@@ -6,7 +6,7 @@ from alembic import context
 
 from app.core.config import settings
 from app.db.base import Base
-from app.models import DmDanToc, DmTinhThanh, NguoiDung  # noqa: F401 — đăng ký model cho autogenerate
+from app.models import DmDanToc, DmTinhThanh, DmTonGiao, NguoiDung  # noqa: F401 — đăng ký model cho autogenerate
 
 config = context.config
 

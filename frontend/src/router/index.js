@@ -60,7 +60,7 @@ const router = createRouter({
         {
           path: 'danh-muc/ton-giao',
           name: 'ton-giao',
-          component: () => import('@/views/PagePlaceholder.vue'),
+          component: () => import('@/views/danh-muc/TonGiao.vue'),
           meta: { title: 'Tôn giáo', requiresAuth: true },
         },
         {
