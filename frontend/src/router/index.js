@@ -54,7 +54,7 @@ const router = createRouter({
         {
           path: 'danh-muc/dan-toc',
           name: 'dan-toc',
-          component: () => import('@/views/PagePlaceholder.vue'),
+          component: () => import('@/views/danh-muc/DanToc.vue'),
           meta: { title: 'Dân tộc', requiresAuth: true },
         },
         {
