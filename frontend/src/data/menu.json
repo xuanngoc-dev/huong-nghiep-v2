@@ -1,0 +1,79 @@
+[
+  {
+    "items": [
+      {
+        "index": "/",
+        "title": "Trang chủ",
+        "icon": "HomeFilled"
+      }
+    ]
+  },
+  {
+    "header": "HƯỚNG NGHIỆP",
+    "abbr": "HN",
+    "items": [
+      {
+        "index": "/huong-nghiep/danh-gia",
+        "title": "Đánh giá năng lực",
+        "icon": "DataAnalysis"
+      },
+      {
+        "index": "/huong-nghiep/goi-y",
+        "title": "Gợi ý nghề nghiệp",
+        "icon": "Opportunity"
+      }
+    ]
+  },
+  {
+    "header": "DANH MỤC",
+    "abbr": "DM",
+    "items": [
+      {
+        "index": "/danh-muc/tinh-thanh",
+        "title": "Tỉnh thành",
+        "icon": "MapLocation"
+      },
+      {
+        "index": "/danh-muc/dan-toc",
+        "title": "Dân tộc",
+        "icon": "User"
+      },
+      {
+        "index": "/danh-muc/ton-giao",
+        "title": "Tôn giáo",
+        "icon": "Sunrise"
+      },
+      {
+        "index": "/danh-muc/khu-vuc-uu-tien",
+        "title": "Khu vực ưu tiên",
+        "icon": "Place"
+      },
+      {
+        "index": "/danh-muc/doi-tuong-uu-tien",
+        "title": "Đối tượng ưu tiên",
+        "icon": "Medal"
+      },
+      {
+        "index": "/danh-muc/phuong-thuc-tuyen-sinh",
+        "title": "Phương thức tuyển sinh",
+        "icon": "Reading"
+      },
+      {
+        "index": "/danh-muc/truong-hoc",
+        "title": "Trường học",
+        "icon": "School"
+      }
+    ]
+  },
+  {
+    "header": "TÀI KHOẢN",
+    "abbr": "TK",
+    "items": [
+      {
+        "index": "/tai-khoan/ho-so",
+        "title": "Hồ sơ của tôi",
+        "icon": "User"
+      }
+    ]
+  }
+]
