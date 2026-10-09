@@ -383,6 +383,7 @@ onMounted(load)
 
   <CustomCard shadow="never" class="catalog-card">
     <div class="toolbar">
+      <h2 class="toolbar__title">Danh sách tỉnh thành</h2>
       <div class="toolbar__actions">
         <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
           <CustomButton
@@ -597,8 +598,18 @@ onMounted(load)
 
 .toolbar {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: 16px;
+}
+
+.toolbar__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--el-text-color-primary);
 }
 
 .row-actions {

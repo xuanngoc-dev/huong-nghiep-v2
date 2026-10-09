@@ -211,6 +211,16 @@ function resolveIcon(name) {
     transition: padding 0.28s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s ease;
   }
 
+  :deep(.el-menu-item.is-active) {
+    background-color: color-mix(in srgb, var(--el-color-primary) 22%, var(--el-bg-color));
+    color: var(--el-color-primary);
+    font-weight: 600;
+  }
+
+  :deep(.el-menu-item.is-active:hover) {
+    background-color: color-mix(in srgb, var(--el-color-primary) 30%, var(--el-bg-color));
+  }
+
   .menu-label {
     display: inline-block;
     max-width: 180px;
