@@ -82,6 +82,18 @@ const router = createRouter({
           meta: { title: 'PT tuyển sinh', requiresAuth: true },
         },
         {
+          path: 'danh-muc/mon-hoc',
+          name: 'mon-hoc',
+          component: () => import('@/views/danh-muc/MonHoc.vue'),
+          meta: { title: 'Môn học', requiresAuth: true },
+        },
+        {
+          path: 'danh-muc/to-hop-mon-hoc',
+          name: 'to-hop-mon-hoc',
+          component: () => import('@/views/danh-muc/ToHopMonHoc.vue'),
+          meta: { title: 'Tổ hợp môn học', requiresAuth: true },
+        },
+        {
           path: 'danh-muc/truong-hoc',
           name: 'truong-hoc',
           component: () => import('@/views/PagePlaceholder.vue'),

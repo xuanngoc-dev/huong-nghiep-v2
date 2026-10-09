@@ -59,6 +59,16 @@
         "icon": "Reading"
       },
       {
+        "index": "/danh-muc/mon-hoc",
+        "title": "Môn học",
+        "icon": "Notebook"
+      },
+      {
+        "index": "/danh-muc/to-hop-mon-hoc",
+        "title": "Tổ hợp môn học",
+        "icon": "Grid"
+      },
+      {
         "index": "/danh-muc/truong-hoc",
         "title": "Trường học",
         "icon": "School"
