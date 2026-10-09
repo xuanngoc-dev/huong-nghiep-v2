@@ -1,6 +1,15 @@
 :root {
   --el-color-primary: #1f7a4d;
   --brand-accent-soft: #e7f5ee;
+  --app-font-family:
+    'Helvetica Neue',
+    Helvetica,
+    'PingFang SC',
+    'Hiragino Sans GB',
+    'Microsoft YaHei',
+    Arial,
+    sans-serif;
+  --app-font-size: 15px;
 }
 
 html,
@@ -9,16 +18,14 @@ body,
   margin: 0;
   padding: 0;
   min-height: 100%;
-  font-family:
-    'Helvetica Neue',
-    Helvetica,
-    'PingFang SC',
-    'Hiragino Sans GB',
-    'Microsoft YaHei',
-    Arial,
-    sans-serif;
+  font-family: var(--app-font-family);
   background: var(--el-bg-color-page);
   color: var(--el-text-color-primary);
+}
+
+body,
+#app {
+  font-size: var(--app-font-size);
 }
 
 a {

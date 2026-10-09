@@ -94,6 +94,12 @@
             <span class="header-datetime__date">{{ nowDate }}</span>
           </div>
 
+          <el-tooltip content="Cài đặt" placement="bottom" :disabled="settingsOpen">
+            <el-button text aria-label="Cài đặt" @click="settingsOpen = true">
+              <el-icon :size="20"><Setting /></el-icon>
+            </el-button>
+          </el-tooltip>
+
           <el-switch
             v-model="isDark"
             inline-prompt
@@ -129,6 +135,8 @@
         <RouterView />
       </el-main>
     </el-container>
+
+    <SettingsDrawer v-model="settingsOpen" />
   </el-container>
 </template>
 
@@ -137,7 +145,8 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { ArrowDown, Expand, Fold, Monitor } from '@element-plus/icons-vue'
+import { ArrowDown, Expand, Fold, Monitor, Setting } from '@element-plus/icons-vue'
+import SettingsDrawer from '@/components/SettingsDrawer.vue'
 import SideMenu from '@/components/SideMenu.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useLayoutStore } from '@/stores/layout'
@@ -165,6 +174,7 @@ const hoverExpanded = ref(false)
 const isMobile = ref(false)
 const mobileMenuOpen = ref(false)
 const isDark = ref(document.documentElement.classList.contains('dark'))
+const settingsOpen = ref(false)
 const now = ref(new Date())
 const asideMountKey = ref(0)
 
@@ -345,6 +355,20 @@ onUnmounted(() => {
 .main-layout {
   min-height: 100vh;
   position: relative;
+  --layout-line: color-mix(in srgb, var(--el-text-color-primary) 34%, var(--el-bg-color));
+  --layout-text: var(--el-text-color-primary);
+  --layout-text-muted: color-mix(in srgb, var(--el-text-color-primary) 78%, var(--el-bg-color));
+  --el-border-color: var(--layout-line);
+  --el-border-color-light: color-mix(in srgb, var(--el-text-color-primary) 26%, var(--el-bg-color));
+  --el-border-color-lighter: color-mix(in srgb, var(--el-text-color-primary) 18%, var(--el-bg-color));
+  --el-text-color-regular: var(--layout-text);
+  --el-text-color-secondary: var(--layout-text-muted);
+  --el-font-size-base: var(--app-font-size);
+  --el-menu-text-color: var(--layout-text);
+  --el-menu-item-font-size: var(--app-font-size);
+  color: var(--layout-text);
+  font-size: var(--app-font-size);
+  text-rendering: geometricPrecision;
 
   &.is-navbar-fixed,
   &.is-sidebar-fixed {
@@ -377,7 +401,7 @@ onUnmounted(() => {
 }
 
 .aside {
-  border-right: 1px solid var(--el-border-color);
+  border-right: 1px solid var(--layout-line);
   background: var(--el-bg-color);
   transition:
     width 0.28s cubic-bezier(0.4, 0, 0.2, 1),
@@ -432,7 +456,25 @@ onUnmounted(() => {
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
-  scrollbar-color: var(--el-border-color) transparent;
+  scrollbar-color: var(--layout-line) transparent;
+
+  :deep(.menu-group__header),
+  :deep(.menu-group__abbr) {
+    font-size: calc(var(--app-font-size) * 0.8);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--layout-text-muted);
+  }
+
+  :deep(.el-menu-item) {
+    font-size: var(--app-font-size);
+    font-weight: 500;
+    color: var(--layout-text);
+  }
+
+  :deep(.el-menu-item.is-active) {
+    font-weight: 600;
+  }
 }
 
 .brand {
@@ -443,9 +485,9 @@ onUnmounted(() => {
   gap: 10px;
   padding: 0 18px;
   font-weight: 700;
-  font-size: 16px;
+  font-size: calc(var(--app-font-size) + 1px);
   color: var(--el-color-primary);
-  border-bottom: 1px solid var(--el-border-color);
+  border-bottom: 1px solid var(--layout-line);
   overflow: hidden;
   white-space: nowrap;
 
@@ -491,8 +533,9 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 16px;
-  border-bottom: 1px solid var(--el-border-color);
+  border-bottom: 1px solid var(--layout-line);
   background: var(--el-bg-color);
+  color: var(--layout-text);
   flex-shrink: 0;
 
   &.is-fixed {
@@ -512,19 +555,21 @@ onUnmounted(() => {
 }
 
 .header-datetime__weekday {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 0.87em;
+  font-weight: 700;
+  color: var(--layout-text);
 }
 
 .header-datetime__time {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 0.93em;
+  font-weight: 700;
   color: var(--el-color-primary);
 }
 
 .header-datetime__date {
-  font-size: 12px;
-  color: var(--el-text-color-secondary);
+  font-size: 0.87em;
+  font-weight: 600;
+  color: var(--layout-text-muted);
 }
 
 .header-left,
@@ -557,7 +602,7 @@ onUnmounted(() => {
   gap: 8px;
   color: var(--el-color-primary);
   font-weight: 700;
-  font-size: 16px;
+  font-size: calc(var(--app-font-size) + 1px);
 }
 
 .header-brand__name {
@@ -576,8 +621,9 @@ onUnmounted(() => {
   flex: 1;
   min-width: 0;
   max-width: 160px;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 1em;
+  font-weight: 600;
+  color: var(--layout-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -1,5 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
+import {
+  APPEARANCE_DEFAULTS,
+  applyAppearance,
+  normalizeFontFamily,
+  normalizeFontSize,
+  normalizeHex,
+} from '@/utils/theme'
 
 const STORAGE_KEY = 'dh-layout-settings'
 
@@ -10,13 +17,20 @@ const defaults = {
   navbarFixed: true,
   sidebarFixed: true,
   sidebarPushContent: true,
+  ...APPEARANCE_DEFAULTS,
 }
 
 function loadSettings() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return { ...defaults }
-    return { ...defaults, ...JSON.parse(raw) }
+    const parsed = raw ? JSON.parse(raw) : {}
+    return {
+      ...defaults,
+      ...parsed,
+      primaryColor: normalizeHex(parsed.primaryColor) || defaults.primaryColor,
+      fontFamily: normalizeFontFamily(parsed.fontFamily),
+      fontSize: normalizeFontSize(parsed.fontSize),
+    }
   } catch {
     return { ...defaults }
   }
@@ -31,20 +45,35 @@ export const useLayoutStore = defineStore('layout', () => {
   const navbarFixed = ref(saved.navbarFixed)
   const sidebarFixed = ref(saved.sidebarFixed)
   const sidebarPushContent = ref(saved.sidebarPushContent)
+  const primaryColor = ref(saved.primaryColor)
+  const fontFamily = ref(saved.fontFamily)
+  const fontSize = ref(saved.fontSize)
+
+  function snapshot() {
+    return {
+      menuGroupCollapsible: menuGroupCollapsible.value,
+      menuUniqueOpened: menuUniqueOpened.value,
+      menuGroupHeaderVisible: menuGroupHeaderVisible.value,
+      navbarFixed: navbarFixed.value,
+      sidebarFixed: sidebarFixed.value,
+      sidebarPushContent: sidebarPushContent.value,
+      primaryColor: normalizeHex(primaryColor.value) || defaults.primaryColor,
+      fontFamily: normalizeFontFamily(fontFamily.value),
+      fontSize: normalizeFontSize(fontSize.value),
+    }
+  }
 
   function persist() {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        menuGroupCollapsible: menuGroupCollapsible.value,
-        menuUniqueOpened: menuUniqueOpened.value,
-        menuGroupHeaderVisible: menuGroupHeaderVisible.value,
-        navbarFixed: navbarFixed.value,
-        sidebarFixed: sidebarFixed.value,
-        sidebarPushContent: sidebarPushContent.value,
-      }),
-    )
+    if (!normalizeHex(primaryColor.value)) {
+      primaryColor.value = defaults.primaryColor
+      return
+    }
+    const data = snapshot()
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+    applyAppearance(data)
   }
+
+  applyAppearance(snapshot())
 
   watch(
     [
@@ -54,6 +83,9 @@ export const useLayoutStore = defineStore('layout', () => {
       navbarFixed,
       sidebarFixed,
       sidebarPushContent,
+      primaryColor,
+      fontFamily,
+      fontSize,
     ],
     persist,
   )
@@ -65,6 +97,9 @@ export const useLayoutStore = defineStore('layout', () => {
     navbarFixed.value = defaults.navbarFixed
     sidebarFixed.value = defaults.sidebarFixed
     sidebarPushContent.value = defaults.sidebarPushContent
+    primaryColor.value = defaults.primaryColor
+    fontFamily.value = defaults.fontFamily
+    fontSize.value = defaults.fontSize
   }
 
   return {
@@ -74,6 +109,9 @@ export const useLayoutStore = defineStore('layout', () => {
     navbarFixed,
     sidebarFixed,
     sidebarPushContent,
+    primaryColor,
+    fontFamily,
+    fontSize,
     reset,
   }
 })

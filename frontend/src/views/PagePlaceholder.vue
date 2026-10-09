@@ -8,9 +8,9 @@ const title = computed(() => route.meta?.title || 'Trang')
 
 <template>
   <el-card shadow="never" class="placeholder-card">
-    <template #header>
+    <!-- <template #header>
       <strong>{{ title }}</strong>
-    </template>
+    </template> -->
     <el-empty description="Nội dung sẽ được bổ sung sau." />
   </el-card>
 </template>

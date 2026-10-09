@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
 
 /**
  * Axios instance dùng chung cho toàn bộ API.
@@ -15,6 +15,35 @@ const api = axios.create({
   },
 })
 
+const LOADING_FLAG = '__fullscreenLoading'
+let pendingRequests = 0
+let loadingInstance = null
+
+function startLoading(config) {
+  if (config.skipLoading) return config
+  config[LOADING_FLAG] = true
+  pendingRequests += 1
+  if (!loadingInstance) {
+    loadingInstance = ElLoading.service({
+      lock: true,
+      fullscreen: true,
+      text: 'Đang tải…',
+      background: 'rgba(0, 0, 0, 0.35)',
+    })
+  }
+  return config
+}
+
+function stopLoading(config) {
+  if (!config?.[LOADING_FLAG]) return
+  config[LOADING_FLAG] = false
+  pendingRequests = Math.max(0, pendingRequests - 1)
+  if (pendingRequests === 0 && loadingInstance) {
+    loadingInstance.close()
+    loadingInstance = null
+  }
+}
+
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token')
@@ -29,14 +58,21 @@ api.interceptors.request.use(
       }
     }
 
-    return config
+    return startLoading(config)
   },
-  (error) => Promise.reject(error),
+  (error) => {
+    stopLoading(error.config)
+    return Promise.reject(error)
+  },
 )
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    stopLoading(response.config)
+    return response
+  },
   (error) => {
+    stopLoading(error.config)
     const status = error.response?.status
     const detail =
       error.response?.data?.detail ||
