@@ -3,5 +3,6 @@
 # Backend
 backend/.venv/
 backend/.env
+backend/logs/
 **/__pycache__/
 *.py[cod]

@@ -1,6 +1,6 @@
 from urllib.parse import quote_plus
 
-from pydantic import computed_field
+from pydantic import Field, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     api_v1_prefix: str = "/api/v1"
     cors_origins: list[str] = ["http://localhost:5173"]
     port: int = 3060
+    log_retention_days: int = Field(default=14, ge=1)
 
     db_host: str = "127.0.0.1"
     db_port: int = 3306

@@ -6,8 +6,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import api_router
 from app.core.config import settings
+from app.core.logging import register_request_logging, setup_logging
 from app.db.session import engine, probe_db_connection
 
+setup_logging()
 logger = logging.getLogger(__name__)
 
 
@@ -37,5 +39,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+register_request_logging(app)
 
 app.include_router(api_router, prefix=settings.api_v1_prefix)
