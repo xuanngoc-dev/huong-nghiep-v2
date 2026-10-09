@@ -66,13 +66,13 @@ const router = createRouter({
         {
           path: 'danh-muc/khu-vuc-uu-tien',
           name: 'khu-vuc-uu-tien',
-          component: () => import('@/views/PagePlaceholder.vue'),
+          component: () => import('@/views/danh-muc/KhuVucUuTien.vue'),
           meta: { title: 'Khu vực ưu tiên', requiresAuth: true },
         },
         {
           path: 'danh-muc/doi-tuong-uu-tien',
           name: 'doi-tuong-uu-tien',
-          component: () => import('@/views/PagePlaceholder.vue'),
+          component: () => import('@/views/danh-muc/DoiTuongUuTien.vue'),
           meta: { title: 'Đối tượng ưu tiên', requiresAuth: true },
         },
         {

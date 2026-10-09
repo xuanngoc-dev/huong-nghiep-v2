@@ -64,7 +64,7 @@ defineExpose({
 <template>
   <el-table
     ref="tableRef"
-    v-loading="loading"
+    v-loading="loading&&false"
     class="custom-table"
     :class="{ 'is-mobile-compact': isMobile }"
     border
