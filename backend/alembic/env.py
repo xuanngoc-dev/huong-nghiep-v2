@@ -10,6 +10,7 @@ from app.models import (  # noqa: F401 — đăng ký model cho autogenerate
     DmDanToc,
     DmDoiTuongUuTien,
     DmKhuVucUuTien,
+    DmPhuongThucTuyenSinh,
     DmTinhThanh,
     DmTonGiao,
     NguoiDung,

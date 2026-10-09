@@ -13,6 +13,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
 def register(payload: RegisterRequest, db: Session = Depends(get_db)) -> AuthResponse:
+    """Đăng ký tài khoản mới và cấp token đăng nhập. Từ chối nếu email hoặc số điện thoại đã được dùng."""
     email = payload.email.lower().strip()
 
     filters = [NguoiDung.email == email]
@@ -49,6 +50,7 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)) -> AuthRes
 
 @router.post("/login", response_model=AuthResponse)
 def login(payload: LoginRequest, db: Session = Depends(get_db)) -> AuthResponse:
+    """Đăng nhập bằng email và mật khẩu, trả về token. Từ chối nếu sai thông tin hoặc tài khoản bị khóa."""
     email = payload.email.lower().strip()
     user = db.scalar(select(NguoiDung).where(NguoiDung.email == email))
 
@@ -69,4 +71,5 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)) -> AuthResponse:
 
 @router.get("/me", response_model=NguoiDungPublic)
 def me(current_user: NguoiDung = Depends(get_current_user)) -> NguoiDungPublic:
+    """Trả về thông tin tài khoản đang đăng nhập."""
     return NguoiDungPublic.model_validate(current_user)

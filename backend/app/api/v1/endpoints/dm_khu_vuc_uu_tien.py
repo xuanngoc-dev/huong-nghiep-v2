@@ -20,11 +20,13 @@ router = APIRouter(prefix="/danh-muc/khu-vuc-uu-tien", tags=["danh-muc"])
 
 
 def _like_pattern(value: str) -> str:
+    """Tạo mẫu tìm kiếm LIKE an toàn: bọc dấu % và escape các ký tự %, _ cùng dấu gạch chéo ngược."""
     escaped = value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
     return f"%{escaped}%"
 
 
 def _get_or_404(db: Session, item_id: int) -> DmKhuVucUuTien:
+    """Lấy một bản ghi theo id. Trả lỗi 404 nếu không tồn tại."""
     item = db.get(DmKhuVucUuTien, item_id)
     if item is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy khu vực ưu tiên")
@@ -40,6 +42,7 @@ def list_khu_vuc_uu_tien(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmKhuVucUuTienPage:
+    """Lấy danh sách khu vực ưu tiên có phân trang. Lọc theo từ khóa (tên, mã) và trạng thái."""
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())
@@ -73,6 +76,7 @@ def get_khu_vuc_uu_tien(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmKhuVucUuTien:
+    """Lấy chi tiết một khu vực ưu tiên theo id."""
     return _get_or_404(db, item_id)
 
 
@@ -82,6 +86,7 @@ def create_khu_vuc_uu_tien_bulk(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmKhuVucUuTienBulkResult:
+    """Thêm nhiều khu vực ưu tiên cùng lúc. Từ chối nếu mã khu vực trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống."""
     if not payload:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Danh sách khu vực ưu tiên trống")
     if len(payload) > 500:
@@ -131,6 +136,7 @@ def create_khu_vuc_uu_tien(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmKhuVucUuTien:
+    """Thêm một khu vực ưu tiên. Từ chối nếu mã khu vực đã tồn tại."""
     item = DmKhuVucUuTien(**payload.model_dump())
     db.add(item)
     try:
@@ -152,6 +158,7 @@ def update_khu_vuc_uu_tien(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmKhuVucUuTien:
+    """Cập nhật toàn bộ thông tin một khu vực ưu tiên theo id."""
     item = _get_or_404(db, item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
@@ -173,6 +180,7 @@ def delete_khu_vuc_uu_tien_many(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmKhuVucUuTienDeleteManyResult:
+    """Xóa nhiều khu vực ưu tiên theo danh sách id."""
     items = db.scalars(select(DmKhuVucUuTien).where(DmKhuVucUuTien.id.in_(payload.ids))).all()
     if not items:
         raise HTTPException(
@@ -191,6 +199,7 @@ def delete_khu_vuc_uu_tien(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> None:
+    """Xóa một khu vực ưu tiên theo id."""
     item = _get_or_404(db, item_id)
     db.delete(item)
     db.commit()

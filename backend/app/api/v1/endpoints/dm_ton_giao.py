@@ -20,11 +20,13 @@ router = APIRouter(prefix="/danh-muc/ton-giao", tags=["danh-muc"])
 
 
 def _like_pattern(value: str) -> str:
+    """Tạo mẫu tìm kiếm LIKE an toàn: bọc dấu % và escape các ký tự %, _ cùng dấu gạch chéo ngược."""
     escaped = value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
     return f"%{escaped}%"
 
 
 def _get_or_404(db: Session, item_id: int) -> DmTonGiao:
+    """Lấy một bản ghi theo id. Trả lỗi 404 nếu không tồn tại."""
     item = db.get(DmTonGiao, item_id)
     if item is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy tôn giáo")
@@ -40,6 +42,7 @@ def list_ton_giao(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmTonGiaoPage:
+    """Lấy danh sách tôn giáo có phân trang. Lọc theo từ khóa (tên, mã) và trạng thái."""
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())
@@ -73,6 +76,7 @@ def get_ton_giao(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmTonGiao:
+    """Lấy chi tiết một tôn giáo theo id."""
     return _get_or_404(db, item_id)
 
 
@@ -82,6 +86,7 @@ def create_ton_giao_bulk(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmTonGiaoBulkResult:
+    """Thêm nhiều tôn giáo cùng lúc. Từ chối nếu mã tôn giáo trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống."""
     if not payload:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Danh sách tôn giáo trống")
     if len(payload) > 500:
@@ -131,6 +136,7 @@ def create_ton_giao(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmTonGiao:
+    """Thêm một tôn giáo. Từ chối nếu mã tôn giáo đã tồn tại."""
     item = DmTonGiao(**payload.model_dump())
     db.add(item)
     try:
@@ -152,6 +158,7 @@ def update_ton_giao(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmTonGiao:
+    """Cập nhật toàn bộ thông tin một tôn giáo theo id."""
     item = _get_or_404(db, item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
@@ -173,6 +180,7 @@ def delete_ton_giao_many(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmTonGiaoDeleteManyResult:
+    """Xóa nhiều tôn giáo theo danh sách id."""
     items = db.scalars(select(DmTonGiao).where(DmTonGiao.id.in_(payload.ids))).all()
     if not items:
         raise HTTPException(
@@ -191,6 +199,7 @@ def delete_ton_giao(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> None:
+    """Xóa một tôn giáo theo id."""
     item = _get_or_404(db, item_id)
     db.delete(item)
     db.commit()

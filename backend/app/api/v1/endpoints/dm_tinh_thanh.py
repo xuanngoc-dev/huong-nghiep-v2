@@ -20,11 +20,13 @@ router = APIRouter(prefix="/danh-muc/tinh-thanh", tags=["danh-muc"])
 
 
 def _like_pattern(value: str) -> str:
+    """Tạo mẫu tìm kiếm LIKE an toàn: bọc dấu % và escape các ký tự %, _ cùng dấu gạch chéo ngược."""
     escaped = value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
     return f"%{escaped}%"
 
 
 def _get_or_404(db: Session, item_id: int) -> DmTinhThanh:
+    """Lấy một bản ghi theo id. Trả lỗi 404 nếu không tồn tại."""
     item = db.get(DmTinhThanh, item_id)
     if item is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy tỉnh thành")
@@ -41,6 +43,7 @@ def list_tinh_thanh(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmTinhThanhPage:
+    """Lấy danh sách tỉnh thành có phân trang. Lọc theo từ khóa (tên, mã), khu vực và trạng thái."""
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())
@@ -76,6 +79,7 @@ def get_tinh_thanh(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmTinhThanh:
+    """Lấy chi tiết một tỉnh thành theo id."""
     return _get_or_404(db, item_id)
 
 
@@ -85,6 +89,7 @@ def create_tinh_thanh_bulk(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmTinhThanhBulkResult:
+    """Thêm nhiều tỉnh thành cùng lúc. Từ chối nếu mã tỉnh trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống."""
     if not payload:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Danh sách tỉnh thành trống")
     if len(payload) > 500:
@@ -134,6 +139,7 @@ def create_tinh_thanh(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmTinhThanh:
+    """Thêm một tỉnh thành. Từ chối nếu mã tỉnh đã tồn tại."""
     item = DmTinhThanh(**payload.model_dump())
     db.add(item)
     try:
@@ -155,6 +161,7 @@ def update_tinh_thanh(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmTinhThanh:
+    """Cập nhật toàn bộ thông tin một tỉnh thành theo id."""
     item = _get_or_404(db, item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
@@ -176,6 +183,7 @@ def delete_tinh_thanh_many(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmTinhThanhDeleteManyResult:
+    """Xóa nhiều tỉnh thành theo danh sách id."""
     items = db.scalars(select(DmTinhThanh).where(DmTinhThanh.id.in_(payload.ids))).all()
     if not items:
         raise HTTPException(
@@ -194,6 +202,7 @@ def delete_tinh_thanh(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> None:
+    """Xóa một tỉnh thành theo id."""
     item = _get_or_404(db, item_id)
     db.delete(item)
     db.commit()

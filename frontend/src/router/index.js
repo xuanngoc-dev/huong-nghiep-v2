@@ -78,8 +78,8 @@ const router = createRouter({
         {
           path: 'danh-muc/phuong-thuc-tuyen-sinh',
           name: 'phuong-thuc-tuyen-sinh',
-          component: () => import('@/views/PagePlaceholder.vue'),
-          meta: { title: 'Phương thức tuyển sinh', requiresAuth: true },
+          component: () => import('@/views/danh-muc/PhuongThucTuyenSinh.vue'),
+          meta: { title: 'PT tuyển sinh', requiresAuth: true },
         },
         {
           path: 'danh-muc/truong-hoc',

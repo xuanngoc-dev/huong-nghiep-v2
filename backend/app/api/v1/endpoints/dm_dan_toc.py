@@ -20,11 +20,13 @@ router = APIRouter(prefix="/danh-muc/dan-toc", tags=["danh-muc"])
 
 
 def _like_pattern(value: str) -> str:
+    """Tạo mẫu tìm kiếm LIKE an toàn: bọc dấu % và escape các ký tự %, _ cùng dấu gạch chéo ngược."""
     escaped = value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
     return f"%{escaped}%"
 
 
 def _get_or_404(db: Session, item_id: int) -> DmDanToc:
+    """Lấy một bản ghi theo id. Trả lỗi 404 nếu không tồn tại."""
     item = db.get(DmDanToc, item_id)
     if item is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy dân tộc")
@@ -40,6 +42,7 @@ def list_dan_toc(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmDanTocPage:
+    """Lấy danh sách dân tộc có phân trang. Lọc theo từ khóa (tên, mã, tên gọi khác) và trạng thái."""
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())
@@ -74,6 +77,7 @@ def get_dan_toc(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmDanToc:
+    """Lấy chi tiết một dân tộc theo id."""
     return _get_or_404(db, item_id)
 
 
@@ -83,6 +87,7 @@ def create_dan_toc_bulk(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmDanTocBulkResult:
+    """Thêm nhiều dân tộc cùng lúc. Từ chối nếu mã dân tộc trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống."""
     if not payload:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Danh sách dân tộc trống")
     if len(payload) > 500:
@@ -132,6 +137,7 @@ def create_dan_toc(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmDanToc:
+    """Thêm một dân tộc. Từ chối nếu mã dân tộc đã tồn tại."""
     item = DmDanToc(**payload.model_dump())
     db.add(item)
     try:
@@ -153,6 +159,7 @@ def update_dan_toc(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmDanToc:
+    """Cập nhật toàn bộ thông tin một dân tộc theo id."""
     item = _get_or_404(db, item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
@@ -174,6 +181,7 @@ def delete_dan_toc_many(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmDanTocDeleteManyResult:
+    """Xóa nhiều dân tộc theo danh sách id."""
     items = db.scalars(select(DmDanToc).where(DmDanToc.id.in_(payload.ids))).all()
     if not items:
         raise HTTPException(
@@ -192,6 +200,7 @@ def delete_dan_toc(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> None:
+    """Xóa một dân tộc theo id."""
     item = _get_or_404(db, item_id)
     db.delete(item)
     db.commit()

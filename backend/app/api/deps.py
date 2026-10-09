@@ -13,6 +13,7 @@ def get_current_user(
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ) -> NguoiDung:
+    """Xác thực Bearer token và trả về người dùng đang đăng nhập. Từ chối nếu chưa đăng nhập, token không hợp lệ hoặc tài khoản bị khóa."""
     if credentials is None or not credentials.credentials:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
