@@ -40,6 +40,18 @@ const router = createRouter({
           meta: { title: 'Gợi ý nghề nghiệp', requiresAuth: true },
         },
         {
+          path: 'trac-nghiem/cau-hoi-dap-an',
+          name: 'cau-hoi-dap-an',
+          component: () => import('@/views/trac-nghiem/CauHoiDapAn.vue'),
+          meta: { title: 'Câu hỏi - Đáp án', requiresAuth: true },
+        },
+        {
+          path: 'trac-nghiem/lich-su',
+          name: 'lich-su-trac-nghiem',
+          component: () => import('@/views/PagePlaceholder.vue'),
+          meta: { title: 'Lịch sử trắc nghiệm', requiresAuth: true },
+        },
+        {
           path: 'tai-khoan/ho-so',
           name: 'ho-so',
           component: () => import('@/views/PagePlaceholder.vue'),

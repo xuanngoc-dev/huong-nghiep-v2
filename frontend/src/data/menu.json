@@ -25,6 +25,22 @@
     ]
   },
   {
+    "header": "TRẮC NGHIỆM",
+    "abbr": "TN",
+    "items": [
+      {
+        "index": "/trac-nghiem/cau-hoi-dap-an",
+        "title": "Câu hỏi - Đáp án",
+        "icon": "EditPen"
+      },
+      {
+        "index": "/trac-nghiem/lich-su",
+        "title": "Lịch sử trắc nghiệm",
+        "icon": "Clock"
+      }
+    ]
+  },
+  {
     "header": "DANH MỤC",
     "abbr": "DM",
     "items": [

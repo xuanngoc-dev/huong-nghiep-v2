@@ -197,7 +197,14 @@ def delete_nhom_tinh_cach_holland_many(
         )
     for item in items:
         db.delete(item)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Không thể xóa vì còn câu hỏi trắc nghiệm dùng mã Holland này",
+        ) from None
     return DmNhomTinhCachHollandDeleteManyResult(deleted=len(items))
 
 
@@ -210,4 +217,11 @@ def delete_nhom_tinh_cach_holland(
     """Xóa một nhóm tính cách Holland theo id."""
     item = _get_or_404(db, item_id)
     db.delete(item)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Không thể xóa vì còn câu hỏi trắc nghiệm dùng mã Holland này",
+        ) from None

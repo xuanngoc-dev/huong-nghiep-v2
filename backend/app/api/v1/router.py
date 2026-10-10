@@ -17,6 +17,7 @@ from app.api.v1.endpoints import (
     dm_to_hop_mon_hoc,
     dm_ton_giao,
     health,
+    tn_cau_hoi,
 )
 
 api_router = APIRouter()
@@ -36,3 +37,4 @@ api_router.include_router(dm_linh_vuc_dao_tao.router)
 api_router.include_router(dm_nhom_nganh_dao_tao.router)
 api_router.include_router(dm_nganh_dao_tao.router)
 api_router.include_router(dm_chuyen_nganh.router)
+api_router.include_router(tn_cau_hoi.router)

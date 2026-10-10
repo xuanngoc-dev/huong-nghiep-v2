@@ -185,7 +185,14 @@ def delete_loai_cau_hoi_many(
         )
     for item in items:
         db.delete(item)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Không thể xóa vì còn câu hỏi trắc nghiệm thuộc loại này",
+        ) from None
     return DmLoaiCauHoiDeleteManyResult(deleted=len(items))
 
 
@@ -198,4 +205,11 @@ def delete_loai_cau_hoi(
     """Xóa một loại câu hỏi theo id."""
     item = _get_or_404(db, item_id)
     db.delete(item)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Không thể xóa vì còn câu hỏi trắc nghiệm thuộc loại này",
+        ) from None

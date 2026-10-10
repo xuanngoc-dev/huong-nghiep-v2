@@ -13,6 +13,8 @@ from app.models.dm_tinh_thanh import DmTinhThanh
 from app.models.dm_to_hop_mon_hoc import DmToHopMonHoc
 from app.models.dm_ton_giao import DmTonGiao
 from app.models.nguoi_dung import NguoiDung
+from app.models.tn_cau_hoi_trac_nghiem import TnCauHoiTracNghiem
+from app.models.tn_cau_tra_loi import TnCauTraLoi
 
 __all__ = [
     "DmChuyenNganh",
@@ -30,4 +32,6 @@ __all__ = [
     "DmToHopMonHoc",
     "DmTonGiao",
     "NguoiDung",
+    "TnCauHoiTracNghiem",
+    "TnCauTraLoi",
 ]
