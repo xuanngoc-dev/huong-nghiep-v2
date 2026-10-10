@@ -85,7 +85,6 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import * as Icons from '@element-plus/icons-vue'
 import { ArrowDown } from '@element-plus/icons-vue'
-import { useAuthStore } from '@/stores/auth'
 import { useLayoutStore } from '@/stores/layout'
 
 const props = defineProps({
@@ -93,13 +92,16 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  groups: {
+    type: Array,
+    default: () => [],
+  },
 })
 
 const route = useRoute()
-const authStore = useAuthStore()
 const layoutStore = useLayoutStore()
 
-const menuGroups = computed(() => authStore.menuGroups)
+const menuGroups = computed(() => props.groups)
 const activeMenu = computed(() => route.path)
 const collapsed = computed(() => props.collapsed)
 const openGroups = ref(new Set())

@@ -15,6 +15,22 @@ const form = reactive({
   mat_khau: '',
 })
 
+function safePath(value) {
+  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) return ''
+  if (value === '/login' || value.startsWith('/login?') || value === '/register' || value.startsWith('/register?')) {
+    return ''
+  }
+  return value
+}
+
+function destinationAfterLogin(isAdmin, redirect) {
+  const requested = safePath(redirect)
+  if (isAdmin) {
+    return requested.startsWith('/admin') ? requested : '/admin'
+  }
+  return requested && !requested.startsWith('/admin') ? requested : '/'
+}
+
 const rules = {
   email: [
     { required: true, message: 'Vui lòng nhập email', trigger: 'blur' },
@@ -31,8 +47,7 @@ async function onSubmit() {
   try {
     await auth.login(form)
     ElMessage.success('Đăng nhập thành công')
-    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/'
-    await router.replace(redirect || '/')
+    await router.replace(destinationAfterLogin(auth.isAdmin, route.query.redirect))
   } catch (error) {
     const detail = error.response?.data?.detail
     ElMessage.error(typeof detail === 'string' ? detail : 'Đăng nhập thất bại')

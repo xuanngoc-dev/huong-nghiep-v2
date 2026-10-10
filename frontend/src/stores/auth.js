@@ -1,7 +1,6 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { fetchMe, login as loginApi, register as registerApi } from '@/api/auth'
-import menuData from '@/data/menu.json'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token') || '')
@@ -9,8 +8,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => Boolean(token.value))
   const displayName = computed(() => user.value?.ho_ten || user.value?.email || '')
-  /** Menu sidebar — sau này lọc theo vai_tro nếu cần */
-  const menuGroups = computed(() => menuData)
+  const isAdmin = computed(() => user.value?.vai_tro == 1)
 
   function setToken(value) {
     token.value = value || ''
@@ -66,7 +64,7 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     isAuthenticated,
     displayName,
-    menuGroups,
+    isAdmin,
     setToken,
     setUser,
     register,

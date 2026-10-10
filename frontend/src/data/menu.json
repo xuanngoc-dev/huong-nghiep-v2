@@ -1,135 +1,180 @@
-[
-  {
-    "items": [
-      {
-        "index": "/",
-        "title": "Trang chủ",
-        "icon": "HomeFilled"
-      }
-    ]
-  },
-  {
-    "header": "HƯỚNG NGHIỆP",
-    "abbr": "HN",
-    "items": [
-      {
-        "index": "/huong-nghiep/danh-gia",
-        "title": "Đánh giá năng lực",
-        "icon": "DataAnalysis"
-      },
-      {
-        "index": "/huong-nghiep/goi-y",
-        "title": "Gợi ý nghề nghiệp",
-        "icon": "Opportunity"
-      }
-    ]
-  },
-  {
-    "header": "TRẮC NGHIỆM",
-    "abbr": "TN",
-    "items": [
-      {
-        "index": "/trac-nghiem/cau-hoi-dap-an",
-        "title": "Câu hỏi - Đáp án",
-        "icon": "EditPen"
-      },
-      {
-        "index": "/trac-nghiem/lich-su",
-        "title": "Lịch sử trắc nghiệm",
-        "icon": "Clock"
-      }
-    ]
-  },
-  {
-    "header": "DANH MỤC",
-    "abbr": "DM",
-    "items": [
-      {
-        "index": "/danh-muc/tinh-thanh",
-        "title": "Tỉnh thành",
-        "icon": "MapLocation"
-      },
-      {
-        "index": "/danh-muc/dan-toc",
-        "title": "Dân tộc",
-        "icon": "User"
-      },
-      {
-        "index": "/danh-muc/ton-giao",
-        "title": "Tôn giáo",
-        "icon": "Sunrise"
-      },
-      {
-        "index": "/danh-muc/khu-vuc-uu-tien",
-        "title": "Khu vực ưu tiên",
-        "icon": "Place"
-      },
-      {
-        "index": "/danh-muc/doi-tuong-uu-tien",
-        "title": "Đối tượng ưu tiên",
-        "icon": "Medal"
-      },
-      {
-        "index": "/danh-muc/phuong-thuc-tuyen-sinh",
-        "title": "PT tuyển sinh",
-        "icon": "Reading"
-      },
-      {
-        "index": "/danh-muc/mon-hoc",
-        "title": "Môn học",
-        "icon": "Notebook"
-      },
-      {
-        "index": "/danh-muc/to-hop-mon-hoc",
-        "title": "Tổ hợp môn học",
-        "icon": "Grid"
-      },
-      {
-        "index": "/danh-muc/loai-cau-hoi",
-        "title": "Loại câu hỏi",
-        "icon": "QuestionFilled"
-      },
-      {
-        "index": "/danh-muc/nhom-tinh-cach-holland",
-        "title": "Nhóm Holland",
-        "icon": "Compass"
-      },
-      {
-        "index": "/danh-muc/linh-vuc-dao-tao",
-        "title": "Lĩnh vực đào tạo",
-        "icon": "Collection"
-      },
-      {
-        "index": "/danh-muc/nhom-nganh-dao-tao",
-        "title": "Nhóm ngành",
-        "icon": "Files"
-      },
-      {
-        "index": "/danh-muc/nganh-dao-tao",
-        "title": "Ngành đào tạo",
-        "icon": "Management"
-      },
-      {
-        "index": "/danh-muc/chuyen-nganh",
-        "title": "Chuyên ngành",
-        "icon": "Tickets"
-      },
-      {
-        "index": "/danh-muc/truong-hoc",
-        "title": "Trường học",
-        "icon": "School"
-      }
-    ]
-  },
-  {
-    "header": "TÀI KHOẢN",
-    "abbr": "TK",
-    "items": [
-      {
-        "index": "/tai-khoan/ho-so",
-        "title": "Hồ sơ của tôi",
-        "icon": "User"
-      }
-    ]
-  }
-]
+{
+  "admin": [
+    {
+      "items": [
+        {
+          "index": "/admin",
+          "title": "Trang chủ",
+          "icon": "HomeFilled"
+        }
+      ]
+    },
+    {
+      "header": "TRẮC NGHIỆM",
+      "abbr": "TN",
+      "items": [
+        {
+          "index": "/admin/trac-nghiem/cau-hoi-dap-an",
+          "title": "Câu hỏi - Đáp án",
+          "icon": "EditPen"
+        },
+        {
+          "index": "/admin/trac-nghiem/lich-su",
+          "title": "Lịch sử trắc nghiệm",
+          "icon": "Clock"
+        }
+      ]
+    },
+    {
+      "header": "DANH MỤC",
+      "abbr": "DM",
+      "items": [
+        {
+          "index": "/admin/danh-muc/tinh-thanh",
+          "title": "Tỉnh thành",
+          "icon": "MapLocation"
+        },
+        {
+          "index": "/admin/danh-muc/dan-toc",
+          "title": "Dân tộc",
+          "icon": "User"
+        },
+        {
+          "index": "/admin/danh-muc/ton-giao",
+          "title": "Tôn giáo",
+          "icon": "Sunrise"
+        },
+        {
+          "index": "/admin/danh-muc/khu-vuc-uu-tien",
+          "title": "Khu vực ưu tiên",
+          "icon": "Place"
+        },
+        {
+          "index": "/admin/danh-muc/doi-tuong-uu-tien",
+          "title": "Đối tượng ưu tiên",
+          "icon": "Medal"
+        },
+        {
+          "index": "/admin/danh-muc/phuong-thuc-tuyen-sinh",
+          "title": "PT tuyển sinh",
+          "icon": "Reading"
+        },
+        {
+          "index": "/admin/danh-muc/mon-hoc",
+          "title": "Môn học",
+          "icon": "Notebook"
+        },
+        {
+          "index": "/admin/danh-muc/to-hop-mon-hoc",
+          "title": "Tổ hợp môn học",
+          "icon": "Grid"
+        },
+        {
+          "index": "/admin/danh-muc/loai-cau-hoi",
+          "title": "Loại câu hỏi",
+          "icon": "QuestionFilled"
+        },
+        {
+          "index": "/admin/danh-muc/nhom-tinh-cach-holland",
+          "title": "Nhóm Holland",
+          "icon": "Compass"
+        },
+        {
+          "index": "/admin/danh-muc/linh-vuc-dao-tao",
+          "title": "Lĩnh vực đào tạo",
+          "icon": "Collection"
+        },
+        {
+          "index": "/admin/danh-muc/nhom-nganh-dao-tao",
+          "title": "Nhóm ngành",
+          "icon": "Files"
+        },
+        {
+          "index": "/admin/danh-muc/nganh-dao-tao",
+          "title": "Ngành đào tạo",
+          "icon": "Management"
+        },
+        {
+          "index": "/admin/danh-muc/chuyen-nganh",
+          "title": "Chuyên ngành",
+          "icon": "Tickets"
+        },
+        {
+          "index": "/admin/danh-muc/truong-hoc",
+          "title": "Trường học",
+          "icon": "School"
+        }
+      ]
+    },
+    {
+      "header": "TÀI KHOẢN",
+      "abbr": "TK",
+      "items": [
+        {
+          "index": "/admin/tai-khoan/ho-so",
+          "title": "Hồ sơ của tôi",
+          "icon": "User"
+        }
+      ]
+    }
+  ],
+  "user": [
+    {
+      "items": [
+        {
+          "index": "/admin",
+          "title": "Quản trị",
+          "icon": "Setting",
+          "adminOnly": true
+        }
+      ]
+    },
+    {
+      "items": [
+        {
+          "index": "/",
+          "title": "Trang chủ",
+          "icon": "HomeFilled"
+        }
+      ]
+    },
+    {
+      "header": "HƯỚNG NGHIỆP",
+      "abbr": "HN",
+      "items": [
+        {
+          "index": "/huong-nghiep/danh-gia",
+          "title": "Đánh giá năng lực",
+          "icon": "DataAnalysis"
+        },
+        {
+          "index": "/huong-nghiep/goi-y",
+          "title": "Gợi ý nghề nghiệp",
+          "icon": "Opportunity"
+        }
+      ]
+    },
+    {
+      "header": "TRẮC NGHIỆM",
+      "abbr": "TN",
+      "items": [
+        {
+          "index": "/trac-nghiem/lich-su",
+          "title": "Lịch sử trắc nghiệm",
+          "icon": "Clock"
+        }
+      ]
+    },
+    {
+      "header": "TÀI KHOẢN",
+      "abbr": "TK",
+      "items": [
+        {
+          "index": "/tai-khoan/ho-so",
+          "title": "Hồ sơ của tôi",
+          "icon": "User"
+        }
+      ]
+    }
+  ]
+}
