@@ -94,6 +94,42 @@ const router = createRouter({
           meta: { title: 'Tổ hợp môn học', requiresAuth: true },
         },
         {
+          path: 'danh-muc/loai-cau-hoi',
+          name: 'loai-cau-hoi',
+          component: () => import('@/views/danh-muc/LoaiCauHoi.vue'),
+          meta: { title: 'Loại câu hỏi', requiresAuth: true },
+        },
+        {
+          path: 'danh-muc/nhom-tinh-cach-holland',
+          name: 'nhom-tinh-cach-holland',
+          component: () => import('@/views/danh-muc/NhomTinhCachHolland.vue'),
+          meta: { title: 'Nhóm Holland', requiresAuth: true },
+        },
+        {
+          path: 'danh-muc/linh-vuc-dao-tao',
+          name: 'linh-vuc-dao-tao',
+          component: () => import('@/views/danh-muc/LinhVucDaoTao.vue'),
+          meta: { title: 'Lĩnh vực đào tạo', requiresAuth: true },
+        },
+        {
+          path: 'danh-muc/nhom-nganh-dao-tao',
+          name: 'nhom-nganh-dao-tao',
+          component: () => import('@/views/danh-muc/NhomNganhDaoTao.vue'),
+          meta: { title: 'Nhóm ngành', requiresAuth: true },
+        },
+        {
+          path: 'danh-muc/nganh-dao-tao',
+          name: 'nganh-dao-tao',
+          component: () => import('@/views/danh-muc/NganhDaoTao.vue'),
+          meta: { title: 'Ngành đào tạo', requiresAuth: true },
+        },
+        {
+          path: 'danh-muc/chuyen-nganh',
+          name: 'chuyen-nganh',
+          component: () => import('@/views/danh-muc/ChuyenNganh.vue'),
+          meta: { title: 'Chuyên ngành', requiresAuth: true },
+        },
+        {
           path: 'danh-muc/truong-hoc',
           name: 'truong-hoc',
           component: () => import('@/views/PagePlaceholder.vue'),

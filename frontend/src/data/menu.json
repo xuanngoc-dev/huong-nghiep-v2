@@ -69,6 +69,36 @@
         "icon": "Grid"
       },
       {
+        "index": "/danh-muc/loai-cau-hoi",
+        "title": "Loại câu hỏi",
+        "icon": "QuestionFilled"
+      },
+      {
+        "index": "/danh-muc/nhom-tinh-cach-holland",
+        "title": "Nhóm Holland",
+        "icon": "Compass"
+      },
+      {
+        "index": "/danh-muc/linh-vuc-dao-tao",
+        "title": "Lĩnh vực đào tạo",
+        "icon": "Collection"
+      },
+      {
+        "index": "/danh-muc/nhom-nganh-dao-tao",
+        "title": "Nhóm ngành",
+        "icon": "Files"
+      },
+      {
+        "index": "/danh-muc/nganh-dao-tao",
+        "title": "Ngành đào tạo",
+        "icon": "Management"
+      },
+      {
+        "index": "/danh-muc/chuyen-nganh",
+        "title": "Chuyên ngành",
+        "icon": "Tickets"
+      },
+      {
         "index": "/danh-muc/truong-hoc",
         "title": "Trường học",
         "icon": "School"

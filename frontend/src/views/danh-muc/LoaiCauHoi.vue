@@ -2,29 +2,24 @@
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
-  createTonGiao,
-  createTonGiaoBulk,
-  deleteTonGiao,
-  deleteTonGiaoMany,
-  fetchTonGiao,
-  updateTonGiao,
-} from '@/api/tonGiao'
+  createLoaiCauHoi,
+  createLoaiCauHoiBulk,
+  deleteLoaiCauHoi,
+  deleteLoaiCauHoiMany,
+  fetchLoaiCauHoi,
+  updateLoaiCauHoi,
+} from '@/api/loaiCauHoi'
 
 const JSON_SAMPLE = `[
   {
-    "ma_ton_giao": "01",
-    "ten_ton_giao": "Phật giáo",
+    "ten_loai_cau_hoi": "Trắc nghiệm một đáp án",
+    "thu_tu_uu_tien": 1,
     "trang_thai": 1
   },
   {
-    "ma_ton_giao": "02",
-    "ten_ton_giao": "Công giáo",
-    "trang_thai": 1
-  },
-  {
-    "ma_ton_giao": "00",
-    "ten_ton_giao": "Không",
-    "ghi_chu": "Không theo tôn giáo"
+    "ten_loai_cau_hoi": "Trắc nghiệm nhiều đáp án",
+    "thu_tu_uu_tien": 2,
+    "ghi_chu": "Chọn một hoặc nhiều phương án"
   }
 ]`
 
@@ -51,17 +46,17 @@ const filters = reactive({
 const form = reactive(emptyForm())
 
 const rules = {
-  ten_ton_giao: [{ required: true, message: 'Vui lòng nhập tên tôn giáo', trigger: 'blur' }],
-  ma_ton_giao: [{ required: true, message: 'Vui lòng nhập mã tôn giáo', trigger: 'blur' }],
+  ten_loai_cau_hoi: [{ required: true, message: 'Vui lòng nhập tên loại câu hỏi', trigger: 'blur' }],
+  thu_tu_uu_tien: [{ required: true, message: 'Vui lòng nhập thứ tự ưu tiên', trigger: 'change' }],
   trang_thai: [{ required: true, message: 'Vui lòng chọn trạng thái', trigger: 'change' }],
 }
 
 function emptyForm() {
   return {
-    ma_ton_giao: '',
-    ten_ton_giao: '',
-    trang_thai: 1,
+    ten_loai_cau_hoi: '',
     ghi_chu: '',
+    thu_tu_uu_tien: 1,
+    trang_thai: 1,
   }
 }
 
@@ -78,28 +73,28 @@ function parseJsonItems(text) {
   try {
     data = JSON.parse(text)
   } catch {
-    throw new Error('JSON không hợp lệ. Hãy dán một mảng tôn giáo.')
+    throw new Error('JSON không hợp lệ. Hãy dán một mảng loại câu hỏi.')
   }
   if (!Array.isArray(data)) {
-    throw new Error('JSON phải là một mảng, ví dụ [{ "ten_ton_giao": "...", "ma_ton_giao": "..." }]')
+    throw new Error('JSON phải là một mảng, ví dụ [{ "ten_loai_cau_hoi": "...", "thu_tu_uu_tien": 1 }]')
   }
   if (!data.length) {
-    throw new Error('Mảng tôn giáo đang trống')
+    throw new Error('Mảng loại câu hỏi đang trống')
   }
 
   return data.map((item, index) => {
     const line = index + 1
     if (!item || typeof item !== 'object' || Array.isArray(item)) {
-      throw new Error(`Phần tử thứ ${line} không phải một tôn giáo`)
+      throw new Error(`Phần tử thứ ${line} không phải một loại câu hỏi`)
     }
-    const tenTonGiao = String(item.ten_ton_giao ?? '').trim()
-    const maTonGiao = String(item.ma_ton_giao ?? '').trim()
-    if (!tenTonGiao || !maTonGiao) {
-      throw new Error(`Phần tử thứ ${line} thiếu ten_ton_giao hoặc ma_ton_giao`)
+    const ten = String(item.ten_loai_cau_hoi ?? '').trim()
+    const order = Number(item.thu_tu_uu_tien)
+    if (!ten || !Number.isInteger(order) || order < 1) {
+      throw new Error(`Phần tử thứ ${line} thiếu ten_loai_cau_hoi hoặc thu_tu_uu_tien`)
     }
     return {
-      ten_ton_giao: tenTonGiao,
-      ma_ton_giao: maTonGiao,
+      ten_loai_cau_hoi: ten,
+      thu_tu_uu_tien: order,
       trang_thai: item.trang_thai ?? 1,
       ghi_chu: item.ghi_chu == null ? null : String(item.ghi_chu).trim() || null,
     }
@@ -124,11 +119,11 @@ async function load() {
     if (filters.trang_thai !== '' && filters.trang_thai !== null) {
       params.trang_thai = filters.trang_thai
     }
-    const data = await fetchTonGiao(params)
+    const data = await fetchLoaiCauHoi(params)
     rows.value = data.items
     total.value = data.total
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không tải được danh sách tôn giáo'))
+    ElMessage.error(errorMessage(error, 'Không tải được danh sách loại câu hỏi'))
   } finally {
     loading.value = false
   }
@@ -176,18 +171,18 @@ function openCreate() {
 function openEdit(row) {
   editingId.value = row.id
   Object.assign(form, {
-    ma_ton_giao: row.ma_ton_giao,
-    ten_ton_giao: row.ten_ton_giao,
-    trang_thai: row.trang_thai,
+    ten_loai_cau_hoi: row.ten_loai_cau_hoi,
     ghi_chu: row.ghi_chu || '',
+    thu_tu_uu_tien: row.thu_tu_uu_tien,
+    trang_thai: row.trang_thai,
   })
   dialogVisible.value = true
 }
 
 function payloadFromForm() {
   return {
-    ma_ton_giao: form.ma_ton_giao.trim().toUpperCase(),
-    ten_ton_giao: form.ten_ton_giao.trim(),
+    ten_loai_cau_hoi: form.ten_loai_cau_hoi.trim(),
+    thu_tu_uu_tien: form.thu_tu_uu_tien,
     trang_thai: form.trang_thai,
     ghi_chu: form.ghi_chu?.trim() || null,
   }
@@ -208,12 +203,12 @@ async function onSubmitJson() {
 
   saving.value = true
   try {
-    const result = await createTonGiaoBulk(items)
-    ElMessage.success(`Đã thêm ${result.created} tôn giáo`)
+    const result = await createLoaiCauHoiBulk(items)
+    ElMessage.success(`Đã thêm ${result.created} loại câu hỏi`)
     dialogVisible.value = false
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không thêm được danh sách tôn giáo'))
+    ElMessage.error(errorMessage(error, 'Không thêm được danh sách loại câu hỏi'))
   } finally {
     saving.value = false
   }
@@ -232,16 +227,16 @@ async function onSubmit() {
   try {
     const payload = payloadFromForm()
     if (editingId.value) {
-      await updateTonGiao(editingId.value, payload)
-      ElMessage.success('Đã cập nhật tôn giáo')
+      await updateLoaiCauHoi(editingId.value, payload)
+      ElMessage.success('Đã cập nhật loại câu hỏi')
     } else {
-      await createTonGiao(payload)
-      ElMessage.success('Đã thêm tôn giáo')
+      await createLoaiCauHoi(payload)
+      ElMessage.success('Đã thêm loại câu hỏi')
     }
     dialogVisible.value = false
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không lưu được tôn giáo'))
+    ElMessage.error(errorMessage(error, 'Không lưu được loại câu hỏi'))
   } finally {
     saving.value = false
   }
@@ -250,7 +245,7 @@ async function onSubmit() {
 async function onDelete(row) {
   try {
     await ElMessageBox.confirm(
-      `Xóa tôn giáo "${row.ten_ton_giao}" (${row.ma_ton_giao})?`,
+      `Xóa loại câu hỏi "${row.ten_loai_cau_hoi}"?`,
       'Xác nhận xóa',
       {
         type: 'warning',
@@ -264,15 +259,15 @@ async function onDelete(row) {
   }
 
   try {
-    await deleteTonGiao(row.id)
-    ElMessage.success('Đã xóa tôn giáo')
+    await deleteLoaiCauHoi(row.id)
+    ElMessage.success('Đã xóa loại câu hỏi')
     tableRef.value?.toggleRowSelection(row, false)
     if (rows.value.length === 1 && page.value > 1) {
       page.value -= 1
     }
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không xóa được tôn giáo'))
+    ElMessage.error(errorMessage(error, 'Không xóa được loại câu hỏi'))
   }
 }
 
@@ -281,16 +276,12 @@ async function onDeleteSelected() {
   if (!ids.length) return
 
   try {
-    await ElMessageBox.confirm(
-      `Xóa ${ids.length} tôn giáo đã chọn?`,
-      'Xác nhận xóa',
-      {
-        type: 'warning',
-        confirmButtonText: 'Xóa',
-        cancelButtonText: 'Hủy',
-        confirmButtonClass: 'el-button--danger',
-      },
-    )
+    await ElMessageBox.confirm(`Xóa ${ids.length} loại câu hỏi đã chọn?`, 'Xác nhận xóa', {
+      type: 'warning',
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy',
+      confirmButtonClass: 'el-button--danger',
+    })
   } catch {
     return
   }
@@ -298,8 +289,8 @@ async function onDeleteSelected() {
   deleting.value = true
   try {
     const removedOnPage = rows.value.filter((row) => ids.includes(row.id)).length
-    const result = await deleteTonGiaoMany(ids)
-    ElMessage.success(`Đã xóa ${result.deleted} tôn giáo`)
+    const result = await deleteLoaiCauHoiMany(ids)
+    ElMessage.success(`Đã xóa ${result.deleted} loại câu hỏi`)
     clearSelection()
     if (removedOnPage >= rows.value.length && page.value > 1) {
       page.value -= 1
@@ -307,7 +298,7 @@ async function onDeleteSelected() {
     }
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không xóa được các tôn giáo đã chọn'))
+    ElMessage.error(errorMessage(error, 'Không xóa được các loại câu hỏi đã chọn'))
   } finally {
     deleting.value = false
   }
@@ -318,123 +309,122 @@ onMounted(load)
 
 <template>
   <div class="catalog-page">
-  <CustomCard shadow="never" class="catalog-card">
-    <div class="filters">
-      <CustomInput
-        v-model="filters.q"
-        class="filter-search"
-        placeholder="Tìm tên hoặc mã tôn giáo"
-        clearable
-        @keyup.enter="onSearch"
-        @clear="onSearch"
-      >
-        <template #prefix>
-          <CustomIcon><Search /></CustomIcon>
-        </template>
-      </CustomInput>
-      <CustomSelect
-        v-model="filters.trang_thai"
-        class="filter-status"
-        placeholder="Trạng thái"
-        clearable
-        @change="onSearch"
-      >
-        <CustomOption label="Hoạt động" :value="1" />
-        <CustomOption label="Ngừng sử dụng" :value="0" />
-      </CustomSelect>
-      <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-    </div>
-  </CustomCard>
-
-  <CustomCard shadow="never" class="catalog-card">
-    <div class="toolbar">
-      <h2 class="toolbar__title">Danh sách tôn giáo</h2>
-      <div class="toolbar__actions">
-        <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
-          <CustomButton
-            type="danger"
-            plain
-            :disabled="!selectedRows.length"
-            :loading="deleting"
-            @click="onDeleteSelected"
-          >
-            <CustomIcon><Delete /></CustomIcon>
-            Xóa
-          </CustomButton>
-        </CustomBadge>
-        <CustomButton type="primary" @click="openCreate">
-          <CustomIcon><Plus /></CustomIcon>
-          Thêm tôn giáo
-        </CustomButton>
+    <CustomCard shadow="never" class="catalog-card">
+      <div class="filters">
+        <CustomInput
+          v-model="filters.q"
+          class="filter-search"
+          placeholder="Tìm tên loại câu hỏi"
+          clearable
+          @keyup.enter="onSearch"
+          @clear="onSearch"
+        >
+          <template #prefix>
+            <CustomIcon><Search /></CustomIcon>
+          </template>
+        </CustomInput>
+        <CustomSelect
+          v-model="filters.trang_thai"
+          class="filter-status"
+          placeholder="Trạng thái"
+          clearable
+          @change="onSearch"
+        >
+          <CustomOption label="Hoạt động" :value="1" />
+          <CustomOption label="Ngừng sử dụng" :value="0" />
+        </CustomSelect>
+        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
       </div>
-    </div>
+    </CustomCard>
 
-    <CustomTable
-      ref="tableRef"
-      :loading="loading"
-      :data="rows"
-      row-key="id"
-      stripe
-      border
-      @selection-change="onSelectionChange"
-    >
-      <CustomTableColumn type="selection" width="48" reserve-selection align="center" />
-      <CustomTableColumn label="STT" width="72" align="center">
-        <template #default="{ $index }">{{ rowIndex($index) }}</template>
-      </CustomTableColumn>
-      <CustomTableColumn prop="ma_ton_giao" label="Mã tôn giáo" width="130" />
-      <CustomTableColumn prop="ten_ton_giao" label="Tên tôn giáo" min-width="200" />
-      <CustomTableColumn label="Trạng thái" width="150" align="center">
-        <template #default="{ row }">
-          <CustomTag :type="row.trang_thai === 1 ? 'success' : 'info'" effect="light">
-            {{ row.trang_thai === 1 ? 'Hoạt động' : 'Ngừng sử dụng' }}
-          </CustomTag>
-        </template>
-      </CustomTableColumn>
-      <CustomTableColumn prop="ghi_chu" label="Ghi chú" min-width="220" show-overflow-tooltip>
-        <template #default="{ row }">{{ row.ghi_chu || '—' }}</template>
-      </CustomTableColumn>
-      <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
-        <template #default="{ row }">
-          <div class="row-actions">
-            <CustomTooltip content="Sửa" placement="top">
-              <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
-                <CustomIcon><Edit /></CustomIcon>
-              </CustomButton>
-            </CustomTooltip>
-            <CustomTooltip content="Xóa" placement="top">
-              <CustomButton link type="danger" aria-label="Xóa" @click="onDelete(row)">
-                <CustomIcon><Delete /></CustomIcon>
-              </CustomButton>
-            </CustomTooltip>
-          </div>
-        </template>
-      </CustomTableColumn>
-      <template #empty>
-        <CustomEmpty description="Chưa có tôn giáo nào." />
-      </template>
-    </CustomTable>
+    <CustomCard shadow="never" class="catalog-card">
+      <div class="toolbar">
+        <h2 class="toolbar__title">Danh sách loại câu hỏi</h2>
+        <div class="toolbar__actions">
+          <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
+            <CustomButton
+              type="danger"
+              plain
+              :disabled="!selectedRows.length"
+              :loading="deleting"
+              @click="onDeleteSelected"
+            >
+              <CustomIcon><Delete /></CustomIcon>
+              Xóa
+            </CustomButton>
+          </CustomBadge>
+          <CustomButton type="primary" @click="openCreate">
+            <CustomIcon><Plus /></CustomIcon>
+            Thêm loại câu hỏi
+          </CustomButton>
+        </div>
+      </div>
 
-    <div class="pager">
-      <CustomPagination
-        v-model:current-page="page"
-        v-model:page-size="pageSize"
-        :total="total"
-        :page-sizes="[10, 20, 50]"
-        layout="total, sizes, prev, pager, next"
-        background
-        @current-change="onPageChange"
-        @size-change="onSizeChange"
-      />
-    </div>
-  </CustomCard>
+      <CustomTable
+        ref="tableRef"
+        :loading="loading"
+        :data="rows"
+        row-key="id"
+        stripe
+        border
+        @selection-change="onSelectionChange"
+      >
+        <CustomTableColumn type="selection" width="48" reserve-selection align="center" />
+        <CustomTableColumn label="STT" width="72" align="center">
+          <template #default="{ $index }">{{ rowIndex($index) }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn prop="thu_tu_uu_tien" label="Thứ tự" width="100" align="center" />
+        <CustomTableColumn prop="ten_loai_cau_hoi" label="Tên loại câu hỏi" min-width="220" />
+        <CustomTableColumn label="Trạng thái" width="150" align="center">
+          <template #default="{ row }">
+            <CustomTag :type="row.trang_thai === 1 ? 'success' : 'info'" effect="light">
+              {{ row.trang_thai === 1 ? 'Hoạt động' : 'Ngừng sử dụng' }}
+            </CustomTag>
+          </template>
+        </CustomTableColumn>
+        <CustomTableColumn prop="ghi_chu" label="Ghi chú" min-width="220" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.ghi_chu || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
+          <template #default="{ row }">
+            <div class="row-actions">
+              <CustomTooltip content="Sửa" placement="top">
+                <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
+                  <CustomIcon><Edit /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+              <CustomTooltip content="Xóa" placement="top">
+                <CustomButton link type="danger" aria-label="Xóa" @click="onDelete(row)">
+                  <CustomIcon><Delete /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+            </div>
+          </template>
+        </CustomTableColumn>
+        <template #empty>
+          <CustomEmpty description="Chưa có loại câu hỏi nào." />
+        </template>
+      </CustomTable>
+
+      <div class="pager">
+        <CustomPagination
+          v-model:current-page="page"
+          v-model:page-size="pageSize"
+          :total="total"
+          :page-sizes="[10, 20, 50]"
+          layout="total, sizes, prev, pager, next"
+          background
+          @current-change="onPageChange"
+          @size-change="onSizeChange"
+        />
+      </div>
+    </CustomCard>
   </div>
 
   <CustomDialog
     v-model="dialogVisible"
-    :title="editingId ? 'Cập nhật tôn giáo' : 'Thêm tôn giáo'"
-    width="720px"
-    class="ton-giao-dialog"
+    :title="editingId ? 'Cập nhật loại câu hỏi' : 'Thêm loại câu hỏi'"
+    width="920px"
     destroy-on-close
     @closed="resetForm"
   >
@@ -446,7 +436,8 @@ onMounted(load)
     <div v-if="!editingId && createMode === 'json'" class="json-panel">
       <div class="json-panel__head">
         <p>
-          Dán một mảng JSON. Mỗi phần tử cần <code>ten_ton_giao</code> và <code>ma_ton_giao</code>.
+          Dán một mảng JSON. Mỗi phần tử cần <code>ten_loai_cau_hoi</code> và
+          <code>thu_tu_uu_tien</code>.
         </p>
         <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
       </div>
@@ -461,17 +452,29 @@ onMounted(load)
 
     <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
       <CustomRow :gutter="16">
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Tên tôn giáo" prop="ten_ton_giao">
-            <CustomInput v-model="form.ten_ton_giao" maxlength="150" placeholder="Ví dụ: Phật giáo" />
+        <CustomCol :span="8" :xs="24">
+          <CustomFormItem label="Tên loại câu hỏi" prop="ten_loai_cau_hoi">
+            <CustomInput
+              v-model="form.ten_loai_cau_hoi"
+              maxlength="150"
+              placeholder="Ví dụ: Trắc nghiệm một đáp án"
+            />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Mã tôn giáo" prop="ma_ton_giao">
-            <CustomInput v-model="form.ma_ton_giao" maxlength="20" placeholder="Ví dụ: 01" />
+        <CustomCol :span="8" :xs="24">
+          <CustomFormItem label="Thứ tự ưu tiên" prop="thu_tu_uu_tien">
+            <CustomInputNumber
+              v-model="form.thu_tu_uu_tien"
+              :min="1"
+              :max="9999"
+              :step="1"
+              :precision="0"
+              controls-position="right"
+              style="width: 100%"
+            />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="12" :xs="24">
+        <CustomCol :span="8" :xs="24">
           <CustomFormItem label="Trạng thái" prop="trang_thai">
             <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
               <CustomOption label="Hoạt động" :value="1" />

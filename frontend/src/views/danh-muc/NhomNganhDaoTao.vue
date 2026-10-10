@@ -1,28 +1,23 @@
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { fetchMonHoc } from '@/api/monHoc'
+import { fetchLinhVuc } from '@/api/linhVucDaoTao'
 import {
-  createToHopMonHoc,
-  createToHopMonHocBulk,
-  deleteToHopMonHoc,
-  deleteToHopMonHocMany,
-  fetchToHopMonHoc,
-  updateToHopMonHoc,
-} from '@/api/toHopMonHoc'
+  createNhomNganh,
+  createNhomNganhBulk,
+  deleteNhomNganh,
+  deleteNhomNganhMany,
+  fetchNhomNganh,
+  updateNhomNganh,
+} from '@/api/nhomNganhDaoTao'
 
 const JSON_SAMPLE = `[
   {
-    "ma_to_hop": "A00",
-    "ten_to_hop": "Toán, Lý, Hóa",
-    "ds_mon_hoc": ["TOAN", "LY", "HOA"],
+    "ma_linh_vuc": "748",
+    "ma_nhom_nganh": "74802",
+    "ten_nhom_nganh": "Công nghệ thông tin",
+    "ten_tieng_anh": "Information technology",
     "trang_thai": 1
-  },
-  {
-    "ma_to_hop": "D01",
-    "ten_to_hop": "Toán, Văn, Anh",
-    "ds_mon_hoc": ["TOAN", "VAN", "ANH"],
-    "ghi_chu": "Tổ hợp khối D"
   }
 ]`
 
@@ -40,75 +35,42 @@ const editingId = ref(null)
 const createMode = ref('form')
 const jsonText = ref('')
 const formRef = ref()
-const monHocOptions = ref([])
+const linhVucOptions = ref([])
 
 const filters = reactive({
   q: '',
   trang_thai: '',
+  ma_linh_vuc: '',
 })
 
 const form = reactive(emptyForm())
 
-const monHocByCode = computed(() => {
-  const map = new Map()
-  for (const item of monHocOptions.value) map.set(item.ma_mon_hoc, item)
-  return map
-})
-
-const selectOptions = computed(() => {
-  const options = monHocOptions.value.map((item) => ({
-    value: item.ma_mon_hoc,
-    label: subjectOptionLabel(item),
-  }))
-  const known = new Set(options.map((item) => item.value))
-  for (const code of form.ds_mon_hoc) {
-    if (!known.has(code)) {
-      options.push({ value: code, label: `${code} (không còn trong danh mục)` })
-    }
-  }
-  return options
-})
-
 const rules = {
-  ten_to_hop: [{ required: true, message: 'Vui lòng nhập tên tổ hợp', trigger: 'blur' }],
-  ma_to_hop: [{ required: true, message: 'Vui lòng nhập mã tổ hợp', trigger: 'blur' }],
-  ds_mon_hoc: [
-    {
-      type: 'array',
-      required: true,
-      min: 1,
-      message: 'Vui lòng chọn ít nhất một môn học',
-      trigger: 'change',
-    },
-  ],
+  ma_linh_vuc: [{ required: true, message: 'Vui lòng chọn lĩnh vực', trigger: 'change' }],
+  ten_nhom_nganh: [{ required: true, message: 'Vui lòng nhập tên nhóm ngành', trigger: 'blur' }],
+  ma_nhom_nganh: [{ required: true, message: 'Vui lòng nhập mã nhóm ngành', trigger: 'blur' }],
+  ten_tieng_anh: [{ required: true, message: 'Vui lòng nhập tên tiếng Anh', trigger: 'blur' }],
   trang_thai: [{ required: true, message: 'Vui lòng chọn trạng thái', trigger: 'change' }],
 }
 
 function emptyForm() {
   return {
-    ma_to_hop: '',
-    ten_to_hop: '',
-    ds_mon_hoc: [],
+    ma_linh_vuc: '',
+    ma_nhom_nganh: '',
+    ten_nhom_nganh: '',
+    ten_tieng_anh: '',
+    mo_ta: '',
     trang_thai: 1,
-    ghi_chu: '',
   }
 }
 
-function subjectOptionLabel(item) {
-  const name = item.ten_viet_tat ? `${item.ten_mon_hoc} (${item.ten_viet_tat})` : item.ten_mon_hoc
-  const status = item.trang_thai === 1 ? '' : ' — ngừng sử dụng'
-  return `${name} · ${item.ma_mon_hoc}${status}`
-}
-
-function subjectLabel(code) {
-  const item = monHocByCode.value.get(code)
-  if (!item) return code
-  return item.ten_viet_tat || item.ten_mon_hoc
+function parentLabel(item) {
+  const suffix = item.trang_thai === 1 ? '' : ' — ngừng sử dụng'
+  return `${item.ma_linh_vuc} · ${item.ten_linh_vuc}${suffix}`
 }
 
 function resetForm() {
   Object.assign(form, emptyForm())
-  form.ds_mon_hoc = []
   editingId.value = null
   createMode.value = 'form'
   jsonText.value = ''
@@ -120,34 +82,36 @@ function parseJsonItems(text) {
   try {
     data = JSON.parse(text)
   } catch {
-    throw new Error('JSON không hợp lệ. Hãy dán một mảng tổ hợp môn học.')
+    throw new Error('JSON không hợp lệ. Hãy dán một mảng nhóm ngành.')
   }
   if (!Array.isArray(data)) {
-    throw new Error('JSON phải là một mảng, ví dụ [{ "ten_to_hop": "...", "ma_to_hop": "...", "ds_mon_hoc": [] }]')
+    throw new Error('JSON phải là một mảng, ví dụ [{ "ma_linh_vuc": "748", "ten_nhom_nganh": "..." }]')
   }
   if (!data.length) {
-    throw new Error('Mảng tổ hợp môn học đang trống')
+    throw new Error('Mảng nhóm ngành đang trống')
   }
 
   return data.map((item, index) => {
     const line = index + 1
     if (!item || typeof item !== 'object' || Array.isArray(item)) {
-      throw new Error(`Phần tử thứ ${line} không phải một tổ hợp môn học`)
+      throw new Error(`Phần tử thứ ${line} không phải một nhóm ngành`)
     }
-    const tenToHop = String(item.ten_to_hop ?? '').trim()
-    const maToHop = String(item.ma_to_hop ?? '').trim()
-    if (!tenToHop || !maToHop) {
-      throw new Error(`Phần tử thứ ${line} thiếu ten_to_hop hoặc ma_to_hop`)
-    }
-    if (!Array.isArray(item.ds_mon_hoc) || !item.ds_mon_hoc.length) {
-      throw new Error(`Phần tử thứ ${line} cần ds_mon_hoc là mảng mã môn học`)
+    const maLinhVuc = String(item.ma_linh_vuc ?? '').trim()
+    const ten = String(item.ten_nhom_nganh ?? '').trim()
+    const ma = String(item.ma_nhom_nganh ?? '').trim()
+    const tenTiengAnh = String(item.ten_tieng_anh ?? '').trim()
+    if (!maLinhVuc || !ten || !ma || !tenTiengAnh) {
+      throw new Error(
+        `Phần tử thứ ${line} thiếu ma_linh_vuc, ten_nhom_nganh, ma_nhom_nganh hoặc ten_tieng_anh`,
+      )
     }
     return {
-      ten_to_hop: tenToHop,
-      ma_to_hop: maToHop,
-      ds_mon_hoc: item.ds_mon_hoc.map((code) => String(code).trim()).filter(Boolean),
+      ma_linh_vuc: maLinhVuc,
+      ten_nhom_nganh: ten,
+      ma_nhom_nganh: ma,
+      ten_tieng_anh: tenTiengAnh,
+      mo_ta: item.mo_ta == null ? null : String(item.mo_ta).trim() || null,
       trang_thai: item.trang_thai ?? 1,
-      ghi_chu: item.ghi_chu == null ? null : String(item.ghi_chu).trim() || null,
     }
   })
 }
@@ -159,18 +123,18 @@ function errorMessage(error, fallback) {
   return fallback
 }
 
-async function loadMonHocOptions() {
+async function loadLinhVucOptions() {
   const pageSize = 100
   let current = 1
   const items = []
   while (current <= 20) {
-    const data = await fetchMonHoc({ page: current, page_size: pageSize })
+    const data = await fetchLinhVuc({ page: current, page_size: pageSize })
     items.push(...(data.items || []))
     if (items.length >= data.total || !data.items?.length) break
     current += 1
   }
-  items.sort((a, b) => a.ma_mon_hoc.localeCompare(b.ma_mon_hoc, 'vi'))
-  monHocOptions.value = items
+  items.sort((a, b) => a.ma_linh_vuc.localeCompare(b.ma_linh_vuc, 'vi'))
+  linhVucOptions.value = items
 }
 
 async function load() {
@@ -184,11 +148,12 @@ async function load() {
     if (filters.trang_thai !== '' && filters.trang_thai !== null) {
       params.trang_thai = filters.trang_thai
     }
-    const data = await fetchToHopMonHoc(params)
+    if (filters.ma_linh_vuc) params.ma_linh_vuc = filters.ma_linh_vuc
+    const data = await fetchNhomNganh(params)
     rows.value = data.items
     total.value = data.total
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không tải được danh sách tổ hợp môn học'))
+    ElMessage.error(errorMessage(error, 'Không tải được danh sách nhóm ngành'))
   } finally {
     loading.value = false
   }
@@ -230,38 +195,33 @@ function onSizeChange() {
 
 async function openCreate() {
   resetForm()
+  if (filters.ma_linh_vuc) form.ma_linh_vuc = filters.ma_linh_vuc
   dialogVisible.value = true
-  try {
-    await loadMonHocOptions()
-  } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không tải được danh sách môn học'))
-  }
+  await loadLinhVucOptions().catch(() => {})
 }
 
 async function openEdit(row) {
   editingId.value = row.id
   Object.assign(form, {
-    ma_to_hop: row.ma_to_hop,
-    ten_to_hop: row.ten_to_hop,
-    ds_mon_hoc: [...(row.ds_mon_hoc || [])],
+    ma_linh_vuc: row.ma_linh_vuc,
+    ma_nhom_nganh: row.ma_nhom_nganh,
+    ten_nhom_nganh: row.ten_nhom_nganh,
+    ten_tieng_anh: row.ten_tieng_anh,
+    mo_ta: row.mo_ta || '',
     trang_thai: row.trang_thai,
-    ghi_chu: row.ghi_chu || '',
   })
   dialogVisible.value = true
-  try {
-    await loadMonHocOptions()
-  } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không tải được danh sách môn học'))
-  }
+  await loadLinhVucOptions().catch(() => {})
 }
 
 function payloadFromForm() {
   return {
-    ma_to_hop: form.ma_to_hop.trim().toUpperCase(),
-    ten_to_hop: form.ten_to_hop.trim(),
-    ds_mon_hoc: form.ds_mon_hoc,
+    ma_linh_vuc: String(form.ma_linh_vuc).trim().toUpperCase(),
+    ma_nhom_nganh: form.ma_nhom_nganh.trim().toUpperCase(),
+    ten_nhom_nganh: form.ten_nhom_nganh.trim(),
+    ten_tieng_anh: form.ten_tieng_anh.trim(),
+    mo_ta: form.mo_ta?.trim() || null,
     trang_thai: form.trang_thai,
-    ghi_chu: form.ghi_chu?.trim() || null,
   }
 }
 
@@ -280,12 +240,12 @@ async function onSubmitJson() {
 
   saving.value = true
   try {
-    const result = await createToHopMonHocBulk(items)
-    ElMessage.success(`Đã thêm ${result.created} tổ hợp môn học`)
+    const result = await createNhomNganhBulk(items)
+    ElMessage.success(`Đã thêm ${result.created} nhóm ngành`)
     dialogVisible.value = false
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không thêm được danh sách tổ hợp môn học'))
+    ElMessage.error(errorMessage(error, 'Không thêm được danh sách nhóm ngành'))
   } finally {
     saving.value = false
   }
@@ -304,16 +264,16 @@ async function onSubmit() {
   try {
     const payload = payloadFromForm()
     if (editingId.value) {
-      await updateToHopMonHoc(editingId.value, payload)
-      ElMessage.success('Đã cập nhật tổ hợp môn học')
+      await updateNhomNganh(editingId.value, payload)
+      ElMessage.success('Đã cập nhật nhóm ngành')
     } else {
-      await createToHopMonHoc(payload)
-      ElMessage.success('Đã thêm tổ hợp môn học')
+      await createNhomNganh(payload)
+      ElMessage.success('Đã thêm nhóm ngành')
     }
     dialogVisible.value = false
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không lưu được tổ hợp môn học'))
+    ElMessage.error(errorMessage(error, 'Không lưu được nhóm ngành'))
   } finally {
     saving.value = false
   }
@@ -322,7 +282,7 @@ async function onSubmit() {
 async function onDelete(row) {
   try {
     await ElMessageBox.confirm(
-      `Xóa tổ hợp "${row.ten_to_hop}" (${row.ma_to_hop})?`,
+      `Xóa nhóm ngành "${row.ten_nhom_nganh}" (${row.ma_nhom_nganh})?`,
       'Xác nhận xóa',
       {
         type: 'warning',
@@ -336,15 +296,15 @@ async function onDelete(row) {
   }
 
   try {
-    await deleteToHopMonHoc(row.id)
-    ElMessage.success('Đã xóa tổ hợp môn học')
+    await deleteNhomNganh(row.id)
+    ElMessage.success('Đã xóa nhóm ngành')
     tableRef.value?.toggleRowSelection(row, false)
     if (rows.value.length === 1 && page.value > 1) {
       page.value -= 1
     }
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không xóa được tổ hợp môn học'))
+    ElMessage.error(errorMessage(error, 'Không xóa được nhóm ngành'))
   }
 }
 
@@ -353,7 +313,7 @@ async function onDeleteSelected() {
   if (!ids.length) return
 
   try {
-    await ElMessageBox.confirm(`Xóa ${ids.length} tổ hợp môn học đã chọn?`, 'Xác nhận xóa', {
+    await ElMessageBox.confirm(`Xóa ${ids.length} nhóm ngành đã chọn?`, 'Xác nhận xóa', {
       type: 'warning',
       confirmButtonText: 'Xóa',
       cancelButtonText: 'Hủy',
@@ -366,8 +326,8 @@ async function onDeleteSelected() {
   deleting.value = true
   try {
     const removedOnPage = rows.value.filter((row) => ids.includes(row.id)).length
-    const result = await deleteToHopMonHocMany(ids)
-    ElMessage.success(`Đã xóa ${result.deleted} tổ hợp môn học`)
+    const result = await deleteNhomNganhMany(ids)
+    ElMessage.success(`Đã xóa ${result.deleted} nhóm ngành`)
     clearSelection()
     if (removedOnPage >= rows.value.length && page.value > 1) {
       page.value -= 1
@@ -375,14 +335,14 @@ async function onDeleteSelected() {
     }
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không xóa được các tổ hợp môn học đã chọn'))
+    ElMessage.error(errorMessage(error, 'Không xóa được các nhóm ngành đã chọn'))
   } finally {
     deleting.value = false
   }
 }
 
 onMounted(async () => {
-  await Promise.all([load(), loadMonHocOptions().catch(() => {})])
+  await Promise.all([load(), loadLinhVucOptions().catch(() => {})])
 })
 </script>
 
@@ -393,7 +353,7 @@ onMounted(async () => {
         <CustomInput
           v-model="filters.q"
           class="filter-search"
-          placeholder="Tìm tên, mã tổ hợp hoặc mã môn"
+          placeholder="Tìm tên, mã hoặc lĩnh vực"
           clearable
           @keyup.enter="onSearch"
           @clear="onSearch"
@@ -402,6 +362,21 @@ onMounted(async () => {
             <CustomIcon><Search /></CustomIcon>
           </template>
         </CustomInput>
+        <CustomSelect
+          v-model="filters.ma_linh_vuc"
+          class="filter-parent"
+          placeholder="Lĩnh vực"
+          clearable
+          filterable
+          @change="onSearch"
+        >
+          <CustomOption
+            v-for="item in linhVucOptions"
+            :key="item.id"
+            :label="parentLabel(item)"
+            :value="item.ma_linh_vuc"
+          />
+        </CustomSelect>
         <CustomSelect
           v-model="filters.trang_thai"
           class="filter-status"
@@ -418,7 +393,7 @@ onMounted(async () => {
 
     <CustomCard shadow="never" class="catalog-card">
       <div class="toolbar">
-        <h2 class="toolbar__title">Danh sách tổ hợp môn học</h2>
+        <h2 class="toolbar__title">Danh sách nhóm ngành đào tạo</h2>
         <div class="toolbar__actions">
           <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
             <CustomButton
@@ -434,7 +409,7 @@ onMounted(async () => {
           </CustomBadge>
           <CustomButton type="primary" @click="openCreate">
             <CustomIcon><Plus /></CustomIcon>
-            Thêm tổ hợp
+            Thêm nhóm ngành
           </CustomButton>
         </div>
       </div>
@@ -452,14 +427,12 @@ onMounted(async () => {
         <CustomTableColumn label="STT" width="72" align="center">
           <template #default="{ $index }">{{ rowIndex($index) }}</template>
         </CustomTableColumn>
-        <CustomTableColumn prop="ma_to_hop" label="Mã tổ hợp" width="130" />
-        <CustomTableColumn prop="ten_to_hop" label="Tên tổ hợp" min-width="200" />
-        <CustomTableColumn label="Danh sách môn học" min-width="240">
-          <template #default="{ row }">
-            <span v-if="row.ds_mon_hoc?.length">{{ row.ds_mon_hoc.map(subjectLabel).join(', ') }}</span>
-            <span v-else>—</span>
-          </template>
+        <CustomTableColumn prop="ma_nhom_nganh" label="Mã" width="120" />
+        <CustomTableColumn prop="ten_nhom_nganh" label="Tên nhóm ngành" min-width="200" />
+        <CustomTableColumn label="Lĩnh vực" min-width="220">
+          <template #default="{ row }">{{ row.ma_linh_vuc }} · {{ row.ten_linh_vuc }}</template>
         </CustomTableColumn>
+        <CustomTableColumn prop="ten_tieng_anh" label="Tên tiếng Anh" min-width="180" />
         <CustomTableColumn label="Trạng thái" width="150" align="center">
           <template #default="{ row }">
             <CustomTag :type="row.trang_thai === 1 ? 'success' : 'info'" effect="light">
@@ -467,8 +440,8 @@ onMounted(async () => {
             </CustomTag>
           </template>
         </CustomTableColumn>
-        <CustomTableColumn prop="ghi_chu" label="Ghi chú" min-width="180" show-overflow-tooltip>
-          <template #default="{ row }">{{ row.ghi_chu || '—' }}</template>
+        <CustomTableColumn prop="mo_ta" label="Mô tả" min-width="200">
+          <template #default="{ row }">{{ row.mo_ta || '—' }}</template>
         </CustomTableColumn>
         <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
           <template #default="{ row }">
@@ -487,7 +460,7 @@ onMounted(async () => {
           </template>
         </CustomTableColumn>
         <template #empty>
-          <CustomEmpty description="Chưa có tổ hợp môn học nào." />
+          <CustomEmpty description="Chưa có nhóm ngành nào." />
         </template>
       </CustomTable>
 
@@ -508,8 +481,8 @@ onMounted(async () => {
 
   <CustomDialog
     v-model="dialogVisible"
-    :title="editingId ? 'Cập nhật tổ hợp môn học' : 'Thêm tổ hợp môn học'"
-    width="720px"
+    :title="editingId ? 'Cập nhật nhóm ngành' : 'Thêm nhóm ngành'"
+    width="760px"
     destroy-on-close
     @closed="resetForm"
   >
@@ -521,8 +494,8 @@ onMounted(async () => {
     <div v-if="!editingId && createMode === 'json'" class="json-panel">
       <div class="json-panel__head">
         <p>
-          Dán một mảng JSON. Mỗi phần tử cần <code>ten_to_hop</code>, <code>ma_to_hop</code> và
-          <code>ds_mon_hoc</code> (mảng mã môn học).
+          Dán một mảng JSON. Mỗi phần tử cần <code>ma_linh_vuc</code>, <code>ten_nhom_nganh</code>,
+          <code>ma_nhom_nganh</code> và <code>ten_tieng_anh</code>.
         </p>
         <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
       </div>
@@ -537,36 +510,44 @@ onMounted(async () => {
 
     <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
       <CustomRow :gutter="16">
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Tên tổ hợp" prop="ten_to_hop">
-            <CustomInput v-model="form.ten_to_hop" maxlength="150" placeholder="Ví dụ: Toán, Lý, Hóa" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Mã tổ hợp" prop="ma_to_hop">
-            <CustomInput v-model="form.ma_to_hop" maxlength="20" placeholder="Ví dụ: A00" />
-          </CustomFormItem>
-        </CustomCol>
         <CustomCol :span="24">
-          <CustomFormItem label="Danh sách môn học" prop="ds_mon_hoc">
+          <CustomFormItem label="Lĩnh vực" prop="ma_linh_vuc">
             <CustomSelect
-              v-model="form.ds_mon_hoc"
-              multiple
+              v-model="form.ma_linh_vuc"
               filterable
-              placeholder="Chọn một hoặc nhiều môn học"
+              placeholder="Chọn lĩnh vực đào tạo"
               style="width: 100%"
-              :disabled="!selectOptions.length"
+              :disabled="!linhVucOptions.length"
             >
               <CustomOption
-                v-for="item in selectOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="item in linhVucOptions"
+                :key="item.id"
+                :label="parentLabel(item)"
+                :value="item.ma_linh_vuc"
               />
             </CustomSelect>
-            <p v-if="!monHocOptions.length" class="field-hint">
-              Chưa có môn học. Hãy thêm ở danh mục Môn học trước.
+            <p v-if="!linhVucOptions.length" class="field-hint">
+              Chưa có lĩnh vực. Hãy thêm ở danh mục Lĩnh vực đào tạo trước.
             </p>
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Tên nhóm ngành" prop="ten_nhom_nganh">
+            <CustomInput v-model="form.ten_nhom_nganh" maxlength="255" placeholder="Ví dụ: Công nghệ thông tin" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Mã nhóm ngành" prop="ma_nhom_nganh">
+            <CustomInput v-model="form.ma_nhom_nganh" maxlength="20" placeholder="Ví dụ: 74802" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Tên tiếng Anh" prop="ten_tieng_anh">
+            <CustomInput
+              v-model="form.ten_tieng_anh"
+              maxlength="255"
+              placeholder="Ví dụ: Information technology"
+            />
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="12" :xs="24">
@@ -578,14 +559,14 @@ onMounted(async () => {
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="24">
-          <CustomFormItem label="Ghi chú" prop="ghi_chu">
+          <CustomFormItem label="Mô tả" prop="mo_ta">
             <CustomInput
-              v-model="form.ghi_chu"
+              v-model="form.mo_ta"
               type="textarea"
               :rows="3"
-              maxlength="2000"
+              maxlength="5000"
               show-word-limit
-              placeholder="Ghi chú thêm (nếu có)"
+              placeholder="Mô tả nhóm ngành (nếu có)"
             />
           </CustomFormItem>
         </CustomCol>
@@ -652,14 +633,11 @@ onMounted(async () => {
 }
 
 .filter-search {
-  width: 300px;
+  width: 280px;
 }
 
-.field-hint {
-  margin: 6px 0 0;
-  color: var(--el-text-color-secondary);
-  font-size: 12px;
-  line-height: 1.4;
+.filter-parent {
+  width: 280px;
 }
 
 .create-mode {
@@ -685,6 +663,13 @@ onMounted(async () => {
   font-size: 13px;
 }
 
+.field-hint {
+  margin: 6px 0 0;
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .filter-status {
   width: 170px;
 }
@@ -697,6 +682,7 @@ onMounted(async () => {
 
 @media (max-width: 640px) {
   .filter-search,
+  .filter-parent,
   .filter-status {
     width: 100%;
   }

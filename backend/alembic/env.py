@@ -7,10 +7,16 @@ from alembic import context
 from app.core.config import settings
 from app.db.base import Base
 from app.models import (  # noqa: F401 — đăng ký model cho autogenerate
+    DmChuyenNganh,
     DmDanToc,
     DmDoiTuongUuTien,
     DmKhuVucUuTien,
+    DmLinhVucDaoTao,
+    DmLoaiCauHoi,
     DmMonHoc,
+    DmNganhDaoTao,
+    DmNhomNganhDaoTao,
+    DmNhomTinhCachHolland,
     DmPhuongThucTuyenSinh,
     DmTinhThanh,
     DmToHopMonHoc,
