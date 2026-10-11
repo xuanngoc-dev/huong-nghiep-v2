@@ -27,6 +27,12 @@ const router = createRouter({
           meta: { title: 'Trang chủ', public: true },
         },
         {
+          path: 'chon-doi-tuong',
+          name: 'chon-doi-tuong',
+          component: () => import('@/views/guest/ChonDoiTuong.vue'),
+          meta: { title: 'Chọn đối tượng', public: true },
+        },
+        {
           path: 'huong-nghiep/danh-gia',
           name: 'danh-gia',
           component: () => import('@/views/member/PagePlaceholder.vue'),
