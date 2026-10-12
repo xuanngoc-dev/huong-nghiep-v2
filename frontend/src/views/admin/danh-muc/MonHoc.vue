@@ -415,7 +415,7 @@ onMounted(load)
             </CustomTag>
           </template>
         </CustomTableColumn>
-        <CustomTableColumn prop="mo_ta" label="Mô tả" min-width="200" show-overflow-tooltip>
+        <CustomTableColumn prop="mo_ta" label="Mô tả" min-width="200" >
           <template #default="{ row }">{{ row.mo_ta || '—' }}</template>
         </CustomTableColumn>
         <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">

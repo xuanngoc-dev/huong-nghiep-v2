@@ -119,6 +119,24 @@
           "icon": "Tickets"
         },
         {
+          "index": "/admin/danh-muc/chung-chi-ngoai-ngu",
+          "title": "Chứng chỉ ngoại ngữ",
+          "tooltip": "Quản lý danh mục chứng chỉ ngoại ngữ",
+          "icon": "Stamp"
+        },
+        {
+          "index": "/admin/danh-muc/bai-thi-danh-gia-nang-luc",
+          "title": "Bài thi năng lực",
+          "tooltip": "Quản lý danh mục bài thi đánh giá năng lực",
+          "icon": "DataAnalysis"
+        },
+        {
+          "index": "/admin/danh-muc/thanh-tich-hoc-tap-nghien-cuu",
+          "title": "Thành tích học tập",
+          "tooltip": "Quản lý danh mục thành tích học tập, nghiên cứu",
+          "icon": "Trophy"
+        },
+        {
           "index": "/admin/danh-muc/truong-hoc",
           "title": "Trường học",
           "tooltip": "Quản lý danh mục trường học",

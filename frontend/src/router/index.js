@@ -194,6 +194,24 @@ const router = createRouter({
           meta: { title: 'Chuyên ngành', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'danh-muc/chung-chi-ngoai-ngu',
+          name: 'chung-chi-ngoai-ngu',
+          component: () => import('@/views/admin/danh-muc/ChungChiNgoaiNgu.vue'),
+          meta: { title: 'Chứng chỉ ngoại ngữ', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/bai-thi-danh-gia-nang-luc',
+          name: 'bai-thi-danh-gia-nang-luc',
+          component: () => import('@/views/admin/danh-muc/BaiThiDanhGiaNangLuc.vue'),
+          meta: { title: 'Bài thi đánh giá năng lực', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thanh-tich-hoc-tap-nghien-cuu',
+          name: 'thanh-tich-hoc-tap-nghien-cuu',
+          component: () => import('@/views/admin/danh-muc/ThanhTichHocTapNghienCuu.vue'),
+          meta: { title: 'Thành tích học tập, nghiên cứu', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'danh-muc/truong-hoc',
           name: 'truong-hoc',
           component: () => import('@/views/admin/PagePlaceholder.vue'),

@@ -382,7 +382,7 @@ onMounted(load)
             </CustomTag>
           </template>
         </CustomTableColumn>
-        <CustomTableColumn prop="ghi_chu" label="Ghi chú" min-width="220" show-overflow-tooltip>
+        <CustomTableColumn prop="ghi_chu" label="Ghi chú" min-width="220" >
           <template #default="{ row }">{{ row.ghi_chu || '—' }}</template>
         </CustomTableColumn>
         <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
