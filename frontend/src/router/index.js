@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { doiTuongList } from '@/data/doiTuong'
+import { dinhHuongThptRoutes } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -39,6 +40,7 @@ const router = createRouter({
           component: () => import('@/views/guest/DoiTuong.vue'),
           meta: { title: item.name, public: true, doiTuong: item.code },
         })),
+        ...dinhHuongThptRoutes,
       ],
     },
     {

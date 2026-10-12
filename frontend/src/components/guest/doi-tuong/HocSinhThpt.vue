@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useDoiTuongAudiences } from '@/composables/useDoiTuongAudiences'
+import { routeNameDinhHuongThpt } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
 import DinhHuongTuongLai from '@/components/guest/chung/DinhHuongTuongLai.vue'
 import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
 import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
@@ -60,10 +62,13 @@ const directions = [
 
 const selectedDirection = ref(sessionStorage.getItem(DINH_HUONG_KEY) || '')
 const { audiences, selectedCode, chonDoiTuong } = useDoiTuongAudiences()
+const router = useRouter()
 
 function chonDinhHuong(direction) {
   selectedDirection.value = direction.code
   sessionStorage.setItem(DINH_HUONG_KEY, direction.code)
+  const name = routeNameDinhHuongThpt(direction.code)
+  if (name) router.push({ name })
 }
 </script>
 
