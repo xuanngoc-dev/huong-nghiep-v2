@@ -24,36 +24,53 @@ onUnmounted(unmountGuestBootstrap)
 
 <style>
 .guest-layout {
-  --bs-success: #1f7a4d;
-  --bs-success-rgb: 31, 122, 77;
+  --guest-primary: #3f9643;
+  --guest-primary-rgb: 63, 150, 67;
+  --guest-primary-hover: #37843b;
+  --bs-success: var(--guest-primary);
+  --bs-success-rgb: 63, 150, 67;
   --guest-radius: 8px;
   --guest-radius-sm: 6px;
   --bs-border-radius-xl: var(--guest-radius);
   --bs-border-radius-xxl: 12px;
-  background: #f4f7f5;
+  background: #fff;
   color: #1c2b23;
   font-family: var(--app-font-family);
 }
 
+.guest-layout h1,
+.guest-layout h2,
+.guest-layout h3,
+.guest-layout h4,
+.guest-layout h5,
+.guest-layout h6 {
+  color: var(--guest-primary);
+}
+
+.guest-layout .guest-banner :is(h1, h2, h3, h4, h5, h6),
+.guest-layout .guest-slide :is(h1, h2, h3, h4, h5, h6) {
+  color: inherit;
+}
+
 .guest-layout .btn-success {
-  --bs-btn-bg: #1f7a4d;
-  --bs-btn-border-color: #1f7a4d;
-  --bs-btn-hover-bg: #18643e;
-  --bs-btn-hover-border-color: #18643e;
-  --bs-btn-active-bg: #145536;
-  --bs-btn-active-border-color: #145536;
-  --bs-btn-disabled-bg: #1f7a4d;
-  --bs-btn-disabled-border-color: #1f7a4d;
+  --bs-btn-bg: var(--guest-primary);
+  --bs-btn-border-color: var(--guest-primary);
+  --bs-btn-hover-bg: var(--guest-primary-hover);
+  --bs-btn-hover-border-color: var(--guest-primary-hover);
+  --bs-btn-active-bg: var(--guest-primary-hover);
+  --bs-btn-active-border-color: var(--guest-primary-hover);
+  --bs-btn-disabled-bg: var(--guest-primary);
+  --bs-btn-disabled-border-color: var(--guest-primary);
 }
 
 .guest-layout .btn-outline-success {
-  --bs-btn-color: #1f7a4d;
-  --bs-btn-border-color: #1f7a4d;
-  --bs-btn-hover-bg: #1f7a4d;
-  --bs-btn-hover-border-color: #1f7a4d;
+  --bs-btn-color: var(--guest-primary);
+  --bs-btn-border-color: var(--guest-primary);
+  --bs-btn-hover-bg: var(--guest-primary);
+  --bs-btn-hover-border-color: var(--guest-primary);
   --bs-btn-hover-color: #fff;
-  --bs-btn-active-bg: #18643e;
-  --bs-btn-active-border-color: #18643e;
+  --bs-btn-active-bg: var(--guest-primary-hover);
+  --bs-btn-active-border-color: var(--guest-primary-hover);
   --bs-btn-active-color: #fff;
 }
 </style>

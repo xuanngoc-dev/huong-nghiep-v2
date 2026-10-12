@@ -2,6 +2,13 @@
 import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { DOI_TUONG_KEY, doiTuongList } from '@/data/doiTuong'
+import HocSinhThcs from '@/components/guest/doi-tuong/HocSinhThcs.vue'
+import HocSinhThpt from '@/components/guest/doi-tuong/HocSinhThpt.vue'
+import PhuHuynh from '@/components/guest/doi-tuong/PhuHuynh.vue'
+import NhaTruong from '@/components/guest/doi-tuong/NhaTruong.vue'
+import SinhVien from '@/components/guest/doi-tuong/SinhVien.vue'
+import ThanhNienNgoaiTruong from '@/components/guest/doi-tuong/ThanhNienNgoaiTruong.vue'
+import NhaTuyenDung from '@/components/guest/doi-tuong/NhaTuyenDung.vue'
 
 const route = useRoute()
 
@@ -17,12 +24,11 @@ watch(
 </script>
 
 <template>
-  <section class="py-5">
-    <div class="container">
-      <p class="text-secondary mb-2">Đối tượng đã chọn</p>
-      <h1 class="h2 mb-3">{{ audience?.name }}</h1>
-      <p class="col-lg-8 text-secondary">{{ audience?.description }}</p>
-      <RouterLink class="btn btn-outline-success mt-3" to="/chon-doi-tuong">Chọn đối tượng khác</RouterLink>
-    </div>
-  </section>
+  <HocSinhThcs v-if="audience?.ma === 'THCS'" :audience="audience" />
+  <HocSinhThpt v-else-if="audience?.ma === 'THPT'" :audience="audience" />
+  <PhuHuynh v-else-if="audience?.ma === 'PH'" :audience="audience" />
+  <NhaTruong v-else-if="audience?.ma === 'NTR'" :audience="audience" />
+  <SinhVien v-else-if="audience?.ma === 'SV'" :audience="audience" />
+  <ThanhNienNgoaiTruong v-else-if="audience?.ma === 'TN'" :audience="audience" />
+  <NhaTuyenDung v-else-if="audience?.ma === 'NTD'" :audience="audience" />
 </template>

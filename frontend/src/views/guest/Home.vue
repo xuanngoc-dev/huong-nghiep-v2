@@ -226,7 +226,7 @@ onUnmounted(() => {
   height: 40px;
   border-radius: var(--guest-radius-sm, 6px);
   background: #e7f5ee;
-  color: #1f7a4d;
+  color: var(--guest-primary);
   font-weight: 700;
 }
 

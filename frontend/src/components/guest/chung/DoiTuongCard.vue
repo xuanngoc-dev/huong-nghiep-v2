@@ -5,6 +5,7 @@ defineProps({
   image: { type: String, required: true },
   name: { type: String, required: true },
   description: { type: String, default: '' },
+  ma: { type: String, default: '' },
   selected: { type: Boolean, default: false },
 })
 
@@ -19,6 +20,7 @@ const emit = defineEmits(['select'])
         <ArrowRight />
       </button>
     </div>
+    <!-- <p v-if="ma" class="audience-card__code">{{ ma }}</p> -->
     <h2 class="audience-card__title">{{ name }}</h2>
     <p class="audience-card__text">{{ description }}</p>
   </article>
@@ -42,13 +44,13 @@ const emit = defineEmits(['select'])
 }
 
 .audience-card.is-selected {
-  border-color: #1f7a4d;
-  box-shadow: 0 0 0 1px #1f7a4d;
+  border-color: var(--guest-primary);
+  box-shadow: 0 0 0 1px var(--guest-primary);
 }
 
 .audience-card.is-selected:hover {
   box-shadow:
-    0 0 0 1px #1f7a4d,
+    0 0 0 1px var(--guest-primary),
     0 16px 32px rgba(31, 122, 77, 0.14);
 }
 
@@ -65,9 +67,17 @@ const emit = defineEmits(['select'])
   object-fit: cover;
 }
 
+.audience-card__code {
+  margin: 14px 0 0;
+  color: var(--guest-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
 .audience-card__title {
-  margin: 18px 0 8px;
-  color: #1f7a4d;
+  margin: 4px 0 8px;
+  color: var(--guest-primary);
   font-size: 1.35rem;
   font-weight: 700;
   line-height: 1.35;
@@ -93,7 +103,7 @@ const emit = defineEmits(['select'])
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: #3caf6a;
+  background: var(--guest-primary);
   color: #fff;
   font-size: 18px;
   cursor: pointer;
@@ -101,7 +111,7 @@ const emit = defineEmits(['select'])
 }
 
 .audience-card__button:hover {
-  background: #349a5d;
+  background: var(--guest-primary-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {

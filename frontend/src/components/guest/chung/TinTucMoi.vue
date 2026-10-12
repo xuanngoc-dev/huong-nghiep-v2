@@ -73,7 +73,7 @@ function formatDate(value) {
 
 .news-panel__title {
   margin: 0 0 16px;
-  color: #1f7a4d;
+  color: var(--guest-primary);
   font-size: 1.25rem;
   font-weight: 700;
 }

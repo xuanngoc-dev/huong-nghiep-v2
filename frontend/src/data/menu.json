@@ -213,5 +213,56 @@
         }
       ]
     }
+  ],
+  "doi-tuong": [
+    {
+      "header": "CHỌN ĐỐI TƯỢNG",
+      "tooltip": "Chọn nhóm đối tượng để xem nội dung phù hợp",
+      "abbr": "ĐT",
+      "items": [
+        {
+          "index": "/hoc-sinh-thcs",
+          "title": "Học sinh THCS",
+          "tooltip": "Bạn đang học cấp trung học cơ sở và muốn hiểu sở thích, năng lực trước khi chọn hướng lên THPT.",
+          "icon": "Reading"
+        },
+        {
+          "index": "/hoc-sinh-thpt",
+          "title": "Học sinh THPT",
+          "tooltip": "Lựa chọn ngành học phù hợp với năng lực và đam mê.",
+          "icon": "School"
+        },
+        {
+          "index": "/phu-huynh",
+          "title": "Phụ huynh",
+          "tooltip": "Bạn đang cùng con tìm hiểu năng lực và cân nhắc ngành học, trường học phù hợp.",
+          "icon": "User"
+        },
+        {
+          "index": "/nha-truong",
+          "title": "Nhà trường",
+          "tooltip": "Bạn là giáo viên hoặc cán bộ nhà trường, muốn hỗ trợ học sinh trong hoạt động hướng nghiệp.",
+          "icon": "Collection"
+        },
+        {
+          "index": "/sinh-vien",
+          "title": "Sinh viên",
+          "tooltip": "Bạn đang học cao đẳng hoặc đại học và muốn đối chiếu ngành đang học hoặc tìm hướng phù hợp hơn.",
+          "icon": "Notebook"
+        },
+        {
+          "index": "/thanh-nien-ngoai-truong",
+          "title": "Thanh niên ngoài trường",
+          "tooltip": "Bạn hiện không đi học và đang tìm hướng nghề để học tiếp hoặc bắt đầu đi làm.",
+          "icon": "Opportunity"
+        },
+        {
+          "index": "/nha-tuyen-dung",
+          "title": "Nhà tuyển dụng",
+          "tooltip": "Bạn đại diện đơn vị tuyển dụng và muốn tìm hiểu định hướng, nhóm tính cách của ứng viên.",
+          "icon": "Management"
+        }
+      ]
+    }
   ]
 }

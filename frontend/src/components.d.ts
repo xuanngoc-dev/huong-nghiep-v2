@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    CauHoiThuongGap: typeof import('./components/guest/chung/CauHoiThuongGap.vue')['default']
     CustomBadge: typeof import('./components/element/CustomBadge.vue')['default']
     CustomButton: typeof import('./components/element/CustomButton.vue')['default']
     CustomCard: typeof import('./components/element/CustomCard.vue')['default']
@@ -35,7 +36,8 @@ declare module 'vue' {
     CustomTableColumn: typeof import('./components/element/CustomTableColumn.vue')['default']
     CustomTag: typeof import('./components/element/CustomTag.vue')['default']
     CustomTooltip: typeof import('./components/element/CustomTooltip.vue')['default']
-    DoiTuongCard: typeof import('./components/guest/DoiTuongCard.vue')['default']
+    DinhHuongTuongLai: typeof import('./components/guest/chung/DinhHuongTuongLai.vue')['default']
+    DoiTuongCard: typeof import('./components/guest/chung/DoiTuongCard.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
@@ -73,12 +75,20 @@ declare module 'vue' {
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    HocSinhThcs: typeof import('./components/guest/doi-tuong/HocSinhThcs.vue')['default']
+    HocSinhThpt: typeof import('./components/guest/doi-tuong/HocSinhThpt.vue')['default']
+    HoTroDinhHuong: typeof import('./components/guest/chung/HoTroDinhHuong.vue')['default']
     MoneyInput: typeof import('./components/element/MoneyInput.vue')['default']
+    NhaTruong: typeof import('./components/guest/doi-tuong/NhaTruong.vue')['default']
+    NhaTuyenDung: typeof import('./components/guest/doi-tuong/NhaTuyenDung.vue')['default']
+    PhuHuynh: typeof import('./components/guest/doi-tuong/PhuHuynh.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SettingsDrawer: typeof import('./components/SettingsDrawer.vue')['default']
     SideMenu: typeof import('./components/SideMenu.vue')['default']
-    TinTucMoi: typeof import('./components/guest/TinTucMoi.vue')['default']
+    SinhVien: typeof import('./components/guest/doi-tuong/SinhVien.vue')['default']
+    ThanhNienNgoaiTruong: typeof import('./components/guest/doi-tuong/ThanhNienNgoaiTruong.vue')['default']
+    TinTucMoi: typeof import('./components/guest/chung/TinTucMoi.vue')['default']
   }
   export interface GlobalDirectives {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
