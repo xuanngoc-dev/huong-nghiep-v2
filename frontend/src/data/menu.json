@@ -159,6 +159,12 @@
           "title": "Trang chủ",
           "tooltip": "Trang chủ định hướng nghề nghiệp",
           "icon": "HomeFilled"
+        },
+        {
+          "index": "/member",
+          "title": "Thành viên",
+          "tooltip": "Khu vực dành cho thành viên đã đăng nhập",
+          "icon": "UserFilled"
         }
       ]
     },
@@ -168,13 +174,13 @@
       "abbr": "HN",
       "items": [
         {
-          "index": "/huong-nghiep/danh-gia",
+          "index": "/member/huong-nghiep/danh-gia",
           "title": "Đánh giá năng lực",
           "tooltip": "Làm bài đánh giá năng lực để định hướng nghề",
           "icon": "DataAnalysis"
         },
         {
-          "index": "/huong-nghiep/goi-y",
+          "index": "/member/huong-nghiep/goi-y",
           "title": "Gợi ý nghề nghiệp",
           "tooltip": "Xem ngành và nghề được gợi ý theo kết quả đánh giá",
           "icon": "Opportunity"
@@ -187,7 +193,7 @@
       "abbr": "TN",
       "items": [
         {
-          "index": "/trac-nghiem/lich-su",
+          "index": "/member/trac-nghiem/lich-su",
           "title": "Lịch sử trắc nghiệm",
           "tooltip": "Xem lại các bài trắc nghiệm bạn đã làm",
           "icon": "Clock"
@@ -200,7 +206,7 @@
       "abbr": "TK",
       "items": [
         {
-          "index": "/tai-khoan/ho-so",
+          "index": "/member/tai-khoan/ho-so",
           "title": "Hồ sơ của tôi",
           "tooltip": "Xem và cập nhật hồ sơ cá nhân",
           "icon": "User"

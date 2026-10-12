@@ -70,7 +70,7 @@ async function onSubmit() {
       mat_khau: form.mat_khau,
     })
     ElMessage.success('Đăng ký thành công')
-    await router.replace('/')
+    await router.replace('/member')
   } catch (error) {
     const detail = error.response?.data?.detail
     ElMessage.error(typeof detail === 'string' ? detail : 'Đăng ký thất bại')

@@ -5,7 +5,7 @@
       <RouterView />
     </main>
     <footer class="border-top bg-white py-4">
-      <div class="container d-flex flex-column flex-md-row justify-content-between gap-2 small text-secondary">
+      <div class="container-fluid d-flex flex-column flex-md-row justify-content-between gap-2 small text-secondary">
         <span>Định hướng nghề</span>
         <span>Trắc nghiệm tính cách và gợi ý ngành học</span>
       </div>
@@ -26,6 +26,10 @@ onUnmounted(unmountGuestBootstrap)
 .guest-layout {
   --bs-success: #1f7a4d;
   --bs-success-rgb: 31, 122, 77;
+  --guest-radius: 8px;
+  --guest-radius-sm: 6px;
+  --bs-border-radius-xl: var(--guest-radius);
+  --bs-border-radius-xxl: 12px;
   background: #f4f7f5;
   color: #1c2b23;
   font-family: var(--app-font-family);

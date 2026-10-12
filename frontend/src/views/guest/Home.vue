@@ -61,7 +61,7 @@ onUnmounted(() => {
 <template>
   <div>
     <section class="guest-banner">
-      <div class="container">
+      <div class="container-fluid">
         <div class="row align-items-center gy-4">
           <div class="col-lg-7">
             <p class="guest-banner__kicker">Trắc nghiệm hướng nghiệp</p>
@@ -89,7 +89,7 @@ onUnmounted(() => {
     </section>
 
     <section class="py-5">
-      <div class="container">
+      <div class="container-fluid">
         <div class="mb-4">
           <h2 class="h3 mb-1">Bắt đầu từ đây</h2>
           <p class="text-secondary mb-0">Ba hướng để hiểu mình trước khi chọn ngành.</p>
@@ -135,7 +135,7 @@ onUnmounted(() => {
     </section>
 
     <section class="py-5 bg-white border-top border-bottom">
-      <div class="container">
+      <div class="container-fluid">
         <h2 class="h3 text-center mb-4">Ba bước</h2>
         <div class="row g-4">
           <div v-for="(step, index) in steps" :key="step.title" class="col-md-4">
@@ -150,7 +150,7 @@ onUnmounted(() => {
     </section>
 
     <section class="py-5">
-      <div class="container">
+      <div class="container-fluid">
         <h2 class="h3 mb-4">Nhóm tính cách Holland</h2>
         <div class="row g-3">
           <div v-for="group in groups" :key="group.code" class="col-md-6 col-lg-4">
@@ -193,7 +193,7 @@ onUnmounted(() => {
 .guest-banner__panel {
   padding: 24px;
   border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 20px;
+  border-radius: var(--guest-radius, 8px);
   background: rgba(255, 255, 255, 0.12);
 }
 
@@ -224,7 +224,7 @@ onUnmounted(() => {
   place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: 12px;
+  border-radius: var(--guest-radius-sm, 6px);
   background: #e7f5ee;
   color: #1f7a4d;
   font-weight: 700;

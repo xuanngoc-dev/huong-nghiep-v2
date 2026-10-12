@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { doiTuongList } from '@/data/doiTuong'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -18,7 +19,7 @@ const router = createRouter({
     },
     {
       path: '/',
-      component: () => import('@/layouts/RootLayout.vue'),
+      component: () => import('@/layouts/GuestLayout.vue'),
       children: [
         {
           path: '',
@@ -31,6 +32,25 @@ const router = createRouter({
           name: 'chon-doi-tuong',
           component: () => import('@/views/guest/ChonDoiTuong.vue'),
           meta: { title: 'Chọn đối tượng', public: true },
+        },
+        ...doiTuongList.map((item) => ({
+          path: item.code,
+          name: item.code,
+          component: () => import('@/views/guest/DoiTuong.vue'),
+          meta: { title: item.name, public: true, doiTuong: item.code },
+        })),
+      ],
+    },
+    {
+      path: '/member',
+      component: () => import('@/layouts/UserLayout.vue'),
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: '',
+          name: 'member-home',
+          component: () => import('@/views/member/PagePlaceholder.vue'),
+          meta: { title: 'Thành viên', requiresAuth: true },
         },
         {
           path: 'huong-nghiep/danh-gia',
@@ -184,19 +204,31 @@ const router = createRouter({
       redirect: '/admin/trac-nghiem/cau-hoi-dap-an',
     },
     {
+      path: '/huong-nghiep/:pathMatch(.*)*',
+      redirect: (to) => `/member/huong-nghiep/${joinPathMatch(to.params.pathMatch)}`,
+    },
+    {
+      path: '/trac-nghiem/lich-su',
+      redirect: '/member/trac-nghiem/lich-su',
+    },
+    {
+      path: '/tai-khoan/:pathMatch(.*)*',
+      redirect: (to) => `/member/tai-khoan/${joinPathMatch(to.params.pathMatch)}`,
+    },
+    {
       path: '/danh-muc/:pathMatch(.*)*',
-      redirect: (to) => {
-        const rest = Array.isArray(to.params.pathMatch)
-          ? to.params.pathMatch.join('/')
-          : to.params.pathMatch || ''
-        return `/admin/danh-muc/${rest}`
-      },
+      redirect: (to) => `/admin/danh-muc/${joinPathMatch(to.params.pathMatch)}`,
     },
   ],
 })
 
+function joinPathMatch(pathMatch) {
+  if (Array.isArray(pathMatch)) return pathMatch.join('/')
+  return pathMatch || ''
+}
+
 function homeLocation(auth) {
-  return auth.isAdmin ? { name: 'admin-home' } : { name: 'home' }
+  return auth.isAdmin ? { name: 'admin-home' } : { name: 'member-home' }
 }
 
 router.beforeEach(async (to) => {
@@ -209,12 +241,12 @@ router.beforeEach(async (to) => {
     await auth.loadMe()
   }
 
-  if (to.meta.requiresAuth && !auth.isAuthenticated) {
+  if (to.matched.some((record) => record.meta.requiresAuth) && !auth.isAuthenticated) {
     return { name: 'login', query: { redirect: to.fullPath } }
   }
 
   if (to.matched.some((record) => record.meta.requiresAdmin) && !auth.isAdmin) {
-    return { name: 'home' }
+    return homeLocation(auth)
   }
 
   if (to.meta.guest && auth.isAuthenticated) {

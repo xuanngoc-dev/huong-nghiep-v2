@@ -35,6 +35,7 @@ declare module 'vue' {
     CustomTableColumn: typeof import('./components/element/CustomTableColumn.vue')['default']
     CustomTag: typeof import('./components/element/CustomTag.vue')['default']
     CustomTooltip: typeof import('./components/element/CustomTooltip.vue')['default']
+    DoiTuongCard: typeof import('./components/guest/DoiTuongCard.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
@@ -77,6 +78,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SettingsDrawer: typeof import('./components/SettingsDrawer.vue')['default']
     SideMenu: typeof import('./components/SideMenu.vue')['default']
+    TinTucMoi: typeof import('./components/guest/TinTucMoi.vue')['default']
   }
   export interface GlobalDirectives {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

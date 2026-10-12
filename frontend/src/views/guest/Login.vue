@@ -28,7 +28,7 @@ function destinationAfterLogin(isAdmin, redirect) {
   if (isAdmin) {
     return requested.startsWith('/admin') ? requested : '/admin'
   }
-  return requested && !requested.startsWith('/admin') ? requested : '/'
+  return requested && !requested.startsWith('/admin') ? requested : '/member'
 }
 
 const rules = {
