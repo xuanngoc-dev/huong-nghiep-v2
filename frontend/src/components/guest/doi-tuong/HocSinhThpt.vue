@@ -213,11 +213,11 @@ function chonDinhHuong(direction) {
   right: 12px;
   bottom: 12px;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--guest-radius, 8px);
   padding: 10px 22px;
   background: var(--guest-primary);
   color: #fff;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1.2;
   cursor: pointer;
 }
