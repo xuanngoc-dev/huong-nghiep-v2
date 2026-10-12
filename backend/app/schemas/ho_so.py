@@ -7,7 +7,9 @@ MUC_TAI_CHINH = {"Thấp", "Trung bình", "Khá", "Tốt"}
 HANH_KIEM = {"Tốt", "Khá", "Trung bình", "Yếu"}
 _PHONE = re.compile(r"^[0-9+\-\s]{8,20}$")
 _SUBJECT_CODE = re.compile(r"^[A-Z0-9][A-Z0-9_-]{0,19}$")
+_CATALOG_CODE = re.compile(r"^[A-Z0-9][A-Z0-9_-]{0,49}$")
 _GRADES = {"10", "11", "12"}
+_RECORD_LIST_LIMIT = 30
 
 
 def _blank(value: str | None) -> str | None:
@@ -128,12 +130,53 @@ class SucKhoeTheChat(BaseModel):
         return _blank(value)
 
 
+class GhiNhanThanhTich(BaseModel):
+    ma: str = Field(..., min_length=1, max_length=50)
+    thanh_tich: str | None = Field(default=None, max_length=100)
+    thoi_gian_cap: date | None = None
+
+    @field_validator("ma")
+    @classmethod
+    def normalize_ma(cls, value: str) -> str:
+        code = value.strip().upper()
+        if not _CATALOG_CODE.fullmatch(code):
+            raise ValueError("Mã nội dung không hợp lệ")
+        return code
+
+    @field_validator("thanh_tich")
+    @classmethod
+    def strip_thanh_tich(cls, value: str | None) -> str | None:
+        return _blank(value)
+
+    @field_validator("thoi_gian_cap")
+    @classmethod
+    def check_thoi_gian_cap(cls, value: date | None) -> date | None:
+        if value is None:
+            return None
+        if value > date.today():
+            raise ValueError("Thời gian cấp không được ở tương lai")
+        if value.year < 1950:
+            raise ValueError("Thời gian cấp không hợp lệ")
+        return value
+
+
+def _record_list(value: list[GhiNhanThanhTich] | None) -> list[GhiNhanThanhTich] | None:
+    if not value:
+        return None
+    if len(value) > _RECORD_LIST_LIMIT:
+        raise ValueError("Mỗi danh sách tối đa 30 bản ghi")
+    return value
+
+
 class TrinhDoHocVan(BaseModel):
     diem_trung_binh_hoc_ba: dict | None = None
     hoc_luc_trung_binh: dict | None = None
     hanh_kiem: dict | None = None
     diem_thi_thpt_quoc_gia: DiemThiThptQuocGia | None = None
     suc_khoe_the_chat: SucKhoeTheChat | None = None
+    chung_chi_ngoai_ngu: list[GhiNhanThanhTich] | None = None
+    bai_thi_danh_gia_nang_luc: list[GhiNhanThanhTich] | None = None
+    thanh_tich_hoc_tap_nghien_cuu: list[GhiNhanThanhTich] | None = None
 
     @field_validator("diem_trung_binh_hoc_ba")
     @classmethod
@@ -149,6 +192,11 @@ class TrinhDoHocVan(BaseModel):
     @classmethod
     def check_hanh_kiem(cls, value: dict | None) -> dict | None:
         return _grade_conduct(value)
+
+    @field_validator("chung_chi_ngoai_ngu", "bai_thi_danh_gia_nang_luc", "thanh_tich_hoc_tap_nghien_cuu")
+    @classmethod
+    def check_record_list(cls, value: list[GhiNhanThanhTich] | None) -> list[GhiNhanThanhTich] | None:
+        return _record_list(value)
 
     @model_validator(mode="after")
     def drop_empty_blocks(self):
@@ -182,6 +230,8 @@ class HoSoWrite(BaseModel):
     dan_toc: str | None = Field(default=None, max_length=150)
     ton_giao: str | None = Field(default=None, max_length=150)
     tinh_thanh_id: int | None = Field(default=None, ge=1)
+    khu_vuc_uu_tien_id: int | None = Field(default=None, ge=1)
+    doi_tuong_uu_tien_id: int | None = Field(default=None, ge=1)
     trinh_do_hoc_van: TrinhDoHocVan | None = None
     suc_khoe_the_chat: SucKhoeTheChat | None = None
     kha_nang_tai_chinh: KhaNangTaiChinh | None = None

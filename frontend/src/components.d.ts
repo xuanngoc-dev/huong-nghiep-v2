@@ -94,6 +94,7 @@ declare module 'vue' {
     MoneyInput: typeof import('./components/element/MoneyInput.vue')['default']
     NhaTruong: typeof import('./components/guest/doi-tuong/NhaTruong.vue')['default']
     NhaTuyenDung: typeof import('./components/guest/doi-tuong/NhaTuyenDung.vue')['default']
+    PageLoading: typeof import('./components/PageLoading.vue')['default']
     PhuHuynh: typeof import('./components/guest/doi-tuong/PhuHuynh.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

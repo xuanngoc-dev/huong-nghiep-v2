@@ -1,9 +1,14 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { fetchBaiThiDanhGiaNangLuc } from '@/api/baiThiDanhGiaNangLuc'
+import { fetchChungChiNgoaiNgu } from '@/api/chungChiNgoaiNgu'
 import { fetchDanToc } from '@/api/danToc'
+import { fetchDoiTuongUuTien } from '@/api/doiTuongUuTien'
 import { fetchHoSo, updateHoSo } from '@/api/hoSo'
+import { fetchKhuVucUuTien } from '@/api/khuVucUuTien'
 import { fetchMonHoc } from '@/api/monHoc'
+import { fetchThanhTichHocTapNghienCuu } from '@/api/thanhTichHocTapNghienCuu'
 import { fetchTinhThanh } from '@/api/tinhThanh'
 import { fetchTonGiao } from '@/api/tonGiao'
 import { useAuthStore } from '@/stores/auth'
@@ -15,6 +20,29 @@ const GIOI_TINH = [
   { value: 2, label: 'Nữ' },
   { value: 3, label: 'Khác' },
 ]
+const RECORD_SECTIONS = [
+  {
+    key: 'chung_chi_ngoai_ngu',
+    title: 'Chứng chỉ ngoại ngữ',
+    lead: 'Chọn chứng chỉ trong danh mục, điểm đạt được và thời gian cấp.',
+    maKey: 'ma_chung_chi',
+    tenKey: 'ten_chung_chi',
+  },
+  {
+    key: 'bai_thi_danh_gia_nang_luc',
+    title: 'Bài thi đánh giá năng lực',
+    lead: 'Chọn bài thi trong danh mục, điểm đạt được và thời gian cấp.',
+    maKey: 'ma_bai_thi',
+    tenKey: 'ten_bai_thi',
+  },
+  {
+    key: 'thanh_tich_hoc_tap_nghien_cuu',
+    title: 'Thành tích học tập, nghiên cứu',
+    lead: 'Chọn thành tích trong danh mục, kết quả đạt được và thời gian cấp.',
+    maKey: 'ma_thanh_tich',
+    tenKey: 'ten_thanh_tich',
+  },
+]
 
 const auth = useAuthStore()
 const formRef = ref()
@@ -24,8 +52,37 @@ const email = ref('')
 const provinceOptions = ref([])
 const ethnicOptions = ref([])
 const religionOptions = ref([])
+const khuVucRows = ref([])
+const doiTuongRows = ref([])
+const catalogRows = reactive({
+  chung_chi_ngoai_ngu: [],
+  bai_thi_danh_gia_nang_luc: [],
+  thanh_tich_hoc_tap_nghien_cuu: [],
+})
 const subjects = ref([])
-const openSections = ref(['ca-nhan', 'hoc-ba', 'thi-thpt', 'suc-khoe'])
+let recordSeq = 0
+
+function blankRecord() {
+  recordSeq += 1
+  return {
+    _key: recordSeq,
+    ma: null,
+    thanh_tich: '',
+    thoi_gian_cap: '',
+    editing: true,
+  }
+}
+
+const recordGroups = reactive(
+  Object.fromEntries(RECORD_SECTIONS.map((section) => [section.key, [blankRecord()]])),
+)
+const openSections = ref([
+  'ca-nhan',
+  'hoc-ba',
+  'thi-thpt',
+  'suc-khoe',
+  ...RECORD_SECTIONS.map((section) => section.key),
+])
 
 const form = reactive({
   ho_ten: '',
@@ -35,6 +92,8 @@ const form = reactive({
   dan_toc: null,
   ton_giao: null,
   tinh_thanh_id: null,
+  khu_vuc_uu_tien_id: null,
+  doi_tuong_uu_tien_id: null,
 })
 const hocBa = reactive({ 10: {}, 11: {}, 12: {} })
 const hocLucTb = reactive({ 10: null, 11: null, 12: null })
@@ -73,10 +132,90 @@ function withCurrent(options, current) {
 
 const ethnicSelectOptions = computed(() => withCurrent(ethnicOptions.value, form.dan_toc))
 const religionSelectOptions = computed(() => withCurrent(religionOptions.value, form.ton_giao))
+const khuVucSelectOptions = computed(() =>
+  khuVucRows.value
+    .filter((item) => item.trang_thai === 1 || item.id === form.khu_vuc_uu_tien_id)
+    .sort((a, b) => a.ten_khu_vuc.localeCompare(b.ten_khu_vuc, 'vi'))
+    .map((item) => ({ id: item.id, label: `${item.ten_khu_vuc} (${item.ma_khu_vuc})` })),
+)
+const doiTuongSelectOptions = computed(() =>
+  doiTuongRows.value
+    .filter((item) => item.trang_thai === 1 || item.id === form.doi_tuong_uu_tien_id)
+    .sort((a, b) => a.ten_doi_tuong.localeCompare(b.ten_doi_tuong, 'vi'))
+    .map((item) => ({ id: item.id, label: `${item.ten_doi_tuong} (${item.ma_doi_tuong})` })),
+)
+const recordSections = computed(() =>
+  RECORD_SECTIONS.map((section) => {
+    const rows = recordGroups[section.key]
+    const selected = new Set(rows.map((row) => row.ma).filter(Boolean))
+    const options = catalogRows[section.key]
+      .filter((item) => item.trang_thai === 1 || selected.has(item[section.maKey]))
+      .sort((a, b) => a[section.tenKey].localeCompare(b[section.tenKey], 'vi'))
+      .map((item) => ({
+        ma: item[section.maKey],
+        label: `${item[section.tenKey]} (${item[section.maKey]})`,
+      }))
+    const known = new Set(options.map((item) => item.ma))
+    for (const code of selected) {
+      if (!known.has(code)) options.push({ ma: code, label: code })
+    }
+    return { ...section, options }
+  }),
+)
 
 function blank(value) {
   const text = String(value ?? '').trim()
   return text || null
+}
+
+function lookupScale(sectionKey, ma) {
+  if (!ma) return ''
+  const section = RECORD_SECTIONS.find((item) => item.key === sectionKey)
+  const row = catalogRows[sectionKey].find((item) => item[section.maKey] === ma)
+  return String(row?.thang_diem || '').trim()
+}
+
+function exampleInRange(min, max) {
+  const decimal = max <= 10
+  const target = min + (max - min) * 0.75
+  const value = decimal
+    ? Math.min(max, Math.max(min, Math.round(target * 2) / 2))
+    : Math.min(max, Math.max(min, Math.round(target)))
+  return decimal ? value.toFixed(1) : String(value)
+}
+
+function hintFromScale(scale) {
+  const range = scale.match(/(\d+(?:[.,]\d+)?)\s*[-–]\s*(\d+(?:[.,]\d+)?)/)
+  if (range) {
+    const min = Number(range[1].replace(',', '.'))
+    const max = Number(range[2].replace(',', '.'))
+    if (Number.isFinite(min) && Number.isFinite(max) && max > min) {
+      const note = scale.match(/\(([^)]+)\)/)
+      const suffix = note && note[1].length <= 24 ? ` (${note[1]})` : ''
+      return `Thang ${range[1].replace(',', '.')}–${range[2].replace(',', '.')}${suffix}, ví dụ ${exampleInRange(min, max)}`
+    }
+  }
+
+  const parts = scale.split(/\s+[-–]\s+/).map((part) => part.trim()).filter(Boolean)
+  if (parts.length > 1 && parts.every((part) => part.length <= 24)) {
+    const list = parts.join(', ')
+    return list.length <= 60 ? list : `Ví dụ: ${parts[0]}`
+  }
+
+  if (scale.length <= 28) return `Ví dụ: ${scale}`
+  return scale
+}
+
+function scorePlaceholder(sectionKey, ma) {
+  if (!ma) return 'Chọn nội dung trước'
+  const scale = lookupScale(sectionKey, ma)
+  if (!scale) return 'Điểm đạt được'
+  const hint = hintFromScale(scale)
+  return hint.length <= 60 ? hint : `${hint.slice(0, 57)}…`
+}
+
+function scoreTitle(sectionKey, ma) {
+  return lookupScale(sectionKey, ma) || undefined
 }
 
 function errorMessage(error, fallback) {
@@ -168,6 +307,55 @@ function applyScores(hocVan) {
   sucKhoe.tien_su_benh = health.tien_su_benh || ''
 }
 
+function applyRecordGroups(hocVan) {
+  for (const section of RECORD_SECTIONS) {
+    const saved = Array.isArray(hocVan?.[section.key]) ? hocVan[section.key] : []
+    if (!saved.length) {
+      recordGroups[section.key] = [blankRecord()]
+      continue
+    }
+    recordGroups[section.key] = saved.map((item) => {
+      const row = blankRecord()
+      row.ma = item.ma || null
+      row.thanh_tich = item.thanh_tich || ''
+      row.thoi_gian_cap = item.thoi_gian_cap || ''
+      row.editing = false
+      return row
+    })
+  }
+}
+
+function addRecord(key) {
+  recordGroups[key].push(blankRecord())
+}
+
+function removeRecord(key, index) {
+  recordGroups[key].splice(index, 1)
+  if (!recordGroups[key].length) recordGroups[key].push(blankRecord())
+}
+
+function canRemove(key, row) {
+  if (recordGroups[key].length > 1) return true
+  return Boolean(blank(row.ma) || blank(row.thanh_tich) || row.thoi_gian_cap)
+}
+
+function collectRecords() {
+  const payload = {}
+  for (const section of RECORD_SECTIONS) {
+    const items = []
+    for (const row of recordGroups[section.key]) {
+      const ma = blank(row.ma)
+      const thanhTich = blank(row.thanh_tich)
+      const issued = row.thoi_gian_cap || null
+      if (!ma && !thanhTich && !issued) continue
+      if (!ma) return { error: `Chọn nội dung ở mục ${section.title}`, section: section.key }
+      items.push({ ma: ma.toUpperCase(), thanh_tich: thanhTich, thoi_gian_cap: issued })
+    }
+    if (items.length) payload[section.key] = items
+  }
+  return { payload }
+}
+
 function scoreMap(source, codes) {
   const data = {}
   for (const code of codes) {
@@ -204,7 +392,10 @@ function buildTrinhDoHocVan() {
   if (Object.keys(conductPayload).length) payload.hanh_kiem = conductPayload
   if (duKien) payload.diem_thi_thpt_quoc_gia = { du_kien: duKien }
   if (Object.keys(health).length) payload.suc_khoe_the_chat = health
-  return Object.keys(payload).length ? payload : null
+  const records = collectRecords()
+  if (records.error) return records
+  Object.assign(payload, records.payload)
+  return { payload: Object.keys(payload).length ? payload : null }
 }
 
 async function loadAll(fetchFn) {
@@ -229,7 +420,10 @@ function applyProfile(data) {
   form.dan_toc = data.dan_toc || null
   form.ton_giao = data.ton_giao || null
   form.tinh_thanh_id = data.tinh_thanh_id ?? null
+  form.khu_vuc_uu_tien_id = data.khu_vuc_uu_tien_id ?? null
+  form.doi_tuong_uu_tien_id = data.doi_tuong_uu_tien_id ?? null
   applyScores(data.trinh_do_hoc_van)
+  applyRecordGroups(data.trinh_do_hoc_van)
 }
 
 function syncAuthUser(data) {
@@ -244,15 +438,20 @@ function syncAuthUser(data) {
 async function load() {
   loading.value = true
   try {
-    const [profile, provinces, ethnics, religions, subjectRows] = await Promise.all([
-      fetchHoSo(),
-      loadAll(fetchTinhThanh),
-      loadAll(fetchDanToc),
-      loadAll(fetchTonGiao),
-      loadAll(fetchMonHoc),
-    ])
+    const [profile, provinces, ethnics, religions, subjectRows, areas, priorities, certificates, exams, achievements] =
+      await Promise.all([
+        fetchHoSo(),
+        loadAll(fetchTinhThanh),
+        loadAll(fetchDanToc),
+        loadAll(fetchTonGiao),
+        loadAll(fetchMonHoc),
+        loadAll(fetchKhuVucUuTien),
+        loadAll(fetchDoiTuongUuTien),
+        loadAll(fetchChungChiNgoaiNgu),
+        loadAll(fetchBaiThiDanhGiaNangLuc),
+        loadAll(fetchThanhTichHocTapNghienCuu),
+      ])
     subjects.value = mergeSubjects(subjectRows, profile.trinh_do_hoc_van)
-    applyProfile(profile)
     provinceOptions.value = provinces
       .filter((item) => item.trang_thai === 1 || item.id === profile.tinh_thanh_id)
       .sort((a, b) => a.ten_tinh.localeCompare(b.ten_tinh, 'vi'))
@@ -264,6 +463,12 @@ async function load() {
       .filter((item) => item.trang_thai === 1)
       .map((item) => item.ten_ton_giao)
       .sort((a, b) => a.localeCompare(b, 'vi'))
+    khuVucRows.value = areas
+    doiTuongRows.value = priorities
+    catalogRows.chung_chi_ngoai_ngu = certificates
+    catalogRows.bai_thi_danh_gia_nang_luc = exams
+    catalogRows.thanh_tich_hoc_tap_nghien_cuu = achievements
+    applyProfile(profile)
   } catch (error) {
     ElMessage.error(errorMessage(error, 'Không tải được hồ sơ'))
   } finally {
@@ -280,6 +485,8 @@ function fillSample() {
   form.tinh_thanh_id = province?.id ?? null
   form.dan_toc = ethnicOptions.value.includes('Kinh') ? 'Kinh' : ethnicOptions.value[0] || null
   form.ton_giao = religionOptions.value.find((item) => item.includes('Không')) || religionOptions.value[0] || null
+  form.khu_vuc_uu_tien_id = khuVucSelectOptions.value[0]?.id ?? null
+  form.doi_tuong_uu_tien_id = doiTuongSelectOptions.value[0]?.id ?? null
 
   GRADES.forEach((grade, gradeIndex) => {
     hocLucTb[grade] = Math.round((7.2 + gradeIndex * 0.3) * 10) / 10
@@ -295,7 +502,18 @@ function fillSample() {
   sucKhoe.chieu_cao = 165
   sucKhoe.can_nang = 52
   sucKhoe.tien_su_benh = 'Không'
-  openSections.value = ['ca-nhan', 'hoc-ba', 'thi-thpt', 'suc-khoe']
+  for (const section of recordSections.value) {
+    if (!section.options.length) {
+      recordGroups[section.key] = [blankRecord()]
+      continue
+    }
+    const row = blankRecord()
+    row.ma = section.options[0].ma
+    row.thanh_tich = section.key === 'thanh_tich_hoc_tap_nghien_cuu' ? 'Giải Nhất' : '8.0'
+    row.thoi_gian_cap = '2025-06-15'
+    recordGroups[section.key] = [row]
+  }
+  openSections.value = ['ca-nhan', 'hoc-ba', 'thi-thpt', 'suc-khoe', ...RECORD_SECTIONS.map((section) => section.key)]
   ElMessage.success('Đã điền dữ liệu mẫu')
 }
 
@@ -304,6 +522,15 @@ async function onSubmit() {
   if (!valid) {
     if (!openSections.value.includes('ca-nhan')) {
       openSections.value = [...openSections.value, 'ca-nhan']
+    }
+    return
+  }
+
+  const built = buildTrinhDoHocVan()
+  if (built.error) {
+    ElMessage.error(built.error)
+    if (!openSections.value.includes(built.section)) {
+      openSections.value = [...openSections.value, built.section]
     }
     return
   }
@@ -318,7 +545,9 @@ async function onSubmit() {
       dan_toc: blank(form.dan_toc),
       ton_giao: blank(form.ton_giao),
       tinh_thanh_id: form.tinh_thanh_id ?? null,
-      trinh_do_hoc_van: buildTrinhDoHocVan(),
+      khu_vuc_uu_tien_id: form.khu_vuc_uu_tien_id ?? null,
+      doi_tuong_uu_tien_id: form.doi_tuong_uu_tien_id ?? null,
+      trinh_do_hoc_van: built.payload,
     })
     subjects.value = mergeSubjects(
       subjects.value.map((item) => ({ ...item, trang_thai: item.trang_thai ?? 1 })),
@@ -429,6 +658,30 @@ onMounted(load)
                 default-first-option
               >
                 <CustomOption v-for="item in religionSelectOptions" :key="item" :label="item" :value="item" />
+              </CustomSelect>
+            </CustomFormItem>
+          </CustomCol>
+          <CustomCol :span="4" :xs="12">
+            <CustomFormItem label="Khu vực ưu tiên">
+              <CustomSelect v-model="form.khu_vuc_uu_tien_id" placeholder="Chọn" clearable filterable>
+                <CustomOption
+                  v-for="item in khuVucSelectOptions"
+                  :key="item.id"
+                  :label="item.label"
+                  :value="item.id"
+                />
+              </CustomSelect>
+            </CustomFormItem>
+          </CustomCol>
+          <CustomCol :span="4" :xs="12">
+            <CustomFormItem label="Đối tượng ưu tiên">
+              <CustomSelect v-model="form.doi_tuong_uu_tien_id" placeholder="Chọn" clearable filterable>
+                <CustomOption
+                  v-for="item in doiTuongSelectOptions"
+                  :key="item.id"
+                  :label="item.label"
+                  :value="item.id"
+                />
               </CustomSelect>
             </CustomFormItem>
           </CustomCol>
@@ -553,6 +806,109 @@ onMounted(load)
           </CustomCol>
         </CustomRow>
       </el-collapse-item>
+
+      <el-collapse-item
+        v-for="section in recordSections"
+        :key="section.key"
+        :name="section.key"
+        :title="section.title"
+      >
+        <p class="profile-section__lead">{{ section.lead }}</p>
+        <CustomTable
+          v-if="openSections.includes(section.key)"
+          :data="recordGroups[section.key]"
+          row-key="_key"
+          class="score-table record-table"
+        >
+          <CustomTableColumn label="STT" width="72" align="center">
+            <template #default="{ $index }">{{ $index + 1 }}</template>
+          </CustomTableColumn>
+          <CustomTableColumn label="Nội dung" min-width="240">
+            <template #default="{ row }">
+              <CustomSelect
+                v-model="row.ma"
+                placeholder="Chọn"
+                filterable
+                :disabled="!row.editing"
+              >
+                <CustomOption
+                  v-for="item in section.options"
+                  :key="item.ma"
+                  :label="item.label"
+                  :value="item.ma"
+                />
+              </CustomSelect>
+            </template>
+          </CustomTableColumn>
+          <CustomTableColumn label="Thành tích" min-width="260">
+            <template #default="{ row }">
+              <CustomInput
+                v-model="row.thanh_tich"
+                maxlength="100"
+                :placeholder="scorePlaceholder(section.key, row.ma)"
+                :title="scoreTitle(section.key, row.ma)"
+                :disabled="!row.editing"
+              />
+            </template>
+          </CustomTableColumn>
+          <CustomTableColumn label="Thời gian cấp" min-width="170">
+            <template #default="{ row }">
+              <CustomDatePicker
+                v-model="row.thoi_gian_cap"
+                type="date"
+                value-format="YYYY-MM-DD"
+                format="DD/MM/YYYY"
+                placeholder="Chọn ngày"
+                clearable
+                :disabled="!row.editing"
+                :disabled-date="disableFutureDate"
+              />
+            </template>
+          </CustomTableColumn>
+          <CustomTableColumn label="Hành động" width="140" align="center">
+            <template #default="{ row, $index }">
+              <div class="row-actions">
+                <CustomButton
+                  v-if="!row.editing"
+                  link
+                  type="primary"
+                  native-type="button"
+                  @click="row.editing = true"
+                >
+                  Sửa
+                </CustomButton>
+                <CustomTooltip
+                  v-if="$index === recordGroups[section.key].length - 1"
+                  content="Thêm mới"
+                  placement="top"
+                >
+                  <CustomButton
+                    link
+                    type="primary"
+                    native-type="button"
+                    aria-label="Thêm mới"
+                    @click="addRecord(section.key)"
+                  >
+                    <CustomIcon><Plus /></CustomIcon>
+                  </CustomButton>
+                </CustomTooltip>
+                <CustomTooltip v-if="canRemove(section.key, row)" content="Xóa" placement="top">
+                  <CustomButton
+                    link
+                    type="danger"
+                    native-type="button"
+                    aria-label="Xóa"
+                    @click="removeRecord(section.key, $index)"
+                  >
+                    <CustomIcon><Delete /></CustomIcon>
+                  </CustomButton>
+                </CustomTooltip>
+              </div>
+            </template>
+          </CustomTableColumn>
+          <template #empty>Chưa có mục trong danh mục.</template>
+        </CustomTable>
+      </el-collapse-item>
       </el-collapse>
 
       <div class="profile-actions">
@@ -601,8 +957,27 @@ onMounted(load)
 }
 
 .score-table :deep(.el-input-number),
-.score-table :deep(.el-select) {
+.score-table :deep(.el-select),
+.record-table :deep(.el-date-editor.el-input) {
   width: 100%;
+}
+
+.row-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.row-actions :deep(.el-icon) {
+  font-size: 18px;
+}
+
+.row-actions :deep(.el-icon svg) {
+  stroke: currentColor;
+  stroke-width: 1.15;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
 }
 
 .score-table.is-mobile-compact :deep(th.el-table__cell),

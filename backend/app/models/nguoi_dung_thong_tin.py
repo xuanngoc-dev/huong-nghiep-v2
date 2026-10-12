@@ -35,6 +35,14 @@ class NguoiDungThongTin(Base):
         ForeignKey("dm_tinh_thanh.id", ondelete="SET NULL"),
         index=True,
     )
+    khu_vuc_uu_tien_id: Mapped[int | None] = mapped_column(
+        ForeignKey("dm_khu_vuc_uu_tien.id", ondelete="SET NULL"),
+        index=True,
+    )
+    doi_tuong_uu_tien_id: Mapped[int | None] = mapped_column(
+        ForeignKey("dm_doi_tuong_uu_tien.id", ondelete="SET NULL"),
+        index=True,
+    )
     edu_coin: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     xu_he_thong: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     mat_khau_thanh_toan: Mapped[str | None] = mapped_column(String(255))

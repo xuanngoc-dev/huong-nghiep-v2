@@ -1,7 +1,8 @@
 <script setup>
-// App shell — toàn bộ trang đi qua Vue Router
+import PageLoading from '@/components/PageLoading.vue'
 </script>
 
 <template>
   <RouterView />
+  <PageLoading />
 </template>
