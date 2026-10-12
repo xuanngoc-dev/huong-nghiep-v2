@@ -20,9 +20,9 @@
         @click="!collapsed && toggleGroup(groupIndex)"
       >
         <el-tooltip
-          :content="group.header"
+          :content="group.tooltip || group.header"
           placement="right"
-          :disabled="!collapsed"
+          :disabled="!collapsed && !group.tooltip"
           :show-after="200"
         >
           <span class="menu-group__face">
@@ -44,9 +44,9 @@
         :class="{ 'is-collapsed': collapsed }"
       >
         <el-tooltip
-          :content="group.header"
+          :content="group.tooltip || group.header"
           placement="right"
-          :disabled="!collapsed"
+          :disabled="!collapsed && !group.tooltip"
           :show-after="200"
         >
           <span class="menu-group__face">
@@ -62,9 +62,9 @@
       >
         <template v-for="item in group.items" :key="item.index">
           <el-tooltip
-            :content="item.title"
+            :content="item.tooltip || item.title"
             placement="right"
-            :disabled="!collapsed"
+            :disabled="!collapsed && !item.tooltip"
             :show-after="280"
           >
             <el-menu-item :index="item.index">

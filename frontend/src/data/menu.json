@@ -5,114 +5,136 @@
         {
           "index": "/admin",
           "title": "Trang chủ",
+          "tooltip": "Tổng quan khu vực quản trị",
           "icon": "HomeFilled"
         }
       ]
     },
     {
       "header": "TRẮC NGHIỆM",
+      "tooltip": "Quản lý nội dung và lịch sử trắc nghiệm",
       "abbr": "TN",
       "items": [
         {
           "index": "/admin/trac-nghiem/cau-hoi-dap-an",
           "title": "Câu hỏi - Đáp án",
+          "tooltip": "Soạn và quản lý câu hỏi cùng đáp án trắc nghiệm",
           "icon": "EditPen"
         },
         {
           "index": "/admin/trac-nghiem/lich-su",
           "title": "Lịch sử trắc nghiệm",
+          "tooltip": "Xem lịch sử bài làm trắc nghiệm của người dùng",
           "icon": "Clock"
         }
       ]
     },
     {
       "header": "DANH MỤC",
+      "tooltip": "Các danh mục dùng chung của hệ thống",
       "abbr": "DM",
       "items": [
         {
           "index": "/admin/danh-muc/tinh-thanh",
           "title": "Tỉnh thành",
+          "tooltip": "Quản lý danh mục tỉnh, thành phố",
           "icon": "MapLocation"
         },
         {
           "index": "/admin/danh-muc/dan-toc",
           "title": "Dân tộc",
+          "tooltip": "Quản lý danh mục dân tộc",
           "icon": "User"
         },
         {
           "index": "/admin/danh-muc/ton-giao",
           "title": "Tôn giáo",
+          "tooltip": "Quản lý danh mục tôn giáo",
           "icon": "Sunrise"
         },
         {
           "index": "/admin/danh-muc/khu-vuc-uu-tien",
           "title": "Khu vực ưu tiên",
+          "tooltip": "Quản lý khu vực ưu tiên trong tuyển sinh",
           "icon": "Place"
         },
         {
           "index": "/admin/danh-muc/doi-tuong-uu-tien",
           "title": "Đối tượng ưu tiên",
+          "tooltip": "Quản lý đối tượng được ưu tiên tuyển sinh",
           "icon": "Medal"
         },
         {
           "index": "/admin/danh-muc/phuong-thuc-tuyen-sinh",
           "title": "PT tuyển sinh",
+          "tooltip": "Quản lý các phương thức tuyển sinh",
           "icon": "Reading"
         },
         {
           "index": "/admin/danh-muc/mon-hoc",
           "title": "Môn học",
+          "tooltip": "Quản lý danh mục môn học",
           "icon": "Notebook"
         },
         {
           "index": "/admin/danh-muc/to-hop-mon-hoc",
           "title": "Tổ hợp môn học",
+          "tooltip": "Quản lý tổ hợp môn dùng để xét tuyển",
           "icon": "Grid"
         },
         {
           "index": "/admin/danh-muc/loai-cau-hoi",
           "title": "Loại câu hỏi",
+          "tooltip": "Quản lý các loại câu hỏi trắc nghiệm",
           "icon": "QuestionFilled"
         },
         {
           "index": "/admin/danh-muc/nhom-tinh-cach-holland",
           "title": "Nhóm Holland",
+          "tooltip": "Quản lý nhóm tính cách Holland dùng để định hướng nghề",
           "icon": "Compass"
         },
         {
           "index": "/admin/danh-muc/linh-vuc-dao-tao",
           "title": "Lĩnh vực đào tạo",
+          "tooltip": "Quản lý danh mục lĩnh vực đào tạo",
           "icon": "Collection"
         },
         {
           "index": "/admin/danh-muc/nhom-nganh-dao-tao",
           "title": "Nhóm ngành",
+          "tooltip": "Quản lý nhóm ngành đào tạo",
           "icon": "Files"
         },
         {
           "index": "/admin/danh-muc/nganh-dao-tao",
           "title": "Ngành đào tạo",
+          "tooltip": "Quản lý danh mục ngành đào tạo",
           "icon": "Management"
         },
         {
           "index": "/admin/danh-muc/chuyen-nganh",
           "title": "Chuyên ngành",
+          "tooltip": "Quản lý chuyên ngành thuộc từng ngành đào tạo",
           "icon": "Tickets"
         },
         {
           "index": "/admin/danh-muc/truong-hoc",
           "title": "Trường học",
+          "tooltip": "Quản lý danh mục trường học",
           "icon": "School"
         }
       ]
     },
     {
       "header": "TÀI KHOẢN",
+      "tooltip": "Thông tin tài khoản quản trị",
       "abbr": "TK",
       "items": [
         {
           "index": "/admin/tai-khoan/ho-so",
           "title": "Hồ sơ của tôi",
+          "tooltip": "Xem và cập nhật hồ sơ tài khoản",
           "icon": "User"
         }
       ]
@@ -124,6 +146,7 @@
         {
           "index": "/admin",
           "title": "Quản trị",
+          "tooltip": "Mở khu vực quản trị hệ thống",
           "icon": "Setting",
           "adminOnly": true
         }
@@ -134,44 +157,52 @@
         {
           "index": "/",
           "title": "Trang chủ",
+          "tooltip": "Trang chủ định hướng nghề nghiệp",
           "icon": "HomeFilled"
         }
       ]
     },
     {
       "header": "HƯỚNG NGHIỆP",
+      "tooltip": "Đánh giá năng lực và gợi ý nghề phù hợp",
       "abbr": "HN",
       "items": [
         {
           "index": "/huong-nghiep/danh-gia",
           "title": "Đánh giá năng lực",
+          "tooltip": "Làm bài đánh giá năng lực để định hướng nghề",
           "icon": "DataAnalysis"
         },
         {
           "index": "/huong-nghiep/goi-y",
           "title": "Gợi ý nghề nghiệp",
+          "tooltip": "Xem ngành và nghề được gợi ý theo kết quả đánh giá",
           "icon": "Opportunity"
         }
       ]
     },
     {
       "header": "TRẮC NGHIỆM",
+      "tooltip": "Lịch sử các bài trắc nghiệm đã làm",
       "abbr": "TN",
       "items": [
         {
           "index": "/trac-nghiem/lich-su",
           "title": "Lịch sử trắc nghiệm",
+          "tooltip": "Xem lại các bài trắc nghiệm bạn đã làm",
           "icon": "Clock"
         }
       ]
     },
     {
       "header": "TÀI KHOẢN",
+      "tooltip": "Hồ sơ và thông tin tài khoản",
       "abbr": "TK",
       "items": [
         {
           "index": "/tai-khoan/ho-so",
           "title": "Hồ sơ của tôi",
+          "tooltip": "Xem và cập nhật hồ sơ cá nhân",
           "icon": "User"
         }
       ]
