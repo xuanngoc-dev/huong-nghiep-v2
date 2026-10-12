@@ -9,6 +9,7 @@ import App from './App.vue'
 import router from './router'
 import { useLayoutStore } from './stores/layout'
 import './styles/index.scss'
+import './styles/guest.scss'
 
 const app = createApp(App)
 const pinia = createPinia()

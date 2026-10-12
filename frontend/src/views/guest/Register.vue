@@ -81,7 +81,7 @@ async function onSubmit() {
 </script>
 
 <template>
-  <div class="auth-page">
+  <div class="auth-page auth-page--register">
     <el-card class="auth-card" shadow="hover">
       <div class="auth-brand">
         <el-icon :size="28" color="var(--el-color-primary)"><UserFilled /></el-icon>
@@ -142,46 +142,3 @@ async function onSubmit() {
     </el-card>
   </div>
 </template>
-
-<style scoped>
-.auth-page {
-  min-height: 100svh;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  background:
-    radial-gradient(circle at top right, rgba(31, 122, 77, 0.12), transparent 40%),
-    var(--el-bg-color-page);
-}
-
-.auth-card {
-  width: min(480px, 100%);
-  border-radius: 16px;
-}
-
-.auth-brand {
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.auth-brand h1 {
-  margin: 12px 0 4px;
-  font-size: 28px;
-}
-
-.auth-brand p {
-  margin: 0;
-  color: var(--el-text-color-secondary);
-}
-
-.submit-btn {
-  width: 100%;
-  margin-top: 8px;
-}
-
-.auth-footer {
-  margin: 20px 0 0;
-  text-align: center;
-  color: var(--el-text-color-secondary);
-}
-</style>
