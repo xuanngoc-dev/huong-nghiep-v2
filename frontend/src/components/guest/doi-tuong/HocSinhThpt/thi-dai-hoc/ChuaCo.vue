@@ -139,6 +139,13 @@ function batDauHolland() {
               </div>
             </div>
             <div class="d-flex flex-wrap gap-2">
+              <RouterLink
+                v-if="auth.isAuthenticated"
+                class="btn btn-outline-success"
+                :to="{ name: 'ho-so' }"
+              >
+                Cập nhật thông tin cá nhân
+              </RouterLink>
               <button type="button" class="btn btn-success" @click="batDauHolland">
                 Bắt đầu trắc nghiệm Holland
               </button>

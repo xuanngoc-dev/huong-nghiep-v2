@@ -17,12 +17,14 @@ from app.api.v1.endpoints import (
     dm_to_hop_mon_hoc,
     dm_ton_giao,
     health,
+    ho_so,
     tn_cau_hoi,
 )
 
 api_router = APIRouter()
 api_router.include_router(health.router, tags=["health"])
 api_router.include_router(auth.router)
+api_router.include_router(ho_so.router)
 api_router.include_router(dm_tinh_thanh.router)
 api_router.include_router(dm_dan_toc.router)
 api_router.include_router(dm_ton_giao.router)

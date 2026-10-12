@@ -22,8 +22,11 @@ from app.models import (  # noqa: F401 — đăng ký model cho autogenerate
     DmToHopMonHoc,
     DmTonGiao,
     NguoiDung,
+    NguoiDungThongTin,
     TnCauHoiTracNghiem,
     TnCauTraLoi,
+    TnChiTietTraLoi,
+    TnPhienKhaoSat,
 )
 
 config = context.config

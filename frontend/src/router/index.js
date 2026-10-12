@@ -75,8 +75,8 @@ const router = createRouter({
         {
           path: 'tai-khoan/ho-so',
           name: 'ho-so',
-          component: () => import('@/views/member/PagePlaceholder.vue'),
-          meta: { title: 'Hồ sơ của tôi', requiresAuth: true },
+          component: () => import('@/views/member/HoSo.vue'),
+          meta: { title: 'Cập nhật thông tin cá nhân', requiresAuth: true },
         },
       ],
     },
