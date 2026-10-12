@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     CauHoiThuongGap: typeof import('./components/guest/chung/CauHoiThuongGap.vue')['default']
+    Chatbot: typeof import('./components/guest/chung/Chatbot.vue')['default']
     CustomBadge: typeof import('./components/element/CustomBadge.vue')['default']
     CustomButton: typeof import('./components/element/CustomButton.vue')['default']
     CustomCard: typeof import('./components/element/CustomCard.vue')['default']
@@ -82,7 +83,9 @@ declare module 'vue' {
     HocSinhThcs: typeof import('./components/guest/doi-tuong/HocSinhThcs.vue')['default']
     HocSinhThpt: typeof import('./components/guest/doi-tuong/HocSinhThpt.vue')['default']
     HoTroDinhHuong: typeof import('./components/guest/chung/HoTroDinhHuong.vue')['default']
+    HoTroNhanh: typeof import('./components/guest/chung/HoTroNhanh.vue')['default']
     KhoiNghiep: typeof import('./components/guest/doi-tuong/HocSinhThpt/KhoiNghiep.vue')['default']
+    LenDauTrang: typeof import('./components/guest/chung/LenDauTrang.vue')['default']
     MoneyInput: typeof import('./components/element/MoneyInput.vue')['default']
     NhaTruong: typeof import('./components/guest/doi-tuong/NhaTruong.vue')['default']
     NhaTuyenDung: typeof import('./components/guest/doi-tuong/NhaTuyenDung.vue')['default']
