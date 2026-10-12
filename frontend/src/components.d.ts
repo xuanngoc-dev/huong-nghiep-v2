@@ -13,6 +13,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     CauHoiThuongGap: typeof import('./components/guest/chung/CauHoiThuongGap.vue')['default']
     Chatbot: typeof import('./components/guest/chung/Chatbot.vue')['default']
+    ChuaCo: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/ChuaCo.vue')['default']
     CustomBadge: typeof import('./components/element/CustomBadge.vue')['default']
     CustomButton: typeof import('./components/element/CustomButton.vue')['default']
     CustomCard: typeof import('./components/element/CustomCard.vue')['default']

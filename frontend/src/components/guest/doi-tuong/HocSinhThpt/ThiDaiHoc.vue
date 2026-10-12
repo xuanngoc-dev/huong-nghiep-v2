@@ -1,47 +1,26 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import chuaCoImage from '@/assets/guest/thanh-nien.jpg'
-import daCoImage from '@/assets/guest/sinh-vien.jpg'
-import phanVanImage from '@/assets/guest/phu-huynh.jpg'
 import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
 import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
 import { DINH_HUONG_THPT_KEY, dinhHuongThptList } from './dinhHuong'
-import { routeNameDinhHuongThpt } from './routes'
+import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './thi-dai-hoc/giaiDoan'
+import { routeNameDinhHuongThpt, routeNameGiaiDoanThiDaiHoc } from './routes'
 
 defineOptions({ name: 'ThptThiDaiHoc' })
 
-const GIAI_DOAN_KEY = 'giai_doan_thi_dai_hoc'
+const stages = giaiDoanThiDaiHocList
 
-const stages = [
-  {
-    code: 'chua-co',
-    name: 'Chưa có ngành nghề phù hợp',
-    description: 'Bạn chưa xác định ngành muốn theo và cần gợi ý từ sở thích, năng lực.',
-    image: chuaCoImage,
-  },
-  {
-    code: 'da-co',
-    name: 'Đã có ngành nghề mong muốn',
-    description: 'Bạn đã chọn ngành và muốn đối chiếu trường, tổ hợp môn và cách xét tuyển.',
-    image: daCoImage,
-  },
-  {
-    code: 'phan-van',
-    name: 'Đang phân vân giữa vài ngành nghề',
-    description: 'Bạn đang cân nhắc một vài ngành và cần so sánh để chốt hướng.',
-    image: phanVanImage,
-  },
-]
-
-const selectedStage = ref(sessionStorage.getItem(GIAI_DOAN_KEY) || '')
+const selectedStage = ref(sessionStorage.getItem(GIAI_DOAN_THI_DAI_HOC_KEY) || '')
 const route = useRoute()
 const router = useRouter()
 const currentDirection = computed(() => route.meta.dinhHuong || '')
 
 function chonGiaiDoan(stage) {
   selectedStage.value = stage.code
-  sessionStorage.setItem(GIAI_DOAN_KEY, stage.code)
+  sessionStorage.setItem(GIAI_DOAN_THI_DAI_HOC_KEY, stage.code)
+  const name = routeNameGiaiDoanThiDaiHoc(stage.code)
+  if (name && name !== route.name) router.push({ name })
 }
 
 function chonHuong(direction) {

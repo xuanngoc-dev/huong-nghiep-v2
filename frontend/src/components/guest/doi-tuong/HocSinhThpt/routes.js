@@ -24,6 +24,17 @@ export const dinhHuongThptRoutes = [
     meta: { title: 'Thi Đại học & cao đẳng', public: true, dinhHuong: 'thi-dai-hoc' },
   },
   {
+    path: 'hoc-sinh-thpt/thi-dai-hoc/chua-co',
+    name: 'thpt-thi-dai-hoc-chua-co',
+    component: () => import('./thi-dai-hoc/ChuaCo.vue'),
+    meta: {
+      title: 'Chưa có ngành nghề phù hợp',
+      public: true,
+      dinhHuong: 'thi-dai-hoc',
+      giaiDoan: 'chua-co',
+    },
+  },
+  {
     path: 'hoc-sinh-thpt/khoi-nghiep',
     name: 'thpt-khoi-nghiep',
     component: () => import('./KhoiNghiep.vue'),
@@ -38,5 +49,9 @@ export const dinhHuongThptRoutes = [
 ]
 
 export function routeNameDinhHuongThpt(code) {
-  return dinhHuongThptRoutes.find((item) => item.meta.dinhHuong === code)?.name
+  return dinhHuongThptRoutes.find((item) => item.meta.dinhHuong === code && !item.meta.giaiDoan)?.name
+}
+
+export function routeNameGiaiDoanThiDaiHoc(code) {
+  return dinhHuongThptRoutes.find((item) => item.meta.giaiDoan === code)?.name
 }
