@@ -8,8 +8,8 @@ export function createCauHoi(payload) {
   return api.post('/trac-nghiem/cau-hoi', payload).then((res) => res.data)
 }
 
-export function createCauHoiBulk(payload) {
-  return api.post('/trac-nghiem/cau-hoi/bulk', payload).then((res) => res.data)
+export function createCauHoiBulk(payload, config) {
+  return api.post('/trac-nghiem/cau-hoi/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateCauHoi(id, payload) {

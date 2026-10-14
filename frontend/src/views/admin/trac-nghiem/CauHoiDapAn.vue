@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   createCauHoi,
@@ -40,7 +40,16 @@ const pageSize = ref(10)
 const dialogVisible = ref(false)
 const editingId = ref(null)
 const createMode = ref('form')
+const JSON_BATCH_SIZE = 20
+const JSON_BATCH_TIMEOUT = 120000
+
 const jsonText = ref('')
+const jsonProgress = reactive({
+  total: 0,
+  done: 0,
+  active: false,
+  failed: false,
+})
 const formRef = ref()
 const hollandOptions = ref([])
 const loaiOptions = ref([])
@@ -112,13 +121,46 @@ function onAnswerDblClick(question, answer) {
   startEditAnswer(question, answer)
 }
 
+const jsonPercent = computed(() => {
+  if (!jsonProgress.total) return 0
+  return Math.min(100, Math.round((jsonProgress.done / jsonProgress.total) * 100))
+})
+
+const jsonProgressStatus = computed(() => {
+  if (jsonProgress.failed) return 'exception'
+  if (jsonProgress.total > 0 && jsonProgress.done >= jsonProgress.total) return 'success'
+  return ''
+})
+
+const jsonProgressText = computed(() => {
+  const { done, total, active } = jsonProgress
+  if (active) {
+    const from = done + 1
+    const to = Math.min(done + JSON_BATCH_SIZE, total)
+    return `Đang lưu câu ${from}–${to} / ${total}`
+  }
+  return `Đã lưu ${done} / ${total} câu hỏi`
+})
+
+function resetJsonProgress() {
+  jsonProgress.total = 0
+  jsonProgress.done = 0
+  jsonProgress.active = false
+  jsonProgress.failed = false
+}
+
 function resetForm() {
   Object.assign(form, emptyForm())
   form.cau_tra_loi = []
   editingId.value = null
   createMode.value = 'form'
   jsonText.value = ''
+  resetJsonProgress()
   formRef.value?.clearValidate()
+}
+
+function isRequestTimeout(error) {
+  return error?.code === 'ECONNABORTED' || /timeout/i.test(error?.message || '')
 }
 
 function parseAnswers(value, line) {
@@ -427,15 +469,53 @@ async function onSubmitJson() {
     return
   }
   saving.value = true
+  jsonProgress.total = items.length
+  jsonProgress.done = 0
+  jsonProgress.active = items.length > 1
+  jsonProgress.failed = false
+  let created = 0
   try {
-    const result = await createCauHoiBulk(items)
-    ElMessage.success(`Đã thêm ${result.created} câu hỏi`)
-    dialogVisible.value = false
-    await load()
+    for (let index = 0; index < items.length; index += JSON_BATCH_SIZE) {
+      const batch = items.slice(index, index + JSON_BATCH_SIZE)
+      const result = await createCauHoiBulk(batch, {
+        skipLoading: true,
+        timeout: JSON_BATCH_TIMEOUT,
+      })
+      created += Number(result?.created ?? batch.length)
+      jsonProgress.done = created
+    }
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không thêm được danh sách câu hỏi'))
+    jsonProgress.failed = true
+    if (created > 0) {
+      jsonText.value = JSON.stringify(items.slice(created), null, 2)
+    }
+    const detail = errorMessage(error, 'Không thêm được danh sách câu hỏi')
+    if (isRequestTimeout(error)) {
+      ElMessage.error(
+        created > 0
+          ? `Đã xác nhận lưu ${created}/${items.length} câu hỏi. Lô đang gửi có thể đã được lưu dù hết thời gian chờ. Hãy kiểm tra danh sách trước khi lưu tiếp phần còn lại trong ô JSON.`
+          : 'Hết thời gian chờ. Câu hỏi có thể đã được lưu — hãy kiểm tra danh sách trước khi gửi lại.',
+      )
+    } else if (created > 0) {
+      ElMessage.error(`Đã lưu ${created}/${items.length} câu hỏi. ${detail} Phần chưa lưu vẫn nằm trong ô JSON.`)
+    } else {
+      ElMessage.error(detail)
+    }
+    if (created > 0 || isRequestTimeout(error)) {
+      await load().catch(() => {})
+    }
+    return
   } finally {
     saving.value = false
+    jsonProgress.active = false
+  }
+
+  ElMessage.success(`Đã thêm ${created} câu hỏi`)
+  dialogVisible.value = false
+  try {
+    await load()
+  } catch (error) {
+    ElMessage.error(errorMessage(error, 'Đã lưu câu hỏi nhưng không tải lại được danh sách'))
   }
 }
 
@@ -756,9 +836,12 @@ onMounted(async () => {
     :title="editingId ? 'Cập nhật câu hỏi' : 'Thêm câu hỏi'"
     width="920px"
     destroy-on-close
+    :close-on-click-modal="!saving"
+    :close-on-press-escape="!saving"
+    :show-close="!saving"
     @closed="resetForm"
   >
-    <CustomRadioGroup v-if="!editingId" v-model="createMode" class="create-mode">
+    <CustomRadioGroup v-if="!editingId" v-model="createMode" class="create-mode" :disabled="saving">
       <CustomRadioButton value="form">Nhập form</CustomRadioButton>
       <CustomRadioButton value="json">Dán JSON</CustomRadioButton>
     </CustomRadioGroup>
@@ -770,9 +853,16 @@ onMounted(async () => {
           <code>loai_cau_hoi_id</code>. <code>cau_tra_loi</code> là mảng
           <code>{ "noi_dung_cau_tra_loi", "diem" }</code>.
         </p>
-        <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
+        <CustomButton text type="primary" :disabled="saving" @click="fillJsonSample">Điền mẫu</CustomButton>
       </div>
-      <CustomInput v-model="jsonText" class="json-input" type="textarea" :rows="16" placeholder="Dán mảng JSON vào đây" />
+      <CustomInput
+        v-model="jsonText"
+        class="json-input"
+        type="textarea"
+        :rows="16"
+        :disabled="saving"
+        placeholder="Dán mảng JSON vào đây"
+      />
     </div>
 
     <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
@@ -875,8 +965,22 @@ onMounted(async () => {
       </CustomRow>
     </CustomForm>
     <template #footer>
-      <CustomButton @click="dialogVisible = false">Hủy</CustomButton>
-      <CustomButton type="primary" :loading="saving" @click="onSubmit">Lưu</CustomButton>
+      <div class="dialog-footer">
+        <div v-if="!editingId && createMode === 'json' && jsonProgress.total > 1" class="json-progress">
+          <el-progress
+            :percentage="jsonPercent"
+            :status="jsonProgressStatus"
+            :stroke-width="14"
+            :striped="jsonProgress.active"
+            striped-flow
+          />
+          <p class="json-progress__text">{{ jsonProgressText }}</p>
+        </div>
+        <div class="dialog-footer__actions">
+          <CustomButton :disabled="saving" @click="dialogVisible = false">Hủy</CustomButton>
+          <CustomButton type="primary" :loading="saving" @click="onSubmit">Lưu</CustomButton>
+        </div>
+      </div>
     </template>
   </CustomDialog>
 </template>
@@ -967,6 +1071,26 @@ onMounted(async () => {
 .json-input :deep(textarea) {
   font-family: ui-monospace, Consolas, monospace;
   font-size: 13px;
+}
+
+.dialog-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dialog-footer__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.json-progress__text {
+  margin: 6px 0 0;
+  text-align: left;
+  color: var(--el-text-color-secondary);
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 .field-hint {
