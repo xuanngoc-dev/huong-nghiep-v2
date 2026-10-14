@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
     auth,
+    chat,
     dm_bai_thi_danh_gia_nang_luc,
     dm_chung_chi_ngoai_ngu,
     dm_chuyen_nganh,
@@ -21,6 +22,7 @@ from app.api.v1.endpoints import (
     dm_ton_giao,
     health,
     ho_so,
+    tai_lieu,
     tn_cau_hoi,
 )
 
@@ -46,3 +48,5 @@ api_router.include_router(dm_chung_chi_ngoai_ngu.router)
 api_router.include_router(dm_bai_thi_danh_gia_nang_luc.router)
 api_router.include_router(dm_thanh_tich_hoc_tap_nghien_cuu.router)
 api_router.include_router(tn_cau_hoi.router)
+api_router.include_router(tai_lieu.router)
+api_router.include_router(chat.router)

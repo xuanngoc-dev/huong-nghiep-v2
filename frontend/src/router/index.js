@@ -41,6 +41,18 @@ const router = createRouter({
           meta: { title: item.name, public: true, doiTuong: item.code },
         })),
         ...dinhHuongThptRoutes,
+        {
+          path: 'demo-chat',
+          name: 'demo-chat',
+          component: () => import('@/views/guest/DemoChat.vue'),
+          meta: { title: 'Demo chat', public: true, hideAssist: true },
+        },
+        {
+          path: ':pathMatch(.*)*',
+          name: 'not-found',
+          component: () => import('@/views/guest/NotFound.vue'),
+          meta: { title: 'Không tìm thấy trang', public: true },
+        },
       ],
     },
     {

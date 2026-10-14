@@ -10,8 +10,8 @@
         <span>Trắc nghiệm tính cách và gợi ý ngành học</span>
       </div>
     </footer>
-    <HoTroNhanh />
-    <div class="guest-dock">
+    <HoTroNhanh v-if="showAssist" />
+    <div v-if="showAssist" class="guest-dock">
       <LenDauTrang />
       <Chatbot />
     </div>
@@ -19,12 +19,16 @@
 </template>
 
 <script setup>
-import { onUnmounted } from 'vue'
+import { computed, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 import GuestHeader from '@/layouts/guest/GuestHeader.vue'
 import HoTroNhanh from '@/components/guest/chung/HoTroNhanh.vue'
 import LenDauTrang from '@/components/guest/chung/LenDauTrang.vue'
 import Chatbot from '@/components/guest/chung/Chatbot.vue'
 import { mountGuestBootstrap, unmountGuestBootstrap } from '@/layouts/guest/bootstrap'
+
+const route = useRoute()
+const showAssist = computed(() => !route.meta.hideAssist)
 
 mountGuestBootstrap()
 onUnmounted(unmountGuestBootstrap)

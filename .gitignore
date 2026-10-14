@@ -4,5 +4,7 @@
 backend/.venv/
 backend/.env
 backend/logs/
+backend/tai_lieu/*
+!backend/tai_lieu/.gitkeep
 **/__pycache__/
 *.py[cod]

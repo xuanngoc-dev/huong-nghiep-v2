@@ -22,6 +22,12 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60 * 24 * 7  # 7 ngày
     jwt_algorithm: str = "HS256"
 
+    # Hỏi đáp tài liệu. Để trống thư mục thì dùng backend/tai_lieu.
+    tai_lieu_dir: str = ""
+    tai_lieu_max_bytes: int = 2 * 1024 * 1024
+    gemini_api_key: str = ""
+    openai_api_key: str = ""
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     @computed_field  # type: ignore[prop-decorator]
