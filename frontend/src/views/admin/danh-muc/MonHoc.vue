@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   createMonHoc,
@@ -49,6 +50,7 @@ const dialogVisible = ref(false)
 const editingId = ref(null)
 const createMode = ref('form')
 const jsonText = ref('')
+const jsonImport = useJsonBatchImport({ label: 'môn học' })
 const formRef = ref()
 
 const filters = reactive({
@@ -86,6 +88,7 @@ function resetForm() {
   editingId.value = null
   createMode.value = 'form'
   jsonText.value = ''
+  jsonImport.reset()
   formRef.value?.clearValidate()
 }
 
@@ -228,17 +231,14 @@ async function onSubmitJson() {
     return
   }
 
-  saving.value = true
-  try {
-    const result = await createMonHocBulk(items)
-    ElMessage.success(`Đã thêm ${result.created} môn học`)
-    dialogVisible.value = false
-    await load()
-  } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không thêm được danh sách môn học'))
-  } finally {
-    saving.value = false
-  }
+  await jsonImport.run({
+    items,
+    createBatch: createMonHocBulk,
+    jsonText,
+    saving,
+    dialogVisible,
+    reload: load,
+  })
 }
 
 async function onSubmit() {
@@ -444,7 +444,6 @@ onMounted(load)
           v-model:current-page="page"
           v-model:page-size="pageSize"
           :total="total"
-          :page-sizes="[10, 20, 50]"
           layout="total, sizes, prev, pager, next"
           background
           @current-change="onPageChange"
@@ -536,8 +535,13 @@ onMounted(load)
       </CustomRow>
     </CustomForm>
     <template #footer>
-      <CustomButton @click="dialogVisible = false">Hủy</CustomButton>
-      <CustomButton type="primary" :loading="saving" @click="onSubmit">Lưu</CustomButton>
+      <JsonImportDialogFooter
+        :batch="jsonImport"
+        :saving="saving"
+        :show-progress="!editingId && createMode === 'json'"
+        @cancel="dialogVisible = false"
+        @save="onSubmit"
+      />
     </template>
   </CustomDialog>
 </template>

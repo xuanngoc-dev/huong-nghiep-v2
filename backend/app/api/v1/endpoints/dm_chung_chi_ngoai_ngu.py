@@ -42,7 +42,7 @@ def list_chung_chi_ngoai_ngu(
     trang_thai: int | None = Query(default=None, ge=0, le=1),
     loai_chung_chi: str | None = Query(default=None, max_length=20),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=100),
+    page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DmChungChiNgoaiNguPage:

@@ -8,8 +8,8 @@ export function createLinhVuc(payload) {
   return api.post('/danh-muc/linh-vuc-dao-tao', payload).then((res) => res.data)
 }
 
-export function createLinhVucBulk(payload) {
-  return api.post('/danh-muc/linh-vuc-dao-tao/bulk', payload).then((res) => res.data)
+export function createLinhVucBulk(payload, config) {
+  return api.post('/danh-muc/linh-vuc-dao-tao/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateLinhVuc(id, payload) {

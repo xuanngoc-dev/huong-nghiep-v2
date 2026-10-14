@@ -8,8 +8,8 @@ export function createNhomHolland(payload) {
   return api.post('/danh-muc/nhom-tinh-cach-holland', payload).then((res) => res.data)
 }
 
-export function createNhomHollandBulk(payload) {
-  return api.post('/danh-muc/nhom-tinh-cach-holland/bulk', payload).then((res) => res.data)
+export function createNhomHollandBulk(payload, config) {
+  return api.post('/danh-muc/nhom-tinh-cach-holland/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateNhomHolland(id, payload) {

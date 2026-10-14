@@ -8,8 +8,8 @@ export function createDanToc(payload) {
   return api.post('/danh-muc/dan-toc', payload).then((res) => res.data)
 }
 
-export function createDanTocBulk(payload) {
-  return api.post('/danh-muc/dan-toc/bulk', payload).then((res) => res.data)
+export function createDanTocBulk(payload, config) {
+  return api.post('/danh-muc/dan-toc/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateDanToc(id, payload) {

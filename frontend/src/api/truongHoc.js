@@ -8,8 +8,8 @@ export function createTruongHoc(payload) {
   return api.post('/danh-muc/truong-hoc', payload).then((res) => res.data)
 }
 
-export function createTruongHocBulk(payload) {
-  return api.post('/danh-muc/truong-hoc/bulk', payload).then((res) => res.data)
+export function createTruongHocBulk(payload, config) {
+  return api.post('/danh-muc/truong-hoc/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateTruongHoc(id, payload) {

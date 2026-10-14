@@ -8,8 +8,8 @@ export function createTinhThanh(payload) {
   return api.post('/danh-muc/tinh-thanh', payload).then((res) => res.data)
 }
 
-export function createTinhThanhBulk(payload) {
-  return api.post('/danh-muc/tinh-thanh/bulk', payload).then((res) => res.data)
+export function createTinhThanhBulk(payload, config) {
+  return api.post('/danh-muc/tinh-thanh/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateTinhThanh(id, payload) {

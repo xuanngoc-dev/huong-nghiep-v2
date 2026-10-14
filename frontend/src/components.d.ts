@@ -90,6 +90,7 @@ declare module 'vue' {
     HocSinhThpt: typeof import('./components/guest/doi-tuong/HocSinhThpt.vue')['default']
     HoTroDinhHuong: typeof import('./components/guest/chung/HoTroDinhHuong.vue')['default']
     HoTroNhanh: typeof import('./components/guest/chung/HoTroNhanh.vue')['default']
+    JsonImportDialogFooter: typeof import('./components/admin/JsonImportDialogFooter.vue')['default']
     KhoiNghiep: typeof import('./components/guest/doi-tuong/HocSinhThpt/KhoiNghiep.vue')['default']
     LenDauTrang: typeof import('./components/guest/chung/LenDauTrang.vue')['default']
     MoneyInput: typeof import('./components/element/MoneyInput.vue')['default']

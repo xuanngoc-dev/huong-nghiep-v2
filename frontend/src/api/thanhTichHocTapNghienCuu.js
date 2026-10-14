@@ -8,8 +8,8 @@ export function createThanhTichHocTapNghienCuu(payload) {
   return api.post('/danh-muc/thanh-tich-hoc-tap-nghien-cuu', payload).then((res) => res.data)
 }
 
-export function createThanhTichHocTapNghienCuuBulk(payload) {
-  return api.post('/danh-muc/thanh-tich-hoc-tap-nghien-cuu/bulk', payload).then((res) => res.data)
+export function createThanhTichHocTapNghienCuuBulk(payload, config) {
+  return api.post('/danh-muc/thanh-tich-hoc-tap-nghien-cuu/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateThanhTichHocTapNghienCuu(id, payload) {

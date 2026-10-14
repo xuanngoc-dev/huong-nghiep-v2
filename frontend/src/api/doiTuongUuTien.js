@@ -8,8 +8,8 @@ export function createDoiTuongUuTien(payload) {
   return api.post('/danh-muc/doi-tuong-uu-tien', payload).then((res) => res.data)
 }
 
-export function createDoiTuongUuTienBulk(payload) {
-  return api.post('/danh-muc/doi-tuong-uu-tien/bulk', payload).then((res) => res.data)
+export function createDoiTuongUuTienBulk(payload, config) {
+  return api.post('/danh-muc/doi-tuong-uu-tien/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateDoiTuongUuTien(id, payload) {
