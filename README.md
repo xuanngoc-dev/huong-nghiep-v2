@@ -29,7 +29,13 @@ frontend/         Vue 3 + Vite
 
 Khi dev, Vite chuyển mọi request `/api` sang `http://127.0.0.1:3060`. Prefix API là `/api/v1`.
 
-## Lệnh tiện lợi
+## Khởi động nhanh trên Windows (1-Click)
+
+Chỉ cần double-click file:
+- `start-dev.bat`: Tự động khởi động cả Backend (FastAPI :3060) và Frontend (Vite :5173), sau đó mở trình duyệt.
+- `stop-dev.bat`: Tắt nhanh các tiến trình đang chạy trên cổng 3060 và 5173.
+
+## Lệnh tiện lợi (Makefile / Linux / WSL)
 
 Từ thư mục gốc project:
 

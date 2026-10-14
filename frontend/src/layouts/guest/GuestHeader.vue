@@ -36,6 +36,10 @@
               </li>
             </ul>
           </div>
+          <RouterLink class="btn btn-outline-success" to="/demo-chat">
+            <el-icon class="me-1"><ChatDotRound /></el-icon>
+            Trợ lý AI
+          </RouterLink>
           <template v-if="auth.isAuthenticated">
             <RouterLink class="btn btn-success" to="/member">Khu vực thành viên</RouterLink>
             <RouterLink v-if="auth.isAdmin" class="btn btn-outline-success" to="/admin">Quản trị</RouterLink>

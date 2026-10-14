@@ -11,6 +11,7 @@ class ModelChat(BaseModel):
     phi: bool
     mo_ta: str
     san_sang: bool
+    provider: str = "gemini"
 
 
 class TaiLieuItem(BaseModel):
