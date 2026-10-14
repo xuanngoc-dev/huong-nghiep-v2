@@ -20,6 +20,7 @@ from app.api.v1.endpoints import (
     dm_tinh_thanh,
     dm_to_hop_mon_hoc,
     dm_ton_giao,
+    dm_truong_dai_hoc,
     health,
     ho_so,
     tai_lieu,
@@ -47,6 +48,7 @@ api_router.include_router(dm_chuyen_nganh.router)
 api_router.include_router(dm_chung_chi_ngoai_ngu.router)
 api_router.include_router(dm_bai_thi_danh_gia_nang_luc.router)
 api_router.include_router(dm_thanh_tich_hoc_tap_nghien_cuu.router)
+api_router.include_router(dm_truong_dai_hoc.router)
 api_router.include_router(tn_cau_hoi.router)
 api_router.include_router(tai_lieu.router)
 api_router.include_router(chat.router)

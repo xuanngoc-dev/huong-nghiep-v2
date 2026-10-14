@@ -15,12 +15,14 @@ from app.models.dm_thanh_tich_hoc_tap_nghien_cuu import DmThanhTichHocTapNghienC
 from app.models.dm_tinh_thanh import DmTinhThanh
 from app.models.dm_to_hop_mon_hoc import DmToHopMonHoc
 from app.models.dm_ton_giao import DmTonGiao
+from app.models.dm_truong_dai_hoc import DmTruongDaiHoc
 from app.models.nguoi_dung import NguoiDung
 from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
 from app.models.tn_cau_hoi_trac_nghiem import TnCauHoiTracNghiem
 from app.models.tn_cau_tra_loi import TnCauTraLoi
 from app.models.tn_chi_tiet_tra_loi import TnChiTietTraLoi
 from app.models.tn_phien_khao_sat import TnPhienKhaoSat
+from app.models.truong_hoc_tuyen_sinh_theo_nam import TruongHocTuyenSinhTheoNam
 
 __all__ = [
     "DmBaiThiDanhGiaNangLuc",
@@ -40,10 +42,12 @@ __all__ = [
     "DmTinhThanh",
     "DmToHopMonHoc",
     "DmTonGiao",
+    "DmTruongDaiHoc",
     "NguoiDung",
     "NguoiDungThongTin",
     "TnCauHoiTracNghiem",
     "TnCauTraLoi",
     "TnChiTietTraLoi",
     "TnPhienKhaoSat",
+    "TruongHocTuyenSinhTheoNam",
 ]

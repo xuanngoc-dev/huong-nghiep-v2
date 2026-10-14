@@ -226,7 +226,7 @@ const router = createRouter({
         {
           path: 'danh-muc/truong-hoc',
           name: 'truong-hoc',
-          component: () => import('@/views/admin/PagePlaceholder.vue'),
+          component: () => import('@/views/admin/danh-muc/TruongHoc.vue'),
           meta: { title: 'Trường học', requiresAuth: true, requiresAdmin: true },
         },
       ],
