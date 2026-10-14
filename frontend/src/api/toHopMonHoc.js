@@ -8,8 +8,8 @@ export function createToHopMonHoc(payload) {
   return api.post('/danh-muc/to-hop-mon-hoc', payload).then((res) => res.data)
 }
 
-export function createToHopMonHocBulk(payload) {
-  return api.post('/danh-muc/to-hop-mon-hoc/bulk', payload).then((res) => res.data)
+export function createToHopMonHocBulk(payload, config) {
+  return api.post('/danh-muc/to-hop-mon-hoc/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateToHopMonHoc(id, payload) {

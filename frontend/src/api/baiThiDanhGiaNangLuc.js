@@ -8,8 +8,8 @@ export function createBaiThiDanhGiaNangLuc(payload) {
   return api.post('/danh-muc/bai-thi-danh-gia-nang-luc', payload).then((res) => res.data)
 }
 
-export function createBaiThiDanhGiaNangLucBulk(payload) {
-  return api.post('/danh-muc/bai-thi-danh-gia-nang-luc/bulk', payload).then((res) => res.data)
+export function createBaiThiDanhGiaNangLucBulk(payload, config) {
+  return api.post('/danh-muc/bai-thi-danh-gia-nang-luc/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateBaiThiDanhGiaNangLuc(id, payload) {

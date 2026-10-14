@@ -8,8 +8,8 @@ export function createKhuVucUuTien(payload) {
   return api.post('/danh-muc/khu-vuc-uu-tien', payload).then((res) => res.data)
 }
 
-export function createKhuVucUuTienBulk(payload) {
-  return api.post('/danh-muc/khu-vuc-uu-tien/bulk', payload).then((res) => res.data)
+export function createKhuVucUuTienBulk(payload, config) {
+  return api.post('/danh-muc/khu-vuc-uu-tien/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateKhuVucUuTien(id, payload) {

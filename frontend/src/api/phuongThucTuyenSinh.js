@@ -8,8 +8,8 @@ export function createPhuongThucTuyenSinh(payload) {
   return api.post('/danh-muc/phuong-thuc-tuyen-sinh', payload).then((res) => res.data)
 }
 
-export function createPhuongThucTuyenSinhBulk(payload) {
-  return api.post('/danh-muc/phuong-thuc-tuyen-sinh/bulk', payload).then((res) => res.data)
+export function createPhuongThucTuyenSinhBulk(payload, config) {
+  return api.post('/danh-muc/phuong-thuc-tuyen-sinh/bulk', payload, config).then((res) => res.data)
 }
 
 export function updatePhuongThucTuyenSinh(id, payload) {

@@ -8,8 +8,8 @@ export function createTonGiao(payload) {
   return api.post('/danh-muc/ton-giao', payload).then((res) => res.data)
 }
 
-export function createTonGiaoBulk(payload) {
-  return api.post('/danh-muc/ton-giao/bulk', payload).then((res) => res.data)
+export function createTonGiaoBulk(payload, config) {
+  return api.post('/danh-muc/ton-giao/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateTonGiao(id, payload) {

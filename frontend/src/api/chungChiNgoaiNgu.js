@@ -8,8 +8,8 @@ export function createChungChiNgoaiNgu(payload) {
   return api.post('/danh-muc/chung-chi-ngoai-ngu', payload).then((res) => res.data)
 }
 
-export function createChungChiNgoaiNguBulk(payload) {
-  return api.post('/danh-muc/chung-chi-ngoai-ngu/bulk', payload).then((res) => res.data)
+export function createChungChiNgoaiNguBulk(payload, config) {
+  return api.post('/danh-muc/chung-chi-ngoai-ngu/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateChungChiNgoaiNgu(id, payload) {

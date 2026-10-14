@@ -8,8 +8,8 @@ export function createLoaiCauHoi(payload) {
   return api.post('/danh-muc/loai-cau-hoi', payload).then((res) => res.data)
 }
 
-export function createLoaiCauHoiBulk(payload) {
-  return api.post('/danh-muc/loai-cau-hoi/bulk', payload).then((res) => res.data)
+export function createLoaiCauHoiBulk(payload, config) {
+  return api.post('/danh-muc/loai-cau-hoi/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateLoaiCauHoi(id, payload) {

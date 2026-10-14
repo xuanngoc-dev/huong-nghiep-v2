@@ -8,8 +8,8 @@ export function createChuyenNganh(payload) {
   return api.post('/danh-muc/chuyen-nganh', payload).then((res) => res.data)
 }
 
-export function createChuyenNganhBulk(payload) {
-  return api.post('/danh-muc/chuyen-nganh/bulk', payload).then((res) => res.data)
+export function createChuyenNganhBulk(payload, config) {
+  return api.post('/danh-muc/chuyen-nganh/bulk', payload, config).then((res) => res.data)
 }
 
 export function updateChuyenNganh(id, payload) {
