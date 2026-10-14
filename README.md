@@ -13,7 +13,7 @@ backend/          API FastAPI
     schemas/      schema request/response
     models/       model dữ liệu
     services/     nghiệp vụ
-frontend/         Vue 3 + Vite + Pinia (cấu trúc kiểu Pandio)
+frontend/         Vue 3 + Vite
   src/
     api/          Axios client + module theo domain
     components/   UI dùng chung
