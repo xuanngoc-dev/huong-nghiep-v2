@@ -25,6 +25,7 @@ from app.api.v1.endpoints import (
     ho_so,
     tai_lieu,
     tn_cau_hoi,
+    tn_phien_khao_sat,
 )
 
 api_router = APIRouter()
@@ -50,5 +51,6 @@ api_router.include_router(dm_bai_thi_danh_gia_nang_luc.router)
 api_router.include_router(dm_thanh_tich_hoc_tap_nghien_cuu.router)
 api_router.include_router(dm_truong_dai_hoc.router)
 api_router.include_router(tn_cau_hoi.router)
+api_router.include_router(tn_phien_khao_sat.router)
 api_router.include_router(tai_lieu.router)
 api_router.include_router(chat.router)
