@@ -31,6 +31,11 @@ class DmNganhDaoTaoWrite(BaseModel):
     trinh_do: str = Field(..., min_length=1, max_length=100)
     ma_holand: list[str] | None = None
     mo_ta: str | None = Field(default=None, max_length=5000)
+    hinh_anh_mo_ta: str | None = Field(default=None, max_length=500)
+    muc_luong_tham_khao: str | None = Field(default=None, max_length=255)
+    nhan_dan: str | None = Field(default=None, max_length=100)
+    thoi_gian_dao_tao: str | None = Field(default=None, max_length=100)
+    chi_tiet: str | None = Field(default=None, max_length=10000)
     trang_thai: int = Field(default=1, ge=0, le=1)
 
     @field_validator("ten_nganh")
@@ -78,7 +83,14 @@ class DmNganhDaoTaoWrite(BaseModel):
     def normalize_ma_holand(cls, value: list[str] | None) -> list[str] | None:
         return _normalize_ma_holand(value)
 
-    @field_validator("mo_ta")
+    @field_validator(
+        "mo_ta",
+        "hinh_anh_mo_ta",
+        "muc_luong_tham_khao",
+        "nhan_dan",
+        "thoi_gian_dao_tao",
+        "chi_tiet",
+    )
     @classmethod
     def empty_to_none(cls, value: str | None) -> str | None:
         if value is None:
@@ -97,6 +109,11 @@ class DmNganhDaoTaoPublic(BaseModel):
     trinh_do: str
     ma_holand: list[str] | None = None
     mo_ta: str | None = None
+    hinh_anh_mo_ta: str | None = None
+    muc_luong_tham_khao: str | None = None
+    nhan_dan: str | None = None
+    thoi_gian_dao_tao: str | None = None
+    chi_tiet: str | None = None
     trang_thai: int
     created_at: datetime | None = None
     updated_at: datetime | None = None

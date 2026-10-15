@@ -30,6 +30,11 @@ class DmNganhDaoTao(Base):
     # Danh sách mã nhóm Holland, ví dụ ["R", "I"]. Không bắt buộc.
     ma_holand: Mapped[list[str] | None] = mapped_column(JSON)
     mo_ta: Mapped[str | None] = mapped_column(Text)
+    hinh_anh_mo_ta: Mapped[str | None] = mapped_column(String(500))
+    muc_luong_tham_khao: Mapped[str | None] = mapped_column(String(255))
+    nhan_dan: Mapped[str | None] = mapped_column(String(100))
+    thoi_gian_dao_tao: Mapped[str | None] = mapped_column(String(100))
+    chi_tiet: Mapped[str | None] = mapped_column(Text)
     # 0: ngừng sử dụng, 1: hoạt động
     trang_thai: Mapped[int] = mapped_column(SmallInteger, nullable=False, default=1, server_default="1")
     created_at: Mapped[datetime] = mapped_column(

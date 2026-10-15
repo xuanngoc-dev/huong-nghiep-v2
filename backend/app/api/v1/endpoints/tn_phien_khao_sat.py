@@ -328,7 +328,18 @@ def lay_nganh_phu_hop(ssid: str, db: Session = Depends(get_db)) -> TnPhienNganhP
             if diem <= 0:
                 continue
             hang.append(
-                (diem, nganh.ma_nganh, nganh.ten_nganh, nganh.ma_nhom_nganh, nhom_nganh.ten_nhom_nganh, ma_holand)
+                (
+                    diem,
+                    nganh.ma_nganh,
+                    nganh.ten_nganh,
+                    nganh.ma_nhom_nganh,
+                    nhom_nganh.ten_nhom_nganh,
+                    ma_holand,
+                    nganh.mo_ta,
+                    nganh.muc_luong_tham_khao,
+                    nganh.thoi_gian_dao_tao,
+                    nganh.hinh_anh_mo_ta,
+                )
             )
         hang.sort(key=lambda item: (-item[0], item[1]))
     return TnPhienNganhPhuHopPublic(
@@ -345,7 +356,22 @@ def lay_nganh_phu_hop(ssid: str, db: Session = Depends(get_db)) -> TnPhienNganhP
                 ma_nhom_nganh=ma_nhom_nganh,
                 ten_nhom_nganh=ten_nhom_nganh,
                 ma_holand=ma_holand,
+                mo_ta=mo_ta,
+                muc_luong_tham_khao=muc_luong,
+                thoi_gian_dao_tao=thoi_gian,
+                hinh_anh_mo_ta=hinh_anh,
             )
-            for _, ma_nganh, ten_nganh, ma_nhom_nganh, ten_nhom_nganh, ma_holand in hang
+            for (
+                _,
+                ma_nganh,
+                ten_nganh,
+                ma_nhom_nganh,
+                ten_nhom_nganh,
+                ma_holand,
+                mo_ta,
+                muc_luong,
+                thoi_gian,
+                hinh_anh,
+            ) in hang
         ],
     )

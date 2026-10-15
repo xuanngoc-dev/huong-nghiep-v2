@@ -23,6 +23,11 @@ const JSON_SAMPLE = `[
     "ten_tieng_anh": "Information technology",
     "trinh_do": "Đại học",
     "ma_holand": ["R", "I"],
+    "hinh_anh_mo_ta": "https://example.com/cntt.jpg",
+    "muc_luong_tham_khao": "15-30 triệu/tháng",
+    "nhan_dan": "Nhu cầu cao",
+    "thoi_gian_dao_tao": "4 năm",
+    "chi_tiet": "Ngành đào tạo về phần mềm, dữ liệu và hệ thống thông tin.",
     "trang_thai": 1
   }
 ]`
@@ -85,8 +90,19 @@ function emptyForm() {
     trinh_do: '',
     ma_holand: [],
     mo_ta: '',
+    hinh_anh_mo_ta: '',
+    muc_luong_tham_khao: '',
+    nhan_dan: '',
+    thoi_gian_dao_tao: '',
+    chi_tiet: '',
     trang_thai: 1,
   }
+}
+
+function optionalText(value) {
+  if (value == null) return null
+  const text = String(value).trim()
+  return text || null
 }
 
 function parentLabel(item) {
@@ -154,7 +170,12 @@ function parseJsonItems(text) {
       ten_tieng_anh: tenTiengAnh,
       trinh_do: trinhDo,
       ma_holand: parseHolland(item.ma_holand, line),
-      mo_ta: item.mo_ta == null ? null : String(item.mo_ta).trim() || null,
+      mo_ta: optionalText(item.mo_ta),
+      hinh_anh_mo_ta: optionalText(item.hinh_anh_mo_ta),
+      muc_luong_tham_khao: optionalText(item.muc_luong_tham_khao),
+      nhan_dan: optionalText(item.nhan_dan),
+      thoi_gian_dao_tao: optionalText(item.thoi_gian_dao_tao),
+      chi_tiet: optionalText(item.chi_tiet),
       trang_thai: item.trang_thai ?? 1,
     }
   })
@@ -261,6 +282,11 @@ async function openEdit(row) {
     trinh_do: row.trinh_do,
     ma_holand: [...(row.ma_holand || [])],
     mo_ta: row.mo_ta || '',
+    hinh_anh_mo_ta: row.hinh_anh_mo_ta || '',
+    muc_luong_tham_khao: row.muc_luong_tham_khao || '',
+    nhan_dan: row.nhan_dan || '',
+    thoi_gian_dao_tao: row.thoi_gian_dao_tao || '',
+    chi_tiet: row.chi_tiet || '',
     trang_thai: row.trang_thai,
   })
   dialogVisible.value = true
@@ -275,7 +301,12 @@ function payloadFromForm() {
     ten_tieng_anh: form.ten_tieng_anh.trim(),
     trinh_do: form.trinh_do.trim(),
     ma_holand: form.ma_holand?.length ? form.ma_holand : null,
-    mo_ta: form.mo_ta?.trim() || null,
+    mo_ta: optionalText(form.mo_ta),
+    hinh_anh_mo_ta: optionalText(form.hinh_anh_mo_ta),
+    muc_luong_tham_khao: optionalText(form.muc_luong_tham_khao),
+    nhan_dan: optionalText(form.nhan_dan),
+    thoi_gian_dao_tao: optionalText(form.thoi_gian_dao_tao),
+    chi_tiet: optionalText(form.chi_tiet),
     trang_thai: form.trang_thai,
   }
 }
@@ -482,6 +513,15 @@ onMounted(async () => {
         </CustomTableColumn>
         <CustomTableColumn prop="ten_tieng_anh" label="Tên tiếng Anh" min-width="180" />
         <CustomTableColumn prop="trinh_do" label="Trình độ" width="130" />
+        <CustomTableColumn label="Nhãn dán" min-width="140" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.nhan_dan || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Thời gian đào tạo" min-width="150" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.thoi_gian_dao_tao || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Mức lương tham khảo" min-width="170" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.muc_luong_tham_khao || '—' }}</template>
+        </CustomTableColumn>
         <CustomTableColumn label="Mã Holland" min-width="140">
           <template #default="{ row }">
             {{ row.ma_holand?.length ? row.ma_holand.join(', ') : '—' }}
@@ -494,8 +534,14 @@ onMounted(async () => {
             </CustomTag>
           </template>
         </CustomTableColumn>
-        <CustomTableColumn prop="mo_ta" label="Mô tả" min-width="180">
+        <CustomTableColumn prop="mo_ta" label="Mô tả" min-width="180" show-overflow-tooltip>
           <template #default="{ row }">{{ row.mo_ta || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Hình ảnh mô tả" min-width="180" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.hinh_anh_mo_ta || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn prop="chi_tiet" label="Chi tiết" min-width="200" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.chi_tiet || '—' }}</template>
         </CustomTableColumn>
         <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
           <template #default="{ row }">
@@ -549,7 +595,9 @@ onMounted(async () => {
         <p>
           Dán một mảng JSON. Mỗi phần tử cần <code>ma_nhom_nganh</code>, <code>ten_nganh</code>,
           <code>ma_nganh</code>, <code>ten_tieng_anh</code> và <code>trinh_do</code>.
-          <code>ma_holand</code> là mảng mã, ví dụ <code>["R", "I"]</code>, có thể bỏ trống.
+          <code>ma_holand</code> là mảng mã, ví dụ <code>["R", "I"]</code>.
+          <code>hinh_anh_mo_ta</code>, <code>muc_luong_tham_khao</code>, <code>nhan_dan</code>,
+          <code>thoi_gian_dao_tao</code> và <code>chi_tiet</code> có thể bỏ trống.
         </p>
         <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
       </div>
@@ -649,6 +697,34 @@ onMounted(async () => {
             </CustomSelect>
           </CustomFormItem>
         </CustomCol>
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Nhãn dán" prop="nhan_dan">
+            <CustomInput v-model="form.nhan_dan" maxlength="100" placeholder="Ví dụ: Nhu cầu cao" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Thời gian đào tạo" prop="thoi_gian_dao_tao">
+            <CustomInput v-model="form.thoi_gian_dao_tao" maxlength="100" placeholder="Ví dụ: 4 năm" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Mức lương tham khảo" prop="muc_luong_tham_khao">
+            <CustomInput
+              v-model="form.muc_luong_tham_khao"
+              maxlength="255"
+              placeholder="Ví dụ: 15-30 triệu/tháng"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Hình ảnh mô tả" prop="hinh_anh_mo_ta">
+            <CustomInput
+              v-model="form.hinh_anh_mo_ta"
+              maxlength="500"
+              placeholder="URL hình ảnh mô tả ngành"
+            />
+          </CustomFormItem>
+        </CustomCol>
         <CustomCol :span="24">
           <CustomFormItem label="Mô tả" prop="mo_ta">
             <CustomInput
@@ -658,6 +734,18 @@ onMounted(async () => {
               maxlength="5000"
               show-word-limit
               placeholder="Mô tả ngành (nếu có)"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="24">
+          <CustomFormItem label="Chi tiết" prop="chi_tiet">
+            <CustomInput
+              v-model="form.chi_tiet"
+              type="textarea"
+              :rows="4"
+              maxlength="10000"
+              show-word-limit
+              placeholder="Chi tiết ngành (nếu có)"
             />
           </CustomFormItem>
         </CustomCol>

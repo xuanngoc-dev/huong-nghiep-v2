@@ -14,7 +14,7 @@ import anhS from '@/assets/guest/holland/s.svg'
 import BuocLamBai from './BuocLamBai.vue'
 
 const ANH_NHOM = { R: anhR, I: anhI, A: anhA, S: anhS, E: anhE, C: anhC }
-const SO_NGANH_NOI_BAT = 5
+const SO_NGANH_HIEN = 4
 
 defineOptions({ name: 'ThptNganhPhuHop' })
 
@@ -25,6 +25,7 @@ const dangTai = ref(false)
 const loi = ref('')
 const duLieu = ref(null)
 const maDangXem = ref('')
+const nhomDaMo = ref({})
 const bang = ref(null)
 const biCat = ref({})
 const theMoTa = new Map()
@@ -61,18 +62,26 @@ const nhomNganhHienThi = computed(() => {
   }
   return [...groups.values()].map((group) => ({
     ...group,
-    nganh: [...group.nganh]
-      .sort((a, b) => {
-        const uuA = a.ma_holand?.[0] === ma ? 0 : 1
-        const uuB = b.ma_holand?.[0] === ma ? 0 : 1
-        return uuA - uuB || a.ten_nganh.localeCompare(b.ten_nganh, 'vi')
-      })
-      .slice(0, SO_NGANH_NOI_BAT),
+    nganh: [...group.nganh].sort((a, b) => {
+      const uuA = a.ma_holand?.[0] === ma ? 0 : 1
+      const uuB = b.ma_holand?.[0] === ma ? 0 : 1
+      return uuA - uuB || a.ten_nganh.localeCompare(b.ten_nganh, 'vi')
+    }),
   }))
 })
 
+function nganhDangXem(nhom) {
+  if (nhomDaMo.value[nhom.ma]) return nhom.nganh
+  return nhom.nganh.slice(0, SO_NGANH_HIEN)
+}
+
+function doiMoNhom(ma) {
+  nhomDaMo.value = { ...nhomDaMo.value, [ma]: !nhomDaMo.value[ma] }
+}
+
 function xemNganh(ma) {
   maDangXem.value = ma
+  nhomDaMo.value = {}
 }
 
 function ganMoTa(ma, el) {
@@ -91,6 +100,7 @@ function doMoTa() {
 async function taiNganh(value) {
   duLieu.value = null
   maDangXem.value = ''
+  nhomDaMo.value = {}
   loi.value = ''
   if (!value) {
     loi.value = 'Không có mã phiên khảo sát.'
@@ -255,10 +265,50 @@ onBeforeUnmount(() => {
           <ul v-else class="major-list">
             <li v-for="nhom in nhomNganhHienThi" :key="nhom.ma" class="card major-card">
               <div class="card-body">
-                <h3 class="major-card__title">{{ nhom.ten }}</h3>
+                <div class="major-card__title">
+                  <h3>
+                    {{ nhom.ten }}
+                    <el-tooltip
+                      :content="`Nhóm này có ${nhom.nganh.length} ngành`"
+                      placement="top"
+                      :show-after="200"
+                    >
+                      <span class="major-card__count">[{{ nhom.nganh.length }}]</span>
+                    </el-tooltip>
+                  </h3>
+                  <el-icon
+                    v-if="nhom.nganh.length > SO_NGANH_HIEN"
+                    class="major-card__more"
+                    :size="22"
+                    role="button"
+                    tabindex="0"
+                    :aria-expanded="!!nhomDaMo[nhom.ma]"
+                    :aria-label="
+                      nhomDaMo[nhom.ma]
+                        ? 'Thu gọn'
+                        : `Xem thêm ${nhom.nganh.length - SO_NGANH_HIEN} ngành`
+                    "
+                    @click="doiMoNhom(nhom.ma)"
+                    @keydown.enter.prevent="doiMoNhom(nhom.ma)"
+                    @keydown.space.prevent="doiMoNhom(nhom.ma)"
+                  >
+                    <ArrowUp v-if="nhomDaMo[nhom.ma]" />
+                    <ArrowDown v-else />
+                  </el-icon>
+                </div>
                 <div class="row g-2">
-                  <div v-for="nganh in nhom.nganh" :key="nganh.ma_nganh" class="col-12 col-md-3">
-                    <CardMajor :ten="nganh.ten_nganh" :ma="nganh.ma_nganh" />
+                  <div
+                    v-for="nganh in nganhDangXem(nhom)"
+                    :key="nganh.ma_nganh"
+                    class="col-12 col-md-6 col-lg-3"
+                  >
+                    <CardMajor
+                      :ten="nganh.ten_nganh"
+                      :mo-ta="nganh.mo_ta || ''"
+                      :muc-luong="nganh.muc_luong_tham_khao || ''"
+                      :thoi-gian="nganh.thoi_gian_dao_tao || ''"
+                      :hinh-anh="nganh.hinh_anh_mo_ta || ''"
+                    />
                   </div>
                 </div>
               </div>
@@ -436,16 +486,41 @@ onBeforeUnmount(() => {
 
 .major-card {
   margin: 0;
-  border-color: #e3ebe6;
-  background: #f6faf7;
+  border-color: #b7d0c2;
+  background: #e5f2ea;
   box-shadow: 0 8px 22px rgba(28, 43, 35, 0.08);
 }
 
 .major-card__title {
-  margin: 0 0 10px;
-  color: #243044;
-  font-size: 1rem;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+}
+
+.major-card__title h3 {
+  margin: 0;
+  color: #0c5c34;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.major-card__count {
+  margin-left: 6px;
+  cursor: help;
+  font-weight: 700;
+}
+
+.major-card__more {
+  flex: 0 0 auto;
+  color: #0c5c34;
+  cursor: pointer;
+}
+
+.major-card__more:hover {
+  color: #084422;
 }
 
 .major-nav {
