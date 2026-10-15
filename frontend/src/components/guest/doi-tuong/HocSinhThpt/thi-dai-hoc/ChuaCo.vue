@@ -1,7 +1,9 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
+import { batDauPhienHolland } from '@/api/phienKhaoSat'
 import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
 
@@ -12,6 +14,7 @@ const auth = useAuthStore()
 const route = useRoute()
 const router = useRouter()
 const currentStage = computed(() => route.meta.giaiDoan || '')
+const dangTaoPhien = ref(false)
 
 const pathSteps = [
   { label: 'Bắt đầu', current: true },
@@ -54,8 +57,24 @@ function chonGiaiDoan(stage) {
   if (!name) router.push({ name: 'thpt-thi-dai-hoc' })
 }
 
-function batDauHolland() {
-  router.push({ name: 'danh-gia' })
+async function batDauHolland() {
+  if (dangTaoPhien.value) return
+  dangTaoPhien.value = true
+  try {
+    const phien = await batDauPhienHolland()
+    router.push({
+      name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
+      params: { ssid: phien.ssid, loaiCauHoiId: phien.loai_cau_hoi_id },
+    })
+  } catch (error) {
+    const status = error.response?.status
+    const detail = error.response?.data?.detail
+    if (status === 400) {
+      ElMessage.error(typeof detail === 'string' ? detail : 'Không tạo được phiên khảo sát.')
+    }
+  } finally {
+    dangTaoPhien.value = false
+  }
 }
 </script>
 
@@ -146,7 +165,7 @@ function batDauHolland() {
               >
                 Cập nhật thông tin cá nhân
               </RouterLink>
-              <button type="button" class="btn btn-success" @click="batDauHolland">
+              <button type="button" class="btn btn-success" :disabled="dangTaoPhien" @click="batDauHolland">
                 Bắt đầu trắc nghiệm Holland
               </button>
               <RouterLink v-if="!auth.isAuthenticated" class="btn btn-outline-success" :to="{ name: 'register' }">

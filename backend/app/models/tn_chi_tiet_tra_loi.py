@@ -33,12 +33,12 @@ class TnChiTietTraLoi(Base):
         nullable=False,
         index=True,
     )
-    cau_tra_loi_id: Mapped[int] = mapped_column(
+    # Để trống khi mới gán câu hỏi cho phiên, điền khi người khảo sát trả lời.
+    cau_tra_loi_id: Mapped[int | None] = mapped_column(
         ForeignKey("tn_cau_tra_loi.id", ondelete="RESTRICT"),
-        nullable=False,
         index=True,
     )
-    diem_dat_duoc: Mapped[int] = mapped_column(Integer, nullable=False)
+    diem_dat_duoc: Mapped[int | None] = mapped_column(Integer)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, server_default=func.now()
     )

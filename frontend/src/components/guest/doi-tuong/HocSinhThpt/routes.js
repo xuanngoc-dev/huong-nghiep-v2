@@ -24,6 +24,26 @@ export const dinhHuongThptRoutes = [
     meta: { title: 'Thi Đại học & cao đẳng', public: true, dinhHuong: 'thi-dai-hoc' },
   },
   {
+    path: 'hoc-sinh-thpt/thi-dai-hoc/lam-trac-nghiem/:ssid/ket-qua',
+    name: 'thpt-thi-dai-hoc-ket-qua',
+    component: () => import('./thi-dai-hoc/lam-trac-nghiem/KetQua.vue'),
+    meta: {
+      title: 'Kết quả trắc nghiệm Holland',
+      public: true,
+      dinhHuong: 'thi-dai-hoc',
+    },
+  },
+  {
+    path: 'hoc-sinh-thpt/thi-dai-hoc/lam-trac-nghiem/:ssid/:loaiCauHoiId(\\d+)',
+    name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
+    component: () => import('./thi-dai-hoc/lam-trac-nghiem/LamBai.vue'),
+    meta: {
+      title: 'Làm trắc nghiệm Holland',
+      public: true,
+      dinhHuong: 'thi-dai-hoc',
+    },
+  },
+  {
     path: 'hoc-sinh-thpt/thi-dai-hoc/chua-co',
     name: 'thpt-thi-dai-hoc-chua-co',
     component: () => import('./thi-dai-hoc/ChuaCo.vue'),

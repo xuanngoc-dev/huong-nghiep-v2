@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    BuocLamBai: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/BuocLamBai.vue')['default']
     CauHoiThuongGap: typeof import('./components/guest/chung/CauHoiThuongGap.vue')['default']
     Chatbot: typeof import('./components/guest/chung/Chatbot.vue')['default']
     ChatMarkdown: typeof import('./components/guest/chung/ChatMarkdown.vue')['default']
@@ -94,7 +95,9 @@ declare module 'vue' {
     HoTroDinhHuong: typeof import('./components/guest/chung/HoTroDinhHuong.vue')['default']
     HoTroNhanh: typeof import('./components/guest/chung/HoTroNhanh.vue')['default']
     JsonImportDialogFooter: typeof import('./components/admin/JsonImportDialogFooter.vue')['default']
+    KetQua: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/KetQua.vue')['default']
     KhoiNghiep: typeof import('./components/guest/doi-tuong/HocSinhThpt/KhoiNghiep.vue')['default']
+    LamBai: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/LamBai.vue')['default']
     LenDauTrang: typeof import('./components/guest/chung/LenDauTrang.vue')['default']
     MoneyInput: typeof import('./components/element/MoneyInput.vue')['default']
     NhaTruong: typeof import('./components/guest/doi-tuong/NhaTruong.vue')['default']
