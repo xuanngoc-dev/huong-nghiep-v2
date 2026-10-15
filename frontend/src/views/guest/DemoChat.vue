@@ -21,6 +21,6 @@ defineOptions({ name: 'DemoChat' })
 </template>
 
 <style scoped>
-.demo-chat__shell { height: min(850px, calc(100dvh - 180px)); min-height: 480px; display: flex; flex-direction: column; }
-@media (max-width: 600px) { .demo-chat__shell { height: calc(100dvh - 130px); min-height: 400px; } }
+.demo-chat { width: 100%; height: 100%; min-height: 0; }
+.demo-chat__shell { width: 100%; height: 100%; max-width: none; min-height: 0; display: flex; flex-direction: column; }
 </style>

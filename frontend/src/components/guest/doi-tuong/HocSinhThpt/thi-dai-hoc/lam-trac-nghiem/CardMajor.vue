@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import anhMacDinh from '@/assets/guest/sinh-vien.jpg'
 
 defineOptions({ name: 'CardMajor' })
@@ -10,9 +10,13 @@ const props = defineProps({
   mucLuong: { type: String, default: '' },
   thoiGian: { type: String, default: '' },
   hinhAnh: { type: String, default: '' },
+  chon: { type: Boolean, default: false },
 })
 
+const emit = defineEmits(['chon'])
+
 const anhLoi = ref(false)
+const oChon = ref(null)
 
 watch(
   () => props.hinhAnh,
@@ -23,15 +27,38 @@ watch(
 
 const anh = computed(() => (props.hinhAnh && !anhLoi.value ? props.hinhAnh : anhMacDinh))
 
+function dongBoChon() {
+  if (oChon.value) oChon.value.checked = props.chon
+}
+
+function khiChon() {
+  emit('chon')
+  nextTick(dongBoChon)
+}
+
 function khiAnhLoi() {
   anhLoi.value = true
 }
+
+watch(() => props.chon, () => nextTick(dongBoChon))
 </script>
 
 <template>
-  <article class="card-major h-100">
+  <article class="card-major h-100" :class="{ 'is-selected': chon }">
     <div class="card-major__body">
-      <h4 class="card-major__name">{{ ten }}</h4>
+      <div class="card-major__heading">
+        <label class="card-major__check">
+          <input
+            ref="oChon"
+            type="checkbox"
+            :checked="chon"
+            :aria-label="`Chọn so sánh ${ten}`"
+            @change="khiChon"
+          />
+          <span class="card-major__mark" aria-hidden="true"></span>
+        </label>
+        <h4 class="card-major__name">{{ ten }}</h4>
+      </div>
       <p class="card-major__desc">{{ moTa || 'Chưa có mô tả.' }}</p>
       <dl class="card-major__facts">
         <div class="card-major__fact">
@@ -66,9 +93,61 @@ function khiAnhLoi() {
   box-shadow: 0 6px 16px rgba(28, 43, 35, 0.07);
 }
 
+.card-major.is-selected {
+  border-color: #0c5c34;
+  box-shadow: 0 0 0 2px #0c5c34;
+}
+
 .card-major__body {
   flex: 1;
   min-width: 0;
+}
+
+.card-major__heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.card-major__check {
+  position: relative;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.card-major__check input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.card-major__mark {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #0c5c34;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.card-major.is-selected .card-major__mark {
+  background: #0c5c34;
+}
+
+.card-major.is-selected .card-major__mark::after {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 9px;
+  margin: 1px 0 0 5px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 .card-major__name {

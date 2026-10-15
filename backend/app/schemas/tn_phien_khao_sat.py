@@ -60,6 +60,7 @@ class TnPhienNganhPhuHopItem(BaseModel):
     muc_luong_tham_khao: str | None = None
     thoi_gian_dao_tao: str | None = None
     hinh_anh_mo_ta: str | None = None
+    chi_tiet: str | None = None
 
 
 class TnPhienNganhPhuHopPublic(BaseModel):

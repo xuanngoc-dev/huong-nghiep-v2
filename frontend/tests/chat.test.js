@@ -161,6 +161,18 @@ test('SSE propagates server errors without marking partial output done', async (
   await assert.rejects(readChatStream(response, () => {}), /Hết hạn mức/)
 })
 
+test('math commands render as readable symbols instead of command names', async () => {
+  const html = await renderToString(h('div', renderMarkdown('$\\mathbf{F} = m \\times a$, $\\alpha \\le \\frac{1}{2}$, $\\sqrt{x}$, $\\text{kg}$')))
+  assert.match(html, /𝐅/)
+  assert.match(html, /×/)
+  assert.match(html, /α/)
+  assert.match(html, /≤/)
+  assert.match(html, /\(1\) \/ \(2\)/)
+  assert.match(html, /√\(x\)/)
+  assert.match(html, /kg/)
+  assert.doesNotMatch(html, /mathbf|alpha|leq|frac|sqrt|text/)
+})
+
 test('Markdown renders tables and keeps HTML and javascript inert', async () => {
   const html = await renderToString(h('div', renderMarkdown('**Đậm**\n\n| Ngành | Điểm |\n| --- | --- |\n| Marketing | 20 |\n\n<script>alert(1)</script>\n[Nguy hiểm](javascript:alert)\n[Đề án](https://example.com)')))
   assert.match(html, /<strong>Đậm<\/strong>/)

@@ -15,6 +15,18 @@ import BuocLamBai from './BuocLamBai.vue'
 
 const ANH_NHOM = { R: anhR, I: anhI, A: anhA, S: anhS, E: anhE, C: anhC }
 const SO_NGANH_HIEN = 4
+const SO_SANH_TOI_DA = 3
+const TIEU_CHI_SO_SANH = [
+  { id: 'mo_ta', ten: 'Mô tả/ngành học' },
+  { id: 'ky_nang_phu_hop', ten: 'Kỹ năng phù hợp' },
+  { id: 'mon_hoc_tieu_bieu', ten: 'Môn học tiêu biểu' },
+  { id: 'co_hoi_nghe_nghiep', ten: 'Cơ hội nghề nghiệp' },
+  { id: 'muc_luong', ten: 'Mức lương (tham khảo)' },
+  { id: 'cong_cu', ten: 'Công cụ thường dùng' },
+  { id: 'do_phu_hop', ten: 'Độ phù hợp với bản thân' },
+  { id: 'diem_can_nhac', ten: 'Điểm cân nhắc' },
+  { id: 'truong_dao_tao', ten: 'Các trường đào tạo' },
+]
 
 defineOptions({ name: 'ThptNganhPhuHop' })
 
@@ -26,6 +38,9 @@ const loi = ref('')
 const duLieu = ref(null)
 const maDangXem = ref('')
 const nhomDaMo = ref({})
+const nganhDaChon = ref({})
+const soSanhMo = ref(false)
+const nganhSoSanh = ref([])
 const bang = ref(null)
 const biCat = ref({})
 const theMoTa = new Map()
@@ -79,9 +94,79 @@ function doiMoNhom(ma) {
   nhomDaMo.value = { ...nhomDaMo.value, [ma]: !nhomDaMo.value[ma] }
 }
 
+function maNganhDaChon(nhom) {
+  return nganhDaChon.value[nhom.ma] || []
+}
+
+function daChonNganh(nhom, nganh) {
+  return maNganhDaChon(nhom).includes(nganh.ma_nganh)
+}
+
+function chonNganh(nhom, nganh) {
+  const daChon = [...maNganhDaChon(nhom)]
+  const index = daChon.indexOf(nganh.ma_nganh)
+  if (index >= 0) {
+    daChon.splice(index, 1)
+  } else if (daChon.length >= SO_SANH_TOI_DA) {
+    ElMessage.warning('Chỉ so sánh tối đa 3 ngành.')
+    return
+  } else {
+    daChon.push(nganh.ma_nganh)
+  }
+  nganhDaChon.value = { ...nganhDaChon.value, [nhom.ma]: daChon }
+}
+
+function moSoSanh(nhom) {
+  const ma = maNganhDaChon(nhom)
+  if (ma.length < 2) {
+    ElMessage.warning('Hãy chọn từ 2 đến 3 ngành để so sánh.')
+    return
+  }
+  nganhSoSanh.value = ma
+    .map((code) => nhom.nganh.find((item) => item.ma_nganh === code))
+    .filter(Boolean)
+  soSanhMo.value = true
+}
+
+function noiChiTiet(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean).join('\n')
+  }
+  if (value == null) return ''
+  return String(value).trim()
+}
+
+function chiTietNganh(nganh) {
+  const text = String(nganh.chi_tiet || '').trim()
+  if (!text.startsWith('{')) return {}
+  try {
+    const data = JSON.parse(text)
+    return data && typeof data === 'object' && !Array.isArray(data) ? data : {}
+  } catch {
+    return {}
+  }
+}
+
+function doPhuHop(nganh) {
+  const khop = nhomTheoDiem.value.filter(
+    (nhom) => nhom.diem > 0 && nganh.ma_holand?.includes(nhom.ma_nhom),
+  )
+  if (!khop.length) return ''
+  return khop.map((nhom) => `${nhom.ma_nhom} · ${nhom.ten_nhom} (${nhom.diem} điểm)`).join('\n')
+}
+
+function giaTriTieuChi(nganh, id) {
+  const chiTiet = chiTietNganh(nganh)
+  if (id === 'mo_ta') return nganh.mo_ta || noiChiTiet(chiTiet.mo_ta) || '—'
+  if (id === 'muc_luong') return nganh.muc_luong_tham_khao || noiChiTiet(chiTiet.muc_luong_tham_khao) || '—'
+  if (id === 'do_phu_hop') return noiChiTiet(chiTiet.do_phu_hop) || doPhuHop(nganh) || '—'
+  return noiChiTiet(chiTiet[id]) || '—'
+}
+
 function xemNganh(ma) {
   maDangXem.value = ma
   nhomDaMo.value = {}
+  nganhDaChon.value = {}
 }
 
 function ganMoTa(ma, el) {
@@ -101,6 +186,9 @@ async function taiNganh(value) {
   duLieu.value = null
   maDangXem.value = ''
   nhomDaMo.value = {}
+  nganhDaChon.value = {}
+  soSanhMo.value = false
+  nganhSoSanh.value = []
   loi.value = ''
   if (!value) {
     loi.value = 'Không có mã phiên khảo sát.'
@@ -276,6 +364,11 @@ onBeforeUnmount(() => {
                       <span class="major-card__count">[{{ nhom.nganh.length }}]</span>
                     </el-tooltip>
                   </h3>
+                  <div class="major-card__tools">
+                    <button type="button" class="major-card__compare" @click="moSoSanh(nhom)">
+                      So sánh
+                      <span v-if="maNganhDaChon(nhom).length">({{ maNganhDaChon(nhom).length }}/3)</span>
+                    </button>
                   <el-icon
                     v-if="nhom.nganh.length > SO_NGANH_HIEN"
                     class="major-card__more"
@@ -295,6 +388,7 @@ onBeforeUnmount(() => {
                     <ArrowUp v-if="nhomDaMo[nhom.ma]" />
                     <ArrowDown v-else />
                   </el-icon>
+                  </div>
                 </div>
                 <div class="row g-2">
                   <div
@@ -308,12 +402,41 @@ onBeforeUnmount(() => {
                       :muc-luong="nganh.muc_luong_tham_khao || ''"
                       :thoi-gian="nganh.thoi_gian_dao_tao || ''"
                       :hinh-anh="nganh.hinh_anh_mo_ta || ''"
+                      :chon="daChonNganh(nhom, nganh)"
+                      @chon="chonNganh(nhom, nganh)"
                     />
                   </div>
                 </div>
               </div>
             </li>
           </ul>
+
+          <el-dialog
+            v-model="soSanhMo"
+            title="So sánh ngành"
+            width="min(1100px, 94vw)"
+            append-to-body
+            class="major-compare-dialog"
+          >
+            <div class="compare-wrap">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Tiêu chí</th>
+                    <th v-for="nganh in nganhSoSanh" :key="nganh.ma_nganh">{{ nganh.ten_nganh }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="tieuChi in TIEU_CHI_SO_SANH" :key="tieuChi.id">
+                    <th>{{ tieuChi.ten }}</th>
+                    <td v-for="nganh in nganhSoSanh" :key="nganh.ma_nganh">
+                      {{ giaTriTieuChi(nganh, tieuChi.id) }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </el-dialog>
 
           <div class="major-nav d-flex flex-wrap justify-content-between gap-2">
             <button type="button" class="btn btn-outline-success" :disabled="!buocTruoc" @click="lui">
@@ -513,6 +636,29 @@ onBeforeUnmount(() => {
   font-weight: 700;
 }
 
+.major-card__tools {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.major-card__compare {
+  padding: 4px 12px;
+  border: 1px solid #0c5c34;
+  border-radius: 8px;
+  background: #fff;
+  color: #0c5c34;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.major-card__compare:hover {
+  background: #0c5c34;
+  color: #fff;
+}
+
 .major-card__more {
   flex: 0 0 auto;
   color: #0c5c34;
@@ -532,5 +678,44 @@ onBeforeUnmount(() => {
 .profile-desc-tip {
   max-width: 360px;
   line-height: 1.45;
+}
+
+.compare-wrap {
+  overflow-x: auto;
+}
+
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #121a28;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.compare-table th,
+.compare-table td {
+  padding: 10px 12px;
+  border: 1px solid #c5d5cc;
+  vertical-align: top;
+  white-space: pre-line;
+}
+
+.compare-table thead th {
+  background: #0c5c34;
+  color: #fff;
+  font-weight: 600;
+}
+
+.compare-table tbody th {
+  width: 180px;
+  background: #e5f2ea;
+  color: #0c5c34;
+  font-weight: 700;
+  text-align: left;
+}
+
+.compare-table td {
+  background: #fff;
+  min-width: 180px;
 }
 </style>

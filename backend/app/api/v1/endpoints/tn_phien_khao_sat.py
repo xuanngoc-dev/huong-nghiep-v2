@@ -339,6 +339,7 @@ def lay_nganh_phu_hop(ssid: str, db: Session = Depends(get_db)) -> TnPhienNganhP
                     nganh.muc_luong_tham_khao,
                     nganh.thoi_gian_dao_tao,
                     nganh.hinh_anh_mo_ta,
+                    nganh.chi_tiet,
                 )
             )
         hang.sort(key=lambda item: (-item[0], item[1]))
@@ -360,6 +361,7 @@ def lay_nganh_phu_hop(ssid: str, db: Session = Depends(get_db)) -> TnPhienNganhP
                 muc_luong_tham_khao=muc_luong,
                 thoi_gian_dao_tao=thoi_gian,
                 hinh_anh_mo_ta=hinh_anh,
+                chi_tiet=chi_tiet,
             )
             for (
                 _,
@@ -372,6 +374,7 @@ def lay_nganh_phu_hop(ssid: str, db: Session = Depends(get_db)) -> TnPhienNganhP
                 muc_luong,
                 thoi_gian,
                 hinh_anh,
+                chi_tiet,
             ) in hang
         ],
     )

@@ -1366,35 +1366,41 @@
 }
 
 .guest-layout:has(.demo-chat) {
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
+}
+
+.guest-layout:has(.demo-chat) footer {
+  display: none;
 }
 
 .guest-layout:has(.demo-chat) main {
   display: flex;
+  flex: 1 1 auto;
+  width: 100%;
   min-height: 0;
 }
 
 .guest-layout .demo-chat {
   display: flex;
   flex: 1;
-  justify-content: center;
+  width: 100%;
   min-height: 0;
-  padding: 16px;
-  background: #f4f7f5;
+  padding: 0;
+  background: #fff;
 }
 
 .guest-layout .demo-chat__shell {
   display: flex;
-  flex: 0 1 920px;
+  flex: 1 1 auto;
   flex-direction: column;
   width: 100%;
-  max-width: 920px;
+  max-width: none;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  border: 1px solid rgba(var(--guest-primary-rgb), 0.28);
-  border-radius: var(--guest-radius);
+  border: 0;
+  border-radius: 0;
   background: #fff;
 }
 
@@ -1701,15 +1707,6 @@
 }
 
 @media (max-width: 767px) {
-  .guest-layout .demo-chat {
-    padding: 0;
-  }
-
-  .guest-layout .demo-chat__shell {
-    border: 0;
-    border-radius: 0;
-  }
-
   .guest-layout .demo-chat__row {
     max-width: 90%;
   }
