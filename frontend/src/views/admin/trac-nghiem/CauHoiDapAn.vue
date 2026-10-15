@@ -83,6 +83,12 @@ function hollandLabel(item) {
   return `${item.ma_nhom} · ${item.ten_nhom}${suffix}`
 }
 
+function hollandListLabel(code) {
+  const item = hollandOptions.value.find((option) => option.ma_nhom === code)
+  if (!item?.ten_nhom) return code ? `[${code}]` : '—'
+  return `[${item.ma_nhom}] - ${item.ten_nhom}`
+}
+
 function loaiLabel(item) {
   const suffix = item.trang_thai === 1 ? '' : ' — ngừng sử dụng'
   return `${item.ten_loai_cau_hoi}${suffix}`
@@ -703,7 +709,9 @@ onMounted(async () => {
         <CustomTableColumn label="STT" width="72" align="center">
           <template #default="{ $index }">{{ rowIndex($index) }}</template>
         </CustomTableColumn>
-        <CustomTableColumn prop="ma_holand" label="Holland" width="110" />
+        <CustomTableColumn label="Holland" min-width="180">
+          <template #default="{ row }">{{ hollandListLabel(row.ma_holand) }}</template>
+        </CustomTableColumn>
         <CustomTableColumn prop="ten_loai_cau_hoi" label="Loại câu hỏi" min-width="160" />
         <CustomTableColumn prop="noi_dung_cau_hoi" label="Nội dung câu hỏi" min-width="280" />
         <CustomTableColumn label="Trạng thái" width="150" align="center">
