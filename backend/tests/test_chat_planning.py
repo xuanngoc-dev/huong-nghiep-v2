@@ -74,6 +74,40 @@ class DynamicLookupTests(CorpusFixture, unittest.TestCase):
         result = lookup.search("học bổng vận động viên", plan=KeHoachTraCuu(khong_can_tra_cuu=True))
         self.assertEqual(result.files, ["guide.txt"])
 
+    def test_international_certificate_and_sat_matching(self):
+        cert_method = {
+            "ma_phuong_thuc": "415",
+            "ten_phuong_thuc": "Xét tuyển tài năng theo chứng chỉ quốc tế SAT/ACT/A-Level/AP/IB",
+            "loai_phuong_thuc": "ChungChiQuocTe",
+            "diem_chuan": 85.0,
+            "thang_diem": 100,
+            "cong_thuc_tinh_diem": {"SAT": "(SAT+thuong)/16", "ACT": "(ACT+thuong)/36"},
+            "dieu_kien_phu": [
+                {"loai": "CHUNG_CHI_QUOC_TE", "gia_tri": ["SAT", "ACT", "A-Level", "AP", "IB"]}
+            ]
+        }
+        prog = program("Khoa học Máy tính", score=85)
+        prog["phuong_thuc_tuyen_sinh"] = [cert_method]
+        self.write("alpha.json", "AAA", "Đại học Alpha Hà Nội", [prog])
+
+        # Match by SAT
+        sat_result = lookup.search("SAT", plan=KeHoachTraCuu(ma_truong=["AAA"], phuong_thuc=["SAT"]))
+        self.assertTrue(sat_result.context)
+        sat_data = json.loads(sat_result.context)
+        self.assertEqual(sat_data["tong_chuong_trinh"], 1)
+        self.assertIn("cong_thuc_tinh_diem", sat_data["ket_qua"][0]["chuong_trinh"][0]["phuong_thuc_tuyen_sinh"][0])
+
+        # Match by Vietnamese method name
+        vn_result = lookup.search("Chứng chỉ quốc tế", plan=KeHoachTraCuu(ma_truong=["AAA"], phuong_thuc=["Chứng chỉ quốc tế"]))
+        self.assertTrue(vn_result.context)
+        vn_data = json.loads(vn_result.context)
+        self.assertEqual(vn_data["tong_chuong_trinh"], 1)
+
+        # Match by PascalCase
+        pascal_result = lookup.search("ChungChiQuocTe", plan=KeHoachTraCuu(ma_truong=["AAA"], phuong_thuc=["ChungChiQuocTe"]))
+        self.assertTrue(pascal_result.context)
+
+
 
 class PlannerFlowTests(CorpusFixture, unittest.IsolatedAsyncioTestCase):
     def setUp(self):

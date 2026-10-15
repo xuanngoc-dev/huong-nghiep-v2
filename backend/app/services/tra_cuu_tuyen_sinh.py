@@ -24,7 +24,9 @@ FILE_WORDS = STOP | LOCATIONS | set("bach khoa thuy loi xay dung cong nghiep su 
 
 @lru_cache(maxsize=4096)
 def normalize(text: str) -> str:
-    value = unicodedata.normalize("NFD", str(text).lower().replace("đ", "d"))
+    s = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1 \2", str(text))
+    s = re.sub(r"([a-z])([A-Z])", r"\1 \2", s)
+    value = unicodedata.normalize("NFD", s.lower().replace("đ", "d"))
     value = "".join(c for c in value if unicodedata.category(c) != "Mn")
     value = re.sub(r"tp[.\s]*hcm|tphcm", "ho chi minh", value)
     value = re.sub(r"\bcntt\b", "cong nghe thong tin", value)
@@ -39,6 +41,37 @@ def normalize(text: str) -> str:
 
 def contains(text: str, phrase: str) -> bool:
     return bool(phrase) and f" {phrase} " in f" {text} "
+
+
+def _method_matches(method: dict, filters: set[str]) -> bool:
+    if not filters:
+        return True
+    exact_terms = {normalize(str(method.get(k) or "")) for k in ("ma_phuong_thuc", "loai_phuong_thuc")} - {""}
+    ten_method = normalize(str(method.get("ten_phuong_thuc") or ""))
+    loai_method = normalize(str(method.get("loai_phuong_thuc") or ""))
+    extra_terms = set()
+    if isinstance(method.get("cong_thuc_tinh_diem"), dict):
+        extra_terms.update(normalize(str(k)) for k in method["cong_thuc_tinh_diem"].keys())
+    for cond in method.get("dieu_kien_phu") or []:
+        if isinstance(cond, dict):
+            cond_type = str(cond.get("loai") or "")
+            if any(k in cond_type for k in ("CHUNG_CHI", "DANH_GIA_TU_DUY", "DANH_GIA_NANG_LUC", "KY_THI", "THANH_TICH")):
+                val = cond.get("gia_tri")
+                if isinstance(val, list):
+                    extra_terms.update(normalize(str(x)) for x in val)
+                elif isinstance(val, str):
+                    extra_terms.add(normalize(val))
+            if cond.get("nguon_diem") and str(cond.get("nguon_diem")).upper() not in {"HOC_BA", "THI_THPT"}:
+                extra_terms.add(normalize(str(cond["nguon_diem"])))
+
+    for f in filters:
+        if f in exact_terms:
+            return True
+        if contains(ten_method, f) or contains(loai_method, f) or (ten_method and f == ten_method):
+            return True
+        if f in extra_terms or any(contains(term, f) for term in extra_terms):
+            return True
+    return False
 
 
 def valid_admission_data(data: dict) -> bool:
@@ -337,6 +370,7 @@ def _planned_search(plan: KeHoachTraCuu, docs: list[Document]) -> SearchResult:
     candidates, ranks = [], []
     combinations = set(plan.to_hop)
     method_filters = {normalize(m) for m in plan.phuong_thuc}
+    detailed = plan.che_do == "chi_tiet" or any(f in {"sat", "act", "ielts", "tsa", "hsa", "alevel", "a level", "ap", "ib", "toefl"} for f in method_filters)
     comparing = any(v is not None for v in (plan.diem_tu, plan.diem_den, plan.diem_muc_tieu))
     for doc in docs:
         school = doc.data["truong"]
@@ -346,7 +380,7 @@ def _planned_search(plan: KeHoachTraCuu, docs: list[Document]) -> SearchResult:
             continue
         school_data = {k: school[k] for k in ("ten_truong", "ma_truong", "nam_tuyen_sinh") if k in school}
         school_data.update(school_location(school))
-        if plan.che_do == "chi_tiet":
+        if detailed:
             school_data.update({k: v for k, v in school.items() if k == "dieu_kien_chung" or "phi" in k})
         for record in doc.data["danh_sach_nganh"]:
             identity = normalize(" ".join(str(record.get(k) or "") for k in ("ma_nganh", "ma_xet_tuyen", "ten_nganh", "ten_chuong_trinh")))
@@ -354,7 +388,7 @@ def _planned_search(plan: KeHoachTraCuu, docs: list[Document]) -> SearchResult:
                 continue
             methods, cutoffs = [], []
             for method in record.get("phuong_thuc_tuyen_sinh", []):
-                if method_filters and not method_filters.intersection(normalize(str(method.get(k) or "")) for k in ("ma_phuong_thuc", "loai_phuong_thuc", "ten_phuong_thuc")):
+                if method_filters and not _method_matches(method, method_filters):
                     continue
                 if plan.thang_diem is not None and _number(method.get("thang_diem")) != plan.thang_diem:
                     continue
@@ -380,7 +414,7 @@ def _planned_search(plan: KeHoachTraCuu, docs: list[Document]) -> SearchResult:
             if not methods:
                 continue
             filtered = {**record, "phuong_thuc_tuyen_sinh": methods}
-            projected = _overview(filtered) if plan.che_do == "tong_quan" else deepcopy(filtered)
+            projected = deepcopy(filtered) if detailed else _overview(filtered)
             if plan.sap_xep == "gan_diem" and plan.diem_muc_tieu is not None:
                 rank = min((abs(p - plan.diem_muc_tieu) for p in cutoffs), default=math.inf)
             elif plan.sap_xep == "diem_tang":
@@ -399,11 +433,11 @@ def _planned_search(plan: KeHoachTraCuu, docs: list[Document]) -> SearchResult:
         record["thu_tu_tra_cuu"] = index
     return _pack_context(candidates, set(plan.thong_tin), plan.ngu_canh, len(candidates), {
         "bo_loc": plan.model_dump(exclude={"ngu_canh"}),
-        "chi_tiet_dieu_kien": plan.che_do == "chi_tiet",
+        "chi_tiet_dieu_kien": detailed,
         "cot_phuong_thuc_tom_tat": ["ma_phuong_thuc", "loai_hoac_ten", "thang_diem", "diem_chuan", "diem_san", "to_hop"],
         "cot_to_hop": ["ma_to_hop", "diem_chuan_rieng"],
         "quy_uoc": "Điểm chuẩn riêng của tổ hợp nếu có được ưu tiên hơn điểm chuẩn phương thức; null là thiếu dữ liệu. Tổng quan chưa bao gồm đầy đủ điều kiện và công thức tính điểm."},
-        budget=settings.chat_context_max_chars if plan.che_do == "tong_quan" else settings.chat_detail_context_max_chars)
+        budget=settings.chat_detail_context_max_chars if detailed else settings.chat_context_max_chars)
 
 
 def _pack_context(candidates: list, intents: set[str], scope: NguCanhChat, total: int,
