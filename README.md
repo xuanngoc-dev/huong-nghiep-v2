@@ -72,3 +72,38 @@ make install
 
 Tài liệu API: http://127.0.0.1:3060/docs  
 Frontend: http://localhost:5173
+
+## Chatbot tuyển sinh
+
+- Tra cứu theo trường/cơ sở, ngành/chương trình, tổ hợp, điểm, chỉ tiêu và điều kiện. Hỗ trợ câu hỏi không dấu, tên viết tắt và câu hỏi nối tiếp. Tên trường mơ hồ được hỏi lại.
+- AI đọc hội thoại, ngữ cảnh đã lưu và danh mục trường/cơ sở để lập kế hoạch tra cứu JSON. Backend kiểm tra schema/mã trường rồi thực hiện các bộ lọc và cách sắp xếp AI chọn. Không có khoảng điểm, danh sách phân miền, số lượng chương trình hay tỷ lệ nhóm nguyện vọng cố định trong code.
+- JSON được đọc vào bộ nhớ đệm; thêm/sửa/xóa tài liệu tự làm mới bộ đệm theo tên, kích thước và thời gian sửa. Truy vấn tổng quan dùng bảng gọn có đủ phương thức, thang điểm, điểm chuẩn, điểm sàn và tổ hợp; yêu cầu chi tiết lấy thêm điều kiện/công thức. Chỉ tính ghi chú/nguồn của bản ghi thực sự gửi, không cắt giữa bản ghi. Nếu vượt dung lượng, thông báo số bản ghi đã gửi và số khớp bộ lọc, không gọi toàn bộ kết quả là phù hợp với thí sinh.
+- `POST /api/v1/chat/hoi/stream` trả SSE với các sự kiện `meta`, `model`, `delta`, `done` hoặc `error`. `done` chứa câu trả lời và nguồn đầy đủ. Endpoint JSON `/chat/hoi` vẫn được hỗ trợ.
+- Hai giao diện dùng chung hội thoại và lưu tối đa 100 tin nhắn trong trình duyệt, theo tài khoản/khách. Ngữ cảnh trường/ngành/năm, điểm, tổ hợp, khu vực và tóm tắt sở thích do AI cập nhật được lưu riêng để tiếp tục tra cứu khi lượt ban đầu đã ra ngoài cửa sổ lịch sử. Dừng hoặc tạo hội thoại mới sẽ hủy yêu cầu đang chạy; phản hồi cũ không được thêm lại.
+- Nguồn hiển thị trường, năm tuyển sinh, thời gian cập nhật file dữ liệu và liên kết xem dữ liệu. Chỉ hiển thị liên kết đề án gốc khi có trường URL hợp lệ trong metadata (`url_nguon`, `nguon_url`, `url`, `link_de_an`). Thời gian sửa file không phải ngày ban hành đề án.
+- Quản lý tài liệu (`GET/POST/DELETE /tai-lieu`) yêu cầu tài khoản quản trị (`vai_tro=1`). Đọc nguồn tham khảo `/chat/nguon/{ten}` là công khai, chỉ cho phép JSON/TXT trong thư mục tài liệu.
+- API chỉ chấp nhận model đã cấu hình. Các biến `CHAT_*` trong `.env.example` điều chỉnh timeout, giới hạn lượt theo IP và số yêu cầu đồng thời. Hạn mức lưu trong bộ nhớ của **từng worker**; nếu triển khai nhiều worker/máy cần thay bộ giới hạn bằng kho dùng chung như Redis. Cấu hình reverse proxy phải chuyển tiếp đúng IP và không buffer SSE; timeout proxy nên lớn hơn timeout chat.
+- Middleware không ghi nội dung chat vào log và không gom các phần SSE trước khi trả cho trình duyệt. Log chat chỉ giữ model, số nguồn, thời gian và lượng token do nhà cung cấp báo về.
+
+Giới hạn chat mặc định:
+
+| Cấu hình | Mặc định | Mục đích |
+| --- | --- | --- |
+| `CHAT_CONTEXT_MAX_CHARS` | 60.000 ký tự JSON | Trần bản tổng quan gọn sau khi AI chọn bộ lọc/sắp xếp; không phải giới hạn token của model. |
+| `CHAT_DETAIL_CONTEXT_MAX_CHARS` | 100.000 ký tự JSON | Trần riêng cho điều kiện/công thức chi tiết; tăng khi cần giữ nhiều chương trình chi tiết hơn, theo dõi chi phí/độ trễ. |
+| `CHAT_PLANNING_TIMEOUT_SECONDS` | 20 giây | Trần cho bước AI lập kế hoạch, nằm trong timeout chung. Kế hoạch sai schema/hết thời gian chuyển sang tổng quan, không áp bộ lọc suy đoán. |
+| `CHAT_TIMEOUT_SECONDS` | 75 giây | Tổng thời gian lập kế hoạch và trả lời. |
+| Lịch sử gửi mỗi lần | 30 tin nhắn / 24.000 ký tự | Ngữ cảnh có cấu trúc lưu riêng, không cần tăng lịch sử để giữ điểm/sở thích. |
+| Câu trả lời | 4.096 token / 16.000 ký tự | Giữ câu trả lời chat gọn; danh sách tư vấn do AI tự chọn theo nhu cầu. |
+
+Một lượt có thể gọi model hai lần (lập kế hoạch và trả lời), có thêm chi phí/độ trễ so với một lần gọi. Log `planning_usage` riêng để theo dõi và điều chỉnh dung lượng theo thực tế. Không ghi prompt hay nội dung kế hoạch vào log.
+
+Kiểm thử không gọi API AI bên ngoài:
+
+```powershell
+cd backend
+python -B -m unittest discover -s tests -v
+cd ../frontend
+npm test
+npm run build
+```

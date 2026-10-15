@@ -6,7 +6,7 @@ from pathlib import Path
 from fastapi import HTTPException, status
 
 from app.core.config import settings
-from app.schemas.chat import TaiLieuItem
+from app.schemas.chat import TaiLieuItem, TinNhan
 
 ALLOWED_SUFFIXES = {".json", ".txt"}
 MAX_CONTEXT_CHARS = 100_000
@@ -111,12 +111,17 @@ def save_tai_lieu(filename: str, data: bytes) -> TaiLieuItem:
     path = resolve_inside(filename)
     if path.suffix.lower() == ".json":
         try:
-            json.loads(text)
+            parsed = json.loads(text)
         except json.JSONDecodeError as exc:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="File JSON không hợp lệ.",
             ) from exc
+        if isinstance(parsed, dict) and "truong" in parsed and "danh_sach_nganh" in parsed:
+            from app.services.tra_cuu_tuyen_sinh import valid_admission_data
+
+            if not valid_admission_data(parsed):
+                raise HTTPException(status_code=400, detail="Cấu trúc tuyển sinh không hợp lệ: kiểm tra trường, danh sách ngành, phương thức và tổ hợp.")
     elif "\x00" in text:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File không phải văn bản.")
 
@@ -137,189 +142,19 @@ def delete_tai_lieu(filename: str) -> None:
     path.unlink()
 
 
-def build_context(cau_hoi: str) -> tuple[str, list[str]]:
-    """Xây dựng ngữ cảnh từ tài liệu tuyển sinh (data_dh_json hoặc thư mục tai_lieu).
-    Hỗ trợ trích xuất thông minh cho dữ liệu JSON tuyển sinh 4 tầng (trường, ngành, phương thức, tổ hợp)
-    và trích xuất tổng quát cho file văn bản khác.
-    """
-    root = tai_lieu_root()
-    if not root.exists():
-        return "", []
+def build_context(cau_hoi: str, lich_su: list[TinNhan] | None = None) -> tuple[str, list[str]]:
+    from app.services.tra_cuu_tuyen_sinh import search
 
-    files = [
-        path
-        for path in root.iterdir()
-        if path.is_file() and not path.name.startswith(".") and path.suffix.lower() in ALLOWED_SUFFIXES
-    ]
-    if not files:
-        return "", []
-
-    q_lower = cau_hoi.lower()
-    q_tokens = _tokens(cau_hoi)
-
-    ranked: list[tuple[int, str, str]] = []
-
-    for path in files:
-        try:
-            text = path.read_text(encoding="utf-8", errors="replace").strip()
-        except OSError:
-            continue
-
-        if path.suffix.lower() == ".json":
-            score, piece = _process_admission_json(path, text, q_lower, q_tokens)
-            if piece:
-                ranked.append((score, path.name, piece))
-                continue
-
-        # File txt hoặc JSON thông thường
-        score = len(q_tokens & _tokens(text[:30_000]))
-        ranked.append((score, path.name, text))
-
-    ranked.sort(key=lambda item: (-item[0], item[1].lower()))
-
-    chunks: list[str] = []
-    used: list[str] = []
-    remaining = MAX_CONTEXT_CHARS
-
-    for score, name, text in ranked:
-        if remaining < 400:
-            break
-        # Nếu điểm bằng 0 khi đã có các file khớp tốt hơn thì bỏ qua
-        if score == 0 and len(used) >= 2:
-            break
-
-        piece = text
-        clipped = False
-        if len(piece) > min(MAX_FILE_CHARS, remaining):
-            piece = piece[: min(MAX_FILE_CHARS, remaining)].rstrip()
-            clipped = True
-        note = " (đã cắt bớt vì quá dài)" if clipped else ""
-        chunks.append(f"### {name}{note}\n{piece}")
-        used.append(name)
-        remaining -= len(piece)
-
-    return "\n\n".join(chunks), used
-
-
-def _process_admission_json(
-    path: Path, raw_text: str, q_lower: str, q_tokens: set[str]
-) -> tuple[int, str]:
-    """Phân tích dữ liệu JSON tuyển sinh đại học để trích xuất ngữ cảnh chính xác nhất."""
-    try:
-        data = json.loads(raw_text)
-    except json.JSONDecodeError:
-        return 0, raw_text[:MAX_FILE_CHARS]
-
-    if not (isinstance(data, dict) and "truong" in data and "danh_sach_nganh" in data):
-        # JSON thông thường
-        score = len(q_tokens & _tokens(raw_text[:30_000]))
-        return score, raw_text[:MAX_FILE_CHARS]
-
-    truong = data.get("truong", {})
-    ma_truong = str(truong.get("ma_truong", "")).strip().lower()
-    ten_truong = str(truong.get("ten_truong", "")).strip().lower()
-
-    uni_score = 0
-    # Khớp mã trường (vd: NEU, HUST, BKA, UTE, PTIT...)
-    if ma_truong and ma_truong in q_lower:
-        uni_score += 150
-
-    # Khớp từ khóa tên trường
-    school_words = [
-        w for w in re.findall(r"\w+", ten_truong)
-        if len(w) > 2 and w not in ("trường", "đại", "học", "thành", "phố", "tỉnh")
-    ]
-    overlap_school = [w for w in school_words if w in q_tokens]
-    if len(overlap_school) >= 2:
-        uni_score += 60 + len(overlap_school) * 15
-    elif len(overlap_school) == 1 and overlap_school[0] in ("neu", "hust", "ueh", "ptit", "ute", "hub"):
-        uni_score += 100
-
-    nganh_list = data.get("danh_sach_nganh", [])
-    matched_nganh: list[dict] = []
-
-    for ng in nganh_list:
-        ten_ng = str(ng.get("ten_nganh", "")).lower()
-        ma_ng = str(ng.get("ma_nganh", "")).lower()
-        ma_xt = str(ng.get("ma_xet_tuyen", "")).lower()
-
-        if ma_ng and ma_ng in q_lower:
-            matched_nganh.append(ng)
-            continue
-        if ma_xt and ma_xt in q_lower:
-            matched_nganh.append(ng)
-            continue
-        if len(ten_ng) > 3 and ten_ng in q_lower:
-            matched_nganh.append(ng)
-            continue
-
-        ng_words = [w for w in re.findall(r"\w+", ten_ng) if len(w) > 2 and w not in ("ngành", "chuyên", "nghiệp")]
-        if len(ng_words) >= 2:
-            ov = [w for w in ng_words if w in q_tokens]
-            if len(ov) >= len(ng_words) * 0.7:
-                matched_nganh.append(ng)
-
-    total_score = uni_score + len(matched_nganh) * 20
-
-    # Nếu không khớp trường và không khớp ngành nào, trả về điểm overlap thông thường
-    if total_score == 0:
-        base_score = len(q_tokens & _tokens(raw_text[:20_000]))
-        return base_score, ""
-
-    # Tạo đối tượng ngữ cảnh tối ưu
-    if matched_nganh:
-        # Giới hạn số ngành nếu trùng quá nhiều
-        selected_nganh = matched_nganh[:15]
-        context_dict = {
-            "truong": truong,
-            "nganh_phu_hop": selected_nganh,
-        }
-    else:
-        # Câu hỏi chung về trường: gửi thông tin trường + danh mục tất cả các ngành (tên, mã, chỉ tiêu)
-        summary_nganh = [
-            {
-                "ma_nganh": ng.get("ma_nganh"),
-                "ma_xet_tuyen": ng.get("ma_xet_tuyen"),
-                "ten_nganh": ng.get("ten_nganh"),
-                "chi_tieu_nganh": ng.get("chi_tieu_nganh"),
-            }
-            for ng in nganh_list
-        ]
-        context_dict = {
-            "truong": truong,
-            "danh_sach_tat_ca_nganh": summary_nganh,
-        }
-
-    compact = json.dumps(context_dict, ensure_ascii=False, separators=(",", ":"))
-    return total_score, compact
+    result = search(cau_hoi, lich_su)
+    return result.context, result.files
 
 
 def _unique_path(path: Path) -> Path:
     if not path.exists():
         return path
-    stem = path.stem
-    suffix = path.suffix
     index = 2
     while True:
-        candidate = path.with_name(f"{stem}-{index}{suffix}")
+        candidate = path.with_name(f"{path.stem}-{index}{path.suffix}")
         if not candidate.exists():
             return candidate
         index += 1
-
-
-def _read_for_prompt(path: Path) -> str:
-    text = path.read_text(encoding="utf-8", errors="replace").strip()
-    if path.suffix.lower() != ".json":
-        return text
-    try:
-        parsed = json.loads(text)
-    except json.JSONDecodeError:
-        return text
-    compact = json.dumps(parsed, ensure_ascii=False, separators=(",", ":"))
-    if len(compact) <= 8_000:
-        return json.dumps(parsed, ensure_ascii=False, indent=2)
-    return compact
-
-
-def _tokens(text: str) -> set[str]:
-    return {token for token in re.findall(r"\w+", text.lower(), flags=re.UNICODE) if len(token) > 1}

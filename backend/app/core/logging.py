@@ -203,13 +203,23 @@ def register_request_logging(app: FastAPI) -> None:
         if request.url.query:
             path = f"{path}?{request.url.query}"
         client = request.client.host if request.client else "-"
-        raw_request = await request.body()
-        request_text, request_data = _format_body(raw_request, request.headers.get("content-type"))
-        caller = _caller_label(request, request_data)
+        private_chat = request.url.path.startswith(f"{settings.api_v1_prefix}/chat/")
+        upload = "multipart/form-data" in request.headers.get("content-type", "")
+        if private_chat or upload:
+            request_text, request_data = "[nội dung không ghi log]", None
+            caller = "người dùng" if request.headers.get("authorization") else "khách"
+        else:
+            raw_request = await request.body()
+            request_text, request_data = _format_body(raw_request, request.headers.get("content-type"))
+            caller = _caller_label(request, request_data)
 
         try:
             response = await call_next(request)
-            raw_response, response = await _capture_response(response)
+            streaming = "text/event-stream" in response.headers.get("content-type", "")
+            if private_chat or streaming:
+                raw_response = b""
+            else:
+                raw_response, response = await _capture_response(response)
         except Exception:
             elapsed_ms = (time.perf_counter() - started) * 1000
             logger.exception(
@@ -224,7 +234,7 @@ def register_request_logging(app: FastAPI) -> None:
             raise
 
         elapsed_ms = (time.perf_counter() - started) * 1000
-        response_text, _ = _format_body(raw_response, response.media_type)
+        response_text = "[nội dung không ghi log]" if private_chat or streaming else _format_body(raw_response, response.media_type)[0]
         if response.status_code >= 500:
             level = logging.ERROR
         elif response.status_code >= 400:

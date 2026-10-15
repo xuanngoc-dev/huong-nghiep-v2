@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     gemini_model: str = "gemini-3.5-flash-lite"
     openai_api_key: str = ""
     openai_model: str = "gpt-6-luna"
+    chat_timeout_seconds: int = Field(default=75, ge=10, le=300)
+    chat_context_max_chars: int = Field(default=60_000, ge=4_000, le=200_000)
+    chat_detail_context_max_chars: int = Field(default=100_000, ge=4_000, le=300_000)
+    chat_planning_timeout_seconds: int = Field(default=20, ge=3, le=60)
 
     model_config = SettingsConfigDict(
         env_file=(".env", "../.env", "backend/.env"),

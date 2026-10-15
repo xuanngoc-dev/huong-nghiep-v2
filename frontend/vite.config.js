@@ -30,7 +30,7 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:3060',
+        target: process.env.DEV_API_TARGET || 'http://127.0.0.1:3060',
         changeOrigin: true,
       },
     },
