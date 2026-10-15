@@ -7,16 +7,76 @@ export function safeLink(value) {
   } catch { return null }
 }
 
+function readableMath(source) {
+  const symbols = {
+    '\\times': '×', '\\cdot': '·', '\\div': '÷', '\\approx': '≈',
+    '\\le': '≤', '\\leq': '≤', '\\ge': '≥', '\\geq': '≥',
+    '\\neq': '≠', '\\pm': '±', '\\%': '%', '\\text': '',
+  }
+  let result = ''
+  for (let i = 0; i < source.length;) {
+    if (source[i] === '\\') {
+      const command = /^\\([a-zA-Z]+|.)/.exec(source.slice(i))
+      if (command) {
+        i += command[0].length
+        if (command[1] === 'frac') {
+          const readGroup = () => {
+            while (/\s/.test(source[i] || '')) i++
+            if (source[i] !== '{') return ''
+            let depth = 1
+            const start = ++i
+            while (i < source.length && depth) {
+              if (source[i] === '{') depth++
+              if (source[i] === '}') depth--
+              i++
+            }
+            return readableMath(source.slice(start, i - 1))
+          }
+          result += `(${readGroup()}) / (${readGroup()})`
+        } else if (command[1] === 'text') {
+          while (/\s/.test(source[i] || '')) i++
+          if (source[i] === '{') {
+            let depth = 1
+            const start = ++i
+            while (i < source.length && depth) {
+              if (source[i] === '{') depth++
+              if (source[i] === '}') depth--
+              i++
+            }
+            result += readableMath(source.slice(start, i - 1))
+          }
+        } else if (command[1] === 'left' || command[1] === 'right') {
+          // TeX sizing commands do not change the readable text representation.
+        } else {
+          result += symbols[command[0]] ?? command[1]
+        }
+        continue
+      }
+    }
+    if (source[i] === '{' || source[i] === '}') { i++; continue }
+    result += source[i++]
+  }
+  return result.replace(/\s+/g, ' ').trim()
+}
+
 function inline(text) {
   const output = []
-  const pattern = /(`[^`\n]+`|\*\*[^*\n]+\*\*|\*[^*\n]+\*|\[[^\]\n]+\]\([^\s)]+\))/g
+  const pattern = /(`[^`\n]+`|\$\$[^$\n]+\$\$|\$[^$\n]+\$|\*\*[^*\n]+\*\*|\*[^*\n]+\*|\[[^\]\n]+\]\([^\s)]+\))/g
   let cursor = 0
   for (const match of text.matchAll(pattern)) {
     output.push(text.slice(cursor, match.index))
     const token = match[0]
     if (token.startsWith('`')) output.push(h('code', token.slice(1, -1)))
-    else if (token.startsWith('**')) output.push(h('strong', token.slice(2, -2)))
-    else if (token.startsWith('*')) output.push(h('em', token.slice(1, -1)))
+    else if (token.startsWith('$')) {
+      const display = token.startsWith('$$')
+      const value = readableMath(token.slice(display ? 2 : 1, display ? -2 : -1))
+      output.push(h(display ? 'span' : 'span', {
+        class: display ? 'ai-chat__math ai-chat__math--display' : 'ai-chat__math',
+        role: 'math', 'aria-label': value,
+      }, value))
+    }
+    else if (token.startsWith('**')) output.push(h('strong', inline(token.slice(2, -2))))
+    else if (token.startsWith('*')) output.push(h('em', inline(token.slice(1, -1))))
     else {
       const link = /^\[([^\]]+)\]\((.+)\)$/.exec(token)
       const href = safeLink(link[2])
@@ -37,6 +97,13 @@ export function renderMarkdown(text) {
   for (let i = 0; i < lines.length;) {
     const line = lines[i]
     if (!line.trim()) { i++; continue }
+    const displayMath = /^\s*\$\$(.+)\$\$\s*$/.exec(line)
+    if (displayMath) {
+      const value = readableMath(displayMath[1])
+      nodes.push(h('div', { class: 'ai-chat__math ai-chat__math--display', role: 'math', 'aria-label': value }, value))
+      i++
+      continue
+    }
     if (line.trim().startsWith('```')) {
       const content = []
       i++

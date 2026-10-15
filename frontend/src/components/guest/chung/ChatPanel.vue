@@ -84,6 +84,8 @@ onMounted(() => { chat.loadModels(); scroll(); if (props.compact) input.value?.f
   &__markdown h3, &__markdown h4, &__markdown h5, &__markdown h6 { margin:12px 0 8px; font-size:1em; }
   &__markdown pre { max-width:100%; overflow-x:auto; padding:12px; background:#edf3ef; border-radius:8px; }
   &__markdown code { font-size:.9em; }
+  &__math { font-family: Cambria, 'Times New Roman', serif; font-size:1.04em; font-style:italic; white-space:normal; }
+  &__math--display { display:block; margin:10px 0; padding:10px 14px; border-left:3px solid #80a991; border-radius:0 8px 8px 0; background:#edf5f0; font-size:1.08em; line-height:1.7; overflow-wrap:anywhere; }
   &__markdown blockquote { border-left:3px solid #80a991; padding-left:12px; }
   &__table-wrap { overflow-x:auto; max-width:100%; margin:10px 0; }
   table { border-collapse:collapse; font-size:13px; min-width:300px; }
