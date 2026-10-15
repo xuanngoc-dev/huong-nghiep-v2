@@ -12,6 +12,8 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_optional_user
 from app.db.session import get_db
 from app.models.dm_loai_cau_hoi import DmLoaiCauHoi
+from app.models.dm_nganh_dao_tao import DmNganhDaoTao
+from app.models.dm_nhom_nganh_dao_tao import DmNhomNganhDaoTao
 from app.models.dm_nhom_tinh_cach_holland import DmNhomTinhCachHolland
 from app.models.nguoi_dung import NguoiDung
 from app.models.tn_cau_hoi_trac_nghiem import TnCauHoiTracNghiem
@@ -26,6 +28,8 @@ from app.schemas.tn_phien_khao_sat import (
     TnPhienKetQuaPublic,
     TnPhienKhaoSatPublic,
     TnPhienLamBaiPublic,
+    TnPhienNganhPhuHopItem,
+    TnPhienNganhPhuHopPublic,
     TnPhienTraLoiWrite,
 )
 
@@ -240,10 +244,8 @@ def luu_tra_loi(
     )
 
 
-@router.get("/{ssid}/ket-qua", response_model=TnPhienKetQuaPublic)
-def lay_ket_qua(ssid: str, db: Session = Depends(get_db)) -> TnPhienKetQuaPublic:
-    """Cộng điểm Holland của phiên theo đáp án đã lưu."""
-    phien = _phien_or_404(db, ssid)
+def _thong_ke_phien(db: Session, ssid: str):
+    """Đếm câu đã trả lời, điểm Holland và các bước câu hỏi của một phiên."""
     tong = db.scalar(select(func.count()).select_from(TnChiTietTraLoi).where(TnChiTietTraLoi.ssid == ssid)) or 0
     da_tra_loi = (
         db.scalar(
@@ -261,7 +263,12 @@ def lay_ket_qua(ssid: str, db: Session = Depends(get_db)) -> TnPhienKetQuaPublic
     ).all()
     diem_theo_ma = {ma: int(diem or 0) for ma, diem in diem_rows}
     nhom = [
-        TnPhienDiemHolland(ma_nhom=item.ma_nhom, ten_nhom=item.ten_nhom, diem=diem_theo_ma.get(item.ma_nhom, 0))
+        TnPhienDiemHolland(
+            ma_nhom=item.ma_nhom,
+            ten_nhom=item.ten_nhom,
+            mo_ta=item.mo_ta,
+            diem=diem_theo_ma.get(item.ma_nhom, 0),
+        )
         for item in db.scalars(
             select(DmNhomTinhCachHolland)
             .where(DmNhomTinhCachHolland.trang_thai == 1)
@@ -276,12 +283,69 @@ def lay_ket_qua(ssid: str, db: Session = Depends(get_db)) -> TnPhienKetQuaPublic
         .group_by(DmLoaiCauHoi.id, DmLoaiCauHoi.ten_loai_cau_hoi, DmLoaiCauHoi.thu_tu_uu_tien)
         .order_by(DmLoaiCauHoi.thu_tu_uu_tien.asc())
     ).all()
+    buoc = [TnPhienBuocPublic(id=loai_id, ten=ten) for loai_id, ten in buoc_rows]
+    return tong, da_tra_loi, nhom, buoc
+
+
+def _ma_noi_bat(nhom: list[TnPhienDiemHolland]) -> str:
+    return "".join(item.ma_nhom for item in nhom[:3] if item.diem > 0)
+
+
+@router.get("/{ssid}/ket-qua", response_model=TnPhienKetQuaPublic)
+def lay_ket_qua(ssid: str, db: Session = Depends(get_db)) -> TnPhienKetQuaPublic:
+    """Cộng điểm Holland của phiên theo đáp án đã lưu."""
+    phien = _phien_or_404(db, ssid)
+    tong, da_tra_loi, nhom, buoc = _thong_ke_phien(db, ssid)
     return TnPhienKetQuaPublic(
         ssid=phien.ssid,
         ma_giao_dich=phien.ma_giao_dich,
         so_cau_hoi=tong,
         so_da_tra_loi=da_tra_loi,
-        ma_noi_bat="".join(item.ma_nhom for item in nhom[:3] if item.diem > 0),
-        buoc=[TnPhienBuocPublic(id=loai_id, ten=ten) for loai_id, ten in buoc_rows],
+        ma_noi_bat=_ma_noi_bat(nhom),
+        buoc=buoc,
         nhom=nhom,
+    )
+
+
+@router.get("/{ssid}/nganh-phu-hop", response_model=TnPhienNganhPhuHopPublic)
+def lay_nganh_phu_hop(ssid: str, db: Session = Depends(get_db)) -> TnPhienNganhPhuHopPublic:
+    """Ngành đào tạo khớp các mã Holland nổi bật của phiên."""
+    phien = _phien_or_404(db, ssid)
+    tong, da_tra_loi, nhom, buoc = _thong_ke_phien(db, ssid)
+    ma_co_diem = [item.ma_nhom for item in nhom if item.diem > 0]
+    trong_so = {ma: len(ma_co_diem) - index for index, ma in enumerate(ma_co_diem)}
+    hang = []
+    if trong_so:
+        rows = db.execute(
+            select(DmNganhDaoTao, DmNhomNganhDaoTao)
+            .join(DmNhomNganhDaoTao, DmNganhDaoTao.ma_nhom_nganh == DmNhomNganhDaoTao.ma_nhom_nganh)
+            .where(DmNganhDaoTao.trang_thai == 1)
+            .order_by(DmNganhDaoTao.ma_nganh.asc())
+        ).all()
+        for nganh, nhom_nganh in rows:
+            ma_holand = [str(ma).upper() for ma in (nganh.ma_holand or []) if ma]
+            diem = sum(trong_so.get(ma, 0) for ma in ma_holand)
+            if diem <= 0:
+                continue
+            hang.append(
+                (diem, nganh.ma_nganh, nganh.ten_nganh, nganh.ma_nhom_nganh, nhom_nganh.ten_nhom_nganh, ma_holand)
+            )
+        hang.sort(key=lambda item: (-item[0], item[1]))
+    return TnPhienNganhPhuHopPublic(
+        ssid=phien.ssid,
+        ma_giao_dich=phien.ma_giao_dich,
+        da_xong=tong > 0 and da_tra_loi == tong,
+        ma_noi_bat=_ma_noi_bat(nhom),
+        buoc=buoc,
+        nhom=nhom,
+        nganh=[
+            TnPhienNganhPhuHopItem(
+                ma_nganh=ma_nganh,
+                ten_nganh=ten_nganh,
+                ma_nhom_nganh=ma_nhom_nganh,
+                ten_nhom_nganh=ten_nhom_nganh,
+                ma_holand=ma_holand,
+            )
+            for _, ma_nganh, ten_nganh, ma_nhom_nganh, ten_nhom_nganh, ma_holand in hang
+        ],
     )

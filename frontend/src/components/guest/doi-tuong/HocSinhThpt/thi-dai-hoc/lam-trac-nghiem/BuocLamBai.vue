@@ -15,10 +15,16 @@ function trangThai(step) {
   return 'chua'
 }
 
+function laBuocCauHoi(step) {
+  return step.id !== 'nganh-phu-hop' && step.id !== 'ket-qua'
+}
+
 function biKhoa(index) {
   const step = props.buoc[index]
   if (!step || String(step.id) === String(props.hienTai)) return false
-  if (step.id === 'ket-qua') return props.buoc.slice(0, index).some((item) => !item.xong)
+  if (step.id === 'nganh-phu-hop' || step.id === 'ket-qua') {
+    return props.buoc.some((item) => laBuocCauHoi(item) && !item.xong)
+  }
   const hienTai = props.buoc.findIndex((item) => String(item.id) === String(props.hienTai))
   if (hienTai < 0 || index <= hienTai) return false
   return !props.buoc[hienTai]?.xong
@@ -26,6 +32,10 @@ function biKhoa(index) {
 
 function mo(step, index) {
   if (biKhoa(index) || String(step.id) === String(props.hienTai)) return
+  if (step.id === 'nganh-phu-hop') {
+    router.push({ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid: props.ssid } })
+    return
+  }
   if (step.id === 'ket-qua') {
     router.push({ name: 'thpt-thi-dai-hoc-ket-qua', params: { ssid: props.ssid } })
     return
@@ -118,18 +128,20 @@ ol.quiz-steps .holland-path__item.is-current .holland-path__index {
 ol.quiz-steps .holland-path__item.is-done .holland-path__index {
   border-color: var(--guest-primary);
   background: #d9f3dc;
-  color: #1c2b23;
-  font-weight: 700;
+  color: #121a28;
+  font-weight: 500;
 }
 
 ol.quiz-steps .holland-path__label {
-  font-weight: 500;
+  color: #2c3a4d;
+  font-weight: 400;
   transition: color 0.45s ease, font-weight 0.45s ease;
 }
 
+ol.quiz-steps .holland-path__item.is-current .holland-path__label,
 ol.quiz-steps .holland-path__item.is-done .holland-path__label {
-  color: #1c2b23;
-  font-weight: 700;
+  color: #121a28;
+  font-weight: 500;
 }
 
 .quiz-ripple {

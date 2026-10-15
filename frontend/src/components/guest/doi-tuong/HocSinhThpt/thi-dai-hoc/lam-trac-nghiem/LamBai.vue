@@ -2,7 +2,8 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { fetchPhienLamBai, luuTraLoi } from '@/api/phienKhaoSat'
+import { fetchNganhPhuHop, fetchPhienLamBai, luuTraLoi } from '@/api/phienKhaoSat'
+import LoadingSuyNghi from '@/components/guest/LoadingSuyNghi.vue'
 import BuocLamBai from './BuocLamBai.vue'
 
 defineOptions({ name: 'ThptLamTracNghiem' })
@@ -12,6 +13,10 @@ const router = useRouter()
 const ssid = computed(() => String(route.params.ssid || ''))
 const loaiCauHoiId = computed(() => Number(route.params.loaiCauHoiId))
 const dangTai = ref(false)
+const dangPhanTich = ref(false)
+const CHO_PHAN_TICH_MS = 5000
+let huyPhanTich = false
+let henPhanTich = 0
 const loi = ref('')
 const phien = ref(null)
 const daChon = ref({})
@@ -60,10 +65,15 @@ const buoc = computed(() => {
     const xong = items.length > 0 && items.every((item) => daChon.value[item.id])
     return { ...group, xong }
   })
-  return [...steps, { id: 'ket-qua', ten: 'Kết quả', xong: false }]
+  return [
+    ...steps,
+    { id: 'nganh-phu-hop', ten: 'Ngành phù hợp', xong: false },
+    { id: 'ket-qua', ten: 'Kết quả', xong: false },
+  ]
 })
 const viTriLoai = computed(() => nhom.value.findIndex((item) => item.id === loaiCauHoiId.value))
-const nutTiep = computed(() => (viTriLoai.value >= 0 && viTriLoai.value < nhom.value.length - 1 ? 'Phần tiếp theo' : 'Xem kết quả'))
+const laBuocCuoi = computed(() => viTriLoai.value >= 0 && viTriLoai.value === nhom.value.length - 1)
+const nutTiep = computed(() => (laBuocCuoi.value ? 'Phân tích kết quả' : 'Phần tiếp theo'))
 const daTraLoi = computed(() => cauHoiLoai.value.filter((item) => daChon.value[item.id]).length)
 const cauDangChon = computed(() => cauHoiLoai.value[chiSo.value] || null)
 
@@ -112,7 +122,11 @@ function xuLyPhim(event) {
 }
 
 onMounted(() => window.addEventListener('keydown', xuLyPhim))
-onBeforeUnmount(() => window.removeEventListener('keydown', xuLyPhim))
+onBeforeUnmount(() => {
+  huyPhanTich = true
+  window.clearTimeout(henPhanTich)
+  window.removeEventListener('keydown', xuLyPhim)
+})
 
 function moLoai(id, thayThe = false) {
   const location = {
@@ -123,8 +137,24 @@ function moLoai(id, thayThe = false) {
   else router.push(location)
 }
 
-function moKetQua() {
-  router.push({ name: 'thpt-thi-dai-hoc-ket-qua', params: { ssid: ssid.value } })
+function doi(ms) {
+  return new Promise((resolve) => {
+    henPhanTich = window.setTimeout(resolve, ms)
+  })
+}
+
+async function moNganhPhuHop() {
+  if (dangPhanTich.value) return
+  dangPhanTich.value = true
+  try {
+    await fetchNganhPhuHop(ssid.value)
+    await doi(CHO_PHAN_TICH_MS)
+    if (huyPhanTich) return
+    await router.push({ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid: ssid.value } })
+  } catch {
+    dangPhanTich.value = false
+    if (!huyPhanTich) ElMessage.error('Không phân tích được kết quả. Bạn thử lại giúp mình nhé.')
+  }
 }
 
 function chuanHoaLoai() {
@@ -142,7 +172,11 @@ function tiep() {
   const thieu = cauHoiLoai.value.findIndex((item) => !daChon.value[item.id])
   if (thieu >= 0) {
     //Bổ sung message thông báo
-    ElMessage.error('Vui lòng hoàn thành câu hỏi trước khi chuyển sang câu hỏi tiếp theo.')
+    ElMessage.error(
+      laBuocCuoi.value
+        ? 'Vui lòng hoàn thành câu hỏi trước khi phân tích kết quả.'
+        : 'Vui lòng hoàn thành câu hỏi trước khi chuyển sang phần tiếp theo.',
+    )
     chonCau(thieu, true, true)
     return
   }
@@ -151,13 +185,13 @@ function tiep() {
     moLoai(next.id)
     return
   }
-  const chua = buoc.value.find((item) => item.id !== 'ket-qua' && !item.xong)
+  const chua = buoc.value.find((item) => item.id !== 'nganh-phu-hop' && item.id !== 'ket-qua' && !item.xong)
   if (chua) {
-    ElMessage.error('Vui lòng hoàn thành các phần trước khi xem kết quả.')
+    ElMessage.error('Vui lòng hoàn thành các phần trước khi xem ngành phù hợp.')
     moLoai(chua.id)
     return
   }
-  moKetQua()
+  moNganhPhuHop()
 }
 
 async function chonDapAn(cau, answerId) {
@@ -210,7 +244,7 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
 </script>
 
 <template>
-  <section class="py-4">
+  <section class="quiz-flow py-4">
     <div class="container-fluid">
       <div class="holland-overview">
         <header class="holland-overview__header">
@@ -260,17 +294,18 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
               Phần trước
             </button>
             <span class="quiz-progress">Đã chọn {{ daTraLoi }}/{{ cauHoiLoai.length }}</span>
-            <button type="button" class="btn btn-success" @click="tiep">
-              {{ nutTiep }}
-            </button>
+            <button type="button" class="btn btn-success" :disabled="dangPhanTich" @click="tiep">{{ nutTiep }}</button>
           </div>
         </template>
 
         <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải bài làm…</p>
       </div>
     </div>
+    <LoadingSuyNghi :visible="dangPhanTich" />
   </section>
 </template>
+
+<style src="./quiz-type.scss"></style>
 
 <style scoped>
 .quiz-list {
@@ -287,8 +322,9 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
 
 .quiz-hint {
   margin: -4px 0 0;
-  color: #6d7882;
+  color: #2c3a4d;
   font-size: 0.92rem;
+  font-weight: 400;
 }
 
 .quiz-question.holland-panel {
@@ -339,7 +375,7 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
 
 .quiz-choice.is-selected .quiz-choice__num,
 .quiz-choice.is-selected .quiz-choice__text {
-  color: #1c2b23;
+  color: #121a28;
 }
 
 .quiz-choice.is-selected .quiz-choice__radio {
@@ -354,22 +390,24 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
 
 .quiz-choice__num {
   flex: 0 0 auto;
-  color: var(--guest-primary);
-  font-weight: 700;
+  color: #1d6b28;
+  font-weight: 500;
   line-height: 1.45;
 }
 
 .quiz-choice__text {
   flex: 1;
   min-width: 0;
-  color: #1c2b23;
+  color: #162033;
+  font-weight: 400;
   line-height: 1.45;
 }
 
 .quiz-progress {
   align-self: center;
-  color: #6d7882;
+  color: #2c3a4d;
   font-size: 0.92rem;
+  font-weight: 400;
 }
 
 @media (min-width: 768px) {

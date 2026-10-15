@@ -21,3 +21,9 @@ export function luuTraLoi(ssid, chiTietId, cauTraLoiId) {
 export function fetchKetQua(ssid) {
   return api.get(`/trac-nghiem/phien/${encodeURIComponent(ssid)}/ket-qua`).then((res) => res.data)
 }
+
+export function fetchNganhPhuHop(ssid) {
+  return api
+    .get(`/trac-nghiem/phien/${encodeURIComponent(ssid)}/nganh-phu-hop`, { skipLoading: true })
+    .then((res) => res.data)
+}

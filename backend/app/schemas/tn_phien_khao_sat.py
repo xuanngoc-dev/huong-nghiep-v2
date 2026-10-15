@@ -36,6 +36,7 @@ class TnPhienBuocPublic(BaseModel):
 class TnPhienDiemHolland(BaseModel):
     ma_nhom: str
     ten_nhom: str
+    mo_ta: str | None = None
     diem: int
 
 
@@ -47,6 +48,24 @@ class TnPhienKetQuaPublic(BaseModel):
     ma_noi_bat: str
     buoc: list[TnPhienBuocPublic]
     nhom: list[TnPhienDiemHolland]
+
+
+class TnPhienNganhPhuHopItem(BaseModel):
+    ma_nganh: str
+    ten_nganh: str
+    ma_nhom_nganh: str
+    ten_nhom_nganh: str
+    ma_holand: list[str]
+
+
+class TnPhienNganhPhuHopPublic(BaseModel):
+    ssid: str
+    ma_giao_dich: str | None
+    da_xong: bool
+    ma_noi_bat: str
+    buoc: list[TnPhienBuocPublic]
+    nhom: list[TnPhienDiemHolland]
+    nganh: list[TnPhienNganhPhuHopItem]
 
 
 class TnPhienKhaoSatPublic(BaseModel):

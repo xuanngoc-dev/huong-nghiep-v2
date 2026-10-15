@@ -12,7 +12,11 @@ const dangTai = ref(false)
 const loi = ref('')
 const ketQua = ref(null)
 
-const buoc = computed(() => [...(ketQua.value?.buoc || []), { id: 'ket-qua', ten: 'Kết quả' }])
+const buoc = computed(() => [
+  ...(ketQua.value?.buoc || []).map((item) => ({ ...item, xong: true })),
+  { id: 'nganh-phu-hop', ten: 'Ngành phù hợp', xong: true },
+  { id: 'ket-qua', ten: 'Kết quả', xong: false },
+])
 const diemCaoNhat = computed(() => Math.max(1, ...(ketQua.value?.nhom || []).map((item) => item.diem)))
 
 async function taiKetQua(value) {
@@ -38,7 +42,7 @@ watch(ssid, taiKetQua, { immediate: true })
 </script>
 
 <template>
-  <section class="py-4">
+  <section class="quiz-flow py-4">
     <div class="container-fluid">
       <div class="holland-overview">
         <header class="holland-overview__header">
@@ -79,10 +83,13 @@ watch(ssid, taiKetQua, { immediate: true })
   </section>
 </template>
 
+<style src="./quiz-type.scss"></style>
+
 <style scoped>
 .quiz-note {
   margin: 0 0 16px;
-  color: #4b5852;
+  color: #2c3a4d;
+  font-weight: 400;
   line-height: 1.5;
 }
 
@@ -110,7 +117,7 @@ watch(ssid, taiKetQua, { immediate: true })
   border-radius: 8px;
   background: var(--guest-primary);
   color: #fff;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .quiz-score__body {
@@ -121,8 +128,8 @@ watch(ssid, taiKetQua, { immediate: true })
 .quiz-score__name {
   display: block;
   margin-bottom: 4px;
-  color: #1c2b23;
-  font-weight: 600;
+  color: #162033;
+  font-weight: 400;
 }
 
 .quiz-score__track {
@@ -142,7 +149,8 @@ watch(ssid, taiKetQua, { immediate: true })
 
 .quiz-score__point {
   flex: 0 0 2.5rem;
-  color: #1c2b23;
+  color: #121a28;
+  font-weight: 500;
   text-align: right;
 }
 </style>

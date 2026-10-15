@@ -1,0 +1,27 @@
+.guest-layout .quiz-flow {
+  color: #162033;
+  font-weight: 400;
+}
+
+.guest-layout .quiz-flow .holland-overview__title,
+.guest-layout .quiz-flow .holland-panel__title,
+.guest-layout .quiz-flow .holland-note__title {
+  color: #121a28;
+  font-weight: 500;
+}
+
+.guest-layout .quiz-flow .holland-overview__lead,
+.guest-layout .quiz-flow .holland-note__text,
+.guest-layout .quiz-flow .holland-kicker,
+.guest-layout .quiz-flow .holland-path__label,
+.guest-layout .quiz-flow .holland-path__index {
+  color: #2c3a4d;
+  font-weight: 400;
+}
+
+.guest-layout .quiz-flow .holland-path__item.is-current .holland-path__label,
+.guest-layout .quiz-flow .holland-path__item.is-done .holland-path__label,
+.guest-layout .quiz-flow .holland-path__item.is-done .holland-path__index {
+  color: #121a28;
+  font-weight: 500;
+}
