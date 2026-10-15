@@ -1,0 +1,975 @@
+{
+  "truong": {
+    "ma_truong": "LPH",
+    "ten_truong": "Trường Đại học Luật Hà Nội",
+    "loai_hinh": "DaiHoc",
+    "nam_tuyen_sinh": 2026
+  },
+  "danh_sach_nganh": [
+    {
+      "ma_nganh": "7380101",
+      "ma_xet_tuyen": null,
+      "ten_nganh": "Luật",
+      "chi_tieu_nganh": 1600,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Tuyển thẳng theo quy chế tuyển sinh",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm theo tổ hợp gốc D01, các tổ hợp còn lại có chênh lệch quy đổi. Chỉ gán điểm cho D01, không nhân bản sang tổ hợp khác.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": 24.12,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D02",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Nga",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Nga"
+              ]
+            },
+            {
+              "ma_to_hap": "D03",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Pháp",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Pháp"
+              ]
+            },
+            {
+              "ma_to_hap": "D04",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Trung",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Trung"
+              ]
+            },
+            {
+              "ma_to_hap": "D05",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Đức",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Đức"
+              ]
+            },
+            {
+              "ma_to_hap": "D06",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Nhật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Nhật"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Học bạ THPT theo điều kiện công bố 2026. Chưa xác minh điểm chuẩn cho mỗi tổ hợp riêng.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D02",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Nga",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Nga"
+              ]
+            },
+            {
+              "ma_to_hap": "D03",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Pháp",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Pháp"
+              ]
+            },
+            {
+              "ma_to_hap": "D04",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Trung",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Trung"
+              ]
+            },
+            {
+              "ma_to_hap": "D05",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Đức",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Đức"
+              ]
+            },
+            {
+              "ma_to_hap": "D06",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Nhật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Nhật"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7380107",
+      "ma_xet_tuyen": null,
+      "ten_nganh": "Luật kinh tế",
+      "chi_tieu_nganh": 550,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Tuyển thẳng theo quy chế tuyển sinh",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm theo tổ hợp gốc D01, các tổ hợp còn lại có chênh lệch quy đổi. Chỉ gán điểm cho D01, không nhân bản sang tổ hợp khác.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": 25.95,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D02",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Nga",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Nga"
+              ]
+            },
+            {
+              "ma_to_hap": "D03",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Pháp",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Pháp"
+              ]
+            },
+            {
+              "ma_to_hap": "D04",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Trung",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Trung"
+              ]
+            },
+            {
+              "ma_to_hap": "D05",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Đức",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Đức"
+              ]
+            },
+            {
+              "ma_to_hap": "D06",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Nhật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Nhật"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Học bạ THPT theo điều kiện công bố 2026. Chưa xác minh điểm chuẩn cho mỗi tổ hợp riêng.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D02",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Nga",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Nga"
+              ]
+            },
+            {
+              "ma_to_hap": "D03",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Pháp",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Pháp"
+              ]
+            },
+            {
+              "ma_to_hap": "D04",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Trung",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Trung"
+              ]
+            },
+            {
+              "ma_to_hap": "D05",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Đức",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Đức"
+              ]
+            },
+            {
+              "ma_to_hap": "D06",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Nhật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Nhật"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7380109",
+      "ma_xet_tuyen": null,
+      "ten_nganh": "Luật thương mại quốc tế",
+      "chi_tieu_nganh": 200,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Tuyển thẳng theo quy chế tuyển sinh",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm theo tổ hợp gốc D01, các tổ hợp còn lại có chênh lệch quy đổi. Chỉ gán điểm cho D01, không nhân bản sang tổ hợp khác.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": 24.22,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Học bạ THPT theo điều kiện công bố 2026. Chưa xác minh điểm chuẩn cho mỗi tổ hợp riêng.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7220201",
+      "ma_xet_tuyen": null,
+      "ten_nganh": "Ngôn ngữ Anh",
+      "chi_tieu_nganh": 200,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Tuyển thẳng theo quy chế tuyển sinh",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm theo tổ hợp gốc D01, các tổ hợp còn lại có chênh lệch quy đổi. Chỉ gán điểm cho D01, không nhân bản sang tổ hợp khác.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": 23.09,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Học bạ THPT theo điều kiện công bố 2026. Chưa xác minh điểm chuẩn cho mỗi tổ hợp riêng.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7380101",
+      "ma_xet_tuyen": null,
+      "ten_nganh": "Luật (Phân hiệu Đắk Lắk)",
+      "chi_tieu_nganh": 300,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Tuyển thẳng theo quy chế tuyển sinh",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm theo tổ hợp gốc D01, các tổ hợp còn lại có chênh lệch quy đổi. Chỉ gán điểm cho D01, không nhân bản sang tổ hợp khác. Mã D01 và điểm trường công bố: 20,00.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": 20.0,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D02",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Nga",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Nga"
+              ]
+            },
+            {
+              "ma_to_hap": "D03",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Pháp",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Pháp"
+              ]
+            },
+            {
+              "ma_to_hap": "D04",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Trung",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Trung"
+              ]
+            },
+            {
+              "ma_to_hap": "D05",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Đức",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Đức"
+              ]
+            },
+            {
+              "ma_to_hap": "D06",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Nhật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Nhật"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Học bạ THPT theo điều kiện công bố 2026. Chưa xác minh điểm chuẩn cho mỗi tổ hợp riêng.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D02",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Nga",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Nga"
+              ]
+            },
+            {
+              "ma_to_hap": "D03",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Pháp",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Pháp"
+              ]
+            },
+            {
+              "ma_to_hap": "D04",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Trung",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Trung"
+              ]
+            },
+            {
+              "ma_to_hap": "D05",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Đức",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Đức"
+              ]
+            },
+            {
+              "ma_to_hap": "D06",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Nhật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Nhật"
+              ]
+            }
+          ]
+        }
+      ],
+      "ten_chuong_trinh": "Luật (Phân hiệu Đắk Lắk)"
+    }
+  ]
+}

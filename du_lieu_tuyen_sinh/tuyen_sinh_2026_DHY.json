@@ -1,0 +1,483 @@
+{
+  "truong": {
+    "ma_truong": "DHY",
+    "ten_truong": "Trường Đại học Y - Dược - Đại học Huế",
+    "loai_hinh": "DaiHoc",
+    "nam_tuyen_sinh": 2026
+  },
+  "danh_sach_nganh": [
+    {
+      "ma_nganh": "7720101",
+      "ma_xet_tuyen": "7720101",
+      "ten_nganh": "Y khoa",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 26.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7720110",
+      "ma_xet_tuyen": "7720110",
+      "ten_nganh": "Y học dự phòng",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7720115",
+      "ma_xet_tuyen": "7720115",
+      "ten_nganh": "Y học cổ truyền",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 22.5,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7720201",
+      "ma_xet_tuyen": "7720201",
+      "ten_nganh": "Dược học",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21.85,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7720301",
+      "ma_xet_tuyen": "7720301",
+      "ten_nganh": "Điều dưỡng",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 19.1,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 642.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG Hà Nội (HSA)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 65.0,
+          "thang_diem": 150,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7720302",
+      "ma_xet_tuyen": "7720302",
+      "ten_nganh": "Hộ sinh",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 603.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG Hà Nội (HSA)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 61.0,
+          "thang_diem": 150,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7720401",
+      "ma_xet_tuyen": "7720401",
+      "ten_nganh": "Dinh dưỡng",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 603.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG Hà Nội (HSA)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 61.0,
+          "thang_diem": 150,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7720501",
+      "ma_xet_tuyen": "7720501",
+      "ten_nganh": "Răng - Hàm - Mặt",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 25.25,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7720601",
+      "ma_xet_tuyen": "7720601",
+      "ten_nganh": "Kỹ thuật xét nghiệm y học",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 20.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 676.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG Hà Nội (HSA)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 69.0,
+          "thang_diem": 150,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7720602",
+      "ma_xet_tuyen": "7720602",
+      "ten_nganh": "Kỹ thuật hình ảnh y học",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 20.75,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 704.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG Hà Nội (HSA)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 72.0,
+          "thang_diem": 150,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7720701",
+      "ma_xet_tuyen": "7720701",
+      "ten_nganh": "Y tế công cộng",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 17.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 571.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG Hà Nội (HSA)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 58.0,
+          "thang_diem": 150,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    }
+  ]
+}

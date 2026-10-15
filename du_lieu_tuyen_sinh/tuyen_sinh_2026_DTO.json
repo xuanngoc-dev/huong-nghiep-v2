@@ -1,0 +1,48 @@
+{
+  "truong": {
+    "ma_truong": "DTO",
+    "ten_truong": "Phân hiệu Đại học Thái Nguyên tại Điện Biên",
+    "loai_hinh": "DaiHoc",
+    "nam_tuyen_sinh": 2026
+  },
+  "danh_sach_nganh": [
+    {
+      "ma_nganh": "7140201",
+      "ten_nganh": "Giáo dục Mầm non",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 23.34,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7140201"
+    },
+    {
+      "ma_nganh": "7140202",
+      "ten_nganh": "Giáo dục Tiểu học",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 25.26,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7140202"
+    }
+  ]
+}

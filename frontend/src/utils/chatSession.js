@@ -2,7 +2,7 @@ export const WELCOME = 'Xin chào! Mình có thể giúp bạn tra cứu ngành 
 export const newConversation = () => [{ id: 'welcome', role: 'bot', text: WELCOME, status: 'done', sources: [], notes: [] }]
 
 /** One request owner per shared conversation; stale requests cannot update a new conversation. */
-export function createChatSession(state, { stream, storage, storageKey }) {
+export function createChatSession(state, { stream, storage, storageKey, loadProfile }) {
   let controller = null
   let revision = 0
   let saveTimer = null
@@ -109,8 +109,19 @@ export function createChatSession(state, { stream, storage, storageKey }) {
     const requestController = new AbortController()
     controller = requestController
     persist()
+    let hoSo = null
+    if (typeof loadProfile === 'function') {
+      try {
+        hoSo = await loadProfile()
+      } catch {
+        hoSo = null
+      }
+    }
+    if (owner !== revision) return
+    const payload = { cau_hoi: text, model_id: model.id, lich_su: history, ngu_canh: state.context || null }
+    if (hoSo) payload.ho_so = hoSo
     try {
-      await stream({ cau_hoi: text, model_id: model.id, lich_su: history, ngu_canh: state.context || null }, {
+      await stream(payload, {
         signal: requestController.signal,
         timeoutMs: (model.timeout_giay || 75) * 1000 + 15000,
         onEvent(event, data) {

@@ -1,0 +1,452 @@
+{
+  "truong": {
+    "ma_truong": "DTN",
+    "ten_truong": "Trường Đại học Nông Lâm – Đại học Thái Nguyên",
+    "loai_hinh": "DaiHoc",
+    "nam_tuyen_sinh": 2026
+  },
+  "danh_sach_nganh": [
+    {
+      "ma_nganh": "7620110",
+      "ten_nganh": "Khoa học cây trồng",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7620110"
+    },
+    {
+      "ma_nganh": "7620105",
+      "ten_nganh": "Chăn nuôi",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7620105"
+    },
+    {
+      "ma_nganh": "7620205",
+      "ten_nganh": "Lâm sinh",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7620205"
+    },
+    {
+      "ma_nganh": "7640101",
+      "ten_nganh": "Thú y",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7640101"
+    },
+    {
+      "ma_nganh": "7850103",
+      "ten_nganh": "Quản lý đất đai",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7850103"
+    },
+    {
+      "ma_nganh": "7440301",
+      "ten_nganh": "Khoa học môi trường",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7440301"
+    },
+    {
+      "ma_nganh": "7480201",
+      "ten_nganh": "Công nghệ thông tin",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7480201",
+      "ten_chuong_trinh": "Công nghệ và đổi mới sáng tạo"
+    },
+    {
+      "ma_nganh": "7420201",
+      "ten_nganh": "Công nghệ sinh học",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7420201"
+    },
+    {
+      "ma_nganh": "7620211",
+      "ten_nganh": "Quản lý tài nguyên rừng",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7620211"
+    },
+    {
+      "ma_nganh": "7620115",
+      "ten_nganh": "Kinh tế nông nghiệp",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7620115"
+    },
+    {
+      "ma_nganh": "7540101",
+      "ten_nganh": "Công nghệ thực phẩm",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7540101"
+    },
+    {
+      "ma_nganh": "7850101",
+      "ten_nganh": "Quản lý tài nguyên và môi trường",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7850101"
+    },
+    {
+      "ma_nganh": "7580109",
+      "ten_nganh": "Quản lý phát triển đô thị và bất động sản",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7580109"
+    },
+    {
+      "ma_nganh": "7620101",
+      "ten_nganh": "Nông nghiệp",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7620101",
+      "ten_chuong_trinh": "Nông nghiệp công nghệ cao"
+    },
+    {
+      "ma_nganh": null,
+      "ten_nganh": "Tài chính - Kế toán",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "TCKT"
+    },
+    {
+      "ma_nganh": "7540106",
+      "ten_nganh": "Đảm bảo chất lượng và an toàn thực phẩm",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7540106"
+    },
+    {
+      "ma_nganh": "7320205",
+      "ten_nganh": "Quản lý thông tin",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7320205"
+    },
+    {
+      "ma_nganh": "7549002",
+      "ten_nganh": "Dược liệu và hợp chất thiên nhiên",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7549002"
+    },
+    {
+      "ma_nganh": "7540101",
+      "ten_nganh": "Công nghệ thực phẩm",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7540101_CTTT",
+      "ten_chuong_trinh": "Công nghệ thực phẩm (chương trình tiên tiến)"
+    },
+    {
+      "ma_nganh": "7440301",
+      "ten_nganh": "Khoa học và quản lý môi trường",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7440301_CTTT",
+      "ten_chuong_trinh": "Khoa học và quản lý môi trường (chương trình tiên tiến)"
+    },
+    {
+      "ma_nganh": "7810204",
+      "ten_nganh": "Quản lý du lịch quốc tế",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7810204_CTTT",
+      "ten_chuong_trinh": "Quản lý du lịch quốc tế (chương trình tiên tiến)"
+    },
+    {
+      "ma_nganh": "7220201",
+      "ten_nganh": "Ngôn ngữ Anh",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7220201"
+    },
+    {
+      "ma_nganh": "7310110",
+      "ten_nganh": "Quản lý kinh tế",
+      "chi_tieu_nganh": null,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": "Mức điểm trúng tuyển đợt 1 năm 2026 được ĐH Thái Nguyên công bố theo mã xét tuyển; chưa xác minh mức điểm riêng nếu áp dụng nhiều phương thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ma_xet_tuyen": "7310110"
+    }
+  ]
+}

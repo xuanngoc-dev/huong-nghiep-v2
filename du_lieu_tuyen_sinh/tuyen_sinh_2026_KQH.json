@@ -1,0 +1,118 @@
+{
+  "truong": {
+    "ma_truong": "KQH",
+    "ten_truong": "Học viện Kỹ thuật Quân sự (hệ quân sự)",
+    "loai_hinh": "HocVien",
+    "nam_tuyen_sinh": 2026
+  },
+  "danh_sach_nganh": [
+    {
+      "ma_nganh": "7860220",
+      "ma_xet_tuyen": null,
+      "ten_nganh": "Kỹ sư quân sự",
+      "chi_tieu_nganh": 400,
+      "dieu_kien_nganh": [
+        {
+          "loai": "SO_TUYEN_QUAN_SU",
+          "gia_tri": true
+        },
+        {
+          "loai": "NGUYEN_VONG",
+          "gia_tri": "Nguyện vọng 1 theo quy định tuyển sinh quân sự"
+        },
+        {
+          "loai": "CHI_TIEU_GIOI_VUNG",
+          "gia_tri": {
+            "bac_nam": 251,
+            "bac_nu": 9,
+            "nam_nam": 135,
+            "nam_nu": 5
+          }
+        }
+      ],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Tuyển thẳng theo quy chế tuyển sinh",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Xét tuyển thẳng, ưu tiên xét tuyển theo quy chế Bộ GD&ĐT và Bộ Quốc phòng.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "ĐGNL ĐHQG Hà Nội (HSA) / ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Xét kết quả HSA do ĐHQG Hà Nội hoặc V-ACT do ĐHQG TP.HCM tổ chức; quy đổi về thang điểm xét tuyển quân sự.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Đánh giá năng lực QDA của Bộ Quốc phòng",
+          "loai_phuong_thuc": "XetTuyenKetHop",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Xét bài thi ĐGNL QDA do Bộ Quốc phòng tổ chức. Đơn vị tổ chức là Bộ Quốc phòng; chưa xác minh mã phương thức Bộ GD&ĐT.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm trúng tuyển khác nhau theo khu vực và giới tính: nam miền Bắc 27,61; nam miền Nam 26,62; nữ miền Bắc 28,65; nữ miền Nam 29,03. Không gán một mức chung.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

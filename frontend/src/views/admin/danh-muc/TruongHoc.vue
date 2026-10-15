@@ -10,6 +10,13 @@ import {
   fetchTruongHoc,
   updateTruongHoc,
 } from '@/api/truongHoc'
+import { collectAllPages, downloadExcel } from '@/utils/excelExport'
+import {
+  TRUONG_HOC_EXPORT_COLUMNS,
+  truongHocExportFilename,
+  truongHocExportRows,
+  truongHocListParams,
+} from '@/utils/truongHocExport'
 
 const LOAI_HINH = ['Công lập', 'Tư thục', 'Quốc tế', 'Dân lập']
 
@@ -44,6 +51,7 @@ const JSON_SAMPLE = `[
 const loading = ref(false)
 const saving = ref(false)
 const deleting = ref(false)
+const exporting = ref(false)
 const rows = ref([])
 const selectedRows = ref([])
 const tableRef = ref()
@@ -206,17 +214,7 @@ function dash(value) {
 async function load() {
   loading.value = true
   try {
-    const params = {
-      page: page.value,
-      page_size: pageSize.value,
-    }
-    if (filters.q.trim()) params.q = filters.q.trim()
-    if (filters.khu_vuc.trim()) params.khu_vuc = filters.khu_vuc.trim()
-    if (filters.loai_hinh_dao_tao) params.loai_hinh_dao_tao = filters.loai_hinh_dao_tao
-    if (filters.trang_thai !== '' && filters.trang_thai !== null) {
-      params.trang_thai = filters.trang_thai
-    }
-    const data = await fetchTruongHoc(params)
+    const data = await fetchTruongHoc(truongHocListParams(filters, { page: page.value, pageSize: pageSize.value }))
     rows.value = data.items
     total.value = data.total
   } catch (error) {
@@ -391,6 +389,28 @@ async function onDelete(row) {
   }
 }
 
+async function onExport() {
+  exporting.value = true
+  try {
+    const items = await collectAllPages((paging) => fetchTruongHoc(truongHocListParams(filters, paging)))
+    if (!items.length) {
+      ElMessage.warning('Không có trường đại học nào khớp bộ lọc để xuất')
+      return
+    }
+    await downloadExcel({
+      filename: truongHocExportFilename(),
+      sheetName: 'Trường đại học',
+      columns: TRUONG_HOC_EXPORT_COLUMNS,
+      rows: truongHocExportRows(items),
+    })
+    ElMessage.success(`Đã xuất ${items.length} trường đại học`)
+  } catch (error) {
+    ElMessage.error(errorMessage(error, 'Không xuất được file Excel'))
+  } finally {
+    exporting.value = false
+  }
+}
+
 async function onDeleteSelected() {
   const ids = selectedRows.value.map((row) => row.id)
   if (!ids.length) return
@@ -478,6 +498,10 @@ onMounted(load)
       <div class="toolbar">
         <h2 class="toolbar__title">Danh sách trường đại học</h2>
         <div class="toolbar__actions">
+          <CustomButton :loading="exporting" @click="onExport">
+            <CustomIcon><Download /></CustomIcon>
+            Xuất Excel
+          </CustomButton>
           <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
             <CustomButton
               type="danger"

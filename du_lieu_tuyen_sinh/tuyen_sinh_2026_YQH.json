@@ -1,0 +1,122 @@
+{
+  "truong": {
+    "ma_truong": "YQH",
+    "ten_truong": "Học viện Quân y (hệ quân sự)",
+    "loai_hinh": "HocVien",
+    "nam_tuyen_sinh": 2026
+  },
+  "danh_sach_nganh": [
+    {
+      "ma_nganh": "7720101",
+      "ma_xet_tuyen": null,
+      "ten_nganh": "Y khoa (hệ quân sự)",
+      "chi_tieu_nganh": 140,
+      "dieu_kien_nganh": [
+        {
+          "loai": "SO_TUYEN_QUAN_SU",
+          "gia_tri": true
+        },
+        {
+          "loai": "CHI_TIEU_GIOI_VUNG",
+          "gia_tri": {
+            "bac_nam": 83,
+            "bac_nu": 8,
+            "nam_nam": 44,
+            "nam_nu": 5
+          }
+        },
+        {
+          "loai": "DO_TUOI_DU_TUYEN",
+          "gia_tri": {
+            "thanh_nien_ngoai_quan_doi": "17-21",
+            "quan_nhan": "18-23"
+          }
+        }
+      ],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Tuyển thẳng theo quy chế tuyển sinh",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Tuyển thẳng và ưu tiên xét tuyển theo quy định Bộ Quốc phòng.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả đánh giá năng lực/tư duy do đơn vị khác tổ chức",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Xét điểm đánh giá năng lực do ĐHQG Hà Nội và ĐHQG TP.HCM tổ chức năm 2026; quy đổi thang 30.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn theo giới và khu vực, không có một điểm duy nhất cho toàn bộ thí sinh: nam Bắc 28,39; nữ Bắc 29,60; nam Nam 27,75; nữ Nam 29,76; cần đối chiếu tổ hợp/quy định từng nhóm.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "B00",
+              "ten_to_hap": "Toán, Hóa học, Sinh học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Sinh học"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "ĐGNL QDA Bộ Quốc phòng",
+          "loai_phuong_thuc": "XetTuyenKetHop",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Xét bài thi ĐGNL QDA do Bộ Quốc phòng tổ chức. Chưa có căn cứ chắc chắn mã Bộ của diện này.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ],
+      "ten_chuong_trinh": "Hệ quân sự"
+    }
+  ]
+}

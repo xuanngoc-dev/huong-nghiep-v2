@@ -1,0 +1,1604 @@
+{
+  "truong": {
+    "ma_truong": "HTN",
+    "ten_truong": "Học viện Thanh thiếu niên Việt Nam (Hà Nội)",
+    "loai_hinh": "DaiHoc",
+    "nam_tuyen_sinh": 2026
+  },
+  "danh_sach_nganh": [
+    {
+      "ma_nganh": "7760102",
+      "ten_nganh": "Công tác Thanh thiếu niên",
+      "chi_tieu_nganh": 180,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "X74",
+              "ten_to_hap": "Ngữ văn, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [
+            {
+              "loai": "NAM_TOT_NGHIEP_THPT",
+              "toan_tu": "=",
+              "gia_tri": 2026
+            },
+            {
+              "loai": "DIEM_HOC_BA_TO_HOP",
+              "nguon_diem": "HOC_BA",
+              "toan_tu": ">=",
+              "gia_tri": 18,
+              "lop": [
+                10,
+                11,
+                12
+              ]
+            },
+            {
+              "loai": "REN_LUYEN",
+              "toan_tu": ">=",
+              "gia_tri": "Khá"
+            }
+          ],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "X74",
+              "ten_to_hap": "Ngữ văn, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo Quy chế",
+          "loai_phuong_thuc": "TuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Xét người đã hoàn thành chương trình dự bị đại học",
+          "loai_phuong_thuc": "Khac",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Xét chuyển người đã hoàn thành chương trình dự bị đại học. Chưa xác minh mã phương thức Bộ năm 2026 cho diện này; 500 chỉ là mã ứng viên, không khai báo thành mã chính thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [],
+          "dien_xet_tuyen": "Xét chuyển thí sinh hoàn thành chương trình dự bị đại học theo hồ sơ riêng"
+        }
+      ],
+      "ma_xet_tuyen": "7760102"
+    },
+    {
+      "ma_nganh": "7760101",
+      "ten_nganh": "Công tác xã hội",
+      "chi_tieu_nganh": 200,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "X74",
+              "ten_to_hap": "Ngữ văn, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [
+            {
+              "loai": "NAM_TOT_NGHIEP_THPT",
+              "toan_tu": "=",
+              "gia_tri": 2026
+            },
+            {
+              "loai": "DIEM_HOC_BA_TO_HOP",
+              "nguon_diem": "HOC_BA",
+              "toan_tu": ">=",
+              "gia_tri": 18,
+              "lop": [
+                10,
+                11,
+                12
+              ]
+            },
+            {
+              "loai": "REN_LUYEN",
+              "toan_tu": ">=",
+              "gia_tri": "Khá"
+            }
+          ],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "X74",
+              "ten_to_hap": "Ngữ văn, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo Quy chế",
+          "loai_phuong_thuc": "TuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Xét người đã hoàn thành chương trình dự bị đại học",
+          "loai_phuong_thuc": "Khac",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Xét chuyển người đã hoàn thành chương trình dự bị đại học. Chưa xác minh mã phương thức Bộ năm 2026 cho diện này; 500 chỉ là mã ứng viên, không khai báo thành mã chính thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [],
+          "dien_xet_tuyen": "Xét chuyển thí sinh hoàn thành chương trình dự bị đại học theo hồ sơ riêng"
+        }
+      ],
+      "ma_xet_tuyen": "7760101"
+    },
+    {
+      "ma_nganh": "7380101",
+      "ten_nganh": "Luật",
+      "chi_tieu_nganh": 220,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [
+            {
+              "loai": "DIEM_TOAN_HOAC_VAN",
+              "nguon_diem": "THI_THPT",
+              "toan_tu": ">=",
+              "gia_tri": 6,
+              "logic": "OR"
+            }
+          ],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "X74",
+              "ten_to_hap": "Ngữ văn, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            }
+          ],
+          "diem_san": 18
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo Quy chế",
+          "loai_phuong_thuc": "TuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Xét người đã hoàn thành chương trình dự bị đại học",
+          "loai_phuong_thuc": "Khac",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Xét chuyển người đã hoàn thành chương trình dự bị đại học. Chưa xác minh mã phương thức Bộ năm 2026 cho diện này; 500 chỉ là mã ứng viên, không khai báo thành mã chính thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [],
+          "dien_xet_tuyen": "Xét chuyển thí sinh hoàn thành chương trình dự bị đại học theo hồ sơ riêng"
+        }
+      ],
+      "ma_xet_tuyen": "7380101"
+    },
+    {
+      "ma_nganh": "7320108",
+      "ten_nganh": "Quan hệ công chúng",
+      "chi_tieu_nganh": 220,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "X74",
+              "ten_to_hap": "Ngữ văn, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo Quy chế",
+          "loai_phuong_thuc": "TuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Xét người đã hoàn thành chương trình dự bị đại học",
+          "loai_phuong_thuc": "Khac",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Xét chuyển người đã hoàn thành chương trình dự bị đại học. Chưa xác minh mã phương thức Bộ năm 2026 cho diện này; 500 chỉ là mã ứng viên, không khai báo thành mã chính thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [],
+          "dien_xet_tuyen": "Xét chuyển thí sinh hoàn thành chương trình dự bị đại học theo hồ sơ riêng"
+        }
+      ],
+      "ma_xet_tuyen": "7320108"
+    },
+    {
+      "ma_nganh": "7310205",
+      "ten_nganh": "Quản lý nhà nước",
+      "chi_tieu_nganh": 180,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "X74",
+              "ten_to_hap": "Ngữ văn, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [
+            {
+              "loai": "NAM_TOT_NGHIEP_THPT",
+              "toan_tu": "=",
+              "gia_tri": 2026
+            },
+            {
+              "loai": "DIEM_HOC_BA_TO_HOP",
+              "nguon_diem": "HOC_BA",
+              "toan_tu": ">=",
+              "gia_tri": 18,
+              "lop": [
+                10,
+                11,
+                12
+              ]
+            },
+            {
+              "loai": "REN_LUYEN",
+              "toan_tu": ">=",
+              "gia_tri": "Khá"
+            }
+          ],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "X74",
+              "ten_to_hap": "Ngữ văn, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo Quy chế",
+          "loai_phuong_thuc": "TuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Xét người đã hoàn thành chương trình dự bị đại học",
+          "loai_phuong_thuc": "Khac",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Xét chuyển người đã hoàn thành chương trình dự bị đại học. Chưa xác minh mã phương thức Bộ năm 2026 cho diện này; 500 chỉ là mã ứng viên, không khai báo thành mã chính thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [],
+          "dien_xet_tuyen": "Xét chuyển thí sinh hoàn thành chương trình dự bị đại học theo hồ sơ riêng"
+        }
+      ],
+      "ma_xet_tuyen": "7310205"
+    },
+    {
+      "ma_nganh": "7310401",
+      "ten_nganh": "Tâm lý học",
+      "chi_tieu_nganh": 190,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "X74",
+              "ten_to_hap": "Ngữ văn, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [
+            {
+              "loai": "NAM_TOT_NGHIEP_THPT",
+              "toan_tu": "=",
+              "gia_tri": 2026
+            },
+            {
+              "loai": "DIEM_HOC_BA_TO_HOP",
+              "nguon_diem": "HOC_BA",
+              "toan_tu": ">=",
+              "gia_tri": 18,
+              "lop": [
+                10,
+                11,
+                12
+              ]
+            },
+            {
+              "loai": "REN_LUYEN",
+              "toan_tu": ">=",
+              "gia_tri": "Khá"
+            }
+          ],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "X74",
+              "ten_to_hap": "Ngữ văn, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo Quy chế",
+          "loai_phuong_thuc": "TuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Xét người đã hoàn thành chương trình dự bị đại học",
+          "loai_phuong_thuc": "Khac",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Xét chuyển người đã hoàn thành chương trình dự bị đại học. Chưa xác minh mã phương thức Bộ năm 2026 cho diện này; 500 chỉ là mã ứng viên, không khai báo thành mã chính thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [],
+          "dien_xet_tuyen": "Xét chuyển thí sinh hoàn thành chương trình dự bị đại học theo hồ sơ riêng"
+        }
+      ],
+      "ma_xet_tuyen": "7310401"
+    },
+    {
+      "ma_nganh": "7310202",
+      "ten_nganh": "Xây dựng Đảng và Chính quyền nhà nước",
+      "chi_tieu_nganh": 180,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "X74",
+              "ten_to_hap": "Ngữ văn, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [
+            {
+              "loai": "NAM_TOT_NGHIEP_THPT",
+              "toan_tu": "=",
+              "gia_tri": 2026
+            },
+            {
+              "loai": "DIEM_HOC_BA_TO_HOP",
+              "nguon_diem": "HOC_BA",
+              "toan_tu": ">=",
+              "gia_tri": 18,
+              "lop": [
+                10,
+                11,
+                12
+              ]
+            },
+            {
+              "loai": "REN_LUYEN",
+              "toan_tu": ">=",
+              "gia_tri": "Khá"
+            }
+          ],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            },
+            {
+              "ma_to_hap": "X74",
+              "ten_to_hap": "Ngữ văn, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo Quy chế",
+          "loai_phuong_thuc": "TuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Xét người đã hoàn thành chương trình dự bị đại học",
+          "loai_phuong_thuc": "Khac",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Xét chuyển người đã hoàn thành chương trình dự bị đại học. Chưa xác minh mã phương thức Bộ năm 2026 cho diện này; 500 chỉ là mã ứng viên, không khai báo thành mã chính thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [],
+          "dien_xet_tuyen": "Xét chuyển thí sinh hoàn thành chương trình dự bị đại học theo hồ sơ riêng"
+        }
+      ],
+      "ma_xet_tuyen": "7310202"
+    },
+    {
+      "ma_nganh": "7480201",
+      "ten_nganh": "Công nghệ thông tin",
+      "chi_tieu_nganh": 130,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "A04",
+              "ten_to_hap": "Toán, Vật lý, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Địa lý"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [
+            {
+              "loai": "NAM_TOT_NGHIEP_THPT",
+              "toan_tu": "=",
+              "gia_tri": 2026
+            },
+            {
+              "loai": "DIEM_HOC_BA_TO_HOP",
+              "nguon_diem": "HOC_BA",
+              "toan_tu": ">=",
+              "gia_tri": 18,
+              "lop": [
+                10,
+                11,
+                12
+              ]
+            },
+            {
+              "loai": "REN_LUYEN",
+              "toan_tu": ">=",
+              "gia_tri": "Khá"
+            }
+          ],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "A04",
+              "ten_to_hap": "Toán, Vật lý, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Địa lý"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo Quy chế",
+          "loai_phuong_thuc": "TuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Xét người đã hoàn thành chương trình dự bị đại học",
+          "loai_phuong_thuc": "Khac",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Xét chuyển người đã hoàn thành chương trình dự bị đại học. Chưa xác minh mã phương thức Bộ năm 2026 cho diện này; 500 chỉ là mã ứng viên, không khai báo thành mã chính thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [],
+          "dien_xet_tuyen": "Xét chuyển thí sinh hoàn thành chương trình dự bị đại học theo hồ sơ riêng"
+        }
+      ],
+      "ma_xet_tuyen": "7480201"
+    },
+    {
+      "ma_nganh": "7310101",
+      "ten_nganh": "Kinh tế",
+      "chi_tieu_nganh": 180,
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "A04",
+              "ten_to_hap": "Toán, Vật lý, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Địa lý"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [
+            {
+              "loai": "NAM_TOT_NGHIEP_THPT",
+              "toan_tu": "=",
+              "gia_tri": 2026
+            },
+            {
+              "loai": "DIEM_HOC_BA_TO_HOP",
+              "nguon_diem": "HOC_BA",
+              "toan_tu": ">=",
+              "gia_tri": 18,
+              "lop": [
+                10,
+                11,
+                12
+              ]
+            },
+            {
+              "loai": "REN_LUYEN",
+              "toan_tu": ">=",
+              "gia_tri": "Khá"
+            }
+          ],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Ngữ văn, Toán, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Toán",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "X21",
+              "ten_to_hap": "Toán, Địa lý, Giáo dục Kinh tế và Pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Giáo dục Kinh tế và Pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "A04",
+              "ten_to_hap": "Toán, Vật lý, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Địa lý"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo Quy chế",
+          "loai_phuong_thuc": "TuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Xét người đã hoàn thành chương trình dự bị đại học",
+          "loai_phuong_thuc": "Khac",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Xét chuyển người đã hoàn thành chương trình dự bị đại học. Chưa xác minh mã phương thức Bộ năm 2026 cho diện này; 500 chỉ là mã ứng viên, không khai báo thành mã chính thức.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [],
+          "dien_xet_tuyen": "Xét chuyển thí sinh hoàn thành chương trình dự bị đại học theo hồ sơ riêng"
+        }
+      ],
+      "ma_xet_tuyen": "7310101"
+    }
+  ]
+}

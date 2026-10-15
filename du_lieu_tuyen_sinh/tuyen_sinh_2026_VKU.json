@@ -1,0 +1,2342 @@
+{
+  "truong": {
+    "ma_truong": "VKU",
+    "ten_truong": "Trường Đại học Công nghệ Thông tin và Truyền thông Việt - Hàn - Đại học Đà Nẵng",
+    "loai_hinh": "DaiHoc",
+    "nam_tuyen_sinh": 2026
+  },
+  "danh_sach_nganh": [
+    {
+      "ma_nganh": "7320106",
+      "ma_xet_tuyen": "7320106",
+      "ten_nganh": "Công nghệ truyền thông - Cử nhân",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21.5,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D09",
+              "ten_to_hap": "Toán, Lịch sử, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Lịch sử",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X78",
+              "ten_to_hap": "Ngữ văn, Tiếng Anh, Giáo dục kinh tế và pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Tiếng Anh",
+                "Giáo dục kinh tế và pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7320106",
+      "ma_xet_tuyen": "7320106DA",
+      "ten_nganh": "Công nghệ truyền thông - Thiết kế mỹ thuật số",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21.5,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D09",
+              "ten_to_hap": "Toán, Lịch sử, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Lịch sử",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X78",
+              "ten_to_hap": "Ngữ văn, Tiếng Anh, Giáo dục kinh tế và pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Tiếng Anh",
+                "Giáo dục kinh tế và pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340101",
+      "ma_xet_tuyen": "7340101",
+      "ten_nganh": "Quản trị kinh doanh - Cử nhân",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D09",
+              "ten_to_hap": "Toán, Lịch sử, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Lịch sử",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X78",
+              "ten_to_hap": "Ngữ văn, Tiếng Anh, Giáo dục kinh tế và pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Tiếng Anh",
+                "Giáo dục kinh tế và pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340101",
+      "ma_xet_tuyen": "7340101EL",
+      "ten_nganh": "Quản trị Logistics và Chuỗi cung ứng số",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 22.5,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D09",
+              "ten_to_hap": "Toán, Lịch sử, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Lịch sử",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X78",
+              "ten_to_hap": "Ngữ văn, Tiếng Anh, Giáo dục kinh tế và pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Tiếng Anh",
+                "Giáo dục kinh tế và pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340101",
+      "ma_xet_tuyen": "7340101ET",
+      "ten_nganh": "Quản trị dịch vụ du lịch và lữ hành số",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 22.5,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D09",
+              "ten_to_hap": "Toán, Lịch sử, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Lịch sử",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X78",
+              "ten_to_hap": "Ngữ văn, Tiếng Anh, Giáo dục kinh tế và pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Tiếng Anh",
+                "Giáo dục kinh tế và pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340101",
+      "ma_xet_tuyen": "7340101IM",
+      "ten_nganh": "Quản trị dự án Công nghệ thông tin",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 20.5,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D09",
+              "ten_to_hap": "Toán, Lịch sử, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Lịch sử",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X78",
+              "ten_to_hap": "Ngữ văn, Tiếng Anh, Giáo dục kinh tế và pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Tiếng Anh",
+                "Giáo dục kinh tế và pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340101",
+      "ma_xet_tuyen": "7340101DE",
+      "ten_nganh": "Giải trí và truyền thông số",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21.5,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D09",
+              "ten_to_hap": "Toán, Lịch sử, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Lịch sử",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X78",
+              "ten_to_hap": "Ngữ văn, Tiếng Anh, Giáo dục kinh tế và pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Tiếng Anh",
+                "Giáo dục kinh tế và pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340115",
+      "ma_xet_tuyen": "7340115",
+      "ten_nganh": "Marketing",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21.5,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D09",
+              "ten_to_hap": "Toán, Lịch sử, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Lịch sử",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X78",
+              "ten_to_hap": "Ngữ văn, Tiếng Anh, Giáo dục kinh tế và pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Tiếng Anh",
+                "Giáo dục kinh tế và pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340205",
+      "ma_xet_tuyen": "7340205",
+      "ten_nganh": "Công nghệ tài chính",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 20,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D09",
+              "ten_to_hap": "Toán, Lịch sử, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Lịch sử",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D10",
+              "ten_to_hap": "Toán, Địa lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Địa lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X78",
+              "ten_to_hap": "Ngữ văn, Tiếng Anh, Giáo dục kinh tế và pháp luật",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Tiếng Anh",
+                "Giáo dục kinh tế và pháp luật"
+              ]
+            },
+            {
+              "ma_to_hap": "C00",
+              "ten_to_hap": "Ngữ văn, Lịch sử, Địa lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Ngữ văn",
+                "Lịch sử",
+                "Địa lý"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7480108",
+      "ma_xet_tuyen": "7480108",
+      "ten_nganh": "Công nghệ kỹ thuật máy tính - Kỹ sư",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21.5,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C01",
+              "ten_to_hap": "Toán, Ngữ văn, Vật lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Vật lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7480108",
+      "ma_xet_tuyen": "7480108B",
+      "ten_nganh": "Công nghệ kỹ thuật máy tính - Cử nhân",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 20.5,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C01",
+              "ten_to_hap": "Toán, Ngữ văn, Vật lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Vật lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7480108",
+      "ma_xet_tuyen": "7480108AS",
+      "ten_nganh": "Công nghệ kỹ thuật máy tính - Kỹ thuật phần mềm ô tô",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21.5,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C01",
+              "ten_to_hap": "Toán, Ngữ văn, Vật lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Vật lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7480108",
+      "ma_xet_tuyen": "7480108UA",
+      "ten_nganh": "Công nghệ kỹ thuật máy tính - Thiết bị bay không người lái",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Theo công thức dự kiến 2026; cùng một tổ hợp môn cho học bạ và thi THPT. Điểm chuẩn riêng từng chương trình chưa xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C01",
+              "ten_to_hap": "Toán, Ngữ văn, Vật lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Vật lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7480108",
+      "ma_xet_tuyen": "7480108RA",
+      "ten_nganh": "Công nghệ kỹ thuật máy tính - Kỹ thuật Robot và trí tuệ nhân tạo",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Theo công thức dự kiến 2026; cùng một tổ hợp môn cho học bạ và thi THPT. Điểm chuẩn riêng từng chương trình chưa xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C01",
+              "ten_to_hap": "Toán, Ngữ văn, Vật lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Vật lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7480202",
+      "ma_xet_tuyen": "7480202",
+      "ten_nganh": "An toàn thông tin - Kỹ sư",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Theo công thức dự kiến 2026; cùng một tổ hợp môn cho học bạ và thi THPT. Điểm chuẩn riêng từng chương trình chưa xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C01",
+              "ten_to_hap": "Toán, Ngữ văn, Vật lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Vật lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7480107",
+      "ma_xet_tuyen": "7480107",
+      "ten_nganh": "Trí tuệ nhân tạo - Kỹ sư",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C01",
+              "ten_to_hap": "Toán, Ngữ văn, Vật lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Vật lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7480107",
+      "ma_xet_tuyen": "7480107DA",
+      "ten_nganh": "Trí tuệ nhân tạo - Phân tích dữ liệu",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C01",
+              "ten_to_hap": "Toán, Ngữ văn, Vật lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Vật lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7480201",
+      "ma_xet_tuyen": "7480201",
+      "ten_nganh": "Công nghệ thông tin - Kỹ sư",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Theo công thức dự kiến 2026; cùng một tổ hợp môn cho học bạ và thi THPT. Điểm chuẩn riêng từng chương trình chưa xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C01",
+              "ten_to_hap": "Toán, Ngữ văn, Vật lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Vật lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7480201",
+      "ma_xet_tuyen": "7480201B",
+      "ten_nganh": "Công nghệ thông tin - Cử nhân",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Theo công thức dự kiến 2026; cùng một tổ hợp môn cho học bạ và thi THPT. Điểm chuẩn riêng từng chương trình chưa xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C01",
+              "ten_to_hap": "Toán, Ngữ văn, Vật lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Vật lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7480201",
+      "ma_xet_tuyen": "7480201GT",
+      "ten_nganh": "Công nghệ thông tin - Công nghệ Game",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Theo công thức dự kiến 2026; cùng một tổ hợp môn cho học bạ và thi THPT. Điểm chuẩn riêng từng chương trình chưa xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C01",
+              "ten_to_hap": "Toán, Ngữ văn, Vật lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Vật lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7480108",
+      "ma_xet_tuyen": "7480108IC",
+      "ten_nganh": "Công nghệ kỹ thuật máy tính - Thiết kế vi mạch bán dẫn",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 24,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C01",
+              "ten_to_hap": "Toán, Ngữ văn, Vật lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Vật lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7480108",
+      "ma_xet_tuyen": "7480108PT",
+      "ten_nganh": "Công nghệ kỹ thuật máy tính - Đóng gói và kiểm thử vi mạch bán dẫn",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "407",
+          "ten_phuong_thuc": "Xét tuyển kết hợp học bạ và điểm thi tốt nghiệp THPT (VKU)",
+          "loai_phuong_thuc": "THPTVaHocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 24.5,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn 2026 của Đại học Đà Nẵng, phương thức 407; có cộng điểm ưu tiên theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C01",
+              "ten_to_hap": "Toán, Ngữ văn, Vật lý",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Vật lý"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ],
+          "cong_thuc_tinh_diem": "ĐXT = 0.60 × Tổng điểm học bạ 3 môn (TB cả năm lớp 10,11,12) + 0.40 × Tổng điểm thi TN THPT 3 môn + điểm cộng + điểm ưu tiên; thang 30.",
+          "tieu_chi_dong_diem": "Ưu tiên thí sinh có điểm cộng ít hơn, sau đó nguyện vọng ưu tiên cao hơn."
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    }
+  ]
+}

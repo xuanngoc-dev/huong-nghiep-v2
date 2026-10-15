@@ -6,12 +6,12 @@ import { createChatSession, newConversation } from '../src/utils/chatSession.js'
 import { createEventParser, readChatStream } from '../src/utils/chatStream.js'
 import { renderMarkdown } from '../src/utils/chatMarkdown.js'
 
-function fixture(stream = async () => {}, saved = null) {
+function fixture(stream = async () => {}, saved = null, loadProfile) {
   const data = new Map(saved ? [['test', JSON.stringify(saved)]] : [])
   const state = { messages: newConversation(), modelId: 'test-model', models: [{ id: 'test-model', ten: 'Test', san_sang: true }],
     draft: '', sending: false, error: '', suggestions: [], storageWarning: '' }
   const storage = { getItem: k => data.get(k), setItem: (k, v) => data.set(k, v) }
-  const session = createChatSession(state, { stream, storage, storageKey: () => 'test' })
+  const session = createChatSession(state, { stream, storage, storageKey: () => 'test', loadProfile })
   return { state, session, data }
 }
 function deferred() {
@@ -46,6 +46,36 @@ test('stream updates shared state, sources, actual model and saved history', asy
   assert.equal(state.messages.at(-1).text, 'Xin chào')
   assert.equal(state.messages.at(-1).meta, 'Fallback')
   assert.equal(JSON.parse(data.get('test')).messages.at(-1).sources[0].ten, 'NEU')
+})
+
+test('logged-in profile is sent with the question and a guest request omits it', async () => {
+  const profile = { trinh_do_hoc_van: { chung_chi_ngoai_ngu: [{ ma: 'IELTS', thanh_tich: '7.5' }] } }
+  const seen = []
+  const loggedIn = fixture(async (body, options) => {
+    seen.push(body)
+    options.onEvent('done', { tra_loi: 'Đã tính điểm cộng IELTS' })
+  }, null, async () => profile)
+  await loggedIn.session.send('Điểm SAT trường Bách khoa')
+  assert.deepEqual(seen[0].ho_so, profile)
+  const guest = fixture(async (body, options) => {
+    seen.push(body)
+    options.onEvent('done', { tra_loi: 'Điểm SAT' })
+  })
+  await guest.session.send('Điểm SAT trường Bách khoa')
+  assert.equal(seen[1].ho_so, undefined)
+})
+
+test('stop while the profile is loading cancels before the question is sent', async () => {
+  const gate = deferred()
+  let calls = 0
+  const { state, session } = fixture(async () => { calls += 1 }, null, () => gate.promise)
+  const request = session.send('Điểm SAT trường Bách khoa')
+  session.stop()
+  gate.resolve({ trinh_do_hoc_van: { chung_chi_ngoai_ngu: [{ ma: 'IELTS', thanh_tich: '7.0' }] } })
+  await request
+  assert.equal(calls, 0)
+  assert.equal(state.sending, false)
+  assert.equal(state.messages.at(-1).status, 'cancelled')
 })
 
 test('structured school and major context is persisted and sent on follow-up', async () => {

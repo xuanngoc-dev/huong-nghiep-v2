@@ -1,0 +1,2740 @@
+{
+  "truong": {
+    "ma_truong": "VGU",
+    "ten_truong": "Trường Đại học Việt - Đức",
+    "loai_hinh": "DaiHoc",
+    "nam_tuyen_sinh": 2026
+  },
+  "danh_sach_nganh": [
+    {
+      "ma_nganh": "7480101",
+      "ma_xet_tuyen": "7480101",
+      "ten_nganh": "Khoa học máy tính",
+      "chi_tieu_nganh": 250,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT (học bạ)",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "415",
+          "ten_phuong_thuc": "Xét bằng chứng chỉ quốc tế đủ điều kiện",
+          "loai_phuong_thuc": "ChungChiQuocTe",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Cần xác minh loại chứng chỉ và ngưỡng tối thiểu từng diện; không suy diễn SAT/IELTS đơn độc đủ điều kiện.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Thi TestAS trong quy trình tuyển sinh VGU",
+          "loai_phuong_thuc": "ChuaXacMinhMaBo",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Mã 401/402 phụ thuộc cơ sở tổ chức kỳ thi TestAS, chưa phân định từ phụ lục.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7520208",
+      "ma_xet_tuyen": "7520208",
+      "ten_nganh": "Kỹ thuật điện và máy tính",
+      "chi_tieu_nganh": 165,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT (học bạ)",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "415",
+          "ten_phuong_thuc": "Xét bằng chứng chỉ quốc tế đủ điều kiện",
+          "loai_phuong_thuc": "ChungChiQuocTe",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Cần xác minh loại chứng chỉ và ngưỡng tối thiểu từng diện; không suy diễn SAT/IELTS đơn độc đủ điều kiện.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Thi TestAS trong quy trình tuyển sinh VGU",
+          "loai_phuong_thuc": "ChuaXacMinhMaBo",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Mã 401/402 phụ thuộc cơ sở tổ chức kỳ thi TestAS, chưa phân định từ phụ lục.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7520103",
+      "ma_xet_tuyen": "7520103",
+      "ten_nganh": "Kỹ thuật cơ khí",
+      "chi_tieu_nganh": 95,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT (học bạ)",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "415",
+          "ten_phuong_thuc": "Xét bằng chứng chỉ quốc tế đủ điều kiện",
+          "loai_phuong_thuc": "ChungChiQuocTe",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Cần xác minh loại chứng chỉ và ngưỡng tối thiểu từng diện; không suy diễn SAT/IELTS đơn độc đủ điều kiện.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Thi TestAS trong quy trình tuyển sinh VGU",
+          "loai_phuong_thuc": "ChuaXacMinhMaBo",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Mã 401/402 phụ thuộc cơ sở tổ chức kỳ thi TestAS, chưa phân định từ phụ lục.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7580201",
+      "ma_xet_tuyen": "7580201",
+      "ten_nganh": "Kỹ thuật và quản lý xây dựng",
+      "chi_tieu_nganh": 60,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT (học bạ)",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "415",
+          "ten_phuong_thuc": "Xét bằng chứng chỉ quốc tế đủ điều kiện",
+          "loai_phuong_thuc": "ChungChiQuocTe",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Cần xác minh loại chứng chỉ và ngưỡng tối thiểu từng diện; không suy diễn SAT/IELTS đơn độc đủ điều kiện.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Thi TestAS trong quy trình tuyển sinh VGU",
+          "loai_phuong_thuc": "ChuaXacMinhMaBo",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Mã 401/402 phụ thuộc cơ sở tổ chức kỳ thi TestAS, chưa phân định từ phụ lục.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7580101",
+      "ma_xet_tuyen": "7580101",
+      "ten_nganh": "Kiến trúc",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT (học bạ)",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "415",
+          "ten_phuong_thuc": "Xét bằng chứng chỉ quốc tế đủ điều kiện",
+          "loai_phuong_thuc": "ChungChiQuocTe",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Cần xác minh loại chứng chỉ và ngưỡng tối thiểu từng diện; không suy diễn SAT/IELTS đơn độc đủ điều kiện.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Thi TestAS trong quy trình tuyển sinh VGU",
+          "loai_phuong_thuc": "ChuaXacMinhMaBo",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Mã 401/402 phụ thuộc cơ sở tổ chức kỳ thi TestAS, chưa phân định từ phụ lục.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340101",
+      "ma_xet_tuyen": "7340101",
+      "ten_nganh": "Quản trị kinh doanh",
+      "chi_tieu_nganh": 140,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT (học bạ)",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "415",
+          "ten_phuong_thuc": "Xét bằng chứng chỉ quốc tế đủ điều kiện",
+          "loai_phuong_thuc": "ChungChiQuocTe",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Cần xác minh loại chứng chỉ và ngưỡng tối thiểu từng diện; không suy diễn SAT/IELTS đơn độc đủ điều kiện.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Thi TestAS trong quy trình tuyển sinh VGU",
+          "loai_phuong_thuc": "ChuaXacMinhMaBo",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Mã 401/402 phụ thuộc cơ sở tổ chức kỳ thi TestAS, chưa phân định từ phụ lục.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340202",
+      "ma_xet_tuyen": "7340202",
+      "ten_nganh": "Tài chính và Kế toán",
+      "chi_tieu_nganh": 95,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT (học bạ)",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "415",
+          "ten_phuong_thuc": "Xét bằng chứng chỉ quốc tế đủ điều kiện",
+          "loai_phuong_thuc": "ChungChiQuocTe",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Cần xác minh loại chứng chỉ và ngưỡng tối thiểu từng diện; không suy diễn SAT/IELTS đơn độc đủ điều kiện.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Thi TestAS trong quy trình tuyển sinh VGU",
+          "loai_phuong_thuc": "ChuaXacMinhMaBo",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Mã 401/402 phụ thuộc cơ sở tổ chức kỳ thi TestAS, chưa phân định từ phụ lục.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7510104",
+      "ma_xet_tuyen": "7510104",
+      "ten_nganh": "Kỹ thuật giao thông thông minh",
+      "chi_tieu_nganh": 60,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT (học bạ)",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "415",
+          "ten_phuong_thuc": "Xét bằng chứng chỉ quốc tế đủ điều kiện",
+          "loai_phuong_thuc": "ChungChiQuocTe",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Cần xác minh loại chứng chỉ và ngưỡng tối thiểu từng diện; không suy diễn SAT/IELTS đơn độc đủ điều kiện.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Thi TestAS trong quy trình tuyển sinh VGU",
+          "loai_phuong_thuc": "ChuaXacMinhMaBo",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Mã 401/402 phụ thuộc cơ sở tổ chức kỳ thi TestAS, chưa phân định từ phụ lục.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7510206",
+      "ma_xet_tuyen": "7510206",
+      "ten_nganh": "Kỹ thuật quy trình sản xuất bền vững",
+      "chi_tieu_nganh": 60,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT (học bạ)",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "415",
+          "ten_phuong_thuc": "Xét bằng chứng chỉ quốc tế đủ điều kiện",
+          "loai_phuong_thuc": "ChungChiQuocTe",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Cần xác minh loại chứng chỉ và ngưỡng tối thiểu từng diện; không suy diễn SAT/IELTS đơn độc đủ điều kiện.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Thi TestAS trong quy trình tuyển sinh VGU",
+          "loai_phuong_thuc": "ChuaXacMinhMaBo",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Mã 401/402 phụ thuộc cơ sở tổ chức kỳ thi TestAS, chưa phân định từ phụ lục.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7520114",
+      "ma_xet_tuyen": "7520114",
+      "ten_nganh": "Kỹ thuật cơ điện tử",
+      "chi_tieu_nganh": 60,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT (học bạ)",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "415",
+          "ten_phuong_thuc": "Xét bằng chứng chỉ quốc tế đủ điều kiện",
+          "loai_phuong_thuc": "ChungChiQuocTe",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Cần xác minh loại chứng chỉ và ngưỡng tối thiểu từng diện; không suy diễn SAT/IELTS đơn độc đủ điều kiện.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Thi TestAS trong quy trình tuyển sinh VGU",
+          "loai_phuong_thuc": "ChuaXacMinhMaBo",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Mã 401/402 phụ thuộc cơ sở tổ chức kỳ thi TestAS, chưa phân định từ phụ lục.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7310101",
+      "ma_xet_tuyen": "7310101",
+      "ten_nganh": "Kinh tế học",
+      "chi_tieu_nganh": 60,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT (học bạ)",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "415",
+          "ten_phuong_thuc": "Xét bằng chứng chỉ quốc tế đủ điều kiện",
+          "loai_phuong_thuc": "ChungChiQuocTe",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Cần xác minh loại chứng chỉ và ngưỡng tối thiểu từng diện; không suy diễn SAT/IELTS đơn độc đủ điều kiện.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Thi TestAS trong quy trình tuyển sinh VGU",
+          "loai_phuong_thuc": "ChuaXacMinhMaBo",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Mã 401/402 phụ thuộc cơ sở tổ chức kỳ thi TestAS, chưa phân định từ phụ lục.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340122",
+      "ma_xet_tuyen": "7340122",
+      "ten_nganh": "Quản trị số và Kinh doanh quốc tế",
+      "chi_tieu_nganh": 30,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT (học bạ)",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "415",
+          "ten_phuong_thuc": "Xét bằng chứng chỉ quốc tế đủ điều kiện",
+          "loai_phuong_thuc": "ChungChiQuocTe",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Cần xác minh loại chứng chỉ và ngưỡng tối thiểu từng diện; không suy diễn SAT/IELTS đơn độc đủ điều kiện.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Thi TestAS trong quy trình tuyển sinh VGU",
+          "loai_phuong_thuc": "ChuaXacMinhMaBo",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Mã 401/402 phụ thuộc cơ sở tổ chức kỳ thi TestAS, chưa phân định từ phụ lục.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7520212",
+      "ma_xet_tuyen": "7520212",
+      "ten_nganh": "Kỹ thuật y sinh",
+      "chi_tieu_nganh": 30,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT (học bạ)",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X06",
+              "ten_to_hap": "Toán, Vật lý, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X26",
+              "ten_to_hap": "Toán, Tin học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Tin học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "415",
+          "ten_phuong_thuc": "Xét bằng chứng chỉ quốc tế đủ điều kiện",
+          "loai_phuong_thuc": "ChungChiQuocTe",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Cần xác minh loại chứng chỉ và ngưỡng tối thiểu từng diện; không suy diễn SAT/IELTS đơn độc đủ điều kiện.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "Thi TestAS trong quy trình tuyển sinh VGU",
+          "loai_phuong_thuc": "ChuaXacMinhMaBo",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Mã 401/402 phụ thuộc cơ sở tổ chức kỳ thi TestAS, chưa phân định từ phụ lục.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    }
+  ]
+}

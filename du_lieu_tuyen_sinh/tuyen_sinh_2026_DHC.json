@@ -1,0 +1,52 @@
+{
+  "truong": {
+    "ma_truong": "DHC",
+    "ten_truong": "Khoa Giáo dục thể chất - Đại học Huế",
+    "loai_hinh": "DaiHoc",
+    "nam_tuyen_sinh": 2026
+  },
+  "danh_sach_nganh": [
+    {
+      "ma_nganh": "7140206",
+      "ma_xet_tuyen": "7140206",
+      "ten_nganh": "Giáo dục Thể chất",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "405",
+          "ten_phuong_thuc": "THPT kết hợp năng khiếu thể dục thể thao",
+          "loai_phuong_thuc": "THPTNangKhieu",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 24.47,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "406",
+          "ten_phuong_thuc": "Học bạ kết hợp năng khiếu thể dục thể thao",
+          "loai_phuong_thuc": "HocBaNangKhieu",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 25.68,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    }
+  ]
+}

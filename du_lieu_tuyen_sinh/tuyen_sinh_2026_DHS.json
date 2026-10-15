@@ -1,0 +1,736 @@
+{
+  "truong": {
+    "ma_truong": "DHS",
+    "ten_truong": "Trường Đại học Sư phạm - Đại học Huế",
+    "loai_hinh": "DaiHoc",
+    "nam_tuyen_sinh": 2026
+  },
+  "danh_sach_nganh": [
+    {
+      "ma_nganh": "7140201",
+      "ma_xet_tuyen": "7140201",
+      "ten_nganh": "Giáo dục Mầm non",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "405",
+          "ten_phuong_thuc": "THPT và năng khiếu",
+          "loai_phuong_thuc": "THPTNangKhieu",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 24.12,
+          "thang_diem": 30,
+          "ghi_chu": "Môn năng khiếu là yêu cầu chuyên biệt của ngành.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "406",
+          "ten_phuong_thuc": "Học bạ và năng khiếu",
+          "loai_phuong_thuc": "HocBaNangKhieu",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 24.12,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140202",
+      "ma_xet_tuyen": "7140202",
+      "ten_nganh": "Giáo dục Tiểu học",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 25.1,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140204",
+      "ma_xet_tuyen": "7140204",
+      "ten_nganh": "Giáo dục Công dân",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 22.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140205",
+      "ma_xet_tuyen": "7140205",
+      "ten_nganh": "Giáo dục Chính trị",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 22.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140208",
+      "ma_xet_tuyen": "7140208",
+      "ten_nganh": "Giáo dục Quốc phòng - An ninh",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 20.5,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140209",
+      "ma_xet_tuyen": "7140209",
+      "ten_nganh": "Sư phạm Toán học",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 25.65,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140210",
+      "ma_xet_tuyen": "7140210",
+      "ten_nganh": "Sư phạm Tin học",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 23.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140211",
+      "ma_xet_tuyen": "7140211",
+      "ten_nganh": "Sư phạm Vật lý",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 25.4,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140212",
+      "ma_xet_tuyen": "7140212",
+      "ten_nganh": "Sư phạm Hóa học",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 24.06,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140213",
+      "ma_xet_tuyen": "7140213",
+      "ten_nganh": "Sư phạm Sinh học",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 22.5,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140217",
+      "ma_xet_tuyen": "7140217",
+      "ten_nganh": "Sư phạm Ngữ văn",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 25.73,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140218",
+      "ma_xet_tuyen": "7140218",
+      "ten_nganh": "Sư phạm Lịch sử",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 25.86,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140219",
+      "ma_xet_tuyen": "7140219",
+      "ten_nganh": "Sư phạm Địa lý",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 24.94,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140221",
+      "ma_xet_tuyen": "7140221",
+      "ten_nganh": "Sư phạm Âm nhạc",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "405",
+          "ten_phuong_thuc": "THPT và năng khiếu",
+          "loai_phuong_thuc": "THPTNangKhieu",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 24.21,
+          "thang_diem": 30,
+          "ghi_chu": "Môn năng khiếu là yêu cầu chuyên biệt của ngành.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140246",
+      "ma_xet_tuyen": "7140246",
+      "ten_nganh": "Sư phạm Công nghệ",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 20.5,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140247",
+      "ma_xet_tuyen": "7140247",
+      "ten_nganh": "Sư phạm Khoa học tự nhiên",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 24.43,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140248",
+      "ma_xet_tuyen": "7140248",
+      "ten_nganh": "Giáo dục pháp luật",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7140249",
+      "ma_xet_tuyen": "7140249",
+      "ten_nganh": "Sư phạm Lịch sử - Địa lý",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 24.88,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7310403",
+      "ma_xet_tuyen": "7310403",
+      "ten_nganh": "Tâm lý học giáo dục",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 24.11,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 25.36,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7480104",
+      "ma_xet_tuyen": "7480104",
+      "ten_nganh": "Hệ thống thông tin",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21.27,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 22.8,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7520117",
+      "ma_xet_tuyen": "7520117",
+      "ten_nganh": "Kỹ thuật công nghiệp",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 24.2,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7520401",
+      "ma_xet_tuyen": "7520401",
+      "ten_nganh": "Vật lý kỹ thuật",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21.71,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 23.2,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    }
+  ]
+}

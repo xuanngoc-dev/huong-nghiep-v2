@@ -149,6 +149,30 @@ class PlannerFlowTests(CorpusFixture, unittest.IsolatedAsyncioTestCase):
         self.assertEqual(events[-1][0], "done")
         self.assertEqual(events[-1][1]["tra_loi"], "Bạn thích công việc nào hơn?")
 
+    async def test_planner_sees_profile_when_scoring_needs_certificate_bonus(self):
+        requests = []
+        def handler(request):
+            body = json.loads(request.content)
+            requests.append(body)
+            if len(requests) == 1:
+                self.assertIn("HỒ SƠ THÍ SINH:", body["messages"][0]["content"])
+                self.assertIn("IELTS", body["messages"][0]["content"])
+                self.assertIn("7.5", body["messages"][0]["content"])
+                answer = KeHoachTraCuu(ma_truong=["AAA"], che_do="chi_tiet", thong_tin=["diem", "dieu_kien"]).model_dump_json()
+            else:
+                self.assertIn("HỒ SƠ THÍ SINH:", body["messages"][0]["content"])
+                self.assertIn("7.5", body["messages"][0]["content"])
+                answer = "IELTS 7.5 được cộng theo công thức của chương trình."
+            payload = {"choices": [{"delta": {"content": answer}, "finish_reason": "stop"}]}
+            return httpx.Response(200, text="data: " + json.dumps(payload) + "\n\ndata: [DONE]\n\n")
+        transport = httpx.MockTransport(handler)
+        profile = {"trinh_do_hoc_van": {"chung_chi_ngoai_ngu": [
+            {"ma": "IELTS", "thanh_tich": "7.5", "thoi_gian_cap": "2025-06-15"}]}}
+        with patch.object(chat_stream.httpx, "AsyncClient", side_effect=lambda **kwargs: self.original_client(transport=transport, **kwargs)):
+            response = await chat_stream.answer(HoiChatRequest(cau_hoi="Điểm SAT trường BKA", model_id="test", ho_so=profile))
+        self.assertEqual(len(requests), 2)
+        self.assertIn("IELTS", response.tra_loi)
+
     async def test_invalid_plan_does_not_invent_restrictive_filters(self):
         async def invalid(_):
             yield "delta", {"text": '{"ma_truong":["UNKNOWN"]}'}

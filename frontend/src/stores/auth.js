@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { fetchMe, login as loginApi, register as registerApi } from '@/api/auth'
+import { clearHoSoCache } from '@/utils/hoSoCache'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token') || '')
@@ -55,6 +56,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function logout() {
+    clearHoSoCache()
     setToken('')
     user.value = null
   }

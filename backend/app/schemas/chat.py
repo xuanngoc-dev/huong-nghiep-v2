@@ -1,7 +1,9 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field, model_validator
+
+from app.schemas.ho_so import KhaNangTaiChinh, SucKhoeTheChat, TrinhDoHocVan
 
 
 class ModelChat(BaseModel):
@@ -68,11 +70,27 @@ class KeHoachTraCuu(BaseModel):
         return self
 
 
+class HoSoChat(BaseModel):
+    """Phần hồ sơ dùng để cá nhân hóa câu trả lời. Không gồm email, họ tên hay số điện thoại."""
+
+    gioi_tinh: int | None = Field(default=None, ge=1, le=3)
+    ngay_sinh: date | None = None
+    dan_toc: str | None = Field(default=None, max_length=150)
+    ton_giao: str | None = Field(default=None, max_length=150)
+    tinh_thanh_id: int | None = Field(default=None, ge=1)
+    khu_vuc_uu_tien_id: int | None = Field(default=None, ge=1)
+    doi_tuong_uu_tien_id: int | None = Field(default=None, ge=1)
+    trinh_do_hoc_van: TrinhDoHocVan | None = None
+    suc_khoe_the_chat: SucKhoeTheChat | None = None
+    kha_nang_tai_chinh: KhaNangTaiChinh | None = None
+
+
 class HoiChatRequest(BaseModel):
     cau_hoi: str = Field(min_length=1, max_length=4000)
     model_id: str = Field(min_length=1, max_length=80)
     lich_su: list[TinNhan] = Field(default_factory=list, max_length=50)
     ngu_canh: NguCanhChat | None = None
+    ho_so: HoSoChat | None = None
 
     @model_validator(mode="after")
     def check_history_budget(self):
@@ -80,6 +98,8 @@ class HoiChatRequest(BaseModel):
             raise ValueError("Vui lòng nhập câu hỏi.")
         if sum(len(item.noi_dung) for item in self.lich_su) > 64000:
             raise ValueError("Lịch sử quá dài. Hãy bắt đầu hội thoại mới.")
+        if self.ho_so is not None and len(self.ho_so.model_dump_json(exclude_none=True)) > 20000:
+            raise ValueError("Hồ sơ gửi kèm quá dài.")
         return self
 
 

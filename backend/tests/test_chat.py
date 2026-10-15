@@ -178,6 +178,17 @@ class SchemaTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             HoiChatRequest(cau_hoi="   ", model_id="x")
 
+    def test_chat_profile_keeps_scores_and_drops_contact_fields(self):
+        payload = HoiChatRequest(cau_hoi="Điểm SAT trường BKA", model_id="x", ho_so={
+            "ho_ten": "Nguyễn Văn An", "email": "an@example.com", "so_dien_thoai": "0912345678",
+            "trinh_do_hoc_van": {"chung_chi_ngoai_ngu": [{"ma": "IELTS", "thanh_tich": "7.5", "thoi_gian_cap": "2025-06-15"}]},
+        })
+        dumped = payload.ho_so.model_dump(exclude_none=True)
+        self.assertEqual(dumped["trinh_do_hoc_van"]["chung_chi_ngoai_ngu"][0]["ma"], "IELTS")
+        self.assertNotIn("email", dumped)
+        self.assertNotIn("ho_ten", dumped)
+        self.assertNotIn("so_dien_thoai", dumped)
+
 
 class StreamTests(CorpusFixture, unittest.IsolatedAsyncioTestCase):
     def setUp(self):
@@ -229,6 +240,18 @@ class StreamTests(CorpusFixture, unittest.IsolatedAsyncioTestCase):
             result = await self.collect()
         self.assertEqual(result[-1][0], "error")
         self.assertNotIn("sensitive", json.dumps(result))
+
+    async def test_logged_in_profile_is_attached_as_candidate_data(self):
+        prepared = await chat_stream.prepare(HoiChatRequest(
+            cau_hoi="Điểm SAT trường BKA", model_id="openai-test",
+            ho_so={"trinh_do_hoc_van": {"chung_chi_ngoai_ngu": [
+                {"ma": "IELTS", "thanh_tich": "7.5", "thoi_gian_cap": "2025-06-15"}]}}))
+        system = prepared.messages[0]["content"]
+        self.assertIn("HỒ SƠ THÍ SINH:", system)
+        self.assertIn("IELTS", system)
+        self.assertIn("7.5", system)
+        guest = await chat_stream.prepare(HoiChatRequest(cau_hoi="Điểm SAT trường BKA", model_id="openai-test"))
+        self.assertNotIn("HỒ SƠ THÍ SINH:", guest.messages[0]["content"])
 
     async def test_unknown_model_rejected_and_history_used(self):
         with self.assertRaises(HTTPException):

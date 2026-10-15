@@ -6,6 +6,7 @@ import { fetchChungChiNgoaiNgu } from '@/api/chungChiNgoaiNgu'
 import { fetchDanToc } from '@/api/danToc'
 import { fetchDoiTuongUuTien } from '@/api/doiTuongUuTien'
 import { fetchHoSo, updateHoSo } from '@/api/hoSo'
+import { storeHoSo } from '@/utils/hoSoCache'
 import { fetchKhuVucUuTien } from '@/api/khuVucUuTien'
 import { fetchMonHoc } from '@/api/monHoc'
 import { fetchThanhTichHocTapNghienCuu } from '@/api/thanhTichHocTapNghienCuu'
@@ -555,6 +556,7 @@ async function onSubmit() {
     )
     applyProfile(data)
     syncAuthUser(data)
+    if (auth.user?.id) storeHoSo(auth.user.id, data)
     ElMessage.success('Đã cập nhật thông tin cá nhân')
   } catch (error) {
     ElMessage.error(errorMessage(error, 'Không lưu được thông tin cá nhân'))

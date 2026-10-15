@@ -1,7 +1,9 @@
 import { computed, reactive, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { hoiChatStream, layDanhSachModel } from '@/api/chat'
+import { fetchHoSo } from '@/api/hoSo'
 import { createChatSession, newConversation } from '@/utils/chatSession'
+import { clearHoSoCache, loadHoSo, toChatProfile } from '@/utils/hoSoCache'
 import { useAuthStore } from '@/stores/auth'
 
 export const useChatStore = defineStore('chat', () => {
@@ -9,7 +11,21 @@ export const useChatStore = defineStore('chat', () => {
   const state = reactive({ messages: newConversation(), draft: '', sending: false, models: [], modelId: '',
     suggestions: [], error: '', loadingModels: false, storageWarning: '', context: null })
   const key = () => `huong-nghiep-chat-v2:${auth.user?.id || 'guest'}`
-  const session = createChatSession(state, { stream: hoiChatStream, storage: localStorage, storageKey: key })
+  function warmProfile() {
+    const userId = auth.user?.id
+    if (!auth.isAuthenticated || !userId) return
+    loadHoSo(userId, fetchHoSo).catch(() => {})
+  }
+  async function loadProfile() {
+    const userId = auth.user?.id
+    if (!auth.isAuthenticated || !userId) return null
+    try {
+      return toChatProfile(await loadHoSo(userId, fetchHoSo))
+    } catch {
+      return null
+    }
+  }
+  const session = createChatSession(state, { stream: hoiChatStream, storage: localStorage, storageKey: key, loadProfile })
   session.restore()
   const model = computed(() => state.models.find(m => m.id === state.modelId))
   let loading = null
@@ -33,7 +49,13 @@ export const useChatStore = defineStore('chat', () => {
     })()
     return loading
   }
-  watch(() => auth.user?.id, () => { session.restore(); loadModels() })
+  warmProfile()
+  watch(() => auth.user?.id, (userId, previousId) => {
+    if (previousId && previousId !== userId) clearHoSoCache(previousId)
+    session.restore()
+    loadModels()
+    if (userId) warmProfile()
+  })
   watch(() => [state.draft, state.modelId], () => session.persist())
   return { state, model, loadModels, send: session.send, stop: session.stop, clear: session.clear, retry: session.retry }
 })

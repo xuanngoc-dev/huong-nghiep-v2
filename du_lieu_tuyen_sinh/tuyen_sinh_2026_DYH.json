@@ -1,0 +1,158 @@
+{
+  "truong": {
+    "ma_truong": "DYH",
+    "ten_truong": "Học viện Quân y (hệ dân sự)",
+    "loai_hinh": "HocVien",
+    "nam_tuyen_sinh": 2026
+  },
+  "danh_sach_nganh": [
+    {
+      "ma_nganh": "7720101",
+      "ma_xet_tuyen": "7720101",
+      "ten_nganh": "Y khoa",
+      "chi_tieu_nganh": 200,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Tuyển thẳng theo quy chế tuyển sinh",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Không yêu cầu sơ tuyển quân sự cho hệ dân sự.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả đánh giá năng lực/tư duy do đơn vị khác tổ chức",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Kết quả HSA ĐHQG Hà Nội hoặc V-ACT ĐHQG TP.HCM được quy đổi về thang 30 theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 27.43,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn công bố chung sau quy đổi THPT/ĐGNL; không cộng nhầm điểm từ kết quả riêng.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "B00",
+              "ten_to_hap": "Toán, Hóa học, Sinh học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Sinh học"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        }
+      ],
+      "ten_chuong_trinh": "Hệ dân sự"
+    },
+    {
+      "ma_nganh": "7720201",
+      "ma_xet_tuyen": "7720201",
+      "ten_nganh": "Dược học",
+      "chi_tieu_nganh": 50,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Tuyển thẳng theo quy chế tuyển sinh",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "Không yêu cầu sơ tuyển quân sự cho hệ dân sự.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả đánh giá năng lực/tư duy do đơn vị khác tổ chức",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "Kết quả HSA ĐHQG Hà Nội hoặc V-ACT ĐHQG TP.HCM được quy đổi về thang 30 theo quy định.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 23.54,
+          "thang_diem": 30,
+          "ghi_chu": "Điểm chuẩn công bố chung sau quy đổi THPT/ĐGNL; không cộng nhầm điểm từ kết quả riêng.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "D07",
+              "ten_to_hap": "Toán, Hóa học, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Hóa học",
+                "Tiếng Anh"
+              ]
+            }
+          ]
+        }
+      ],
+      "ten_chuong_trinh": "Hệ dân sự"
+    }
+  ]
+}

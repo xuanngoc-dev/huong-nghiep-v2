@@ -1,0 +1,179 @@
+{
+  "truong": {
+    "ma_truong": "CSH",
+    "ten_truong": "Học viện Cảnh sát nhân dân",
+    "loai_hinh": "HocVien",
+    "nam_tuyen_sinh": 2026
+  },
+  "danh_sach_nganh": [
+    {
+      "ma_nganh": "7860100",
+      "ma_xet_tuyen": "7860100",
+      "ten_nganh": "Nhóm ngành nghiệp vụ Cảnh sát",
+      "chi_tieu_nganh": 400,
+      "dieu_kien_nganh": [
+        {
+          "loai": "DIEU_KIEN_SO_TUYEN",
+          "gia_tri": true
+        },
+        {
+          "loai": "KHU_VUC_TUYEN_SINH",
+          "gia_tri": "Từ thành phố Huế trở ra"
+        },
+        {
+          "loai": "CHI_TIEU_THEO_GIOI",
+          "gia_tri": {
+            "nam": 360,
+            "nu": 40
+          }
+        }
+      ],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Tuyển thẳng theo quy chế tuyển sinh",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": 20,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": "20 chỉ tiêu tuyển thẳng: nam 18, nữ 2; xét tuyển thẳng theo quy chế Bộ GDĐT và Bộ Công an.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": [],
+          "dien_xet_tuyen": "PT1"
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "PT2: Chứng chỉ ngoại ngữ quốc tế + bài thi đánh giá Bộ Công an",
+          "loai_phuong_thuc": "XetTuyenKetHop",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "PT2 kết hợp chứng chỉ ngoại ngữ quốc tế với bài thi đánh giá Bộ Công an. Chưa xác minh mã Bộ; không mặc nhiên xếp 402/415/500. PT2+PT3 có 380 chỉ tiêu chung: nam 342, nữ 38, không có phân bổ riêng. Điểm trúng tuyển 2026 PT2/PT3 công bố theo giới: nam 21,61; nữ 24,42 (thang 30); không gán chung.",
+          "dieu_kien_phu": [
+            {
+              "loai": "SO_TUYEN_CONG_AN",
+              "gia_tri": true
+            },
+            {
+              "loai": "Bai_thi",
+              "gia_tri": "CA1/CA2/CA3/CA4"
+            }
+          ],
+          "to_hop_mon": [],
+          "dien_xet_tuyen": "PT2"
+        },
+        {
+          "ma_phuong_thuc": null,
+          "ten_phuong_thuc": "PT3: Điểm thi THPT + bài thi đánh giá Bộ Công an",
+          "loai_phuong_thuc": "XetTuyenKetHop",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": 30,
+          "ghi_chu": "PT3 kết hợp kết quả thi tốt nghiệp THPT với bài thi đánh giá Bộ Công an. PT2+PT3 dùng chung 380 chỉ tiêu, không được chia giả. Mã Bộ chưa có căn cứ chính thức. Điểm trúng tuyển 2026 PT2/PT3 công bố theo giới: nam 21,61; nữ 24,42 (thang 30); không gán chung.",
+          "dieu_kien_phu": [
+            {
+              "loai": "SO_TUYEN_CONG_AN",
+              "gia_tri": true
+            },
+            {
+              "loai": "BAI_THI_DGNL_BCA",
+              "gia_tri": [
+                "CA1",
+                "CA2",
+                "CA3",
+                "CA4"
+              ]
+            }
+          ],
+          "to_hop_mon": [
+            {
+              "ma_to_hap": "A00",
+              "ten_to_hap": "Toán, Vật lý, Hóa học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Hóa học"
+              ]
+            },
+            {
+              "ma_to_hap": "A01",
+              "ten_to_hap": "Toán, Vật lý, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Vật lý",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "C03",
+              "ten_to_hap": "Toán, Ngữ văn, Lịch sử",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Lịch sử"
+              ]
+            },
+            {
+              "ma_to_hap": "D01",
+              "ten_to_hap": "Toán, Ngữ văn, Tiếng Anh",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tiếng Anh"
+              ]
+            },
+            {
+              "ma_to_hap": "X02",
+              "ten_to_hap": "Toán, Ngữ văn, Tin học",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Tin học"
+              ]
+            },
+            {
+              "ma_to_hap": "X03",
+              "ten_to_hap": "Toán, Ngữ văn, Công nghệ công nghiệp",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Công nghệ công nghiệp"
+              ]
+            },
+            {
+              "ma_to_hap": "X04",
+              "ten_to_hap": "Toán, Ngữ văn, Công nghệ nông nghiệp",
+              "chi_tieu_to_hap": null,
+              "diem_chuan": null,
+              "dieu_kien_phu": [],
+              "danh_sach_mon": [
+                "Toán",
+                "Ngữ văn",
+                "Công nghệ nông nghiệp"
+              ]
+            }
+          ],
+          "dien_xet_tuyen": "PT3"
+        }
+      ]
+    }
+  ]
+}

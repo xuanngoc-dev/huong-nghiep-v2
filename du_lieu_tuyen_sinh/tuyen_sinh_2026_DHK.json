@@ -1,0 +1,1176 @@
+{
+  "truong": {
+    "ma_truong": "DHK",
+    "ten_truong": "Trường Đại học Kinh tế - Đại học Huế",
+    "loai_hinh": "DaiHoc",
+    "nam_tuyen_sinh": 2026
+  },
+  "danh_sach_nganh": [
+    {
+      "ma_nganh": "7310101",
+      "ma_xet_tuyen": "7310101",
+      "ten_nganh": "Kinh tế",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.75,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 535.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7310101",
+      "ma_xet_tuyen": "7310101TA",
+      "ten_nganh": "Kinh tế (chương trình tiếng Anh)",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.75,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 535.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7310102",
+      "ma_xet_tuyen": "7310102",
+      "ten_nganh": "Kinh tế chính trị",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.75,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 535.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7310106",
+      "ma_xet_tuyen": "7310106",
+      "ten_nganh": "Kinh tế quốc tế",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.75,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 535.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7310107",
+      "ma_xet_tuyen": "7310107",
+      "ten_nganh": "Thống kê kinh tế",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.75,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 535.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7310109",
+      "ma_xet_tuyen": "7310109",
+      "ten_nganh": "Kinh tế số",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.75,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 535.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340101",
+      "ma_xet_tuyen": "7340101",
+      "ten_nganh": "Quản trị kinh doanh",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 20.25,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 603.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340101",
+      "ma_xet_tuyen": "7340101TA",
+      "ten_nganh": "Quản trị kinh doanh (chương trình tiếng Anh)",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.75,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 535.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340115",
+      "ma_xet_tuyen": "7340115",
+      "ten_nganh": "Marketing",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 20.5,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 22.12,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 695.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340120",
+      "ma_xet_tuyen": "7340120",
+      "ten_nganh": "Kinh doanh quốc tế",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 17.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 19.5,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 571.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340121",
+      "ma_xet_tuyen": "7340121",
+      "ten_nganh": "Kinh doanh thương mại",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 17.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 19.5,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 571.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340122",
+      "ma_xet_tuyen": "7340122",
+      "ten_nganh": "Thương mại điện tử",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 19.5,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21.37,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 658.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340201",
+      "ma_xet_tuyen": "7340201",
+      "ten_nganh": "Tài chính - Ngân hàng",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 19.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21.0,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 639.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340301",
+      "ma_xet_tuyen": "7340301",
+      "ten_nganh": "Kế toán",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 19.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21.0,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 639.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340301",
+      "ma_xet_tuyen": "7340301TA",
+      "ten_nganh": "Kế toán (chương trình tiếng Anh)",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.75,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 535.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340302",
+      "ma_xet_tuyen": "7340302",
+      "ten_nganh": "Kiểm toán",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.75,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 535.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340404",
+      "ma_xet_tuyen": "7340404",
+      "ten_nganh": "Quản trị nhân lực",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 17.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 19.5,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 571.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7340405",
+      "ma_xet_tuyen": "7340405",
+      "ten_nganh": "Hệ thống thông tin quản lý",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.75,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 535.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7349001",
+      "ma_xet_tuyen": "7349001",
+      "ten_nganh": "Tài chính - Ngân hàng (chương trình liên kết quốc tế)",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.75,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 535.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7510605",
+      "ma_xet_tuyen": "7510605",
+      "ten_nganh": "Logistics và Quản lý chuỗi cung ứng",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 20.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 21.75,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 676.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7620115",
+      "ma_xet_tuyen": "7620115",
+      "ten_nganh": "Kinh tế nông nghiệp",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.75,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 535.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    },
+    {
+      "ma_nganh": "7903124",
+      "ma_xet_tuyen": "7903124",
+      "ten_nganh": "Song ngành Kinh tế - Tài chính",
+      "chi_tieu_nganh": null,
+      "dieu_kien_nganh": [],
+      "phuong_thuc_tuyen_sinh": [
+        {
+          "ma_phuong_thuc": "100",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi tốt nghiệp THPT năm 2026",
+          "loai_phuong_thuc": "DiemThiTHPT",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 16.0,
+          "thang_diem": 30,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "200",
+          "ten_phuong_thuc": "Xét kết quả học tập THPT theo phương thức/điểm quy đổi trường công bố",
+          "loai_phuong_thuc": "HocBa",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 18.75,
+          "thang_diem": 30,
+          "ghi_chu": "Lưu đúng cột điểm xét tuyển theo học bạ của phụ lục; điều kiện kèm theo riêng cần xác minh.",
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "402",
+          "ten_phuong_thuc": "Xét kết quả kỳ thi đánh giá năng lực ĐHQG TP.HCM (V-ACT)",
+          "loai_phuong_thuc": "DanhGiaNangLuc",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": 535.0,
+          "thang_diem": 1200,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        },
+        {
+          "ma_phuong_thuc": "301",
+          "ten_phuong_thuc": "Xét tuyển thẳng theo quy chế",
+          "loai_phuong_thuc": "XetTuyenThang",
+          "chi_tieu_phuong_thuc": null,
+          "diem_chuan": null,
+          "thang_diem": null,
+          "ghi_chu": null,
+          "dieu_kien_phu": [],
+          "to_hop_mon": []
+        }
+      ]
+    }
+  ]
+}
