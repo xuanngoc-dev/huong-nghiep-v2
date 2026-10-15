@@ -372,6 +372,13 @@ def _planned_search(plan: KeHoachTraCuu, docs: list[Document]) -> SearchResult:
     method_filters = {normalize(m) for m in plan.phuong_thuc}
     detailed = plan.che_do == "chi_tiet" or any(f in {"sat", "act", "ielts", "tsa", "hsa", "alevel", "a level", "ap", "ib", "toefl"} for f in method_filters)
     comparing = any(v is not None for v in (plan.diem_tu, plan.diem_den, plan.diem_muc_tieu))
+    # When a candidate score is stated without an explicit score range, show
+    # cutoffs within the configured margin on either side of that score.
+    score_min = plan.diem_tu
+    score_max = plan.diem_den
+    if plan.diem_muc_tieu is not None and score_min is None and score_max is None:
+        score_min = max(0.0, plan.diem_muc_tieu - settings.chat_score_margin)
+        score_max = plan.diem_muc_tieu + settings.chat_score_margin
     for doc in docs:
         school = doc.data["truong"]
         if plan.ma_truong and str(school.get("ma_truong")) not in plan.ma_truong:
@@ -400,9 +407,9 @@ def _planned_search(plan: KeHoachTraCuu, docs: list[Document]) -> SearchResult:
                 kept, scores = [], []
                 for combo in combos or [{}]:
                     cutoff = _number(combo.get("diem_chuan") if combo.get("diem_chuan") is not None else method.get("diem_chuan"))
-                    if plan.diem_tu is not None and (cutoff is None or cutoff < plan.diem_tu):
+                    if score_min is not None and (cutoff is None or cutoff < score_min):
                         continue
-                    if plan.diem_den is not None and (cutoff is None or cutoff > plan.diem_den):
+                    if score_max is not None and (cutoff is None or cutoff > score_max):
                         continue
                     kept.append(combo)
                     if cutoff is not None:

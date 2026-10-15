@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     chat_context_max_chars: int = Field(default=60_000, ge=4_000, le=200_000)
     chat_detail_context_max_chars: int = Field(default=100_000, ge=4_000, le=300_000)
     chat_planning_timeout_seconds: int = Field(default=20, ge=3, le=60)
+    chat_score_margin: float = Field(default=1.0, ge=0, le=100)
 
     model_config = SettingsConfigDict(
         env_file=(".env", "../.env", "backend/.env"),

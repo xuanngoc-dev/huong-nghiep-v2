@@ -76,7 +76,7 @@ Frontend: http://localhost:5173
 ## Chatbot tuyển sinh
 
 - Tra cứu theo trường/cơ sở, ngành/chương trình, tổ hợp, điểm, chỉ tiêu và điều kiện. Hỗ trợ câu hỏi không dấu, tên viết tắt và câu hỏi nối tiếp. Tên trường mơ hồ được hỏi lại.
-- AI đọc hội thoại, ngữ cảnh đã lưu và danh mục trường/cơ sở để lập kế hoạch tra cứu JSON. Backend kiểm tra schema/mã trường rồi thực hiện các bộ lọc và cách sắp xếp AI chọn. Không có khoảng điểm, danh sách phân miền, số lượng chương trình hay tỷ lệ nhóm nguyện vọng cố định trong code.
+- AI đọc hội thoại, ngữ cảnh đã lưu và danh mục trường/cơ sở để lập kế hoạch tra cứu JSON. Backend kiểm tra schema/mã trường rồi thực hiện các bộ lọc và cách sắp xếp AI chọn. Khi có điểm mục tiêu và không yêu cầu khoảng điểm riêng, mặc định chỉ lấy điểm chuẩn trong khoảng điểm mục tiêu ± `CHAT_SCORE_MARGIN`; cấu hình này giúp danh sách tập trung vào ngành gần mức điểm người hỏi.
 - JSON được đọc vào bộ nhớ đệm; thêm/sửa/xóa tài liệu tự làm mới bộ đệm theo tên, kích thước và thời gian sửa. Truy vấn tổng quan dùng bảng gọn có đủ phương thức, thang điểm, điểm chuẩn, điểm sàn và tổ hợp; yêu cầu chi tiết lấy thêm điều kiện/công thức. Chỉ tính ghi chú/nguồn của bản ghi thực sự gửi, không cắt giữa bản ghi. Nếu vượt dung lượng, thông báo số bản ghi đã gửi và số khớp bộ lọc, không gọi toàn bộ kết quả là phù hợp với thí sinh.
 - `POST /api/v1/chat/hoi/stream` trả SSE với các sự kiện `meta`, `model`, `delta`, `done` hoặc `error`. `done` chứa câu trả lời và nguồn đầy đủ. Endpoint JSON `/chat/hoi` vẫn được hỗ trợ.
 - Hai giao diện dùng chung hội thoại và lưu tối đa 100 tin nhắn trong trình duyệt, theo tài khoản/khách. Ngữ cảnh trường/ngành/năm, điểm, tổ hợp, khu vực và tóm tắt sở thích do AI cập nhật được lưu riêng để tiếp tục tra cứu khi lượt ban đầu đã ra ngoài cửa sổ lịch sử. Dừng hoặc tạo hội thoại mới sẽ hủy yêu cầu đang chạy; phản hồi cũ không được thêm lại.
@@ -92,6 +92,7 @@ Giới hạn chat mặc định:
 | `CHAT_CONTEXT_MAX_CHARS` | 60.000 ký tự JSON | Trần bản tổng quan gọn sau khi AI chọn bộ lọc/sắp xếp; không phải giới hạn token của model. |
 | `CHAT_DETAIL_CONTEXT_MAX_CHARS` | 100.000 ký tự JSON | Trần riêng cho điều kiện/công thức chi tiết; tăng khi cần giữ nhiều chương trình chi tiết hơn, theo dõi chi phí/độ trễ. |
 | `CHAT_PLANNING_TIMEOUT_SECONDS` | 20 giây | Trần cho bước AI lập kế hoạch, nằm trong timeout chung. Kế hoạch sai schema/hết thời gian chuyển sang tổng quan, không áp bộ lọc suy đoán. |
+| `CHAT_SCORE_MARGIN` | 1.0 điểm | Biên mỗi phía quanh điểm mục tiêu. Ví dụ 28 điểm lấy ngành có điểm chuẩn từ 27 đến 29; đặt `0.5` để thu hẹp khoảng từ 27.5 đến 28.5. |
 | `CHAT_TIMEOUT_SECONDS` | 75 giây | Tổng thời gian lập kế hoạch và trả lời. |
 | Lịch sử gửi mỗi lần | 30 tin nhắn / 24.000 ký tự | Ngữ cảnh có cấu trúc lưu riêng, không cần tăng lịch sử để giữ điểm/sở thích. |
 | Câu trả lời | 4.096 token / 16.000 ký tự | Giữ câu trả lời chat gọn; danh sách tư vấn do AI tự chọn theo nhu cầu. |
