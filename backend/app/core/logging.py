@@ -204,6 +204,7 @@ def register_request_logging(app: FastAPI) -> None:
             path = f"{path}?{request.url.query}"
         client = request.client.host if request.client else "-"
         private_chat = request.url.path.startswith(f"{settings.api_v1_prefix}/chat/")
+        large_read = request.url.path.startswith(f"{settings.api_v1_prefix}/kiem-tra-du-lieu/noi-dung")
         upload = "multipart/form-data" in request.headers.get("content-type", "")
         if private_chat or upload:
             request_text, request_data = "[nội dung không ghi log]", None
@@ -216,7 +217,7 @@ def register_request_logging(app: FastAPI) -> None:
         try:
             response = await call_next(request)
             streaming = "text/event-stream" in response.headers.get("content-type", "")
-            if private_chat or streaming:
+            if private_chat or streaming or large_read:
                 raw_response = b""
             else:
                 raw_response, response = await _capture_response(response)
@@ -234,7 +235,11 @@ def register_request_logging(app: FastAPI) -> None:
             raise
 
         elapsed_ms = (time.perf_counter() - started) * 1000
-        response_text = "[nội dung không ghi log]" if private_chat or streaming else _format_body(raw_response, response.media_type)[0]
+        response_text = (
+            "[nội dung không ghi log]"
+            if private_chat or streaming or large_read
+            else _format_body(raw_response, response.media_type)[0]
+        )
         if response.status_code >= 500:
             level = logging.ERROR
         elif response.status_code >= 400:

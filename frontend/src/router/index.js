@@ -48,6 +48,12 @@ const router = createRouter({
           meta: { title: 'Demo chat', public: true, hideAssist: true },
         },
         {
+          path: 'validate-data',
+          name: 'validate-data',
+          component: () => import('@/views/guest/ValidateData.vue'),
+          meta: { title: 'Kiểm tra dữ liệu', public: true, hideAssist: true },
+        },
+        {
           path: ':pathMatch(.*)*',
           name: 'not-found',
           component: () => import('@/views/guest/NotFound.vue'),
