@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, Integer, SmallInteger, String, Text, func
+from sqlalchemy import JSON, DateTime, Integer, SmallInteger, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -27,4 +27,10 @@ class DmTonGiao(Base):
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    # Bổ sung theo docs/tuyen_sinh_mysql_dm.sql.
+    ten_goi_khac: Mapped[dict | list | None] = mapped_column(
+        JSON,
+        comment="Tên gọi khác hoặc tên viết tắt.",
     )

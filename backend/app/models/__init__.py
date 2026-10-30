@@ -24,6 +24,36 @@ from app.models.tn_chi_tiet_tra_loi import TnChiTietTraLoi
 from app.models.tn_phien_khao_sat import TnPhienKhaoSat
 from app.models.truong_hoc_tuyen_sinh_theo_nam import TruongHocTuyenSinhTheoNam
 
+from app.models.dm_van_ban import DmVanBan
+from app.models.dm_truong import DmTruong
+from app.models.dm_bang_cap_chung_chi import DmBangCapChungChi
+from app.models.dm_bai_thi_danh_gia import DmBaiThiDanhGia
+from app.models.dm_thanh_tich_hoc_tap import DmThanhTichHocTap
+from app.models.dm_to_hop_mon_hoc_chi_tiet import DmToHopMonHocChiTiet
+from app.models.dats_tuyen_sinh import DatsTuyenSinh
+from app.models.dats_tru_so import DatsTruSo
+from app.models.dats_website import DatsWebsite
+from app.models.dats_lien_he_tuyen_sinh import DatsLienHeTuyenSinh
+from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
+from app.models.dats_ke_hoach_tuyen_sinh import DatsKeHoachTuyenSinh
+from app.models.dats_phuong_thuc import DatsPhuongThuc
+from app.models.dats_phuong_thuc_to_hop import DatsPhuongThucToHop
+from app.models.dats_nhan_su import DatsNhanSu
+from app.models.dats_co_so_vat_chat import DatsCoSoVatChat
+from app.models.dats_quy_mo_dao_tao import DatsQuyMoDaoTao
+from app.models.dats_ty_le_viec_lam import DatsTyLeViecLam
+from app.models.dats_trinh_do_nganh import DatsTrinhDoNganh
+from app.models.dats_doi_tuong_du_tuyen import DatsDoiTuongDuTuyen
+from app.models.dats_dieu_kien_du_tuyen import DatsDieuKienDuTuyen
+from app.models.dats_tieu_chi_xet_tuyen import DatsTieuChiXetTuyen
+from app.models.dats_diem_cong import DatsDiemCong
+from app.models.dats_quy_tac_phan_bo import DatsQuyTacPhanBo
+from app.models.dats_ho_so_du_tuyen import DatsHoSoDuTuyen
+from app.models.dats_quy_doi_nguong_dau_vao import DatsQuyDoiNguongDauVao
+from app.models.dats_quy_doi_diem_trung_tuyen import DatsQuyDoiDiemTrungTuyen
+from app.models.dats_chinh_sach_xet_tuyen_thang import DatsChinhSachXetTuyenThang
+from app.models.dats_chinh_sach_uu_tien_xet_tuyen import DatsChinhSachUuTienXetTuyen
+
 __all__ = [
     "DmBaiThiDanhGiaNangLuc",
     "DmChungChiNgoaiNgu",
@@ -50,4 +80,33 @@ __all__ = [
     "TnChiTietTraLoi",
     "TnPhienKhaoSat",
     "TruongHocTuyenSinhTheoNam",
+    "DmVanBan",
+    "DmTruong",
+    "DmBangCapChungChi",
+    "DmBaiThiDanhGia",
+    "DmThanhTichHocTap",
+    "DmToHopMonHocChiTiet",
+    "DatsTuyenSinh",
+    "DatsTruSo",
+    "DatsWebsite",
+    "DatsLienHeTuyenSinh",
+    "DatsChuongTrinhDaoTao",
+    "DatsKeHoachTuyenSinh",
+    "DatsPhuongThuc",
+    "DatsPhuongThucToHop",
+    "DatsNhanSu",
+    "DatsCoSoVatChat",
+    "DatsQuyMoDaoTao",
+    "DatsTyLeViecLam",
+    "DatsTrinhDoNganh",
+    "DatsDoiTuongDuTuyen",
+    "DatsDieuKienDuTuyen",
+    "DatsTieuChiXetTuyen",
+    "DatsDiemCong",
+    "DatsQuyTacPhanBo",
+    "DatsHoSoDuTuyen",
+    "DatsQuyDoiNguongDauVao",
+    "DatsQuyDoiDiemTrungTuyen",
+    "DatsChinhSachXetTuyenThang",
+    "DatsChinhSachUuTienXetTuyen",
 ]

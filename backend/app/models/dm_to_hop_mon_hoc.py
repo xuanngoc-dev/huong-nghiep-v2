@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import JSON, DateTime, Integer, SmallInteger, String, Text, func
+from sqlalchemy.dialects.mysql import SMALLINT
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -29,4 +30,30 @@ class DmToHopMonHoc(Base):
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    # Bổ sung theo docs/tuyen_sinh_mysql_dm.sql.
+    mo_ta: Mapped[str | None] = mapped_column(
+        Text,
+        comment="Mô tả tổ hợp hoặc mục đích sử dụng.",
+    )
+
+    nam_ap_dung_tu: Mapped[int | None] = mapped_column(
+        SMALLINT(unsigned=True),
+        comment="Năm bắt đầu áp dụng, nếu tổ hợp có thời hạn.",
+    )
+
+    nam_ap_dung_den: Mapped[int | None] = mapped_column(
+        SMALLINT(unsigned=True),
+        comment="Năm kết thúc áp dụng; để NULL nếu chưa xác định.",
+    )
+
+    tao_luc: Mapped[datetime | None] = mapped_column(
+        DateTime,
+        comment="Thời điểm tạo bản ghi.",
+    )
+
+    cap_nhat_luc: Mapped[datetime | None] = mapped_column(
+        DateTime,
+        comment="Thời điểm cập nhật gần nhất.",
     )
