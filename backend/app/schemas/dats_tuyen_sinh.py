@@ -97,6 +97,17 @@ class DatsTuyenSinhBulkResult(BaseModel):
     created: int
 
 
+class DatsImportRequest(BaseModel):
+    truong_id: int = Field(..., ge=1)
+    nam_tuyen_sinh: int = Field(..., ge=1990, le=2100)
+    du_lieu: dict
+
+
+class DatsImportResult(BaseModel):
+    de_an_id: int
+    counts: dict[str, int]
+
+
 class DatsTuyenSinhDeleteMany(BaseModel):
     ids: list[int] = Field(..., min_length=1, max_length=500)
 

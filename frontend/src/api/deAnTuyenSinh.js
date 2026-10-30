@@ -12,6 +12,10 @@ export function createDeAnTuyenSinhBulk(payload, config) {
   return api.post('/de-an-tuyen-sinh/bulk', payload, config).then((res) => res.data)
 }
 
+export function importDeAnTuyenSinh(payload, config) {
+  return api.post('/de-an-tuyen-sinh/import', payload, config).then((res) => res.data)
+}
+
 export function updateDeAnTuyenSinh(id, payload) {
   return api.put(`/de-an-tuyen-sinh/${id}`, payload).then((res) => res.data)
 }

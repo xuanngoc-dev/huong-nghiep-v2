@@ -11,6 +11,8 @@ from app.models.dats_tuyen_sinh import DatsTuyenSinh
 from app.models.dm_truong import DmTruong
 from app.models.nguoi_dung import NguoiDung
 from app.schemas.dats_tuyen_sinh import (
+    DatsImportRequest,
+    DatsImportResult,
     DatsTuyenSinhBulkResult,
     DatsTuyenSinhDeleteMany,
     DatsTuyenSinhDeleteManyResult,
@@ -18,6 +20,7 @@ from app.schemas.dats_tuyen_sinh import (
     DatsTuyenSinhPublic,
     DatsTuyenSinhWrite,
 )
+from app.services.dats_import import DatsImportError, import_document
 
 router = APIRouter(prefix="/de-an-tuyen-sinh", tags=["de-an-tuyen-sinh"])
 
@@ -180,6 +183,28 @@ def create_de_an_bulk(
             detail="Không lưu được đề án tuyển sinh",
         ) from None
     return DatsTuyenSinhBulkResult(created=len(items))
+
+
+@router.post("/import", response_model=DatsImportResult, status_code=status.HTTP_201_CREATED)
+def import_de_an(
+    payload: DatsImportRequest,
+    db: Session = Depends(get_db),
+    _: NguoiDung = Depends(get_current_user),
+) -> DatsImportResult:
+    """Nhập một đề án và các bảng dats_ trong cùng file JSON."""
+    try:
+        de_an_id, counts = import_document(db, payload.truong_id, payload.nam_tuyen_sinh, payload.du_lieu)
+        db.commit()
+    except DatsImportError as exc:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from None
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Không lưu được dữ liệu đề án",
+        ) from None
+    return DatsImportResult(de_an_id=de_an_id, counts=counts)
 
 
 @router.post("", response_model=DatsTuyenSinhPublic, status_code=status.HTTP_201_CREATED)

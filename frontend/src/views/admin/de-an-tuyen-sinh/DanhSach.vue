@@ -4,10 +4,10 @@ import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   createDeAnTuyenSinh,
-  createDeAnTuyenSinhBulk,
   deleteDeAnTuyenSinh,
   deleteDeAnTuyenSinhMany,
   fetchDeAnTuyenSinh,
+  importDeAnTuyenSinh,
   updateDeAnTuyenSinh,
 } from '@/api/deAnTuyenSinh'
 import { fetchTruongHoc } from '@/api/truongHoc'
@@ -140,49 +140,13 @@ function selectedJsonYear() {
   return year
 }
 
-function optionalQuota(value) {
-  if (value == null || value === '') return null
-  const quota = Number(value)
-  if (!Number.isInteger(quota) || quota < 0) {
-    throw new Error('chi_tieu không hợp lệ')
-  }
-  return quota
-}
-
-function optionalForms(value) {
-  if (value == null || value === '') return null
-  const source = Array.isArray(value) ? value : String(value).split(',')
-  const cleaned = []
-  for (const item of source) {
-    const text = String(item).trim()
-    if (!text || cleaned.includes(text)) continue
-    if (text.length > 100) {
-      throw new Error('Hình thức đào tạo dài quá 100 ký tự')
-    }
-    cleaned.push(text)
-  }
-  if (cleaned.length > 20) {
-    throw new Error('Có quá 20 hình thức đào tạo')
-  }
-  return cleaned.length ? cleaned : null
-}
-
-function optionalDate(value) {
-  if (value == null || value === '') return null
-  const text = String(value).trim()
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) {
-    throw new Error('ngay_cong_bo phải theo dạng YYYY-MM-DD')
-  }
-  return text
-}
-
 function selectedJsonSchool() {
   const id = jsonTruongId.value
   if (id == null || id === '') return null
   return truongOptions.value.find((school) => school.id === id) || null
 }
 
-function parseJsonDocument(text, truongId, namTuyenSinh) {
+function parseJsonDocument(text) {
   let data
   try {
     data = JSON.parse(text)
@@ -196,24 +160,7 @@ function parseJsonDocument(text, truongId, namTuyenSinh) {
   if (!item || typeof item !== 'object' || Array.isArray(item)) {
     throw new Error('Thiếu object dats_tuyen_sinh')
   }
-  const trangThai = optionalText(item.trang_thai)
-  if (trangThai && trangThai.length > 20) {
-    throw new Error('trang_thai dài quá 20 ký tự')
-  }
-  return [
-    {
-      truong_id: truongId,
-      nam_tuyen_sinh: namTuyenSinh,
-      chi_tieu: optionalQuota(item.chi_tieu),
-      ten_de_an: optionalText(item.ten_de_an),
-      hinh_thuc_dao_tao: optionalForms(item.hinh_thuc_dao_tao),
-      gioi_thieu: optionalText(item.gioi_thieu),
-      ngay_cong_bo: optionalDate(item.ngay_cong_bo),
-      nguon_du_lieu_url: optionalText(item.nguon_du_lieu_url),
-      trang_thai: trangThai,
-      ghi_chu: optionalText(item.ghi_chu),
-    },
-  ]
+  return data
 }
 
 function errorMessage(error, fallback) {
@@ -360,22 +307,33 @@ async function onSubmitJson() {
     return
   }
 
-  let items
+  let document
   try {
-    items = parseJsonDocument(jsonText.value, school.id, year)
+    document = parseJsonDocument(jsonText.value)
   } catch (error) {
     ElMessage.error(error.message)
     return
   }
 
-  await jsonImport.run({
-    items,
-    createBatch: createDeAnTuyenSinhBulk,
-    jsonText,
-    saving,
-    dialogVisible,
-    reload: load,
-  })
+  saving.value = true
+  try {
+    const result = await importDeAnTuyenSinh(
+      {
+        truong_id: school.id,
+        nam_tuyen_sinh: year,
+        du_lieu: document,
+      },
+      { skipLoading: true, timeout: 120000 },
+    )
+    const total = Object.values(result.counts || {}).reduce((sum, count) => sum + Number(count || 0), 0)
+    ElMessage.success(`Đã nhập đề án và ${total} bản ghi`)
+    dialogVisible.value = false
+    await load()
+  } catch (error) {
+    ElMessage.error(errorMessage(error, 'Không nhập được đề án tuyển sinh'))
+  } finally {
+    saving.value = false
+  }
 }
 
 async function onSubmit() {
@@ -647,8 +605,9 @@ onMounted(async () => {
       <div class="json-panel__head">
         <p>
           Chọn trường và năm tuyển sinh, rồi dán JSON một trường một năm.
-          Màn này lưu <code>dats_tuyen_sinh</code>.
+          Hệ thống lưu <code>dats_tuyen_sinh</code> và các bảng <code>dats_</code> khác trong file.
           <code>truong_id</code> và <code>nam_tuyen_sinh</code> lấy từ lựa chọn bên dưới.
+          Mã phương thức và mã tổ hợp để trống được đối chiếu với danh mục.
         </p>
         <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
       </div>

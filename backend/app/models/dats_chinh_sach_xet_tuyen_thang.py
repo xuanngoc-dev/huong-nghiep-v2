@@ -52,7 +52,7 @@ class DatsChinhSachXetTuyenThang(Base):
         comment="Tên diện xét tuyển thẳng",
     )
     nhom_doi_tuong: Mapped[str | None] = mapped_column(
-        String(100),
+        String(255),
         comment="Nhóm đối tượng theo quy định",
     )
     can_cu_phap_ly: Mapped[str | None] = mapped_column(

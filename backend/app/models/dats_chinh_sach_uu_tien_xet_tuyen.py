@@ -55,7 +55,7 @@ class DatsChinhSachUuTienXetTuyen(Base):
         comment="Tên diện ưu tiên xét tuyển",
     )
     nhom_doi_tuong: Mapped[str | None] = mapped_column(
-        String(100),
+        String(255),
         comment="Nhóm đối tượng được ưu tiên",
     )
     can_cu_phap_ly: Mapped[str | None] = mapped_column(
