@@ -636,7 +636,7 @@ onMounted(async () => {
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật đề án tuyển sinh' : 'Thêm đề án tuyển sinh'"
-    width="1100px"
+    width="90%"
     destroy-on-close
     @closed="resetForm"
   >
