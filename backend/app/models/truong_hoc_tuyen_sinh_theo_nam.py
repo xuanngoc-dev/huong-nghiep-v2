@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import JSON, DateTime, Index, Integer, String, UniqueConstraint, func
+from sqlalchemy import JSON, DateTime, ForeignKey, Index, Integer, String, UniqueConstraint, func
 from sqlalchemy.dialects.mysql import BIGINT
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -35,8 +35,14 @@ class TruongHocTuyenSinhTheoNam(Base):
     id: Mapped[int] = mapped_column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
     ma_truong: Mapped[str] = mapped_column(
         String(20),
+        ForeignKey(
+            "dm_truong.ma_truong",
+            name="fk_tuyen_sinh_nam_ma_truong",
+            onupdate="CASCADE",
+            ondelete="RESTRICT",
+        ),
         nullable=False,
-        comment="Mã trường, cùng quy ước với dm_truong_dai_hoc.ma_truong",
+        comment="Mã trường, tham chiếu dm_truong.ma_truong",
     )
     ten_truong: Mapped[str] = mapped_column(
         String(255), nullable=False, comment="Tên trường trong đề án năm đó"

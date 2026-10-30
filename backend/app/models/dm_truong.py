@@ -192,6 +192,10 @@ class DmTruong(Base):
         Numeric(15, 2),
         comment="Diện tích tính bằng m²; cần thống nhất phạm vi đo.",
     )
+    hoc_phi_trung_binh: Mapped[str | None] = mapped_column(
+        String(100),
+        comment="Mức học phí tham khảo.",
+    )
     trang_thai_hoat_dong: Mapped[str | None] = mapped_column(
         String(30),
         comment="Trạng thái hoạt động của trường.",

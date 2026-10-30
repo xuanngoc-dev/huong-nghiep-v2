@@ -24,7 +24,6 @@ from app.models import (  # noqa: F401 — đăng ký model cho autogenerate
     DmTinhThanh,
     DmToHopMonHoc,
     DmTonGiao,
-    DmTruongDaiHoc,
     NguoiDung,
     NguoiDungThongTin,
     TnCauHoiTracNghiem,

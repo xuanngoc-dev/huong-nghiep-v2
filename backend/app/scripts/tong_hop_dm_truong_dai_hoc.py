@@ -1,4 +1,6 @@
-"""Tổng hợp danh sách trường cao đẳng, học viện, đại học để import dm_truong_dai_hoc.
+"""Tổng hợp danh sách trường cao đẳng, học viện, đại học ra file JSON cho tra cứu.
+
+Dữ liệu danh mục trường trong database nằm ở bảng dm_truong.
 
 Nguồn mã trường, tên, tỉnh/thành và website:
 
@@ -670,15 +672,17 @@ def compile_schools(
 
 
 def validate_items(items: list[dict]) -> None:
-    from app.schemas.dm_truong_dai_hoc import DmTruongDaiHocWrite
-
     codes: set[str] = set()
     for item in items:
-        model = DmTruongDaiHocWrite.model_validate(item)
-        if model.ma_truong in codes:
-            raise ValueError(f"Mã trường trùng sau khi chuẩn hóa: {model.ma_truong}")
-        codes.add(model.ma_truong)
-        item["ma_truong"] = model.ma_truong
+        code = clean_code(item.get("ma_truong"))
+        name = str(item.get("ten_truong") or "").strip()
+        if not code or not name:
+            raise ValueError("Mỗi trường cần mã và tên")
+        if code in codes:
+            raise ValueError(f"Mã trường trùng sau khi chuẩn hóa: {code}")
+        codes.add(code)
+        item["ma_truong"] = code
+        item["ten_truong"] = name
 
 
 def default_output_path() -> Path:

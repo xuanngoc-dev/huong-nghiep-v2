@@ -25,7 +25,7 @@ def upgrade() -> None:
             "ma_truong",
             sa.String(length=20),
             nullable=False,
-            comment="Mã trường, cùng quy ước với dm_truong_dai_hoc.ma_truong",
+            comment="Mã trường, tham chiếu dm_truong.ma_truong",
         ),
         sa.Column(
             "ten_truong",
