@@ -55,9 +55,27 @@ const JSON_SAMPLE = `[
     "ten_chi_tiet": "Bài thi đánh giá năng lực của Đại học Quốc gia Hà Nội",
     "linh_vuc": "Đánh giá năng lực",
     "mon": "Tổng hợp",
-    "thang_diem": "0-150",
+    "ten_viet_tat": "HSA",
+    "don_vi_to_chuc": "Đại học Quốc gia Hà Nội",
+    "loai_danh_gia": "Năng lực",
     "loai_chung_chi": "trong_nuoc",
-    "trang_thai": 1,
+    "mo_ta": "Đánh giá năng lực học tập bậc đại học",
+    "doi_tuong_du_thi": "Học sinh lớp 12 và thí sinh tự do",
+    "hinh_thuc_thi": ["Giấy", "Máy tính"],
+    "thang_diem": "0-150",
+    "diem_toi_thieu": 0,
+    "don_vi_diem": "điểm",
+    "cau_truc_bai_thi": [
+      { "phan": "Tư duy định lượng", "so_cau": 50, "thoi_luong_phut": 75 },
+      { "phan": "Tư duy định tính", "so_cau": 50, "thoi_luong_phut": 60 }
+    ],
+    "thoi_luong_phut": 195,
+    "cach_cong_bo_ket_qua": "Công bố trên website chính thức",
+    "nam_ap_dung_tu": 2025,
+    "nam_ap_dung_den": null,
+    "website_chinh_thuc": "https://hsa.edu.vn",
+    "nguon_du_lieu_url": "https://hsa.edu.vn",
+    "trang_thai": "Hoạt động",
     "ghi_chu": "Bài thi trong nước"
   },
   {
@@ -66,8 +84,25 @@ const JSON_SAMPLE = `[
     "ten_chi_tiet": "Scholastic Assessment Test",
     "linh_vuc": "Đánh giá năng lực",
     "mon": "Tổng hợp",
+    "ten_viet_tat": "SAT",
+    "don_vi_to_chuc": "College Board",
+    "loai_danh_gia": "Năng lực",
+    "loai_chung_chi": "quoc_te",
+    "mo_ta": "Bài thi chuẩn hóa dùng cho tuyển sinh đại học",
+    "doi_tuong_du_thi": "Học sinh trung học",
+    "hinh_thuc_thi": ["Máy tính"],
     "thang_diem": "400-1600",
-    "loai_chung_chi": "quoc_te"
+    "diem_toi_thieu": 400,
+    "don_vi_diem": "điểm",
+    "cau_truc_bai_thi": [
+      { "phan": "Reading and Writing", "thoi_luong_phut": 64 },
+      { "phan": "Math", "thoi_luong_phut": 70 }
+    ],
+    "thoi_luong_phut": 134,
+    "cach_cong_bo_ket_qua": "Công bố trên tài khoản College Board",
+    "nam_ap_dung_tu": 2024,
+    "website_chinh_thuc": "https://satsuite.collegeboard.org",
+    "trang_thai": "Hoạt động"
   }
 ]`
 
@@ -109,10 +144,27 @@ function emptyForm() {
     ten_chi_tiet: '',
     linh_vuc: '',
     mon: '',
+    ten_viet_tat: '',
+    don_vi_to_chuc: '',
+    loai_danh_gia: '',
     loai_chung_chi: 'trong_nuoc',
+    mo_ta: '',
+    doi_tuong_du_thi: '',
+    hinh_thuc_thi: '',
     thang_diem: '',
+    diem_toi_thieu: null,
+    don_vi_diem: '',
+    cau_truc_bai_thi: '',
+    thoi_luong_phut: null,
+    cach_cong_bo_ket_qua: '',
+    nam_ap_dung_tu: null,
+    nam_ap_dung_den: null,
+    website_chinh_thuc: '',
+    nguon_du_lieu_url: '',
     trang_thai: 'Hoạt động',
     ghi_chu: '',
+    tao_luc: '',
+    cap_nhat_luc: '',
   }
 }
 
@@ -129,6 +181,96 @@ function optionalText(value) {
   if (value == null) return null
   const text = String(value).trim()
   return text || null
+}
+
+function fieldError(line, message) {
+  return line ? `Phần tử thứ ${line}: ${message}` : message
+}
+
+function optionalScore(value, line) {
+  if (value === null || value === undefined || value === '') return null
+  const number = Number(value)
+  if (!Number.isFinite(number) || number < 0 || number > 999999.99) {
+    throw new Error(fieldError(line, 'Điểm tối thiểu phải từ 0 đến 999999.99'))
+  }
+  return Math.round(number * 100) / 100
+}
+
+function optionalInt(value, line, label) {
+  if (value === null || value === undefined || value === '') return null
+  const number = Number(value)
+  if (!Number.isInteger(number) || number < 0 || number > 65535) {
+    throw new Error(fieldError(line, `${label} phải là số nguyên từ 0 đến 65535`))
+  }
+  return number
+}
+
+function assertYearRange(tu, den, line) {
+  if (tu != null && den != null && den < tu) {
+    throw new Error(fieldError(line, 'Năm áp dụng đến phải lớn hơn hoặc bằng năm áp dụng từ'))
+  }
+}
+
+function jsonToEditor(value) {
+  if (value == null || value === '') return ''
+  if (typeof value === 'string') return value
+  return JSON.stringify(value, null, 2)
+}
+
+function parseJsonValue(value, line, label) {
+  if (value == null || value === '') return null
+  if (Array.isArray(value) || (typeof value === 'object' && value !== null)) return value
+  const text = String(value).trim()
+  if (!text) return null
+  let parsed
+  try {
+    parsed = JSON.parse(text)
+  } catch {
+    throw new Error(fieldError(line, `${label} không phải JSON hợp lệ`))
+  }
+  if (parsed == null) return null
+  if (typeof parsed !== 'object') {
+    throw new Error(fieldError(line, `${label} phải là mảng hoặc object JSON`))
+  }
+  return parsed
+}
+
+function recordFromItem(item, line) {
+  const ten = String(item.ten_bai_thi ?? '').trim()
+  const ma = String(item.ma_bai_thi ?? '').trim().toUpperCase()
+  const loai = String(item.loai_chung_chi ?? '').trim().toLowerCase()
+  if (!ten || !ma || !loai) {
+    throw new Error(fieldError(line, 'thiếu ten_bai_thi, ma_bai_thi hoặc loai_chung_chi'))
+  }
+  const namTu = optionalInt(item.nam_ap_dung_tu, line, 'Năm áp dụng từ')
+  const namDen = optionalInt(item.nam_ap_dung_den, line, 'Năm áp dụng đến')
+  assertYearRange(namTu, namDen, line)
+  return {
+    ten_bai_thi: ten,
+    ma_bai_thi: ma,
+    ten_chi_tiet: optionalText(item.ten_chi_tiet),
+    linh_vuc: optionalText(item.linh_vuc),
+    mon: optionalText(item.mon),
+    ten_viet_tat: optionalText(item.ten_viet_tat),
+    don_vi_to_chuc: optionalText(item.don_vi_to_chuc),
+    loai_danh_gia: optionalText(item.loai_danh_gia),
+    loai_chung_chi: loai,
+    mo_ta: optionalText(item.mo_ta),
+    doi_tuong_du_thi: optionalText(item.doi_tuong_du_thi),
+    hinh_thuc_thi: parseJsonValue(item.hinh_thuc_thi, line, 'Hình thức thi'),
+    thang_diem: optionalText(item.thang_diem),
+    diem_toi_thieu: optionalScore(item.diem_toi_thieu, line),
+    don_vi_diem: optionalText(item.don_vi_diem),
+    cau_truc_bai_thi: parseJsonValue(item.cau_truc_bai_thi, line, 'Cấu trúc bài thi'),
+    thoi_luong_phut: optionalInt(item.thoi_luong_phut, line, 'Thời lượng'),
+    cach_cong_bo_ket_qua: optionalText(item.cach_cong_bo_ket_qua),
+    nam_ap_dung_tu: namTu,
+    nam_ap_dung_den: namDen,
+    website_chinh_thuc: optionalText(item.website_chinh_thuc),
+    nguon_du_lieu_url: optionalText(item.nguon_du_lieu_url),
+    trang_thai: item.trang_thai ?? 'Hoạt động',
+    ghi_chu: optionalText(item.ghi_chu),
+  }
 }
 
 function loaiLabel(value) {
@@ -200,23 +342,7 @@ function parseJsonItems(text) {
     if (!item || typeof item !== 'object' || Array.isArray(item)) {
       throw new Error(`Phần tử thứ ${line} không phải một bài thi đánh giá năng lực`)
     }
-    const ten = String(item.ten_bai_thi ?? '').trim()
-    const ma = String(item.ma_bai_thi ?? '').trim()
-    const loai = String(item.loai_chung_chi ?? '').trim().toLowerCase()
-    if (!ten || !ma || !loai) {
-      throw new Error(`Phần tử thứ ${line} thiếu ten_bai_thi, ma_bai_thi hoặc loai_chung_chi`)
-    }
-    return {
-      ten_bai_thi: ten,
-      ma_bai_thi: ma,
-      ten_chi_tiet: optionalText(item.ten_chi_tiet),
-      linh_vuc: optionalText(item.linh_vuc),
-      mon: optionalText(item.mon),
-      loai_chung_chi: loai,
-      thang_diem: optionalText(item.thang_diem),
-      trang_thai: item.trang_thai ?? 1,
-      ghi_chu: optionalText(item.ghi_chu),
-    }
+    return recordFromItem(item, line)
   })
 }
 
@@ -296,31 +422,38 @@ function openCreate() {
 function openEdit(row) {
   editingId.value = row.id
   Object.assign(form, {
-    ma_bai_thi: row.ma_bai_thi,
-    ten_bai_thi: row.ten_bai_thi,
+    ma_bai_thi: row.ma_bai_thi || '',
+    ten_bai_thi: row.ten_bai_thi || '',
     ten_chi_tiet: row.ten_chi_tiet || '',
     linh_vuc: row.linh_vuc || '',
     mon: row.mon || '',
+    ten_viet_tat: row.ten_viet_tat || '',
+    don_vi_to_chuc: row.don_vi_to_chuc || '',
+    loai_danh_gia: row.loai_danh_gia || '',
     loai_chung_chi: row.loai_chung_chi,
+    mo_ta: row.mo_ta || '',
+    doi_tuong_du_thi: row.doi_tuong_du_thi || '',
+    hinh_thuc_thi: jsonToEditor(row.hinh_thuc_thi),
     thang_diem: row.thang_diem || '',
+    diem_toi_thieu: row.diem_toi_thieu,
+    don_vi_diem: row.don_vi_diem || '',
+    cau_truc_bai_thi: jsonToEditor(row.cau_truc_bai_thi),
+    thoi_luong_phut: row.thoi_luong_phut,
+    cach_cong_bo_ket_qua: row.cach_cong_bo_ket_qua || '',
+    nam_ap_dung_tu: row.nam_ap_dung_tu,
+    nam_ap_dung_den: row.nam_ap_dung_den,
+    website_chinh_thuc: row.website_chinh_thuc || '',
+    nguon_du_lieu_url: row.nguon_du_lieu_url || '',
     trang_thai: row.trang_thai,
     ghi_chu: row.ghi_chu || '',
+    tao_luc: row.tao_luc,
+    cap_nhat_luc: row.cap_nhat_luc,
   })
   dialogVisible.value = true
 }
 
 function payloadFromForm() {
-  return {
-    ma_bai_thi: form.ma_bai_thi.trim().toUpperCase(),
-    ten_bai_thi: form.ten_bai_thi.trim(),
-    ten_chi_tiet: optionalText(form.ten_chi_tiet),
-    linh_vuc: optionalText(form.linh_vuc),
-    mon: optionalText(form.mon),
-    loai_chung_chi: form.loai_chung_chi,
-    thang_diem: optionalText(form.thang_diem),
-    trang_thai: form.trang_thai,
-    ghi_chu: optionalText(form.ghi_chu),
-  }
+  return recordFromItem(form, null)
 }
 
 function fillJsonSample() {
@@ -355,9 +488,16 @@ async function onSubmit() {
   const valid = await formRef.value?.validate().catch(() => false)
   if (!valid) return
 
+  let payload
+  try {
+    payload = payloadFromForm()
+  } catch (error) {
+    ElMessage.error(error.message)
+    return
+  }
+
   saving.value = true
   try {
-    const payload = payloadFromForm()
     if (editingId.value) {
       await updateBaiThiDanhGiaNangLuc(editingId.value, payload)
       ElMessage.success('Đã cập nhật bài thi đánh giá năng lực')
@@ -573,7 +713,7 @@ onMounted(load)
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật bài thi đánh giá năng lực' : 'Thêm bài thi đánh giá năng lực'"
-    width="960px"
+    width="90%"
     destroy-on-close
     @closed="resetForm"
   >
@@ -587,6 +727,9 @@ onMounted(load)
         <p>
           Dán một mảng JSON. Mỗi phần tử cần <code>ten_bai_thi</code>, <code>ma_bai_thi</code> và
           <code>loai_chung_chi</code> (<code>trong_nuoc</code> hoặc <code>quoc_te</code>).
+          <code>hinh_thuc_thi</code> và <code>cau_truc_bai_thi</code> là mảng hoặc object JSON.
+          Các cột còn lại có thể để trống. <code>id</code>, <code>tao_luc</code> và
+          <code>cap_nhat_luc</code> do hệ thống ghi.
         </p>
         <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
       </div>
@@ -601,39 +744,49 @@ onMounted(load)
 
     <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
       <CustomRow :gutter="16">
-        <CustomCol :span="8" :xs="24">
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
           <CustomFormItem label="Tên bài thi" prop="ten_bai_thi">
             <CustomInput v-model="form.ten_bai_thi" maxlength="255" placeholder="Ví dụ: Đánh giá năng lực HSA" />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="8" :xs="24">
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
           <CustomFormItem label="Mã bài thi" prop="ma_bai_thi">
             <CustomInput v-model="form.ma_bai_thi" maxlength="50" placeholder="Ví dụ: HSA" />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="8" :xs="24">
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
           <CustomFormItem label="Loại" prop="loai_chung_chi">
             <CustomSelect v-model="form.loai_chung_chi" :clearable="false" style="width: 100%">
               <CustomOption v-for="item in LOAI" :key="item.value" :label="item.label" :value="item.value" />
             </CustomSelect>
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="8" :xs="24">
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <CustomFormItem label="Tên viết tắt">
+            <CustomInput v-model="form.ten_viet_tat" maxlength="50" placeholder="Ví dụ: HSA" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
           <CustomFormItem label="Lĩnh vực">
-            <CustomInput v-model="form.linh_vuc" maxlength="150" placeholder="Ví dụ: Ngoại ngữ" />
+            <CustomInput v-model="form.linh_vuc" maxlength="150" placeholder="Ví dụ: Đánh giá năng lực" />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="8" :xs="24">
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
           <CustomFormItem label="Môn">
-            <CustomInput v-model="form.mon" maxlength="150" placeholder="Ví dụ: Tiếng Anh" />
+            <CustomInput v-model="form.mon" maxlength="150" placeholder="Ví dụ: Tổng hợp" />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Thang điểm">
-            <CustomInput v-model="form.thang_diem" maxlength="100" placeholder="Ví dụ: 0-9" />
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <CustomFormItem label="Đơn vị tổ chức">
+            <CustomInput v-model="form.don_vi_to_chuc" maxlength="255" placeholder="Ví dụ: Đại học Quốc gia Hà Nội" />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="8" :xs="24">
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <CustomFormItem label="Loại đánh giá">
+            <CustomInput v-model="form.loai_danh_gia" maxlength="50" placeholder="Ví dụ: Năng lực" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
           <CustomFormItem label="Trạng thái" prop="trang_thai">
             <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
               <CustomOption label="Hoạt động" value="Hoạt động" />
@@ -641,7 +794,85 @@ onMounted(load)
             </CustomSelect>
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="24">
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <CustomFormItem label="Thang điểm">
+            <CustomInput v-model="form.thang_diem" maxlength="100" placeholder="Ví dụ: 0-150" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <CustomFormItem label="Điểm tối thiểu">
+            <CustomInputNumber
+              v-model="form.diem_toi_thieu"
+              :min="0"
+              :max="999999.99"
+              :precision="2"
+              :step="1"
+              :value-on-clear="null"
+              controls-position="right"
+              style="width: 100%"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <CustomFormItem label="Đơn vị điểm">
+            <CustomInput v-model="form.don_vi_diem" maxlength="30" placeholder="Ví dụ: điểm" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <CustomFormItem label="Thời lượng (phút)">
+            <CustomInputNumber
+              v-model="form.thoi_luong_phut"
+              :min="0"
+              :max="65535"
+              :precision="0"
+              :step="1"
+              :value-on-clear="null"
+              controls-position="right"
+              style="width: 100%"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <CustomFormItem label="Áp dụng từ">
+            <CustomInputNumber
+              v-model="form.nam_ap_dung_tu"
+              :min="0"
+              :max="65535"
+              :precision="0"
+              :step="1"
+              :value-on-clear="null"
+              controls-position="right"
+              placeholder="Năm"
+              style="width: 100%"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12" :sm="8" :md="6" :lg="4">
+          <CustomFormItem label="Áp dụng đến">
+            <CustomInputNumber
+              v-model="form.nam_ap_dung_den"
+              :min="0"
+              :max="65535"
+              :precision="0"
+              :step="1"
+              :value-on-clear="null"
+              controls-position="right"
+              placeholder="Năm"
+              style="width: 100%"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="12">
+          <CustomFormItem label="Website">
+            <CustomInput v-model="form.website_chinh_thuc" maxlength="1000" placeholder="https://" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="12">
+          <CustomFormItem label="Nguồn dữ liệu">
+            <CustomInput v-model="form.nguon_du_lieu_url" maxlength="1000" placeholder="https://" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="12">
           <CustomFormItem label="Tên chi tiết">
             <CustomInput
               v-model="form.ten_chi_tiet"
@@ -650,7 +881,67 @@ onMounted(load)
             />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="24">
+        <CustomCol :span="12" :xs="12">
+          <CustomFormItem label="Đối tượng dự thi">
+            <CustomInput
+              v-model="form.doi_tuong_du_thi"
+              type="textarea"
+              :rows="3"
+              placeholder="Nhóm đối tượng có thể dự thi"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Hình thức thi">
+            <CustomInput
+              v-model="form.hinh_thuc_thi"
+              type="textarea"
+              :rows="3"
+              placeholder='Mảng hoặc object JSON. Ví dụ: ["Giấy", "Máy tính"]'
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Cấu trúc bài thi">
+            <CustomInput
+              v-model="form.cau_truc_bai_thi"
+              type="textarea"
+              :rows="3"
+              placeholder='Mảng hoặc object JSON. Ví dụ: [{"phan": "Toán", "so_cau": 50}]'
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="12">
+          <CustomFormItem label="Công bố kết quả">
+            <CustomInput
+              v-model="form.cach_cong_bo_ket_qua"
+              type="textarea"
+              :rows="3"
+              placeholder="Cách đơn vị tổ chức công bố kết quả"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="12">
+          <CustomFormItem label="Mô tả">
+            <CustomInput
+              v-model="form.mo_ta"
+              type="textarea"
+              :rows="3"
+              placeholder="Mục tiêu và phạm vi đánh giá"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol v-if="editingId" :span="12" :xs="12">
+          <CustomFormItem label="Tạo lúc">
+            <CustomInput :model-value="formatDateTime(form.tao_luc)" disabled />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol v-if="editingId" :span="12" :xs="12">
+          <CustomFormItem label="Cập nhật lúc">
+            <CustomInput :model-value="formatDateTime(form.cap_nhat_luc)" disabled />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="12">
           <CustomFormItem label="Ghi chú">
             <CustomInput
               v-model="form.ghi_chu"
