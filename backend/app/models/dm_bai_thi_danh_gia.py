@@ -8,6 +8,8 @@ from sqlalchemy import (
     Numeric,
     String,
     Text,
+    UniqueConstraint,
+    func,
 )
 from sqlalchemy.dialects.mysql import BIGINT, SMALLINT
 from sqlalchemy.orm import Mapped, mapped_column
@@ -21,6 +23,7 @@ class DmBaiThiDanhGia(Base):
     __tablename__ = "dm_bai_thi_danh_gia"
     __table_args__ = (
         Index("idx_dm_bai_thi_danh_gia_ma_bai_thi", "ma_bai_thi"),
+        UniqueConstraint("ma_bai_thi", name="uk_dm_bai_thi_danh_gia_ma_bai_thi"),
         {
             "mysql_charset": "utf8mb4",
             "mysql_collate": "utf8mb4_unicode_ci",
@@ -36,13 +39,25 @@ class DmBaiThiDanhGia(Base):
         comment="Khóa chính, tự tăng.",
     )
     ma_bai_thi: Mapped[str | None] = mapped_column(
-        String(30),
+        String(50),
         comment="Mã định danh bài thi trong hệ thống.",
     )
     ten_bai_thi: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
         comment="Tên chính thức của bài thi hoặc kỳ thi.",
+    )
+    ten_chi_tiet: Mapped[str | None] = mapped_column(
+        String(500),
+        comment="Tên đầy đủ hoặc mô tả ngắn của bài thi.",
+    )
+    linh_vuc: Mapped[str | None] = mapped_column(
+        String(150),
+        comment="Lĩnh vực của bài thi.",
+    )
+    mon: Mapped[str | None] = mapped_column(
+        String(150),
+        comment="Môn hoặc nội dung được đánh giá.",
     )
     ten_viet_tat: Mapped[str | None] = mapped_column(
         String(50),
@@ -56,6 +71,10 @@ class DmBaiThiDanhGia(Base):
         String(50),
         comment="Loại bài thi hoặc năng lực được đánh giá.",
     )
+    loai_chung_chi: Mapped[str | None] = mapped_column(
+        String(50),
+        comment="Nhóm trong nước hoặc quốc tế: trong_nuoc, quoc_te.",
+    )
     mo_ta: Mapped[str | None] = mapped_column(
         Text,
         comment="Mô tả mục tiêu và phạm vi đánh giá của bài thi.",
@@ -68,9 +87,9 @@ class DmBaiThiDanhGia(Base):
         JSON,
         comment="Các hình thức tổ chức có thể áp dụng.",
     )
-    thang_diem: Mapped[Decimal | None] = mapped_column(
-        Numeric(8, 2),
-        comment="Điểm tối đa của bài thi.",
+    thang_diem: Mapped[str | None] = mapped_column(
+        String(100),
+        comment="Mô tả thang điểm bằng chữ, ví dụ 0-150 hoặc 400-1600.",
     )
     diem_toi_thieu: Mapped[Decimal | None] = mapped_column(
         Numeric(8, 2),
@@ -118,9 +137,12 @@ class DmBaiThiDanhGia(Base):
     )
     tao_luc: Mapped[datetime | None] = mapped_column(
         DateTime,
+        server_default=func.now(),
         comment="Thời điểm tạo bản ghi.",
     )
     cap_nhat_luc: Mapped[datetime | None] = mapped_column(
         DateTime,
+        server_default=func.now(),
+        onupdate=func.now(),
         comment="Thời điểm cập nhật bản ghi gần nhất.",
     )

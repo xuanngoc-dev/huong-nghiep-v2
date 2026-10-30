@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
 from app.db.session import get_db
-from app.models.dm_bai_thi_danh_gia_nang_luc import DmBaiThiDanhGiaNangLuc
+from app.models.dm_bai_thi_danh_gia import DmBaiThiDanhGia
 from app.models.nguoi_dung import NguoiDung
 from app.schemas.dm_bai_thi_danh_gia_nang_luc import (
     DmBaiThiDanhGiaNangLucBulkResult,
@@ -14,6 +14,7 @@ from app.schemas.dm_bai_thi_danh_gia_nang_luc import (
     DmBaiThiDanhGiaNangLucPage,
     DmBaiThiDanhGiaNangLucPublic,
     DmBaiThiDanhGiaNangLucWrite,
+    normalize_trang_thai,
 )
 
 router = APIRouter(prefix="/danh-muc/bai-thi-danh-gia-nang-luc", tags=["danh-muc"])
@@ -25,9 +26,9 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _get_or_404(db: Session, item_id: int) -> DmBaiThiDanhGiaNangLuc:
+def _get_or_404(db: Session, item_id: int) -> DmBaiThiDanhGia:
     """Lấy một bản ghi theo id. Trả lỗi 404 nếu không tồn tại."""
-    item = db.get(DmBaiThiDanhGiaNangLuc, item_id)
+    item = db.get(DmBaiThiDanhGia, item_id)
     if item is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -39,8 +40,8 @@ def _get_or_404(db: Session, item_id: int) -> DmBaiThiDanhGiaNangLuc:
 @router.get("", response_model=DmBaiThiDanhGiaNangLucPage)
 def list_bai_thi_danh_gia_nang_luc(
     q: str | None = Query(default=None, max_length=255),
-    trang_thai: int | None = Query(default=None, ge=0, le=1),
-    loai_chung_chi: str | None = Query(default=None, max_length=20),
+    trang_thai: str | None = Query(default=None, max_length=20),
+    loai_chung_chi: str | None = Query(default=None, max_length=50),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
@@ -52,27 +53,30 @@ def list_bai_thi_danh_gia_nang_luc(
         pattern = _like_pattern(q.strip())
         filters.append(
             or_(
-                DmBaiThiDanhGiaNangLuc.ten_bai_thi.like(pattern, escape="\\"),
-                DmBaiThiDanhGiaNangLuc.ma_bai_thi.like(pattern, escape="\\"),
-                DmBaiThiDanhGiaNangLuc.ten_chi_tiet.like(pattern, escape="\\"),
-                DmBaiThiDanhGiaNangLuc.linh_vuc.like(pattern, escape="\\"),
-                DmBaiThiDanhGiaNangLuc.mon.like(pattern, escape="\\"),
+                DmBaiThiDanhGia.ten_bai_thi.like(pattern, escape="\\"),
+                DmBaiThiDanhGia.ma_bai_thi.like(pattern, escape="\\"),
+                DmBaiThiDanhGia.ten_chi_tiet.like(pattern, escape="\\"),
+                DmBaiThiDanhGia.linh_vuc.like(pattern, escape="\\"),
+                DmBaiThiDanhGia.mon.like(pattern, escape="\\"),
+                DmBaiThiDanhGia.ten_viet_tat.like(pattern, escape="\\"),
+                DmBaiThiDanhGia.don_vi_to_chuc.like(pattern, escape="\\"),
+                DmBaiThiDanhGia.loai_danh_gia.like(pattern, escape="\\"),
             )
         )
-    if trang_thai is not None:
-        filters.append(DmBaiThiDanhGiaNangLuc.trang_thai == trang_thai)
+    if trang_thai and trang_thai.strip():
+        filters.append(DmBaiThiDanhGia.trang_thai == (normalize_trang_thai(trang_thai) or trang_thai.strip()))
     if loai_chung_chi and loai_chung_chi.strip():
-        filters.append(DmBaiThiDanhGiaNangLuc.loai_chung_chi == loai_chung_chi.strip().lower())
+        filters.append(DmBaiThiDanhGia.loai_chung_chi == loai_chung_chi.strip().lower())
 
-    count_stmt = select(func.count()).select_from(DmBaiThiDanhGiaNangLuc)
-    stmt = select(DmBaiThiDanhGiaNangLuc)
+    count_stmt = select(func.count()).select_from(DmBaiThiDanhGia)
+    stmt = select(DmBaiThiDanhGia)
     if filters:
         count_stmt = count_stmt.where(*filters)
         stmt = stmt.where(*filters)
 
     total = db.scalar(count_stmt) or 0
     items = db.scalars(
-        stmt.order_by(DmBaiThiDanhGiaNangLuc.ma_bai_thi.asc(), DmBaiThiDanhGiaNangLuc.id.asc())
+        stmt.order_by(DmBaiThiDanhGia.ma_bai_thi.asc(), DmBaiThiDanhGia.id.asc())
         .offset((page - 1) * page_size)
         .limit(page_size)
     ).all()
@@ -84,7 +88,7 @@ def get_bai_thi_danh_gia_nang_luc(
     item_id: int,
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
-) -> DmBaiThiDanhGiaNangLuc:
+) -> DmBaiThiDanhGia:
     """Lấy chi tiết một bài thi đánh giá năng lực theo id."""
     return _get_or_404(db, item_id)
 
@@ -122,7 +126,7 @@ def create_bai_thi_danh_gia_nang_luc_bulk(
 
     existing = list(
         db.scalars(
-            select(DmBaiThiDanhGiaNangLuc.ma_bai_thi).where(DmBaiThiDanhGiaNangLuc.ma_bai_thi.in_(codes))
+            select(DmBaiThiDanhGia.ma_bai_thi).where(DmBaiThiDanhGia.ma_bai_thi.in_(codes))
         ).all()
     )
     if existing:
@@ -131,7 +135,7 @@ def create_bai_thi_danh_gia_nang_luc_bulk(
             detail=f"Mã bài thi đã tồn tại: {', '.join(existing)}",
         )
 
-    items = [DmBaiThiDanhGiaNangLuc(**item.model_dump()) for item in payload]
+    items = [DmBaiThiDanhGia(**item.model_dump()) for item in payload]
     db.add_all(items)
     try:
         db.commit()
@@ -149,9 +153,9 @@ def create_bai_thi_danh_gia_nang_luc(
     payload: DmBaiThiDanhGiaNangLucWrite,
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
-) -> DmBaiThiDanhGiaNangLuc:
+) -> DmBaiThiDanhGia:
     """Thêm một bài thi đánh giá năng lực. Từ chối nếu mã đã tồn tại."""
-    item = DmBaiThiDanhGiaNangLuc(**payload.model_dump())
+    item = DmBaiThiDanhGia(**payload.model_dump())
     db.add(item)
     try:
         db.commit()
@@ -171,10 +175,10 @@ def update_bai_thi_danh_gia_nang_luc(
     payload: DmBaiThiDanhGiaNangLucWrite,
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
-) -> DmBaiThiDanhGiaNangLuc:
+) -> DmBaiThiDanhGia:
     """Cập nhật toàn bộ thông tin một bài thi đánh giá năng lực theo id."""
     item = _get_or_404(db, item_id)
-    for key, value in payload.model_dump().items():
+    for key, value in payload.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
     try:
         db.commit()
@@ -195,7 +199,7 @@ def delete_bai_thi_danh_gia_nang_luc_many(
     _: NguoiDung = Depends(get_current_user),
 ) -> DmBaiThiDanhGiaNangLucDeleteManyResult:
     """Xóa nhiều bài thi đánh giá năng lực theo danh sách id."""
-    items = db.scalars(select(DmBaiThiDanhGiaNangLuc).where(DmBaiThiDanhGiaNangLuc.id.in_(payload.ids))).all()
+    items = db.scalars(select(DmBaiThiDanhGia).where(DmBaiThiDanhGia.id.in_(payload.ids))).all()
     if not items:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
