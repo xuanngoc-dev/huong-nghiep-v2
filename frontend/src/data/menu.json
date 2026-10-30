@@ -39,6 +39,138 @@
           "title": "Danh sách",
           "tooltip": "Xem và quản lý danh sách đề án tuyển sinh",
           "icon": "List"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/tru-so",
+          "title": "Trụ sở",
+          "tooltip": "Trụ sở, cơ sở và phân hiệu của trường",
+          "icon": "OfficeBuilding"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/website",
+          "title": "Website",
+          "tooltip": "Các trang thông tin điện tử liên quan đến đề án",
+          "icon": "Link"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/lien-he",
+          "title": "Liên hệ",
+          "tooltip": "Đầu mối, số điện thoại và email tư vấn tuyển sinh",
+          "icon": "Phone"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/chuong-trinh",
+          "title": "Chương trình",
+          "tooltip": "Danh sách chương trình và chỉ tiêu tổng theo chương trình",
+          "icon": "Reading"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/ke-hoach",
+          "title": "Kế hoạch",
+          "tooltip": "Kế hoạch và phạm vi tuyển sinh của chương trình",
+          "icon": "Calendar"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/phuong-thuc",
+          "title": "Phương thức",
+          "tooltip": "Phương thức, điều kiện và chỉ tiêu theo phương thức",
+          "icon": "Operation"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/phuong-thuc-to-hop",
+          "title": "Tổ hợp phương thức",
+          "tooltip": "Tổ hợp môn gắn với từng phương thức của đề án",
+          "icon": "Grid"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/nhan-su",
+          "title": "Nhân sự",
+          "tooltip": "Đội ngũ giảng viên và cán bộ quản lý được đề án công bố",
+          "icon": "Avatar"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/co-so-vat-chat",
+          "title": "Cơ sở vật chất",
+          "tooltip": "Cơ sở vật chất phục vụ đào tạo",
+          "icon": "House"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/quy-mo-dao-tao",
+          "title": "Quy mô đào tạo",
+          "tooltip": "Quy mô người học theo năm, trình độ và hình thức đào tạo",
+          "icon": "Histogram"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/ty-le-viec-lam",
+          "title": "Tỷ lệ việc làm",
+          "tooltip": "Tỷ lệ việc làm của người học sau tốt nghiệp",
+          "icon": "TrendCharts"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/trinh-do-nganh",
+          "title": "Trình độ ngành",
+          "tooltip": "Trình độ và hình thức đào tạo gắn với chương trình",
+          "icon": "Medal"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/doi-tuong-du-tuyen",
+          "title": "Đối tượng dự tuyển",
+          "tooltip": "Nhóm thí sinh được phép dự tuyển",
+          "icon": "User"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/dieu-kien-du-tuyen",
+          "title": "Điều kiện dự tuyển",
+          "tooltip": "Điều kiện cần đáp ứng để dự tuyển",
+          "icon": "CircleCheck"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/tieu-chi-xet-tuyen",
+          "title": "Tiêu chí xét tuyển",
+          "tooltip": "Tiêu chí chính, tiêu chí phụ và thứ tự xét",
+          "icon": "Finished"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/diem-cong",
+          "title": "Điểm cộng",
+          "tooltip": "Điểm thưởng, điểm xét thưởng và điểm khuyến khích",
+          "icon": "Plus"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/quy-tac-phan-bo",
+          "title": "Quy tắc phân bổ",
+          "tooltip": "Quy tắc phân bổ thí sinh vào ngành, chương trình",
+          "icon": "Share"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/ho-so-du-tuyen",
+          "title": "Hồ sơ dự tuyển",
+          "tooltip": "Giấy tờ và minh chứng thí sinh cần nộp",
+          "icon": "Document"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/quy-doi-nguong",
+          "title": "Quy đổi ngưỡng",
+          "tooltip": "Quy đổi ngưỡng đầu vào giữa phương thức và tổ hợp",
+          "icon": "Switch"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/quy-doi-diem",
+          "title": "Quy đổi điểm",
+          "tooltip": "Quy đổi điểm trúng tuyển giữa phương thức và tổ hợp",
+          "icon": "DataLine"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/xet-tuyen-thang",
+          "title": "Xét tuyển thẳng",
+          "tooltip": "Chính sách xét tuyển thẳng của đề án",
+          "icon": "Promotion"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/uu-tien-xet-tuyen",
+          "title": "Ưu tiên xét tuyển",
+          "tooltip": "Chính sách ưu tiên xét tuyển của đề án",
+          "icon": "Star"
         }
       ]
     },

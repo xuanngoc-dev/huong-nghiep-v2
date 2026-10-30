@@ -4,6 +4,10 @@ export function fetchDeAnTuyenSinh(params) {
   return api.get('/de-an-tuyen-sinh', { params }).then((res) => res.data)
 }
 
+export function fetchDeAnTuyenSinhChiTiet(id, config) {
+  return api.get(`/de-an-tuyen-sinh/${id}/chi-tiet`, config).then((res) => res.data)
+}
+
 export function createDeAnTuyenSinh(payload) {
   return api.post('/de-an-tuyen-sinh', payload).then((res) => res.data)
 }

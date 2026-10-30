@@ -508,7 +508,7 @@ onMounted(async () => {
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật tổ hợp môn học' : 'Thêm tổ hợp môn học'"
-    width="720px"
+    width="80%"
     destroy-on-close
     @closed="resetForm"
   >
@@ -529,7 +529,7 @@ onMounted(async () => {
         v-model="jsonText"
         class="json-input"
         type="textarea"
-        :rows="16"
+        :rows="26"
         placeholder="Dán mảng JSON vào đây"
       />
     </div>

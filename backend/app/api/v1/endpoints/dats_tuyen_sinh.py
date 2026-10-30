@@ -14,13 +14,15 @@ from app.schemas.dats_tuyen_sinh import (
     DatsImportRequest,
     DatsImportResult,
     DatsTuyenSinhBulkResult,
+    DatsTuyenSinhChiTiet,
     DatsTuyenSinhDeleteMany,
     DatsTuyenSinhDeleteManyResult,
     DatsTuyenSinhPage,
     DatsTuyenSinhPublic,
     DatsTuyenSinhWrite,
 )
-from app.services.dats_import import DatsImportError, import_document
+from app.services.dats_detail import load_de_an_bang
+from app.services.dats_import import DatsImportError, delete_de_an_children, import_document
 
 router = APIRouter(prefix="/de-an-tuyen-sinh", tags=["de-an-tuyen-sinh"])
 
@@ -141,6 +143,17 @@ def list_de_an(
     )
 
 
+@router.get("/{item_id}/chi-tiet", response_model=DatsTuyenSinhChiTiet)
+def get_de_an_chi_tiet(
+    item_id: int,
+    db: Session = Depends(get_db),
+    _: NguoiDung = Depends(get_current_user),
+) -> DatsTuyenSinhChiTiet:
+    """Lấy đề án và mọi bảng dats_ liên quan để xem chi tiết."""
+    item, truong = _load_pair(db, item_id)
+    return DatsTuyenSinhChiTiet(de_an=_to_public(item, truong), bang=load_de_an_bang(db, item.id))
+
+
 @router.get("/{item_id}", response_model=DatsTuyenSinhPublic)
 def get_de_an(
     item_id: int,
@@ -191,13 +204,7 @@ def import_de_an(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DatsImportResult:
-    """Nhập đúng một bản ghi dats_tuyen_sinh. Các bảng dats_ khác thuộc menu riêng."""
-    extra = sorted(key for key in payload.du_lieu if key.startswith("dats_") and key != "dats_tuyen_sinh")
-    if extra:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Màn đề án chỉ nhập bảng dats_tuyen_sinh. Các bảng khác nhập ở menu riêng.",
-        )
+    """Nhập một đề án và các bảng dats_ lồng trong JSON, trong một transaction."""
     try:
         de_an_id, counts = import_document(db, payload.truong_id, payload.nam_tuyen_sinh, payload.du_lieu)
         db.commit()
@@ -274,6 +281,7 @@ def delete_de_an_many(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Không tìm thấy đề án tuyển sinh để xóa",
         )
+    delete_de_an_children(db, [item.id for item in items])
     for item in items:
         db.delete(item)
     try:
@@ -295,6 +303,7 @@ def delete_de_an(
 ) -> None:
     """Xóa một đề án tuyển sinh theo id."""
     item, _truong = _load_pair(db, item_id)
+    delete_de_an_children(db, [item.id])
     db.delete(item)
     try:
         db.commit()

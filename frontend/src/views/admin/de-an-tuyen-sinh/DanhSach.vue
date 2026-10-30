@@ -11,6 +11,7 @@ import {
   updateDeAnTuyenSinh,
 } from '@/api/deAnTuyenSinh'
 import { fetchTruongHoc } from '@/api/truongHoc'
+import ChiTietDeAnDialog from './ChiTietDeAnDialog.vue'
 
 const STATUS_OPTIONS = [
   { value: 'nhap', label: 'Nháp', tag: 'info' },
@@ -26,20 +27,90 @@ const HINH_THUC_OPTIONS = [
   'Văn bằng 2',
 ]
 
+const IMPORT_LABELS = {
+  dats_tuyen_sinh: 'đề án',
+  dats_tru_so: 'trụ sở',
+  dats_website: 'website',
+  dats_lien_he_tuyen_sinh: 'liên hệ',
+  dats_chuong_trinh_dao_tao: 'chương trình',
+  dats_ke_hoach_tuyen_sinh: 'kế hoạch',
+  dats_phuong_thuc: 'phương thức',
+  dats_phuong_thuc_to_hop: 'tổ hợp',
+  dats_nhan_su: 'nhân sự',
+  dats_co_so_vat_chat: 'cơ sở vật chất',
+  dats_quy_mo_dao_tao: 'quy mô',
+  dats_ty_le_viec_lam: 'tỷ lệ việc làm',
+  dats_trinh_do_nganh: 'trình độ ngành',
+  dats_doi_tuong_du_tuyen: 'đối tượng',
+  dats_dieu_kien_du_tuyen: 'điều kiện',
+  dats_tieu_chi_xet_tuyen: 'tiêu chí',
+  dats_diem_cong: 'điểm cộng',
+  dats_quy_tac_phan_bo: 'quy tắc phân bổ',
+  dats_ho_so_du_tuyen: 'hồ sơ',
+  dats_quy_doi_nguong_dau_vao: 'quy đổi ngưỡng',
+  dats_quy_doi_diem_trung_tuyen: 'quy đổi điểm',
+  dats_chinh_sach_xet_tuyen_thang: 'xét tuyển thẳng',
+  dats_chinh_sach_uu_tien_xet_tuyen: 'ưu tiên',
+}
+
 const JSON_SAMPLE = `{
   "thong_tin_import": {
-    "phien_ban_cau_truc": "2.0",
-    "pham_vi": "mot_truong_mot_nam"
+    "phien_ban_cau_truc": "3.2",
+    "pham_vi": "mot_truong_mot_nam",
+    "ma_truong": "BKA",
+    "nam_tuyen_sinh": 2026,
+    "kieu_cau_truc": "mot_de_an_long_nhau",
+    "xu_ly_khi_da_ton_tai": "tu_choi"
   },
   "dats_tuyen_sinh": {
     "chi_tieu": 9880,
-    "ten_de_an": "Thông tin tuyển sinh đại học chính quy năm 2026 - Đại học Bách khoa Hà Nội (Quyết định 2466/QĐ-ĐHBK)",
+    "ten_de_an": "Thông tin tuyển sinh đại học chính quy năm 2026 - Đại học Bách khoa Hà Nội",
     "hinh_thuc_dao_tao": ["Chính quy"],
-    "gioi_thieu": "68 chương trình (38 chuẩn, 26 Elitech, 2 PFIEV, 2 liên kết quốc tế); 5 chương trình mới. Ba phương thức chính: XTTN, ĐGTD/TSA, THPT.",
+    "gioi_thieu": "Mẫu rút gọn. File đầy đủ lồng chương trình, phương thức và tổ hợp.",
     "ngay_cong_bo": "2026-03-03",
     "nguon_du_lieu_url": null,
     "trang_thai": null,
-    "ghi_chu": "Nguồn: PDF Quyết định 2466/QĐ-ĐHBK ngày 03/03/2026."
+    "ghi_chu": null,
+    "dats_lien_he_tuyen_sinh": [
+      { "ten_don_vi": "Ban Tuyển sinh - Hướng nghiệp" }
+    ],
+    "dats_doi_tuong_du_tuyen": [
+      {
+        "ma_doi_tuong": "THPT",
+        "ten_doi_tuong": "Thí sinh xét tuyển kết quả thi THPT"
+      }
+    ],
+    "dats_dieu_kien_du_tuyen": [
+      {
+        "ma_dieu_kien": "DK_THPT",
+        "ten_dieu_kien": "Tốt nghiệp THPT",
+        "loai_dieu_kien": "bat_buoc",
+        "noi_dung_dieu_kien": "Đã tốt nghiệp THPT",
+        "ma_doi_tuong_du_tuyen": "THPT"
+      }
+    ],
+    "dats_chuong_trinh_dao_tao": [
+      {
+        "ma_xet_tuyen": "BF1",
+        "ten_chuong_trinh": "Kỹ thuật Sinh học",
+        "trinh_do_dao_tao": "dai_hoc",
+        "hinh_thuc_dao_tao": "chinh_quy",
+        "dats_phuong_thuc": [
+          {
+            "ma_phuong_thuc_cua_bo": "100",
+            "ma_phuong_thuc_cua_truong": "THPT",
+            "ten_phuong_thuc_cua_truong": "Xét kết quả thi THPT",
+            "to_hop_mon_hoc": ["A00"],
+            "dats_phuong_thuc_to_hop": [
+              { "thu_tu_hien_thi": 1, "ma_to_hop": "A00" }
+            ]
+          }
+        ],
+        "dats_trinh_do_nganh": [
+          { "trinh_do_dao_tao": "dai_hoc", "hinh_thuc_dao_tao": "chinh_quy" }
+        ]
+      }
+    ]
   }
 }`
 
@@ -53,9 +124,12 @@ const total = ref(0)
 const page = ref(1)
 const pageSize = ref(20)
 const dialogVisible = ref(false)
+const detailVisible = ref(false)
+const detailId = ref(null)
 const editingId = ref(null)
 const createMode = ref('form')
 const jsonText = ref('')
+const jsonFileRef = ref(null)
 const jsonTruongId = ref(null)
 const jsonNamTuyenSinh = ref(new Date().getFullYear())
 const jsonImport = useJsonBatchImport({ label: 'đề án tuyển sinh' })
@@ -151,20 +225,50 @@ function parseJsonDocument(text) {
   try {
     data = JSON.parse(text)
   } catch {
-    throw new Error('JSON không hợp lệ. Hãy dán một object đề án theo cấu trúc một trường, một năm.')
+    throw new Error('JSON không hợp lệ. Hãy dán một đề án theo cấu trúc một trường, một năm.')
   }
   if (!data || typeof data !== 'object' || Array.isArray(data)) {
     throw new Error('JSON phải là một object có khóa dats_tuyen_sinh.')
   }
-  const extra = Object.keys(data).filter((key) => key.startsWith('dats_') && key !== 'dats_tuyen_sinh')
-  if (extra.length) {
-    throw new Error('Màn đề án chỉ nhập bảng dats_tuyen_sinh. Các bảng khác nhập ở menu riêng.')
+  if (
+    data.thong_tin_import != null &&
+    (typeof data.thong_tin_import !== 'object' || Array.isArray(data.thong_tin_import))
+  ) {
+    throw new Error('thong_tin_import phải là object')
   }
   const item = data.dats_tuyen_sinh
   if (!item || typeof item !== 'object' || Array.isArray(item)) {
     throw new Error('Thiếu object dats_tuyen_sinh')
   }
-  return { dats_tuyen_sinh: item }
+  return data
+}
+
+function applyDocumentSelection(data) {
+  const info = data.thong_tin_import && !Array.isArray(data.thong_tin_import) ? data.thong_tin_import : {}
+  const yearValue = info.nam_tuyen_sinh ?? data.dats_tuyen_sinh?.nam_tuyen_sinh
+  if (yearValue != null && yearValue !== '') {
+    const year = Number(yearValue)
+    if (!Number.isInteger(year) || year < 1990 || year > 2100) {
+      throw new Error('Năm tuyển sinh trong file phải là số từ 1990 đến 2100')
+    }
+    jsonNamTuyenSinh.value = year
+  }
+  const code = info.ma_truong
+  if (code == null || String(code).trim() === '') return
+  const school = truongOptions.value.find(
+    (item) => String(item.ma_truong || '').trim().toUpperCase() === String(code).trim().toUpperCase(),
+  )
+  if (!school) {
+    throw new Error(`Không tìm thấy trường có mã ${String(code).trim()}`)
+  }
+  jsonTruongId.value = school.id
+}
+
+function importSummary(counts) {
+  const parts = Object.entries(counts || {})
+    .filter(([, count]) => Number(count) > 0)
+    .map(([table, count]) => `${count} ${IMPORT_LABELS[table] || table}`)
+  return parts.length ? `Đã nhập ${parts.join(', ')}` : 'Đã nhập đề án tuyển sinh'
 }
 
 function errorMessage(error, fallback) {
@@ -263,6 +367,11 @@ function openCreate() {
   dialogVisible.value = true
 }
 
+function openDetail(row) {
+  detailId.value = row.id
+  detailVisible.value = true
+}
+
 function openEdit(row) {
   editingId.value = row.id
   Object.assign(form, {
@@ -297,39 +406,68 @@ function payloadFromForm() {
 
 function fillJsonSample() {
   jsonText.value = JSON_SAMPLE
+  try {
+    applyDocumentSelection(parseJsonDocument(jsonText.value))
+  } catch (error) {
+    ElMessage.error(error.message)
+  }
+}
+
+function openJsonFile() {
+  jsonFileRef.value?.click()
+}
+
+function onJsonFile(event) {
+  const file = event.target.files?.[0]
+  event.target.value = ''
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = () => {
+    jsonText.value = String(reader.result || '')
+    try {
+      applyDocumentSelection(parseJsonDocument(jsonText.value))
+    } catch (error) {
+      ElMessage.error(error.message)
+    }
+  }
+  reader.onerror = () => {
+    ElMessage.error('Không đọc được file JSON')
+  }
+  reader.readAsText(file)
 }
 
 async function onSubmitJson() {
-  const school = selectedJsonSchool()
-  if (!school) {
-    ElMessage.error('Vui lòng chọn trường')
-    return
-  }
-  const year = selectedJsonYear()
-  if (year == null) {
-    ElMessage.error('Năm tuyển sinh phải là số từ 1990 đến 2100')
-    return
-  }
-
   let document
   try {
     document = parseJsonDocument(jsonText.value)
+    applyDocumentSelection(document)
   } catch (error) {
     ElMessage.error(error.message)
     return
   }
 
+  const schoolAfterFile = selectedJsonSchool()
+  const yearAfterFile = selectedJsonYear()
+  if (!schoolAfterFile) {
+    ElMessage.error('Vui lòng chọn trường')
+    return
+  }
+  if (yearAfterFile == null) {
+    ElMessage.error('Năm tuyển sinh phải là số từ 1990 đến 2100')
+    return
+  }
+
   saving.value = true
   try {
-    await importDeAnTuyenSinh(
+    const result = await importDeAnTuyenSinh(
       {
-        truong_id: school.id,
-        nam_tuyen_sinh: year,
+        truong_id: schoolAfterFile.id,
+        nam_tuyen_sinh: yearAfterFile,
         du_lieu: document,
       },
-      { skipLoading: true, timeout: 120000 },
+      { skipLoading: true, timeout: 300000 },
     )
-    ElMessage.success('Đã nhập đề án tuyển sinh')
+    ElMessage.success(importSummary(result?.counts))
     dialogVisible.value = false
     await load()
   } catch (error) {
@@ -371,7 +509,7 @@ async function onDelete(row) {
   const name = row.ten_de_an || `năm ${row.nam_tuyen_sinh}`
   try {
     await ElMessageBox.confirm(
-      `Xóa đề án "${name}" của ${row.ten_truong}?`,
+      `Xóa đề án "${name}" của ${row.ten_truong}? Dữ liệu liên quan của đề án cũng bị xóa.`,
       'Xác nhận xóa',
       {
         type: 'warning',
@@ -403,7 +541,7 @@ async function onDeleteSelected() {
 
   try {
     await ElMessageBox.confirm(
-      `Xóa ${ids.length} đề án tuyển sinh đã chọn?`,
+      `Xóa ${ids.length} đề án tuyển sinh đã chọn? Dữ liệu liên quan của các đề án cũng bị xóa.`,
       'Xác nhận xóa',
       {
         type: 'warning',
@@ -538,7 +676,11 @@ onMounted(async () => {
           <template #default="{ row }">{{ schoolLabel(row) }}</template>
         </CustomTableColumn>
         <CustomTableColumn prop="ten_de_an" label="Tên đề án" min-width="240">
-          <template #default="{ row }">{{ row.ten_de_an || '—' }}</template>
+          <template #default="{ row }">
+            <CustomButton link type="primary" class="name-link" @click="openDetail(row)">
+              {{ row.ten_de_an || 'Xem chi tiết' }}
+            </CustomButton>
+          </template>
         </CustomTableColumn>
         <CustomTableColumn label="Chỉ tiêu" width="120" align="right">
           <template #default="{ row }">{{ formatQuota(row.chi_tieu) }}</template>
@@ -557,9 +699,14 @@ onMounted(async () => {
             <span v-else>—</span>
           </template>
         </CustomTableColumn>
-        <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
+        <CustomTableColumn label="Thao tác" width="140" fixed="right" align="center">
           <template #default="{ row }">
             <div class="row-actions">
+              <CustomTooltip content="Xem chi tiết" placement="top">
+                <CustomButton link type="primary" aria-label="Xem chi tiết" @click="openDetail(row)">
+                  <CustomIcon><View /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
               <CustomTooltip content="Sửa" placement="top">
                 <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
                   <CustomIcon><Edit /></CustomIcon>
@@ -592,6 +739,8 @@ onMounted(async () => {
     </CustomCard>
   </div>
 
+  <ChiTietDeAnDialog v-model="detailVisible" :de-an-id="detailId" />
+
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật đề án tuyển sinh' : 'Thêm đề án tuyển sinh'"
@@ -607,10 +756,24 @@ onMounted(async () => {
     <div v-if="!editingId && createMode === 'json'" class="json-panel">
       <div class="json-panel__head">
         <p>
-          Chọn trường và năm tuyển sinh, rồi dán JSON của riêng bảng <code>dats_tuyen_sinh</code>.
-          <code>truong_id</code> và <code>nam_tuyen_sinh</code> lấy từ lựa chọn bên dưới.
+          Dán hoặc chọn file JSON một trường, một năm. Các bảng con nằm trong
+          <code>dats_tuyen_sinh</code> (chương trình, phương thức, tổ hợp, điều kiện, ...)
+          được nhập cùng đề án. Nếu file có <code>thong_tin_import.ma_truong</code> và
+          <code>nam_tuyen_sinh</code>, trường và năm lấy từ file. Mã phương thức của Bộ và mã tổ hợp
+          phải có trong danh mục. <code>to_hop_mon_hoc</code> để trống nghĩa là phương thức áp dụng mọi tổ hợp;
+          nếu có thì là mảng mã tổ hợp, ví dụ ["A01"].
         </p>
-        <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
+        <div class="json-panel__actions">
+          <CustomButton text type="primary" @click="openJsonFile">Chọn file</CustomButton>
+          <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
+        </div>
+        <input
+          ref="jsonFileRef"
+          class="json-file"
+          type="file"
+          accept=".json,application/json"
+          @change="onJsonFile"
+        />
       </div>
       <div class="json-meta">
         <div class="json-school">
@@ -840,6 +1003,15 @@ onMounted(async () => {
   paint-order: stroke fill;
 }
 
+.name-link {
+  max-width: 100%;
+  height: auto;
+  padding: 0;
+  white-space: normal;
+  text-align: left;
+  line-height: 1.4;
+}
+
 .filter-search,
 .filter-school {
   width: 280px;
@@ -869,6 +1041,16 @@ onMounted(async () => {
   margin: 0;
   color: var(--el-text-color-secondary);
   line-height: 1.5;
+}
+
+.json-panel__actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 4px;
+}
+
+.json-file {
+  display: none;
 }
 
 .json-meta {

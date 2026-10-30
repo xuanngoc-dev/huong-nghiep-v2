@@ -1,17 +1,19 @@
 """Nhập dữ liệu các bảng dats_ từ JSON một trường, một năm.
 
-Màn đề án tuyển sinh chỉ gửi dats_tuyen_sinh. Các bảng còn lại sẽ có menu riêng.
+JSON phẳng để các bảng cạnh nhau và nối bằng id trong file.
+JSON lồng nhau để bảng con nằm trong bản ghi cha; khóa ngoại được gán theo vị trí.
 """
 
 from __future__ import annotations
 
+import logging
 import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 
-from sqlalchemy import String, Text, select
+from sqlalchemy import String, Text, delete, or_, select
 from sqlalchemy.orm import Session
 
 from app.models.dats_chinh_sach_uu_tien_xet_tuyen import DatsChinhSachUuTienXetTuyen
@@ -41,6 +43,8 @@ from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.dm_phuong_thuc_tuyen_sinh import DmPhuongThucTuyenSinh
 from app.models.dm_to_hop_mon_hoc import DmToHopMonHoc
 from app.models.dm_truong import DmTruong
+
+logger = logging.getLogger(__name__)
 
 _MAX_ROWS = 5000
 _MA_TO_HOP = re.compile(r"ma_to_hop\s*=\s*([A-Za-z0-9._-]+)")
@@ -91,6 +95,14 @@ _TABLES: list[tuple[str, type, str]] = [
 ]
 _MODELS = {name: model for name, model, _kind in _TABLES}
 _KINDS = {name: kind for name, _model, kind in _TABLES}
+# Bảng không gắn trực tiếp vào đề án; phải nằm trong bản ghi cha hoặc có sẵn khóa ngoại.
+_REQUIRED_PARENT = {
+    "dats_ke_hoach_tuyen_sinh": "dats_chuong_trinh_dao_tao",
+    "dats_phuong_thuc": "dats_chuong_trinh_dao_tao",
+    "dats_trinh_do_nganh": "dats_chuong_trinh_dao_tao",
+    "dats_phuong_thuc_to_hop": "dats_phuong_thuc",
+}
+_PARENT_FK = {parent: column for column, parent in _DATS_FK.items()}
 
 
 class DatsImportError(ValueError):
@@ -113,12 +125,43 @@ class PreparedRow:
     values: dict
 
 
+def conflict_policy(document: dict) -> str | None:
+    """`tu_choi` khi không được tạo thêm đề án cùng trường và năm."""
+    if not isinstance(document, dict):
+        return None
+    info = document.get("thong_tin_import")
+    policy = info.get("xu_ly_khi_da_ton_tai") if isinstance(info, dict) else None
+    if policy not in (None, "tu_choi"):
+        raise DatsImportError("Chỉ hỗ trợ xu_ly_khi_da_ton_tai bằng tu_choi")
+    proposal = document.get("dats_tuyen_sinh")
+    nested = isinstance(proposal, dict) and _has_nested_tables(proposal)
+    if policy == "tu_choi" or nested:
+        return "tu_choi"
+    return None
+
+
 def import_document(db: Session, truong_id: int, nam_tuyen_sinh: int, document: dict) -> tuple[int, dict[str, int]]:
     """Lưu toàn bộ JSON trong một transaction. Id trong file chỉ dùng để nối khóa ngoại."""
+    if not isinstance(document, dict):
+        raise DatsImportError("JSON phải là một object một trường, một năm")
     if db.get(DmTruong, truong_id) is None:
         raise DatsImportError("Trường học không tồn tại")
-    catalogs = _load_catalogs(db, document)
-    rows = prepare_import(document, truong_id=truong_id, nam_tuyen_sinh=nam_tuyen_sinh, catalogs=catalogs)
+    if conflict_policy(document) == "tu_choi":
+        found = db.scalar(
+            select(DatsTuyenSinh.id)
+            .where(
+                DatsTuyenSinh.truong_id == truong_id,
+                DatsTuyenSinh.nam_tuyen_sinh == nam_tuyen_sinh,
+            )
+            .limit(1)
+        )
+        if found is not None:
+            raise DatsImportError(
+                f"Trường đã có đề án tuyển sinh năm {nam_tuyen_sinh}. Hãy xóa đề án cũ trước khi nhập lại."
+            )
+    flat = flatten_nested_document(document)
+    catalogs = _load_catalogs(db, flat)
+    rows = prepare_import(flat, truong_id=truong_id, nam_tuyen_sinh=nam_tuyen_sinh, catalogs=catalogs)
     return _apply(db, rows)
 
 
@@ -132,6 +175,8 @@ def prepare_import(
     """Chuẩn hóa JSON thành các dòng chờ ghi. Khóa ngoại dats_ vẫn là id gốc trong file."""
     if not isinstance(document, dict):
         raise DatsImportError("JSON phải là một object một trường, một năm")
+    document = flatten_nested_document(document)
+    _link_subjects(document)
     unknown = sorted(key for key in document if key.startswith("dats_") and key not in _MODELS)
     if unknown:
         raise DatsImportError(f"Chưa hỗ trợ bảng: {', '.join(unknown)}")
@@ -156,6 +201,203 @@ def prepare_import(
     if not any(row.table == "dats_tuyen_sinh" for row in prepared):
         raise DatsImportError("Thiếu object dats_tuyen_sinh")
     return prepared
+
+
+def _has_nested_tables(raw: dict) -> bool:
+    return any(key.startswith("dats_") and key in _MODELS for key in raw)
+
+
+def flatten_nested_document(document: dict) -> dict:
+    """Đưa bảng con ra cùng cấp và gán khóa ngoại từ bản ghi cha. JSON phẳng được giữ nguyên."""
+    if not isinstance(document, dict):
+        return document
+    proposal = document.get("dats_tuyen_sinh")
+    if not isinstance(proposal, dict) or not _has_nested_tables(proposal):
+        return document
+    siblings = [key for key in document if key.startswith("dats_") and key != "dats_tuyen_sinh"]
+    if siblings:
+        raise DatsImportError("JSON lồng nhau không được kèm bảng dats_ cùng cấp với dats_tuyen_sinh")
+
+    buckets: dict[str, list] = {name: [] for name, _model, kind in _TABLES if kind == "list"}
+    used: dict[str, set[int]] = defaultdict(set)
+    next_id: dict[str, int] = defaultdict(lambda: 1)
+    holder: dict[str, dict] = {}
+
+    def take_id(table: str, raw: dict, label: str) -> int | None:
+        if "id" not in _MODELS[table].__table__.columns:
+            return None
+        value = raw.get("id")
+        if value not in (None, ""):
+            number = _as_int(value, f"{label} có id không hợp lệ")
+            if number < 1:
+                raise DatsImportError(f"{label} có id không hợp lệ")
+            if number in used[table]:
+                raise DatsImportError(f"{label} trùng id {number}")
+            used[table].add(number)
+            return number
+        while next_id[table] in used[table]:
+            next_id[table] += 1
+        number = next_id[table]
+        next_id[table] += 1
+        used[table].add(number)
+        return number
+
+    def visit(table: str, raw, ancestors: dict[str, int], label: str) -> None:
+        if not isinstance(raw, dict):
+            raise DatsImportError(f"{label} không phải object")
+        source_id = take_id(table, raw, label)
+        row: dict = {}
+        children: list[tuple[str, list]] = []
+        for key, value in raw.items():
+            if not key.startswith("dats_"):
+                row[key] = value
+                continue
+            if key not in _MODELS:
+                raise DatsImportError(f"Chưa hỗ trợ bảng: {key}")
+            if value is None:
+                continue
+            if not isinstance(value, list):
+                raise DatsImportError(f"{key} phải là một mảng")
+            children.append((key, value))
+        if source_id is not None:
+            row["id"] = source_id
+        if table == "dats_phuong_thuc":
+            _fill_method_combo_ids(row, children)
+        columns = _MODELS[table].__table__.columns
+        for fk_name, parent_table in _DATS_FK.items():
+            if fk_name not in columns or row.get(fk_name) not in (None, ""):
+                continue
+            parent_id = ancestors.get(parent_table)
+            if parent_id is not None:
+                row[fk_name] = parent_id
+        parent_table = _REQUIRED_PARENT.get(table)
+        if parent_table and parent_table not in ancestors:
+            fk_name = _PARENT_FK[parent_table]
+            if row.get(fk_name) in (None, ""):
+                raise DatsImportError(f"{label} phải nằm trong {parent_table}")
+        if table == "dats_tuyen_sinh":
+            holder["proposal"] = row
+        else:
+            buckets[table].append(row)
+        child_ancestors = dict(ancestors)
+        if source_id is not None:
+            child_ancestors[table] = source_id
+        for child_table, items in children:
+            for index, item in enumerate(items, start=1):
+                visit(child_table, item, child_ancestors, f"{child_table} dòng {index}")
+
+    visit("dats_tuyen_sinh", proposal, {}, "dats_tuyen_sinh")
+    flat = {key: value for key, value in document.items() if not key.startswith("dats_")}
+    flat["dats_tuyen_sinh"] = holder["proposal"]
+    for name, rows in buckets.items():
+        if rows:
+            flat[name] = rows
+    return flat
+
+
+def _explicit_combo_list(value) -> bool:
+    return isinstance(value, list) and any(item not in (None, "") for item in value)
+
+
+def _declared_method_combos(row: dict) -> list | None:
+    for key in ("to_hop_mon_hoc", "to_hop_ids"):
+        if _explicit_combo_list(row.get(key)):
+            return row.get(key)
+    if row.get("to_hop_id") not in (None, ""):
+        return [row.get("to_hop_id")]
+    return None
+
+
+def _fill_method_combo_ids(row: dict, children: list[tuple[str, list]]) -> None:
+    """Lấy mã tổ hợp từ bảng con khi phương thức chưa khai báo to_hop_mon_hoc."""
+    if _declared_method_combos(row) is not None:
+        return
+    collected = []
+    for key, items in children:
+        if key != "dats_phuong_thuc_to_hop":
+            continue
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            value = item.get("ma_to_hop")
+            if value in (None, ""):
+                value = item.get("to_hop_id")
+            if value not in (None, ""):
+                collected.append(value)
+    if collected:
+        row["to_hop_mon_hoc"] = collected
+
+
+def _link_subjects(document: dict) -> None:
+    """Đổi ma_doi_tuong_du_tuyen thành doi_tuong_du_tuyen_id trong cùng file."""
+    conditions = document.get("dats_dieu_kien_du_tuyen") or []
+    if not isinstance(conditions, list):
+        return
+    pending = [
+        raw
+        for raw in conditions
+        if isinstance(raw, dict)
+        and raw.get("ma_doi_tuong_du_tuyen") not in (None, "")
+        and raw.get("doi_tuong_du_tuyen_id") in (None, "")
+    ]
+    if not pending:
+        return
+    by_code: dict[str, int] = {}
+    subjects = document.get("dats_doi_tuong_du_tuyen") or []
+    if not isinstance(subjects, list):
+        subjects = []
+    for index, raw in enumerate(subjects, start=1):
+        if not isinstance(raw, dict):
+            continue
+        code = raw.get("ma_doi_tuong")
+        if code in (None, ""):
+            continue
+        key = str(code).strip()
+        if key in by_code:
+            raise DatsImportError(f"Trùng mã đối tượng dự tuyển {key}")
+        source_id = raw.get("id")
+        if source_id in (None, ""):
+            raise DatsImportError(f"dats_doi_tuong_du_tuyen dòng {index} thiếu id để gắn điều kiện")
+        by_code[key] = _as_int(source_id, f"dats_doi_tuong_du_tuyen dòng {index} có id không hợp lệ")
+    for raw in pending:
+        key = str(raw.get("ma_doi_tuong_du_tuyen")).strip()
+        mapped = by_code.get(key)
+        if mapped is None:
+            raise DatsImportError(f"Không tìm thấy đối tượng dự tuyển mã {key}")
+        raw["doi_tuong_du_tuyen_id"] = mapped
+        raw.pop("ma_doi_tuong_du_tuyen", None)
+
+
+def delete_de_an_children(db: Session, de_an_ids: list[int]) -> None:
+    """Xóa bản ghi các bảng dats_ thuộc các đề án, theo thứ tự phụ thuộc."""
+    if not de_an_ids:
+        return
+    program_ids = list(
+        db.scalars(
+            select(DatsChuongTrinhDaoTao.id).where(DatsChuongTrinhDaoTao.de_an_id.in_(de_an_ids))
+        ).all()
+    )
+    method_ids = []
+    if program_ids:
+        method_ids = list(
+            db.scalars(
+                select(DatsPhuongThuc.id).where(DatsPhuongThuc.de_an_chuong_trinh_id.in_(program_ids))
+            ).all()
+        )
+    for table, model, _kind in reversed(_TABLES):
+        if table == "dats_tuyen_sinh":
+            continue
+        columns = model.__table__.c
+        clauses = []
+        if "de_an_id" in columns:
+            clauses.append(columns.de_an_id.in_(de_an_ids))
+        if "de_an_chuong_trinh_id" in columns and program_ids:
+            clauses.append(columns.de_an_chuong_trinh_id.in_(program_ids))
+        if "de_an_phuong_thuc_id" in columns and method_ids:
+            clauses.append(columns.de_an_phuong_thuc_id.in_(method_ids))
+        if not clauses:
+            continue
+        db.execute(delete(model).where(or_(*clauses)))
 
 
 def _section(document: dict, table: str, kind: str) -> list:
@@ -205,6 +447,9 @@ def _values(raw: dict, table: str, label: str, truong_id: int, nam_tuyen_sinh: i
             if code is None:
                 raise DatsImportError(f"{label} thiếu ma_phuong_thuc_cua_bo hoặc mã phương thức có trong danh mục")
             values[name] = code
+            continue
+        if name == "to_hop_mon_hoc" and table == "dats_phuong_thuc":
+            values[name] = _method_combo_codes(raw, label, catalogs)
             continue
         if name not in raw or raw[name] is None or raw[name] == "":
             if name == "to_hop_id" and table == "dats_phuong_thuc_to_hop":
@@ -333,6 +578,53 @@ def _lookup_code(mapping: dict[str, int], code) -> int | None:
     return mapping.get(text)
 
 
+def _method_combo_codes(raw: dict, label: str, catalogs: CatalogIndex) -> list[str] | None:
+    """NULL khi phương thức không giới hạn tổ hợp. Mảng lưu mã tổ hợp, ví dụ ["A01"]."""
+    supplied = _declared_method_combos(raw)
+    if supplied is None:
+        return None
+    if not isinstance(supplied, list):
+        raise DatsImportError(f"{label} có to_hop_mon_hoc phải là mảng hoặc null")
+    resolved: list[str] = []
+    seen: set[str] = set()
+    for item in supplied:
+        if item in (None, ""):
+            continue
+        code = _resolve_combo_code(item, label, catalogs)
+        if code in seen:
+            continue
+        seen.add(code)
+        resolved.append(code)
+    return resolved or None
+
+
+def _resolve_combo_code(item, label: str, catalogs: CatalogIndex) -> str:
+    if isinstance(item, bool):
+        raise DatsImportError(f"{label} có to_hop_mon_hoc không hợp lệ")
+    if isinstance(item, int) or (isinstance(item, str) and str(item).strip().isdigit()):
+        number = _as_int(item, f"{label} có to_hop_mon_hoc không hợp lệ")
+        if number < 1:
+            raise DatsImportError(f"{label} có to_hop_mon_hoc không hợp lệ")
+        if number not in catalogs.to_hop_ids:
+            logger.warning("%s có tổ hợp không có trong danh mục | to_hop_id=%s", label, number)
+            raise DatsImportError(f"{label} có tổ hợp không có trong danh mục")
+        for code, item_id in catalogs.to_hop_by_code.items():
+            if item_id == number:
+                return code
+        logger.warning("%s có tổ hợp không có trong danh mục | to_hop_id=%s", label, number)
+        raise DatsImportError(f"{label} có tổ hợp không có trong danh mục")
+    code = str(item).strip().upper()
+    if _lookup_code(catalogs.to_hop_by_code, code) is None:
+        logger.warning(
+            "%s có mã tổ hợp không có trong danh mục | ma_to_hop=%s | gia_tri=%r",
+            label,
+            code,
+            item,
+        )
+        raise DatsImportError(f"{label} có mã tổ hợp {code} không có trong danh mục")
+    return code
+
+
 def _combo_code(raw: dict) -> str | None:
     explicit = raw.get("ma_to_hop")
     if explicit not in (None, ""):
@@ -402,6 +694,8 @@ def _load_catalogs(db: Session, document: dict) -> CatalogIndex:
             _collect_ref(raw.get("phuong_thuc_nguon_id"), method_ids)
             _collect_ref(raw.get("phuong_thuc_dich_id"), method_ids)
             _collect_ref(raw.get("to_hop_id"), combo_ids)
+            _collect_combo_list(raw.get("to_hop_mon_hoc"), combo_ids, combo_codes)
+            _collect_combo_list(raw.get("to_hop_ids"), combo_ids, combo_codes)
             _collect_ref(raw.get("to_hop_nguon_id"), combo_ids)
             _collect_ref(raw.get("to_hop_dich_id"), combo_ids)
             _collect_ref(raw.get("nganh_dao_tao_id"), nganh_ids)
@@ -439,7 +733,11 @@ def _load_catalogs(db: Session, document: dict) -> CatalogIndex:
     return CatalogIndex(
         phuong_thuc_by_code={code: phuong_thuc_by_code[code] for code in method_codes if code in phuong_thuc_by_code},
         phuong_thuc_ids=found_method_ids,
-        to_hop_by_code={code: to_hop_by_code[code] for code in combo_codes if code in to_hop_by_code},
+        to_hop_by_code={
+            code: item_id
+            for code, item_id in to_hop_by_code.items()
+            if code in combo_codes or item_id in combo_ids
+        },
         to_hop_ids=found_combo_ids,
         nganh_ids=found_nganh_ids,
     )
@@ -454,6 +752,19 @@ def _section_or_empty(document: dict, table: str, kind: str) -> list:
     if kind == "list" and isinstance(value, list):
         return value
     return []
+
+
+def _collect_combo_list(value, combo_ids: set[int], combo_codes: set[str]) -> None:
+    if value in (None, "", []):
+        return
+    items = value if isinstance(value, list) else [value]
+    for item in items:
+        if item in (None, "") or isinstance(item, bool):
+            continue
+        if isinstance(item, int) or (isinstance(item, str) and str(item).strip().isdigit()):
+            _collect_ref(item, combo_ids)
+            continue
+        combo_codes.add(str(item).strip().upper())
 
 
 def _collect_ref(value, bucket: set[int]) -> None:

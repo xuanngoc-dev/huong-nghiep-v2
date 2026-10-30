@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -91,6 +92,11 @@ class DatsTuyenSinhPage(BaseModel):
     total: int
     page: int
     page_size: int
+
+
+class DatsTuyenSinhChiTiet(BaseModel):
+    de_an: DatsTuyenSinhPublic
+    bang: dict[str, list[dict[str, Any]]]
 
 
 class DatsTuyenSinhBulkResult(BaseModel):

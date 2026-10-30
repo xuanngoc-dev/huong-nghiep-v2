@@ -4,7 +4,6 @@ from sqlalchemy import (
     JSON,
     ForeignKey,
     Index,
-    Integer,
     Numeric,
     String,
     Text,
@@ -26,7 +25,6 @@ class DatsPhuongThuc(Base):
             "ma_phuong_thuc_cua_bo",
         ),
         Index("idx_dats_phuong_thuc_ma_phuong_thuc_cua_bo", "ma_phuong_thuc_cua_bo"),
-        Index("idx_dats_phuong_thuc_to_hop_id", "to_hop_id"),
         {
             "mysql_charset": "utf8mb4",
             "mysql_collate": "utf8mb4_unicode_ci",
@@ -99,15 +97,9 @@ class DatsPhuongThuc(Base):
         Text,
         comment="Công thức điểm xét tuyển.",
     )
-    to_hop_id: Mapped[int | None] = mapped_column(
-        Integer,
-        ForeignKey(
-            "dm_to_hop_mon_hoc.id",
-            name="fk_dats_phuong_thuc_to_hop_id",
-            onupdate="RESTRICT",
-            ondelete="RESTRICT",
-        ),
-        comment="Tổ hợp áp dụng; NULL nếu không dùng tổ hợp.; một tổ hợp theo Excel; nhiều tổ hợp dùng dats_phuong_thuc_to_hop.",
+    to_hop_mon_hoc: Mapped[list | None] = mapped_column(
+        JSON,
+        comment='Danh sách mã tổ hợp môn áp dụng, ví dụ ["A01"]. NULL nếu phương thức áp dụng cho mọi tổ hợp.',
     )
     thu_tu_uu_tien: Mapped[int | None] = mapped_column(
         SMALLINT(unsigned=True),

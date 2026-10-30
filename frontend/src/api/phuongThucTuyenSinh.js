@@ -1,7 +1,7 @@
 import api from '@/api/axios'
 
-export function fetchPhuongThucTuyenSinh(params) {
-  return api.get('/danh-muc/phuong-thuc-tuyen-sinh', { params }).then((res) => res.data)
+export function fetchPhuongThucTuyenSinh(params, config) {
+  return api.get('/danh-muc/phuong-thuc-tuyen-sinh', { ...config, params }).then((res) => res.data)
 }
 
 export function createPhuongThucTuyenSinh(payload) {
