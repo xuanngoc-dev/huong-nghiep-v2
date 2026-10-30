@@ -21,41 +21,19 @@ def catalogs() -> CatalogIndex:
 
 
 class DatsImportTests(unittest.TestCase):
-    def test_sample_file_keeps_every_dats_table_and_resolves_catalogs(self):
+    def test_sample_file_contains_only_the_proposal(self):
         document = json.loads(SAMPLE.read_text())
+        self.assertEqual(
+            [key for key in document if key.startswith("dats_")],
+            ["dats_tuyen_sinh"],
+        )
         rows = prepare_import(document, truong_id=9, nam_tuyen_sinh=2027, catalogs=catalogs())
-        counts = {}
-        for row in rows:
-            counts[row.table] = counts.get(row.table, 0) + 1
-
-        self.assertEqual(counts["dats_tuyen_sinh"], 1)
-        self.assertEqual(counts["dats_chuong_trinh_dao_tao"], 68)
-        self.assertEqual(counts["dats_phuong_thuc"], 204)
-        self.assertEqual(counts["dats_phuong_thuc_to_hop"], 229)
-        self.assertEqual(counts["dats_lien_he_tuyen_sinh"], 1)
-        self.assertEqual(counts["dats_trinh_do_nganh"], 68)
-        self.assertEqual(counts["dats_doi_tuong_du_tuyen"], 5)
-        self.assertEqual(counts["dats_dieu_kien_du_tuyen"], 30)
-        self.assertEqual(counts["dats_tieu_chi_xet_tuyen"], 13)
-        self.assertEqual(counts["dats_diem_cong"], 2)
-        self.assertEqual(counts["dats_ho_so_du_tuyen"], 5)
-        self.assertEqual(counts["dats_chinh_sach_xet_tuyen_thang"], 2)
-
-        proposal = next(row for row in rows if row.table == "dats_tuyen_sinh")
+        self.assertEqual([row.table for row in rows], ["dats_tuyen_sinh"])
+        proposal = rows[0]
         self.assertEqual(proposal.values["truong_id"], 9)
         self.assertEqual(proposal.values["nam_tuyen_sinh"], 2027)
-        self.assertEqual(proposal.source_id, 2600001)
-
-        methods = [row for row in rows if row.table == "dats_phuong_thuc"]
-        self.assertEqual(
-            {row.values["ma_phuong_thuc_cua_bo"] for row in methods},
-            set(CODES["phuong_thuc"]),
-        )
-        self.assertTrue(all(row.values["de_an_chuong_trinh_id"] for row in methods))
-
-        combos = [row for row in rows if row.table == "dats_phuong_thuc_to_hop"]
-        self.assertEqual({row.values["to_hop_id"] for row in combos}, set(CODES["to_hop"].values()))
-        self.assertTrue(all(row.values["de_an_phuong_thuc_id"] for row in combos))
+        self.assertEqual(proposal.values["chi_tieu"], 9880)
+        self.assertEqual(proposal.values["ten_de_an"], document["dats_tuyen_sinh"]["ten_de_an"])
 
     def test_missing_subject_combo_is_rejected(self):
         document = {

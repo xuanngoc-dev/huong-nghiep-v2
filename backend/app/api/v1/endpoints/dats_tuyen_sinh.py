@@ -191,7 +191,13 @@ def import_de_an(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DatsImportResult:
-    """Nhập một đề án và các bảng dats_ trong cùng file JSON."""
+    """Nhập đúng một bản ghi dats_tuyen_sinh. Các bảng dats_ khác thuộc menu riêng."""
+    extra = sorted(key for key in payload.du_lieu if key.startswith("dats_") and key != "dats_tuyen_sinh")
+    if extra:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Màn đề án chỉ nhập bảng dats_tuyen_sinh. Các bảng khác nhập ở menu riêng.",
+        )
     try:
         de_an_id, counts = import_document(db, payload.truong_id, payload.nam_tuyen_sinh, payload.du_lieu)
         db.commit()

@@ -1,4 +1,7 @@
-"""Nhập một đề án tuyển sinh và các bảng dats_ đi kèm từ JSON một trường, một năm."""
+"""Nhập dữ liệu các bảng dats_ từ JSON một trường, một năm.
+
+Màn đề án tuyển sinh chỉ gửi dats_tuyen_sinh. Các bảng còn lại sẽ có menu riêng.
+"""
 
 from __future__ import annotations
 
@@ -175,7 +178,7 @@ def _source_id(raw: dict, table: str, label: str) -> int | None:
         return None
     value = raw.get("id")
     if value is None or value == "":
-        raise DatsImportError(f"{label} thiếu id để liên kết các bảng trong file")
+        return None
     number = _as_int(value, f"{label} có id không hợp lệ")
     if number < 1:
         raise DatsImportError(f"{label} có id không hợp lệ")

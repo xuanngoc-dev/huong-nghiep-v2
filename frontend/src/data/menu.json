@@ -30,6 +30,19 @@
       ]
     },
     {
+      "header": "ĐỀ ÁN TUYỂN SINH",
+      "tooltip": "Quản lý đề án tuyển sinh theo trường và năm",
+      "abbr": "ĐA",
+      "items": [
+        {
+          "index": "/admin/de-an-tuyen-sinh/danh-sach",
+          "title": "Danh sách",
+          "tooltip": "Xem và quản lý danh sách đề án tuyển sinh",
+          "icon": "List"
+        }
+      ]
+    },
+    {
       "header": "DANH MỤC",
       "tooltip": "Các danh mục dùng chung của hệ thống",
       "abbr": "DM",
@@ -141,19 +154,6 @@
           "title": "Trường học",
           "tooltip": "Quản lý danh mục trường đại học",
           "icon": "School"
-        }
-      ]
-    },
-    {
-      "header": "ĐỀ ÁN TUYỂN SINH",
-      "tooltip": "Quản lý đề án tuyển sinh theo trường và năm",
-      "abbr": "ĐA",
-      "items": [
-        {
-          "index": "/admin/de-an-tuyen-sinh/danh-sach",
-          "title": "Danh sách",
-          "tooltip": "Xem và quản lý danh sách đề án tuyển sinh",
-          "icon": "List"
         }
       ]
     },

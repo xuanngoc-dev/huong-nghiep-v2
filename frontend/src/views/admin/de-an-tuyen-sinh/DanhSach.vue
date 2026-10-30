@@ -156,11 +156,15 @@ function parseJsonDocument(text) {
   if (!data || typeof data !== 'object' || Array.isArray(data)) {
     throw new Error('JSON phải là một object có khóa dats_tuyen_sinh.')
   }
+  const extra = Object.keys(data).filter((key) => key.startsWith('dats_') && key !== 'dats_tuyen_sinh')
+  if (extra.length) {
+    throw new Error('Màn đề án chỉ nhập bảng dats_tuyen_sinh. Các bảng khác nhập ở menu riêng.')
+  }
   const item = data.dats_tuyen_sinh
   if (!item || typeof item !== 'object' || Array.isArray(item)) {
     throw new Error('Thiếu object dats_tuyen_sinh')
   }
-  return data
+  return { dats_tuyen_sinh: item }
 }
 
 function errorMessage(error, fallback) {
@@ -317,7 +321,7 @@ async function onSubmitJson() {
 
   saving.value = true
   try {
-    const result = await importDeAnTuyenSinh(
+    await importDeAnTuyenSinh(
       {
         truong_id: school.id,
         nam_tuyen_sinh: year,
@@ -325,8 +329,7 @@ async function onSubmitJson() {
       },
       { skipLoading: true, timeout: 120000 },
     )
-    const total = Object.values(result.counts || {}).reduce((sum, count) => sum + Number(count || 0), 0)
-    ElMessage.success(`Đã nhập đề án và ${total} bản ghi`)
+    ElMessage.success('Đã nhập đề án tuyển sinh')
     dialogVisible.value = false
     await load()
   } catch (error) {
@@ -604,10 +607,8 @@ onMounted(async () => {
     <div v-if="!editingId && createMode === 'json'" class="json-panel">
       <div class="json-panel__head">
         <p>
-          Chọn trường và năm tuyển sinh, rồi dán JSON một trường một năm.
-          Hệ thống lưu <code>dats_tuyen_sinh</code> và các bảng <code>dats_</code> khác trong file.
+          Chọn trường và năm tuyển sinh, rồi dán JSON của riêng bảng <code>dats_tuyen_sinh</code>.
           <code>truong_id</code> và <code>nam_tuyen_sinh</code> lấy từ lựa chọn bên dưới.
-          Mã phương thức và mã tổ hợp để trống được đối chiếu với danh mục.
         </p>
         <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
       </div>
