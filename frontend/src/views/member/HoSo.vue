@@ -2,7 +2,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { fetchBaiThiDanhGiaNangLuc } from '@/api/baiThiDanhGiaNangLuc'
-import { fetchChungChiNgoaiNgu } from '@/api/chungChiNgoaiNgu'
+import { fetchBangCapChungChi } from '@/api/bangCapChungChi'
 import { fetchDanToc } from '@/api/danToc'
 import { fetchDoiTuongUuTien } from '@/api/doiTuongUuTien'
 import { fetchHoSo, updateHoSo } from '@/api/hoSo'
@@ -145,12 +145,16 @@ const doiTuongSelectOptions = computed(() =>
     .sort((a, b) => a.ten_doi_tuong.localeCompare(b.ten_doi_tuong, 'vi'))
     .map((item) => ({ id: item.id, label: `${item.ten_doi_tuong} (${item.ma_doi_tuong})` })),
 )
+function isCatalogOpen(status) {
+  return status !== 0 && status !== '0' && status !== 'Ngừng sử dụng'
+}
+
 const recordSections = computed(() =>
   RECORD_SECTIONS.map((section) => {
     const rows = recordGroups[section.key]
     const selected = new Set(rows.map((row) => row.ma).filter(Boolean))
     const options = catalogRows[section.key]
-      .filter((item) => item.trang_thai === 1 || selected.has(item[section.maKey]))
+      .filter((item) => isCatalogOpen(item.trang_thai) || selected.has(item[section.maKey]))
       .sort((a, b) => a[section.tenKey].localeCompare(b[section.tenKey], 'vi'))
       .map((item) => ({
         ma: item[section.maKey],
@@ -448,7 +452,7 @@ async function load() {
         loadAll(fetchMonHoc),
         loadAll(fetchKhuVucUuTien),
         loadAll(fetchDoiTuongUuTien),
-        loadAll(fetchChungChiNgoaiNgu),
+        loadAll(fetchBangCapChungChi),
         loadAll(fetchBaiThiDanhGiaNangLuc),
         loadAll(fetchThanhTichHocTapNghienCuu),
       ])

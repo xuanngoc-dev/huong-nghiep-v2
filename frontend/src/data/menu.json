@@ -119,9 +119,9 @@
           "icon": "Tickets"
         },
         {
-          "index": "/admin/danh-muc/chung-chi-ngoai-ngu",
-          "title": "Chứng chỉ ngoại ngữ",
-          "tooltip": "Quản lý danh mục chứng chỉ ngoại ngữ",
+          "index": "/admin/danh-muc/bang-cap-chung-chi",
+          "title": "Bằng cấp chứng chỉ",
+          "tooltip": "Quản lý danh mục bằng cấp, chứng chỉ",
           "icon": "Stamp"
         },
         {
@@ -141,6 +141,19 @@
           "title": "Trường học",
           "tooltip": "Quản lý danh mục trường đại học",
           "icon": "School"
+        }
+      ]
+    },
+    {
+      "header": "ĐỀ ÁN TUYỂN SINH",
+      "tooltip": "Quản lý đề án tuyển sinh theo trường và năm",
+      "abbr": "ĐA",
+      "items": [
+        {
+          "index": "/admin/de-an-tuyen-sinh/danh-sach",
+          "title": "Danh sách",
+          "tooltip": "Xem và quản lý danh sách đề án tuyển sinh",
+          "icon": "List"
         }
       ]
     },

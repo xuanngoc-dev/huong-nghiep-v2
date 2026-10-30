@@ -212,10 +212,10 @@ const router = createRouter({
           meta: { title: 'Chuyên ngành', requiresAuth: true, requiresAdmin: true },
         },
         {
-          path: 'danh-muc/chung-chi-ngoai-ngu',
-          name: 'chung-chi-ngoai-ngu',
-          component: () => import('@/views/admin/danh-muc/ChungChiNgoaiNgu.vue'),
-          meta: { title: 'Chứng chỉ ngoại ngữ', requiresAuth: true, requiresAdmin: true },
+          path: 'danh-muc/bang-cap-chung-chi',
+          name: 'bang-cap-chung-chi',
+          component: () => import('@/views/admin/danh-muc/BangCapChungChi.vue'),
+          meta: { title: 'Bằng cấp chứng chỉ', requiresAuth: true, requiresAdmin: true },
         },
         {
           path: 'danh-muc/bai-thi-danh-gia-nang-luc',
@@ -234,6 +234,12 @@ const router = createRouter({
           name: 'truong-hoc',
           component: () => import('@/views/admin/danh-muc/TruongHoc.vue'),
           meta: { title: 'Trường học', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'de-an-tuyen-sinh/danh-sach',
+          name: 'de-an-tuyen-sinh-danh-sach',
+          component: () => import('@/views/admin/de-an-tuyen-sinh/DanhSach.vue'),
+          meta: { title: 'Danh sách đề án tuyển sinh', requiresAuth: true, requiresAdmin: true },
         },
       ],
     },
@@ -256,6 +262,10 @@ const router = createRouter({
     {
       path: '/danh-muc/:pathMatch(.*)*',
       redirect: (to) => `/admin/danh-muc/${joinPathMatch(to.params.pathMatch)}`,
+    },
+    {
+      path: '/de-an-tuyen-sinh/:pathMatch(.*)*',
+      redirect: (to) => `/admin/de-an-tuyen-sinh/${joinPathMatch(to.params.pathMatch)}`,
     },
   ],
 })

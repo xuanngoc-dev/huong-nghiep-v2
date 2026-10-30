@@ -18,7 +18,92 @@ import {
   truongHocListParams,
 } from '@/utils/truongHocExport'
 
-const LOAI_HINH = ['Công lập', 'Tư thục', 'Quốc tế', 'Dân lập']
+const LOAI_CO_SO = ['Cao đẳng', 'Trường đại học', 'Đại học', 'Học viện']
+const LOAI_HINH = ['Công lập', 'Tư thục', 'Có vốn đầu tư nước ngoài']
+const TRANG_THAI = ['Đang hoạt động', 'Ngừng hoạt động']
+const VUNG_MIEN = ['Bắc', 'Trung', 'Nam']
+
+const TEXT_FIELDS = [
+  'ten_tieng_anh',
+  'ten_viet_tat',
+  'slug',
+  'loai_co_so',
+  'loai_hinh',
+  'co_quan_chu_quan',
+  'gioi_thieu_ngan',
+  'gioi_thieu_chi_tiet',
+  'the_manh',
+  'ma_tinh_thanh',
+  'ten_tinh_thanh',
+  'ma_phuong_xa',
+  'ten_phuong_xa',
+  'dia_chi_tru_so',
+  'vung_mien',
+  'so_dien_thoai',
+  'email',
+  'website',
+  'website_tuyen_sinh',
+  'hotline_tuyen_sinh',
+  'email_tuyen_sinh',
+  'logo_url',
+  'anh_dai_dien_url',
+  'hoc_phi_trung_binh',
+  'trang_thai_hoat_dong',
+  'nguon_du_lieu_url',
+  'ghi_chu',
+]
+const LIST_FIELDS = ['ten_goi_khac', 'bac_dao_tao', 'linh_vuc_dao_tao_chinh', 'linh_vuc_dao_tao_khac']
+const LIST_LABELS = {
+  ten_goi_khac: 'Tên gọi khác',
+  bac_dao_tao: 'Bậc đào tạo',
+  linh_vuc_dao_tao_chinh: 'Lĩnh vực đào tạo chính',
+  linh_vuc_dao_tao_khac: 'Lĩnh vực đào tạo khác',
+}
+
+const COLUMNS = [
+  { key: 'ma_truong', label: 'Mã', width: 110 },
+  { key: 'ten_truong', label: 'Tên trường', minWidth: 240 },
+  { key: 'ten_tieng_anh', label: 'Tên tiếng Anh', minWidth: 220 },
+  { key: 'ten_viet_tat', label: 'Viết tắt', width: 120 },
+  { key: 'ten_goi_khac', label: 'Tên gọi khác', minWidth: 180 },
+  { key: 'slug', label: 'Slug', minWidth: 160 },
+  { key: 'loai_co_so', label: 'Loại cơ sở', width: 150 },
+  { key: 'loai_hinh', label: 'Loại hình', width: 180 },
+  { key: 'co_quan_chu_quan', label: 'Cơ quan chủ quản', minWidth: 180 },
+  { key: 'truong_cha_id', label: 'Trường trực thuộc', width: 250, align: 'center' },
+  { key: 'ngay_thanh_lap', label: 'Ngày thành lập', width: 140, align: 'center' },
+  { key: 'nam_thanh_lap', label: 'Năm thành lập', width: 150, align: 'center' },
+  { key: 'gioi_thieu_ngan', label: 'Giới thiệu ngắn', minWidth: 220 },
+  { key: 'gioi_thieu_chi_tiet', label: 'Giới thiệu chi tiết', minWidth: 240 },
+  { key: 'the_manh', label: 'Thế mạnh', minWidth: 200 },
+  { key: 'bac_dao_tao', label: 'Bậc đào tạo', minWidth: 180 },
+  { key: 'linh_vuc_dao_tao_chinh', label: 'Lĩnh vực đào tạo chính', minWidth: 220 },
+  { key: 'linh_vuc_dao_tao_khac', label: 'Lĩnh vực đào tạo khác', minWidth: 220 },
+  { key: 'ma_tinh_thanh', label: 'Mã tỉnh/thành', width: 140 },
+  { key: 'ten_tinh_thanh', label: 'Tỉnh/thành', minWidth: 150 },
+  { key: 'ma_phuong_xa', label: 'Mã phường/xã', width: 140 },
+  { key: 'ten_phuong_xa', label: 'Phường/xã', minWidth: 150 },
+  { key: 'dia_chi_tru_so', label: 'Địa chỉ trụ sở', minWidth: 240 },
+  { key: 'vung_mien', label: 'Vùng miền', width: 120 },
+  { key: 'vi_do', label: 'Vĩ độ', width: 120, align: 'right' },
+  { key: 'kinh_do', label: 'Kinh độ', width: 120, align: 'right' },
+  { key: 'so_dien_thoai', label: 'Số điện thoại', minWidth: 150 },
+  { key: 'email', label: 'Email', minWidth: 200 },
+  { key: 'website', label: 'Website', minWidth: 200 },
+  { key: 'website_tuyen_sinh', label: 'Website tuyển sinh', minWidth: 200 },
+  { key: 'hotline_tuyen_sinh', label: 'Hotline tuyển sinh', minWidth: 200 },
+  { key: 'email_tuyen_sinh', label: 'Email tuyển sinh', minWidth: 200 },
+  { key: 'logo_url', label: 'Logo', minWidth: 180 },
+  { key: 'anh_dai_dien_url', label: 'Ảnh đại diện', minWidth: 180 },
+  { key: 'dien_tich_m2', label: 'Diện tích (m²)', width: 140, align: 'right' },
+  { key: 'hoc_phi_trung_binh', label: 'Học phí trung bình', minWidth: 200 },
+  { key: 'trang_thai_hoat_dong', label: 'Trạng thái', width: 160 },
+  { key: 'nguon_du_lieu_url', label: 'Nguồn dữ liệu', minWidth: 200 },
+  { key: 'ngay_xac_minh', label: 'Ngày xác minh', width: 170, align: 'center' },
+  { key: 'ghi_chu', label: 'Ghi chú', minWidth: 200 },
+  { key: 'tao_luc', label: 'Tạo lúc', width: 170, align: 'center' },
+  { key: 'cap_nhat_luc', label: 'Cập nhật lúc', width: 170, align: 'center' },
+]
 
 const JSON_SAMPLE = `[
   {
@@ -26,25 +111,23 @@ const JSON_SAMPLE = `[
     "ten_truong": "Đại học Bách khoa Hà Nội",
     "ten_viet_tat": "HUST",
     "ten_tieng_anh": "Hanoi University of Science and Technology",
-    "khu_vuc": "Hà Nội",
-    "dia_chi": "Số 1 Đại Cồ Việt, Hai Bà Trưng, Hà Nội",
-    "loai_hinh_dao_tao": "Công lập",
-    "nhom_nganh": "Kỹ thuật - Công nghệ",
+    "ten_goi_khac": ["ĐHBK Hà Nội"],
+    "slug": "dai-hoc-bach-khoa-ha-noi",
+    "loai_co_so": "Đại học",
+    "loai_hinh": "Công lập",
+    "co_quan_chu_quan": "Bộ Giáo dục và Đào tạo",
+    "nam_thanh_lap": 1956,
+    "gioi_thieu_ngan": "Trường đại học kỹ thuật.",
+    "bac_dao_tao": ["Đại học", "Thạc sĩ", "Tiến sĩ"],
+    "linh_vuc_dao_tao_chinh": ["Kỹ thuật", "Công nghệ"],
+    "linh_vuc_dao_tao_khac": ["Kinh tế", "Ngoại ngữ"],
+    "ten_tinh_thanh": "Hà Nội",
+    "dia_chi_tru_so": "Số 1 Đại Cồ Việt, Hai Bà Trưng, Hà Nội",
+    "vung_mien": "Bắc",
     "website": "https://hust.edu.vn",
     "email": "hust@hust.edu.vn",
-    "so_dien_thoai": "024 3869 4242",
-    "hoc_phi_trung_binh": "25-35 triệu/năm",
-    "nam_thanh_lap": 1956,
-    "trang_thai": 1,
-    "gioi_thieu": "Trường đại học kỹ thuật."
-  },
-  {
-    "ma_truong": "KHA",
-    "ten_truong": "Đại học Kinh tế Quốc dân",
-    "ten_viet_tat": "NEU",
-    "khu_vuc": "Hà Nội",
-    "loai_hinh_dao_tao": "Công lập",
-    "nhom_nganh": "Kinh tế"
+    "so_dien_thoai": "02438694242",
+    "trang_thai_hoat_dong": "Đang hoạt động"
   }
 ]`
 
@@ -62,14 +145,15 @@ const dialogVisible = ref(false)
 const editingId = ref(null)
 const createMode = ref('form')
 const jsonText = ref('')
-const jsonImport = useJsonBatchImport({ label: 'trường đại học' })
+const jsonImport = useJsonBatchImport({ label: 'trường học' })
 const formRef = ref()
 
 const filters = reactive({
   q: '',
-  khu_vuc: '',
-  loai_hinh_dao_tao: '',
-  trang_thai: '',
+  vung_mien: '',
+  loai_co_so: '',
+  loai_hinh: '',
+  trang_thai_hoat_dong: '',
 })
 
 const form = reactive(emptyForm())
@@ -77,30 +161,38 @@ const form = reactive(emptyForm())
 const rules = {
   ten_truong: [{ required: true, message: 'Vui lòng nhập tên trường', trigger: 'blur' }],
   ma_truong: [{ required: true, message: 'Vui lòng nhập mã trường', trigger: 'blur' }],
-  trang_thai: [{ required: true, message: 'Vui lòng chọn trạng thái', trigger: 'change' }],
-  email: [
-    {
-      validator: (_rule, value, callback) => {
-        const text = String(value || '').trim()
-        if (!text || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) {
-          callback()
-          return
-        }
-        callback(new Error('Email không hợp lệ'))
-      },
-      trigger: 'blur',
-    },
-  ],
-  nam_thanh_lap: [
+  email: [emailRule()],
+  email_tuyen_sinh: [emailRule()],
+  nam_thanh_lap: [yearRule()],
+  vi_do: [rangeRule('Vĩ độ', -90, 90)],
+  kinh_do: [rangeRule('Kinh độ', -180, 180)],
+  dien_tich_m2: [
     {
       validator: (_rule, value, callback) => {
         if (value === null || value === undefined || value === '') {
           callback()
           return
         }
-        const year = Number(value)
-        if (!Number.isInteger(year) || year < 1000 || year > 2100) {
-          callback(new Error('Năm thành lập từ 1000 đến 2100'))
+        const number = Number(value)
+        if (!Number.isFinite(number) || number < 0) {
+          callback(new Error('Diện tích không được âm'))
+          return
+        }
+        callback()
+      },
+      trigger: 'change',
+    },
+  ],
+  truong_cha_id: [
+    {
+      validator: (_rule, value, callback) => {
+        if (value === null || value === undefined || value === '') {
+          callback()
+          return
+        }
+        const id = Number(value)
+        if (!Number.isInteger(id) || id < 1) {
+          callback(new Error('ID trường trực thuộc phải là số nguyên dương'))
           return
         }
         callback()
@@ -110,26 +202,71 @@ const rules = {
   ],
 }
 
-function emptyForm() {
+function emailRule() {
   return {
+    validator: (_rule, value, callback) => {
+      const text = String(value || '').trim()
+      if (!text || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) {
+        callback()
+        return
+      }
+      callback(new Error('Email không hợp lệ'))
+    },
+    trigger: 'blur',
+  }
+}
+
+function yearRule() {
+  return {
+    validator: (_rule, value, callback) => {
+      if (value === null || value === undefined || value === '') {
+        callback()
+        return
+      }
+      const year = Number(value)
+      if (!Number.isInteger(year) || year < 1000 || year > 2100) {
+        callback(new Error('Năm thành lập từ 1000 đến 2100'))
+        return
+      }
+      callback()
+    },
+    trigger: 'change',
+  }
+}
+
+function rangeRule(label, min, max) {
+  return {
+    validator: (_rule, value, callback) => {
+      if (value === null || value === undefined || value === '') {
+        callback()
+        return
+      }
+      const number = Number(value)
+      if (!Number.isFinite(number) || number < min || number > max) {
+        callback(new Error(`${label} từ ${min} đến ${max}`))
+        return
+      }
+      callback()
+    },
+    trigger: 'change',
+  }
+}
+
+function emptyForm() {
+  const next = {
     ma_truong: '',
     ten_truong: '',
-    ten_viet_tat: '',
-    ten_tieng_anh: '',
-    khu_vuc: '',
-    dia_chi: '',
-    loai_hinh_dao_tao: '',
-    nhom_nganh: '',
-    website: '',
-    email: '',
-    so_dien_thoai: '',
-    logo: '',
-    anh_bia: '',
-    gioi_thieu: '',
-    hoc_phi_trung_binh: '',
+    truong_cha_id: null,
     nam_thanh_lap: null,
-    trang_thai: 1,
+    vi_do: null,
+    kinh_do: null,
+    dien_tich_m2: null,
+    ngay_thanh_lap: '',
+    ngay_xac_minh: '',
   }
+  for (const key of TEXT_FIELDS) next[key] = ''
+  for (const key of LIST_FIELDS) next[key] = ''
+  return next
 }
 
 function resetForm() {
@@ -153,49 +290,88 @@ function optionalYear(value) {
   return Number.isFinite(year) ? year : null
 }
 
+function optionalNumber(value) {
+  if (value === null || value === undefined || value === '') return null
+  const number = Number(value)
+  return Number.isFinite(number) ? number : null
+}
+
+function optionalInt(value) {
+  if (value === null || value === undefined || value === '') return null
+  const number = Number(value)
+  return Number.isInteger(number) ? number : null
+}
+
+function listToText(value) {
+  if (!Array.isArray(value) || !value.length) return ''
+  return value.join(', ')
+}
+
+function parseList(value, line, label) {
+  if (value == null || value === '') return null
+  let items = value
+  if (typeof value === 'string') {
+    const text = value.trim()
+    if (!text) return null
+    if (text.startsWith('[')) {
+      try {
+        items = JSON.parse(text)
+      } catch {
+        throw new Error(line ? `Phần tử thứ ${line}: ${label} không phải JSON hợp lệ` : `${label} không phải JSON hợp lệ`)
+      }
+    } else {
+      items = text.split(',')
+    }
+  }
+  if (!Array.isArray(items)) {
+    throw new Error(line ? `Phần tử thứ ${line}: ${label} phải là mảng chuỗi` : `${label} phải là mảng chuỗi`)
+  }
+  const cleaned = []
+  for (const item of items) {
+    const text = String(item ?? '').trim()
+    if (text) cleaned.push(text)
+  }
+  return cleaned.length ? cleaned : null
+}
+
 function parseJsonItems(text) {
   let data
   try {
     data = JSON.parse(text)
   } catch {
-    throw new Error('JSON không hợp lệ. Hãy dán một mảng trường đại học.')
+    throw new Error('JSON không hợp lệ. Hãy dán một mảng trường học.')
   }
   if (!Array.isArray(data)) {
     throw new Error('JSON phải là một mảng, ví dụ [{ "ten_truong": "...", "ma_truong": "..." }]')
   }
   if (!data.length) {
-    throw new Error('Mảng trường đại học đang trống')
+    throw new Error('Mảng trường học đang trống')
   }
 
   return data.map((item, index) => {
     const line = index + 1
     if (!item || typeof item !== 'object' || Array.isArray(item)) {
-      throw new Error(`Phần tử thứ ${line} không phải một trường đại học`)
+      throw new Error(`Phần tử thứ ${line} không phải một trường học`)
     }
     const ten = String(item.ten_truong ?? '').trim()
     const ma = String(item.ma_truong ?? '').trim()
     if (!ten || !ma) {
       throw new Error(`Phần tử thứ ${line} thiếu ten_truong hoặc ma_truong`)
     }
-    return {
+    const payload = {
       ma_truong: ma,
       ten_truong: ten,
-      ten_viet_tat: optionalText(item.ten_viet_tat),
-      ten_tieng_anh: optionalText(item.ten_tieng_anh),
-      khu_vuc: optionalText(item.khu_vuc),
-      dia_chi: optionalText(item.dia_chi),
-      loai_hinh_dao_tao: optionalText(item.loai_hinh_dao_tao),
-      nhom_nganh: optionalText(item.nhom_nganh),
-      website: optionalText(item.website),
-      email: optionalText(item.email),
-      so_dien_thoai: optionalText(item.so_dien_thoai),
-      logo: optionalText(item.logo),
-      anh_bia: optionalText(item.anh_bia),
-      gioi_thieu: optionalText(item.gioi_thieu),
-      hoc_phi_trung_binh: optionalText(item.hoc_phi_trung_binh),
+      truong_cha_id: optionalInt(item.truong_cha_id),
       nam_thanh_lap: optionalYear(item.nam_thanh_lap),
-      trang_thai: item.trang_thai ?? 1,
+      vi_do: optionalNumber(item.vi_do),
+      kinh_do: optionalNumber(item.kinh_do),
+      dien_tich_m2: optionalNumber(item.dien_tich_m2),
+      ngay_thanh_lap: optionalText(item.ngay_thanh_lap),
+      ngay_xac_minh: optionalText(item.ngay_xac_minh),
     }
+    for (const key of TEXT_FIELDS) payload[key] = optionalText(item[key])
+    for (const key of LIST_FIELDS) payload[key] = parseList(item[key], line, LIST_LABELS[key])
+    return payload
   })
 }
 
@@ -211,6 +387,63 @@ function dash(value) {
   return value
 }
 
+function formatList(value) {
+  if (!Array.isArray(value) || !value.length) return '—'
+  return value.join(', ')
+}
+
+function formatDate(value) {
+  if (!value) return '—'
+  const match = String(value).match(/^(\d{4})-(\d{2})-(\d{2})/)
+  if (!match) return String(value)
+  return `${match[3]}/${match[2]}/${match[1]}`
+}
+
+function formatDateTime(value) {
+  if (!value) return '—'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return String(value)
+  return date.toLocaleString('vi-VN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+function formatNumber(value) {
+  if (value === null || value === undefined || value === '') return '—'
+  const number = Number(value)
+  if (!Number.isFinite(number)) return String(value)
+  return number.toLocaleString('vi-VN', { maximumFractionDigits: 7 })
+}
+
+function formatCell(row, column) {
+  const value = row[column.key]
+  if (LIST_FIELDS.includes(column.key)) return formatList(value)
+  if (column.key === 'ngay_thanh_lap') return formatDate(value)
+  if (column.key === 'ngay_xac_minh' || column.key === 'tao_luc' || column.key === 'cap_nhat_luc') {
+    return formatDateTime(value)
+  }
+  if (column.key === 'vi_do' || column.key === 'kinh_do' || column.key === 'dien_tich_m2') {
+    return formatNumber(value)
+  }
+  return dash(value)
+}
+
+function toDateInput(value) {
+  if (!value) return ''
+  const match = String(value).match(/^(\d{4}-\d{2}-\d{2})/)
+  return match ? match[1] : ''
+}
+
+function toDateTimeInput(value) {
+  if (!value) return ''
+  const match = String(value).replace('T', ' ').match(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2})/)
+  return match ? `${match[1]} ${match[2]}:00` : ''
+}
+
 async function load() {
   loading.value = true
   try {
@@ -218,7 +451,7 @@ async function load() {
     rows.value = data.items
     total.value = data.total
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không tải được danh sách trường đại học'))
+    ElMessage.error(errorMessage(error, 'Không tải được danh sách trường học'))
   } finally {
     loading.value = false
   }
@@ -265,48 +498,37 @@ function openCreate() {
 
 function openEdit(row) {
   editingId.value = row.id
-  Object.assign(form, {
-    ma_truong: row.ma_truong,
-    ten_truong: row.ten_truong,
-    ten_viet_tat: row.ten_viet_tat || '',
-    ten_tieng_anh: row.ten_tieng_anh || '',
-    khu_vuc: row.khu_vuc || '',
-    dia_chi: row.dia_chi || '',
-    loai_hinh_dao_tao: row.loai_hinh_dao_tao || '',
-    nhom_nganh: row.nhom_nganh || '',
-    website: row.website || '',
-    email: row.email || '',
-    so_dien_thoai: row.so_dien_thoai || '',
-    logo: row.logo || '',
-    anh_bia: row.anh_bia || '',
-    gioi_thieu: row.gioi_thieu || '',
-    hoc_phi_trung_binh: row.hoc_phi_trung_binh || '',
-    nam_thanh_lap: row.nam_thanh_lap,
-    trang_thai: row.trang_thai,
-  })
+  const next = emptyForm()
+  next.ma_truong = row.ma_truong
+  next.ten_truong = row.ten_truong
+  next.truong_cha_id = row.truong_cha_id
+  next.nam_thanh_lap = row.nam_thanh_lap
+  next.vi_do = row.vi_do
+  next.kinh_do = row.kinh_do
+  next.dien_tich_m2 = row.dien_tich_m2
+  next.ngay_thanh_lap = toDateInput(row.ngay_thanh_lap)
+  next.ngay_xac_minh = toDateTimeInput(row.ngay_xac_minh)
+  for (const key of TEXT_FIELDS) next[key] = row[key] || ''
+  for (const key of LIST_FIELDS) next[key] = listToText(row[key])
+  Object.assign(form, next)
   dialogVisible.value = true
 }
 
 function payloadFromForm() {
-  return {
+  const payload = {
     ma_truong: form.ma_truong.trim().toUpperCase(),
     ten_truong: form.ten_truong.trim(),
-    ten_viet_tat: optionalText(form.ten_viet_tat),
-    ten_tieng_anh: optionalText(form.ten_tieng_anh),
-    khu_vuc: optionalText(form.khu_vuc),
-    dia_chi: optionalText(form.dia_chi),
-    loai_hinh_dao_tao: optionalText(form.loai_hinh_dao_tao),
-    nhom_nganh: optionalText(form.nhom_nganh),
-    website: optionalText(form.website),
-    email: optionalText(form.email),
-    so_dien_thoai: optionalText(form.so_dien_thoai),
-    logo: optionalText(form.logo),
-    anh_bia: optionalText(form.anh_bia),
-    gioi_thieu: optionalText(form.gioi_thieu),
-    hoc_phi_trung_binh: optionalText(form.hoc_phi_trung_binh),
+    truong_cha_id: optionalInt(form.truong_cha_id),
     nam_thanh_lap: optionalYear(form.nam_thanh_lap),
-    trang_thai: form.trang_thai,
+    vi_do: optionalNumber(form.vi_do),
+    kinh_do: optionalNumber(form.kinh_do),
+    dien_tich_m2: optionalNumber(form.dien_tich_m2),
+    ngay_thanh_lap: optionalText(form.ngay_thanh_lap),
+    ngay_xac_minh: optionalText(form.ngay_xac_minh),
   }
+  for (const key of TEXT_FIELDS) payload[key] = optionalText(form[key])
+  for (const key of LIST_FIELDS) payload[key] = parseList(form[key], 0, LIST_LABELS[key])
+  return payload
 }
 
 function fillJsonSample() {
@@ -341,20 +563,27 @@ async function onSubmit() {
   const valid = await formRef.value?.validate().catch(() => false)
   if (!valid) return
 
+  let payload
+  try {
+    payload = payloadFromForm()
+  } catch (error) {
+    ElMessage.error(error.message)
+    return
+  }
+
   saving.value = true
   try {
-    const payload = payloadFromForm()
     if (editingId.value) {
       await updateTruongHoc(editingId.value, payload)
-      ElMessage.success('Đã cập nhật trường đại học')
+      ElMessage.success('Đã cập nhật trường học')
     } else {
       await createTruongHoc(payload)
-      ElMessage.success('Đã thêm trường đại học')
+      ElMessage.success('Đã thêm trường học')
     }
     dialogVisible.value = false
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không lưu được trường đại học'))
+    ElMessage.error(errorMessage(error, 'Không lưu được trường học'))
   } finally {
     saving.value = false
   }
@@ -378,14 +607,14 @@ async function onDelete(row) {
 
   try {
     await deleteTruongHoc(row.id)
-    ElMessage.success('Đã xóa trường đại học')
+    ElMessage.success('Đã xóa trường học')
     tableRef.value?.toggleRowSelection(row, false)
     if (rows.value.length === 1 && page.value > 1) {
       page.value -= 1
     }
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không xóa được trường đại học'))
+    ElMessage.error(errorMessage(error, 'Không xóa được trường học'))
   }
 }
 
@@ -394,16 +623,16 @@ async function onExport() {
   try {
     const items = await collectAllPages((paging) => fetchTruongHoc(truongHocListParams(filters, paging)))
     if (!items.length) {
-      ElMessage.warning('Không có trường đại học nào khớp bộ lọc để xuất')
+      ElMessage.warning('Không có trường học nào khớp bộ lọc để xuất')
       return
     }
     await downloadExcel({
       filename: truongHocExportFilename(),
-      sheetName: 'Trường đại học',
+      sheetName: 'Trường học',
       columns: TRUONG_HOC_EXPORT_COLUMNS,
       rows: truongHocExportRows(items),
     })
-    ElMessage.success(`Đã xuất ${items.length} trường đại học`)
+    ElMessage.success(`Đã xuất ${items.length} trường học`)
   } catch (error) {
     ElMessage.error(errorMessage(error, 'Không xuất được file Excel'))
   } finally {
@@ -416,7 +645,7 @@ async function onDeleteSelected() {
   if (!ids.length) return
 
   try {
-    await ElMessageBox.confirm(`Xóa ${ids.length} trường đại học đã chọn?`, 'Xác nhận xóa', {
+    await ElMessageBox.confirm(`Xóa ${ids.length} trường học đã chọn?`, 'Xác nhận xóa', {
       type: 'warning',
       confirmButtonText: 'Xóa',
       cancelButtonText: 'Hủy',
@@ -430,7 +659,7 @@ async function onDeleteSelected() {
   try {
     const removedOnPage = rows.value.filter((row) => ids.includes(row.id)).length
     const result = await deleteTruongHocMany(ids)
-    ElMessage.success(`Đã xóa ${result.deleted} trường đại học`)
+    ElMessage.success(`Đã xóa ${result.deleted} trường học`)
     clearSelection()
     if (removedOnPage >= rows.value.length && page.value > 1) {
       page.value -= 1
@@ -438,7 +667,7 @@ async function onDeleteSelected() {
     }
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không xóa được các trường đại học đã chọn'))
+    ElMessage.error(errorMessage(error, 'Không xóa được các trường học đã chọn'))
   } finally {
     deleting.value = false
   }
@@ -454,7 +683,7 @@ onMounted(load)
         <CustomInput
           v-model="filters.q"
           class="filter-search"
-          placeholder="Tìm tên, mã, viết tắt hoặc tên tiếng Anh"
+          placeholder="Tìm tên, mã, viết tắt, tên tiếng Anh hoặc tỉnh/thành"
           clearable
           @keyup.enter="onSearch"
           @clear="onSearch"
@@ -463,32 +692,53 @@ onMounted(load)
             <CustomIcon><Search /></CustomIcon>
           </template>
         </CustomInput>
-        <CustomInput
-          v-model="filters.khu_vuc"
-          class="filter-region"
-          placeholder="Khu vực"
-          clearable
-          @keyup.enter="onSearch"
-          @clear="onSearch"
-        />
         <CustomSelect
-          v-model="filters.loai_hinh_dao_tao"
+          v-model="filters.vung_mien"
+          class="filter-status"
+          placeholder="Vùng miền"
+          clearable
+          filterable
+          allow-create
+          default-first-option
+          @change="onSearch"
+        >
+          <CustomOption v-for="item in VUNG_MIEN" :key="item" :label="item" :value="item" />
+        </CustomSelect>
+        <CustomSelect
+          v-model="filters.loai_co_so"
+          class="filter-status"
+          placeholder="Loại cơ sở"
+          clearable
+          filterable
+          allow-create
+          default-first-option
+          @change="onSearch"
+        >
+          <CustomOption v-for="item in LOAI_CO_SO" :key="item" :label="item" :value="item" />
+        </CustomSelect>
+        <CustomSelect
+          v-model="filters.loai_hinh"
           class="filter-status"
           placeholder="Loại hình"
           clearable
+          filterable
+          allow-create
+          default-first-option
           @change="onSearch"
         >
           <CustomOption v-for="item in LOAI_HINH" :key="item" :label="item" :value="item" />
         </CustomSelect>
         <CustomSelect
-          v-model="filters.trang_thai"
+          v-model="filters.trang_thai_hoat_dong"
           class="filter-status"
           placeholder="Trạng thái"
           clearable
+          filterable
+          allow-create
+          default-first-option
           @change="onSearch"
         >
-          <CustomOption label="Hoạt động" :value="1" />
-          <CustomOption label="Khóa" :value="0" />
+          <CustomOption v-for="item in TRANG_THAI" :key="item" :label="item" :value="item" />
         </CustomSelect>
         <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
       </div>
@@ -496,7 +746,7 @@ onMounted(load)
 
     <CustomCard shadow="never" class="catalog-card">
       <div class="toolbar">
-        <h2 class="toolbar__title">Danh sách trường đại học</h2>
+        <h2 class="toolbar__title">Danh sách trường học</h2>
         <div class="toolbar__actions">
           <CustomButton :loading="exporting" @click="onExport">
             <CustomIcon><Download /></CustomIcon>
@@ -534,32 +784,17 @@ onMounted(load)
         <CustomTableColumn label="STT" width="72" align="center">
           <template #default="{ $index }">{{ rowIndex($index) }}</template>
         </CustomTableColumn>
-        <CustomTableColumn prop="ma_truong" label="Mã" width="100" />
-        <CustomTableColumn prop="ten_viet_tat" label="Viết tắt" width="110">
-          <template #default="{ row }">{{ dash(row.ten_viet_tat) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="ten_truong" label="Tên trường" min-width="240" show-overflow-tooltip />
-        <CustomTableColumn prop="khu_vuc" label="Khu vực" min-width="140">
-          <template #default="{ row }">{{ dash(row.khu_vuc) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="loai_hinh_dao_tao" label="Loại hình" width="130">
-          <template #default="{ row }">{{ dash(row.loai_hinh_dao_tao) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="nhom_nganh" label="Nhóm ngành" min-width="160" show-overflow-tooltip>
-          <template #default="{ row }">{{ dash(row.nhom_nganh) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="hoc_phi_trung_binh" label="Học phí" min-width="150" show-overflow-tooltip>
-          <template #default="{ row }">{{ dash(row.hoc_phi_trung_binh) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="nam_thanh_lap" label="Năm thành lập" width="130" align="center">
-          <template #default="{ row }">{{ dash(row.nam_thanh_lap) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Trạng thái" width="130" align="center">
-          <template #default="{ row }">
-            <CustomTag :type="row.trang_thai === 1 ? 'success' : 'info'" effect="light">
-              {{ row.trang_thai === 1 ? 'Hoạt động' : 'Khóa' }}
-            </CustomTag>
-          </template>
+        <CustomTableColumn
+          v-for="column in COLUMNS"
+          :key="column.key"
+          :prop="column.key"
+          :label="column.label"
+          :width="column.width"
+          :min-width="column.minWidth"
+          :align="column.align"
+          show-overflow-tooltip
+        >
+          <template #default="{ row }">{{ formatCell(row, column) }}</template>
         </CustomTableColumn>
         <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
           <template #default="{ row }">
@@ -578,7 +813,7 @@ onMounted(load)
           </template>
         </CustomTableColumn>
         <template #empty>
-          <CustomEmpty description="Chưa có trường đại học nào." />
+          <CustomEmpty description="Chưa có trường học nào." />
         </template>
       </CustomTable>
 
@@ -598,8 +833,8 @@ onMounted(load)
 
   <CustomDialog
     v-model="dialogVisible"
-    :title="editingId ? 'Cập nhật trường đại học' : 'Thêm trường đại học'"
-    width="960px"
+    :title="editingId ? 'Cập nhật trường học' : 'Thêm trường học'"
+    width="1080px"
     destroy-on-close
     @closed="resetForm"
   >
@@ -612,6 +847,7 @@ onMounted(load)
       <div class="json-panel__head">
         <p>
           Dán một mảng JSON. Mỗi phần tử cần <code>ten_truong</code> và <code>ma_truong</code>.
+          Các danh sách như <code>linh_vuc_dao_tao_chinh</code> là mảng chuỗi.
         </p>
         <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
       </div>
@@ -637,17 +873,8 @@ onMounted(load)
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Năm thành lập" prop="nam_thanh_lap">
-            <CustomInputNumber
-              v-model="form.nam_thanh_lap"
-              :min="1000"
-              :max="2100"
-              :step="1"
-              :precision="0"
-              :value-on-clear="null"
-              controls-position="right"
-              style="width: 100%"
-            />
+          <CustomFormItem label="Slug">
+            <CustomInput v-model="form.slug" maxlength="255" placeholder="dai-hoc-bach-khoa-ha-noi" />
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="12" :xs="24">
@@ -660,43 +887,97 @@ onMounted(load)
             <CustomInput v-model="form.ten_tieng_anh" maxlength="255" placeholder="Tên tiếng Anh" />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Khu vực">
-            <CustomInput v-model="form.khu_vuc" maxlength="50" placeholder="Tỉnh/thành phố hoặc miền" />
+        <CustomCol :span="24">
+          <CustomFormItem label="Tên gọi khác">
+            <CustomInput v-model="form.ten_goi_khac" maxlength="5000" placeholder="Phân tách bằng dấu phẩy" />
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Loại hình đào tạo">
-            <CustomSelect
-              v-model="form.loai_hinh_dao_tao"
-              filterable
-              allow-create
-              default-first-option
-              placeholder="Chọn hoặc nhập loại hình"
-              style="width: 100%"
-            >
+          <CustomFormItem label="Loại cơ sở">
+            <CustomSelect v-model="form.loai_co_so" filterable allow-create default-first-option clearable placeholder="Chọn hoặc nhập" style="width: 100%">
+              <CustomOption v-for="item in LOAI_CO_SO" :key="item" :label="item" :value="item" />
+            </CustomSelect>
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="8" :xs="24">
+          <CustomFormItem label="Loại hình">
+            <CustomSelect v-model="form.loai_hinh" filterable allow-create default-first-option clearable placeholder="Chọn hoặc nhập" style="width: 100%">
               <CustomOption v-for="item in LOAI_HINH" :key="item" :label="item" :value="item" />
             </CustomSelect>
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Nhóm ngành">
-            <CustomInput v-model="form.nhom_nganh" maxlength="100" placeholder="Khối ngành chính" />
+          <CustomFormItem label="Trạng thái hoạt động">
+            <CustomSelect v-model="form.trang_thai_hoat_dong" filterable allow-create default-first-option clearable placeholder="Chọn hoặc nhập" style="width: 100%">
+              <CustomOption v-for="item in TRANG_THAI" :key="item" :label="item" :value="item" />
+            </CustomSelect>
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Website">
-            <CustomInput v-model="form.website" maxlength="255" placeholder="https://..." />
+          <CustomFormItem label="Cơ quan chủ quản">
+            <CustomInput v-model="form.co_quan_chu_quan" maxlength="255" />
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Email" prop="email">
-            <CustomInput v-model="form.email" maxlength="100" placeholder="email@truong.edu.vn" />
+          <CustomFormItem label="ID trường trực thuộc" prop="truong_cha_id">
+            <CustomInputNumber v-model="form.truong_cha_id" :min="1" :step="1" :precision="0" :value-on-clear="null" controls-position="right" style="width: 100%" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Năm thành lập" prop="nam_thanh_lap">
+            <CustomInputNumber v-model="form.nam_thanh_lap" :min="1000" :max="2100" :step="1" :precision="0" :value-on-clear="null" controls-position="right" style="width: 100%" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Ngày thành lập">
+            <CustomDatePicker v-model="form.ngay_thanh_lap" type="date" value-format="YYYY-MM-DD" format="DD/MM/YYYY" placeholder="Chọn ngày" clearable style="width: 100%" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="6" :xs="12">
+          <CustomFormItem label="Mã tỉnh/thành">
+            <CustomInput v-model="form.ma_tinh_thanh" maxlength="10" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="6" :xs="12">
+          <CustomFormItem label="Tỉnh/thành">
+            <CustomInput v-model="form.ten_tinh_thanh" maxlength="100" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="6" :xs="12">
+          <CustomFormItem label="Mã phường/xã">
+            <CustomInput v-model="form.ma_phuong_xa" maxlength="10" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="6" :xs="12">
+          <CustomFormItem label="Phường/xã">
+            <CustomInput v-model="form.ten_phuong_xa" maxlength="100" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="16" :xs="24">
+          <CustomFormItem label="Địa chỉ trụ sở">
+            <CustomInput v-model="form.dia_chi_tru_so" maxlength="500" />
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Số điện thoại">
-            <CustomInput v-model="form.so_dien_thoai" maxlength="50" placeholder="Hotline" />
+          <CustomFormItem label="Vùng miền">
+            <CustomSelect v-model="form.vung_mien" filterable allow-create default-first-option clearable placeholder="Chọn hoặc nhập" style="width: 100%">
+              <CustomOption v-for="item in VUNG_MIEN" :key="item" :label="item" :value="item" />
+            </CustomSelect>
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="8" :xs="24">
+          <CustomFormItem label="Vĩ độ" prop="vi_do">
+            <CustomInputNumber v-model="form.vi_do" :min="-90" :max="90" :step="0.000001" :precision="7" :value-on-clear="null" controls-position="right" style="width: 100%" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="8" :xs="24">
+          <CustomFormItem label="Kinh độ" prop="kinh_do">
+            <CustomInputNumber v-model="form.kinh_do" :min="-180" :max="180" :step="0.000001" :precision="7" :value-on-clear="null" controls-position="right" style="width: 100%" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="8" :xs="24">
+          <CustomFormItem label="Diện tích (m²)" prop="dien_tich_m2">
+            <CustomInputNumber v-model="form.dien_tich_m2" :min="0" :step="1" :precision="2" :value-on-clear="null" controls-position="right" style="width: 100%" />
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="8" :xs="24">
@@ -705,45 +986,88 @@ onMounted(load)
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Trạng thái" prop="trang_thai">
-            <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
-              <CustomOption label="Hoạt động" :value="1" />
-              <CustomOption label="Khóa" :value="0" />
-            </CustomSelect>
+          <CustomFormItem label="Số điện thoại">
+            <CustomInput v-model="form.so_dien_thoai" maxlength="30" />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="8" :xs="24" />
-        <CustomCol :span="24">
-          <CustomFormItem label="Địa chỉ">
-            <CustomInput
-              v-model="form.dia_chi"
-              type="textarea"
-              :rows="2"
-              maxlength="5000"
-              placeholder="Địa chỉ cơ sở chính"
-            />
+        <CustomCol :span="8" :xs="24">
+          <CustomFormItem label="Email" prop="email">
+            <CustomInput v-model="form.email" maxlength="255" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="8" :xs="24">
+          <CustomFormItem label="Website">
+            <CustomInput v-model="form.website" maxlength="500" placeholder="https://..." />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="8" :xs="24">
+          <CustomFormItem label="Hotline tuyển sinh">
+            <CustomInput v-model="form.hotline_tuyen_sinh" maxlength="30" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="8" :xs="24">
+          <CustomFormItem label="Email tuyển sinh" prop="email_tuyen_sinh">
+            <CustomInput v-model="form.email_tuyen_sinh" maxlength="255" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="8" :xs="24">
+          <CustomFormItem label="Website tuyển sinh">
+            <CustomInput v-model="form.website_tuyen_sinh" maxlength="500" placeholder="https://..." />
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="12" :xs="24">
           <CustomFormItem label="Logo">
-            <CustomInput v-model="form.logo" maxlength="255" placeholder="URL logo" />
+            <CustomInput v-model="form.logo_url" maxlength="1000" placeholder="URL logo" />
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Ảnh bìa">
-            <CustomInput v-model="form.anh_bia" maxlength="255" placeholder="URL ảnh bìa/campus" />
+          <CustomFormItem label="Ảnh đại diện">
+            <CustomInput v-model="form.anh_dai_dien_url" maxlength="1000" placeholder="URL ảnh khuôn viên" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="16" :xs="24">
+          <CustomFormItem label="Nguồn dữ liệu">
+            <CustomInput v-model="form.nguon_du_lieu_url" maxlength="1000" placeholder="URL nguồn xác minh" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="8" :xs="24">
+          <CustomFormItem label="Ngày xác minh">
+            <CustomDatePicker v-model="form.ngay_xac_minh" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" format="DD/MM/YYYY HH:mm" placeholder="Chọn thời điểm" clearable style="width: 100%" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Bậc đào tạo">
+            <CustomInput v-model="form.bac_dao_tao" type="textarea" :rows="2" maxlength="5000" placeholder="Phân tách bằng dấu phẩy. Ví dụ: Đại học, Thạc sĩ" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Lĩnh vực đào tạo chính">
+            <CustomInput v-model="form.linh_vuc_dao_tao_chinh" type="textarea" :rows="2" maxlength="5000" placeholder="Phân tách bằng dấu phẩy" />
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="24">
-          <CustomFormItem label="Giới thiệu">
-            <CustomInput
-              v-model="form.gioi_thieu"
-              type="textarea"
-              :rows="4"
-              maxlength="20000"
-              show-word-limit
-              placeholder="Mô tả chi tiết, lịch sử trường"
-            />
+          <CustomFormItem label="Lĩnh vực đào tạo khác">
+            <CustomInput v-model="form.linh_vuc_dao_tao_khac" type="textarea" :rows="2" maxlength="5000" placeholder="Phân tách bằng dấu phẩy" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="24">
+          <CustomFormItem label="Giới thiệu ngắn">
+            <CustomInput v-model="form.gioi_thieu_ngan" type="textarea" :rows="2" maxlength="1000" show-word-limit />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="24">
+          <CustomFormItem label="Thế mạnh">
+            <CustomInput v-model="form.the_manh" type="textarea" :rows="3" maxlength="20000" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="24">
+          <CustomFormItem label="Giới thiệu chi tiết">
+            <CustomInput v-model="form.gioi_thieu_chi_tiet" type="textarea" :rows="4" maxlength="20000" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="24">
+          <CustomFormItem label="Ghi chú">
+            <CustomInput v-model="form.ghi_chu" type="textarea" :rows="3" maxlength="20000" />
           </CustomFormItem>
         </CustomCol>
       </CustomRow>
@@ -814,11 +1138,7 @@ onMounted(load)
 }
 
 .filter-search {
-  width: 320px;
-}
-
-.filter-region {
-  width: 180px;
+  width: 360px;
 }
 
 .create-mode {
@@ -845,7 +1165,7 @@ onMounted(load)
 }
 
 .filter-status {
-  width: 170px;
+  width: 190px;
 }
 
 .pager {
@@ -856,7 +1176,6 @@ onMounted(load)
 
 @media (max-width: 640px) {
   .filter-search,
-  .filter-region,
   .filter-status {
     width: 100%;
   }

@@ -15,6 +15,38 @@ const LOAI = [
   { value: 'trong_nuoc', label: 'Trong nước' },
   { value: 'quoc_te', label: 'Quốc tế' },
 ]
+const JSON_FIELDS = ['hinh_thuc_thi', 'cau_truc_bai_thi']
+const DATE_FIELDS = ['tao_luc', 'cap_nhat_luc']
+
+const COLUMNS = [
+  { key: 'id', label: 'ID', width: 80, align: 'right' },
+  { key: 'ma_bai_thi', label: 'Mã', width: 120 },
+  { key: 'ten_bai_thi', label: 'Tên bài thi', minWidth: 180 },
+  { key: 'ten_chi_tiet', label: 'Tên chi tiết', minWidth: 200 },
+  { key: 'linh_vuc', label: 'Lĩnh vực', minWidth: 140 },
+  { key: 'mon', label: 'Môn', minWidth: 120 },
+  { key: 'ten_viet_tat', label: 'Tên viết tắt', width: 130 },
+  { key: 'don_vi_to_chuc', label: 'Đơn vị tổ chức', minWidth: 180 },
+  { key: 'loai_danh_gia', label: 'Loại đánh giá', minWidth: 150 },
+  { key: 'loai_chung_chi', label: 'Loại', width: 130 },
+  { key: 'mo_ta', label: 'Mô tả', minWidth: 200 },
+  { key: 'doi_tuong_du_thi', label: 'Đối tượng dự thi', minWidth: 180 },
+  { key: 'hinh_thuc_thi', label: 'Hình thức thi', minWidth: 160 },
+  { key: 'thang_diem', label: 'Thang điểm', width: 160 },
+  { key: 'diem_toi_thieu', label: 'Điểm tối thiểu', width: 140, align: 'right' },
+  { key: 'don_vi_diem', label: 'Đơn vị điểm', width: 130 },
+  { key: 'cau_truc_bai_thi', label: 'Cấu trúc bài thi', minWidth: 180 },
+  { key: 'thoi_luong_phut', label: 'Thời lượng (phút)', width: 170, align: 'right' },
+  { key: 'cach_cong_bo_ket_qua', label: 'Công bố kết quả', minWidth: 180 },
+  { key: 'nam_ap_dung_tu', label: 'Áp dụng từ', width: 120, align: 'right' },
+  { key: 'nam_ap_dung_den', label: 'Áp dụng đến', width: 130, align: 'right' },
+  { key: 'website_chinh_thuc', label: 'Website', minWidth: 180 },
+  { key: 'nguon_du_lieu_url', label: 'Nguồn dữ liệu', minWidth: 180 },
+  { key: 'trang_thai', label: 'Trạng thái', width: 150, align: 'center' },
+  { key: 'ghi_chu', label: 'Ghi chú', minWidth: 160 },
+  { key: 'tao_luc', label: 'Tạo lúc', width: 170, align: 'center' },
+  { key: 'cap_nhat_luc', label: 'Cập nhật lúc', width: 170, align: 'center' },
+]
 
 const JSON_SAMPLE = `[
   {
@@ -79,7 +111,7 @@ function emptyForm() {
     mon: '',
     loai_chung_chi: 'trong_nuoc',
     thang_diem: '',
-    trang_thai: 1,
+    trang_thai: 'Hoạt động',
     ghi_chu: '',
   }
 }
@@ -101,6 +133,52 @@ function optionalText(value) {
 
 function loaiLabel(value) {
   return LOAI.find((item) => item.value === value)?.label || value || '—'
+}
+
+function listToText(value) {
+  if (!Array.isArray(value) || !value.length) return ''
+  if (value.every((item) => item == null || typeof item !== 'object')) return value.join(', ')
+  return JSON.stringify(value)
+}
+
+function formatJson(value) {
+  if (value == null || value === '') return ''
+  if (Array.isArray(value)) return listToText(value)
+  if (typeof value === 'object') return JSON.stringify(value)
+  return String(value)
+}
+
+function formatDateTime(value) {
+  if (!value) return '—'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return String(value)
+  return date.toLocaleString('vi-VN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+function formatCell(row, column) {
+  const value = row[column.key]
+  if (JSON_FIELDS.includes(column.key)) return dash(formatJson(value))
+  if (column.key === 'loai_chung_chi') return loaiLabel(value)
+  if (DATE_FIELDS.includes(column.key)) return formatDateTime(value)
+  return dash(value)
+}
+
+function statusType(value) {
+  if (value === 'Hoạt động' || value === 1 || value === '1') return 'success'
+  if (value === 'Ngừng sử dụng' || value === 0 || value === '0') return 'info'
+  return 'warning'
+}
+
+function statusLabel(value) {
+  if (value === 1 || value === '1') return 'Hoạt động'
+  if (value === 0 || value === '0') return 'Ngừng sử dụng'
+  return value
 }
 
 function parseJsonItems(text) {
@@ -393,8 +471,8 @@ onMounted(load)
           clearable
           @change="onSearch"
         >
-          <CustomOption label="Hoạt động" :value="1" />
-          <CustomOption label="Ngừng sử dụng" :value="0" />
+          <CustomOption label="Hoạt động" value="Hoạt động" />
+          <CustomOption label="Ngừng sử dụng" value="Ngừng sử dụng" />
         </CustomSelect>
         <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
       </div>
@@ -436,32 +514,26 @@ onMounted(load)
         <CustomTableColumn label="STT" width="72" align="center">
           <template #default="{ $index }">{{ rowIndex($index) }}</template>
         </CustomTableColumn>
-        <CustomTableColumn prop="ma_bai_thi" label="Mã" width="120" />
-        <CustomTableColumn prop="ten_bai_thi" label="Tên bài thi" min-width="180" />
-        <CustomTableColumn prop="ten_chi_tiet" label="Tên chi tiết" min-width="200" >
-          <template #default="{ row }">{{ dash(row.ten_chi_tiet) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="linh_vuc" label="Lĩnh vực" min-width="140">
-          <template #default="{ row }">{{ dash(row.linh_vuc) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="mon" label="Môn" min-width="120">
-          <template #default="{ row }">{{ dash(row.mon) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Loại" width="130">
-          <template #default="{ row }">{{ loaiLabel(row.loai_chung_chi) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="thang_diem" label="Thang điểm" width="130">
-          <template #default="{ row }">{{ dash(row.thang_diem) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Trạng thái" width="150" align="center">
+        <CustomTableColumn
+          v-for="column in COLUMNS"
+          :key="column.key"
+          :prop="column.key"
+          :label="column.label"
+          :width="column.width"
+          :min-width="column.minWidth"
+          :align="column.align"
+          show-overflow-tooltip
+        >
           <template #default="{ row }">
-            <CustomTag :type="row.trang_thai === 1 ? 'success' : 'info'" effect="light">
-              {{ row.trang_thai === 1 ? 'Hoạt động' : 'Ngừng sử dụng' }}
+            <CustomTag
+              v-if="column.key === 'trang_thai' && row.trang_thai"
+              :type="statusType(row.trang_thai)"
+              effect="light"
+            >
+              {{ statusLabel(row.trang_thai) }}
             </CustomTag>
+            <span v-else>{{ formatCell(row, column) }}</span>
           </template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="ghi_chu" label="Ghi chú" min-width="160" >
-          <template #default="{ row }">{{ dash(row.ghi_chu) }}</template>
         </CustomTableColumn>
         <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
           <template #default="{ row }">
@@ -564,8 +636,8 @@ onMounted(load)
         <CustomCol :span="8" :xs="24">
           <CustomFormItem label="Trạng thái" prop="trang_thai">
             <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
-              <CustomOption label="Hoạt động" :value="1" />
-              <CustomOption label="Ngừng sử dụng" :value="0" />
+              <CustomOption label="Hoạt động" value="Hoạt động" />
+              <CustomOption label="Ngừng sử dụng" value="Ngừng sử dụng" />
             </CustomSelect>
           </CustomFormItem>
         </CustomCol>
