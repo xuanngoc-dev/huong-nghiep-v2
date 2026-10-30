@@ -53,7 +53,6 @@ _DATS_FK = {
 }
 _CATALOG_KIND = {
     "nganh_dao_tao_id": "nganh",
-    "phuong_thuc_id": "phuong_thuc",
     "to_hop_id": "to_hop",
     "phuong_thuc_nguon_id": "phuong_thuc",
     "phuong_thuc_dich_id": "phuong_thuc",
@@ -195,13 +194,16 @@ def _values(raw: dict, table: str, label: str, truong_id: int, nam_tuyen_sinh: i
         if name == "nam_tuyen_sinh":
             values[name] = nam_tuyen_sinh
             continue
+        if name == "ma_phuong_thuc_cua_bo" and table == "dats_phuong_thuc":
+            supplied = raw.get(name)
+            if supplied in (None, ""):
+                supplied = raw.get("ma_phuong_thuc_cua_truong")
+            code = _known_method_code(catalogs, supplied)
+            if code is None:
+                raise DatsImportError(f"{label} thiếu ma_phuong_thuc_cua_bo hoặc mã phương thức có trong danh mục")
+            values[name] = code
+            continue
         if name not in raw or raw[name] is None or raw[name] == "":
-            if name == "phuong_thuc_id" and table == "dats_phuong_thuc":
-                values[name] = _require_catalog(
-                    _lookup_code(catalogs.phuong_thuc_by_code, raw.get("ma_phuong_thuc_cua_truong")),
-                    f"{label} thiếu phuong_thuc_id hoặc mã phương thức có trong danh mục",
-                )
-                continue
             if name == "to_hop_id" and table == "dats_phuong_thuc_to_hop":
                 values[name] = _require_catalog(
                     _lookup_code(catalogs.to_hop_by_code, _combo_code(raw)),
@@ -310,6 +312,15 @@ def _as_int(value, message: str) -> int:
     return number
 
 
+def _known_method_code(catalogs: CatalogIndex, code) -> str | None:
+    if code is None:
+        return None
+    text = str(code).strip().upper()
+    if not text or text not in catalogs.phuong_thuc_by_code:
+        return None
+    return text
+
+
 def _lookup_code(mapping: dict[str, int], code) -> int | None:
     if code is None:
         return None
@@ -385,15 +396,16 @@ def _load_catalogs(db: Session, document: dict) -> CatalogIndex:
         for raw in _section_or_empty(document, table, kind):
             if not isinstance(raw, dict):
                 continue
-            _collect_ref(raw.get("phuong_thuc_id"), method_ids)
             _collect_ref(raw.get("phuong_thuc_nguon_id"), method_ids)
             _collect_ref(raw.get("phuong_thuc_dich_id"), method_ids)
             _collect_ref(raw.get("to_hop_id"), combo_ids)
             _collect_ref(raw.get("to_hop_nguon_id"), combo_ids)
             _collect_ref(raw.get("to_hop_dich_id"), combo_ids)
             _collect_ref(raw.get("nganh_dao_tao_id"), nganh_ids)
-            if table == "dats_phuong_thuc" and raw.get("phuong_thuc_id") in (None, ""):
-                code = raw.get("ma_phuong_thuc_cua_truong")
+            if table == "dats_phuong_thuc":
+                code = raw.get("ma_phuong_thuc_cua_bo")
+                if code in (None, ""):
+                    code = raw.get("ma_phuong_thuc_cua_truong")
                 if code not in (None, ""):
                     method_codes.add(str(code).strip().upper())
             if table == "dats_phuong_thuc_to_hop" and raw.get("to_hop_id") in (None, ""):

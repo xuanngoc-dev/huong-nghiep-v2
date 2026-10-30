@@ -275,7 +275,7 @@ CREATE TABLE IF NOT EXISTS `dm_phuong_thuc_tuyen_sinh` (
   `tao_luc` DATETIME NULL DEFAULT NULL COMMENT 'Thời điểm tạo bản ghi.',
   `cap_nhat_luc` DATETIME NULL DEFAULT NULL COMMENT 'Thời điểm cập nhật gần nhất.',
   PRIMARY KEY (`id`),
-  KEY `idx_dm_phuong_thuc_tuyen_sinh_ma_phuong_thuc` (`ma_phuong_thuc`),
+  UNIQUE KEY `uq_dm_phuong_thuc_tuyen_sinh_ma` (`ma_phuong_thuc`),
   KEY `idx_dm_phuong_thuc_tuyen_sinh_nam_ap_dung_tu` (`nam_ap_dung_tu`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Danh mục phương thức tuyển sinh';
 
@@ -433,7 +433,7 @@ CREATE TABLE IF NOT EXISTS `dats_ke_hoach_tuyen_sinh` (
 CREATE TABLE IF NOT EXISTS `dats_phuong_thuc` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Khóa chính.',
   `de_an_chuong_trinh_id` BIGINT UNSIGNED NOT NULL COMMENT 'Chương trình áp dụng.',
-  `phuong_thuc_id` BIGINT UNSIGNED NOT NULL COMMENT 'Danh mục phương thức; FK dm_phuong_thuc_tuyen_sinh.id.',
+  `ma_phuong_thuc_cua_bo` VARCHAR(20) NOT NULL COMMENT 'Mã phương thức của Bộ; FK dm_phuong_thuc_tuyen_sinh.ma_phuong_thuc.',
   `ma_phuong_thuc_cua_truong` VARCHAR(20) NULL DEFAULT NULL COMMENT 'Mã riêng của trường.',
   `ten_phuong_thuc_cua_truong` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Tên phương thức theo đề án.',
   `chi_tieu_phuong_thuc` INT UNSIGNED NULL DEFAULT NULL COMMENT 'Chỉ tiêu riêng; NULL nếu không chia chỉ tiêu.',
@@ -448,11 +448,11 @@ CREATE TABLE IF NOT EXISTS `dats_phuong_thuc` (
   `ghi_chu_chi_tieu` TEXT NULL DEFAULT NULL COMMENT 'Cách phân bổ chỉ tiêu.',
   `ghi_chu` TEXT NULL DEFAULT NULL COMMENT 'Lưu ý phương thức.',
   PRIMARY KEY (`id`),
-  KEY `idx_dats_phuong_thuc_de_an_chuong_trinh_id_phuong_thuc_id` (`de_an_chuong_trinh_id`, `phuong_thuc_id`),
-  KEY `idx_dats_phuong_thuc_phuong_thuc_id` (`phuong_thuc_id`),
+  KEY `idx_dats_phuong_thuc_de_an_chuong_trinh_id_ma_bo` (`de_an_chuong_trinh_id`, `ma_phuong_thuc_cua_bo`),
+  KEY `idx_dats_phuong_thuc_ma_phuong_thuc_cua_bo` (`ma_phuong_thuc_cua_bo`),
   KEY `idx_dats_phuong_thuc_to_hop_id` (`to_hop_id`),
   CONSTRAINT `fk_dats_phuong_thuc_de_an_chuong_trinh_id` FOREIGN KEY (`de_an_chuong_trinh_id`) REFERENCES `dats_chuong_trinh_dao_tao` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT,
-  CONSTRAINT `fk_dats_phuong_thuc_phuong_thuc_id` FOREIGN KEY (`phuong_thuc_id`) REFERENCES `dm_phuong_thuc_tuyen_sinh` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT,
+  CONSTRAINT `fk_dats_phuong_thuc_ma_phuong_thuc_cua_bo` FOREIGN KEY (`ma_phuong_thuc_cua_bo`) REFERENCES `dm_phuong_thuc_tuyen_sinh` (`ma_phuong_thuc`) ON UPDATE RESTRICT ON DELETE RESTRICT,
   CONSTRAINT `fk_dats_phuong_thuc_to_hop_id` FOREIGN KEY (`to_hop_id`) REFERENCES `dm_to_hop_mon_hoc` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Phương thức, điều kiện và chỉ tiêu theo phương thức';
 

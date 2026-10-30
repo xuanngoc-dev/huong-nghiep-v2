@@ -20,8 +20,12 @@ class DatsPhuongThuc(Base):
 
     __tablename__ = "dats_phuong_thuc"
     __table_args__ = (
-        Index("idx_dats_phuong_thuc_de_an_chuong_trinh_id_phuong_thuc_id", "de_an_chuong_trinh_id", "phuong_thuc_id"),
-        Index("idx_dats_phuong_thuc_phuong_thuc_id", "phuong_thuc_id"),
+        Index(
+            "idx_dats_phuong_thuc_de_an_chuong_trinh_id_ma_bo",
+            "de_an_chuong_trinh_id",
+            "ma_phuong_thuc_cua_bo",
+        ),
+        Index("idx_dats_phuong_thuc_ma_phuong_thuc_cua_bo", "ma_phuong_thuc_cua_bo"),
         Index("idx_dats_phuong_thuc_to_hop_id", "to_hop_id"),
         {
             "mysql_charset": "utf8mb4",
@@ -48,16 +52,16 @@ class DatsPhuongThuc(Base):
         nullable=False,
         comment="Chương trình áp dụng.",
     )
-    phuong_thuc_id: Mapped[int] = mapped_column(
-        Integer,
+    ma_phuong_thuc_cua_bo: Mapped[str] = mapped_column(
+        String(20),
         ForeignKey(
-            "dm_phuong_thuc_tuyen_sinh.id",
-            name="fk_dats_phuong_thuc_phuong_thuc_id",
+            "dm_phuong_thuc_tuyen_sinh.ma_phuong_thuc",
+            name="fk_dats_phuong_thuc_ma_phuong_thuc_cua_bo",
             onupdate="RESTRICT",
             ondelete="RESTRICT",
         ),
         nullable=False,
-        comment="Danh mục phương thức; FK dm_phuong_thuc_tuyen_sinh.id.",
+        comment="Mã phương thức của Bộ; FK dm_phuong_thuc_tuyen_sinh.ma_phuong_thuc.",
     )
     ma_phuong_thuc_cua_truong: Mapped[str | None] = mapped_column(
         String(20),

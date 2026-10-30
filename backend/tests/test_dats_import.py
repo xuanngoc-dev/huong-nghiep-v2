@@ -48,8 +48,8 @@ class DatsImportTests(unittest.TestCase):
 
         methods = [row for row in rows if row.table == "dats_phuong_thuc"]
         self.assertEqual(
-            {row.values["phuong_thuc_id"] for row in methods},
-            set(CODES["phuong_thuc"].values()),
+            {row.values["ma_phuong_thuc_cua_bo"] for row in methods},
+            set(CODES["phuong_thuc"]),
         )
         self.assertTrue(all(row.values["de_an_chuong_trinh_id"] for row in methods))
 
