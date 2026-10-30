@@ -1,4 +1,7 @@
-"""create_dm_chung_chi_bai_thi_thanh_tich
+"""create_dm_bai_thi_thanh_tich
+
+Chứng chỉ ngoại ngữ không tạo ở revision này. Danh mục đó dùng
+dm_bang_cap_chung_chi.
 
 Revision ID: 20261012_0022
 Revises: 20261012_0021
@@ -75,19 +78,6 @@ def _common_tail(include_loai: bool, include_don_vi: bool) -> list[sa.Column]:
 
 def upgrade() -> None:
     op.create_table(
-        "dm_chung_chi_ngoai_ngu",
-        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column("ma_chung_chi", sa.String(length=50), nullable=False),
-        sa.Column("ten_chung_chi", sa.String(length=255), nullable=False),
-        *_common_tail(include_loai=True, include_don_vi=True),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("ma_chung_chi", name="uq_dm_chung_chi_ngoai_ngu_ma"),
-        **_TABLE_KW,
-    )
-    op.create_index("ix_dm_chung_chi_ngoai_ngu_ma", "dm_chung_chi_ngoai_ngu", ["ma_chung_chi"])
-    op.create_index("ix_dm_chung_chi_ngoai_ngu_ten", "dm_chung_chi_ngoai_ngu", ["ten_chung_chi"])
-
-    op.create_table(
         "dm_bai_thi_danh_gia_nang_luc",
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("ma_bai_thi", sa.String(length=50), nullable=False),
@@ -129,6 +119,7 @@ def downgrade() -> None:
     op.drop_index("ix_dm_bai_thi_danh_gia_nang_luc_ten", table_name="dm_bai_thi_danh_gia_nang_luc")
     op.drop_index("ix_dm_bai_thi_danh_gia_nang_luc_ma", table_name="dm_bai_thi_danh_gia_nang_luc")
     op.drop_table("dm_bai_thi_danh_gia_nang_luc")
-    op.drop_index("ix_dm_chung_chi_ngoai_ngu_ten", table_name="dm_chung_chi_ngoai_ngu")
-    op.drop_index("ix_dm_chung_chi_ngoai_ngu_ma", table_name="dm_chung_chi_ngoai_ngu")
-    op.drop_table("dm_chung_chi_ngoai_ngu")
+    if sa.inspect(op.get_bind()).has_table("dm_chung_chi_ngoai_ngu"):
+        op.drop_index("ix_dm_chung_chi_ngoai_ngu_ten", table_name="dm_chung_chi_ngoai_ngu")
+        op.drop_index("ix_dm_chung_chi_ngoai_ngu_ma", table_name="dm_chung_chi_ngoai_ngu")
+        op.drop_table("dm_chung_chi_ngoai_ngu")

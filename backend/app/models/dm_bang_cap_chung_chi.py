@@ -9,6 +9,7 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    func,
 )
 from sqlalchemy.dialects.mysql import BIGINT, SMALLINT
 from sqlalchemy.orm import Mapped, mapped_column
@@ -38,13 +39,25 @@ class DmBangCapChungChi(Base):
         comment="Khóa chính, tự tăng.",
     )
     ma_chung_chi: Mapped[str | None] = mapped_column(
-        String(30),
+        String(50),
         comment="Mã định danh chứng chỉ trong hệ thống.",
     )
     ten_chung_chi: Mapped[str] = mapped_column(
-        String(150),
+        String(255),
         nullable=False,
         comment="Tên chứng chỉ.",
+    )
+    ten_chi_tiet: Mapped[str | None] = mapped_column(
+        String(500),
+        comment="Tên đầy đủ hoặc mô tả ngắn của chứng chỉ.",
+    )
+    linh_vuc: Mapped[str | None] = mapped_column(
+        String(150),
+        comment="Lĩnh vực của chứng chỉ.",
+    )
+    mon: Mapped[str | None] = mapped_column(
+        String(150),
+        comment="Môn hoặc nội dung được đánh giá.",
     )
     ma_ngon_ngu: Mapped[str | None] = mapped_column(
         String(10),
@@ -61,6 +74,10 @@ class DmBangCapChungChi(Base):
     loai_chung_chi: Mapped[str | None] = mapped_column(
         String(50),
         comment="Nhóm hoặc loại chứng chỉ.",
+    )
+    thang_diem: Mapped[str | None] = mapped_column(
+        String(100),
+        comment="Mô tả thang điểm bằng chữ, ví dụ 0-9 hoặc Bậc 1-6.",
     )
     thang_diem_min: Mapped[Decimal | None] = mapped_column(
         Numeric(6, 2),
@@ -100,9 +117,12 @@ class DmBangCapChungChi(Base):
     )
     tao_luc: Mapped[datetime | None] = mapped_column(
         DateTime,
+        server_default=func.now(),
         comment="Thời điểm tạo bản ghi.",
     )
     cap_nhat_luc: Mapped[datetime | None] = mapped_column(
         DateTime,
+        server_default=func.now(),
+        onupdate=func.now(),
         comment="Thời điểm cập nhật bản ghi gần nhất.",
     )

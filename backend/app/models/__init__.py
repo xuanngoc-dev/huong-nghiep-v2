@@ -1,5 +1,4 @@
 from app.models.dm_bai_thi_danh_gia_nang_luc import DmBaiThiDanhGiaNangLuc
-from app.models.dm_chung_chi_ngoai_ngu import DmChungChiNgoaiNgu
 from app.models.dm_chuyen_nganh import DmChuyenNganh
 from app.models.dm_dan_toc import DmDanToc
 from app.models.dm_doi_tuong_uu_tien import DmDoiTuongUuTien
@@ -55,7 +54,6 @@ from app.models.dats_chinh_sach_uu_tien_xet_tuyen import DatsChinhSachUuTienXetT
 
 __all__ = [
     "DmBaiThiDanhGiaNangLuc",
-    "DmChungChiNgoaiNgu",
     "DmChuyenNganh",
     "DmDanToc",
     "DmDoiTuongUuTien",

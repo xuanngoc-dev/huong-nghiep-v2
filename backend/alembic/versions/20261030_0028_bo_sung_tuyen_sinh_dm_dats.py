@@ -740,15 +740,33 @@ def upgrade() -> None:
         ),
         sa.Column(
             "ma_chung_chi",
-            sa.String(length=30),
+            sa.String(length=50),
             nullable=True,
             comment="Mã định danh chứng chỉ trong hệ thống.",
         ),
         sa.Column(
             "ten_chung_chi",
-            sa.String(length=150),
+            sa.String(length=255),
             nullable=False,
             comment="Tên chứng chỉ.",
+        ),
+        sa.Column(
+            "ten_chi_tiet",
+            sa.String(length=500),
+            nullable=True,
+            comment="Tên đầy đủ hoặc mô tả ngắn của chứng chỉ.",
+        ),
+        sa.Column(
+            "linh_vuc",
+            sa.String(length=150),
+            nullable=True,
+            comment="Lĩnh vực của chứng chỉ.",
+        ),
+        sa.Column(
+            "mon",
+            sa.String(length=150),
+            nullable=True,
+            comment="Môn hoặc nội dung được đánh giá.",
         ),
         sa.Column(
             "ma_ngon_ngu",
@@ -773,6 +791,12 @@ def upgrade() -> None:
             sa.String(length=50),
             nullable=True,
             comment="Nhóm hoặc loại chứng chỉ.",
+        ),
+        sa.Column(
+            "thang_diem",
+            sa.String(length=100),
+            nullable=True,
+            comment="Mô tả thang điểm bằng chữ, ví dụ 0-9 hoặc Bậc 1-6.",
         ),
         sa.Column(
             "thang_diem_min",
@@ -832,12 +856,14 @@ def upgrade() -> None:
             "tao_luc",
             sa.DateTime(),
             nullable=True,
+            server_default=sa.text("CURRENT_TIMESTAMP"),
             comment="Thời điểm tạo bản ghi.",
         ),
         sa.Column(
             "cap_nhat_luc",
             sa.DateTime(),
             nullable=True,
+            server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
             comment="Thời điểm cập nhật bản ghi gần nhất.",
         ),
         sa.UniqueConstraint("ma_chung_chi", name="uk_dm_bang_cap_chung_chi_ma_chung_chi"),

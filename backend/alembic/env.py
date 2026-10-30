@@ -8,7 +8,6 @@ from app.core.config import settings
 from app.db.base import Base
 from app.models import (  # noqa: F401 — đăng ký model cho autogenerate
     DmBaiThiDanhGiaNangLuc,
-    DmChungChiNgoaiNgu,
     DmChuyenNganh,
     DmDanToc,
     DmDoiTuongUuTien,

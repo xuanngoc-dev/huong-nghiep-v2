@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
 from app.db.session import get_db
-from app.models.dm_chung_chi_ngoai_ngu import DmChungChiNgoaiNgu
+from app.models.dm_bang_cap_chung_chi import DmBangCapChungChi
 from app.models.nguoi_dung import NguoiDung
 from app.schemas.dm_chung_chi_ngoai_ngu import (
     DmChungChiNgoaiNguBulkResult,
@@ -16,7 +16,7 @@ from app.schemas.dm_chung_chi_ngoai_ngu import (
     DmChungChiNgoaiNguWrite,
 )
 
-router = APIRouter(prefix="/danh-muc/chung-chi-ngoai-ngu", tags=["danh-muc"])
+router = APIRouter(prefix="/danh-muc/bang-cap-chung-chi", tags=["danh-muc"])
 
 
 def _like_pattern(value: str) -> str:
@@ -25,9 +25,9 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _get_or_404(db: Session, item_id: int) -> DmChungChiNgoaiNgu:
+def _get_or_404(db: Session, item_id: int) -> DmBangCapChungChi:
     """Lấy một bản ghi theo id. Trả lỗi 404 nếu không tồn tại."""
-    item = db.get(DmChungChiNgoaiNgu, item_id)
+    item = db.get(DmBangCapChungChi, item_id)
     if item is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -39,8 +39,8 @@ def _get_or_404(db: Session, item_id: int) -> DmChungChiNgoaiNgu:
 @router.get("", response_model=DmChungChiNgoaiNguPage)
 def list_chung_chi_ngoai_ngu(
     q: str | None = Query(default=None, max_length=255),
-    trang_thai: int | None = Query(default=None, ge=0, le=1),
-    loai_chung_chi: str | None = Query(default=None, max_length=20),
+    trang_thai: str | None = Query(default=None, max_length=20),
+    loai_chung_chi: str | None = Query(default=None, max_length=50),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
@@ -52,27 +52,30 @@ def list_chung_chi_ngoai_ngu(
         pattern = _like_pattern(q.strip())
         filters.append(
             or_(
-                DmChungChiNgoaiNgu.ten_chung_chi.like(pattern, escape="\\"),
-                DmChungChiNgoaiNgu.ma_chung_chi.like(pattern, escape="\\"),
-                DmChungChiNgoaiNgu.ten_chi_tiet.like(pattern, escape="\\"),
-                DmChungChiNgoaiNgu.linh_vuc.like(pattern, escape="\\"),
-                DmChungChiNgoaiNgu.mon.like(pattern, escape="\\"),
+                DmBangCapChungChi.ten_chung_chi.like(pattern, escape="\\"),
+                DmBangCapChungChi.ma_chung_chi.like(pattern, escape="\\"),
+                DmBangCapChungChi.ten_chi_tiet.like(pattern, escape="\\"),
+                DmBangCapChungChi.linh_vuc.like(pattern, escape="\\"),
+                DmBangCapChungChi.mon.like(pattern, escape="\\"),
+                DmBangCapChungChi.ten_ngon_ngu.like(pattern, escape="\\"),
+                DmBangCapChungChi.ma_ngon_ngu.like(pattern, escape="\\"),
+                DmBangCapChungChi.don_vi_cap.like(pattern, escape="\\"),
             )
         )
-    if trang_thai is not None:
-        filters.append(DmChungChiNgoaiNgu.trang_thai == trang_thai)
+    if trang_thai and trang_thai.strip():
+        filters.append(DmBangCapChungChi.trang_thai == trang_thai.strip())
     if loai_chung_chi and loai_chung_chi.strip():
-        filters.append(DmChungChiNgoaiNgu.loai_chung_chi == loai_chung_chi.strip().lower())
+        filters.append(DmBangCapChungChi.loai_chung_chi == loai_chung_chi.strip())
 
-    count_stmt = select(func.count()).select_from(DmChungChiNgoaiNgu)
-    stmt = select(DmChungChiNgoaiNgu)
+    count_stmt = select(func.count()).select_from(DmBangCapChungChi)
+    stmt = select(DmBangCapChungChi)
     if filters:
         count_stmt = count_stmt.where(*filters)
         stmt = stmt.where(*filters)
 
     total = db.scalar(count_stmt) or 0
     items = db.scalars(
-        stmt.order_by(DmChungChiNgoaiNgu.ma_chung_chi.asc(), DmChungChiNgoaiNgu.id.asc())
+        stmt.order_by(DmBangCapChungChi.ma_chung_chi.asc(), DmBangCapChungChi.id.asc())
         .offset((page - 1) * page_size)
         .limit(page_size)
     ).all()
@@ -84,7 +87,7 @@ def get_chung_chi_ngoai_ngu(
     item_id: int,
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
-) -> DmChungChiNgoaiNgu:
+) -> DmBangCapChungChi:
     """Lấy chi tiết một chứng chỉ ngoại ngữ theo id."""
     return _get_or_404(db, item_id)
 
@@ -122,7 +125,7 @@ def create_chung_chi_ngoai_ngu_bulk(
 
     existing = list(
         db.scalars(
-            select(DmChungChiNgoaiNgu.ma_chung_chi).where(DmChungChiNgoaiNgu.ma_chung_chi.in_(codes))
+            select(DmBangCapChungChi.ma_chung_chi).where(DmBangCapChungChi.ma_chung_chi.in_(codes))
         ).all()
     )
     if existing:
@@ -131,7 +134,7 @@ def create_chung_chi_ngoai_ngu_bulk(
             detail=f"Mã chứng chỉ đã tồn tại: {', '.join(existing)}",
         )
 
-    items = [DmChungChiNgoaiNgu(**item.model_dump()) for item in payload]
+    items = [DmBangCapChungChi(**item.model_dump()) for item in payload]
     db.add_all(items)
     try:
         db.commit()
@@ -149,9 +152,9 @@ def create_chung_chi_ngoai_ngu(
     payload: DmChungChiNgoaiNguWrite,
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
-) -> DmChungChiNgoaiNgu:
+) -> DmBangCapChungChi:
     """Thêm một chứng chỉ ngoại ngữ. Từ chối nếu mã đã tồn tại."""
-    item = DmChungChiNgoaiNgu(**payload.model_dump())
+    item = DmBangCapChungChi(**payload.model_dump())
     db.add(item)
     try:
         db.commit()
@@ -171,7 +174,7 @@ def update_chung_chi_ngoai_ngu(
     payload: DmChungChiNgoaiNguWrite,
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
-) -> DmChungChiNgoaiNgu:
+) -> DmBangCapChungChi:
     """Cập nhật toàn bộ thông tin một chứng chỉ ngoại ngữ theo id."""
     item = _get_or_404(db, item_id)
     for key, value in payload.model_dump().items():
@@ -195,7 +198,7 @@ def delete_chung_chi_ngoai_ngu_many(
     _: NguoiDung = Depends(get_current_user),
 ) -> DmChungChiNgoaiNguDeleteManyResult:
     """Xóa nhiều chứng chỉ ngoại ngữ theo danh sách id."""
-    items = db.scalars(select(DmChungChiNgoaiNgu).where(DmChungChiNgoaiNgu.id.in_(payload.ids))).all()
+    items = db.scalars(select(DmBangCapChungChi).where(DmBangCapChungChi.id.in_(payload.ids))).all()
     if not items:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
