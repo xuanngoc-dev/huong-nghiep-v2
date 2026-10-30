@@ -737,7 +737,7 @@ onMounted(load)
         v-model="jsonText"
         class="json-input"
         type="textarea"
-        :rows="16"
+        :rows="26"
         placeholder="Dán mảng JSON vào đây"
       />
     </div>

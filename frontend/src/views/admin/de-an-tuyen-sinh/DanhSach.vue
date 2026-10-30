@@ -26,17 +26,22 @@ const HINH_THUC_OPTIONS = [
   'Văn bằng 2',
 ]
 
-const JSON_SAMPLE = `[
-  {
-    "ma_truong": "BKA",
-    "nam_tuyen_sinh": 2026,
-    "ten_de_an": "Đề án tuyển sinh năm 2026",
-    "chi_tieu": 8000,
-    "hinh_thuc_dao_tao": ["Chính quy", "Liên thông"],
-    "ngay_cong_bo": "2026-01-15",
-    "trang_thai": "cong_bo"
+const JSON_SAMPLE = `{
+  "thong_tin_import": {
+    "phien_ban_cau_truc": "2.0",
+    "pham_vi": "mot_truong_mot_nam"
+  },
+  "dats_tuyen_sinh": {
+    "chi_tieu": 9880,
+    "ten_de_an": "Thông tin tuyển sinh đại học chính quy năm 2026 - Đại học Bách khoa Hà Nội (Quyết định 2466/QĐ-ĐHBK)",
+    "hinh_thuc_dao_tao": ["Chính quy"],
+    "gioi_thieu": "68 chương trình (38 chuẩn, 26 Elitech, 2 PFIEV, 2 liên kết quốc tế); 5 chương trình mới. Ba phương thức chính: XTTN, ĐGTD/TSA, THPT.",
+    "ngay_cong_bo": "2026-03-03",
+    "nguon_du_lieu_url": null,
+    "trang_thai": null,
+    "ghi_chu": "Nguồn: PDF Quyết định 2466/QĐ-ĐHBK ngày 03/03/2026."
   }
-]`
+}`
 
 const loading = ref(false)
 const saving = ref(false)
@@ -51,6 +56,8 @@ const dialogVisible = ref(false)
 const editingId = ref(null)
 const createMode = ref('form')
 const jsonText = ref('')
+const jsonTruongId = ref(null)
+const jsonNamTuyenSinh = ref(new Date().getFullYear())
 const jsonImport = useJsonBatchImport({ label: 'đề án tuyển sinh' })
 const formRef = ref()
 const truongOptions = ref([])
@@ -89,6 +96,8 @@ function resetForm() {
   editingId.value = null
   createMode.value = 'form'
   jsonText.value = ''
+  jsonTruongId.value = null
+  jsonNamTuyenSinh.value = new Date().getFullYear()
   jsonImport.reset()
   formRef.value?.clearValidate()
 }
@@ -125,27 +134,22 @@ function optionalText(value) {
   return cleaned || null
 }
 
-function optionalYear(value, line) {
-  if (value == null || value === '') {
-    throw new Error(`Phần tử thứ ${line} thiếu nam_tuyen_sinh`)
-  }
-  const year = Number(value)
-  if (!Number.isInteger(year) || year < 1990 || year > 2100) {
-    throw new Error(`Phần tử thứ ${line} có nam_tuyen_sinh không hợp lệ`)
-  }
+function selectedJsonYear() {
+  const year = Number(jsonNamTuyenSinh.value)
+  if (!Number.isInteger(year) || year < 1990 || year > 2100) return null
   return year
 }
 
-function optionalQuota(value, line) {
+function optionalQuota(value) {
   if (value == null || value === '') return null
   const quota = Number(value)
   if (!Number.isInteger(quota) || quota < 0) {
-    throw new Error(`Phần tử thứ ${line} có chi_tieu không hợp lệ`)
+    throw new Error('chi_tieu không hợp lệ')
   }
   return quota
 }
 
-function optionalForms(value, line) {
+function optionalForms(value) {
   if (value == null || value === '') return null
   const source = Array.isArray(value) ? value : String(value).split(',')
   const cleaned = []
@@ -153,80 +157,63 @@ function optionalForms(value, line) {
     const text = String(item).trim()
     if (!text || cleaned.includes(text)) continue
     if (text.length > 100) {
-      throw new Error(`Phần tử thứ ${line} có hình thức đào tạo dài quá 100 ký tự`)
+      throw new Error('Hình thức đào tạo dài quá 100 ký tự')
     }
     cleaned.push(text)
   }
   if (cleaned.length > 20) {
-    throw new Error(`Phần tử thứ ${line} có quá 20 hình thức đào tạo`)
+    throw new Error('Có quá 20 hình thức đào tạo')
   }
   return cleaned.length ? cleaned : null
 }
 
-function optionalDate(value, line) {
+function optionalDate(value) {
   if (value == null || value === '') return null
   const text = String(value).trim()
   if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) {
-    throw new Error(`Phần tử thứ ${line} có ngay_cong_bo phải theo dạng YYYY-MM-DD`)
+    throw new Error('ngay_cong_bo phải theo dạng YYYY-MM-DD')
   }
   return text
 }
 
-function resolveTruongId(item, line) {
-  if (item.truong_id != null && String(item.truong_id).trim() !== '') {
-    const id = Number(item.truong_id)
-    if (!Number.isInteger(id) || id < 1) {
-      throw new Error(`Phần tử thứ ${line} có truong_id không hợp lệ`)
-    }
-    return id
-  }
-  const code = String(item.ma_truong ?? '').trim()
-  if (!code) {
-    throw new Error(`Phần tử thứ ${line} thiếu truong_id hoặc ma_truong`)
-  }
-  const found = truongOptions.value.find((school) => school.ma_truong === code)
-  if (!found) {
-    throw new Error(`Phần tử thứ ${line}: không tìm thấy trường có mã ${code}`)
-  }
-  return found.id
+function selectedJsonSchool() {
+  const id = jsonTruongId.value
+  if (id == null || id === '') return null
+  return truongOptions.value.find((school) => school.id === id) || null
 }
 
-function parseJsonItems(text) {
+function parseJsonDocument(text, truongId, namTuyenSinh) {
   let data
   try {
     data = JSON.parse(text)
   } catch {
-    throw new Error('JSON không hợp lệ. Hãy dán một mảng đề án tuyển sinh.')
+    throw new Error('JSON không hợp lệ. Hãy dán một object đề án theo cấu trúc một trường, một năm.')
   }
-  if (!Array.isArray(data)) {
-    throw new Error('JSON phải là một mảng, ví dụ [{ "ma_truong": "BKA", "nam_tuyen_sinh": 2026 }]')
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    throw new Error('JSON phải là một object có khóa dats_tuyen_sinh.')
   }
-  if (!data.length) {
-    throw new Error('Mảng đề án tuyển sinh đang trống')
+  const item = data.dats_tuyen_sinh
+  if (!item || typeof item !== 'object' || Array.isArray(item)) {
+    throw new Error('Thiếu object dats_tuyen_sinh')
   }
-
-  return data.map((item, index) => {
-    const line = index + 1
-    if (!item || typeof item !== 'object' || Array.isArray(item)) {
-      throw new Error(`Phần tử thứ ${line} không phải một đề án tuyển sinh`)
-    }
-    const trangThai = optionalText(item.trang_thai)
-    if (trangThai && trangThai.length > 20) {
-      throw new Error(`Phần tử thứ ${line} có trang_thai dài quá 20 ký tự`)
-    }
-    return {
-      truong_id: resolveTruongId(item, line),
-      nam_tuyen_sinh: optionalYear(item.nam_tuyen_sinh, line),
-      chi_tieu: optionalQuota(item.chi_tieu, line),
+  const trangThai = optionalText(item.trang_thai)
+  if (trangThai && trangThai.length > 20) {
+    throw new Error('trang_thai dài quá 20 ký tự')
+  }
+  return [
+    {
+      truong_id: truongId,
+      nam_tuyen_sinh: namTuyenSinh,
+      chi_tieu: optionalQuota(item.chi_tieu),
       ten_de_an: optionalText(item.ten_de_an),
-      hinh_thuc_dao_tao: optionalForms(item.hinh_thuc_dao_tao, line),
+      hinh_thuc_dao_tao: optionalForms(item.hinh_thuc_dao_tao),
       gioi_thieu: optionalText(item.gioi_thieu),
-      ngay_cong_bo: optionalDate(item.ngay_cong_bo, line),
+      ngay_cong_bo: optionalDate(item.ngay_cong_bo),
       nguon_du_lieu_url: optionalText(item.nguon_du_lieu_url),
       trang_thai: trangThai,
       ghi_chu: optionalText(item.ghi_chu),
-    }
-  })
+    },
+  ]
 }
 
 function errorMessage(error, fallback) {
@@ -362,9 +349,20 @@ function fillJsonSample() {
 }
 
 async function onSubmitJson() {
+  const school = selectedJsonSchool()
+  if (!school) {
+    ElMessage.error('Vui lòng chọn trường')
+    return
+  }
+  const year = selectedJsonYear()
+  if (year == null) {
+    ElMessage.error('Năm tuyển sinh phải là số từ 1990 đến 2100')
+    return
+  }
+
   let items
   try {
-    items = parseJsonItems(jsonText.value)
+    items = parseJsonDocument(jsonText.value, school.id, year)
   } catch (error) {
     ElMessage.error(error.message)
     return
@@ -648,17 +646,48 @@ onMounted(async () => {
     <div v-if="!editingId && createMode === 'json'" class="json-panel">
       <div class="json-panel__head">
         <p>
-          Dán một mảng JSON. Mỗi phần tử cần <code>nam_tuyen_sinh</code> và
-          <code>truong_id</code> hoặc <code>ma_truong</code>.
+          Chọn trường và năm tuyển sinh, rồi dán JSON một trường một năm.
+          Màn này lưu <code>dats_tuyen_sinh</code>.
+          <code>truong_id</code> và <code>nam_tuyen_sinh</code> lấy từ lựa chọn bên dưới.
         </p>
         <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
+      </div>
+      <div class="json-meta">
+        <div class="json-school">
+          <span class="json-field__label">Trường</span>
+          <CustomSelect
+            v-model="jsonTruongId"
+            filterable
+            placeholder="Chọn trường"
+            style="width: 100%"
+          >
+            <CustomOption
+              v-for="item in truongOptions"
+              :key="item.id"
+              :label="schoolLabel(item)"
+              :value="item.id"
+            />
+          </CustomSelect>
+        </div>
+        <div class="json-year">
+          <span class="json-field__label">Năm tuyển sinh</span>
+          <CustomInputNumber
+            v-model="jsonNamTuyenSinh"
+            :min="1990"
+            :max="2100"
+            :step="1"
+            :controls="false"
+            placeholder="Năm"
+            style="width: 100%"
+          />
+        </div>
       </div>
       <CustomInput
         v-model="jsonText"
         class="json-input"
         type="textarea"
-        :rows="16"
-        placeholder="Dán mảng JSON vào đây"
+        :rows="26"
+        placeholder="Dán JSON một trường, một năm vào đây"
       />
     </div>
 
@@ -882,6 +911,37 @@ onMounted(async () => {
   line-height: 1.5;
 }
 
+.json-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.json-school {
+  flex: 1 1 320px;
+  max-width: 480px;
+}
+
+.json-year {
+  width: 160px;
+}
+
+.json-field__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--el-text-color-regular);
+}
+
+.json-field__label::before {
+  content: '*';
+  margin-right: 4px;
+  color: var(--el-color-danger);
+}
+
 .json-input :deep(textarea) {
   font-family: ui-monospace, Consolas, monospace;
   font-size: 13px;
@@ -897,8 +957,11 @@ onMounted(async () => {
   .filter-search,
   .filter-school,
   .filter-year,
-  .filter-status {
+  .filter-status,
+  .json-school,
+  .json-year {
     width: 100%;
+    max-width: none;
   }
 }
 </style>
