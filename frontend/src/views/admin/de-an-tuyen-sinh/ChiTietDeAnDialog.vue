@@ -141,6 +141,7 @@ watch(
             v-else-if="tab.merged"
             :programs="rowsOf('dats_chuong_trinh_dao_tao')"
             :methods="rowsOf('dats_phuong_thuc')"
+            :criteria="rowsOf('dats_tieu_chi_xet_tuyen')"
           />
           <component :is="tab.component" v-else :rows="rowsOf(tab.key)" />
         </el-tab-pane>

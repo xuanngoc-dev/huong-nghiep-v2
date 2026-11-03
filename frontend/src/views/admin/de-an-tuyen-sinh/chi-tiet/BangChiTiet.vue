@@ -21,7 +21,7 @@ defineProps({
       :width="column.width"
       :min-width="column.minWidth"
       :align="column.align"
-      :show-overflow-tooltip="column.tooltip === true && column.type !== 'link'"
+      :show-overflow-tooltip="column.tooltip === true && column.type !== 'link' && false"
     >
       <template #default="{ row }">
         <a

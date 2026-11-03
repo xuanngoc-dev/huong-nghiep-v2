@@ -60,8 +60,8 @@
         },
         {
           "index": "/admin/de-an-tuyen-sinh/chuong-trinh",
-          "title": "Chương trình",
-          "tooltip": "Danh sách chương trình và chỉ tiêu tổng theo chương trình",
+          "title": "Chương trình & phương thức",
+          "tooltip": "Chương trình đào tạo và phương thức xét tuyển theo đề án",
           "icon": "Reading"
         },
         {
@@ -69,12 +69,6 @@
           "title": "Kế hoạch",
           "tooltip": "Kế hoạch và phạm vi tuyển sinh của chương trình",
           "icon": "Calendar"
-        },
-        {
-          "index": "/admin/de-an-tuyen-sinh/phuong-thuc",
-          "title": "Phương thức",
-          "tooltip": "Phương thức, điều kiện và chỉ tiêu theo phương thức",
-          "icon": "Operation"
         },
         {
           "index": "/admin/de-an-tuyen-sinh/phuong-thuc-to-hop",

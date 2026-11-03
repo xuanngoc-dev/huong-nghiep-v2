@@ -22,7 +22,9 @@ from app.api.v1.endpoints import (
     dm_ton_giao,
     dm_truong,
     dats_chuong_trinh_dao_tao,
+    dats_tru_so,
     dats_tuyen_sinh,
+    dats_website,
     health,
     ho_so,
     kiem_tra_du_lieu,
@@ -55,6 +57,8 @@ api_router.include_router(dm_thanh_tich_hoc_tap_nghien_cuu.router)
 api_router.include_router(dm_truong.router)
 api_router.include_router(dats_tuyen_sinh.router)
 api_router.include_router(dats_chuong_trinh_dao_tao.router)
+api_router.include_router(dats_tru_so.router)
+api_router.include_router(dats_website.router)
 api_router.include_router(tn_cau_hoi.router)
 api_router.include_router(tn_phien_khao_sat.router)
 api_router.include_router(kiem_tra_du_lieu.router)

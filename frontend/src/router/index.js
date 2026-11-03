@@ -263,7 +263,7 @@ const router = createRouter({
           path: 'de-an-tuyen-sinh/chuong-trinh',
           name: 'de-an-tuyen-sinh-chuong-trinh',
           component: () => import('@/views/admin/de-an-tuyen-sinh/ChuongTrinhDaoTao.vue'),
-          meta: { title: 'Chương trình đào tạo', requiresAuth: true, requiresAdmin: true },
+          meta: { title: 'Chương trình & phương thức', requiresAuth: true, requiresAdmin: true },
         },
         {
           path: 'de-an-tuyen-sinh/ke-hoach',
@@ -273,9 +273,7 @@ const router = createRouter({
         },
         {
           path: 'de-an-tuyen-sinh/phuong-thuc',
-          name: 'de-an-tuyen-sinh-phuong-thuc',
-          component: () => import('@/views/admin/de-an-tuyen-sinh/PhuongThuc.vue'),
-          meta: { title: 'Phương thức', requiresAuth: true, requiresAdmin: true },
+          redirect: { name: 'de-an-tuyen-sinh-chuong-trinh' },
         },
         {
           path: 'de-an-tuyen-sinh/phuong-thuc-to-hop',

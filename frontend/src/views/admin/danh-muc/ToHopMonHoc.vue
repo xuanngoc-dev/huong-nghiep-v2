@@ -74,15 +74,6 @@ const selectOptions = computed(() => {
 const rules = {
   ten_to_hop: [{ required: true, message: 'Vui lòng nhập tên tổ hợp', trigger: 'blur' }],
   ma_to_hop: [{ required: true, message: 'Vui lòng nhập mã tổ hợp', trigger: 'blur' }],
-  ds_mon_hoc: [
-    {
-      type: 'array',
-      required: true,
-      min: 1,
-      message: 'Vui lòng chọn ít nhất một môn học',
-      trigger: 'change',
-    },
-  ],
   trang_thai: [{ required: true, message: 'Vui lòng chọn trạng thái', trigger: 'change' }],
 }
 
@@ -142,13 +133,14 @@ function parseJsonItems(text) {
     if (!tenToHop || !maToHop) {
       throw new Error(`Phần tử thứ ${line} thiếu ten_to_hop hoặc ma_to_hop`)
     }
-    if (!Array.isArray(item.ds_mon_hoc) || !item.ds_mon_hoc.length) {
-      throw new Error(`Phần tử thứ ${line} cần ds_mon_hoc là mảng mã môn học`)
+    const subjects = item.ds_mon_hoc
+    if (subjects != null && !Array.isArray(subjects)) {
+      throw new Error(`Phần tử thứ ${line} có ds_mon_hoc không phải mảng mã môn học`)
     }
     return {
       ten_to_hop: tenToHop,
       ma_to_hop: maToHop,
-      ds_mon_hoc: item.ds_mon_hoc.map((code) => String(code).trim()).filter(Boolean),
+      ds_mon_hoc: (subjects || []).map((code) => String(code).trim()).filter(Boolean),
       trang_thai: item.trang_thai ?? 1,
       ghi_chu: item.ghi_chu == null ? null : String(item.ghi_chu).trim() || null,
     }
@@ -520,8 +512,8 @@ onMounted(async () => {
     <div v-if="!editingId && createMode === 'json'" class="json-panel">
       <div class="json-panel__head">
         <p>
-          Dán một mảng JSON. Mỗi phần tử cần <code>ten_to_hop</code>, <code>ma_to_hop</code> và
-          <code>ds_mon_hoc</code> (mảng mã môn học).
+          Dán một mảng JSON. Mỗi phần tử cần <code>ten_to_hop</code> và <code>ma_to_hop</code>.
+          <code>ds_mon_hoc</code> là mảng mã môn học, có thể để trống.
         </p>
         <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
       </div>
@@ -552,7 +544,7 @@ onMounted(async () => {
               v-model="form.ds_mon_hoc"
               multiple
               filterable
-              placeholder="Chọn một hoặc nhiều môn học"
+              placeholder="Chọn môn học, có thể để trống"
               style="width: 100%"
               :disabled="!selectOptions.length"
             >

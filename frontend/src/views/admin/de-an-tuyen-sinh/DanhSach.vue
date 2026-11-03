@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
@@ -11,6 +11,7 @@ import {
   updateDeAnTuyenSinh,
 } from '@/api/deAnTuyenSinh'
 import { fetchTruongHoc } from '@/api/truongHoc'
+import { NAM_HOC, danhSachNamHoc, laNamHoc, nhanNamHoc } from '@/constants/namHoc'
 import ChiTietDeAnDialog from './ChiTietDeAnDialog.vue'
 
 const STATUS_OPTIONS = [
@@ -147,7 +148,7 @@ const form = reactive(emptyForm())
 
 const rules = {
   truong_id: [{ required: true, message: 'Vui lòng chọn trường', trigger: 'change' }],
-  nam_tuyen_sinh: [{ required: true, message: 'Vui lòng nhập năm tuyển sinh', trigger: 'change' }],
+  nam_tuyen_sinh: [{ required: true, message: 'Vui lòng chọn năm học', trigger: 'change' }],
 }
 
 function emptyForm() {
@@ -279,13 +280,11 @@ function errorMessage(error, fallback) {
 }
 
 function yearFilter() {
-  const raw = String(filters.nam_tuyen_sinh ?? '').trim()
-  if (!raw) return null
-  if (!/^\d{4}$/.test(raw)) return undefined
-  const year = Number(raw)
-  if (year < 1990 || year > 2100) return undefined
-  return year
+  return laNamHoc(filters.nam_tuyen_sinh)
 }
+
+const namHocForm = computed(() => danhSachNamHoc(new Date().getFullYear(), form.nam_tuyen_sinh))
+const namHocJson = computed(() => danhSachNamHoc(new Date().getFullYear(), jsonNamTuyenSinh.value))
 
 async function loadTruongOptions() {
   const pageSizeOptions = 1000
@@ -303,10 +302,6 @@ async function loadTruongOptions() {
 
 async function load() {
   const year = yearFilter()
-  if (year === undefined) {
-    ElMessage.error('Năm tuyển sinh phải là số từ 1990 đến 2100')
-    return
-  }
 
   loading.value = true
   try {
@@ -608,15 +603,15 @@ onMounted(async () => {
             :value="item.id"
           />
         </CustomSelect>
-        <CustomInput
+        <CustomSelect
           v-model="filters.nam_tuyen_sinh"
           class="filter-year"
-          placeholder="Năm"
+          placeholder="Năm học"
           clearable
-          maxlength="4"
-          @keyup.enter="onSearch"
-          @clear="onSearch"
-        />
+          @change="onSearch"
+        >
+          <CustomOption v-for="nam in NAM_HOC" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
+        </CustomSelect>
         <CustomSelect
           v-model="filters.trang_thai"
           class="filter-status"
@@ -793,16 +788,10 @@ onMounted(async () => {
           </CustomSelect>
         </div>
         <div class="json-year">
-          <span class="json-field__label">Năm tuyển sinh</span>
-          <CustomInputNumber
-            v-model="jsonNamTuyenSinh"
-            :min="1990"
-            :max="2100"
-            :step="1"
-            :controls="false"
-            placeholder="Năm"
-            style="width: 100%"
-          />
+          <span class="json-field__label">Năm học</span>
+          <CustomSelect v-model="jsonNamTuyenSinh" placeholder="Năm học" style="width: 100%">
+            <CustomOption v-for="nam in namHocJson" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
+          </CustomSelect>
         </div>
       </div>
       <CustomInput
@@ -834,15 +823,10 @@ onMounted(async () => {
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="6" :xs="24">
-          <CustomFormItem label="Năm tuyển sinh" prop="nam_tuyen_sinh">
-            <CustomInputNumber
-              v-model="form.nam_tuyen_sinh"
-              :min="1990"
-              :max="2100"
-              :step="1"
-              :controls="false"
-              style="width: 100%"
-            />
+          <CustomFormItem label="Năm học" prop="nam_tuyen_sinh">
+            <CustomSelect v-model="form.nam_tuyen_sinh" placeholder="Năm học" style="width: 100%">
+              <CustomOption v-for="nam in namHocForm" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
+            </CustomSelect>
           </CustomFormItem>
         </CustomCol>
         <CustomCol :span="6" :xs="24">
@@ -1018,7 +1002,7 @@ onMounted(async () => {
 }
 
 .filter-year {
-  width: 110px;
+  width: 168px;
 }
 
 .filter-status {
@@ -1067,7 +1051,7 @@ onMounted(async () => {
 }
 
 .json-year {
-  width: 160px;
+  width: 180px;
 }
 
 .json-field__label {

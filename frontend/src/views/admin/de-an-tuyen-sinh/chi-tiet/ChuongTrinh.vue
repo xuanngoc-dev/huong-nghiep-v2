@@ -2,11 +2,16 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { fetchPhuongThucTuyenSinh } from '@/api/phuongThucTuyenSinh'
+import { buildMethodDetail } from './phuongThucChiTiet'
 
 const props = defineProps({
   programs: { type: Array, default: () => [] },
   methods: { type: Array, default: () => [] },
+  criteria: { type: Array, default: () => [] },
 })
+
+const detailVisible = ref(false)
+const activeDetail = ref(null)
 
 const filters = reactive({
   ten: [],
@@ -187,6 +192,30 @@ const emptyText = computed(() => {
   if (active && props.programs.length) return 'Không có chương trình phù hợp bộ lọc.'
   return 'Chưa có chương trình đào tạo.'
 })
+
+const detailByKey = computed(() => {
+  const map = new Map()
+  for (const column of methodColumns.value) {
+    map.set(column.key, buildMethodDetail({
+      label: column.label,
+      subtitle: column.hint,
+      methods: props.methods.filter((method) => methodKey(method) === column.key),
+      criteria: props.criteria,
+    }))
+  }
+  return map
+})
+
+function openMethodDetail(column) {
+  activeDetail.value = detailByKey.value.get(column.key) || null
+  detailVisible.value = true
+}
+
+function cellText(value) {
+  if (value == null || value === '') return '—'
+  if (typeof value === 'object') return JSON.stringify(value)
+  return String(value)
+}
 </script>
 
 <template>
@@ -266,12 +295,24 @@ const emptyText = computed(() => {
         class-name="combo-cell"
       >
         <template #header>
-          <CustomTooltip placement="top" :disabled="!column.hint">
-            <template #content>
-              <div class="method-tip">{{ column.hint }}</div>
-            </template>
-            <span class="method-header">{{ column.label }}</span>
-          </CustomTooltip>
+          <div class="method-heading">
+            <CustomTooltip placement="top" :disabled="!column.hint">
+              <template #content>
+                <div class="method-tip">{{ column.hint }}</div>
+              </template>
+              <span class="method-name">{{ column.label }}</span>
+            </CustomTooltip>
+            <CustomTooltip content="Xem chi tiết" placement="top">
+              <button
+                type="button"
+                class="method-detail"
+                aria-label="Xem chi tiết"
+                @click.stop="openMethodDetail(column)"
+              >
+                <CustomIcon><View /></CustomIcon>
+              </button>
+            </CustomTooltip>
+          </div>
         </template>
         <template #default="{ row }">
           <span v-if="row.cells[column.key].combos.length" class="combo-list">
@@ -294,6 +335,60 @@ const emptyText = computed(() => {
       <CustomEmpty :description="emptyText" />
     </template>
   </CustomTable>
+
+  <CustomDialog
+    v-model="detailVisible"
+    class="method-detail-dialog"
+    :title="activeDetail?.title || 'Chi tiết phương thức'"
+    width="90%"
+    append-to-body
+  >
+    <p v-if="activeDetail?.subtitle" class="detail-sub">{{ activeDetail.subtitle }}</p>
+    <div v-if="activeDetail?.sections.length" class="detail-body">
+      <section v-for="section in activeDetail.sections" :key="section.key" class="detail-section">
+        <h3>{{ section.title }}</h3>
+        <article v-for="(block, index) in section.blocks" :key="`${section.key}-${index}`" class="detail-block">
+          <h4 v-if="block.title">{{ block.title }}</h4>
+          <p v-if="block.kind === 'text'" class="detail-text">{{ block.text }}</p>
+          <p v-else-if="block.kind === 'formula'" class="formula">{{ block.formula }}</p>
+          <div
+            v-else-if="block.kind === 'table'"
+            class="detail-table"
+            :class="{ 'detail-table--wide': block.columns.length > 4 }"
+          >
+            <CustomTable :data="block.rows" border max-height="480">
+              <el-table-column
+                v-for="column in block.columns"
+                :key="column.key"
+                :label="column.label"
+                :min-width="column.minWidth"
+                show-overflow-tooltip
+              >
+                <template #default="{ row }">{{ cellText(row[column.key]) }}</template>
+              </el-table-column>
+            </CustomTable>
+          </div>
+          <div v-else-if="block.kind === 'groups'" class="score-groups">
+            <div v-for="group in block.groups" :key="group.title" class="score-group">
+              <h5>{{ group.title }}</h5>
+              <CustomTable :data="group.rows" border max-height="480">
+                <el-table-column label="Mức" min-width="160">
+                  <template #default="{ row }">{{ row.loai }}</template>
+                </el-table-column>
+                <el-table-column label="Điểm" width="100" align="center">
+                  <template #default="{ row }">{{ cellText(row.diem) }}</template>
+                </el-table-column>
+              </CustomTable>
+            </div>
+          </div>
+          <ul v-if="block.notes?.length" class="detail-notes">
+            <li v-for="note in block.notes" :key="note">{{ note }}</li>
+          </ul>
+        </article>
+      </section>
+    </div>
+    <CustomEmpty v-else description="Phương thức này chưa có quy định quy đổi điểm hoặc cách tính điểm." />
+  </CustomDialog>
 </template>
 
 <style scoped>
@@ -358,8 +453,121 @@ const emptyText = computed(() => {
   color: var(--el-color-danger);
 }
 
-.method-header {
+.method-heading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  max-width: 100%;
+}
+
+.method-name {
   cursor: help;
+}
+
+.method-detail {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-left: 4px;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 85%);
+  border-radius: 4px;
+  background: rgb(255 255 255 / 18%);
+  color: #fff;
+  cursor: pointer;
+}
+
+.method-detail:hover {
+  background: rgb(255 255 255 / 32%);
+}
+
+.method-detail :deep(.el-icon) {
+  font-size: 14px;
+}
+
+.detail-sub,
+.detail-body {
+  font-size: var(--app-font-size);
+  line-height: 1.5;
+  color: var(--el-text-color-primary);
+}
+
+.detail-sub {
+  margin: 0 0 16px;
+  color: var(--el-text-color-secondary);
+  white-space: pre-line;
+}
+
+.detail-section + .detail-section {
+  margin-top: 22px;
+}
+
+.detail-section h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--el-text-color-primary);
+}
+
+.detail-block + .detail-block {
+  margin-top: 14px;
+}
+
+.detail-block h4,
+.score-group h5 {
+  margin: 0 0 8px;
+  font-size: inherit;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--el-text-color-primary);
+}
+
+.detail-text,
+.formula,
+.detail-notes {
+  font-size: inherit;
+  line-height: 1.5;
+}
+
+.detail-text,
+.formula {
+  margin: 0;
+}
+
+.formula {
+  padding: 10px 12px;
+  background: var(--el-fill-color-light);
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.detail-notes {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--el-text-color-regular);
+  line-height: 1.5;
+}
+
+.detail-table,
+.detail-table--wide {
+  width: 100%;
+}
+
+.score-groups {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .score-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .method-tip {

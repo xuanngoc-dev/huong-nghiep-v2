@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field, field_validator
 class DmToHopMonHocWrite(BaseModel):
     ma_to_hop: str = Field(..., min_length=1, max_length=20)
     ten_to_hop: str = Field(..., min_length=1, max_length=150)
-    ds_mon_hoc: list[str] = Field(..., min_length=1, max_length=20)
+    ds_mon_hoc: list[str] = Field(default_factory=list, max_length=20)
     trang_thai: int = Field(default=1, ge=0, le=1)
     ghi_chu: str | None = Field(default=None, max_length=2000)
 
@@ -41,8 +41,6 @@ class DmToHopMonHocWrite(BaseModel):
                 continue
             seen.add(item)
             cleaned.append(item)
-        if not cleaned:
-            raise ValueError("Vui lòng chọn ít nhất một môn học")
         return cleaned
 
     @field_validator("ghi_chu")
