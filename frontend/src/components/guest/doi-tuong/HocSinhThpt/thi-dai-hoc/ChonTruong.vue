@@ -26,6 +26,9 @@ const holland = ref([])
 const dangTaiNganh = ref(false)
 const loiNganh = ref('')
 const dangTaoPhien = ref(false)
+const nganhCungNhom = ref([])
+const dangTaiCungNhom = ref(false)
+const loiCungNhom = ref('')
 
 const danhSach = ref([])
 const tinhTheoMa = ref(new Map())
@@ -38,6 +41,8 @@ const trang = ref(1)
 const soMoiTrang = ref(12)
 const truongDaChon = ref([])
 const soSanhMo = ref(false)
+const chiTietMo = ref(false)
+const truongChiTiet = ref(null)
 const introMo = ref(['nganh'])
 
 const ten = ref('')
@@ -51,6 +56,10 @@ function tachMoTa(value) {
     .map((item) => item.trim())
     .filter(Boolean)
 }
+
+const tenNhom = computed(
+  () => nganh.value?.ten_nhom_nganh || nganhCungNhom.value[0]?.ten_nhom_nganh || '',
+)
 
 const loiThe = computed(() => {
   const item = nganh.value
@@ -102,6 +111,30 @@ function diaDiem(item) {
   return [khuVucCua(item), item.ten_tinh_thanh].filter(Boolean).join(' · ') || 'Chưa rõ khu vực'
 }
 
+function diaChi(item) {
+  return (item.dia_chi_tru_so || '').trim() || 'Chưa cập nhật'
+}
+
+function hrefWebsite(value) {
+  const text = (value || '').trim()
+  if (!text) return ''
+  if (/^https?:\/\//i.test(text)) return text
+  return `https://${text}`
+}
+
+function linhVucCua(item) {
+  const nguon = [...(item.linh_vuc_dao_tao_chinh || []), ...(item.linh_vuc_dao_tao_khac || [])]
+  const tags = []
+  const daCo = new Set()
+  for (const raw of nguon) {
+    const text = String(raw || '').trim()
+    if (!text || daCo.has(text)) continue
+    daCo.add(text)
+    tags.push(text)
+  }
+  return tags
+}
+
 const ketQua = computed(() => {
   const tuKhoa = boLoc.value.ten.toLowerCase()
   return danhSach.value.filter((item) => {
@@ -137,6 +170,11 @@ const hangSoSanh = [
   { label: 'Tên tiếng Anh', lay: (item) => item.ten_tieng_anh || '—' },
 ]
 
+function moChiTiet(item) {
+  truongChiTiet.value = item
+  chiTietMo.value = true
+}
+
 function daChon(item) {
   return truongDaChon.value.some((truong) => truong.id === item.id)
 }
@@ -169,6 +207,45 @@ const goiYHoSo = computed(() => {
   }
   return 'Hồ sơ cá nhân bổ sung khu vực nơi bạn đang ở vào tìm kiếm trường. Cập nhật tỉnh thành tại Hồ sơ của tôi. Chưa có tài khoản thì đăng nhập hoặc tạo tài khoản.'
 })
+
+const biCatMap = ref({})
+
+function khoaTran(id, field) {
+  return `${id}:${field}`
+}
+
+function biCat(id, field) {
+  return !!biCatMap.value[khoaTran(id, field)]
+}
+
+function datBiCat(key, value) {
+  if (!!biCatMap.value[key] === value) return
+  biCatMap.value = { ...biCatMap.value, [key]: value }
+}
+
+const vMotHang = {
+  mounted(el, binding) {
+    const doCapNhat = () => {
+      datBiCat(binding.value, el.scrollWidth > el.clientWidth + 1)
+    }
+    el._roTran = new ResizeObserver(doCapNhat)
+    el._roTran.observe(el)
+    el._khoaTran = binding.value
+    doCapNhat()
+  },
+  updated(el, binding) {
+    el._khoaTran = binding.value
+    datBiCat(binding.value, el.scrollWidth > el.clientWidth + 1)
+  },
+  unmounted(el) {
+    el._roTran?.disconnect()
+    const key = el._khoaTran
+    if (!key || !(key in biCatMap.value)) return
+    const next = { ...biCatMap.value }
+    delete next[key]
+    biCatMap.value = next
+  },
+}
 
 function diHoSo() {
   if (!auth.isAuthenticated) {
@@ -216,7 +293,44 @@ async function thamGiaKhaoSat() {
   }
 }
 
+let lanTaiNganh = 0
+
+async function taiNganhCungNhom(maNhom, lan) {
+  if (!maNhom) {
+    nganhCungNhom.value = []
+    loiCungNhom.value = ''
+    return
+  }
+  dangTaiCungNhom.value = true
+  loiCungNhom.value = ''
+  nganhCungNhom.value = []
+  try {
+    const pageSize = 200
+    let page = 1
+    const items = []
+    while (page <= 20) {
+      const data = await fetchNganh(
+        { page, page_size: pageSize, trang_thai: 1, ma_nhom_nganh: maNhom },
+        { skipLoading: true },
+      )
+      if (lan !== lanTaiNganh) return
+      items.push(...(data.items || []))
+      if (items.length >= (data.total || 0) || !data.items?.length) break
+      page += 1
+    }
+    if (lan !== lanTaiNganh) return
+    items.sort((a, b) => a.ten_nganh.localeCompare(b.ten_nganh, 'vi'))
+    nganhCungNhom.value = items
+  } catch {
+    if (lan !== lanTaiNganh) return
+    loiCungNhom.value = 'Không tải được ngành cùng nhóm.'
+  } finally {
+    if (lan === lanTaiNganh) dangTaiCungNhom.value = false
+  }
+}
+
 async function taiNganh() {
+  const lan = ++lanTaiNganh
   dangTaiNganh.value = true
   loiNganh.value = ''
   nganh.value = null
@@ -225,15 +339,39 @@ async function taiNganh() {
       fetchNganh({ q: maNganh.value, trang_thai: 1, page: 1, page_size: 20 }, { skipLoading: true }),
       fetchNhomHolland({ trang_thai: 1, page: 1, page_size: 20 }, { skipLoading: true }),
     ])
+    if (lan !== lanTaiNganh) return
     holland.value = hollandData.items || []
     nganh.value = (data.items || []).find((item) => item.ma_nganh === maNganh.value) || null
-    if (!nganh.value) loiNganh.value = 'Không tìm thấy ngành đã chọn.'
+    if (!nganh.value) {
+      loiNganh.value = 'Không tìm thấy ngành đã chọn.'
+      nganhCungNhom.value = []
+      return
+    }
+    const maNhom = nganh.value.ma_nhom_nganh
+    const daCoDanhSach = nganhCungNhom.value.some((item) => item.ma_nhom_nganh === maNhom)
+    if (!daCoDanhSach) taiNganhCungNhom(maNhom, lan)
   } catch {
+    if (lan !== lanTaiNganh) return
     loiNganh.value = 'Không tải được thông tin ngành.'
+    nganhCungNhom.value = []
   } finally {
-    dangTaiNganh.value = false
+    if (lan === lanTaiNganh) dangTaiNganh.value = false
   }
 }
+
+function chonNganhKhac(item) {
+  if (item.ma_nganh === maNganh.value) return
+  router.push({
+    name: 'thpt-thi-dai-hoc-chon-truong',
+    params: { maNganh: item.ma_nganh },
+  })
+}
+
+watch(maNganh, (ma, truoc) => {
+  if (!ma || ma === truoc) return
+  introMo.value = ['nganh']
+  taiNganh()
+})
 
 async function taiHet(layTrang) {
   const pageSize = 500
@@ -302,6 +440,8 @@ onMounted(() => {
 <template>
   <section class="chon-truong py-4">
     <div class="container-fluid">
+      <div class="row g-4">
+        <div class="col-lg-9">
       <CustomButton link type="primary" @click="quayLai">Quay lại ngành</CustomButton>
 
       <article class="intro-card mt-3">
@@ -407,11 +547,70 @@ onMounted(() => {
                 <span class="nhom-card__mark" aria-hidden="true"></span>
               </label>
               <div class="nhom-card__main">
-                <p class="nhom-card__field">{{ loaiCua(item) || 'Cơ sở đào tạo' }}</p>
-                <h3 class="nhom-card__name">{{ item.ten_truong }}</h3>
-                <p v-if="item.ten_tieng_anh" class="nhom-card__en">{{ item.ten_tieng_anh }}</p>
-                <p class="nhom-card__meta">{{ diaDiem(item) }}</p>
-                <p v-if="item.gioi_thieu_ngan" class="nhom-card__text">{{ item.gioi_thieu_ngan }}</p>
+                <CustomTooltip
+                  :content="loaiCua(item) || 'Cơ sở đào tạo'"
+                  placement="top"
+                  :disabled="!biCat(item.id, 'loai')"
+                >
+                  <p v-mot-hang="khoaTran(item.id, 'loai')" class="nhom-card__line nhom-card__field">
+                    {{ loaiCua(item) || 'Cơ sở đào tạo' }}
+                  </p>
+                </CustomTooltip>
+                <!-- <div v-if="linhVucCua(item).length" class="nhom-card__tags">
+                  <CustomTag v-for="tag in linhVucCua(item)" :key="tag" effect="plain">{{ tag }}</CustomTag>
+                </div> -->
+                <CustomTooltip :content="item.ten_truong" placement="top" :disabled="!biCat(item.id, 'ten')">
+                  <h3 v-mot-hang="khoaTran(item.id, 'ten')" class="nhom-card__line nhom-card__name">
+                    {{ item.ten_truong }}
+                  </h3>
+                </CustomTooltip>
+                <CustomTooltip :content="diaChi(item)" placement="top" :disabled="!item.dia_chi_tru_so || !biCat(item.id, 'diachi')">
+                  <p class="nhom-card__addr">
+                    <CustomIcon class="nhom-card__pin" aria-hidden="true"><Location /></CustomIcon>
+                    <span v-mot-hang="khoaTran(item.id, 'diachi')" class="nhom-card__line nhom-card__meta">
+                      {{ diaChi(item) }}
+                    </span>
+                  </p>
+                </CustomTooltip>
+                <CustomTooltip
+                  :content="item.website || 'Chưa cập nhật'"
+                  placement="top"
+                  :disabled="!item.website || !biCat(item.id, 'web')"
+                >
+                  <p class="nhom-card__addr">
+                    <CustomIcon class="nhom-card__pin" aria-hidden="true"><Link /></CustomIcon>
+                    <a
+                      v-if="item.website"
+                      v-mot-hang="khoaTran(item.id, 'web')"
+                      class="nhom-card__line nhom-card__web"
+                      :href="hrefWebsite(item.website)"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      @click.stop
+                    >
+                      {{ item.website }}
+                    </a>
+                    <span v-else class="nhom-card__line nhom-card__meta">Chưa cập nhật</span>
+                  </p>
+                </CustomTooltip>
+                <!-- <CustomTooltip :content="diaDiem(item)" placement="top" :disabled="!biCat(item.id, 'dia')">
+                  <p v-mot-hang="khoaTran(item.id, 'dia')" class="nhom-card__line nhom-card__meta">
+                    {{ diaDiem(item) }}
+                  </p>
+                </CustomTooltip> -->
+                <CustomTooltip
+                  v-if="item.gioi_thieu_ngan"
+                  :content="item.gioi_thieu_ngan"
+                  placement="top"
+                  :disabled="!biCat(item.id, 'gioi')"
+                >
+                  <!-- <p v-mot-hang="khoaTran(item.id, 'gioi')" class="nhom-card__line nhom-card__text">
+                    {{ item.gioi_thieu_ngan }}
+                  </p> -->
+                </CustomTooltip>
+                <!-- <div class="nhom-card__detail">
+                  <CustomButton plain type="primary" @click.stop="moChiTiet(item)">Chi tiết</CustomButton>
+                </div> -->
               </div>
             </article>
           </div>
@@ -426,7 +625,66 @@ onMounted(() => {
           />
         </div>
       </div>
+        </div>
+
+        <div class="col-lg-3">
+          <div class="paths-card">
+            <h2 id="nganh-cung-nhom" class="h4 mb-2">Ngành cùng nhóm</h2>
+            <p v-if="tenNhom" class="side-lead">{{ tenNhom }}</p>
+            <p v-if="loiCungNhom" class="holland-note holland-note__text mb-0">{{ loiCungNhom }}</p>
+            <p v-else-if="dangTaiCungNhom || (dangTaiNganh && !nganhCungNhom.length)" class="side-lead mb-0">
+              Đang tải ngành…
+            </p>
+            <p v-else-if="!nganhCungNhom.length" class="side-lead mb-0">Chưa có ngành trong nhóm này.</p>
+            <div v-else class="d-flex flex-column gap-2" aria-labelledby="nganh-cung-nhom">
+              <button
+                v-for="item in nganhCungNhom"
+                :key="item.id"
+                type="button"
+                class="switch-card side-nganh"
+                :class="{ 'is-selected': item.ma_nganh === maNganh }"
+                @click="chonNganhKhac(item)"
+              >
+                <span class="side-nganh__code">{{ item.ma_nganh }}</span>
+                <span class="switch-card__body">
+                  <span class="switch-card__name">{{ item.ten_nganh }}</span>
+                  <span v-if="item.ten_tieng_anh" class="switch-card__text">{{ item.ten_tieng_anh }}</span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <CustomDialog v-model="chiTietMo" :title="truongChiTiet?.ten_truong || 'Chi tiết trường'" :width="720" :height="420">
+      <div v-if="truongChiTiet" class="chi-tiet">
+        <p class="nhom-card__field">{{ loaiCua(truongChiTiet) || 'Cơ sở đào tạo' }}</p>
+        <div v-if="linhVucCua(truongChiTiet).length" class="nhom-card__tags">
+          <CustomTag v-for="tag in linhVucCua(truongChiTiet)" :key="tag" effect="plain">{{ tag }}</CustomTag>
+        </div>
+        <p class="chi-tiet__addr">
+          <CustomIcon class="nhom-card__pin" aria-hidden="true"><Location /></CustomIcon>
+          <span>{{ diaChi(truongChiTiet) }}</span>
+        </p>
+        <p class="chi-tiet__row">
+          <CustomIcon class="nhom-card__pin" aria-hidden="true"><Link /></CustomIcon>
+          <a
+            v-if="truongChiTiet.website"
+            class="nhom-card__web"
+            :href="hrefWebsite(truongChiTiet.website)"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {{ truongChiTiet.website }}
+          </a>
+          <span v-else>Chưa cập nhật website</span>
+        </p>
+        <p class="chi-tiet__label">{{ diaDiem(truongChiTiet) }}</p>
+        <p v-if="truongChiTiet.gioi_thieu_ngan" class="chi-tiet__text">{{ truongChiTiet.gioi_thieu_ngan }}</p>
+        <p v-if="truongChiTiet.gioi_thieu_chi_tiet" class="chi-tiet__text">{{ truongChiTiet.gioi_thieu_chi_tiet }}</p>
+      </div>
+    </CustomDialog>
 
     <CustomDialog v-model="soSanhMo" title="So sánh trường" :width="960" height="70vh">
       <div class="so-sanh-wrap">
@@ -460,8 +718,34 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.chon-truong :is(.h2, .holland-overview__title, .nhom-card__name) {
+.chon-truong :is(.h2, .h4, .holland-overview__title, .nhom-card__name, .switch-card__name) {
   font-weight: 400;
+}
+
+.side-lead {
+  margin: 0 0 12px;
+  color: #5c6b62;
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+.side-nganh {
+  align-items: center;
+}
+
+.side-nganh__code {
+  flex: 0 0 auto;
+  min-width: 52px;
+  padding: 4px 6px;
+  border-radius: 8px;
+  background: var(--guest-primary);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .chon-truong :deep(.el-button) {
@@ -625,8 +909,24 @@ onMounted(() => {
 }
 
 .nhom-card__main {
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  align-self: stretch;
+  gap: 4px;
   min-width: 0;
+}
+
+.nhom-card__main :deep(.el-tooltip__trigger) {
+  display: block;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.nhom-card__line {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .nhom-card__check {
@@ -634,7 +934,95 @@ onMounted(() => {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
+  align-self: center;
   cursor: pointer;
+}
+
+.nhom-card__addr,
+.chi-tiet__addr {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+}
+
+.nhom-card__main :deep(.nhom-card__addr.el-tooltip__trigger) {
+  display: flex;
+}
+
+.nhom-card__pin {
+  flex: 0 0 auto;
+  color: var(--guest-primary);
+  font-size: 1rem;
+}
+
+.nhom-card__addr .nhom-card__line {
+  flex: 1;
+  min-width: 0;
+}
+
+.nhom-card__web {
+  display: block;
+  color: var(--guest-primary);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.45;
+  text-decoration: none;
+}
+
+.nhom-card__web:hover {
+  text-decoration: underline;
+}
+
+.nhom-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.nhom-card__tags :deep(.el-tag) {
+  height: auto;
+  border-color: #7eae8c;
+  background: #f3faf6;
+  color: #1f6b45;
+  font-weight: 400;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+.nhom-card__detail {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.chi-tiet {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #3a4742;
+  font-weight: 400;
+}
+
+.chi-tiet__row,
+.chi-tiet__label,
+.chi-tiet__text {
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.chi-tiet__row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chi-tiet__text {
+  white-space: pre-line;
 }
 
 .nhom-card__check input {
@@ -767,13 +1155,6 @@ onMounted(() => {
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.45;
-}
-
-.nhom-card__text {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
 }
 
 .nhom-pager {
