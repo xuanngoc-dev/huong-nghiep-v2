@@ -35,7 +35,7 @@ const hoSo = ref(null)
 const dangTai = ref(false)
 const loi = ref('')
 const trang = ref(1)
-const soMoiTrang = ref(8)
+const soMoiTrang = ref(12)
 const truongDaChon = ref([])
 const soSanhMo = ref(false)
 const introMo = ref(['nganh'])
@@ -141,15 +141,15 @@ function daChon(item) {
   return truongDaChon.value.some((truong) => truong.id === item.id)
 }
 
-function doiChon(item, event) {
+function doiChon(item) {
+  const dangChon = daChon(item)
   const conLai = truongDaChon.value.filter((truong) => truong.id !== item.id)
-  if (!event.target.checked) {
+  if (dangChon) {
     truongDaChon.value = conLai
     if (conLai.length < 2) soSanhMo.value = false
     return
   }
   if (conLai.length >= SO_TRUONG_TOI_DA) {
-    event.target.checked = false
     ElMessage.warning('Chỉ chọn tối đa 3 trường để so sánh.')
     return
   }
@@ -394,15 +394,15 @@ onMounted(() => {
         <p v-else-if="!ketQua.length" class="holland-note holland-note__text">Không có trường khớp bộ lọc.</p>
         <div v-else class="row g-3">
           <div v-for="item in truongTrang" :key="item.id" class="col-12 col-md-6 col-lg-3">
-            <article class="nhom-card h-100" :class="{ 'is-selected': daChon(item) }">
+            <article class="nhom-card h-100" :class="{ 'is-selected': daChon(item) }" @click="doiChon(item)">
               <p class="nhom-card__code">{{ item.ma_truong }}</p>
-              <label class="nhom-card__check">
+              <label class="nhom-card__check" @click.stop>
                 <input
                   type="checkbox"
                   :checked="daChon(item)"
                   :disabled="!daChon(item) && truongDaChon.length >= SO_TRUONG_TOI_DA"
                   :aria-label="`Chọn ${item.ten_truong}`"
-                  @change="doiChon(item, $event)"
+                  @change="doiChon(item)"
                 />
                 <span class="nhom-card__mark" aria-hidden="true"></span>
               </label>
@@ -611,6 +611,7 @@ onMounted(() => {
   border-radius: 12px;
   background: #fff;
   box-shadow: 0 10px 24px rgba(31, 122, 77, 0.16);
+  cursor: pointer;
 }
 
 .nhom-card.is-selected {
