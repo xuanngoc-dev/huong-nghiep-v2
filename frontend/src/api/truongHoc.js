@@ -1,7 +1,7 @@
 import api from '@/api/axios'
 
-export function fetchTruongHoc(params) {
-  return api.get('/danh-muc/truong-hoc', { params }).then((res) => res.data)
+export function fetchTruongHoc(params, config = {}) {
+  return api.get('/danh-muc/truong-hoc', { ...config, params }).then((res) => res.data)
 }
 
 export function createTruongHoc(payload) {

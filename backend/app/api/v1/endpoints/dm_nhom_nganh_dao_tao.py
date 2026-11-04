@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models.dm_linh_vuc_dao_tao import DmLinhVucDaoTao
+from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.dm_nhom_nganh_dao_tao import DmNhomNganhDaoTao
 from app.models.nguoi_dung import NguoiDung
 from app.schemas.dm_nhom_nganh_dao_tao import (
@@ -40,8 +41,25 @@ def _ensure_linh_vuc(db: Session, codes: list[str]) -> None:
         )
 
 
-def _to_public(item: DmNhomNganhDaoTao, parent: DmLinhVucDaoTao) -> DmNhomNganhDaoTaoPublic:
-    """Ghép nhóm ngành với tên và mã lĩnh vực cha để trả về cho client."""
+def _dem_nganh(db: Session, codes: list[str]) -> dict[str, int]:
+    """Đếm ngành đang hoạt động theo từng mã nhóm ngành."""
+    unique = list(dict.fromkeys(codes))
+    if not unique:
+        return {}
+    rows = db.execute(
+        select(DmNganhDaoTao.ma_nhom_nganh, func.count())
+        .where(DmNganhDaoTao.ma_nhom_nganh.in_(unique), DmNganhDaoTao.trang_thai == 1)
+        .group_by(DmNganhDaoTao.ma_nhom_nganh)
+    ).all()
+    return {code: int(total) for code, total in rows}
+
+
+def _to_public(
+    item: DmNhomNganhDaoTao,
+    parent: DmLinhVucDaoTao,
+    so_nganh: int = 0,
+) -> DmNhomNganhDaoTaoPublic:
+    """Ghép nhóm ngành với tên, mã lĩnh vực cha và số ngành đang hoạt động."""
     return DmNhomNganhDaoTaoPublic(
         id=item.id,
         ma_linh_vuc=item.ma_linh_vuc,
@@ -50,10 +68,16 @@ def _to_public(item: DmNhomNganhDaoTao, parent: DmLinhVucDaoTao) -> DmNhomNganhD
         ten_nhom_nganh=item.ten_nhom_nganh,
         ten_tieng_anh=item.ten_tieng_anh,
         mo_ta=item.mo_ta,
+        so_nganh=so_nganh,
         trang_thai=item.trang_thai,
         created_at=item.created_at,
         updated_at=item.updated_at,
     )
+
+
+def _public_one(db: Session, item: DmNhomNganhDaoTao, parent: DmLinhVucDaoTao) -> DmNhomNganhDaoTaoPublic:
+    counts = _dem_nganh(db, [item.ma_nhom_nganh])
+    return _to_public(item, parent, counts.get(item.ma_nhom_nganh, 0))
 
 
 def _load_pair(db: Session, item_id: int) -> tuple[DmNhomNganhDaoTao, DmLinhVucDaoTao]:
@@ -76,9 +100,8 @@ def list_nhom_nganh_dao_tao(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
 ) -> DmNhomNganhDaoTaoPage:
-    """Lấy danh sách nhóm ngành có phân trang. Lọc theo từ khóa, trạng thái và lĩnh vực cha."""
+    """Lấy danh sách nhóm ngành có phân trang, không cần đăng nhập. Lọc theo từ khóa, trạng thái và lĩnh vực cha."""
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())
@@ -113,8 +136,9 @@ def list_nhom_nganh_dao_tao(
         .offset((page - 1) * page_size)
         .limit(page_size)
     ).all()
+    counts = _dem_nganh(db, [item.ma_nhom_nganh for item, _parent in rows])
     return DmNhomNganhDaoTaoPage(
-        items=[_to_public(item, parent) for item, parent in rows],
+        items=[_to_public(item, parent, counts.get(item.ma_nhom_nganh, 0)) for item, parent in rows],
         total=total,
         page=page,
         page_size=page_size,
@@ -129,7 +153,7 @@ def get_nhom_nganh_dao_tao(
 ) -> DmNhomNganhDaoTaoPublic:
     """Lấy chi tiết một nhóm ngành đào tạo theo id, kèm tên lĩnh vực cha."""
     item, parent = _load_pair(db, item_id)
-    return _to_public(item, parent)
+    return _public_one(db, item, parent)
 
 
 @router.post("/bulk", response_model=DmNhomNganhDaoTaoBulkResult, status_code=status.HTTP_201_CREATED)
@@ -196,7 +220,7 @@ def create_nhom_nganh_dao_tao(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Mã nhóm ngành đã tồn tại") from None
     db.refresh(item)
     saved, parent = _load_pair(db, item.id)
-    return _to_public(saved, parent)
+    return _public_one(db, saved, parent)
 
 
 @router.put("/{item_id}", response_model=DmNhomNganhDaoTaoPublic)
@@ -218,7 +242,7 @@ def update_nhom_nganh_dao_tao(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Mã nhóm ngành đã tồn tại") from None
     db.refresh(item)
     saved, parent = _load_pair(db, item.id)
-    return _to_public(saved, parent)
+    return _public_one(db, saved, parent)
 
 
 @router.delete("", response_model=DmNhomNganhDaoTaoDeleteManyResult)

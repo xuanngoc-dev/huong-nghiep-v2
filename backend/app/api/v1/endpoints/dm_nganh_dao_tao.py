@@ -106,9 +106,8 @@ def list_nganh_dao_tao(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
 ) -> DmNganhDaoTaoPage:
-    """Lấy danh sách ngành đào tạo có phân trang. Lọc theo từ khóa, trạng thái và nhóm ngành cha."""
+    """Lấy danh sách ngành đào tạo có phân trang, không cần đăng nhập. Lọc theo từ khóa, trạng thái và nhóm ngành cha."""
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())

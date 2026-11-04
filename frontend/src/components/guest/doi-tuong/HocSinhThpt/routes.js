@@ -65,6 +65,27 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
+    path: 'hoc-sinh-thpt/thi-dai-hoc/da-co',
+    name: 'thpt-thi-dai-hoc-da-co',
+    component: () => import('./thi-dai-hoc/DaCo.vue'),
+    meta: {
+      title: 'Đã có ngành nghề mong muốn',
+      public: true,
+      dinhHuong: 'thi-dai-hoc',
+      giaiDoan: 'da-co',
+    },
+  },
+  {
+    path: 'hoc-sinh-thpt/thi-dai-hoc/da-co/chon-truong/:maNganh',
+    name: 'thpt-thi-dai-hoc-chon-truong',
+    component: () => import('./thi-dai-hoc/ChonTruong.vue'),
+    meta: {
+      title: 'Chọn trường',
+      public: true,
+      dinhHuong: 'thi-dai-hoc',
+    },
+  },
+  {
     path: 'hoc-sinh-thpt/khoi-nghiep',
     name: 'thpt-khoi-nghiep',
     component: () => import('./KhoiNghiep.vue'),

@@ -1,7 +1,7 @@
 import api from '@/api/axios'
 
-export function fetchNhomNganh(params) {
-  return api.get('/danh-muc/nhom-nganh-dao-tao', { params }).then((res) => res.data)
+export function fetchNhomNganh(params, config = {}) {
+  return api.get('/danh-muc/nhom-nganh-dao-tao', { ...config, params }).then((res) => res.data)
 }
 
 export function createNhomNganh(payload) {

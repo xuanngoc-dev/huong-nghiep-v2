@@ -43,9 +43,8 @@ def list_nhom_tinh_cach_holland(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
 ) -> DmNhomTinhCachHollandPage:
-    """Lấy danh sách nhóm Holland có phân trang. Lọc theo từ khóa (tên, mã, tên tiếng Anh) và trạng thái."""
+    """Lấy danh sách nhóm Holland có phân trang, không cần đăng nhập."""
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())

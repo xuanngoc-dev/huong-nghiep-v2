@@ -60,6 +60,7 @@ class DmNhomNganhDaoTaoPublic(BaseModel):
     ten_nhom_nganh: str
     ten_tieng_anh: str
     mo_ta: str | None = None
+    so_nganh: int = 0
     trang_thai: int
     created_at: datetime | None = None
     updated_at: datetime | None = None

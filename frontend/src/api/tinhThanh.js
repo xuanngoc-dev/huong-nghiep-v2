@@ -1,7 +1,7 @@
 import api from '@/api/axios'
 
-export function fetchTinhThanh(params) {
-  return api.get('/danh-muc/tinh-thanh', { params }).then((res) => res.data)
+export function fetchTinhThanh(params, config = {}) {
+  return api.get('/danh-muc/tinh-thanh', { ...config, params }).then((res) => res.data)
 }
 
 export function createTinhThanh(payload) {
