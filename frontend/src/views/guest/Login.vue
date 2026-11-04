@@ -104,7 +104,9 @@ async function onSubmit() {
 
       <p class="auth-footer">
         Chưa có tài khoản?
-        <RouterLink to="/register">Đăng ký</RouterLink>
+        <RouterLink :to="{ name: 'register', query: route.query.redirect ? { redirect: route.query.redirect } : {} }">
+          Đăng ký
+        </RouterLink>
       </p>
     </el-card>
   </div>

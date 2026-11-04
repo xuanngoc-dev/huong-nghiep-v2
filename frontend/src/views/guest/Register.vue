@@ -1,11 +1,20 @@
 <script setup>
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const route = useRoute()
 const auth = useAuthStore()
+
+function safePath(value) {
+  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) return ''
+  if (value === '/login' || value.startsWith('/login?') || value === '/register' || value.startsWith('/register?')) {
+    return ''
+  }
+  return value
+}
 
 const formRef = ref()
 const submitting = ref(false)
@@ -70,7 +79,7 @@ async function onSubmit() {
       mat_khau: form.mat_khau,
     })
     ElMessage.success('Đăng ký thành công')
-    await router.replace('/member')
+    await router.replace(safePath(route.query.redirect) || '/member')
   } catch (error) {
     const detail = error.response?.data?.detail
     ElMessage.error(typeof detail === 'string' ? detail : 'Đăng ký thất bại')
@@ -137,7 +146,9 @@ async function onSubmit() {
 
       <p class="auth-footer">
         Đã có tài khoản?
-        <RouterLink to="/login">Đăng nhập</RouterLink>
+        <RouterLink :to="{ name: 'login', query: route.query.redirect ? { redirect: route.query.redirect } : {} }">
+          Đăng nhập
+        </RouterLink>
       </p>
     </el-card>
   </div>

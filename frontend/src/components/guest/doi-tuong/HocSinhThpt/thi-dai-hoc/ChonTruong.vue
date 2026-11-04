@@ -2,7 +2,9 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { fetchHoSo } from '@/api/hoSo'
 import { fetchNganh } from '@/api/nganhDaoTao'
+import { useAuthStore } from '@/stores/auth'
 import { fetchNhomHolland } from '@/api/nhomTinhCachHolland'
 import { batDauPhienHolland } from '@/api/phienKhaoSat'
 import { fetchTinhThanh } from '@/api/tinhThanh'
@@ -12,10 +14,11 @@ defineOptions({ name: 'ThptThiDaiHocChonTruong' })
 
 const KHU_VUC = ['Bắc', 'Trung', 'Nam']
 const LOAI_CO_SO = ['Cao đẳng', 'Đại học', 'Học viện']
-const SO_TRUONG_TOI_DA = 3
+const SO_TRUONG_TOI_DA = 4
 
 const route = useRoute()
 const router = useRouter()
+const auth = useAuthStore()
 const maNganh = computed(() => String(route.params.maNganh || ''))
 
 const nganh = ref(null)
@@ -27,12 +30,15 @@ const dangTaoPhien = ref(false)
 const danhSach = ref([])
 const tinhTheoMa = ref(new Map())
 const tinhTheoTen = ref(new Map())
+const tinhTheoId = ref(new Map())
+const hoSo = ref(null)
 const dangTai = ref(false)
 const loi = ref('')
 const trang = ref(1)
 const soMoiTrang = ref(8)
 const truongDaChon = ref([])
 const soSanhMo = ref(false)
+const introMo = ref(['nganh'])
 
 const ten = ref('')
 const khuVuc = ref('')
@@ -150,6 +156,45 @@ function doiChon(item, event) {
   truongDaChon.value = [...conLai, item]
 }
 
+const tinhHoSo = computed(() => {
+  const id = hoSo.value?.tinh_thanh_id
+  if (!id) return null
+  return tinhTheoId.value.get(id) || null
+})
+
+const goiYHoSo = computed(() => {
+  const tinh = tinhHoSo.value
+  if (tinh?.ten && tinh.khu_vuc) {
+    return `Hồ sơ cá nhân bổ sung khu vực nơi bạn đang ở vào tìm kiếm trường. Hồ sơ đang ở ${tinh.ten}, khu vực ${tinh.khu_vuc}. Cập nhật tỉnh thành tại Hồ sơ của tôi.`
+  }
+  return 'Hồ sơ cá nhân bổ sung khu vực nơi bạn đang ở vào tìm kiếm trường. Cập nhật tỉnh thành tại Hồ sơ của tôi. Chưa có tài khoản thì đăng nhập hoặc tạo tài khoản.'
+})
+
+function diHoSo() {
+  if (!auth.isAuthenticated) {
+    router.push({ name: 'login', query: { redirect: '/member/tai-khoan/ho-so' } })
+    return
+  }
+  router.push({ name: 'ho-so' })
+}
+
+function apDungKhuVucHoSo() {
+  const khu = tinhHoSo.value?.khu_vuc
+  if (!khu || !KHU_VUC.includes(khu) || boLoc.value.khuVuc || khuVuc.value) return
+  khuVuc.value = khu
+  boLoc.value = { ...boLoc.value, khuVuc: khu }
+}
+
+async function taiHoSo() {
+  if (!auth.isAuthenticated) return
+  try {
+    hoSo.value = await fetchHoSo({ skipLoading: true })
+  } catch {
+    hoSo.value = null
+  }
+  apDungKhuVucHoSo()
+}
+
 function quayLai() {
   router.push({ name: 'thpt-thi-dai-hoc-da-co' })
 }
@@ -218,14 +263,18 @@ async function taiTruong() {
     const tinhData = { items: tinhItems }
     const theoMa = new Map()
     const theoTen = new Map()
+    const theoId = new Map()
     for (const item of tinhData.items || []) {
       if (item.ma_tinh && item.khu_vuc) theoMa.set(item.ma_tinh, item.khu_vuc)
       const tenTinh = chuanHoa(item.ten_tinh)
       if (tenTinh && item.khu_vuc) theoTen.set(tenTinh, item.khu_vuc)
+      if (item.id) theoId.set(item.id, { ten: item.ten_tinh, khu_vuc: item.khu_vuc || '' })
     }
     tinhTheoMa.value = theoMa
     tinhTheoTen.value = theoTen
+    tinhTheoId.value = theoId
     danhSach.value = truongData.items || []
+    apDungKhuVucHoSo()
   } catch {
     loi.value = 'Không tải được danh sách trường.'
     danhSach.value = []
@@ -246,6 +295,7 @@ function timKiem() {
 onMounted(() => {
   taiNganh()
   taiTruong()
+  taiHoSo()
 })
 </script>
 
@@ -259,26 +309,34 @@ onMounted(() => {
         <p v-else-if="dangTaiNganh" class="holland-overview__lead mb-0">Đang tải ngành…</p>
         <template v-else-if="nganh">
           <p class="nhom-card__code">{{ nganh.ma_nganh }}</p>
-          <p class="nhom-card__field">{{ nganh.trinh_do }}</p>
-          <h2 class="h2 mb-1">{{ nganh.ten_nganh }}</h2>
-          <p v-if="nganh.ten_tieng_anh" class="nhom-card__en">{{ nganh.ten_tieng_anh }}</p>
-          <p class="loi-the">
-            Bạn đã chọn ngành <span class="intro-card__emph">{{ nganh.ten_nganh }}</span>, trực thuộc nhóm ngành
-            nghề <span class="intro-card__emph">{{ nganh.ten_nhom_nganh }}</span>. Ngành này có những lợi thế:
-          </p>
-          <ul v-if="loiThe.length" class="loi-the-list">
-            <li v-for="(item, index) in loiThe" :key="index">{{ item }}</li>
-          </ul>
-          <p v-else class="loi-the">Danh mục chưa có mô tả lợi thế cho ngành này.</p>
-          <p class="loi-the mb-0">
-            Bạn có muốn tham gia khảo sát để chắc chắn thêm về điều đó, hoặc chọn lại ngành nghề khác?
-          </p>
-          <div class="intro-actions">
-            <CustomButton type="primary" :disabled="dangTaoPhien" :loading="dangTaoPhien" @click="thamGiaKhaoSat">
-              Tham gia khảo sát
-            </CustomButton>
-            <CustomButton link type="primary" @click="quayLai">Chọn lại ngành</CustomButton>
-          </div>
+          <el-collapse v-model="introMo" class="intro-collapse" expand-icon-position="left">
+            <el-collapse-item name="nganh">
+              <template #title>
+                <div class="intro-collapse__title">
+                  <p class="nhom-card__field">{{ nganh.trinh_do }}</p>
+                  <h2 class="h2 mb-1">{{ nganh.ten_nganh }}</h2>
+                  <p v-if="nganh.ten_tieng_anh" class="nhom-card__en">{{ nganh.ten_tieng_anh }}</p>
+                </div>
+              </template>
+              <p class="loi-the">
+                Bạn đã chọn ngành <span class="intro-card__emph">{{ nganh.ten_nganh }}</span>, trực thuộc nhóm ngành
+                nghề <span class="intro-card__emph">{{ nganh.ten_nhom_nganh }}</span>. Ngành này có những lợi thế:
+              </p>
+              <ul v-if="loiThe.length" class="loi-the-list">
+                <li v-for="(item, index) in loiThe" :key="index">{{ item }}</li>
+              </ul>
+              <p v-else class="loi-the">Danh mục chưa có mô tả lợi thế cho ngành này.</p>
+              <p class="loi-the mb-0">
+                Bạn có muốn tham gia khảo sát để chắc chắn thêm về điều đó, hoặc chọn lại ngành nghề khác?
+              </p>
+              <div class="intro-actions">
+                <CustomButton type="primary" :disabled="dangTaoPhien" :loading="dangTaoPhien" @click="thamGiaKhaoSat">
+                  Tham gia khảo sát
+                </CustomButton>
+                <CustomButton link type="primary" @click="quayLai">Chọn lại ngành</CustomButton>
+              </div>
+            </el-collapse-item>
+          </el-collapse>
         </template>
       </article>
 
@@ -321,6 +379,11 @@ onMounted(() => {
                     So sánh
                   </CustomButton>
                 </CustomBadge>
+              </span>
+            </CustomTooltip>
+            <CustomTooltip :content="goiYHoSo" placement="top">
+              <span class="nhom-filter__tooltip">
+                <CustomButton @click="diHoSo">Hồ sơ của tôi</CustomButton>
               </span>
             </CustomTooltip>
           </div>
@@ -439,6 +502,46 @@ onMounted(() => {
   font-weight: 400;
 }
 
+.intro-collapse {
+  border-top: 0;
+  border-bottom: 0;
+}
+
+.intro-collapse :deep(.el-collapse-item__header) {
+  height: auto;
+  align-items: flex-start;
+  padding: 0 72px 0 0;
+  border-bottom: 0;
+  background: transparent;
+  line-height: 1.35;
+  font-weight: 400;
+}
+
+.intro-collapse :deep(.el-collapse-item__arrow) {
+  margin-top: 4px;
+}
+
+.intro-collapse :deep(.el-collapse-item__wrap) {
+  border-bottom: 0;
+  background: transparent;
+}
+
+.intro-collapse :deep(.el-collapse-item__content) {
+  padding-bottom: 0;
+  color: inherit;
+  font-size: inherit;
+  font-weight: 400;
+}
+
+.intro-collapse__title {
+  padding: 2px 0 8px;
+  text-align: left;
+}
+
+.intro-collapse__title .h2 {
+  font-weight: 400;
+}
+
 .intro-actions {
   display: flex;
   flex-wrap: wrap;
@@ -449,8 +552,16 @@ onMounted(() => {
 
 .nhom-filter__actions {
   display: flex;
-  align-items: flex-end;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
+  max-width: 100%;
+}
+
+@media (max-width: 767.98px) {
+  .nhom-filter__actions {
+    flex: 1 1 100%;
+  }
 }
 
 .nhom-filter__tooltip {
