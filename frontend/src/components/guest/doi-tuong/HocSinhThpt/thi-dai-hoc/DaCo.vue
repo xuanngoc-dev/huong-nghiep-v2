@@ -272,6 +272,10 @@ onMounted(taiNhomNganh)
             </div>
           </div>
           <NhacKhaoSat class="mt-3" />
+          <!-- Hỗ trợ & FAQ -->
+          <HoTroDinhHuong class="mt-3" />
+          <CauHoiThuongGap class="mt-3" />
+          <!-- /Hỗ trợ & FAQ -->
         </div>
 
         <div class="col-lg-3">
