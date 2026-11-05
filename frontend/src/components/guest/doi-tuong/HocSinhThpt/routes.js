@@ -86,6 +86,17 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
+    path: 'hoc-sinh-thpt/thi-dai-hoc/phan-van',
+    name: 'thpt-thi-dai-hoc-phan-van',
+    component: () => import('./thi-dai-hoc/PhanVan.vue'),
+    meta: {
+      title: 'Đang phân vân giữa vài ngành nghề',
+      public: true,
+      dinhHuong: 'thi-dai-hoc',
+      giaiDoan: 'phan-van',
+    },
+  },
+  {
     path: 'hoc-sinh-thpt/khoi-nghiep',
     name: 'thpt-khoi-nghiep',
     component: () => import('./KhoiNghiep.vue'),

@@ -29,9 +29,27 @@ const props = defineProps({
   hinhAnh: { type: String, default: '' },
   hanhDong: { type: String, default: '' },
   khoa: { type: [String, Number], default: '' },
+  coTheChon: { type: Boolean, default: false },
+  daChon: { type: Boolean, default: false },
+  khoaChon: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['chon'])
+const emit = defineEmits(['chon', 'doiChon', 'hetCho'])
+
+function clickCheck(event) {
+  if (!props.khoaChon) return
+  event.preventDefault()
+  emit('hetCho')
+}
+
+function doiTrangThai(event) {
+  event.target.checked = props.daChon
+  if (props.khoaChon) {
+    emit('hetCho')
+    return
+  }
+  emit('doiChon')
+}
 
 const anh = computed(() => {
   const tuProps = typeof props.hinhAnh === 'string' ? props.hinhAnh.trim() : ''
@@ -114,8 +132,21 @@ function matTiepGiap(hash) {
 </script>
 
 <template>
-  <article class="card-dao-tao" :class="{ 'card-dao-tao--co-anh': anh }">
+  <article
+    class="card-dao-tao"
+    :class="{ 'card-dao-tao--co-anh': anh, 'card-dao-tao--co-chon': coTheChon, 'is-selected': daChon }"
+  >
     <span v-if="anh" class="card-dao-tao__bg" :style="styleNen" aria-hidden="true" />
+    <label v-if="coTheChon" class="card-dao-tao__check" @click="clickCheck">
+      <input
+        type="checkbox"
+        :checked="daChon"
+        :disabled="khoaChon"
+        :aria-label="daChon ? `Bỏ ${ten} khỏi danh sách phân vân` : `Đưa ${ten} vào danh sách phân vân`"
+        @change="doiTrangThai"
+      />
+      <span class="card-dao-tao__mark" aria-hidden="true"></span>
+    </label>
     <p class="card-dao-tao__code">{{ ma }}</p>
     <div class="card-dao-tao__main">
       <!-- <p class="card-dao-tao__field">{{ nhan }}</p> -->
@@ -184,6 +215,74 @@ function matTiepGiap(hash) {
   gap: 6px;
   min-width: 0;
   padding-right: 28px;
+}
+
+.card-dao-tao--co-chon .card-dao-tao__main {
+  padding-bottom: 28px;
+}
+
+.card-dao-tao.is-selected {
+  border-color: var(--guest-primary);
+  box-shadow: 0 0 0 2px var(--guest-primary);
+}
+
+.card-dao-tao__check {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  z-index: 2;
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.card-dao-tao__check:has(input:disabled) {
+  cursor: not-allowed;
+}
+
+.card-dao-tao__check input {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.card-dao-tao__mark {
+  display: grid;
+  place-content: center;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #7eae8c;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.card-dao-tao__mark::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--guest-primary);
+  transform: scale(0);
+}
+
+.card-dao-tao__check input:checked + .card-dao-tao__mark {
+  border-color: var(--guest-primary);
+}
+
+.card-dao-tao__check input:checked + .card-dao-tao__mark::after {
+  transform: scale(1);
+}
+
+.card-dao-tao__check input:focus-visible + .card-dao-tao__mark {
+  outline: 2px solid var(--guest-primary);
+  outline-offset: 2px;
+}
+
+.card-dao-tao__check input:disabled + .card-dao-tao__mark {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .card-dao-tao__code {

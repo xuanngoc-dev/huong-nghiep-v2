@@ -1,5 +1,5 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const props = defineProps({
   ssid: { type: String, required: true },
@@ -7,7 +7,13 @@ const props = defineProps({
   hienTai: { type: [Number, String], required: true },
 })
 
+const route = useRoute()
 const router = useRouter()
+
+function queryMaNganh() {
+  const ma = route.query.ma_nganh
+  return ma ? { ma_nganh: ma } : {}
+}
 
 function trangThai(step) {
   if (String(step.id) === String(props.hienTai)) return 'dang'
@@ -33,16 +39,17 @@ function biKhoa(index) {
 function mo(step, index) {
   if (biKhoa(index) || String(step.id) === String(props.hienTai)) return
   if (step.id === 'nganh-phu-hop') {
-    router.push({ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid: props.ssid } })
+    router.push({ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid: props.ssid }, query: queryMaNganh() })
     return
   }
   if (step.id === 'ket-qua') {
-    router.push({ name: 'thpt-thi-dai-hoc-ket-qua', params: { ssid: props.ssid } })
+    router.push({ name: 'thpt-thi-dai-hoc-ket-qua', params: { ssid: props.ssid }, query: queryMaNganh() })
     return
   }
   router.push({
     name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
     params: { ssid: props.ssid, loaiCauHoiId: step.id },
+    query: queryMaNganh(),
   })
 }
 </script>

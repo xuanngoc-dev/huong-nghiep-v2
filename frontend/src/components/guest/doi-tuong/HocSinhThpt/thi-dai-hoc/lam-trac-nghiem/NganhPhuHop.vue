@@ -206,11 +206,17 @@ async function taiNganh(value) {
   }
 }
 
+function queryMaNganh() {
+  const ma = route.query.ma_nganh
+  return ma ? { ma_nganh: ma } : {}
+}
+
 function lui() {
   if (!buocTruoc.value) return
   router.push({
     name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
     params: { ssid: ssid.value, loaiCauHoiId: buocTruoc.value.id },
+    query: queryMaNganh(),
   })
 }
 
@@ -219,7 +225,7 @@ function tiep() {
     ElMessage.error('Vui lòng hoàn thành các phần trước khi xem kết quả.')
     return
   }
-  router.push({ name: 'thpt-thi-dai-hoc-ket-qua', params: { ssid: ssid.value } })
+  router.push({ name: 'thpt-thi-dai-hoc-ket-qua', params: { ssid: ssid.value }, query: queryMaNganh() })
 }
 
 watch(ssid, taiNganh, { immediate: true })

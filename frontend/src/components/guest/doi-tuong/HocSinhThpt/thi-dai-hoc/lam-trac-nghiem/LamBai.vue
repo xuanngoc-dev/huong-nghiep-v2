@@ -128,10 +128,16 @@ onBeforeUnmount(() => {
   window.removeEventListener('keydown', xuLyPhim)
 })
 
+function queryMaNganh() {
+  const ma = route.query.ma_nganh
+  return ma ? { ma_nganh: ma } : {}
+}
+
 function moLoai(id, thayThe = false) {
   const location = {
     name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
     params: { ssid: ssid.value, loaiCauHoiId: id },
+    query: queryMaNganh(),
   }
   if (thayThe) router.replace(location)
   else router.push(location)
@@ -150,7 +156,11 @@ async function moNganhPhuHop() {
     await fetchNganhPhuHop(ssid.value)
     await doi(CHO_PHAN_TICH_MS)
     if (huyPhanTich) return
-    await router.push({ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid: ssid.value } })
+    await router.push({
+      name: 'thpt-thi-dai-hoc-nganh-phu-hop',
+      params: { ssid: ssid.value },
+      query: queryMaNganh(),
+    })
   } catch {
     dangPhanTich.value = false
     if (!huyPhanTich) ElMessage.error('Không phân tích được kết quả. Bạn thử lại giúp mình nhé.')
