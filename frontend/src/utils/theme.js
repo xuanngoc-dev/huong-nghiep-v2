@@ -32,7 +32,7 @@ export const FONT_OPTIONS = [
 export const APPEARANCE_DEFAULTS = {
   primaryColor: '#1f7a4d',
   fontFamily: 'default',
-  fontSize: 15,
+  fontSize: 16,
 }
 
 const FONT_SIZE_MIN = 13

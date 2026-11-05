@@ -9,6 +9,8 @@ import {
 } from '@/utils/theme'
 
 const STORAGE_KEY = 'dh-layout-settings'
+const APPEARANCE_VERSION = 2
+const PREVIOUS_FONT_SIZE = 15
 
 const defaults = {
   menuGroupCollapsible: false,
@@ -24,12 +26,18 @@ function loadSettings() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     const parsed = raw ? JSON.parse(raw) : {}
+    const version = Number(parsed.appearanceVersion) || 1
+    let fontSize = normalizeFontSize(parsed.fontSize)
+    if (version < APPEARANCE_VERSION && fontSize === PREVIOUS_FONT_SIZE) {
+      fontSize = defaults.fontSize
+    }
     return {
       ...defaults,
       ...parsed,
       primaryColor: normalizeHex(parsed.primaryColor) || defaults.primaryColor,
       fontFamily: normalizeFontFamily(parsed.fontFamily),
-      fontSize: normalizeFontSize(parsed.fontSize),
+      fontSize,
+      appearanceVersion: APPEARANCE_VERSION,
     }
   } catch {
     return { ...defaults }
@@ -60,6 +68,7 @@ export const useLayoutStore = defineStore('layout', () => {
       primaryColor: normalizeHex(primaryColor.value) || defaults.primaryColor,
       fontFamily: normalizeFontFamily(fontFamily.value),
       fontSize: normalizeFontSize(fontSize.value),
+      appearanceVersion: APPEARANCE_VERSION,
     }
   }
 
