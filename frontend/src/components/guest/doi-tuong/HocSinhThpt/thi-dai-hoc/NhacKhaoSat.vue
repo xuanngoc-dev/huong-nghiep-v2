@@ -1,15 +1,13 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import anhPhanVan from '@/assets/guest/phan-van.jpg'
-import { GIAI_DOAN_THI_DAI_HOC_KEY } from './giaiDoan'
 
 defineOptions({ name: 'ThptNhacKhaoSat' })
 
 const router = useRouter()
 
 function thamGia() {
-  sessionStorage.setItem(GIAI_DOAN_THI_DAI_HOC_KEY, 'chua-co')
-  router.push({ name: 'thpt-thi-dai-hoc-chua-co' })
+  router.push({ name: 'thpt-thi-dai-hoc-huong-dan-khao-sat' })
 }
 </script>
 

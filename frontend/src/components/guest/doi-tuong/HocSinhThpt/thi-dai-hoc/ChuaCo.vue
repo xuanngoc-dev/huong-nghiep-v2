@@ -1,51 +1,27 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { useAuthStore } from '@/stores/auth'
-import { batDauPhienHolland } from '@/api/phienKhaoSat'
+import { fetchNganh } from '@/api/nganhDaoTao'
+import { fetchTruongHoc } from '@/api/truongHoc'
 import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
+import CardNganhDaoTao from './CardNganhDaoTao.vue'
 
 defineOptions({ name: 'ThptThiDaiHocChuaCo' })
 
+const MA_NGANH_NOI_BAT = ['480201', '480107', '480208', '480103', '340101', '220201', '720101', '380101']
+const MA_TRUONG_NOI_BAT = ['BKA', 'QSB', 'QSC', 'KHA', 'NTH', 'YHB', 'LPH', 'SPH']
+
 const stages = giaiDoanThiDaiHocList
-const auth = useAuthStore()
 const route = useRoute()
 const router = useRouter()
 const currentStage = computed(() => route.meta.giaiDoan || '')
-const dangTaoPhien = ref(false)
-
-const pathSteps = [
-  { label: 'Bắt đầu', current: true },
-  { label: 'Sở thích & đam mê' },
-  { label: 'Kỹ năng & khả năng' },
-  { label: 'Môi trường làm việc' },
-  { label: 'Phong cách làm việc' },
-  { label: 'Ngành phù hợp' },
-  { label: 'Kết quả' },
-]
-
-const beforeTips = [
-  'Dành khoảng 5 phút để thư giãn và tập trung.',
-  'Nhập thông tin của bản thân để hệ thống giúp phân tích kết quả 1 cách chuẩn xác nhất.',
-  'Hiểu rằng trắc nghiệm này nhằm giúp bạn hiểu mình hơn, không phải để tạo hình ảnh “hoàn hảo” cho người khác.',
-  'Trung thực với bản thân, không khen hoặc chê quá mức.',
-  'Hoàn thành bài trong khoảng 20 phút để kết quả phản ánh đúng nhất.',
-]
-
-const duringTips = [
-  'Trả lời nhanh, tự nhiên, theo cảm nhận đầu tiên — đừng suy nghĩ quá nhiều.',
-  'Với mỗi mô tả, hãy chọn mức độ phù hợp với bạn theo 5 mức:',
-]
-
-const scores = [
-  { code: 'A', point: 5, tone: 'a' },
-  { code: 'B', point: 4, tone: 'b' },
-  { code: 'C', point: 3, tone: 'c' },
-  { code: 'D', point: 2, tone: 'd' },
-  { code: 'E', point: 1, tone: 'e' },
-]
+const nganhNoiBat = ref([])
+const truongNoiBat = ref([])
+const dangTaiNganh = ref(false)
+const dangTaiTruong = ref(false)
+const loiNganh = ref('')
+const loiTruong = ref('')
 
 function chonGiaiDoan(stage) {
   sessionStorage.setItem(GIAI_DOAN_THI_DAI_HOC_KEY, stage.code)
@@ -57,132 +33,132 @@ function chonGiaiDoan(stage) {
   if (!name) router.push({ name: 'thpt-thi-dai-hoc' })
 }
 
-async function batDauHolland() {
-  if (dangTaoPhien.value) return
-  dangTaoPhien.value = true
-  try {
-    const phien = await batDauPhienHolland()
-    router.push({
-      name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
-      params: { ssid: phien.ssid, loaiCauHoiId: phien.loai_cau_hoi_id },
-    })
-  } catch (error) {
-    const status = error.response?.status
-    const detail = error.response?.data?.detail
-    if (status === 400) {
-      ElMessage.error(typeof detail === 'string' ? detail : 'Không tạo được phiên khảo sát.')
+function moHuongDan() {
+  router.push({ name: 'thpt-thi-dai-hoc-huong-dan-khao-sat' })
+}
+
+async function layTheoMa(fetchFn, codes, key, params = {}) {
+  let coLoiMang = true
+  const items = await Promise.all(codes.map(async (code) => {
+    try {
+      const data = await fetchFn(
+        { page: 1, page_size: 20, q: code, ...params },
+        { skipLoading: true },
+      )
+      coLoiMang = false
+      return (data.items || []).find((item) => String(item[key] || '').toUpperCase() === code) || null
+    } catch {
+      return null
     }
+  }))
+  return { items: items.filter(Boolean), coLoiMang }
+}
+
+function moTaNganh(item) {
+  if (item.mo_ta) return item.mo_ta
+  if (item.ten_nhom_nganh && item.ten_nhom_nganh !== item.ten_nganh) return item.ten_nhom_nganh
+  return ''
+}
+
+function moTaTruong(item) {
+  return [item.ten_tinh_thanh, item.loai_co_so].filter(Boolean).join(' · ')
+}
+
+async function taiNganhNoiBat() {
+  dangTaiNganh.value = true
+  loiNganh.value = ''
+  try {
+    const { items, coLoiMang } = await layTheoMa(fetchNganh, MA_NGANH_NOI_BAT, 'ma_nganh', { trang_thai: 1 })
+    nganhNoiBat.value = items
+    if (!items.length && coLoiMang) loiNganh.value = 'Không tải được ngành nổi bật.'
   } finally {
-    dangTaoPhien.value = false
+    dangTaiNganh.value = false
   }
 }
+
+async function taiTruongNoiBat() {
+  dangTaiTruong.value = true
+  loiTruong.value = ''
+  try {
+    const { items, coLoiMang } = await layTheoMa(fetchTruongHoc, MA_TRUONG_NOI_BAT, 'ma_truong')
+    truongNoiBat.value = items
+    if (!items.length && coLoiMang) loiTruong.value = 'Không tải được trường nổi bật.'
+  } finally {
+    dangTaiTruong.value = false
+  }
+}
+
+onMounted(() => {
+  taiNganhNoiBat()
+  taiTruongNoiBat()
+})
 </script>
 
 <template>
-  <section class="py-4">
+  <section class="chua-co py-4">
     <div class="container-fluid">
       <div class="row g-4">
         <div class="col-lg-9">
           <article class="intro-card">
             <h2 class="h2 mb-2">Bạn chưa rõ mình phù hợp với ngành nghề nào?</h2>
-            <p class="text-secondary mb-3">Đừng lo, đã có cẩm nang định hướng nghề.</p>
+            <p class="text-secondary mb-0">
+              Làm khảo sát để hệ thống gợi ý ngành đào tạo gần với sở thích và năng lực của bạn.
+            </p>
           </article>
 
-          <div class="stages-card holland-overview mt-3">
-            <header class="holland-overview__header">
-              <h2 class="holland-overview__title">Tổng quan về trắc nghiệm Holland</h2>
-              <p class="holland-overview__lead">
-                Khám phá các nhóm ngành nghề được gợi ý sau khi hoàn thành bài trắc nghiệm.
-              </p>
-            </header>
+          <article class="stages-card holland-overview mt-3">
+            <h2 class="h4 mb-2">Bắt đầu từ khảo sát</h2>
+            <p class="text-secondary mb-3">
+              Bài trắc nghiệm Holland giúp bạn hiểu nhóm tính cách nổi bật, rồi đối chiếu với các ngành đào tạo.
+              Xem hướng dẫn trước khi làm bài.
+            </p>
+            <button type="button" class="btn btn-success" @click="moHuongDan">
+              Bắt đầu khảo sát
+            </button>
+          </article>
 
-            <article class="holland-intro">
-              <div class="holland-intro__body">
-                <!-- <span class="holland-intro__badge">Khám phá bản thân</span> -->
-                <h3 class="holland-intro__title">Giới thiệu trắc nghiệm hướng nghiệp</h3>
-                <p class="holland-intro__text">
-                  Mô hình Holland Test được xây dựng trên nền tảng tâm lý học nghề nghiệp, dựa vào giả
-                  thuyết rằng con người có thể được phân loại vào 6 nhóm tính cách nghề nghiệp RIASEC, và
-                  mức độ phù hợp giữa tính cách với môi trường làm việc quyết định sự hài lòng, hiệu suất
-                  và khả năng gắn bó lâu dài. Nhiều nghiên cứu đã chứng minh, khi làm việc trong môi
-                  trường phù hợp với mã Holland, cá nhân có xu hướng giảm căng thẳng, tăng động lực và
-                  phát triển bền vững hơn.
-                </p>
-              </div>
-              <aside class="holland-duration">
-                <span class="holland-kicker">Thời lượng dự kiến</span>
-                <strong class="holland-duration__time">20 phút</strong>
-                <p class="holland-duration__text">
-                  Chọn nơi yên tĩnh và trả lời theo cảm nhận đầu tiên.
-                </p>
-              </aside>
-            </article>
-
-            <article class="holland-panel">
-              <p class="holland-kicker">Lộ trình trắc nghiệm</p>
-              <ol class="holland-path">
-                <li
-                  v-for="(step, index) in pathSteps"
-                  :key="step.label"
-                  class="holland-path__item"
-                  :class="{ 'is-current': step.current }"
-                >
-                  <span class="holland-path__index">{{ index + 1 }}</span>
-                  <span class="holland-path__label">{{ step.label }}</span>
-                </li>
-              </ol>
-            </article>
-
-            <div class="row g-3">
-              <div class="col-md-6">
-                <article class="holland-panel h-100">
-                  <h3 class="holland-panel__title">Trước khi bắt đầu, bạn cần:</h3>
-                  <ul class="holland-list">
-                    <li v-for="tip in beforeTips" :key="tip">{{ tip }}</li>
-                  </ul>
-                </article>
-              </div>
-              <div class="col-md-6">
-                <article class="holland-panel h-100">
-                  <h3 class="holland-panel__title">Trong quá trình làm bài, bạn cần:</h3>
-                  <ul class="holland-list">
-                    <li v-for="tip in duringTips" :key="tip">{{ tip }}</li>
-                  </ul>
-                  <ul class="holland-scores">
-                    <li v-for="score in scores" :key="score.code" class="holland-score">
-                      <span class="holland-score__mark" :class="`is-${score.tone}`">{{ score.code }}</span>
-                      <span class="holland-score__point" :class="`is-${score.tone}`">{{ score.point }} điểm</span>
-                    </li>
-                  </ul>
-                </article>
+          <article class="stages-card mt-3">
+            <h2 class="h4 mb-2">Ngành nổi bật</h2>
+            <p class="text-secondary mb-3">Một số ngành nhiều thí sinh đang tìm hiểu, để bạn tham khảo trước khi làm khảo sát.</p>
+            <p v-if="loiNganh" class="holland-note holland-note__text mb-0">{{ loiNganh }}</p>
+            <p v-else-if="dangTaiNganh" class="text-secondary mb-0">Đang tải ngành…</p>
+            <KhongCoDuLieu v-else-if="!nganhNoiBat.length" text="Chưa có ngành nổi bật." />
+            <div v-else class="row g-3">
+              <div v-for="item in nganhNoiBat" :key="item.id" class="col-12 col-md-6 col-lg-4">
+                <CardNganhDaoTao
+                  :ma="item.ma_nganh"
+                  :ten="item.ten_nganh"
+                  :ten-tieng-anh="item.ten_tieng_anh"
+                  :mo-ta="moTaNganh(item)"
+                  :hinh-anh="item.hinh_anh_mo_ta || ''"
+                  :khoa="item.id"
+                />
               </div>
             </div>
-            <div class="d-flex flex-wrap gap-2">
-              <RouterLink
-                v-if="auth.isAuthenticated"
-                class="btn btn-outline-success"
-                :to="{ name: 'ho-so' }"
-              >
-                Cập nhật thông tin cá nhân
-              </RouterLink>
-              <button type="button" class="btn btn-success" :disabled="dangTaoPhien" @click="batDauHolland">
-                Bắt đầu trắc nghiệm Holland
-              </button>
-              <RouterLink v-if="!auth.isAuthenticated" class="btn btn-outline-success" :to="{ name: 'register' }">
-                Đăng ký tài khoản
-              </RouterLink>
+          </article>
+
+          <article class="stages-card mt-3">
+            <h2 class="h4 mb-2">Trường nổi bật</h2>
+            <p class="text-secondary mb-3">Một số cơ sở đào tạo để bạn xem thêm khi đang tìm hướng đi.</p>
+            <p v-if="loiTruong" class="holland-note holland-note__text mb-0">{{ loiTruong }}</p>
+            <p v-else-if="dangTaiTruong" class="text-secondary mb-0">Đang tải trường…</p>
+            <KhongCoDuLieu v-else-if="!truongNoiBat.length" text="Chưa có trường nổi bật." />
+            <div v-else class="row g-3">
+              <div v-for="item in truongNoiBat" :key="item.id" class="col-12 col-md-6 col-lg-4">
+                <CardNganhDaoTao
+                  :ma="item.ma_truong"
+                  :ten="item.ten_truong"
+                  :ten-tieng-anh="item.ten_tieng_anh || ''"
+                  :mo-ta="item.gioi_thieu_ngan || moTaTruong(item)"
+                  :hinh-anh="item.anh_dai_dien_url || item.logo_url || ''"
+                  :khoa="item.id"
+                />
+              </div>
             </div>
-            <article class="holland-note">
-              <h3 class="holland-note__title">Lưu ý:</h3>
-              <p class="holland-note__text">
-                Kết quả trắc nghiệm chỉ mang tính tham khảo, hỗ trợ định hướng ban đầu và không thay thế
-                tư vấn hướng nghiệp chuyên sâu từ chuyên gia.
-              </p>
-              <p v-if="!auth.isAuthenticated" class="holland-note__text">
-                Bạn có thể đăng ký tài khoản để lưu bài làm và tối ưu hóa việc khảo sát.
-              </p>
-            </article>
-          </div>
+          </article>
+
+          <HoTroDinhHuong class="mt-3" />
+          <CauHoiThuongGap class="mt-3" />
         </div>
 
         <div class="col-lg-3">
@@ -210,3 +186,9 @@ async function batDauHolland() {
     </div>
   </section>
 </template>
+
+<style scoped>
+.chua-co :is(.h2, .h4, .switch-card__name) {
+  font-weight: 400;
+}
+</style>

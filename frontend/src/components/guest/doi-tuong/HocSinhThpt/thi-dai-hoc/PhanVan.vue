@@ -4,7 +4,6 @@ import { ElMessage } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchNganh } from '@/api/nganhDaoTao'
 import { fetchNhomNganh } from '@/api/nhomNganhDaoTao'
-import { batDauPhienHolland } from '@/api/phienKhaoSat'
 import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
 import CardNganhDaoTao from './CardNganhDaoTao.vue'
@@ -49,7 +48,6 @@ const soSanhMo = ref(false)
 const dangTaiSoSanh = ref(false)
 const loiSoSanh = ref('')
 const nganhSoSanh = ref([])
-const dangTaoPhien = ref(false)
 
 const linhVucOptions = computed(() => {
   const map = new Map()
@@ -171,23 +169,12 @@ async function taiNganhTheoMa(item) {
   return (data.items || []).find((nganh) => nganh.ma_nganh === item.ma_nganh) || item
 }
 
-async function lamKhaoSat() {
-  if (dangTaoPhien.value) return
-  const ma = nganhSoSanh.value.map((item) => item.ma_nganh).filter(Boolean)
-  dangTaoPhien.value = true
-  try {
-    const phien = await batDauPhienHolland()
-    await router.push({
-      name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
-      params: { ssid: phien.ssid, loaiCauHoiId: phien.loai_cau_hoi_id },
-      query: { ma_nganh: ma },
-    })
-  } catch (error) {
-    const detail = error.response?.data?.detail
-    ElMessage.error(typeof detail === 'string' ? detail : 'Không tạo được phiên khảo sát.')
-  } finally {
-    dangTaoPhien.value = false
-  }
+function lamKhaoSat() {
+  const ma = danhSachPhanVan.value.map((item) => item.ma_nganh).filter(Boolean)
+  router.push({
+    name: 'thpt-thi-dai-hoc-huong-dan-khao-sat',
+    query: ma.length ? { ma_nganh: ma } : {},
+  })
 }
 
 async function moSoSanh() {
@@ -505,7 +492,7 @@ onMounted(taiNhomNganh)
           <p class="so-sanh-footer__text">Để tìm ra ngành nghề phù hợp nhất thì hãy làm khảo sát.</p>
           <div class="so-sanh-footer__actions">
             <CustomButton @click="soSanhMo = false">Đóng</CustomButton>
-            <CustomButton type="primary" :loading="dangTaoPhien" @click="lamKhaoSat">Làm khảo sát</CustomButton>
+            <CustomButton type="primary" @click="lamKhaoSat">Làm khảo sát</CustomButton>
           </div>
         </div>
       </template>

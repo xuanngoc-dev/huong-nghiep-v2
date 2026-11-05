@@ -65,6 +65,16 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
+    path: 'hoc-sinh-thpt/thi-dai-hoc/huong-dan-khao-sat',
+    name: 'thpt-thi-dai-hoc-huong-dan-khao-sat',
+    component: () => import('./thi-dai-hoc/HuongDanKhaoSat.vue'),
+    meta: {
+      title: 'Hướng dẫn khảo sát',
+      public: true,
+      dinhHuong: 'thi-dai-hoc',
+    },
+  },
+  {
     path: 'hoc-sinh-thpt/thi-dai-hoc/da-co',
     name: 'thpt-thi-dai-hoc-da-co',
     component: () => import('./thi-dai-hoc/DaCo.vue'),
@@ -111,9 +121,9 @@ export const dinhHuongThptRoutes = [
 ]
 
 export function routeNameDinhHuongThpt(code) {
-  return dinhHuongThptRoutes.find((item) => item.meta.dinhHuong === code && !item.meta.giaiDoan)?.name
+  return dinhHuongThptRoutes.find((item) => item.meta?.dinhHuong === code && !item.meta?.giaiDoan)?.name
 }
 
 export function routeNameGiaiDoanThiDaiHoc(code) {
-  return dinhHuongThptRoutes.find((item) => item.meta.giaiDoan === code)?.name
+  return dinhHuongThptRoutes.find((item) => item.meta?.giaiDoan === code)?.name
 }
