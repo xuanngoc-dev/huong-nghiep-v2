@@ -68,6 +68,7 @@ def _to_public(
         ten_nhom_nganh=item.ten_nhom_nganh,
         ten_tieng_anh=item.ten_tieng_anh,
         mo_ta=item.mo_ta,
+        hinh_anh_mo_ta=item.hinh_anh_mo_ta,
         so_nganh=so_nganh,
         trang_thai=item.trang_thai,
         created_at=item.created_at,

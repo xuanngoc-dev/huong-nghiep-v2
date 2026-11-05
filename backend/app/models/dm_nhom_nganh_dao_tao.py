@@ -27,6 +27,7 @@ class DmNhomNganhDaoTao(Base):
     ten_nhom_nganh: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     ten_tieng_anh: Mapped[str] = mapped_column(String(255), nullable=False)
     mo_ta: Mapped[str | None] = mapped_column(Text)
+    hinh_anh_mo_ta: Mapped[str | None] = mapped_column(String(500))
     # 0: ngừng sử dụng, 1: hoạt động
     trang_thai: Mapped[int] = mapped_column(SmallInteger, nullable=False, default=1, server_default="1")
     created_at: Mapped[datetime] = mapped_column(

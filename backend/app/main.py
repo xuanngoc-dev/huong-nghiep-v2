@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import api_router
 from app.core.config import settings
+from app.core.json_utf8 import Utf8JSONResponse
 from app.core.logging import register_request_logging, setup_logging
 from app.db.session import engine, probe_db_connection
 
@@ -30,7 +31,11 @@ async def lifespan(_: FastAPI):
     engine.dispose()
 
 
-app = FastAPI(title=settings.app_name, lifespan=lifespan)
+app = FastAPI(
+    title=settings.app_name,
+    lifespan=lifespan,
+    default_response_class=Utf8JSONResponse,
+)
 
 app.add_middleware(
     CORSMiddleware,

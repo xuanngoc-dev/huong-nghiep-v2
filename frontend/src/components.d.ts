@@ -14,6 +14,7 @@ declare module 'vue' {
     BieuDoRadar: typeof import('./components/guest/BieuDoRadar.vue')['default']
     BuocLamBai: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/BuocLamBai.vue')['default']
     CardMajor: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/CardMajor.vue')['default']
+    CardNganhDaoTao: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/CardNganhDaoTao.vue')['default']
     CauHoiThuongGap: typeof import('./components/guest/chung/CauHoiThuongGap.vue')['default']
     Chatbot: typeof import('./components/guest/chung/Chatbot.vue')['default']
     ChatMarkdown: typeof import('./components/guest/chung/ChatMarkdown.vue')['default']

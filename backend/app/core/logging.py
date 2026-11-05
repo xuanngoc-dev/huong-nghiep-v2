@@ -172,6 +172,21 @@ def _caller_label(request: Request, body: object | None) -> str:
     return "khách"
 
 
+def _media_type_utf8(response: Response) -> str | None:
+    """Giữ media type và khai báo charset UTF-8 cho JSON và văn bản."""
+    media = response.media_type
+    if not media:
+        header = response.headers.get("content-type")
+        media = header.split(";", 1)[0].strip() if header else None
+    if not media:
+        return None
+    if "charset=" in media.lower():
+        return media
+    if media.lower().startswith("application/json") or media.lower().startswith("text/"):
+        return f"{media}; charset=utf-8"
+    return media
+
+
 async def _capture_response(response: Response) -> tuple[bytes, Response]:
     """Đọc body phản hồi rồi tạo lại response để client vẫn nhận đủ dữ liệu."""
     chunks: list[bytes] = []
@@ -187,7 +202,7 @@ async def _capture_response(response: Response) -> tuple[bytes, Response]:
         content=body,
         status_code=response.status_code,
         headers=headers,
-        media_type=response.media_type,
+        media_type=_media_type_utf8(response),
         background=response.background,
     )
     return body, rebuilt

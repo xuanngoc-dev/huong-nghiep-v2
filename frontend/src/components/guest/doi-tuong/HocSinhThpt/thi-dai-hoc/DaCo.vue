@@ -5,6 +5,7 @@ import { fetchNganh } from '@/api/nganhDaoTao'
 import { fetchNhomNganh } from '@/api/nhomNganhDaoTao'
 import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
+import CardNganhDaoTao from './CardNganhDaoTao.vue'
 
 defineOptions({ name: 'ThptThiDaiHocDaCo' })
 
@@ -213,18 +214,18 @@ onMounted(taiNhomNganh)
               </p>
               <div v-else class="row g-3">
                 <div v-for="item in nganhTrang" :key="item.id" class="col-12 col-md-6 col-lg-3">
-                  <article class="nhom-card h-100">
-                    <p class="nhom-card__code">{{ item.ma_nganh }}</p>
-                    <div class="nhom-card__main">
-                      <p class="nhom-card__field">{{ item.trinh_do }}</p>
-                      <h3 class="nhom-card__name">{{ item.ten_nganh }}</h3>
-                      <p class="nhom-card__en">{{ item.ten_tieng_anh }}</p>
-                      <p v-if="item.mo_ta" class="nhom-card__text">{{ item.mo_ta }}</p>
-                    </div>
-                    <button type="button" class="nhom-card__majors" @click="diChonTruong(item)">
-                      Chọn
-                    </button>
-                  </article>
+                  <CardNganhDaoTao
+                    class="h-100"
+                    :ma="item.ma_nganh"
+                    :nhan="item.trinh_do"
+                    :ten="item.ten_nganh"
+                    :ten-tieng-anh="item.ten_tieng_anh"
+                    :mo-ta="item.mo_ta || ''"
+                    :hinh-anh="item.hinh_anh_mo_ta || ''"
+                    :khoa="item.id"
+                    hanh-dong="Chọn"
+                    @chon="diChonTruong(item)"
+                  />
                 </div>
               </div>
               <div v-if="!dangTaiNganh && !loiNganh && nganh.length" class="nhom-pager">
@@ -245,18 +246,18 @@ onMounted(taiNhomNganh)
             </p>
             <div v-else class="row g-3">
               <div v-for="item in ketQuaTrang" :key="item.id" class="col-12 col-md-6 col-lg-3">
-                <article class="nhom-card h-100">
-                  <p class="nhom-card__code">{{ item.ma_nhom_nganh }}</p>
-                  <div class="nhom-card__main">
-                    <p class="nhom-card__field">{{ item.ten_linh_vuc }}</p>
-                    <h3 class="nhom-card__name">{{ item.ten_nhom_nganh }}</h3>
-                    <p class="nhom-card__en">{{ item.ten_tieng_anh }}</p>
-                    <p v-if="item.mo_ta" class="nhom-card__text">{{ item.mo_ta }}</p>
-                  </div>
-                  <button type="button" class="nhom-card__majors" @click="xemNganh(item)">
-                    {{ item.so_nganh || 0 }} Ngành
-                  </button>
-                </article>
+                <CardNganhDaoTao
+                  class="h-100"
+                  :ma="item.ma_nhom_nganh"
+                  :nhan="item.ten_linh_vuc"
+                  :ten="item.ten_nhom_nganh"
+                  :ten-tieng-anh="item.ten_tieng_anh"
+                  :mo-ta="item.mo_ta || ''"
+                  :hinh-anh="item.hinh_anh_mo_ta || ''"
+                  :khoa="item.id"
+                  :hanh-dong="`${item.so_nganh || 0} Ngành`"
+                  @chon="xemNganh(item)"
+                />
               </div>
             </div>
             <div v-if="!nhomDangXem && !dangTai && !loi && ketQua.length" class="nhom-pager">
@@ -358,97 +359,6 @@ onMounted(taiNhomNganh)
     flex-basis: 100%;
     max-width: none;
   }
-}
-
-.nhom-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin: 0;
-  padding: 16px;
-  overflow: hidden;
-  border: 2px solid #7eae8c;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 10px 24px rgba(31, 122, 77, 0.16);
-}
-
-.nhom-card__main {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-  padding-right: 28px;
-}
-
-.nhom-card__code {
-  position: absolute;
-  top: 5px;
-  right: -45px;
-  z-index: 1;
-  width: 118px;
-  margin: 0;
-  padding: 4px 0;
-  background: var(--guest-primary);
-  box-shadow: 0 2px 6px rgba(28, 43, 35, 0.2);
-  color: #fff;
-  font-size: 0.72rem;
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  line-height: 1.2;
-  text-align: center;
-  transform: rotate(45deg);
-}
-
-.nhom-card__majors {
-  align-self: flex-end;
-  border: 0;
-  border-radius: 8px;
-  padding: 6px 12px;
-  background: var(--guest-primary);
-  color: #fff;
-  font-size: 0.8125rem;
-  font-weight: 400;
-  line-height: 1.2;
-  cursor: pointer;
-}
-
-.nhom-card__majors:hover {
-  background: var(--guest-primary-hover);
-}
-
-.nhom-card__field {
-  margin: 0;
-  color: var(--guest-primary);
-  font-size: 0.78rem;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  line-height: 1.35;
-  text-transform: uppercase;
-}
-
-.nhom-card__name {
-  margin: 0;
-  color: #1c2b23;
-  font-size: 1.15rem;
-  font-weight: 400;
-  line-height: 1.35;
-}
-
-.nhom-card__en,
-.nhom-card__text {
-  margin: 0;
-  color: #5c6b62;
-  line-height: 1.45;
-}
-
-.nhom-card__text {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
 }
 
 .nhom-pager {

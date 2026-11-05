@@ -168,6 +168,7 @@ CREATE TABLE `dm_nhom_nganh_dao_tao` (
   `ten_nhom_nganh` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `ten_tieng_anh` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `mo_ta` text COLLATE utf8mb4_unicode_ci,
+  `hinh_anh_mo_ta` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'URL hình ảnh mô tả',
   `trang_thai` smallint(6) NOT NULL DEFAULT '1' COMMENT '0: ngừng sử dụng, 1: hoạt động',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

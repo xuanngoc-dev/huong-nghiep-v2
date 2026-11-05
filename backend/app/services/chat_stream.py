@@ -12,6 +12,7 @@ from fastapi import HTTPException
 from starlette.concurrency import run_in_threadpool
 
 from app.core.config import settings
+from app.core.json_utf8 import chuan_hoa_utf8
 from app.schemas.chat import HoSoChat, HoiChatRequest, HoiChatResponse, KeHoachTraCuu, ModelChat, NguCanhChat
 from app.services.hoi_dap import danh_sach_model
 from app.services.tra_cuu_tuyen_sinh import SearchResult, documents, search
@@ -314,4 +315,5 @@ async def answer(payload: HoiChatRequest) -> HoiChatResponse:
 
 
 def encode_event(event: str, data: dict) -> str:
-    return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
+    payload = json.dumps(chuan_hoa_utf8(data), ensure_ascii=False)
+    return f"event: {event}\ndata: {payload}\n\n"

@@ -45,4 +45,8 @@ def get_nguon(ten: str):
     path = resolve_inside(ten)
     if not path.is_file():
         raise HTTPException(404, "Không tìm thấy nguồn dữ liệu.")
-    return FileResponse(path, filename=path.name, media_type="application/json" if path.suffix.lower() == ".json" else "text/plain")
+    if path.suffix.lower() == ".json":
+        media_type = "application/json; charset=utf-8"
+    else:
+        media_type = "text/plain; charset=utf-8"
+    return FileResponse(path, filename=path.name, media_type=media_type)
