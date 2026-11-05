@@ -110,6 +110,7 @@ declare module 'vue' {
     LoadingSuyNghi: typeof import('./components/guest/LoadingSuyNghi.vue')['default']
     MoneyInput: typeof import('./components/element/MoneyInput.vue')['default']
     NganhPhuHop: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/NganhPhuHop.vue')['default']
+    NhacKhaoSat: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/NhacKhaoSat.vue')['default']
     NhaTruong: typeof import('./components/guest/doi-tuong/NhaTruong.vue')['default']
     NhaTuyenDung: typeof import('./components/guest/doi-tuong/NhaTuyenDung.vue')['default']
     NoiDungPhuongThuc: typeof import('./components/guest/kiem-tra-du-lieu/NoiDungPhuongThuc.vue')['default']

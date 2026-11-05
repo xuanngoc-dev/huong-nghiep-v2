@@ -1,6 +1,7 @@
 <template>
   <div class="guest-layout d-flex flex-column min-vh-100">
     <GuestHeader />
+    <GuestBreadcrumb />
     <main class="flex-grow-1">
       <RouterView />
     </main>
@@ -22,6 +23,7 @@
 import { computed, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import GuestHeader from '@/layouts/guest/GuestHeader.vue'
+import GuestBreadcrumb from '@/layouts/guest/GuestBreadcrumb.vue'
 import HoTroNhanh from '@/components/guest/chung/HoTroNhanh.vue'
 import LenDauTrang from '@/components/guest/chung/LenDauTrang.vue'
 import Chatbot from '@/components/guest/chung/Chatbot.vue'

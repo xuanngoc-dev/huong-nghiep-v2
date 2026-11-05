@@ -6,6 +6,7 @@ import { fetchNhomNganh } from '@/api/nhomNganhDaoTao'
 import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
 import CardNganhDaoTao from './CardNganhDaoTao.vue'
+import NhacKhaoSat from './NhacKhaoSat.vue'
 
 defineOptions({ name: 'ThptThiDaiHocDaCo' })
 
@@ -159,7 +160,7 @@ onMounted(taiNhomNganh)
           </article>
 
           <div class="stages-card holland-overview mt-3">
-            <header class="holland-overview__header">
+            <header class="holland-overview__header" v-if="false">
               <h2 class="holland-overview__title">
                 {{ nhomDangXem ? nhomDangXem.ten_nhom_nganh : 'Nhóm ngành đào tạo' }}
               </h2>
@@ -270,6 +271,7 @@ onMounted(taiNhomNganh)
               />
             </div>
           </div>
+          <NhacKhaoSat class="mt-3" />
         </div>
 
         <div class="col-lg-3">
