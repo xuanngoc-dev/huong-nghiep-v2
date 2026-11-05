@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchNganh } from '@/api/nganhDaoTao'
 import { fetchTruongHoc } from '@/api/truongHoc'
+import anhChuaCo from '@/assets/guest/thanh-nien.jpg'
 import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
 import CardNganhDaoTao from './CardNganhDaoTao.vue'
@@ -244,20 +245,28 @@ onMounted(() => {
       <div class="row g-4">
         <div class="col-lg-9">
           <article class="intro-card">
-            <h2 class="h2 mb-2">Bạn chưa rõ mình phù hợp với ngành nghề nào?</h2>
-            <p class="text-secondary mb-0">
-              Làm khảo sát để hệ thống gợi ý ngành đào tạo gần với sở thích và năng lực của bạn.
-            </p>
+            <div class="row g-3 align-items-center">
+              <div class="col-md-5">
+                <img
+                  class="intro-card__image"
+                  :src="anhChuaCo"
+                  alt="Nhóm học sinh cùng tìm hiểu một nghề thực hành"
+                />
+              </div>
+              <div class="col-md-7">
+                <h2 class="h2 mb-2">Bạn chưa rõ mình phù hợp với ngành nghề nào?</h2>
+                <p class="text-secondary mb-2">
+                  Làm khảo sát để hệ thống gợi ý ngành đào tạo gần với sở thích và năng lực của bạn.
+                </p>
+                <p class="text-secondary mb-3">
+                  Bài trắc nghiệm Holland giúp bạn hiểu nhóm tính cách nổi bật, rồi đối chiếu với các ngành đào tạo.
+                  Xem hướng dẫn trước khi làm bài.
+                </p>
+                <CustomButton type="primary" plain @click="moHuongDan">Bắt đầu khảo sát</CustomButton>
+              </div>
+            </div>
           </article>
 
-          <article class="stages-card holland-overview mt-3">
-            <h2 class="h4 mb-2">Bắt đầu từ khảo sát</h2>
-            <p class="text-secondary mb-3">
-              Bài trắc nghiệm Holland giúp bạn hiểu nhóm tính cách nổi bật, rồi đối chiếu với các ngành đào tạo.
-              Xem hướng dẫn trước khi làm bài.
-            </p>
-            <CustomButton type="primary" @click="moHuongDan">Bắt đầu khảo sát</CustomButton>
-          </article>
 
           <article class="stages-card mt-3">
             <h2 class="h4 mb-2">Ngành nổi bật</h2>
@@ -379,6 +388,14 @@ onMounted(() => {
 <style scoped>
 .chua-co :is(.h2, .h4, .switch-card__name) {
   font-weight: 400;
+}
+
+.intro-card__image {
+  display: block;
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 10px;
 }
 
 .the-card {
