@@ -70,6 +70,17 @@
   color: #5c6b62;
 }
 
+.phan-van-list__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.phan-van-list__items {
+  flex: 1 1 220px;
+}
+
 .phan-van-list__items {
   display: flex;
   flex-wrap: wrap;
@@ -80,7 +91,19 @@
   list-style: none;
 }
 
-.phan-van-list__items li:not(.phan-van-list__compare) {
+.phan-van-list__actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.phan-van-list__actions .nhom-back {
+  align-self: center;
+}
+
+.phan-van-list__items li {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -93,18 +116,11 @@
   font-weight: 400;
 }
 
-.phan-van-list__remove {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.phan-van-list__remove.el-button {
   width: 22px;
   height: 22px;
-  border: 0;
-  border-radius: 50%;
+  min-height: 22px;
   padding: 0;
-  background: transparent;
-  color: #d92d20;
-  cursor: pointer;
 }
 
 .phan-van-list__remove:hover {
@@ -114,15 +130,6 @@
 .phan-van-list__remove:focus-visible {
   outline: 2px solid #d92d20;
   outline-offset: 2px;
-}
-
-.phan-van-list__compare {
-  display: inline-flex;
-  align-items: center;
-  margin: 0 0 0 auto;
-  padding: 0;
-  border: 0;
-  background: transparent;
 }
 
 .phan-van-list__tooltip {
@@ -137,6 +144,7 @@
 
 .nhom-back {
   align-self: flex-start;
+  height: auto;
   border: 0;
   padding: 0;
   background: transparent;
@@ -144,6 +152,11 @@
   font: inherit;
   font-weight: 400;
   cursor: pointer;
+}
+
+.phan-van .nhom-back.el-button {
+  height: auto;
+  padding: 0;
 }
 
 .nhom-back:hover {

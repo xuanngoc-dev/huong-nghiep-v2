@@ -396,7 +396,7 @@ watch(maNganh, taiNganh, { immediate: true })
   background: #fff;
   color: #0c5c34;
   font-size: 0.95rem;
-  font-weight: 600;
+  /* font-weight: 600; */
   line-height: 1.3;
   cursor: pointer;
 }

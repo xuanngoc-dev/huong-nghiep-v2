@@ -246,7 +246,7 @@ onMounted(taiNhomNganh)
               Không có nhóm ngành khớp bộ lọc.
             </p>
             <div v-else class="row g-3">
-              <div v-for="item in ketQuaTrang" :key="item.id" class="col-12 col-md-6 col-lg-3">
+              <div v-for="item in ketQuaTrang" :key="item.id" class="col-12 col-md-6 col-lg-4">
                 <CardNganhDaoTao
                   class="h-100"
                   :ma="item.ma_nhom_nganh"
