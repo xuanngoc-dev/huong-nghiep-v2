@@ -421,6 +421,170 @@ function payloadFromForm() {
   }
 }
 
+const SAMPLE_MO_TA = `Ngành Công nghệ thông tin đào tạo khả năng phân tích bài toán, thiết kế giải pháp và xây dựng phần mềm cho doanh nghiệp, cơ quan và dịch vụ số. Người học được trang bị tư duy thuật toán, lập trình, cơ sở dữ liệu, mạng máy tính, an toàn thông tin và cách triển khai sản phẩm theo dự án.
+
+Chương trình gắn lý thuyết với thực hành: làm bài tập lớn, tham gia nhóm, đọc tài liệu kỹ thuật và trình bày kết quả cho người dùng không chuyên. Sinh viên rèn thói quen viết mã rõ ràng, kiểm thử, quản lý phiên bản và tiếp nhận phản hồi để chỉnh sửa sản phẩm.
+
+Ngành phù hợp với người kiên nhẫn, ham học công nghệ mới và muốn tạo ra ứng dụng có người dùng thật. Sau tốt nghiệp có thể làm lập trình, kiểm thử, phân tích nghiệp vụ, vận hành hệ thống hoặc học tiếp về dữ liệu, trí tuệ nhân tạo và điện toán đám mây.`
+
+const SAMPLE_CHI_TIET = `Mục tiêu đào tạo
+Đào tạo cử nhân có nền tảng vững về khoa học máy tính và kỹ năng nghề để tham gia xây dựng, bảo trì và cải tiến hệ thống thông tin. Người học biết chuyển yêu cầu thực tế thành đặc tả, thiết kế, mã nguồn và tài liệu bàn giao. Kết thúc chương trình, sinh viên có thể làm việc độc lập ở mức cơ bản và phối hợp trong nhóm sản phẩm.
+
+Kiến thức cốt lõi
+Toán rời rạc, xác suất thống kê và tư duy thuật toán giúp đánh giá độ phức tạp của lời giải. Cấu trúc dữ liệu, lập trình hướng đối tượng, cơ sở dữ liệu quan hệ và phi quan hệ là phần bắt buộc. Kiến trúc máy tính, hệ điều hành và mạng máy tính giải thích cách chương trình chạy trên hạ tầng thật. An toàn thông tin, kiểm thử và quy trình phát triển phần mềm được học song song với đồ án.
+
+Kỹ năng nghề nghiệp
+Sinh viên viết được ứng dụng web hoặc dịch vụ phía máy chủ, thiết kế lược đồ dữ liệu, truy vấn và tối ưu các thao tác thường gặp. Biết dùng Git, trình soạn mã, công cụ gỡ lỗi và môi trường triển khai thử. Đọc được tài liệu tiếng Anh ở mức chuyên ngành, ước lượng công việc và báo cáo tiến độ. Kỹ năng giao tiếp giúp làm rõ yêu cầu mơ hồ trước khi lập trình.
+
+Môi trường và cơ hội
+Người làm nghề thường ngồi theo nhóm nhỏ, làm việc theo sprint, họp ngắn và demo định kỳ. Việc có thể ở công ty sản phẩm, gia công phần mềm, ngân hàng, viễn thông, y tế, giáo dục hoặc cơ quan nhà nước đang chuyển đổi số. Vị trí khởi đầu thường là lập trình viên, kiểm thử viên hoặc nhân viên vận hành. Sau vài năm có thể đi sâu frontend, backend, dữ liệu, bảo mật, điện toán đám mây hoặc đảm nhận vai trò dẫn dắt kỹ thuật.
+
+Phẩm chất cần có
+Cần sự cẩn thận khi xử lý dữ liệu và lỗi biên, sẵn sàng học lại công cụ khi công nghệ đổi, và tôn trọng người dùng cuối. Ngành đòi hỏi thời gian thực hành ngoài giờ lý thuyết. Người chỉ muốn học thuộc mà không làm dự án sẽ khó theo kịp. Ngược lại, người chịu làm bài, hỏi khi kẹt và ghi lại cách mình sửa lỗi sẽ tiến bộ đều.
+
+Lưu ý khi nhập học
+Nên củng cố tiếng Anh và toán trước năm nhất. Chọn đề tài đồ án gắn với một người dùng cụ thể để portafolio có bằng chứng làm được việc. Thực tập nên xin sớm, dù vị trí còn nhỏ, vì kinh nghiệm dự án thật thường quyết định mức lương năm đầu hơn điểm tổng kết.`
+
+const SAMPLE_MUC_LUONG = [
+  { name: 'Thực tập', min: '3', max: '6', unit: 'VND', period: 'thang' },
+  { name: 'Mới ra trường', min: '8', max: '12', unit: 'VND', period: 'thang' },
+  { name: 'Dưới 1 năm', min: '10', max: '15', unit: 'VND', period: 'thang' },
+  { name: '1–2 năm', min: '15', max: '22', unit: 'VND', period: 'thang' },
+  { name: '2–3 năm', min: '20', max: '30', unit: 'VND', period: 'thang' },
+  { name: '3–5 năm', min: '28', max: '45', unit: 'VND', period: 'thang' },
+  { name: '5–8 năm', min: '40', max: '70', unit: 'VND', period: 'thang' },
+  { name: 'Trên 8 năm', min: '60', max: '99', unit: 'VND', period: 'thang' },
+]
+
+const SAMPLE_MO_TA_CONG_VIEC = [
+  {
+    name: 'Phân tích yêu cầu',
+    value:
+      'Làm việc với người dùng và phân tích nghiệp vụ để viết lại bài toán bằng ngôn ngữ rõ: ai dùng, dữ liệu vào ra, quy tắc và ngoại lệ. Chốt phạm vi trước khi ước lượng và lập trình.',
+    ghi_chu: 'Ưu tiên các luồng chính, ghi lại giả định còn mở',
+  },
+  {
+    name: 'Thiết kế giải pháp',
+    value:
+      'Phác thảo luồng màn hình, cấu trúc mô-đun và lược đồ dữ liệu. Chọn cách lưu trữ, phân quyền và điểm tích hợp với hệ thống có sẵn để nhóm triển khai thống nhất.',
+    ghi_chu: 'Vẽ sơ đồ ngắn, tránh thiết kế quá sớm toàn bộ hệ thống',
+  },
+  {
+    name: 'Lập trình tính năng',
+    value:
+      'Viết mã cho giao diện, dịch vụ và truy cập dữ liệu theo đặc tả đã chốt. Tách hàm nhỏ, đặt tên dễ đọc và xử lý lỗi có thông báo người dùng hiểu được.',
+    ghi_chu: 'Mỗi lần chỉ một tính năng, có tiêu chí xong việc',
+  },
+  {
+    name: 'Kiểm thử và sửa lỗi',
+    value:
+      'Viết ca kiểm thử cho đường đúng và đường sai, chạy lại sau mỗi sửa đổi. Ghi lại bước tái hiện lỗi, nguyên nhân và cách khắc phục để người sau không gặp lại.',
+    ghi_chu: 'Lỗi dữ liệu biên và phân quyền cần được kiểm tra riêng',
+  },
+  {
+    name: 'Quản lý mã nguồn',
+    value:
+      'Đưa thay đổi lên nhánh riêng, mô tả nội dung commit và tạo yêu cầu xem lại. Phản hồi nhận xét của đồng nghiệp rồi mới hợp nhất vào nhánh chính.',
+    ghi_chu: 'Không đẩy bí mật, khóa hay tệp cấu hình nội bộ',
+  },
+  {
+    name: 'Làm việc nhóm',
+    value:
+      'Họp ngắn để đồng bộ việc đang kẹt, cập nhật bảng công việc và hỗ trợ thành viên khi tắc ở môi trường hoặc dữ liệu mẫu. Giữ thái độ cụ thể khi góp ý mã.',
+    ghi_chu: 'Báo sớm nếu trễ hạn thay vì đợi đến ngày demo',
+  },
+  {
+    name: 'Tài liệu và bàn giao',
+    value:
+      'Viết hướng dẫn cài đặt, mô tả API và cách vận hành các tác vụ định kỳ. Tài liệu đủ để người mới chạy được hệ thống mà không phải hỏi lại từng lệnh.',
+    ghi_chu: 'Cập nhật tài liệu cùng lúc với mã, không để cuối dự án',
+  },
+  {
+    name: 'Vận hành và cải tiến',
+    value:
+      'Theo dõi lỗi trên môi trường thật, xử lý sự cố theo mức ưu tiên và đề xuất cải thiện hiệu năng hoặc trải nghiệm sau khi có số liệu sử dụng.',
+    ghi_chu: 'Chỉ tối ưu đoạn thực sự chậm hoặc hay lỗi',
+  },
+]
+
+const SAMPLE_LO_TRINH = [
+  {
+    name: 'Năm 1',
+    value:
+      'Học nhập môn lập trình, toán rời rạc và cách máy tính biểu diễn dữ liệu. Làm các bài tập nhỏ đến chương trình hoàn chỉnh một chức năng, tập thói quen đọc lỗi và sửa từng bước.',
+    ghi_chu: 'Nên luyện gõ mã mỗi tuần, chưa cần công nghệ mới',
+  },
+  {
+    name: 'Năm 2',
+    value:
+      'Học cấu trúc dữ liệu, cơ sở dữ liệu và lập trình hướng đối tượng. Bắt đầu làm ứng dụng có nhiều màn hình, biết tách giao diện, xử lý nghiệp vụ và lưu trữ.',
+    ghi_chu: 'Làm một dự án cá nhân để giữ mạch thực hành',
+  },
+  {
+    name: 'Năm 3',
+    value:
+      'Đi vào chuyên ngành như web, di động hoặc dữ liệu. Tham gia đồ án nhóm, thực tập ngắn và học quy trình: yêu cầu, thiết kế, mã, kiểm thử, trình bày.',
+    ghi_chu: 'Xin thực tập sớm dù vị trí còn hỗ trợ',
+  },
+  {
+    name: 'Năm 4',
+    value:
+      'Hoàn thành đồ án tốt nghiệp gắn với bài toán có người dùng. Hoàn thiện hồ sơ năng lực: mã nguồn, mô tả việc đã làm và kết quả đo được.',
+    ghi_chu: 'Chọn đề tài đủ nhỏ để làm xong và demo được',
+  },
+  {
+    name: '0–2 năm đi làm',
+    value:
+      'Đảm nhận tính năng nhỏ trong sản phẩm có sẵn, sửa lỗi và học quy ước của nhóm. Mục tiêu là giao việc đúng hạn, hỏi đúng chỗ và để lại mã người khác đọc được.',
+    ghi_chu: 'Cấp độ lập trình viên mới',
+  },
+  {
+    name: '2–4 năm',
+    value:
+      'Tự nhận một phân hệ, ước lượng công việc và hướng dẫn thực tập sinh. Bắt đầu chọn hướng sâu: giao diện, máy chủ, dữ liệu hoặc vận hành.',
+    ghi_chu: 'Cấp độ lập trình viên chính',
+  },
+  {
+    name: '4–7 năm',
+    value:
+      'Chịu trách nhiệm chất lượng một mảng sản phẩm, đưa ra phương án kỹ thuật và xử lý sự cố khó. Tham gia phỏng vấn và xây dựng quy ước mã của nhóm.',
+    ghi_chu: 'Có thể hướng tới trưởng nhóm kỹ thuật',
+  },
+  {
+    name: 'Sau 7 năm',
+    value:
+      'Làm kiến trúc sư giải pháp hoặc quản lý nhóm kỹ thuật: cân bằng chi phí, rủi ro và tốc độ giao hàng. Vẫn giữ thời gian đọc mã và thử nghiệm công nghệ trước khi áp dụng rộng.',
+    ghi_chu: 'Nhánh quản lý hoặc nhánh chuyên gia đều hợp lệ',
+  },
+]
+
+function fillFormSample() {
+  if (!editingId.value) {
+    const nhom = nhomOptions.value.find((item) => item.trang_thai === 1) || nhomOptions.value[0]
+    if (nhom) form.ma_nhom_nganh = nhom.ma_nhom_nganh
+    form.ten_nganh = 'Công nghệ thông tin'
+    form.ma_nganh = '7480201'
+    form.ten_tieng_anh = 'Information Technology'
+    form.trinh_do = 'Đại học'
+    form.ma_holand = hollandOptions.value
+      .filter((item) => item.trang_thai === 1)
+      .slice(0, 2)
+      .map((item) => item.ma_nhom)
+    form.nhan_dan = 'Nhu cầu cao'
+    form.thoi_gian_dao_tao = '4 năm'
+    form.hinh_anh_mo_ta = 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80'
+    form.trang_thai = 1
+  }
+
+  form.mo_ta = SAMPLE_MO_TA
+  form.chi_tiet = SAMPLE_CHI_TIET
+  form.muc_luong_tham_khao = SAMPLE_MUC_LUONG.map((item) => ({ ...item }))
+  form.mo_ta_cong_viec = SAMPLE_MO_TA_CONG_VIEC.map((item) => ({ ...item }))
+  form.lo_trinh_phat_trien = SAMPLE_LO_TRINH.map((item) => ({ ...item }))
+  formRef.value?.clearValidate()
+  ElMessage.success('Đã điền dữ liệu mẫu')
+}
+
 function fillJsonSample() {
   jsonText.value = JSON_SAMPLE
 }
@@ -905,7 +1069,15 @@ onMounted(async () => {
         :show-progress="!editingId && createMode === 'json'"
         @cancel="dialogVisible = false"
         @save="onSubmit"
-      />
+      >
+        <CustomButton
+          v-if="editingId || createMode === 'form'"
+          :disabled="saving"
+          @click="fillFormSample"
+        >
+          Điền dữ liệu mẫu
+        </CustomButton>
+      </JsonImportDialogFooter>
     </template>
   </CustomDialog>
 </template>

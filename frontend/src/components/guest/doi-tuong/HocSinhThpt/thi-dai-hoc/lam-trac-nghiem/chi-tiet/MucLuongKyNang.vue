@@ -22,16 +22,15 @@ const coDuLieu = computed(() => luong.value.length > 0 || kyNang.value.length > 
 </script>
 
 <template>
-  <div v-if="coDuLieu" class="luong" :class="{ 'luong--hai-cot': luong.length && kyNang.length }">
-    <section v-if="luong.length" class="luong__so">
-      <p>Mức lương tham khảo</p>
-      <dl v-if="luong.length > 1 || luong[0].name" class="luong__muc">
-        <div v-for="(item, index) in luong" :key="`${index}-${item.name}`">
-          <dt>{{ item.name || 'Tham khảo' }}</dt>
-          <dd>{{ hienMucLuong(item) }}</dd>
-        </div>
-      </dl>
-      <strong v-else>{{ hienMucLuong(luong[0]) }}</strong>
+  <div v-if="coDuLieu" class="luong">
+    <section v-if="luong.length">
+      <h3>Mức lương tham khảo</h3>
+      <div class="luong__cards">
+        <article v-for="(item, index) in luong" :key="`${index}-${item.name}`" class="luong__card">
+          <p class="luong__ten">{{ item.name || 'Tham khảo' }}</p>
+          <p class="luong__gia">{{ hienMucLuong(item) }}</p>
+        </article>
+      </div>
     </section>
     <section v-if="kyNang.length">
       <h3>Kỹ năng phù hợp</h3>
@@ -45,18 +44,34 @@ const coDuLieu = computed(() => luong.value.length > 0 || kyNang.value.length > 
 
 <style scoped>
 .luong {
-  display: grid;
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.luong__so {
+.luong h3 {
   margin: 0;
-  padding: 16px;
+  color: #0c5c34;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.luong__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.luong__card {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid #c5d5cc;
   border-radius: 12px;
   background: #f6faf7;
 }
 
-.luong__so p {
+.luong__ten {
   margin: 0;
   color: #31483d;
   font-size: 0.82rem;
@@ -65,49 +80,13 @@ const coDuLieu = computed(() => luong.value.length > 0 || kyNang.value.length > 
   text-transform: uppercase;
 }
 
-.luong__so strong {
-  display: block;
-  margin-top: 6px;
+.luong__gia {
+  margin: 6px 0 0;
   color: #0c5c34;
-  font-size: 1.35rem;
+  font-size: 1.15rem;
+  font-weight: 700;
   line-height: 1.35;
   white-space: pre-line;
-}
-
-.luong__muc {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 8px 0 0;
-}
-
-.luong__muc div {
-  display: grid;
-  gap: 2px;
-}
-
-.luong__muc dt,
-.luong__muc dd {
-  margin: 0;
-}
-
-.luong__muc dt {
-  color: #31483d;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.luong__muc dd {
-  color: #0c5c34;
-  font-size: 1.05rem;
-  font-weight: 700;
-}
-
-.luong h3 {
-  margin: 0;
-  color: #0c5c34;
-  font-size: 1.05rem;
-  font-weight: 700;
 }
 
 .luong__chip {
@@ -125,12 +104,5 @@ const coDuLieu = computed(() => luong.value.length > 0 || kyNang.value.length > 
   background: #e7f5ec;
   color: #0c5c34;
   font-weight: 600;
-}
-
-@media (min-width: 768px) {
-  .luong--hai-cot {
-    grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
-    align-items: start;
-  }
 }
 </style>

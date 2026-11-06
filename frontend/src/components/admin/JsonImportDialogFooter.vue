@@ -56,6 +56,7 @@ const text = computed(() => {
       <p class="json-progress__text">{{ text }}</p>
     </div>
     <div class="dialog-footer__actions">
+      <slot />
       <CustomButton :disabled="saving" @click="$emit('cancel')">Hủy</CustomButton>
       <CustomButton type="primary" :loading="saving" @click="$emit('save')">Lưu</CustomButton>
     </div>

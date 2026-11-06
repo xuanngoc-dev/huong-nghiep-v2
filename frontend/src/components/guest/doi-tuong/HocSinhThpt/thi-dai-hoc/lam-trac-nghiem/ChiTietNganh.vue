@@ -3,8 +3,11 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchNganh } from '@/api/nganhDaoTao'
 import anhMacDinh from '@/assets/guest/sinh-vien.jpg'
+import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
+import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
 import { noiMucLuong } from '@/utils/capTenGiaTri'
 import { docChiTiet, noiGiaTri } from './chi-tiet/chiTiet'
+import CardNganhDaoTao from '../CardNganhDaoTao.vue'
 import TongQuan from './chi-tiet/TongQuan.vue'
 import MoTaCongViec from './chi-tiet/MoTaCongViec.vue'
 import LoTrinhPhatTrien from './chi-tiet/LoTrinhPhatTrien.vue'
@@ -12,6 +15,8 @@ import MucLuongKyNang from './chi-tiet/MucLuongKyNang.vue'
 import TruongDaoTao from './chi-tiet/TruongDaoTao.vue'
 
 defineOptions({ name: 'ThptChiTietNganh' })
+
+const SO_NGANH_CUNG_NHOM = 4
 
 const TABS = [
   { id: 'tong-quan', nhan: 'Tổng quan', component: TongQuan },
@@ -30,6 +35,9 @@ const loi = ref('')
 const nganh = ref(null)
 const anhHong = ref(false)
 const tabDangChon = ref(TABS[0].id)
+const nganhCungNhom = ref([])
+const dangTaiCungNhom = ref(false)
+const loiCungNhom = ref('')
 
 const anh = computed(() => {
   const url = String(nganh.value?.hinh_anh_mo_ta || '').trim()
@@ -44,6 +52,9 @@ function queryMaNganh() {
 
 const chiTiet = computed(() => (nganh.value ? docChiTiet(nganh.value) : { vanBan: '', json: null }))
 const thanhPhanTab = computed(() => TABS.find((tab) => tab.id === tabDangChon.value)?.component || TongQuan)
+const tenNhom = computed(() =>
+  [nganh.value?.ma_nhom_nganh, nganh.value?.ten_nhom_nganh].filter(Boolean).join(' · '),
+)
 
 const moTa = computed(() => {
   if (!nganh.value) return ''
@@ -60,7 +71,7 @@ const tomTat = computed(() => {
     { nhan: 'Nhóm ngành', giaTri: [nganh.value.ma_nhom_nganh, nganh.value.ten_nhom_nganh].filter(Boolean).join(' · ') },
     { nhan: 'Trình độ', giaTri: nganh.value.trinh_do },
     { nhan: 'Thời gian đào tạo', giaTri: nganh.value.thoi_gian_dao_tao || noiGiaTri(json?.thoi_gian_dao_tao) },
-    { nhan: 'Mức lương tham khảo', giaTri: noiMucLuong(nganh.value.muc_luong_tham_khao) || noiGiaTri(json?.muc_luong_tham_khao || json?.muc_luong) },
+    // { nhan: 'Mức lương tham khảo', giaTri: noiMucLuong(nganh.value.muc_luong_tham_khao) || noiGiaTri(json?.muc_luong_tham_khao || json?.muc_luong) },
     { nhan: 'Nhu cầu việc làm', giaTri: nganh.value.nhan_dan },
     { nhan: 'Nhóm Holland', giaTri: holand },
   ].filter((item) => item.giaTri)
@@ -80,6 +91,16 @@ function dieuHuongTab(event) {
   nextTick(() => document.getElementById(idTab(tabDangChon.value))?.focus())
 }
 
+function xemNganh(ma) {
+  const code = String(ma || '').trim()
+  if (!code || code.toUpperCase() === maNganh.value.toUpperCase()) return
+  router.push({
+    name: 'thpt-thi-dai-hoc-chi-tiet-nganh',
+    params: { ssid: ssid.value, maNganh: code },
+    query: queryMaNganh(),
+  })
+}
+
 function quayLai() {
   if (!ssid.value) {
     router.push({ name: 'thpt-thi-dai-hoc' })
@@ -92,8 +113,37 @@ function quayLai() {
   })
 }
 
+let lanTai = 0
+
+async function taiNganhCungNhom(maNhom, maHienTai, lan) {
+  nganhCungNhom.value = []
+  loiCungNhom.value = ''
+  if (!maNhom) return
+  dangTaiCungNhom.value = true
+  try {
+    const data = await fetchNganh(
+      { ma_nhom_nganh: maNhom, trang_thai: 1, page: 1, page_size: 24 },
+      { skipLoading: true },
+    )
+    if (lan !== lanTai) return
+    const items = (data.items || []).filter(
+      (item) => String(item.ma_nganh).toUpperCase() !== String(maHienTai).toUpperCase(),
+    )
+    items.sort((a, b) => String(a.ten_nganh || '').localeCompare(String(b.ten_nganh || ''), 'vi'))
+    nganhCungNhom.value = items.slice(0, SO_NGANH_CUNG_NHOM)
+  } catch {
+    if (lan !== lanTai) return
+    loiCungNhom.value = 'Không tải được ngành cùng nhóm.'
+  } finally {
+    if (lan === lanTai) dangTaiCungNhom.value = false
+  }
+}
+
 async function taiNganh(ma) {
+  const lan = ++lanTai
   nganh.value = null
+  nganhCungNhom.value = []
+  loiCungNhom.value = ''
   anhHong.value = false
   loi.value = ''
   tabDangChon.value = TABS[0].id
@@ -107,16 +157,19 @@ async function taiNganh(ma) {
       { q: ma, trang_thai: 1, page: 1, page_size: 20 },
       { skipLoading: true },
     )
+    if (lan !== lanTai) return
     const found = (data.items || []).find((item) => String(item.ma_nganh).toUpperCase() === ma.toUpperCase())
     if (!found) {
       loi.value = 'Không tìm thấy ngành này.'
       return
     }
     nganh.value = found
+    taiNganhCungNhom(found.ma_nhom_nganh, ma, lan)
   } catch {
+    if (lan !== lanTai) return
     loi.value = 'Không tải được thông tin ngành.'
   } finally {
-    dangTai.value = false
+    if (lan === lanTai) dangTai.value = false
   }
 }
 
@@ -186,6 +239,32 @@ watch(maNganh, taiNganh, { immediate: true })
               <component :is="thanhPhanTab" :nganh="nganh" :chi-tiet="chiTiet.json" :van-ban="chiTiet.vanBan" />
             </div>
           </div>
+
+          <section class="major-peers" aria-labelledby="nganh-cung-nhom-title">
+            <h2 id="nganh-cung-nhom-title" class="major-peers__title">Một số ngành học cùng nhóm</h2>
+            <p v-if="tenNhom" class="major-peers__lead">{{ tenNhom }}</p>
+            <p v-if="loiCungNhom" class="holland-note holland-note__text">{{ loiCungNhom }}</p>
+            <p v-else-if="dangTaiCungNhom" class="major-peers__lead">Đang tải ngành cùng nhóm…</p>
+            <p v-else-if="!nganhCungNhom.length" class="major-peers__lead">Chưa có ngành khác trong nhóm này.</p>
+            <div v-else class="row g-3">
+              <div v-for="item in nganhCungNhom" :key="item.ma_nganh" class="col-12 col-md-6 col-xl-3">
+                <CardNganhDaoTao
+                  class="h-100"
+                  :ma="item.ma_nganh"
+                  :ten="item.ten_nganh"
+                  :ten-tieng-anh="item.ten_tieng_anh"
+                  :mo-ta="item.mo_ta || ''"
+                  :hinh-anh="item.hinh_anh_mo_ta || ''"
+                  :khoa="item.id || item.ma_nganh"
+                  hanh-dong="Xem chi tiết"
+                  @chon="xemNganh(item.ma_nganh)"
+                />
+              </div>
+            </div>
+          </section>
+
+          <HoTroDinhHuong class="mt-3" />
+          <CauHoiThuongGap class="mt-3" />
         </template>
 
         <div class="major-nav">
@@ -338,6 +417,32 @@ watch(maNganh, taiNganh, { immediate: true })
   border: 1px solid #c5d5cc;
   border-radius: 12px;
   background: #fff;
+}
+
+.major-peers {
+  margin-top: 28px;
+  padding: 16px;
+  border: 1px solid #c5d5cc;
+  border-radius: 12px;
+  background: #f6faf7;
+}
+
+.major-peers__title {
+  margin: 0;
+  color: #0c5c34;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.major-peers__lead {
+  margin: 8px 0 0;
+  color: #3d5c4c;
+  line-height: 1.5;
+}
+
+.major-peers .row {
+  margin-top: 4px;
 }
 
 .major-nav {
