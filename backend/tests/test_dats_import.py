@@ -38,10 +38,10 @@ class DatsImportTests(unittest.TestCase):
             [key for key in document if key.startswith("dats_")],
             ["dats_tuyen_sinh"],
         )
-        rows = prepare_import(document, truong_id=9, nam_tuyen_sinh=2027, catalogs=catalogs())
+        rows = prepare_import(document, ma_truong="BKA", nam_tuyen_sinh=2027, catalogs=catalogs())
         self.assertEqual([row.table for row in rows], ["dats_tuyen_sinh"])
         proposal = rows[0]
-        self.assertEqual(proposal.values["truong_id"], 9)
+        self.assertEqual(proposal.values["ma_truong"], "BKA")
         self.assertEqual(proposal.values["nam_tuyen_sinh"], 2027)
         self.assertEqual(proposal.values["chi_tieu"], 9880)
         self.assertEqual(proposal.values["ten_de_an"], document["dats_tuyen_sinh"]["ten_de_an"])
@@ -72,13 +72,13 @@ class DatsImportTests(unittest.TestCase):
             to_hop_ids=set(),
         )
         with self.assertRaises(DatsImportError) as caught:
-            prepare_import(document, truong_id=9, nam_tuyen_sinh=2026, catalogs=limited_without_combo)
+            prepare_import(document, ma_truong="BKA", nam_tuyen_sinh=2026, catalogs=limited_without_combo)
         self.assertIn("tổ hợp", str(caught.exception))
 
     def test_nested_sample_links_children_from_parent_position(self):
         document = json.loads(NESTED.read_text())
         self.assertEqual(conflict_policy(document), "tu_choi")
-        rows = prepare_import(document, truong_id=9, nam_tuyen_sinh=2026, catalogs=catalogs())
+        rows = prepare_import(document, ma_truong="BKA", nam_tuyen_sinh=2026, catalogs=catalogs())
         counts = Counter(row.table for row in rows)
         self.assertEqual(counts["dats_tuyen_sinh"], 1)
         self.assertEqual(counts["dats_chuong_trinh_dao_tao"], 68)
@@ -90,7 +90,7 @@ class DatsImportTests(unittest.TestCase):
         self.assertEqual(counts["dats_lien_he_tuyen_sinh"], 1)
 
         proposal = rows[0]
-        self.assertEqual(proposal.values["truong_id"], 9)
+        self.assertEqual(proposal.values["ma_truong"], "BKA")
         self.assertEqual(proposal.values["nam_tuyen_sinh"], 2026)
         program = next(
             row
@@ -159,7 +159,7 @@ class DatsImportTests(unittest.TestCase):
                 ],
             }
         }
-        rows = prepare_import(document, truong_id=9, nam_tuyen_sinh=2026, catalogs=catalogs())
+        rows = prepare_import(document, ma_truong="BKA", nam_tuyen_sinh=2026, catalogs=catalogs())
         methods = [row for row in rows if row.table == "dats_phuong_thuc"]
         self.assertIsNone(methods[0].values["to_hop_mon_hoc"])
         self.assertEqual(methods[1].values["to_hop_mon_hoc"], ["K01", "A00"])
@@ -184,7 +184,7 @@ class DatsImportTests(unittest.TestCase):
         }
         with self.assertLogs("app.services.dats_import", level="WARNING") as logs:
             with self.assertRaises(DatsImportError) as caught:
-                prepare_import(document, truong_id=9, nam_tuyen_sinh=2026, catalogs=catalogs())
+                prepare_import(document, ma_truong="BKA", nam_tuyen_sinh=2026, catalogs=catalogs())
         self.assertEqual(
             str(caught.exception),
             "dats_phuong_thuc dòng 1 có mã tổ hợp ZZ9 không có trong danh mục",
@@ -201,7 +201,7 @@ class DatsImportTests(unittest.TestCase):
             }
         }
         with self.assertRaises(DatsImportError) as caught:
-            prepare_import(document, truong_id=9, nam_tuyen_sinh=2026, catalogs=catalogs())
+            prepare_import(document, ma_truong="BKA", nam_tuyen_sinh=2026, catalogs=catalogs())
         self.assertIn("NOPE", str(caught.exception))
 
     def test_method_outside_program_is_rejected(self):
@@ -214,7 +214,7 @@ class DatsImportTests(unittest.TestCase):
             }
         }
         with self.assertRaises(DatsImportError) as caught:
-            prepare_import(document, truong_id=9, nam_tuyen_sinh=2026, catalogs=catalogs())
+            prepare_import(document, ma_truong="BKA", nam_tuyen_sinh=2026, catalogs=catalogs())
         self.assertIn("dats_chuong_trinh_dao_tao", str(caught.exception))
 
 

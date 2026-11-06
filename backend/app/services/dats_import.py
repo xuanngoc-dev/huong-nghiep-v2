@@ -140,17 +140,18 @@ def conflict_policy(document: dict) -> str | None:
     return None
 
 
-def import_document(db: Session, truong_id: int, nam_tuyen_sinh: int, document: dict) -> tuple[int, dict[str, int]]:
+def import_document(db: Session, ma_truong: str, nam_tuyen_sinh: int, document: dict) -> tuple[int, dict[str, int]]:
     """Lưu toàn bộ JSON trong một transaction. Id trong file chỉ dùng để nối khóa ngoại."""
     if not isinstance(document, dict):
         raise DatsImportError("JSON phải là một object một trường, một năm")
-    if db.get(DmTruong, truong_id) is None:
+    code = ma_truong.strip()
+    if db.scalar(select(DmTruong.id).where(DmTruong.ma_truong == code)) is None:
         raise DatsImportError("Trường học không tồn tại")
     if conflict_policy(document) == "tu_choi":
         found = db.scalar(
             select(DatsTuyenSinh.id)
             .where(
-                DatsTuyenSinh.truong_id == truong_id,
+                DatsTuyenSinh.ma_truong == code,
                 DatsTuyenSinh.nam_tuyen_sinh == nam_tuyen_sinh,
             )
             .limit(1)
@@ -161,14 +162,14 @@ def import_document(db: Session, truong_id: int, nam_tuyen_sinh: int, document: 
             )
     flat = flatten_nested_document(document)
     catalogs = _load_catalogs(db, flat)
-    rows = prepare_import(flat, truong_id=truong_id, nam_tuyen_sinh=nam_tuyen_sinh, catalogs=catalogs)
+    rows = prepare_import(flat, ma_truong=code, nam_tuyen_sinh=nam_tuyen_sinh, catalogs=catalogs)
     return _apply(db, rows)
 
 
 def prepare_import(
     document: dict,
     *,
-    truong_id: int,
+    ma_truong: str,
     nam_tuyen_sinh: int,
     catalogs: CatalogIndex,
 ) -> list[PreparedRow]:
@@ -196,7 +197,7 @@ def prepare_import(
                 if source_id in seen_ids[table]:
                     raise DatsImportError(f"{label} trùng id {source_id}")
                 seen_ids[table].add(source_id)
-            values = _values(raw, table, label, truong_id, nam_tuyen_sinh, catalogs)
+            values = _values(raw, table, label, ma_truong, nam_tuyen_sinh, catalogs)
             prepared.append(PreparedRow(table=table, source_id=source_id, values=values))
     if not any(row.table == "dats_tuyen_sinh" for row in prepared):
         raise DatsImportError("Thiếu object dats_tuyen_sinh")
@@ -427,14 +428,14 @@ def _source_id(raw: dict, table: str, label: str) -> int | None:
     return number
 
 
-def _values(raw: dict, table: str, label: str, truong_id: int, nam_tuyen_sinh: int, catalogs: CatalogIndex) -> dict:
+def _values(raw: dict, table: str, label: str, ma_truong: str, nam_tuyen_sinh: int, catalogs: CatalogIndex) -> dict:
     columns = {column.name: column for column in _MODELS[table].__table__.columns}
     values: dict = {}
     for name, column in columns.items():
         if name in _SKIP_COLUMNS:
             continue
-        if table == "dats_tuyen_sinh" and name == "truong_id":
-            values[name] = truong_id
+        if table == "dats_tuyen_sinh" and name == "ma_truong":
+            values[name] = ma_truong.strip()
             continue
         if name == "nam_tuyen_sinh":
             values[name] = nam_tuyen_sinh

@@ -141,19 +141,19 @@ const filters = reactive({
   q: '',
   trang_thai: '',
   nam_tuyen_sinh: '',
-  truong_id: '',
+  ma_truong: '',
 })
 
 const form = reactive(emptyForm())
 
 const rules = {
-  truong_id: [{ required: true, message: 'Vui lòng chọn trường', trigger: 'change' }],
+  ma_truong: [{ required: true, message: 'Vui lòng chọn trường', trigger: 'change' }],
   nam_tuyen_sinh: [{ required: true, message: 'Vui lòng chọn năm học', trigger: 'change' }],
 }
 
 function emptyForm() {
   return {
-    truong_id: null,
+    ma_truong: null,
     nam_tuyen_sinh: new Date().getFullYear(),
     chi_tieu: null,
     ten_de_an: '',
@@ -216,9 +216,9 @@ function selectedJsonYear() {
 }
 
 function selectedJsonSchool() {
-  const id = jsonTruongId.value
-  if (id == null || id === '') return null
-  return truongOptions.value.find((school) => school.id === id) || null
+  const code = jsonTruongId.value
+  if (code == null || code === '') return null
+  return truongOptions.value.find((school) => school.ma_truong === code) || null
 }
 
 function parseJsonDocument(text) {
@@ -262,7 +262,7 @@ function applyDocumentSelection(data) {
   if (!school) {
     throw new Error(`Không tìm thấy trường có mã ${String(code).trim()}`)
   }
-  jsonTruongId.value = school.id
+  jsonTruongId.value = school.ma_truong
 }
 
 function importSummary(counts) {
@@ -312,7 +312,7 @@ async function load() {
     if (filters.q.trim()) params.q = filters.q.trim()
     if (filters.trang_thai) params.trang_thai = filters.trang_thai
     if (year != null) params.nam_tuyen_sinh = year
-    if (filters.truong_id) params.truong_id = filters.truong_id
+    if (filters.ma_truong) params.ma_truong = filters.ma_truong
     const data = await fetchDeAnTuyenSinh(params)
     rows.value = data.items
     total.value = data.total
@@ -370,7 +370,7 @@ function openDetail(row) {
 function openEdit(row) {
   editingId.value = row.id
   Object.assign(form, {
-    truong_id: row.truong_id,
+    ma_truong: row.ma_truong,
     nam_tuyen_sinh: row.nam_tuyen_sinh,
     chi_tieu: row.chi_tieu ?? null,
     ten_de_an: row.ten_de_an || '',
@@ -386,7 +386,7 @@ function openEdit(row) {
 
 function payloadFromForm() {
   return {
-    truong_id: form.truong_id,
+    ma_truong: form.ma_truong,
     nam_tuyen_sinh: form.nam_tuyen_sinh,
     chi_tieu: form.chi_tieu == null || form.chi_tieu === '' ? null : Number(form.chi_tieu),
     ten_de_an: optionalText(form.ten_de_an),
@@ -456,7 +456,7 @@ async function onSubmitJson() {
   try {
     const result = await importDeAnTuyenSinh(
       {
-        truong_id: schoolAfterFile.id,
+        ma_truong: schoolAfterFile.ma_truong,
         nam_tuyen_sinh: yearAfterFile,
         du_lieu: document,
       },
@@ -589,7 +589,7 @@ onMounted(async () => {
           </template>
         </CustomInput>
         <CustomSelect
-          v-model="filters.truong_id"
+          v-model="filters.ma_truong"
           class="filter-school"
           placeholder="Trường"
           clearable
@@ -600,7 +600,7 @@ onMounted(async () => {
             v-for="item in truongOptions"
             :key="item.id"
             :label="schoolLabel(item)"
-            :value="item.id"
+            :value="item.ma_truong"
           />
         </CustomSelect>
         <CustomSelect
@@ -783,7 +783,7 @@ onMounted(async () => {
               v-for="item in truongOptions"
               :key="item.id"
               :label="schoolLabel(item)"
-              :value="item.id"
+              :value="item.ma_truong"
             />
           </CustomSelect>
         </div>
@@ -806,9 +806,9 @@ onMounted(async () => {
     <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
       <CustomRow :gutter="16">
         <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Trường" prop="truong_id">
+          <CustomFormItem label="Trường" prop="ma_truong">
             <CustomSelect
-              v-model="form.truong_id"
+              v-model="form.ma_truong"
               filterable
               placeholder="Chọn trường"
               style="width: 100%"
@@ -817,7 +817,7 @@ onMounted(async () => {
                 v-for="item in truongOptions"
                 :key="item.id"
                 :label="schoolLabel(item)"
-                :value="item.id"
+                :value="item.ma_truong"
               />
             </CustomSelect>
           </CustomFormItem>

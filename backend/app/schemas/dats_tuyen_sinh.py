@@ -12,7 +12,7 @@ def _clean_text(value: str | None) -> str | None:
 
 
 class DatsTuyenSinhWrite(BaseModel):
-    truong_id: int = Field(..., ge=1)
+    ma_truong: str = Field(..., min_length=1, max_length=20)
     nam_tuyen_sinh: int = Field(..., ge=1990, le=2100)
     chi_tieu: int | None = Field(default=None, ge=0, le=4_294_967_295)
     ten_de_an: str | None = Field(default=None, max_length=255)
@@ -22,6 +22,14 @@ class DatsTuyenSinhWrite(BaseModel):
     nguon_du_lieu_url: str | None = Field(default=None, max_length=1000)
     trang_thai: str | None = Field(default=None, max_length=20)
     ghi_chu: str | None = Field(default=None, max_length=20000)
+
+    @field_validator("ma_truong")
+    @classmethod
+    def require_ma_truong(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("Vui lòng chọn trường")
+        return cleaned
 
     @field_validator("ten_de_an", "gioi_thieu", "nguon_du_lieu_url", "ghi_chu")
     @classmethod
@@ -104,9 +112,17 @@ class DatsTuyenSinhBulkResult(BaseModel):
 
 
 class DatsImportRequest(BaseModel):
-    truong_id: int = Field(..., ge=1)
+    ma_truong: str = Field(..., min_length=1, max_length=20)
     nam_tuyen_sinh: int = Field(..., ge=1990, le=2100)
     du_lieu: dict
+
+    @field_validator("ma_truong")
+    @classmethod
+    def require_ma_truong(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("Vui lòng chọn trường")
+        return cleaned
 
 
 class DatsImportResult(BaseModel):
@@ -134,3 +150,28 @@ class DatsTuyenSinhDeleteMany(BaseModel):
 
 class DatsTuyenSinhDeleteManyResult(BaseModel):
     deleted: int
+
+
+class TruongDaoTaoPublic(BaseModel):
+    ma_truong: str
+    ten_truong: str
+    ten_viet_tat: str | None = None
+    ten_tieng_anh: str | None = None
+    loai_co_so: str | None = None
+    loai_hinh: str | None = None
+    vung_mien: str | None = None
+    ten_tinh_thanh: str | None = None
+    dia_chi_tru_so: str | None = None
+    website: str | None = None
+    website_tuyen_sinh: str | None = None
+    anh_dai_dien_url: str | None = None
+    nam_tuyen_sinh: int
+    so_chuong_trinh: int
+    chi_tieu: int | None = None
+
+
+class TruongDaoTaoPage(BaseModel):
+    items: list[TruongDaoTaoPublic]
+    total: int
+    page: int
+    page_size: int

@@ -1,8 +1,30 @@
 <script setup>
-import { computed } from 'vue'
-import { layChiTiet, thanhTruong } from './chiTiet'
+import { onMounted, ref, watch } from 'vue'
+import { fetchTruongDaoTao } from '@/api/deAnTuyenSinh'
+import { fetchTinhThanh } from '@/api/tinhThanh'
+import { danhSachNamHoc, nhanNamHoc } from '@/constants/namHoc'
+import anhThpt from '@/assets/guest/thpt.jpg'
+import anhSinhVien from '@/assets/guest/sinh-vien.jpg'
+import anhThcs from '@/assets/guest/thcs.jpg'
+import anhThanhNien from '@/assets/guest/thanh-nien.jpg'
+import anhPhuHuynh from '@/assets/guest/phu-huynh.jpg'
+import anhNhaTruong from '@/assets/guest/nha-truong.jpg'
+import anhNhaTuyenDung from '@/assets/guest/nha-tuyen-dung.jpg'
 
 defineOptions({ name: 'ChiTietTruongDaoTao' })
+
+const KHU_VUC = ['Bắc', 'Trung', 'Nam']
+const LOAI_CO_SO = ['Cao đẳng', 'Đại học', 'Học viện']
+const NAM_HIEN_TAI = new Date().getFullYear()
+const ANH_DU_PHONG = [
+  anhThpt,
+  anhSinhVien,
+  anhThcs,
+  anhThanhNien,
+  anhPhuHuynh,
+  anhNhaTruong,
+  anhNhaTuyenDung,
+]
 
 const props = defineProps({
   nganh: { type: Object, required: true },
@@ -10,35 +32,368 @@ const props = defineProps({
   vanBan: { type: String, default: '' },
 })
 
-const truong = computed(() => thanhTruong(layChiTiet(props.chiTiet, ['truong_dao_tao'])))
+const tuKhoa = ref('')
+const khuVuc = ref('')
+const namHoc = ref(NAM_HIEN_TAI)
+const loai = ref('')
+const tinh = ref('')
+const boLoc = ref({
+  tuKhoa: '',
+  khuVuc: '',
+  namHoc: NAM_HIEN_TAI,
+  loai: '',
+  tinh: '',
+})
+const namOptions = danhSachNamHoc(NAM_HIEN_TAI)
+const tinhOptions = ref([])
+const danhSach = ref([])
+const total = ref(0)
+const trang = ref(1)
+const soMoiTrang = ref(12)
+const dangTai = ref(false)
+const loi = ref('')
+let lanTai = 0
+
+function hrefWebsite(value) {
+  const text = String(value || '').trim()
+  if (!text) return ''
+  if (/^https?:\/\//i.test(text)) return text
+  return `https://${text}`
+}
+
+function diaDiem(item) {
+  return [item.vung_mien, item.ten_tinh_thanh].filter(Boolean).join(' · ')
+}
+
+function chiTieu(value) {
+  if (value == null || value === '') return ''
+  return Number(value).toLocaleString('vi-VN')
+}
+
+function anhNen(item) {
+  const url = String(item?.anh_dai_dien_url || '').trim()
+  if (url) return url
+  if (!ANH_DU_PHONG.length) return ''
+  return ANH_DU_PHONG[bamMa(item?.ma_truong) % ANH_DU_PHONG.length]
+}
+
+function bamMa(ma) {
+  let hash = 2166136261
+  const khoa = String(ma || '')
+  for (let i = 0; i < khoa.length; i += 1) {
+    hash ^= khoa.charCodeAt(i)
+    hash = Math.imul(hash, 16777619)
+  }
+  return hash >>> 0
+}
+
+function matSong(hash) {
+  const truc = 34 + (hash % 8)
+  const bienDo = 2.5 + ((hash >>> 4) % 6)
+  const soSong = 1 + ((hash >>> 8) % 3)
+  const lech = ((hash >>> 11) % 9) - 4
+  const phase = ((hash >>> 16) % 628) / 100
+  const beRong = 1.15 + ((hash >>> 6) % 3) * 0.35
+  const soLop = 14
+  const ys = []
+  for (let y = -20; y <= 120; y += 10) ys.push(y)
+
+  function xTai(y, shift) {
+    const ty = (y + 20) / 140
+    const x = truc + shift + lech * ty + Math.sin(phase + ty * Math.PI * 2 * soSong) * bienDo
+    return 100 - x
+  }
+
+  function vien(shift) {
+    return ys.map((y) => `${xTai(y, shift).toFixed(2)},${y}`).join(' L')
+  }
+
+  let shapes = `<path d='M130,-20 L${vien(0)} L130,120 Z' fill='white'/>`
+  for (let i = 0; i < soLop; i += 1) {
+    const mo = ((1 - (i + 1) / soLop) ** 1.35).toFixed(3)
+    const a = vien(i * beRong).split(' L')
+    const b = vien((i + 1) * beRong).split(' L')
+    shapes += `<path d='M${a.join(' L')} L${b.reverse().join(' L')} Z' fill='white' fill-opacity='${mo}'/>`
+  }
+
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'>${shapes}</svg>`
+  return `url("data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}")`
+}
+
+function matTiepGiap(hash) {
+  const kieu = hash % 6
+  const neo = 36 + (hash % 8)
+  const het = neo + 16 + ((hash >>> 5) % 12)
+  const goc = 76 + ((hash >>> 9) % 29)
+  if (kieu === 0) return `linear-gradient(${goc + 180}deg, #000 ${neo}%, transparent ${het}%)`
+  if (kieu === 1) return `linear-gradient(${360 - goc}deg, #000 ${neo}%, transparent ${het}%)`
+  if (kieu === 2) {
+    const y = (hash >>> 12) % 101
+    return `radial-gradient(145% 180% at 106% ${y}%, #000 ${neo}%, transparent ${het}%)`
+  }
+  if (kieu === 3) {
+    const giua = neo + Math.round((het - neo) * 0.45)
+    return `linear-gradient(${goc + 180}deg, #000 ${neo}%, rgba(0,0,0,.62) ${giua}%, transparent ${het}%)`
+  }
+  return matSong(hash)
+}
+
+function styleNen(item) {
+  const url = anhNen(item).replace(/["\\\n\r\f]/g, '')
+  if (!url) return undefined
+  return {
+    backgroundImage: `url("${url}")`,
+    WebkitMaskImage: matTiepGiap(bamMa(item.ma_truong)),
+    maskImage: matTiepGiap(bamMa(item.ma_truong)),
+  }
+}
+
+async function taiTinh() {
+  try {
+    const data = await fetchTinhThanh({ page: 1, page_size: 200, trang_thai: 1 }, { skipLoading: true })
+    const items = [...(data.items || [])]
+    items.sort((a, b) => String(a.ten_tinh || '').localeCompare(String(b.ten_tinh || ''), 'vi'))
+    tinhOptions.value = items
+  } catch {
+    tinhOptions.value = []
+  }
+}
+
+async function tai() {
+  const ma = String(props.nganh?.ma_nganh || '').trim()
+  const lan = ++lanTai
+  danhSach.value = []
+  total.value = 0
+  if (!ma) {
+    loi.value = 'Không có mã ngành.'
+    return
+  }
+  dangTai.value = true
+  loi.value = ''
+  try {
+    const params = {
+      ma_nganh: ma,
+      nam_tuyen_sinh: boLoc.value.namHoc || NAM_HIEN_TAI,
+      page: trang.value,
+      page_size: soMoiTrang.value,
+    }
+    if (boLoc.value.tuKhoa) params.q = boLoc.value.tuKhoa
+    if (boLoc.value.khuVuc) params.vung_mien = boLoc.value.khuVuc
+    if (boLoc.value.loai) params.loai_co_so = boLoc.value.loai
+    if (boLoc.value.tinh) params.ten_tinh_thanh = boLoc.value.tinh
+    const data = await fetchTruongDaoTao(params, { skipLoading: true })
+    if (lan !== lanTai) return
+    danhSach.value = data.items || []
+    total.value = data.total || 0
+  } catch {
+    if (lan !== lanTai) return
+    loi.value = 'Không tải được trường đào tạo.'
+  } finally {
+    if (lan === lanTai) dangTai.value = false
+  }
+}
+
+function timKiem() {
+  const nam = Number(namHoc.value)
+  boLoc.value = {
+    tuKhoa: tuKhoa.value.trim(),
+    khuVuc: khuVuc.value || '',
+    namHoc: Number.isInteger(nam) ? nam : NAM_HIEN_TAI,
+    loai: loai.value || '',
+    tinh: tinh.value || '',
+  }
+  if (trang.value !== 1) trang.value = 1
+  else tai()
+}
+
+watch(
+  () => props.nganh?.ma_nganh,
+  () => {
+    if (trang.value !== 1) trang.value = 1
+    else tai()
+  },
+)
+
+watch(trang, tai)
+watch(soMoiTrang, () => {
+  if (trang.value !== 1) trang.value = 1
+  else tai()
+})
+
+onMounted(() => {
+  taiTinh()
+  tai()
+})
 </script>
 
 <template>
-  <ul v-if="truong.length" class="truong">
-    <li v-for="item in truong" :key="item.ten" class="truong__item">
-      <h3>{{ item.ten }}</h3>
-      <p v-if="item.phu">{{ item.phu }}</p>
-    </li>
-  </ul>
-  <KhongCoDuLieu v-else text="Chưa có trường đào tạo cho ngành này." />
+  <div class="truong-dao-tao">
+    <form class="nhom-filter" @submit.prevent="timKiem">
+      <div class="nhom-filter__field nhom-filter__field--ten">
+        <label class="nhom-filter__label" for="loc-tu-khoa-truong">Từ khóa</label>
+        <CustomInput id="loc-tu-khoa-truong" v-model="tuKhoa" placeholder="Tên hoặc mã trường" clearable />
+      </div>
+      <div class="nhom-filter__field nhom-filter__field--khu-vuc">
+        <label class="nhom-filter__label" for="loc-khu-vuc-truong">Khu vực</label>
+        <CustomSelect id="loc-khu-vuc-truong" v-model="khuVuc" class="nhom-filter__select" clearable placeholder="Tất cả khu vực">
+          <CustomOption v-for="item in KHU_VUC" :key="item" :label="item" :value="item" />
+        </CustomSelect>
+      </div>
+      <div class="nhom-filter__field nhom-filter__field--nam">
+        <label class="nhom-filter__label" for="loc-nam-hoc-truong">Năm học</label>
+        <CustomSelect id="loc-nam-hoc-truong" v-model="namHoc" class="nhom-filter__select" placeholder="Năm học">
+          <CustomOption v-for="nam in namOptions" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
+        </CustomSelect>
+      </div>
+      <div class="nhom-filter__field nhom-filter__field--loai">
+        <label class="nhom-filter__label" for="loc-loai-truong">Loại cơ sở</label>
+        <CustomSelect id="loc-loai-truong" v-model="loai" class="nhom-filter__select" clearable placeholder="Tất cả loại">
+          <CustomOption v-for="item in LOAI_CO_SO" :key="item" :label="item" :value="item" />
+        </CustomSelect>
+      </div>
+      <div class="nhom-filter__field nhom-filter__field--tinh">
+        <label class="nhom-filter__label" for="loc-tinh-truong">Tỉnh/thành</label>
+        <CustomSelect id="loc-tinh-truong" v-model="tinh" class="nhom-filter__select" filterable clearable placeholder="Tất cả tỉnh/thành">
+          <CustomOption v-for="item in tinhOptions" :key="item.id" :label="item.ten_tinh" :value="item.ten_tinh" />
+        </CustomSelect>
+      </div>
+      <div class="nhom-filter__actions">
+        <CustomButton type="primary" native-type="submit">Tìm kiếm</CustomButton>
+      </div>
+    </form>
+
+    <p v-if="loi" class="truong-dao-tao__status">{{ loi }}</p>
+    <p v-else-if="dangTai" class="truong-dao-tao__status">Đang tải trường đào tạo…</p>
+    <KhongCoDuLieu v-else-if="!danhSach.length" text="Chưa có trường đào tạo cho ngành này." />
+    <div v-else class="row g-3 truong">
+      <div v-for="item in danhSach" :key="item.ma_truong" class="col-12 col-lg-3">
+        <article class="truong__item" :class="{ 'truong__item--co-anh': anhNen(item) }">
+          <span v-if="anhNen(item)" class="truong__bg" :style="styleNen(item)" aria-hidden="true" />
+          <p class="truong__code">{{ item.ma_truong }}</p>
+          <div class="truong__main">
+            <h3>{{ item.ten_truong }}</h3>
+            <p v-if="item.ten_tieng_anh" class="truong__en">{{ item.ten_tieng_anh }}</p>
+            <p v-if="diaDiem(item) || item.loai_co_so" class="truong__meta">
+              {{ [item.loai_co_so, diaDiem(item)].filter(Boolean).join(' · ') }}
+            </p>
+            <p v-if="item.dia_chi_tru_so">{{ item.dia_chi_tru_so }}</p>
+            <p v-if="item.so_chuong_trinh || chiTieu(item.chi_tieu)">
+              <span v-if="item.so_chuong_trinh">{{ item.so_chuong_trinh }} chương trình</span>
+              <span v-if="item.so_chuong_trinh && chiTieu(item.chi_tieu)"> · </span>
+              <span v-if="chiTieu(item.chi_tieu)">Chỉ tiêu {{ chiTieu(item.chi_tieu) }}</span>
+            </p>
+            <p v-if="hrefWebsite(item.website_tuyen_sinh || item.website)" class="truong__web">
+              <a :href="hrefWebsite(item.website_tuyen_sinh || item.website)" target="_blank" rel="noopener noreferrer">
+                {{ item.website_tuyen_sinh || item.website }}
+              </a>
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+    <div v-if="!dangTai && !loi && total > soMoiTrang" class="nhom-pager">
+      <CustomPagination
+        v-model:current-page="trang"
+        v-model:page-size="soMoiTrang"
+        :total="total"
+        :page-sizes="[12, 24, 48]"
+        layout="total, sizes, prev, pager, next"
+        background
+      />
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.truong {
+.truong-dao-tao {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
+}
+
+.nhom-filter__field--nam,
+.nhom-filter__field--tinh {
+  flex: 1 1 160px;
+  max-width: 220px;
+}
+
+.nhom-filter__label {
+  color: #3a4742;
+  font-size: 0.8125rem;
+}
+
+.truong-dao-tao__status {
   margin: 0;
-  padding: 0;
-  list-style: none;
+  color: #3d5c4c;
+  line-height: 1.5;
 }
 
 .truong__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
   margin: 0;
-  padding: 12px 14px;
+  padding: 16px;
+  overflow: hidden;
   border: 1px solid #c5d5cc;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #f6faf7;
+}
+
+.truong__bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  width: 100%;
+  background-position: right center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  pointer-events: none;
+  -webkit-mask-position: right center;
+  mask-position: right center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.truong__main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding-right: 28px;
+}
+
+.truong__item--co-anh :is(h3, .truong__en, .truong__meta, .truong__main > p) {
+  width: fit-content;
+  max-width: 100%;
+  text-shadow: 0 0 10px #fff, 0 0 5px #fff;
+}
+
+.truong__code {
+  position: absolute;
+  top: 5px;
+  right: -45px;
+  z-index: 2;
+  width: 118px;
+  margin: 0;
+  padding: 4px 0;
+  background: var(--guest-primary, #0c5c34);
+  box-shadow: 0 2px 6px rgba(28, 43, 35, 0.2);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-align: center;
+  transform: rotate(45deg);
 }
 
 .truong__item h3 {
@@ -49,9 +404,37 @@ const truong = computed(() => thanhTruong(layChiTiet(props.chiTiet, ['truong_dao
   line-height: 1.4;
 }
 
-.truong__item p {
+.truong__en,
+.truong__meta,
+.truong__main > p {
   margin: 4px 0 0;
   color: #1c2836;
   line-height: 1.5;
+}
+
+.truong__en {
+  color: #3d5c4c;
+}
+
+.truong__web {
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.truong__main a {
+  color: #0c5c34;
+  word-break: break-all;
+}
+
+@media (max-width: 767.98px) {
+  .nhom-filter__field--ten,
+  .nhom-filter__field--khu-vuc,
+  .nhom-filter__field--nam,
+  .nhom-filter__field--loai,
+  .nhom-filter__field--tinh,
+  .nhom-filter__actions {
+    flex: 1 1 100%;
+    max-width: none;
+  }
 }
 </style>

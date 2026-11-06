@@ -61,12 +61,12 @@ let ignoreContextChange = false
 const filters = reactive({
   q: '',
   nam_tuyen_sinh: '',
-  truong_id: '',
+  ma_truong: '',
   de_an_id: '',
 })
 
 const context = reactive({
-  truong_id: null,
+  ma_truong: null,
   nam_tuyen_sinh: new Date().getFullYear(),
   de_an_id: null,
 })
@@ -79,9 +79,9 @@ const rules = {
 
 const selectedYear = computed(() => laNamHoc(context.nam_tuyen_sinh))
 
-const contextReady = computed(() => Boolean(context.truong_id) && selectedYear.value != null)
+const contextReady = computed(() => Boolean(context.ma_truong) && selectedYear.value != null)
 
-const filterDeAnReady = computed(() => Boolean(filters.truong_id) || yearFilter() != null)
+const filterDeAnReady = computed(() => Boolean(filters.ma_truong) || yearFilter() != null)
 
 function emptyForm() {
   return {
@@ -97,7 +97,7 @@ function resetForm() {
   editingId.value = null
   createMode.value = 'json'
   jsonText.value = ''
-  context.truong_id = null
+  context.ma_truong = null
   context.nam_tuyen_sinh = new Date().getFullYear()
   context.de_an_id = null
   deAnOptions.value = []
@@ -173,7 +173,7 @@ function yearFilter() {
 }
 
 function ensureContext() {
-  if (!context.truong_id) {
+  if (!context.ma_truong) {
     ElMessage.error('Vui lòng chọn trường')
     return false
   }
@@ -204,7 +204,7 @@ async function loadTruongOptions() {
 
 async function loadDeAnOptions() {
   const requestId = ++deAnRequest
-  const truongId = context.truong_id
+  const truongId = context.ma_truong
   const year = selectedYear.value
   if (!truongId || year == null) {
     deAnOptions.value = []
@@ -213,7 +213,7 @@ async function loadDeAnOptions() {
   deAnLoading.value = true
   try {
     const data = await fetchDeAnTuyenSinh({
-      truong_id: truongId,
+      ma_truong: truongId,
       nam_tuyen_sinh: year,
       page: 1,
       page_size: 1000,
@@ -232,14 +232,14 @@ async function loadDeAnOptions() {
 async function loadFilterDeAnOptions() {
   const requestId = ++filterDeAnRequest
   const year = yearFilter()
-  if (!filters.truong_id && year == null) {
+  if (!filters.ma_truong && year == null) {
     filterDeAnOptions.value = []
     return
   }
   filterDeAnLoading.value = true
   try {
     const params = { page: 1, page_size: 1000 }
-    if (filters.truong_id) params.truong_id = filters.truong_id
+    if (filters.ma_truong) params.ma_truong = filters.ma_truong
     if (year != null) params.nam_tuyen_sinh = year
     const data = await fetchDeAnTuyenSinh(params)
     if (requestId !== filterDeAnRequest) return
@@ -275,7 +275,7 @@ async function load() {
     }
     if (filters.q.trim()) params.q = filters.q.trim()
     if (year != null) params.nam_tuyen_sinh = year
-    if (filters.truong_id) params.truong_id = filters.truong_id
+    if (filters.ma_truong) params.ma_truong = filters.ma_truong
     if (filters.de_an_id) params.de_an_id = filters.de_an_id
     const data = await fetchWebsite(params)
     rows.value = data.items
@@ -334,7 +334,7 @@ async function openEdit(row) {
   ignoreContextChange = true
   editingId.value = row.id
   createMode.value = 'form'
-  context.truong_id = row.truong_id
+  context.ma_truong = row.ma_truong
   context.nam_tuyen_sinh = row.nam_tuyen_sinh
   context.de_an_id = row.de_an_id
   Object.assign(form, {
@@ -503,7 +503,7 @@ onMounted(async () => {
           </template>
         </CustomInput>
         <CustomSelect
-          v-model="filters.truong_id"
+          v-model="filters.ma_truong"
           class="filter-school"
           placeholder="Trường"
           clearable
@@ -514,7 +514,7 @@ onMounted(async () => {
             v-for="item in truongOptions"
             :key="item.id"
             :label="schoolLabel(item)"
-            :value="item.id"
+            :value="item.ma_truong"
           />
         </CustomSelect>
         <CustomSelect
@@ -655,7 +655,7 @@ onMounted(async () => {
       <CustomCol :span="8">
         <span class="json-field__label">Trường</span>
         <CustomSelect
-          v-model="context.truong_id"
+          v-model="context.ma_truong"
           filterable
           placeholder="Chọn trường"
           style="width: 100%"
@@ -665,7 +665,7 @@ onMounted(async () => {
             v-for="item in truongOptions"
             :key="item.id"
             :label="schoolLabel(item)"
-            :value="item.id"
+            :value="item.ma_truong"
           />
         </CustomSelect>
       </CustomCol>

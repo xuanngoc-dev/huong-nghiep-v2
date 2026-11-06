@@ -20,7 +20,7 @@ class DatsTuyenSinh(Base):
 
     __tablename__ = "dats_tuyen_sinh"
     __table_args__ = (
-        Index("idx_dats_tuyen_sinh_truong_id_nam_tuyen_sinh", "truong_id", "nam_tuyen_sinh"),
+        Index("idx_dats_tuyen_sinh_ma_truong_nam_tuyen_sinh", "ma_truong", "nam_tuyen_sinh"),
         {
             "mysql_charset": "utf8mb4",
             "mysql_collate": "utf8mb4_unicode_ci",
@@ -35,16 +35,16 @@ class DatsTuyenSinh(Base):
         autoincrement=True,
         comment="Khóa chính, tự tăng.",
     )
-    truong_id: Mapped[int] = mapped_column(
-        BIGINT(unsigned=True),
+    ma_truong: Mapped[str] = mapped_column(
+        String(20),
         ForeignKey(
-            "dm_truong.id",
-            name="fk_dats_tuyen_sinh_truong_id",
-            onupdate="RESTRICT",
+            "dm_truong.ma_truong",
+            name="fk_dats_tuyen_sinh_ma_truong",
+            onupdate="CASCADE",
             ondelete="RESTRICT",
         ),
         nullable=False,
-        comment="Đơn vị đào tạo; khóa ngoại đến dm_truong.id.",
+        comment="Mã trường; khóa ngoại đến dm_truong.ma_truong.",
     )
     nam_tuyen_sinh: Mapped[int] = mapped_column(
         SMALLINT(unsigned=True),

@@ -329,7 +329,7 @@ CREATE TABLE IF NOT EXISTS `dm_to_hop_mon_hoc_chi_tiet` (
 -- Thông tin chung của đề án theo trường và năm tuyển sinh
 CREATE TABLE IF NOT EXISTS `dats_tuyen_sinh` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Khóa chính, tự tăng.',
-  `truong_id` BIGINT UNSIGNED NOT NULL COMMENT 'Đơn vị đào tạo; khóa ngoại đến dm_truong.id.',
+  `ma_truong` VARCHAR(20) NOT NULL COMMENT 'Mã trường; khóa ngoại đến dm_truong.ma_truong.',
   `nam_tuyen_sinh` SMALLINT UNSIGNED NOT NULL COMMENT 'Năm tuyển sinh của đề án.',
   `chi_tieu` INT UNSIGNED NULL DEFAULT NULL COMMENT 'Tổng chỉ tiêu của đợt tuyển sinh',
   `ten_de_an` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Tên đề án/thông tin tuyển sinh.',
@@ -342,8 +342,8 @@ CREATE TABLE IF NOT EXISTS `dats_tuyen_sinh` (
   `tao_luc` DATETIME NULL DEFAULT NULL COMMENT 'Thời điểm tạo bản ghi.',
   `cap_nhat_luc` DATETIME NULL DEFAULT NULL COMMENT 'Thời điểm cập nhật gần nhất.',
   PRIMARY KEY (`id`),
-  KEY `idx_dats_tuyen_sinh_truong_id_nam_tuyen_sinh` (`truong_id`, `nam_tuyen_sinh`),
-  CONSTRAINT `fk_dats_tuyen_sinh_truong_id` FOREIGN KEY (`truong_id`) REFERENCES `dm_truong` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
+  KEY `idx_dats_tuyen_sinh_ma_truong_nam_tuyen_sinh` (`ma_truong`, `nam_tuyen_sinh`),
+  CONSTRAINT `fk_dats_tuyen_sinh_ma_truong` FOREIGN KEY (`ma_truong`) REFERENCES `dm_truong` (`ma_truong`) ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Thông tin chung của đề án theo trường và năm tuyển sinh';
 
 -- Trụ sở, cơ sở và phân hiệu của trường

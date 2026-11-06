@@ -35,7 +35,7 @@ def _to_public(item: DatsTruSo, de_an: DatsTuyenSinh, truong: DmTruong) -> DatsT
         id=item.id,
         de_an_id=item.de_an_id,
         ten_de_an=de_an.ten_de_an,
-        truong_id=de_an.truong_id,
+        truong_id=truong.id,
         ma_truong=truong.ma_truong or "",
         ten_truong=truong.ten_truong,
         nam_tuyen_sinh=de_an.nam_tuyen_sinh,
@@ -52,7 +52,7 @@ def _joined():
     return (
         select(DatsTruSo, DatsTuyenSinh, DmTruong)
         .join(DatsTuyenSinh, DatsTruSo.de_an_id == DatsTuyenSinh.id)
-        .join(DmTruong, DatsTuyenSinh.truong_id == DmTruong.id)
+        .join(DmTruong, DatsTuyenSinh.ma_truong == DmTruong.ma_truong)
     )
 
 
@@ -82,7 +82,7 @@ def _apply(item: DatsTruSo, de_an_id: int, payload: DatsTruSoFields) -> None:
 def list_tru_so(
     q: str | None = Query(default=None, max_length=255),
     nam_tuyen_sinh: int | None = Query(default=None, ge=1990, le=2100),
-    truong_id: int | None = Query(default=None, ge=1),
+    ma_truong: str | None = Query(default=None, max_length=20),
     de_an_id: int | None = Query(default=None, ge=1),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
@@ -109,13 +109,13 @@ def list_tru_so(
         )
     if nam_tuyen_sinh is not None:
         filters.append(DatsTuyenSinh.nam_tuyen_sinh == nam_tuyen_sinh)
-    if truong_id is not None:
-        filters.append(DatsTuyenSinh.truong_id == truong_id)
+    if ma_truong and ma_truong.strip():
+        filters.append(DatsTuyenSinh.ma_truong == ma_truong.strip())
     if de_an_id is not None:
         filters.append(DatsTruSo.de_an_id == de_an_id)
 
     joined = DatsTruSo.__table__.join(DatsTuyenSinh, DatsTruSo.de_an_id == DatsTuyenSinh.id).join(
-        DmTruong, DatsTuyenSinh.truong_id == DmTruong.id
+        DmTruong, DatsTuyenSinh.ma_truong == DmTruong.ma_truong
     )
     count_stmt = select(func.count()).select_from(joined)
     stmt = _joined()

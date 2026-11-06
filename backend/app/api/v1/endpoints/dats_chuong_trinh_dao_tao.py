@@ -51,7 +51,7 @@ def _to_public(
         id=item.id,
         de_an_id=item.de_an_id,
         ten_de_an=de_an.ten_de_an,
-        truong_id=de_an.truong_id,
+        truong_id=truong.id,
         ma_truong=truong.ma_truong or "",
         ten_truong=truong.ten_truong,
         nam_tuyen_sinh=de_an.nam_tuyen_sinh,
@@ -76,7 +76,7 @@ def _joined():
     return (
         select(DatsChuongTrinhDaoTao, DatsTuyenSinh, DmTruong, DmNganhDaoTao, DatsTruSo)
         .join(DatsTuyenSinh, DatsChuongTrinhDaoTao.de_an_id == DatsTuyenSinh.id)
-        .join(DmTruong, DatsTuyenSinh.truong_id == DmTruong.id)
+        .join(DmTruong, DatsTuyenSinh.ma_truong == DmTruong.ma_truong)
         .outerjoin(DmNganhDaoTao, DatsChuongTrinhDaoTao.nganh_dao_tao_id == DmNganhDaoTao.id)
         .outerjoin(DatsTruSo, DatsChuongTrinhDaoTao.co_so_id == DatsTruSo.id)
     )
@@ -148,7 +148,7 @@ def _apply(item: DatsChuongTrinhDaoTao, de_an_id: int, payload: DatsChuongTrinhD
 def list_chuong_trinh(
     q: str | None = Query(default=None, max_length=255),
     nam_tuyen_sinh: int | None = Query(default=None, ge=1990, le=2100),
-    truong_id: int | None = Query(default=None, ge=1),
+    ma_truong: str | None = Query(default=None, max_length=20),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
@@ -170,12 +170,12 @@ def list_chuong_trinh(
         )
     if nam_tuyen_sinh is not None:
         filters.append(DatsTuyenSinh.nam_tuyen_sinh == nam_tuyen_sinh)
-    if truong_id is not None:
-        filters.append(DatsTuyenSinh.truong_id == truong_id)
+    if ma_truong and ma_truong.strip():
+        filters.append(DatsTuyenSinh.ma_truong == ma_truong.strip())
 
     joined = (
         DatsChuongTrinhDaoTao.__table__.join(DatsTuyenSinh, DatsChuongTrinhDaoTao.de_an_id == DatsTuyenSinh.id).join(
-            DmTruong, DatsTuyenSinh.truong_id == DmTruong.id
+            DmTruong, DatsTuyenSinh.ma_truong == DmTruong.ma_truong
         )
     )
     count_stmt = select(func.count()).select_from(joined)

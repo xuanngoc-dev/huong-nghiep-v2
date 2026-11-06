@@ -16,7 +16,7 @@ let detailRequest = 0
 
 const filters = reactive({
   nam_tuyen_sinh: '',
-  truong_id: '',
+  ma_truong: '',
   de_an_id: '',
 })
 
@@ -48,7 +48,7 @@ function yearFilter() {
   return laNamHoc(filters.nam_tuyen_sinh)
 }
 
-const filterDeAnReady = computed(() => Boolean(filters.truong_id) || yearFilter() != null)
+const filterDeAnReady = computed(() => Boolean(filters.ma_truong) || yearFilter() != null)
 
 async function loadTruongOptions() {
   const pageSizeOptions = 1000
@@ -67,14 +67,14 @@ async function loadTruongOptions() {
 async function loadDeAnOptions() {
   const requestId = ++deAnRequest
   const year = yearFilter()
-  if (!filters.truong_id && year == null) {
+  if (!filters.ma_truong && year == null) {
     deAnOptions.value = []
     return
   }
   deAnLoading.value = true
   try {
     const params = { page: 1, page_size: 1000 }
-    if (filters.truong_id) params.truong_id = filters.truong_id
+    if (filters.ma_truong) params.ma_truong = filters.ma_truong
     if (year != null) params.nam_tuyen_sinh = year
     const data = await fetchDeAnTuyenSinh(params)
     if (requestId !== deAnRequest) return
@@ -123,7 +123,7 @@ onMounted(() => {
     <CustomCard shadow="never" class="catalog-card">
       <div class="scope">
         <CustomSelect
-          v-model="filters.truong_id"
+          v-model="filters.ma_truong"
           class="filter-school"
           placeholder="Trường"
           clearable
@@ -134,7 +134,7 @@ onMounted(() => {
             v-for="item in truongOptions"
             :key="item.id"
             :label="schoolLabel(item)"
-            :value="item.id"
+            :value="item.ma_truong"
           />
         </CustomSelect>
         <CustomSelect
