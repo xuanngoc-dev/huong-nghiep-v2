@@ -18,6 +18,7 @@ const JSON_SAMPLE = `[
     "ten_tieng_anh": "Realistic",
     "mo_ta": "Thích làm việc với máy móc, công cụ và hoạt động thực hành.",
     "vi_du_nghe_nghiep": "Kỹ sư, thợ cơ khí, kiến trúc sư",
+    "hinh_anh_mo_ta": "https://example.com/holland-r.jpg",
     "trang_thai": 1
   },
   {
@@ -65,6 +66,7 @@ function emptyForm() {
     ten_tieng_anh: '',
     mo_ta: '',
     vi_du_nghe_nghiep: '',
+    hinh_anh_mo_ta: '',
     trang_thai: 1,
   }
 }
@@ -110,6 +112,8 @@ function parseJsonItems(text) {
       mo_ta: item.mo_ta == null ? null : String(item.mo_ta).trim() || null,
       vi_du_nghe_nghiep:
         item.vi_du_nghe_nghiep == null ? null : String(item.vi_du_nghe_nghiep).trim() || null,
+      hinh_anh_mo_ta:
+        item.hinh_anh_mo_ta == null ? null : String(item.hinh_anh_mo_ta).trim() || null,
       trang_thai: item.trang_thai ?? 1,
     }
   })
@@ -190,6 +194,7 @@ function openEdit(row) {
     ten_tieng_anh: row.ten_tieng_anh,
     mo_ta: row.mo_ta || '',
     vi_du_nghe_nghiep: row.vi_du_nghe_nghiep || '',
+    hinh_anh_mo_ta: row.hinh_anh_mo_ta || '',
     trang_thai: row.trang_thai,
   })
   dialogVisible.value = true
@@ -202,6 +207,7 @@ function payloadFromForm() {
     ten_tieng_anh: form.ten_tieng_anh.trim(),
     mo_ta: form.mo_ta?.trim() || null,
     vi_du_nghe_nghiep: form.vi_du_nghe_nghiep?.trim() || null,
+    hinh_anh_mo_ta: form.hinh_anh_mo_ta?.trim() || null,
     trang_thai: form.trang_thai,
   }
 }
@@ -409,6 +415,9 @@ onMounted(load)
         >
           <template #default="{ row }">{{ row.vi_du_nghe_nghiep || '—' }}</template>
         </CustomTableColumn>
+        <CustomTableColumn prop="hinh_anh_mo_ta" label="Hình ảnh mô tả" min-width="220">
+          <template #default="{ row }">{{ row.hinh_anh_mo_ta || '—' }}</template>
+        </CustomTableColumn>
         <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
           <template #default="{ row }">
             <div class="row-actions">
@@ -519,6 +528,15 @@ onMounted(load)
               maxlength="5000"
               show-word-limit
               placeholder="Ví dụ: Kỹ sư, thợ cơ khí"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="24">
+          <CustomFormItem label="Hình ảnh mô tả" prop="hinh_anh_mo_ta">
+            <CustomInput
+              v-model="form.hinh_anh_mo_ta"
+              maxlength="500"
+              placeholder="URL hình ảnh mô tả"
             />
           </CustomFormItem>
         </CustomCol>

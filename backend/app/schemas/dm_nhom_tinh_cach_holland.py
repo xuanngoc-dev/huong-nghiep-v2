@@ -9,6 +9,7 @@ class DmNhomTinhCachHollandWrite(BaseModel):
     ten_tieng_anh: str = Field(..., min_length=1, max_length=150)
     mo_ta: str | None = Field(default=None, max_length=5000)
     vi_du_nghe_nghiep: str | None = Field(default=None, max_length=5000)
+    hinh_anh_mo_ta: str | None = Field(default=None, max_length=500)
     trang_thai: int = Field(default=1, ge=0, le=1)
 
     @field_validator("ten_nhom")
@@ -35,7 +36,7 @@ class DmNhomTinhCachHollandWrite(BaseModel):
             raise ValueError("Mã nhóm không được để trống")
         return cleaned
 
-    @field_validator("mo_ta", "vi_du_nghe_nghiep")
+    @field_validator("mo_ta", "vi_du_nghe_nghiep", "hinh_anh_mo_ta")
     @classmethod
     def empty_to_none(cls, value: str | None) -> str | None:
         if value is None:
@@ -51,6 +52,7 @@ class DmNhomTinhCachHollandPublic(BaseModel):
     ten_tieng_anh: str
     mo_ta: str | None = None
     vi_du_nghe_nghiep: str | None = None
+    hinh_anh_mo_ta: str | None = None
     trang_thai: int
     created_at: datetime | None = None
     updated_at: datetime | None = None
