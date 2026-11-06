@@ -111,7 +111,10 @@ declare module 'vue' {
     LamBai: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/LamBai.vue')['default']
     LenDauTrang: typeof import('./components/guest/chung/LenDauTrang.vue')['default']
     LoadingSuyNghi: typeof import('./components/guest/LoadingSuyNghi.vue')['default']
+    LoTrinhPhatTrien: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/LoTrinhPhatTrien.vue')['default']
     MoneyInput: typeof import('./components/element/MoneyInput.vue')['default']
+    MoTaCongViec: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/MoTaCongViec.vue')['default']
+    MucLuongKyNang: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/MucLuongKyNang.vue')['default']
     NganhPhuHop: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/NganhPhuHop.vue')['default']
     NhacKhaoSat: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/NhacKhaoSat.vue')['default']
     NhaTruong: typeof import('./components/guest/doi-tuong/NhaTruong.vue')['default']
@@ -128,6 +131,8 @@ declare module 'vue' {
     ThanhNienNgoaiTruong: typeof import('./components/guest/doi-tuong/ThanhNienNgoaiTruong.vue')['default']
     ThiDaiHoc: typeof import('./components/guest/doi-tuong/HocSinhThpt/ThiDaiHoc.vue')['default']
     TinTucMoi: typeof import('./components/guest/chung/TinTucMoi.vue')['default']
+    TongQuan: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/TongQuan.vue')['default']
+    TruongDaoTao: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/TruongDaoTao.vue')['default']
     XuatKhauLaoDong: typeof import('./components/guest/doi-tuong/HocSinhThpt/XuatKhauLaoDong.vue')['default']
   }
   export interface GlobalDirectives {

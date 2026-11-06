@@ -1,34 +1,25 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchNganh } from '@/api/nganhDaoTao'
 import anhMacDinh from '@/assets/guest/sinh-vien.jpg'
+import { noiMucLuong } from '@/utils/capTenGiaTri'
+import { docChiTiet, noiGiaTri } from './chi-tiet/chiTiet'
+import TongQuan from './chi-tiet/TongQuan.vue'
+import MoTaCongViec from './chi-tiet/MoTaCongViec.vue'
+import LoTrinhPhatTrien from './chi-tiet/LoTrinhPhatTrien.vue'
+import MucLuongKyNang from './chi-tiet/MucLuongKyNang.vue'
+import TruongDaoTao from './chi-tiet/TruongDaoTao.vue'
 
 defineOptions({ name: 'ThptChiTietNganh' })
 
-const NHAN_MUC = {
-  mo_ta: 'Mô tả',
-  ky_nang_phu_hop: 'Kỹ năng phù hợp',
-  mon_hoc_tieu_bieu: 'Môn học tiêu biểu',
-  co_hoi_nghe_nghiep: 'Cơ hội nghề nghiệp',
-  muc_luong: 'Mức lương tham khảo',
-  muc_luong_tham_khao: 'Mức lương tham khảo',
-  cong_cu: 'Công cụ thường dùng',
-  do_phu_hop: 'Độ phù hợp',
-  diem_can_nhac: 'Điểm cân nhắc',
-  truong_dao_tao: 'Các trường đào tạo',
-  thoi_gian_dao_tao: 'Thời gian đào tạo',
-}
-const THU_TU_CHI_TIET = [
-  'ky_nang_phu_hop',
-  'mon_hoc_tieu_bieu',
-  'co_hoi_nghe_nghiep',
-  'cong_cu',
-  'do_phu_hop',
-  'diem_can_nhac',
-  'truong_dao_tao',
+const TABS = [
+  { id: 'tong-quan', nhan: 'Tổng quan', component: TongQuan },
+  { id: 'mo-ta-cong-viec', nhan: 'Mô tả công việc', component: MoTaCongViec },
+  { id: 'lo-trinh', nhan: 'Lộ trình phát triển', component: LoTrinhPhatTrien },
+  { id: 'muc-luong', nhan: 'Mức lương & Kỹ năng', component: MucLuongKyNang },
+  { id: 'truong', nhan: 'Trường đào tạo', component: TruongDaoTao },
 ]
-const DA_HIEN = new Set(['mo_ta', 'muc_luong', 'muc_luong_tham_khao', 'thoi_gian_dao_tao'])
 
 const route = useRoute()
 const router = useRouter()
@@ -38,6 +29,7 @@ const dangTai = ref(false)
 const loi = ref('')
 const nganh = ref(null)
 const anhHong = ref(false)
+const tabDangChon = ref(TABS[0].id)
 
 const anh = computed(() => {
   const url = String(nganh.value?.hinh_anh_mo_ta || '').trim()
@@ -50,75 +42,43 @@ function queryMaNganh() {
   return ma ? { ma_nganh: ma } : {}
 }
 
-function noiGiaTri(value) {
-  if (Array.isArray(value)) {
-    return value.map((item) => noiGiaTri(item)).filter(Boolean).join('\n')
-  }
-  if (value && typeof value === 'object') {
-    return Object.entries(value)
-      .map(([key, item]) => {
-        const text = noiGiaTri(item)
-        return text ? `${NHAN_MUC[key] || key}: ${text}` : ''
-      })
-      .filter(Boolean)
-      .join('\n')
-  }
-  if (value == null) return ''
-  return String(value).trim()
-}
-
-function docChiTiet(item) {
-  const text = String(item?.chi_tiet || '').trim()
-  if (!text.startsWith('{')) return { vanBan: text, json: null }
-  try {
-    const data = JSON.parse(text)
-    if (data && typeof data === 'object' && !Array.isArray(data)) return { vanBan: '', json: data }
-  } catch {
-    /* Giữ nguyên đoạn văn khi chi tiết không phải JSON. */
-  }
-  return { vanBan: text, json: null }
-}
+const chiTiet = computed(() => (nganh.value ? docChiTiet(nganh.value) : { vanBan: '', json: null }))
+const thanhPhanTab = computed(() => TABS.find((tab) => tab.id === tabDangChon.value)?.component || TongQuan)
 
 const moTa = computed(() => {
   if (!nganh.value) return ''
-  const { vanBan, json } = docChiTiet(nganh.value)
+  const { vanBan, json } = chiTiet.value
   return nganh.value.mo_ta || noiGiaTri(json?.mo_ta) || vanBan
 })
 
 const tomTat = computed(() => {
   if (!nganh.value) return []
-  const { json } = docChiTiet(nganh.value)
+  const { json } = chiTiet.value
   const holand = Array.isArray(nganh.value.ma_holand) ? nganh.value.ma_holand.filter(Boolean).join(', ') : ''
   return [
     { nhan: 'Mã ngành', giaTri: nganh.value.ma_nganh },
     { nhan: 'Nhóm ngành', giaTri: [nganh.value.ma_nhom_nganh, nganh.value.ten_nhom_nganh].filter(Boolean).join(' · ') },
     { nhan: 'Trình độ', giaTri: nganh.value.trinh_do },
     { nhan: 'Thời gian đào tạo', giaTri: nganh.value.thoi_gian_dao_tao || noiGiaTri(json?.thoi_gian_dao_tao) },
-    { nhan: 'Mức lương tham khảo', giaTri: nganh.value.muc_luong_tham_khao || noiGiaTri(json?.muc_luong_tham_khao || json?.muc_luong) },
+    { nhan: 'Mức lương tham khảo', giaTri: noiMucLuong(nganh.value.muc_luong_tham_khao) || noiGiaTri(json?.muc_luong_tham_khao || json?.muc_luong) },
     { nhan: 'Nhu cầu việc làm', giaTri: nganh.value.nhan_dan },
     { nhan: 'Nhóm Holland', giaTri: holand },
   ].filter((item) => item.giaTri)
 })
 
-const mucChiTiet = computed(() => {
-  if (!nganh.value) return []
-  const { vanBan, json } = docChiTiet(nganh.value)
-  const muc = []
-  if (json) {
-    const keys = [
-      ...THU_TU_CHI_TIET.filter((key) => key in json),
-      ...Object.keys(json).filter((key) => !DA_HIEN.has(key) && !THU_TU_CHI_TIET.includes(key)),
-    ]
-    for (const key of keys) {
-      if (DA_HIEN.has(key)) continue
-      const giaTri = noiGiaTri(json[key])
-      if (giaTri) muc.push({ id: key, nhan: NHAN_MUC[key] || key, giaTri })
-    }
-  } else if (vanBan && nganh.value.mo_ta) {
-    muc.push({ id: 'chi-tiet', nhan: 'Chi tiết', giaTri: vanBan })
-  }
-  return muc
-})
+function idTab(id) {
+  return `major-tab-${maNganh.value}-${id}`
+}
+
+function dieuHuongTab(event) {
+  const huong = { ArrowRight: 1, ArrowLeft: -1, Home: 'dau', End: 'cuoi' }[event.key]
+  if (!huong) return
+  event.preventDefault()
+  const index = TABS.findIndex((tab) => tab.id === tabDangChon.value)
+  const ke = huong === 'dau' ? 0 : huong === 'cuoi' ? TABS.length - 1 : (index + huong + TABS.length) % TABS.length
+  tabDangChon.value = TABS[ke].id
+  nextTick(() => document.getElementById(idTab(tabDangChon.value))?.focus())
+}
 
 function quayLai() {
   if (!ssid.value) {
@@ -136,6 +96,7 @@ async function taiNganh(ma) {
   nganh.value = null
   anhHong.value = false
   loi.value = ''
+  tabDangChon.value = TABS[0].id
   if (!ma) {
     loi.value = 'Không có mã ngành.'
     return
@@ -166,39 +127,65 @@ watch(maNganh, taiNganh, { immediate: true })
   <section class="quiz-flow py-4">
     <div class="container-fluid">
       <div class="holland-overview">
-        <header class="holland-overview__header">
+        <!-- <header class="holland-overview__header">
           <h2 class="holland-overview__title">Chi tiết ngành</h2>
           <p v-if="nganh" class="holland-overview__lead">
             {{ [nganh.ma_nhom_nganh, nganh.ten_nhom_nganh].filter(Boolean).join(' · ') || nganh.ten_nganh }}
           </p>
           <p v-else class="holland-overview__lead">Thông tin đào tạo theo mã ngành trên đường dẫn.</p>
-        </header>
+        </header> -->
 
         <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
         <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải thông tin ngành…</p>
 
         <template v-else-if="nganh">
           <article class="major-detail">
-            <img class="major-detail__image" :src="anh" :alt="`Hình minh họa ngành ${nganh.ten_nganh}`" @error="anhHong = true" />
-            <div class="major-detail__intro">
-              <p class="major-detail__code">{{ nganh.ma_nganh }}</p>
-              <h3 class="major-detail__name">{{ nganh.ten_nganh }}</h3>
-              <p v-if="nganh.ten_tieng_anh" class="major-detail__en">{{ nganh.ten_tieng_anh }}</p>
-              <p class="major-detail__text">{{ moTa || 'Chưa có mô tả cho ngành này.' }}</p>
+            <div class="major-detail__head">
+              <img class="major-detail__image" :src="anh" :alt="`Hình minh họa ngành ${nganh.ten_nganh}`" @error="anhHong = true" />
+              <div class="major-detail__intro">
+                <p class="major-detail__code">{{ nganh.ma_nganh }}</p>
+                <h3 class="major-detail__name">{{ nganh.ten_nganh }}</h3>
+                <p v-if="nganh.ten_tieng_anh" class="major-detail__en">{{ nganh.ten_tieng_anh }}</p>
+                <p class="major-detail__text">{{ moTa || 'Chưa có mô tả cho ngành này.' }}</p>
+              </div>
             </div>
+
+            <dl v-if="tomTat.length" class="major-facts">
+              <div v-for="item in tomTat" :key="item.nhan" class="major-facts__item">
+                <dt>{{ item.nhan }}</dt>
+                <dd>{{ item.giaTri }}</dd>
+              </div>
+            </dl>
           </article>
 
-          <dl v-if="tomTat.length" class="major-facts">
-            <div v-for="item in tomTat" :key="item.nhan" class="major-facts__item">
-              <dt>{{ item.nhan }}</dt>
-              <dd>{{ item.giaTri }}</dd>
+          <div class="major-tabs">
+            <div class="major-tabs__bar" role="tablist" aria-label="Nội dung chi tiết ngành">
+              <button
+                v-for="tab in TABS"
+                :id="idTab(tab.id)"
+                :key="tab.id"
+                type="button"
+                role="tab"
+                class="major-tabs__pill"
+                :class="{ 'is-active': tabDangChon === tab.id }"
+                :aria-selected="tabDangChon === tab.id"
+                :aria-controls="`major-panel-${maNganh}-${tab.id}`"
+                :tabindex="tabDangChon === tab.id ? 0 : -1"
+                @click="tabDangChon = tab.id"
+                @keydown="dieuHuongTab"
+              >
+                {{ tab.nhan }}
+              </button>
             </div>
-          </dl>
-
-          <article v-for="muc in mucChiTiet" :key="muc.id" class="major-section">
-            <h3>{{ muc.nhan }}</h3>
-            <p>{{ muc.giaTri }}</p>
-          </article>
+            <div
+              :id="`major-panel-${maNganh}-${tabDangChon}`"
+              class="major-tabs__panel"
+              role="tabpanel"
+              :aria-labelledby="idTab(tabDangChon)"
+            >
+              <component :is="thanhPhanTab" :nganh="nganh" :chi-tiet="chiTiet.json" :van-ban="chiTiet.vanBan" />
+            </div>
+          </div>
         </template>
 
         <div class="major-nav">
@@ -214,7 +201,7 @@ watch(maNganh, taiNganh, { immediate: true })
 <style scoped>
 .major-detail {
   display: flex;
-  align-items: stretch;
+  flex-direction: column;
   gap: 18px;
   margin-top: 28px;
   padding: 16px;
@@ -222,6 +209,12 @@ watch(maNganh, taiNganh, { immediate: true })
   border-radius: 12px;
   background: #f6faf7;
   box-shadow: 0 8px 22px rgba(28, 43, 35, 0.08);
+}
+
+.major-detail__head {
+  display: flex;
+  align-items: stretch;
+  gap: 18px;
 }
 
 .major-detail__image {
@@ -277,7 +270,7 @@ watch(maNganh, taiNganh, { immediate: true })
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 10px;
-  margin: 16px 0 0;
+  margin: 0;
 }
 
 .major-facts__item {
@@ -306,27 +299,45 @@ watch(maNganh, taiNganh, { immediate: true })
   white-space: pre-line;
 }
 
-.major-section {
-  margin-top: 16px;
-  padding: 16px 18px;
+.major-tabs {
+  margin-top: 20px;
+}
+
+.major-tabs__bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.major-tabs__pill {
+  margin: 0;
+  padding: 8px 16px;
+  border: 1px solid #0c5c34;
+  border-radius: 999px;
+  background: #fff;
+  color: #0c5c34;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+  cursor: pointer;
+}
+
+.major-tabs__pill.is-active {
+  background: #0c5c34;
+  color: #fff;
+}
+
+.major-tabs__pill:focus-visible {
+  outline: 2px solid #0c5c34;
+  outline-offset: 2px;
+}
+
+.major-tabs__panel {
+  margin-top: 14px;
+  padding: 18px;
   border: 1px solid #c5d5cc;
   border-radius: 12px;
   background: #fff;
-}
-
-.major-section h3 {
-  margin: 0;
-  color: #0c5c34;
-  font-size: 1.1rem;
-  font-weight: 700;
-}
-
-.major-section p {
-  margin: 8px 0 0;
-  color: #1c2836;
-  font-size: 1rem;
-  line-height: 1.55;
-  white-space: pre-line;
 }
 
 .major-nav {
@@ -334,7 +345,7 @@ watch(maNganh, taiNganh, { immediate: true })
 }
 
 @media (max-width: 575.98px) {
-  .major-detail {
+  .major-detail__head {
     flex-direction: column;
   }
 

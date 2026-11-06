@@ -9,6 +9,7 @@ import { fetchNhomHolland } from '@/api/nhomTinhCachHolland'
 import { batDauPhienHolland } from '@/api/phienKhaoSat'
 import { fetchTinhThanh } from '@/api/tinhThanh'
 import { fetchTruongHoc } from '@/api/truongHoc'
+import { noiMucLuong } from '@/utils/capTenGiaTri'
 
 defineOptions({ name: 'ThptThiDaiHocChonTruong' })
 
@@ -66,7 +67,8 @@ const loiThe = computed(() => {
   if (!item) return []
   const lines = [...tachMoTa(item.mo_ta), ...tachMoTa(item.chi_tiet)]
   if (item.nhan_dan) lines.push(`Nhu cầu việc làm: ${item.nhan_dan}`)
-  if (item.muc_luong_tham_khao) lines.push(`Mức lương tham khảo: ${item.muc_luong_tham_khao}`)
+  const luong = noiMucLuong(item.muc_luong_tham_khao, '; ')
+  if (luong) lines.push(`Mức lương tham khảo: ${luong}`)
   if (item.thoi_gian_dao_tao) lines.push(`Thời gian đào tạo: ${item.thoi_gian_dao_tao}`)
   const theoMa = new Map(holland.value.map((nhom) => [nhom.ma_nhom, nhom]))
   for (const code of item.ma_holand || []) {

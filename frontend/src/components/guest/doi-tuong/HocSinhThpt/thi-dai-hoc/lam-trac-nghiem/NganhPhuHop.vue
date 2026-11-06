@@ -14,6 +14,7 @@ import anhR from '@/assets/guest/holland/r.svg'
 import anhS from '@/assets/guest/holland/s.svg'
 import anhMacDinh from '@/assets/guest/sinh-vien.jpg'
 import BuocLamBai from './BuocLamBai.vue'
+import { noiMucLuong } from '@/utils/capTenGiaTri'
 
 const ANH_NHOM = { R: anhR, I: anhI, A: anhA, S: anhS, E: anhE, C: anhC }
 const SO_NGANH_HIEN = 4
@@ -189,7 +190,7 @@ function doPhuHop(nganh) {
 function giaTriTieuChi(nganh, id) {
   const chiTiet = chiTietNganh(nganh)
   if (id === 'mo_ta') return nganh.mo_ta || noiChiTiet(chiTiet.mo_ta) || '—'
-  if (id === 'muc_luong') return nganh.muc_luong_tham_khao || noiChiTiet(chiTiet.muc_luong_tham_khao) || '—'
+  if (id === 'muc_luong') return noiMucLuong(nganh.muc_luong_tham_khao) || noiChiTiet(chiTiet.muc_luong_tham_khao) || '—'
   if (id === 'do_phu_hop') return noiChiTiet(chiTiet.do_phu_hop) || doPhuHop(nganh) || '—'
   return noiChiTiet(chiTiet[id]) || '—'
 }
@@ -478,7 +479,7 @@ onBeforeUnmount(() => {
                     <CardMajor
                       :ten="nganh.ten_nganh"
                       :mo-ta="nganh.mo_ta || ''"
-                      :muc-luong="nganh.muc_luong_tham_khao || ''"
+                      :muc-luong="noiMucLuong(nganh.muc_luong_tham_khao, ' · ')"
                       :thoi-gian="nganh.thoi_gian_dao_tao || ''"
                       :hinh-anh="nganh.hinh_anh_mo_ta || ''"
                       :chon="daChonNganh(nhom, nganh)"

@@ -12,6 +12,11 @@ import {
   updateNganh,
 } from '@/api/nganhDaoTao'
 import { fetchNhomNganh } from '@/api/nhomNganhDaoTao'
+import { DON_VI_TIEN, DON_VI_TIEN_MAC_DINH } from '@/constants/donViTien'
+import { KY_LUONG_MAC_DINH, maKyLuong } from '@/constants/kyLuong'
+import { danhSachCap, danhSachMucLuong, noiCap, noiMucLuong } from '@/utils/capTenGiaTri'
+import BangMucLuong from './BangMucLuong.vue'
+import BangTenGiaTri from './BangTenGiaTri.vue'
 
 const TRINH_DO = ['Trung cấp', 'Cao đẳng', 'Đại học', 'Thạc sĩ', 'Tiến sĩ']
 
@@ -24,7 +29,17 @@ const JSON_SAMPLE = `[
     "trinh_do": "Đại học",
     "ma_holand": ["R", "I"],
     "hinh_anh_mo_ta": "https://example.com/cntt.jpg",
-    "muc_luong_tham_khao": "15-30 triệu/tháng",
+    "muc_luong_tham_khao": [
+      { "name": "1 năm", "min": 10, "max": 15, "unit": "VND", "period": "thang" },
+      { "name": "3 năm", "min": 15.5, "max": 20, "unit": "VND", "period": "thang" }
+    ],
+    "mo_ta_cong_viec": [
+      { "name": "Nhiệm vụ chính", "value": "Phân tích yêu cầu và xây dựng phần mềm.", "ghi_chu": "Làm việc với nhóm sản phẩm" }
+    ],
+    "lo_trinh_phat_trien": [
+      { "name": "Năm 1-2", "value": "Thực tập, lập trình viên mới", "ghi_chu": "" },
+      { "name": "Năm 3-5", "value": "Lập trình viên chính" }
+    ],
     "nhan_dan": "Nhu cầu cao",
     "thoi_gian_dao_tao": "4 năm",
     "chi_tiet": "Ngành đào tạo về phần mềm, dữ liệu và hệ thống thông tin.",
@@ -91,7 +106,9 @@ function emptyForm() {
     ma_holand: [],
     mo_ta: '',
     hinh_anh_mo_ta: '',
-    muc_luong_tham_khao: '',
+    muc_luong_tham_khao: [],
+    mo_ta_cong_viec: [],
+    lo_trinh_phat_trien: [],
     nhan_dan: '',
     thoi_gian_dao_tao: '',
     chi_tiet: '',
@@ -103,6 +120,90 @@ function optionalText(value) {
   if (value == null) return null
   const text = String(value).trim()
   return text || null
+}
+
+function hienNhapTien(value) {
+  if (value == null || value === '') return ''
+  const num = Number(value)
+  if (!Number.isFinite(num)) return ''
+  const rounded = Math.round(num * 10) / 10
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)
+}
+
+function copyMucLuong(value) {
+  return danhSachMucLuong(value).map((item) => ({
+    name: item.name,
+    min: hienNhapTien(item.min),
+    max: hienNhapTien(item.max),
+    unit: item.unit || DON_VI_TIEN_MAC_DINH,
+    period: maKyLuong(item.period) || KY_LUONG_MAC_DINH,
+  }))
+}
+
+function copyCap(value) {
+  return danhSachCap(value).map((item) => ({
+    name: item.name,
+    value: item.value,
+    ghi_chu: item.ghi_chu || '',
+  }))
+}
+
+function chuanMucLuong(rows, label) {
+  const cleaned = []
+  const units = new Set(DON_VI_TIEN.map((item) => item.value))
+  for (const [index, item] of (rows || []).entries()) {
+    const name = String(item?.name || '').trim()
+    const minText = String(item?.min ?? '').trim()
+    const maxText = String(item?.max ?? '').trim()
+    const unit = String(item?.unit || '').trim().toUpperCase() || DON_VI_TIEN_MAC_DINH
+    const period = maKyLuong(item?.period)
+    if (!name && !minText && !maxText) continue
+    const line = `${label}: dòng ${index + 1}`
+    if (!name || !minText || !maxText) {
+      throw new Error(`${line} cần đủ kinh nghiệm, mức từ và mức đến`)
+    }
+    if (!/^\d{1,2}(\.\d)?$/.test(minText) || !/^\d{1,2}(\.\d)?$/.test(maxText)) {
+      throw new Error(`${line} chỉ nhập tối đa 2 chữ số và 1 chữ số thập phân`)
+    }
+    const min = Number(minText)
+    const max = Number(maxText)
+    if (min > max) throw new Error(`${line} có mức từ lớn hơn mức đến`)
+    if (!units.has(unit)) throw new Error(`${line} có đơn vị tính không hợp lệ`)
+    if (!period) throw new Error(`${line} có thời gian lương không hợp lệ`)
+    cleaned.push({ name, min, max, unit, period })
+  }
+  return cleaned.length ? cleaned : null
+}
+
+function chuanCap(rows, label) {
+  const cleaned = []
+  for (const [index, item] of (rows || []).entries()) {
+    const name = String(item?.name || '').trim()
+    const value = String(item?.value || '').trim()
+    const ghiChu = String(item?.ghi_chu || '').trim()
+    if (!name && !value && !ghiChu) continue
+    if (!name || !value) {
+      throw new Error(`${label}: dòng ${index + 1} cần cả tên và giá trị`)
+    }
+    cleaned.push(ghiChu ? { name, value, ghi_chu: ghiChu } : { name, value })
+  }
+  return cleaned.length ? cleaned : null
+}
+
+function parseMucLuong(value, line) {
+  if (value == null || value === '') return null
+  if (!Array.isArray(value)) {
+    throw new Error(`Phần tử thứ ${line}: muc_luong_tham_khao phải là mảng {name, min, max, unit, period}`)
+  }
+  return chuanMucLuong(value, `Phần tử thứ ${line}, mức lương`)
+}
+
+function parseCap(value, line, field) {
+  if (value == null || value === '') return null
+  if (!Array.isArray(value)) {
+    throw new Error(`Phần tử thứ ${line}: ${field} phải là mảng object {name, value, ghi_chu}`)
+  }
+  return chuanCap(value, `Phần tử thứ ${line}, ${field}`)
 }
 
 function parentLabel(item) {
@@ -118,6 +219,9 @@ function hollandLabel(item) {
 function resetForm() {
   Object.assign(form, emptyForm())
   form.ma_holand = []
+  form.muc_luong_tham_khao = []
+  form.mo_ta_cong_viec = []
+  form.lo_trinh_phat_trien = []
   editingId.value = null
   createMode.value = 'form'
   jsonText.value = ''
@@ -172,7 +276,9 @@ function parseJsonItems(text) {
       ma_holand: parseHolland(item.ma_holand, line),
       mo_ta: optionalText(item.mo_ta),
       hinh_anh_mo_ta: optionalText(item.hinh_anh_mo_ta),
-      muc_luong_tham_khao: optionalText(item.muc_luong_tham_khao),
+      muc_luong_tham_khao: parseMucLuong(item.muc_luong_tham_khao, line),
+      mo_ta_cong_viec: parseCap(item.mo_ta_cong_viec, line, 'mo_ta_cong_viec'),
+      lo_trinh_phat_trien: parseCap(item.lo_trinh_phat_trien, line, 'lo_trinh_phat_trien'),
       nhan_dan: optionalText(item.nhan_dan),
       thoi_gian_dao_tao: optionalText(item.thoi_gian_dao_tao),
       chi_tiet: optionalText(item.chi_tiet),
@@ -283,7 +389,9 @@ async function openEdit(row) {
     ma_holand: [...(row.ma_holand || [])],
     mo_ta: row.mo_ta || '',
     hinh_anh_mo_ta: row.hinh_anh_mo_ta || '',
-    muc_luong_tham_khao: row.muc_luong_tham_khao || '',
+    muc_luong_tham_khao: copyMucLuong(row.muc_luong_tham_khao),
+    mo_ta_cong_viec: copyCap(row.mo_ta_cong_viec),
+    lo_trinh_phat_trien: copyCap(row.lo_trinh_phat_trien),
     nhan_dan: row.nhan_dan || '',
     thoi_gian_dao_tao: row.thoi_gian_dao_tao || '',
     chi_tiet: row.chi_tiet || '',
@@ -303,7 +411,9 @@ function payloadFromForm() {
     ma_holand: form.ma_holand?.length ? form.ma_holand : null,
     mo_ta: optionalText(form.mo_ta),
     hinh_anh_mo_ta: optionalText(form.hinh_anh_mo_ta),
-    muc_luong_tham_khao: optionalText(form.muc_luong_tham_khao),
+    muc_luong_tham_khao: chuanMucLuong(form.muc_luong_tham_khao, 'Mức lương tham khảo'),
+    mo_ta_cong_viec: chuanCap(form.mo_ta_cong_viec, 'Mô tả công việc'),
+    lo_trinh_phat_trien: chuanCap(form.lo_trinh_phat_trien, 'Lộ trình phát triển'),
     nhan_dan: optionalText(form.nhan_dan),
     thoi_gian_dao_tao: optionalText(form.thoi_gian_dao_tao),
     chi_tiet: optionalText(form.chi_tiet),
@@ -343,9 +453,16 @@ async function onSubmit() {
   const valid = await formRef.value?.validate().catch(() => false)
   if (!valid) return
 
+  let payload
+  try {
+    payload = payloadFromForm()
+  } catch (error) {
+    ElMessage.error(error.message)
+    return
+  }
+
   saving.value = true
   try {
-    const payload = payloadFromForm()
     if (editingId.value) {
       await updateNganh(editingId.value, payload)
       ElMessage.success('Đã cập nhật ngành')
@@ -519,8 +636,14 @@ onMounted(async () => {
         <CustomTableColumn label="Thời gian đào tạo" min-width="150" show-overflow-tooltip>
           <template #default="{ row }">{{ row.thoi_gian_dao_tao || '—' }}</template>
         </CustomTableColumn>
-        <CustomTableColumn label="Mức lương tham khảo" min-width="170" show-overflow-tooltip>
-          <template #default="{ row }">{{ row.muc_luong_tham_khao || '—' }}</template>
+        <CustomTableColumn label="Mức lương tham khảo" min-width="200" show-overflow-tooltip>
+          <template #default="{ row }">{{ noiMucLuong(row.muc_luong_tham_khao, ' · ') || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Mô tả công việc" min-width="200" show-overflow-tooltip>
+          <template #default="{ row }">{{ noiCap(row.mo_ta_cong_viec, ' · ') || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Lộ trình phát triển" min-width="200" show-overflow-tooltip>
+          <template #default="{ row }">{{ noiCap(row.lo_trinh_phat_trien, ' · ') || '—' }}</template>
         </CustomTableColumn>
         <CustomTableColumn label="Mã Holland" min-width="140">
           <template #default="{ row }">
@@ -580,8 +703,9 @@ onMounted(async () => {
 
   <CustomDialog
     v-model="dialogVisible"
+    class="nganh-form-dialog"
     :title="editingId ? 'Cập nhật ngành' : 'Thêm ngành'"
-    width="860px"
+    width="1400px"
     destroy-on-close
     @closed="resetForm"
   >
@@ -596,8 +720,13 @@ onMounted(async () => {
           Dán một mảng JSON. Mỗi phần tử cần <code>ma_nhom_nganh</code>, <code>ten_nganh</code>,
           <code>ma_nganh</code>, <code>ten_tieng_anh</code> và <code>trinh_do</code>.
           <code>ma_holand</code> là mảng mã, ví dụ <code>["R", "I"]</code>.
-          <code>hinh_anh_mo_ta</code>, <code>muc_luong_tham_khao</code>, <code>nhan_dan</code>,
-          <code>thoi_gian_dao_tao</code> và <code>chi_tiet</code> có thể bỏ trống.
+          <code>hinh_anh_mo_ta</code>, <code>nhan_dan</code>, <code>thoi_gian_dao_tao</code> và
+          <code>chi_tiet</code> có thể bỏ trống.
+          <code>muc_luong_tham_khao</code> là mảng
+          <code>{"name","min","max","unit","period"}</code>: min và max tối đa 2 chữ số với 1 chữ số thập phân,
+          unit thuộc VNĐ, USD hoặc EUR, period là buổi, ngày, tuần, tháng hoặc năm (mặc định tháng).
+          <code>mo_ta_cong_viec</code> và <code>lo_trinh_phat_trien</code> là mảng
+          <code>{"name","value","ghi_chu"}</code>, ghi chú có thể bỏ trống. Các mảng này có thể bỏ trống.
         </p>
         <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
       </div>
@@ -612,7 +741,7 @@ onMounted(async () => {
 
     <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
       <CustomRow :gutter="16">
-        <CustomCol :span="24">
+        <CustomCol :span="4" :xs="12">
           <CustomFormItem label="Nhóm ngành" prop="ma_nhom_nganh">
             <CustomSelect
               v-model="form.ma_nhom_nganh"
@@ -633,17 +762,17 @@ onMounted(async () => {
             </p>
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="12" :xs="24">
+        <CustomCol :span="4" :xs="12">
           <CustomFormItem label="Tên ngành" prop="ten_nganh">
             <CustomInput v-model="form.ten_nganh" maxlength="255" placeholder="Ví dụ: Công nghệ thông tin" />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="12" :xs="24">
+        <CustomCol :span="4" :xs="12">
           <CustomFormItem label="Mã ngành" prop="ma_nganh">
             <CustomInput v-model="form.ma_nganh" maxlength="20" placeholder="Ví dụ: 7480201" />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="12" :xs="24">
+        <CustomCol :span="4" :xs="12">
           <CustomFormItem label="Tên tiếng Anh" prop="ten_tieng_anh">
             <CustomInput
               v-model="form.ten_tieng_anh"
@@ -652,7 +781,7 @@ onMounted(async () => {
             />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="12" :xs="24">
+        <CustomCol :span="4" :xs="12">
           <CustomFormItem label="Trình độ" prop="trinh_do">
             <CustomSelect
               v-model="form.trinh_do"
@@ -666,14 +795,14 @@ onMounted(async () => {
             </CustomSelect>
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="12" :xs="24">
+        <CustomCol :span="4" :xs="12">
           <CustomFormItem label="Mã Holland" prop="ma_holand">
             <CustomSelect
               v-model="form.ma_holand"
               multiple
               filterable
               clearable
-              placeholder="Chọn một hoặc nhiều mã, có thể bỏ trống"
+              placeholder="Chọn mã, có thể bỏ trống"
               style="width: 100%"
               :disabled="!hollandSelectOptions.length"
             >
@@ -689,7 +818,7 @@ onMounted(async () => {
             </p>
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="12" :xs="24">
+        <CustomCol :span="4" :xs="12">
           <CustomFormItem label="Trạng thái" prop="trang_thai">
             <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
               <CustomOption label="Hoạt động" :value="1" />
@@ -697,26 +826,17 @@ onMounted(async () => {
             </CustomSelect>
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="12" :xs="24">
+        <CustomCol :span="4" :xs="12">
           <CustomFormItem label="Nhãn dán" prop="nhan_dan">
             <CustomInput v-model="form.nhan_dan" maxlength="100" placeholder="Ví dụ: Nhu cầu cao" />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="12" :xs="24">
+        <CustomCol :span="4" :xs="12">
           <CustomFormItem label="Thời gian đào tạo" prop="thoi_gian_dao_tao">
             <CustomInput v-model="form.thoi_gian_dao_tao" maxlength="100" placeholder="Ví dụ: 4 năm" />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Mức lương tham khảo" prop="muc_luong_tham_khao">
-            <CustomInput
-              v-model="form.muc_luong_tham_khao"
-              maxlength="255"
-              placeholder="Ví dụ: 15-30 triệu/tháng"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
+        <CustomCol :span="4" :xs="12">
           <CustomFormItem label="Hình ảnh mô tả" prop="hinh_anh_mo_ta">
             <CustomInput
               v-model="form.hinh_anh_mo_ta"
@@ -725,7 +845,7 @@ onMounted(async () => {
             />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="24">
+        <CustomCol :span="12" :xs="12">
           <CustomFormItem label="Mô tả" prop="mo_ta">
             <CustomInput
               v-model="form.mo_ta"
@@ -737,15 +857,42 @@ onMounted(async () => {
             />
           </CustomFormItem>
         </CustomCol>
-        <CustomCol :span="24">
+        <CustomCol :span="12" :xs="12">
           <CustomFormItem label="Chi tiết" prop="chi_tiet">
             <CustomInput
               v-model="form.chi_tiet"
               type="textarea"
-              :rows="4"
+              :rows="3"
               maxlength="10000"
               show-word-limit
               placeholder="Chi tiết ngành (nếu có)"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="24">
+          <CustomFormItem label="Mức lương tham khảo" prop="muc_luong_tham_khao">
+            <BangMucLuong v-model="form.muc_luong_tham_khao" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="24">
+          <CustomFormItem label="Mô tả công việc" prop="mo_ta_cong_viec">
+            <BangTenGiaTri
+              v-model="form.mo_ta_cong_viec"
+              name-label="Hạng mục"
+              value-label="Mô tả"
+              name-placeholder="Ví dụ: Nhiệm vụ chính"
+              value-placeholder="Mô tả ngắn công việc"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="24">
+          <CustomFormItem label="Lộ trình phát triển" prop="lo_trinh_phat_trien">
+            <BangTenGiaTri
+              v-model="form.lo_trinh_phat_trien"
+              name-label="Giai đoạn"
+              value-label="Nội dung"
+              name-placeholder="Ví dụ: Năm 1-2"
+              value-placeholder="Ví dụ: Thực tập, lập trình viên mới"
             />
           </CustomFormItem>
         </CustomCol>
@@ -844,14 +991,44 @@ onMounted(async () => {
 
 .json-input :deep(textarea) {
   font-family: ui-monospace, Consolas, monospace;
-  font-size: 13px;
+  font-size: var(--app-font-size);
+  font-weight: 400;
 }
 
 .field-hint {
   margin: 6px 0 0;
   color: var(--el-text-color-secondary);
-  font-size: 12px;
+  font-size: var(--app-font-size);
+  font-weight: 400;
   line-height: 1.4;
+}
+
+.nganh-form-dialog {
+  --el-dialog-content-font-size: var(--app-font-size);
+  --el-dialog-title-font-size: var(--app-font-size);
+  --el-font-weight-primary: 400;
+  font-weight: 400;
+}
+
+.nganh-form-dialog :deep(.el-form-item) {
+  --font-size: var(--app-font-size);
+  --el-form-label-font-size: var(--app-font-size);
+}
+
+.nganh-form-dialog :deep(.el-dialog__title),
+.nganh-form-dialog :deep(.el-dialog__body),
+.nganh-form-dialog :deep(.el-form-item__label),
+.nganh-form-dialog :deep(.el-form-item__content),
+.nganh-form-dialog :deep(.el-input__wrapper),
+.nganh-form-dialog :deep(.el-textarea__inner),
+.nganh-form-dialog :deep(.el-select__wrapper),
+.nganh-form-dialog :deep(.el-radio-button__inner),
+.nganh-form-dialog :deep(.el-button),
+.nganh-form-dialog :deep(.cap-table),
+.nganh-form-dialog :deep(.cap-table th),
+.nganh-form-dialog :deep(.cap-table__empty) {
+  font-size: var(--app-font-size);
+  font-weight: 400;
 }
 
 .filter-status {

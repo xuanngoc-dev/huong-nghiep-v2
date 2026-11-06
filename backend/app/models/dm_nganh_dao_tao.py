@@ -37,7 +37,19 @@ class DmNganhDaoTao(Base):
     ma_holand: Mapped[list[str] | None] = mapped_column(JSON)
     mo_ta: Mapped[str | None] = mapped_column(Text)
     hinh_anh_mo_ta: Mapped[str | None] = mapped_column(String(500))
-    muc_luong_tham_khao: Mapped[str | None] = mapped_column(String(255))
+    # Mảng {"name", "min", "max", "unit"}: kinh nghiệm, khoảng lương và đơn vị tiền.
+    muc_luong_tham_khao: Mapped[list | None] = mapped_column(
+        JSON,
+        comment="Mức lương tham khảo. Mảng object {name, min, max, unit, period}.",
+    )
+    mo_ta_cong_viec: Mapped[list | None] = mapped_column(
+        JSON,
+        comment="Mô tả công việc. Mảng object {name, value, ghi_chu}.",
+    )
+    lo_trinh_phat_trien: Mapped[list | None] = mapped_column(
+        JSON,
+        comment="Lộ trình phát triển. Mảng object {name, value, ghi_chu}.",
+    )
     nhan_dan: Mapped[str | None] = mapped_column(String(100))
     thoi_gian_dao_tao: Mapped[str | None] = mapped_column(String(100))
     chi_tiet: Mapped[str | None] = mapped_column(Text)

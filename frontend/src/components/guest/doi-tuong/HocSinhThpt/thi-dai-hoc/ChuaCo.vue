@@ -7,6 +7,7 @@ import anhChuaCo from '@/assets/guest/thanh-nien.jpg'
 import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
 import CardNganhDaoTao from './CardNganhDaoTao.vue'
+import { noiMucLuong } from '@/utils/capTenGiaTri'
 
 defineOptions({ name: 'ThptThiDaiHocChuaCo' })
 
@@ -158,7 +159,7 @@ const bangChiTiet = computed(() => {
     )
     tieuChi = gomHang(
       dongThongTin('Thời gian đào tạo', item.thoi_gian_dao_tao || json?.thoi_gian_dao_tao),
-      dongThongTin('Mức lương tham khảo', item.muc_luong_tham_khao || json?.muc_luong_tham_khao || json?.muc_luong),
+      dongThongTin('Mức lương tham khảo', noiMucLuong(item.muc_luong_tham_khao) || noiGiaTri(json?.muc_luong_tham_khao || json?.muc_luong)),
       dongThongTin('Nhu cầu việc làm', item.nhan_dan),
       dongThongTin('Nhóm Holland', item.ma_holand),
     )

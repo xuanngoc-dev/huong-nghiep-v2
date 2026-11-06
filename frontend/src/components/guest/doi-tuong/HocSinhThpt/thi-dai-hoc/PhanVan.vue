@@ -8,6 +8,7 @@ import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
 import CardNganhDaoTao from './CardNganhDaoTao.vue'
 import NhacKhaoSat from './NhacKhaoSat.vue'
+import { noiMucLuong } from '@/utils/capTenGiaTri'
 
 defineOptions({ name: 'ThptThiDaiHocPhanVan' })
 
@@ -156,7 +157,7 @@ function chiTietNganh(nganh) {
 function giaTriTieuChi(nganh, id) {
   const chiTiet = chiTietNganh(nganh)
   if (id === 'mo_ta') return nganh.mo_ta || noiChiTiet(chiTiet.mo_ta) || '—'
-  if (id === 'muc_luong') return nganh.muc_luong_tham_khao || noiChiTiet(chiTiet.muc_luong_tham_khao) || '—'
+  if (id === 'muc_luong') return noiMucLuong(nganh.muc_luong_tham_khao) || noiChiTiet(chiTiet.muc_luong_tham_khao) || '—'
   if (id === 'do_phu_hop') return noiChiTiet(chiTiet.do_phu_hop) || '—'
   return noiChiTiet(chiTiet[id]) || '—'
 }

@@ -57,7 +57,7 @@ class TnPhienNganhPhuHopItem(BaseModel):
     ten_nhom_nganh: str
     ma_holand: list[str]
     mo_ta: str | None = None
-    muc_luong_tham_khao: str | None = None
+    muc_luong_tham_khao: list[dict] | None = None
     thoi_gian_dao_tao: str | None = None
     hinh_anh_mo_ta: str | None = None
     chi_tiet: str | None = None
