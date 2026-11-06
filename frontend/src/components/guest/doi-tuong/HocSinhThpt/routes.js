@@ -34,6 +34,16 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
+    path: 'hoc-sinh-thpt/thi-dai-hoc/lam-trac-nghiem/:ssid/nganh/:maNganh',
+    name: 'thpt-thi-dai-hoc-chi-tiet-nganh',
+    component: () => import('./thi-dai-hoc/lam-trac-nghiem/ChiTietNganh.vue'),
+    meta: {
+      title: 'Chi tiết ngành',
+      public: true,
+      dinhHuong: 'thi-dai-hoc',
+    },
+  },
+  {
     path: 'hoc-sinh-thpt/thi-dai-hoc/lam-trac-nghiem/:ssid/ket-qua',
     name: 'thpt-thi-dai-hoc-ket-qua',
     component: () => import('./thi-dai-hoc/lam-trac-nghiem/KetQua.vue'),

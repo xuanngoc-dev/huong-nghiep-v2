@@ -194,6 +194,16 @@ function giaTriTieuChi(nganh, id) {
   return noiChiTiet(chiTiet[id]) || '—'
 }
 
+function khamPhaNganh(ma) {
+  const code = String(ma || '').trim()
+  if (!code || !ssid.value) return
+  router.push({
+    name: 'thpt-thi-dai-hoc-chi-tiet-nganh',
+    params: { ssid: ssid.value, maNganh: code },
+    query: queryMaNganh(),
+  })
+}
+
 function xemNganh(ma) {
   huyTaiThem()
   maDangXem.value = ma
@@ -473,6 +483,7 @@ onBeforeUnmount(() => {
                       :hinh-anh="nganh.hinh_anh_mo_ta || ''"
                       :chon="daChonNganh(nhom, nganh)"
                       @chon="chonNganh(nhom, nganh)"
+                      @kham-pha="khamPhaNganh(nganh.ma_nganh)"
                     />
                   </div>
                 </div>

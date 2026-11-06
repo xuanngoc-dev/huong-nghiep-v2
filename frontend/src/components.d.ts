@@ -20,6 +20,7 @@ declare module 'vue' {
     ChatMarkdown: typeof import('./components/guest/chung/ChatMarkdown.vue')['default']
     ChatMessage: typeof import('./components/guest/chung/ChatMessage.vue')['default']
     ChatPanel: typeof import('./components/guest/chung/ChatPanel.vue')['default']
+    ChiTietNganh: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/ChiTietNganh.vue')['default']
     ChonTruong: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/ChonTruong.vue')['default']
     ChuaCo: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/ChuaCo.vue')['default']
     CustomBadge: typeof import('./components/element/CustomBadge.vue')['default']

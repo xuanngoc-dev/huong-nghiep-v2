@@ -13,7 +13,7 @@ const props = defineProps({
   chon: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['chon'])
+const emit = defineEmits(['chon', 'khamPha'])
 
 const anhLoi = ref(false)
 const oChon = ref(null)
@@ -153,6 +153,9 @@ watch(() => props.chon, () => nextTick(dongBoChon))
           <dd>{{ thoiGian || '—' }}</dd>
         </div>
       </dl>
+      <div class="card-major__footer">
+        <CustomButton type="primary" plain @click.stop="emit('khamPha')">Khám phá ngay</CustomButton>
+      </div>
     </div>
   </article>
 </template>
@@ -218,7 +221,9 @@ watch(() => props.chon, () => nextTick(dongBoChon))
 .card-major__body {
   position: relative;
   z-index: 1;
+  display: flex;
   flex: 1;
+  flex-direction: column;
   min-width: 0;
 }
 
@@ -319,6 +324,17 @@ watch(() => props.chon, () => nextTick(dongBoChon))
 .card-major__fact dd {
   color: #121a28;
   font-weight: 500;
+}
+
+.card-major__footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.card-major__footer :deep(.el-button) {
+  margin: 0;
 }
 
 </style>
