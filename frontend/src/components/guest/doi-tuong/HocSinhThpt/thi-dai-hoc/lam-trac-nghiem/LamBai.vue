@@ -75,6 +75,9 @@ const viTriLoai = computed(() => nhom.value.findIndex((item) => item.id === loai
 const laBuocCuoi = computed(() => viTriLoai.value >= 0 && viTriLoai.value === nhom.value.length - 1)
 const nutTiep = computed(() => (laBuocCuoi.value ? 'Phân tích kết quả' : 'Phần tiếp theo'))
 const daTraLoi = computed(() => cauHoiLoai.value.filter((item) => daChon.value[item.id]).length)
+const khoaTraLoi = computed(
+  () => cauHoi.value.length > 0 && cauHoi.value.every((item) => daChon.value[item.id]),
+)
 const cauDangChon = computed(() => cauHoiLoai.value[chiSo.value] || null)
 
 function ganTheCau(index, el) {
@@ -114,7 +117,7 @@ function xuLyPhim(event) {
     chonCau(chiSo.value - 1)
     return
   }
-  if (!/^[1-5]$/.test(event.key) || !cauDangChon.value) return
+  if (khoaTraLoi.value || !/^[1-5]$/.test(event.key) || !cauDangChon.value) return
   const answer = cauDangChon.value.cau_tra_loi[Number(event.key) - 1]
   if (!answer) return
   event.preventDefault()
@@ -205,6 +208,7 @@ function tiep() {
 }
 
 async function chonDapAn(cau, answerId) {
+  if (khoaTraLoi.value) return
   const truoc = daChon.value[cau.id]
   daChon.value = { ...daChon.value, [cau.id]: answerId }
   try {
@@ -277,12 +281,17 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
               @click="chonCau(cauIndex, false)"
             >
               <h3 class="holland-panel__title">Câu {{ cauIndex + 1 }}. {{ cau.noi_dung_cau_hoi }}</h3>
-              <div class="quiz-choices" role="radiogroup" :aria-label="`Câu ${cauIndex + 1}`">
+              <div
+                class="quiz-choices"
+                role="radiogroup"
+                :aria-label="`Câu ${cauIndex + 1}`"
+                :aria-disabled="khoaTraLoi"
+              >
                 <label
                   v-for="(answer, index) in cau.cau_tra_loi"
                   :key="answer.id"
                   class="quiz-choice"
-                  :class="{ 'is-selected': daChon[cau.id] === answer.id }"
+                  :class="{ 'is-selected': daChon[cau.id] === answer.id, 'is-locked': khoaTraLoi }"
                 >
                   <input
                     class="quiz-choice__radio"
@@ -290,6 +299,7 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
                     :name="`cau-${cau.id}`"
                     :value="answer.id"
                     :checked="daChon[cau.id] === answer.id"
+                    :disabled="khoaTraLoi"
                     @change="chonDapAn(cau, answer.id)"
                   />
                   <span class="quiz-choice__num">{{ index + 1 }}</span>
@@ -299,12 +309,12 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
             </article>
           </div>
 
-          <div class="quiz-nav d-flex flex-wrap justify-content-between gap-2">
-            <button type="button" class="btn btn-outline-success" :disabled="viTriLoai <= 0" @click="lui">
-              Phần trước
-            </button>
-            <span class="quiz-progress">Đã chọn {{ daTraLoi }}/{{ cauHoiLoai.length }}</span>
-            <button type="button" class="btn btn-success" :disabled="dangPhanTich" @click="tiep">{{ nutTiep }}</button>
+          <div class="quiz-nav">
+            <CustomButton plain type="primary" :disabled="viTriLoai <= 0" @click="lui">Phần trước</CustomButton>
+            <span class="quiz-progress">Đã trả lời {{ daTraLoi }}/{{ cauHoiLoai.length }}</span>
+            <CustomButton type="primary" :disabled="dangPhanTich" :loading="dangPhanTich" @click="tiep">
+              {{ nutTiep }}
+            </CustomButton>
           </div>
         </template>
 
@@ -327,6 +337,11 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
 }
 
 .quiz-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
   margin-top: 28px;
 }
 
@@ -390,6 +405,14 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
 
 .quiz-choice.is-selected .quiz-choice__radio {
   accent-color: var(--guest-primary);
+}
+
+.quiz-choice.is-locked {
+  cursor: default;
+}
+
+.quiz-choice.is-locked .quiz-choice__radio {
+  cursor: default;
 }
 
 .quiz-choice__radio {

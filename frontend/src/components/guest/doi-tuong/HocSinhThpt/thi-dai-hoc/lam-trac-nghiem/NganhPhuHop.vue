@@ -2,8 +2,9 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { fetchNganhPhuHop } from '@/api/phienKhaoSat'
+import { fetchNganhPhuHop, fetchPhienLamBai } from '@/api/phienKhaoSat'
 import BieuDoRadar from '@/components/guest/BieuDoRadar.vue'
+import LoadingSuyNghi from '@/components/guest/LoadingSuyNghi.vue'
 import CardMajor from './CardMajor.vue'
 import anhA from '@/assets/guest/holland/a.svg'
 import anhC from '@/assets/guest/holland/c.svg'
@@ -11,10 +12,12 @@ import anhE from '@/assets/guest/holland/e.svg'
 import anhI from '@/assets/guest/holland/i.svg'
 import anhR from '@/assets/guest/holland/r.svg'
 import anhS from '@/assets/guest/holland/s.svg'
+import anhMacDinh from '@/assets/guest/sinh-vien.jpg'
 import BuocLamBai from './BuocLamBai.vue'
 
 const ANH_NHOM = { R: anhR, I: anhI, A: anhA, S: anhS, E: anhE, C: anhC }
 const SO_NGANH_HIEN = 4
+const SO_NHOM_HIEN = 3
 const SO_SANH_TOI_DA = 3
 const TIEU_CHI_SO_SANH = [
   { id: 'mo_ta', ten: 'Mô tả/ngành học' },
@@ -37,6 +40,8 @@ const dangTai = ref(false)
 const loi = ref('')
 const duLieu = ref(null)
 const maDangXem = ref('')
+const soNhomHien = ref(SO_NHOM_HIEN)
+const dangTaiThem = ref(false)
 const nhomDaMo = ref({})
 const nganhDaChon = ref({})
 const soSanhMo = ref(false)
@@ -45,6 +50,7 @@ const bang = ref(null)
 const biCat = ref({})
 const theMoTa = new Map()
 let quanSatBang = null
+let henTaiThem = 0
 
 const buoc = computed(() => {
   const daXong = !!duLieu.value?.da_xong
@@ -62,6 +68,12 @@ const nhomTheoDiem = computed(() =>
   [...(duLieu.value?.nhom || [])].sort((a, b) => b.diem - a.diem || a.ma_nhom.localeCompare(b.ma_nhom)),
 )
 const nhomCaoNhat = computed(() => nhomTheoDiem.value[0] || null)
+const anhNhomHong = ref(false)
+const anhNhomCao = computed(() => {
+  const ma = nhomCaoNhat.value?.ma_nhom
+  if (!ma || anhNhomHong.value) return anhMacDinh
+  return ANH_NHOM[ma] || anhMacDinh
+})
 const maDangChon = computed(() => maDangXem.value || nhomCaoNhat.value?.ma_nhom || '')
 const nhomNganhHienThi = computed(() => {
   const ma = maDangChon.value
@@ -84,6 +96,25 @@ const nhomNganhHienThi = computed(() => {
     }),
   }))
 })
+const nhomNganhDangXem = computed(() => nhomNganhHienThi.value.slice(0, soNhomHien.value))
+const conNhom = computed(() => Math.max(nhomNganhHienThi.value.length - soNhomHien.value, 0))
+
+function huyTaiThem() {
+  if (!henTaiThem) return
+  clearTimeout(henTaiThem)
+  henTaiThem = 0
+  dangTaiThem.value = false
+}
+
+function taiThemNhom() {
+  if (dangTaiThem.value || !conNhom.value) return
+  dangTaiThem.value = true
+  henTaiThem = window.setTimeout(() => {
+    soNhomHien.value += SO_NHOM_HIEN
+    dangTaiThem.value = false
+    henTaiThem = 0
+  }, 1000)
+}
 
 function nganhDangXem(nhom) {
   if (nhomDaMo.value[nhom.ma]) return nhom.nganh
@@ -164,7 +195,9 @@ function giaTriTieuChi(nganh, id) {
 }
 
 function xemNganh(ma) {
+  huyTaiThem()
   maDangXem.value = ma
+  soNhomHien.value = SO_NHOM_HIEN
   nhomDaMo.value = {}
   nganhDaChon.value = {}
 }
@@ -182,9 +215,30 @@ function doMoTa() {
   biCat.value = next
 }
 
+function queryMaNganh() {
+  const ma = route.query.ma_nganh
+  return ma ? { ma_nganh: ma } : {}
+}
+
+async function chuyenVeLamBai(value) {
+  const phien = await fetchPhienLamBai(value)
+  const cau = phien.cau_hoi || []
+  const thieu = cau.find((item) => !item.cau_tra_loi_id) || cau[0]
+  if (!thieu) return false
+  ElMessage.error('Vui lòng hoàn thành các câu hỏi trước khi xem ngành phù hợp.')
+  await router.replace({
+    name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
+    params: { ssid: value, loaiCauHoiId: thieu.loai_cau_hoi_id },
+    query: queryMaNganh(),
+  })
+  return true
+}
+
 async function taiNganh(value) {
+  huyTaiThem()
   duLieu.value = null
   maDangXem.value = ''
+  soNhomHien.value = SO_NHOM_HIEN
   nhomDaMo.value = {}
   nganhDaChon.value = {}
   soSanhMo.value = false
@@ -195,20 +249,21 @@ async function taiNganh(value) {
     return
   }
   dangTai.value = true
+  let roiTrang = false
   try {
-    duLieu.value = await fetchNganhPhuHop(value)
+    const data = await fetchNganhPhuHop(value)
+    if (!data.da_xong) {
+      roiTrang = await chuyenVeLamBai(value)
+      if (roiTrang) return
+    }
+    duLieu.value = data
   } catch (error) {
     const status = error.response?.status
     const detail = error.response?.data?.detail
     loi.value = status === 404 && typeof detail === 'string' ? detail : 'Không tải được ngành phù hợp.'
   } finally {
-    dangTai.value = false
+    if (!roiTrang) dangTai.value = false
   }
-}
-
-function queryMaNganh() {
-  const ma = route.query.ma_nganh
-  return ma ? { ma_nganh: ma } : {}
 }
 
 function lui() {
@@ -229,6 +284,9 @@ function tiep() {
 }
 
 watch(ssid, taiNganh, { immediate: true })
+watch(nhomCaoNhat, () => {
+  anhNhomHong.value = false
+})
 watch(nhomTheoDiem, () => nextTick(doMoTa))
 watch(bang, (el) => {
   if (!quanSatBang) quanSatBang = new ResizeObserver(() => doMoTa())
@@ -242,6 +300,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  huyTaiThem()
   quanSatBang?.disconnect()
   quanSatBang = null
 })
@@ -267,16 +326,19 @@ onBeforeUnmount(() => {
 
           <article v-if="nhomCaoNhat" class="top-group">
             <img
-              class="top-group__icon"
-              :src="ANH_NHOM[nhomCaoNhat.ma_nhom]"
-              :alt="`Biểu tượng nhóm ${nhomCaoNhat.ten_nhom}`"
+              class="top-group__image"
+              :src="anhNhomCao"
+              :alt="`Hình minh họa nhóm ${nhomCaoNhat.ten_nhom}`"
+              @error="anhNhomHong = true"
             />
             <div class="top-group__body">
               <p class="top-group__kicker">Nhóm điểm cao nhất</p>
-              <h3 class="top-group__name">[{{ nhomCaoNhat.ma_nhom }}]-{{ nhomCaoNhat.ten_nhom }}</h3>
+              <div class="top-group__heading">
+                <h3 class="top-group__name">[{{ nhomCaoNhat.ma_nhom }}]-{{ nhomCaoNhat.ten_nhom }}</h3>
+                <p class="top-group__score">{{ nhomCaoNhat.diem }} điểm</p>
+              </div>
               <p class="top-group__text">{{ nhomCaoNhat.mo_ta || 'Chưa có mô tả cho nhóm này.' }}</p>
             </div>
-            <p class="top-group__score">{{ nhomCaoNhat.diem }} điểm</p>
           </article>
 
           <div v-if="nhomTheoDiem.length" class="row g-3 profile">
@@ -356,8 +418,9 @@ onBeforeUnmount(() => {
           <p v-else-if="!nhomNganhHienThi.length" class="holland-note holland-note__text">
             Không có nhóm ngành khớp mã {{ maDangChon }}.
           </p>
-          <ul v-else class="major-list">
-            <li v-for="nhom in nhomNganhHienThi" :key="nhom.ma" class="card major-card">
+          <template v-else>
+            <ul class="major-list">
+              <li v-for="nhom in nhomNganhDangXem" :key="nhom.ma" class="card major-card">
               <div class="card-body">
                 <div class="major-card__title">
                   <h3>
@@ -415,7 +478,17 @@ onBeforeUnmount(() => {
                 </div>
               </div>
             </li>
-          </ul>
+            </ul>
+            <button
+              v-if="conNhom"
+              type="button"
+              class="major-list__more"
+              :disabled="dangTaiThem"
+              @click="taiThemNhom"
+            >
+              Xem thêm
+            </button>
+          </template>
 
           <el-dialog
             v-model="soSanhMo"
@@ -453,6 +526,7 @@ onBeforeUnmount(() => {
         </template>
       </div>
     </div>
+    <LoadingSuyNghi :visible="dangTaiThem" text="Đang tải thêm nhóm ngành…" />
   </section>
 </template>
 
@@ -462,19 +536,20 @@ onBeforeUnmount(() => {
 .top-group {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   margin-top: 28px;
-  padding: 10px 14px;
+  min-height: 128px;
+  padding: 16px 18px;
   border: 1px solid #e3ebe6;
   border-radius: 12px;
   background: #f6faf7;
   box-shadow: 0 8px 22px rgba(28, 43, 35, 0.08);
 }
 
-.top-group__icon {
-  flex: 0 0 48px;
-  width: 48px;
-  height: 48px;
+.top-group__image {
+  flex: 0 0 168px;
+  width: 168px;
+  height: 108px;
   object-fit: cover;
   border-radius: 10px;
   background: #e7edf2;
@@ -495,31 +570,54 @@ onBeforeUnmount(() => {
   text-transform: uppercase;
 }
 
+.top-group__heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .top-group__name {
   margin: 0;
   color: #243044;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 500;
 }
 
 .top-group__text {
   display: -webkit-box;
-  margin: 2px 0 0;
+  margin: 6px 0 0;
   overflow: hidden;
   color: #4a5568;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 400;
-  line-height: 1.4;
+  line-height: 1.5;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
 }
 
 .top-group__score {
   flex: 0 0 auto;
   margin: 0;
-  color: #3a4a5e;
-  font-weight: 500;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #e7f5ea;
+  color: #0c5c34;
+  font-weight: 600;
   white-space: nowrap;
+}
+
+@media (max-width: 575.98px) {
+  .top-group {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .top-group__image {
+    flex-basis: auto;
+    width: 100%;
+    height: 140px;
+  }
 }
 
 .profile {
@@ -613,10 +711,34 @@ onBeforeUnmount(() => {
   list-style: none;
 }
 
+.major-list__more {
+  display: block;
+  margin: 16px auto 0;
+  padding: 8px 18px;
+  border: 1px solid #0c5c34;
+  border-radius: 8px;
+  background: #fff;
+  color: #0c5c34;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.major-list__more:hover:not(:disabled) {
+  background: #0c5c34;
+  color: #fff;
+}
+
+.major-list__more:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
 .major-card {
   margin: 0;
   border-color: #b7d0c2;
-  background: #e5f2ea;
+  background: #ffffff;
   box-shadow: 0 8px 22px rgba(28, 43, 35, 0.08);
 }
 

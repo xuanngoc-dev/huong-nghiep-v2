@@ -20,12 +20,97 @@ const oChon = ref(null)
 
 watch(
   () => props.hinhAnh,
-  () => {
+  (url) => {
     anhLoi.value = false
+    const text = typeof url === 'string' ? url.trim() : ''
+    if (!text) return
+    const probe = new Image()
+    probe.onerror = () => {
+      if ((props.hinhAnh || '').trim() === text) anhLoi.value = true
+    }
+    probe.src = text
   },
+  { immediate: true },
 )
 
-const anh = computed(() => (props.hinhAnh && !anhLoi.value ? props.hinhAnh : anhMacDinh))
+const anh = computed(() => {
+  const tuProps = typeof props.hinhAnh === 'string' ? props.hinhAnh.trim() : ''
+  if (tuProps && !anhLoi.value) return tuProps
+  return anhMacDinh
+})
+
+const styleNen = computed(() => {
+  if (!anh.value) return undefined
+  const mat = matTiepGiap(bamBanGhi())
+  const url = anh.value.replace(/["\\\n\r\f]/g, '')
+  return {
+    backgroundImage: `url("${url}")`,
+    WebkitMaskImage: mat,
+    maskImage: mat,
+  }
+})
+
+function bamBanGhi() {
+  const khoa = String(props.ten || '')
+  let hash = 2166136261
+  for (let i = 0; i < khoa.length; i += 1) {
+    hash ^= khoa.charCodeAt(i)
+    hash = Math.imul(hash, 16777619)
+  }
+  return hash >>> 0
+}
+
+function matSong(hash) {
+  const truc = 34 + (hash % 8)
+  const bienDo = 2.5 + ((hash >>> 4) % 6)
+  const soSong = 1 + ((hash >>> 8) % 3)
+  const lech = ((hash >>> 11) % 9) - 4
+  const phase = ((hash >>> 16) % 628) / 100
+  const beRong = 1.15 + ((hash >>> 6) % 3) * 0.35
+  const soLop = 14
+  const ys = []
+  for (let y = -20; y <= 120; y += 10) ys.push(y)
+
+  function xTai(y, shift) {
+    const ty = (y + 20) / 140
+    const x = truc + shift + lech * ty + Math.sin(phase + ty * Math.PI * 2 * soSong) * bienDo
+    return 100 - x
+  }
+
+  function vien(shift) {
+    return ys.map((y) => `${xTai(y, shift).toFixed(2)},${y}`).join(' L')
+  }
+
+  let shapes = `<path d='M130,-20 L${vien(0)} L130,120 Z' fill='white'/>`
+  for (let i = 0; i < soLop; i += 1) {
+    const mo = ((1 - (i + 1) / soLop) ** 1.35).toFixed(3)
+    const a = vien(i * beRong).split(' L')
+    const b = vien((i + 1) * beRong).split(' L')
+    shapes += `<path d='M${a.join(' L')} L${b.reverse().join(' L')} Z' fill='white' fill-opacity='${mo}'/>`
+  }
+
+  const svg =
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'>${shapes}</svg>`
+  return `url("data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}")`
+}
+
+function matTiepGiap(hash) {
+  const kieu = hash % 6
+  const neo = 36 + (hash % 8)
+  const het = neo + 16 + ((hash >>> 5) % 12)
+  const goc = 76 + ((hash >>> 9) % 29)
+  if (kieu === 0) return `linear-gradient(${goc + 180}deg, #000 ${neo}%, transparent ${het}%)`
+  if (kieu === 1) return `linear-gradient(${360 - goc}deg, #000 ${neo}%, transparent ${het}%)`
+  if (kieu === 2) {
+    const y = (hash >>> 12) % 101
+    return `radial-gradient(145% 180% at 106% ${y}%, #000 ${neo}%, transparent ${het}%)`
+  }
+  if (kieu === 3) {
+    const giua = neo + Math.round((het - neo) * 0.45)
+    return `linear-gradient(${goc + 180}deg, #000 ${neo}%, rgba(0,0,0,.62) ${giua}%, transparent ${het}%)`
+  }
+  return matSong(hash)
+}
 
 function dongBoChon() {
   if (oChon.value) oChon.value.checked = props.chon
@@ -36,15 +121,13 @@ function khiChon() {
   nextTick(dongBoChon)
 }
 
-function khiAnhLoi() {
-  anhLoi.value = true
-}
-
 watch(() => props.chon, () => nextTick(dongBoChon))
 </script>
 
 <template>
-  <article class="card-major h-100" :class="{ 'is-selected': chon }">
+  <article class="card-major h-100" :class="{ 'is-selected': chon, 'card-major--co-anh': anh }">
+    <span v-if="anh" class="card-major__image" :style="styleNen" aria-hidden="true" />
+    <span class="card-major__shade" aria-hidden="true" />
     <div class="card-major__body">
       <div class="card-major__heading">
         <label class="card-major__check">
@@ -71,25 +154,20 @@ watch(() => props.chon, () => nextTick(dongBoChon))
         </div>
       </dl>
     </div>
-    <img
-      class="card-major__image"
-      :src="anh"
-      :alt="`Hình minh họa ngành ${ten}`"
-      @error="khiAnhLoi"
-    />
   </article>
 </template>
 
 <style scoped>
 .card-major {
+  position: relative;
   display: flex;
-  align-items: stretch;
-  gap: 12px;
   margin: 0;
+  min-height: 168px;
   padding: 14px;
+  overflow: hidden;
   border: 1px solid #c5d5cc;
   border-radius: 10px;
-  background: #fff;
+  background: linear-gradient(90deg, #cfffe5 0%, #cfe0d7 52%, #f4f8f6 80%);
   box-shadow: 0 6px 16px rgba(28, 43, 35, 0.07);
 }
 
@@ -98,7 +176,48 @@ watch(() => props.chon, () => nextTick(dongBoChon))
   box-shadow: 0 0 0 2px #0c5c34;
 }
 
+.card-major__image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  width: 100%;
+  background-position: right center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  pointer-events: none;
+  -webkit-mask-position: right center;
+  mask-position: right center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.card-major__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(90deg, rgba(16, 62, 42, 0.16) 0%, rgba(16, 62, 42, 0.1) 46%, transparent 70%);
+  pointer-events: none;
+}
+
+.card-major--co-anh :is(.card-major__name, .card-major__desc) {
+  border-radius: 4px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.card-major--co-anh .card-major__desc {
+  width: fit-content;
+  max-width: 100%;
+  padding: 0 4px;
+}
+
 .card-major__body {
+  position: relative;
+  z-index: 1;
   flex: 1;
   min-width: 0;
 }
@@ -151,6 +270,8 @@ watch(() => props.chon, () => nextTick(dongBoChon))
 }
 
 .card-major__name {
+  flex: 1;
+  min-width: 0;
   margin: 0;
   color: #0c5c34;
   font-size: 1.15rem;
@@ -200,25 +321,4 @@ watch(() => props.chon, () => nextTick(dongBoChon))
   font-weight: 500;
 }
 
-.card-major__image {
-  flex: 0 0 118px;
-  width: 118px;
-  align-self: stretch;
-  min-height: 118px;
-  object-fit: cover;
-  border-radius: 8px;
-  background: #e7edf2;
-}
-
-@media (max-width: 480px) {
-  .card-major {
-    flex-direction: column-reverse;
-  }
-
-  .card-major__image {
-    flex-basis: auto;
-    width: 100%;
-    height: 140px;
-  }
-}
 </style>
