@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { fetchTruongDaoTao } from '@/api/deAnTuyenSinh'
 import { fetchTinhThanh } from '@/api/tinhThanh'
 import { danhSachNamHoc, nhanNamHoc } from '@/constants/namHoc'
@@ -12,6 +13,9 @@ import anhNhaTruong from '@/assets/guest/nha-truong.jpg'
 import anhNhaTuyenDung from '@/assets/guest/nha-tuyen-dung.jpg'
 
 defineOptions({ name: 'ChiTietTruongDaoTao' })
+
+const route = useRoute()
+const router = useRouter()
 
 const KHU_VUC = ['Bắc', 'Trung', 'Nam']
 const LOAI_CO_SO = ['Cao đẳng', 'Đại học', 'Học viện']
@@ -193,6 +197,30 @@ async function tai() {
   }
 }
 
+function diChonTruong() {
+  const ma = String(props.nganh?.ma_nganh || '').trim()
+  if (!ma) return
+  router.push({
+    name: 'thpt-thi-dai-hoc-chon-truong',
+    params: { maNganh: ma },
+  })
+}
+
+function diChiTiet(item) {
+  const maTruong = String(item?.ma_truong || '').trim()
+  const ssid = String(route.params.ssid || '').trim()
+  if (!maTruong || !ssid) return
+  const query = {}
+  const maNganh = String(props.nganh?.ma_nganh || '').trim()
+  if (maNganh) query.ma_nganh = maNganh
+  if (boLoc.value.namHoc) query.nam = String(boLoc.value.namHoc)
+  router.push({
+    name: 'thpt-thi-dai-hoc-chi-tiet-truong',
+    params: { ssid, maTruong },
+    query,
+  })
+}
+
 function timKiem() {
   const nam = Number(namHoc.value)
   boLoc.value = {
@@ -259,6 +287,7 @@ onMounted(() => {
       </div>
       <div class="nhom-filter__actions">
         <CustomButton type="primary" native-type="submit">Tìm kiếm</CustomButton>
+        <CustomButton native-type="button" type="success" @click="diChonTruong">Trường phù hợp</CustomButton>
       </div>
     </form>
 
@@ -287,6 +316,9 @@ onMounted(() => {
                 {{ item.website_tuyen_sinh || item.website }}
               </a>
             </p>
+            <div class="truong__actions">
+              <CustomButton plain type="success" @click="diChiTiet(item)">Chi tiết</CustomButton>
+            </div>
           </div>
         </article>
       </div>
@@ -417,8 +449,12 @@ onMounted(() => {
 }
 
 .truong__web {
-  margin-top: auto;
   padding-top: 8px;
+}
+
+.truong__actions {
+  margin-top: auto;
+  padding-top: 12px;
 }
 
 .truong__main a {
