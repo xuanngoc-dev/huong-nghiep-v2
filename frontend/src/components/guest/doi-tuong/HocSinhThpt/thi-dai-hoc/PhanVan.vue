@@ -200,6 +200,13 @@ async function moSoSanh() {
   }
 }
 
+function hrefChonTruong(item) {
+  return router.resolve({
+    name: 'thpt-thi-dai-hoc-chon-truong',
+    params: { maNganh: item.ma_nganh },
+  }).href
+}
+
 function chonNhom(item) {
   nhomDangXem.value = item
   trangNganh.value = 1
@@ -360,6 +367,7 @@ onMounted(() => {
                     co-the-chon
                     :da-chon="daChon(item)"
                     :khoa-chon="!daChon(item) && hetCho()"
+                    :href-kham-pha="hrefChonTruong(item)"
                     @doi-chon="doiPhanVan(item)"
                     @het-cho="baoHetCho"
                   />

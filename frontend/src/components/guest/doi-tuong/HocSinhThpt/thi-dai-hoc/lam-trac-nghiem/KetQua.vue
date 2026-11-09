@@ -42,7 +42,7 @@ watch(ssid, taiKetQua, { immediate: true })
 </script>
 
 <template>
-  <section class="quiz-flow py-4">
+  <section class="quiz-flow">
     <div class="container-fluid">
       <div class="holland-overview">
         <header class="holland-overview__header">
@@ -136,7 +136,7 @@ watch(ssid, taiKetQua, { immediate: true })
   display: block;
   height: 8px;
   overflow: hidden;
-  border-radius: 999px;
+  border-radius: 0.375rem;
   background: #e6ece8;
 }
 

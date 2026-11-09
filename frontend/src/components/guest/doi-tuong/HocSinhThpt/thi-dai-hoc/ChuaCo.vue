@@ -317,7 +317,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="chua-co py-4">
+  <section class="chua-co">
     <div class="container-fluid">
       <div class="row g-4">
         <div class="col-lg-9">
@@ -550,7 +550,7 @@ onMounted(() => {
   margin: 0;
   padding: 8px 16px;
   border: 1px solid var(--guest-primary, #3f9643);
-  border-radius: 999px;
+  border-radius: 0.375rem;
   background: #fff;
   color: var(--guest-primary, #3f9643);
   font-size: 0.95rem;
@@ -607,7 +607,7 @@ onMounted(() => {
   height: auto;
   margin: 0;
   border: 0;
-  border-radius: 999px;
+  border-radius: 0.375rem;
   padding: 8px 18px;
   background: #fff;
   box-shadow: 0 8px 18px rgba(16, 42, 28, 0.22);

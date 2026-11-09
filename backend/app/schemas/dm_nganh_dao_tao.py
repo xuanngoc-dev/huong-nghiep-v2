@@ -1,5 +1,5 @@
+import math
 from datetime import datetime
-from decimal import Decimal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -8,13 +8,11 @@ from app.constants.ky_luong import KY_LUONG, KY_LUONG_MAC_DINH, KY_LUONG_NHAN
 
 
 def _so_luong(value: float) -> float:
-    try:
-        amount = Decimal(str(value))
-    except Exception as exc:
-        raise ValueError("Mức lương phải là số") from exc
-    if amount < 0 or amount > Decimal("99.9") or amount != amount.quantize(Decimal("0.1")):
-        raise ValueError("Mức lương chỉ gồm tối đa 2 chữ số và 1 chữ số thập phân")
-    return float(amount.quantize(Decimal("0.1")))
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError("Mức lương phải là số không âm")
+    if not math.isfinite(value) or value < 0:
+        raise ValueError("Mức lương phải là số không âm")
+    return float(value)
 
 
 def _ma_ky_luong(value: str) -> str:
@@ -31,8 +29,8 @@ class MucLuongThamKhao(BaseModel):
     """Một mốc lương: kinh nghiệm, khoảng từ–đến, đơn vị tiền và kỳ lương."""
 
     name: str = Field(..., min_length=1, max_length=255)
-    min: float = Field(..., ge=0, le=99.9)
-    max: float = Field(..., ge=0, le=99.9)
+    min: float = Field(..., ge=0)
+    max: float = Field(..., ge=0)
     unit: str = Field(..., min_length=1, max_length=10)
     period: str = Field(default=KY_LUONG_MAC_DINH, max_length=20)
 
@@ -46,7 +44,7 @@ class MucLuongThamKhao(BaseModel):
 
     @field_validator("min", "max")
     @classmethod
-    def mot_chu_so_thap_phan(cls, value: float) -> float:
+    def so_khong_am(cls, value: float) -> float:
         return _so_luong(value)
 
     @field_validator("unit")

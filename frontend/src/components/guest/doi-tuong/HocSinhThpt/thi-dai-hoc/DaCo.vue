@@ -181,7 +181,7 @@ onMounted(() => {
 
             <template v-else>
               <h2 class="h4 mb-2">Nhóm ngành nghề</h2>
-              <p class="text-secondary mb-3">Chọn nhóm gần với ngành bạn đang hướng tới.</p>
+              <p class="text-secondary mb-3">Bạn định hướng sẽ học ngành nghề nào?</p>
               <p v-if="loiNhom" class="text-secondary mb-0">{{ loiNhom }}</p>
               <p v-else-if="dangTaiNhom" class="text-secondary mb-0">Đang tải nhóm ngành nghề…</p>
               <KhongCoDuLieu v-else-if="!nhomNghe.length" text="Chưa có nhóm ngành nghề." />

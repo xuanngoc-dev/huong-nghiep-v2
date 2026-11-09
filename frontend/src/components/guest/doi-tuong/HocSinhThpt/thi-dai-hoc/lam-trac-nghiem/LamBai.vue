@@ -14,9 +14,15 @@ const ssid = computed(() => String(route.params.ssid || ''))
 const loaiCauHoiId = computed(() => Number(route.params.loaiCauHoiId))
 const dangTai = ref(false)
 const dangPhanTich = ref(false)
+const dangDoiPhan = ref(false)
+const nutDangCho = ref('')
+const khuVucBai = ref(null)
 const CHO_PHAN_TICH_MS = 5000
+const CHO_DOI_PHAN_MS = 480
 let huyPhanTich = false
 let henPhanTich = 0
+let huyDoiPhan = false
+let henDoiPhan = 0
 const loi = ref('')
 const phien = ref(null)
 const daChon = ref({})
@@ -106,7 +112,16 @@ function phimDangNhap(event) {
 }
 
 function xuLyPhim(event) {
-  if (!cauHoiLoai.value.length || phimDangNhap(event) || event.altKey || event.ctrlKey || event.metaKey) return
+  if (
+    dangDoiPhan.value ||
+    !cauHoiLoai.value.length ||
+    phimDangNhap(event) ||
+    event.altKey ||
+    event.ctrlKey ||
+    event.metaKey
+  ) {
+    return
+  }
   if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
     event.preventDefault()
     chonCau(chiSo.value + 1)
@@ -127,7 +142,9 @@ function xuLyPhim(event) {
 onMounted(() => window.addEventListener('keydown', xuLyPhim))
 onBeforeUnmount(() => {
   huyPhanTich = true
+  huyDoiPhan = true
   window.clearTimeout(henPhanTich)
+  window.clearTimeout(henDoiPhan)
   window.removeEventListener('keydown', xuLyPhim)
 })
 
@@ -142,8 +159,34 @@ function moLoai(id, thayThe = false) {
     params: { ssid: ssid.value, loaiCauHoiId: id },
     query: queryMaNganh(),
   }
-  if (thayThe) router.replace(location)
-  else router.push(location)
+  return thayThe ? router.replace(location) : router.push(location)
+}
+
+function choDoiPhan(ms) {
+  return new Promise((resolve) => {
+    henDoiPhan = window.setTimeout(resolve, ms)
+  })
+}
+
+async function chuyenPhan(id, nut) {
+  if (dangDoiPhan.value || dangPhanTich.value || id == null) return
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    await moLoai(id).catch(() => {})
+    return
+  }
+  nutDangCho.value = nut
+  dangDoiPhan.value = true
+  try {
+    await choDoiPhan(CHO_DOI_PHAN_MS)
+    if (huyDoiPhan) return
+    await moLoai(id).catch(() => {})
+    if (huyDoiPhan) return
+    await nextTick()
+    khuVucBai.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  } finally {
+    dangDoiPhan.value = false
+    nutDangCho.value = ''
+  }
 }
 
 function doi(ms) {
@@ -178,7 +221,7 @@ function chuanHoaLoai() {
 
 function lui() {
   const prev = nhom.value[viTriLoai.value - 1]
-  if (prev) moLoai(prev.id)
+  if (prev) chuyenPhan(prev.id, 'lui')
 }
 
 function tiep() {
@@ -195,20 +238,20 @@ function tiep() {
   }
   const next = nhom.value[viTriLoai.value + 1]
   if (next) {
-    moLoai(next.id)
+    chuyenPhan(next.id, 'tiep')
     return
   }
   const chua = buoc.value.find((item) => item.id !== 'nganh-phu-hop' && item.id !== 'ket-qua' && !item.xong)
   if (chua) {
     ElMessage.error('Vui lòng hoàn thành các phần trước khi xem ngành phù hợp.')
-    moLoai(chua.id)
+    chuyenPhan(chua.id, 'tiep')
     return
   }
   moNganhPhuHop()
 }
 
 async function chonDapAn(cau, answerId) {
-  if (khoaTraLoi.value) return
+  if (khoaTraLoi.value || dangDoiPhan.value) return
   const truoc = daChon.value[cau.id]
   daChon.value = { ...daChon.value, [cau.id]: answerId }
   try {
@@ -258,7 +301,7 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
 </script>
 
 <template>
-  <section class="quiz-flow py-4">
+  <section ref="khuVucBai" class="quiz-flow" :aria-busy="dangDoiPhan">
     <div class="container-fluid">
       <div class="holland-overview">
         <header class="holland-overview__header">
@@ -270,7 +313,7 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
 
         <template v-else-if="cauHoiLoai.length">
           <BuocLamBai :ssid="ssid" :buoc="buoc" :hien-tai="loaiCauHoiId" />
-          <div class="quiz-list">
+          <div class="quiz-list" :class="{ 'is-switching': dangDoiPhan }">
             <article
               v-for="(cau, cauIndex) in cauHoiLoai"
               :key="cau.id"
@@ -310,9 +353,22 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
           </div>
 
           <div class="quiz-nav">
-            <CustomButton plain type="primary" :disabled="viTriLoai <= 0" @click="lui">Phần trước</CustomButton>
+            <CustomButton
+              plain
+              type="primary"
+              :disabled="viTriLoai <= 0 || dangDoiPhan || dangPhanTich"
+              :loading="nutDangCho === 'lui'"
+              @click="lui"
+            >
+              Phần trước
+            </CustomButton>
             <span class="quiz-progress">Đã trả lời {{ daTraLoi }}/{{ cauHoiLoai.length }}</span>
-            <CustomButton type="primary" :disabled="dangPhanTich" :loading="dangPhanTich" @click="tiep">
+            <CustomButton
+              type="primary"
+              :disabled="dangPhanTich || dangDoiPhan"
+              :loading="dangPhanTich || nutDangCho === 'tiep'"
+              @click="tiep"
+            >
               {{ nutTiep }}
             </CustomButton>
           </div>
@@ -322,18 +378,74 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
       </div>
     </div>
     <LoadingSuyNghi :visible="dangPhanTich" />
+    <Transition name="quiz-switch">
+      <div
+        v-if="dangDoiPhan"
+        class="quiz-switch"
+        role="status"
+        aria-live="polite"
+        aria-label="Đang chuyển phần"
+      >
+        <span class="quiz-switch__spin" />
+      </div>
+    </Transition>
   </section>
 </template>
 
 <style src="./quiz-type.scss"></style>
 
 <style scoped>
+.quiz-flow {
+  scroll-margin-top: 16px;
+}
+
 .quiz-list {
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
   align-items: start;
   margin-top: 28px;
+  transition: opacity 0.2s ease;
+}
+
+.quiz-list.is-switching {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.quiz-switch {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, #f6fbf7 72%, transparent);
+  backdrop-filter: blur(1px);
+}
+
+.quiz-switch__spin {
+  width: 28px;
+  height: 28px;
+  border: 3px solid color-mix(in srgb, var(--guest-primary, #3f9643) 24%, transparent);
+  border-top-color: var(--guest-primary, #3f9643);
+  border-radius: 50%;
+  animation: quiz-switch-spin 0.7s linear infinite;
+}
+
+.quiz-switch-enter-active,
+.quiz-switch-leave-active {
+  transition: opacity 0.16s ease;
+}
+
+.quiz-switch-enter-from,
+.quiz-switch-leave-to {
+  opacity: 0;
+}
+
+@keyframes quiz-switch-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .quiz-nav {
@@ -446,6 +558,16 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
 @media (min-width: 768px) {
   .quiz-list {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quiz-list,
+  .quiz-switch__spin,
+  .quiz-switch-enter-active,
+  .quiz-switch-leave-active {
+    transition: none;
+    animation: none;
   }
 }
 </style>

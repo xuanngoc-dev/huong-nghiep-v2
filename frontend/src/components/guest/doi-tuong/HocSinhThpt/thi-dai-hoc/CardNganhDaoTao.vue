@@ -32,6 +32,7 @@ const props = defineProps({
   coTheChon: { type: Boolean, default: false },
   daChon: { type: Boolean, default: false },
   khoaChon: { type: Boolean, default: false },
+  hrefKhamPha: { type: String, default: '' },
 })
 
 const emit = defineEmits(['chon', 'doiChon', 'hetCho'])
@@ -134,7 +135,12 @@ function matTiepGiap(hash) {
 <template>
   <article
     class="card-dao-tao"
-    :class="{ 'card-dao-tao--co-anh': anh, 'card-dao-tao--co-chon': coTheChon, 'is-selected': daChon }"
+    :class="{
+      'card-dao-tao--co-anh': anh,
+      'card-dao-tao--co-chon': coTheChon,
+      'card-dao-tao--co-kham-pha': hrefKhamPha,
+      'is-selected': daChon,
+    }"
   >
     <span v-if="anh" class="card-dao-tao__bg" :style="styleNen" aria-hidden="true" />
     <label v-if="coTheChon" class="card-dao-tao__check" @click="clickCheck">
@@ -157,6 +163,15 @@ function matTiepGiap(hash) {
     <button v-if="hanhDong" type="button" class="card-dao-tao__action" @click="emit('chon')">
       {{ hanhDong }}
     </button>
+    <a
+      v-if="hrefKhamPha"
+      class="card-dao-tao__kham-pha"
+      :href="hrefKhamPha"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Khám phá
+    </a>
   </article>
 </template>
 
@@ -217,8 +232,9 @@ function matTiepGiap(hash) {
   padding-right: 28px;
 }
 
-.card-dao-tao--co-chon .card-dao-tao__main {
-  padding-bottom: 28px;
+.card-dao-tao--co-chon .card-dao-tao__main,
+.card-dao-tao--co-kham-pha .card-dao-tao__main {
+  padding-bottom: 40px;
 }
 
 .card-dao-tao.is-selected {
@@ -321,6 +337,31 @@ function matTiepGiap(hash) {
 
 .card-dao-tao__action:hover {
   background: var(--guest-primary-hover);
+}
+
+.card-dao-tao__kham-pha {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2;
+  border-radius: 8px;
+  padding: 6px 12px;
+  background: var(--guest-primary);
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.card-dao-tao__kham-pha:hover {
+  background: var(--guest-primary-hover);
+  color: #fff;
+}
+
+.card-dao-tao__kham-pha:focus-visible {
+  outline: 2px solid var(--guest-primary);
+  outline-offset: 2px;
 }
 
 .card-dao-tao__field {

@@ -34,14 +34,14 @@ function xoaDong(index) {
   )
 }
 
-/** Giữ tối đa 2 chữ số phần nguyên và 1 chữ số thập phân. */
+/** Chỉ giữ số không âm: chữ số và một dấu thập phân, không giới hạn độ dài. */
 function locSoTien(value) {
   const cleaned = String(value ?? '').replace(',', '.').replace(/[^\d.]/g, '')
   const dot = cleaned.indexOf('.')
   const head = dot === -1 ? cleaned : cleaned.slice(0, dot)
-  const intPart = head.replace(/^0+(?=\d)/, '').slice(0, 2)
+  const intPart = head.replace(/^0+(?=\d)/, '')
   if (dot === -1) return intPart
-  const decimal = cleaned.slice(dot + 1).replace(/\./g, '').slice(0, 1)
+  const decimal = cleaned.slice(dot + 1).replace(/\./g, '')
   return `${intPart || '0'}.${decimal}`
 }
 

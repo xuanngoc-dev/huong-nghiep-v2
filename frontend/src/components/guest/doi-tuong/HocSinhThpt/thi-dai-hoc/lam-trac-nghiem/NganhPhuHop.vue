@@ -318,7 +318,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section class="quiz-flow py-4">
+  <section class="quiz-flow">
     <div class="container-fluid">
       <div class="holland-overview">
         <header class="holland-overview__header">
@@ -612,7 +612,7 @@ onBeforeUnmount(() => {
   flex: 0 0 auto;
   margin: 0;
   padding: 2px 10px;
-  border-radius: 999px;
+  border-radius: 0.375rem;
   background: #e7f5ea;
   color: #0c5c34;
   font-weight: 600;

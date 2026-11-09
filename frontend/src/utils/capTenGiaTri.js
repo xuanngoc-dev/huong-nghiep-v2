@@ -4,14 +4,13 @@ import { nhanKyLuong } from '@/constants/kyLuong'
 function soTien(value) {
   if (value == null || value === '') return null
   const num = Number(value)
-  return Number.isFinite(num) ? Math.round(num * 10) / 10 : null
+  return Number.isFinite(num) ? num : null
 }
 
 export function hienSoTien(value) {
   const num = soTien(value)
   if (num == null) return ''
-  const text = Number.isInteger(num) ? String(num) : num.toFixed(1)
-  return text.replace('.', ',')
+  return String(num).replace('.', ',')
 }
 
 export function danhSachMucLuong(value) {

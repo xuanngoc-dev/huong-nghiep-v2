@@ -2,6 +2,7 @@
 import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchNganh } from '@/api/nganhDaoTao'
+import { fetchNhomHolland } from '@/api/nhomTinhCachHolland'
 import anhMacDinh from '@/assets/guest/sinh-vien.jpg'
 import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
 import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
@@ -38,6 +39,7 @@ const tabDangChon = ref(TABS[0].id)
 const nganhCungNhom = ref([])
 const dangTaiCungNhom = ref(false)
 const loiCungNhom = ref('')
+const nhomHolland = ref([])
 
 const anh = computed(() => {
   const url = String(nganh.value?.hinh_anh_mo_ta || '').trim()
@@ -62,10 +64,22 @@ const moTa = computed(() => {
   return nganh.value.mo_ta || noiGiaTri(json?.mo_ta) || vanBan
 })
 
+function maHollandCua(item) {
+  const value = item?.ma_holand
+  if (Array.isArray(value)) return value.map((code) => String(code).trim()).filter(Boolean)
+  if (typeof value === 'string' && value.trim()) return [value.trim()]
+  return []
+}
+
 const tomTat = computed(() => {
   if (!nganh.value) return []
   const { json } = chiTiet.value
-  const holand = Array.isArray(nganh.value.ma_holand) ? nganh.value.ma_holand.filter(Boolean).join(', ') : ''
+  const theoMa = new Map(
+    nhomHolland.value.map((nhom) => [String(nhom.ma_nhom).toUpperCase(), nhom.ten_nhom]),
+  )
+  const holand = maHollandCua(nganh.value)
+    .map((code) => theoMa.get(code.toUpperCase()) || code)
+    .join(', ')
   return [
     { nhan: 'Mã ngành', giaTri: nganh.value.ma_nganh },
     { nhan: 'Nhóm ngành', giaTri: [nganh.value.ma_nhom_nganh, nganh.value.ten_nhom_nganh].filter(Boolean).join(' · ') },
@@ -114,6 +128,20 @@ function quayLai() {
 }
 
 let lanTai = 0
+let taiHolland = null
+
+function taiNhomHolland() {
+  if (!taiHolland) {
+    taiHolland = fetchNhomHolland({ trang_thai: 1, page: 1, page_size: 20 }, { skipLoading: true })
+      .then((data) => {
+        nhomHolland.value = data.items || []
+      })
+      .catch(() => {
+        taiHolland = null
+      })
+  }
+  return taiHolland
+}
 
 async function taiNganhCungNhom(maNhom, maHienTai, lan) {
   nganhCungNhom.value = []
@@ -153,10 +181,10 @@ async function taiNganh(ma) {
   }
   dangTai.value = true
   try {
-    const data = await fetchNganh(
-      { q: ma, trang_thai: 1, page: 1, page_size: 20 },
-      { skipLoading: true },
-    )
+    const [data] = await Promise.all([
+      fetchNganh({ q: ma, trang_thai: 1, page: 1, page_size: 20 }, { skipLoading: true }),
+      taiNhomHolland(),
+    ])
     if (lan !== lanTai) return
     const found = (data.items || []).find((item) => String(item.ma_nganh).toUpperCase() === ma.toUpperCase())
     if (!found) {
@@ -177,7 +205,7 @@ watch(maNganh, taiNganh, { immediate: true })
 </script>
 
 <template>
-  <section class="quiz-flow py-4">
+  <section class="quiz-flow">
     <div class="container-fluid">
       <div class="holland-overview">
         <!-- <header class="holland-overview__header">
@@ -200,15 +228,14 @@ watch(maNganh, taiNganh, { immediate: true })
                 <h3 class="major-detail__name">{{ nganh.ten_nganh }}</h3>
                 <p v-if="nganh.ten_tieng_anh" class="major-detail__en">{{ nganh.ten_tieng_anh }}</p>
                 <p class="major-detail__text">{{ moTa || 'Chưa có mô tả cho ngành này.' }}</p>
+                <dl v-if="tomTat.length" class="major-facts">
+                  <div v-for="item in tomTat" :key="item.nhan" class="major-facts__item">
+                    <dt>{{ item.nhan }}</dt>
+                    <dd>{{ item.giaTri }}</dd>
+                  </div>
+                </dl>
               </div>
             </div>
-
-            <dl v-if="tomTat.length" class="major-facts">
-              <div v-for="item in tomTat" :key="item.nhan" class="major-facts__item">
-                <dt>{{ item.nhan }}</dt>
-                <dd>{{ item.giaTri }}</dd>
-              </div>
-            </dl>
           </article>
 
           <div class="major-tabs">
@@ -276,188 +303,3 @@ watch(maNganh, taiNganh, { immediate: true })
 </template>
 
 <style src="./quiz-type.scss"></style>
-
-<style scoped>
-.major-detail {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  margin-top: 28px;
-  padding: 16px;
-  border: 1px solid #c5d5cc;
-  border-radius: 12px;
-  background: #f6faf7;
-  box-shadow: 0 8px 22px rgba(28, 43, 35, 0.08);
-}
-
-.major-detail__head {
-  display: flex;
-  align-items: stretch;
-  gap: 18px;
-}
-
-.major-detail__image {
-  flex: 0 0 280px;
-  width: 280px;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
-  background: #e7edf2;
-}
-
-.major-detail__intro {
-  flex: 1;
-  min-width: 0;
-}
-
-.major-detail__code {
-  display: inline-block;
-  margin: 0 0 6px;
-  padding: 2px 10px;
-  border-radius: 999px;
-  background: #0c5c34;
-  color: #fff;
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-}
-
-.major-detail__name {
-  margin: 0;
-  color: #0c5c34;
-  font-size: 1.45rem;
-  font-weight: 700;
-  line-height: 1.3;
-}
-
-.major-detail__en {
-  margin: 4px 0 0;
-  color: #3d5c4c;
-  font-size: 1rem;
-  line-height: 1.4;
-}
-
-.major-detail__text {
-  margin: 10px 0 0;
-  color: #1c2836;
-  font-size: 1rem;
-  line-height: 1.55;
-  white-space: pre-line;
-}
-
-.major-facts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 10px;
-  margin: 0;
-}
-
-.major-facts__item {
-  margin: 0;
-  padding: 12px 14px;
-  border: 1px solid #c5d5cc;
-  border-radius: 10px;
-  background: #fff;
-}
-
-.major-facts__item dt {
-  margin: 0;
-  color: #31483d;
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-.major-facts__item dd {
-  margin: 4px 0 0;
-  color: #121a28;
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.45;
-  white-space: pre-line;
-}
-
-.major-tabs {
-  margin-top: 20px;
-}
-
-.major-tabs__bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.major-tabs__pill {
-  margin: 0;
-  padding: 8px 16px;
-  border: 1px solid #0c5c34;
-  border-radius: 999px;
-  background: #fff;
-  color: #0c5c34;
-  font-size: 0.95rem;
-  /* font-weight: 600; */
-  line-height: 1.3;
-  cursor: pointer;
-}
-
-.major-tabs__pill.is-active {
-  background: #0c5c34;
-  color: #fff;
-}
-
-.major-tabs__pill:focus-visible {
-  outline: 2px solid #0c5c34;
-  outline-offset: 2px;
-}
-
-.major-tabs__panel {
-  margin-top: 14px;
-  padding: 18px;
-  border: 1px solid #c5d5cc;
-  border-radius: 12px;
-  background: #fff;
-}
-
-.major-peers {
-  margin-top: 28px;
-  padding: 16px;
-  border: 1px solid #c5d5cc;
-  border-radius: 12px;
-  background: #f6faf7;
-}
-
-.major-peers__title {
-  margin: 0;
-  color: #0c5c34;
-  font-size: 1.35rem;
-  font-weight: 700;
-  line-height: 1.35;
-}
-
-.major-peers__lead {
-  margin: 8px 0 0;
-  color: #3d5c4c;
-  line-height: 1.5;
-}
-
-.major-peers .row {
-  margin-top: 4px;
-}
-
-.major-nav {
-  margin-top: 28px;
-}
-
-@media (max-width: 575.98px) {
-  .major-detail__head {
-    flex-direction: column;
-  }
-
-  .major-detail__image {
-    flex-basis: auto;
-    width: 100%;
-    height: 160px;
-  }
-}
-</style>

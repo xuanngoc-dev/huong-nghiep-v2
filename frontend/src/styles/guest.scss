@@ -578,7 +578,7 @@
 
 .guest-layout .guest-banner__chip {
   padding: 6px 10px;
-  border-radius: 999px;
+  border-radius: 0.375rem;
   background: rgba(255, 255, 255, 0.16);
   font-size: 14px;
 }
@@ -905,7 +905,7 @@
   align-items: center;
   gap: 5px;
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: 0.375rem;
   border: 1px solid #cce2d6;
   background: #fff;
   font-size: 0.75rem;
@@ -1097,7 +1097,7 @@
   display: inline-block;
   margin-bottom: 8px;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: 0.375rem;
   background: var(--guest-primary);
   color: #fff;
   font-size: 0.68rem;
@@ -1482,7 +1482,7 @@
   align-items: center;
   gap: 8px;
   padding: 7px 16px;
-  border-radius: 999px;
+  border-radius: 0.375rem;
   border: 1px solid #cce2d6;
   background: #fff;
   color: #2d3c34;
@@ -1645,7 +1645,7 @@
 
 .guest-layout .demo-chat__suggestions button {
   border: 1px solid rgba(var(--guest-primary-rgb), 0.35);
-  border-radius: 999px;
+  border-radius: 0.375rem;
   padding: 6px 12px;
   background: #fff;
   color: var(--guest-primary);

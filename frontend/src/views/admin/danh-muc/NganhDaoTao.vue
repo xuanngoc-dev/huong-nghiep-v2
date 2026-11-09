@@ -125,9 +125,8 @@ function optionalText(value) {
 function hienNhapTien(value) {
   if (value == null || value === '') return ''
   const num = Number(value)
-  if (!Number.isFinite(num)) return ''
-  const rounded = Math.round(num * 10) / 10
-  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)
+  if (!Number.isFinite(num) || num < 0) return ''
+  return String(num)
 }
 
 function copyMucLuong(value) {
@@ -148,6 +147,14 @@ function copyCap(value) {
   }))
 }
 
+function docSoTien(value) {
+  const raw = String(value ?? '').trim().replace(',', '.')
+  const text = raw.endsWith('.') ? raw.slice(0, -1) : raw
+  if (!/^\d+(\.\d+)?$/.test(text)) return null
+  const num = Number(text)
+  return Number.isFinite(num) ? num : null
+}
+
 function chuanMucLuong(rows, label) {
   const cleaned = []
   const units = new Set(DON_VI_TIEN.map((item) => item.value))
@@ -162,11 +169,11 @@ function chuanMucLuong(rows, label) {
     if (!name || !minText || !maxText) {
       throw new Error(`${line} cần đủ kinh nghiệm, mức từ và mức đến`)
     }
-    if (!/^\d{1,2}(\.\d)?$/.test(minText) || !/^\d{1,2}(\.\d)?$/.test(maxText)) {
-      throw new Error(`${line} chỉ nhập tối đa 2 chữ số và 1 chữ số thập phân`)
+    const min = docSoTien(minText)
+    const max = docSoTien(maxText)
+    if (min == null || max == null) {
+      throw new Error(`${line} chỉ nhập số không âm`)
     }
-    const min = Number(minText)
-    const max = Number(maxText)
     if (min > max) throw new Error(`${line} có mức từ lớn hơn mức đến`)
     if (!units.has(unit)) throw new Error(`${line} có đơn vị tính không hợp lệ`)
     if (!period) throw new Error(`${line} có thời gian lương không hợp lệ`)
@@ -887,7 +894,7 @@ onMounted(async () => {
           <code>hinh_anh_mo_ta</code>, <code>nhan_dan</code>, <code>thoi_gian_dao_tao</code> và
           <code>chi_tiet</code> có thể bỏ trống.
           <code>muc_luong_tham_khao</code> là mảng
-          <code>{"name","min","max","unit","period"}</code>: min và max tối đa 2 chữ số với 1 chữ số thập phân,
+          <code>{"name","min","max","unit","period"}</code>: min và max là số không âm, không giới hạn,
           unit thuộc VNĐ, USD hoặc EUR, period là buổi, ngày, tuần, tháng hoặc năm (mặc định tháng).
           <code>mo_ta_cong_viec</code> và <code>lo_trinh_phat_trien</code> là mảng
           <code>{"name","value","ghi_chu"}</code>, ghi chú có thể bỏ trống. Các mảng này có thể bỏ trống.

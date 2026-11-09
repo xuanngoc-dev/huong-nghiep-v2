@@ -100,7 +100,7 @@ const coDuLieu = computed(() => tuCot.value.length || moTa.value.length || coHoi
 
 .cong-viec__chip li {
   padding: 6px 12px;
-  border-radius: 999px;
+  border-radius: 0.375rem;
   background: #e7f5ec;
   color: #0c5c34;
   font-weight: 600;
