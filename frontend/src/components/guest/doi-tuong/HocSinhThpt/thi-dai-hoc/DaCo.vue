@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchNganh } from '@/api/nganhDaoTao'
-import { fetchNhomNganh } from '@/api/nhomNganhDaoTao'
+import { fetchNhomHolland } from '@/api/nhomTinhCachHolland'
 import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
 import CardNganhDaoTao from './CardNganhDaoTao.vue'
@@ -15,57 +15,53 @@ const route = useRoute()
 const router = useRouter()
 const currentStage = computed(() => route.meta.giaiDoan || '')
 
-const danhSach = ref([])
-const dangTai = ref(false)
-const loi = ref('')
 const SO_MOI_TRANG = 8
-
-const ten = ref('')
-const maLinhVuc = ref('')
-const boLoc = ref({ ten: '', maLinhVuc: '' })
-const trang = ref(1)
-const nhomDangXem = ref(null)
+const nhomNghe = ref([])
 const nganh = ref([])
+const dangTaiNhom = ref(false)
 const dangTaiNganh = ref(false)
+const loiNhom = ref('')
 const loiNganh = ref('')
+const nhomDangXem = ref(null)
 const trangNganh = ref(1)
 
-const linhVucOptions = computed(() => {
-  const map = new Map()
-  for (const item of danhSach.value) {
-    if (!map.has(item.ma_linh_vuc)) map.set(item.ma_linh_vuc, item.ten_linh_vuc)
-  }
-  return [...map.entries()]
-    .map(([ma, tenLinhVuc]) => ({ ma, ten: tenLinhVuc }))
-    .sort((a, b) => a.ten.localeCompare(b.ten, 'vi'))
-})
+function moTaHolland(item) {
+  return item.mo_ta || item.vi_du_nghe_nghiep || ''
+}
 
-const ketQua = computed(() => {
-  const tuKhoa = boLoc.value.ten.toLocaleLowerCase('vi')
-  const ma = boLoc.value.maLinhVuc
-  return danhSach.value.filter((item) => {
-    if (ma && item.ma_linh_vuc !== ma) return false
-    if (!tuKhoa) return true
-    return item.ten_nhom_nganh.toLocaleLowerCase('vi').includes(tuKhoa)
-  })
-})
+function maHollandCua(item) {
+  const value = item?.ma_holand
+  if (Array.isArray(value)) return value.map((code) => String(code).toUpperCase())
+  if (typeof value === 'string' && value.trim()) return [value.trim().toUpperCase()]
+  return []
+}
 
-const ketQuaTrang = computed(() => {
-  const batDau = (trang.value - 1) * SO_MOI_TRANG
-  return ketQua.value.slice(batDau, batDau + SO_MOI_TRANG)
+function moTaNganh(item) {
+  if (item.mo_ta) return item.mo_ta
+  if (item.ten_nhom_nganh && item.ten_nhom_nganh !== item.ten_nganh) return item.ten_nhom_nganh
+  return ''
+}
+
+const nganhTheoNhom = computed(() => {
+  const ma = String(nhomDangXem.value?.ma_nhom || '').toUpperCase()
+  if (!ma) return []
+  return nganh.value
+    .filter((item) => maHollandCua(item).includes(ma))
+    .sort((a, b) => a.ten_nganh.localeCompare(b.ten_nganh, 'vi'))
 })
 
 const nganhTrang = computed(() => {
   const batDau = (trangNganh.value - 1) * SO_MOI_TRANG
-  return nganh.value.slice(batDau, batDau + SO_MOI_TRANG)
+  return nganhTheoNhom.value.slice(batDau, batDau + SO_MOI_TRANG)
 })
 
-function timKiem() {
-  boLoc.value = {
-    ten: ten.value.trim(),
-    maLinhVuc: maLinhVuc.value || '',
-  }
-  trang.value = 1
+function chonNhom(item) {
+  nhomDangXem.value = item
+  trangNganh.value = 1
+}
+
+function quayLaiNhom() {
+  nhomDangXem.value = null
 }
 
 function diChonTruong(item) {
@@ -73,40 +69,6 @@ function diChonTruong(item) {
     name: 'thpt-thi-dai-hoc-chon-truong',
     params: { maNganh: item.ma_nganh },
   })
-}
-
-async function xemNganh(nhom) {
-  nhomDangXem.value = nhom
-  trangNganh.value = 1
-  dangTaiNganh.value = true
-  loiNganh.value = ''
-  nganh.value = []
-  try {
-    const pageSize = 200
-    let page = 1
-    const items = []
-    while (page <= 20) {
-      const data = await fetchNganh(
-        { page, page_size: pageSize, trang_thai: 1, ma_nhom_nganh: nhom.ma_nhom_nganh },
-        { skipLoading: true },
-      )
-      items.push(...(data.items || []))
-      if (items.length >= (data.total || 0) || !data.items?.length) break
-      page += 1
-    }
-    items.sort((a, b) => a.ten_nganh.localeCompare(b.ten_nganh, 'vi'))
-    nganh.value = items
-  } catch {
-    loiNganh.value = 'Không tải được danh sách ngành.'
-  } finally {
-    dangTaiNganh.value = false
-  }
-}
-
-function quayLaiNhom() {
-  nhomDangXem.value = null
-  nganh.value = []
-  loiNganh.value = ''
 }
 
 function chonGiaiDoan(stage) {
@@ -119,32 +81,54 @@ function chonGiaiDoan(stage) {
   if (!name) router.push({ name: 'thpt-thi-dai-hoc' })
 }
 
-async function taiNhomNganh() {
-  dangTai.value = true
-  loi.value = ''
+async function taiHetNganh() {
+  const pageSize = 200
+  let page = 1
+  const items = []
+  while (page <= 20) {
+    const data = await fetchNganh(
+      { page, page_size: pageSize, trang_thai: 1 },
+      { skipLoading: true },
+    )
+    items.push(...(data.items || []))
+    if (items.length >= (data.total || 0) || !data.items?.length) break
+    page += 1
+  }
+  return items
+}
+
+async function taiNhomNghe() {
+  dangTaiNhom.value = true
+  loiNhom.value = ''
   try {
-    const pageSize = 200
-    let page = 1
-    const items = []
-    while (page <= 20) {
-      const data = await fetchNhomNganh(
-        { page, page_size: pageSize, trang_thai: 1 },
-        { skipLoading: true },
-      )
-      items.push(...(data.items || []))
-      if (items.length >= (data.total || 0) || !data.items?.length) break
-      page += 1
-    }
-    items.sort((a, b) => a.ten_nhom_nganh.localeCompare(b.ten_nhom_nganh, 'vi'))
-    danhSach.value = items
+    const data = await fetchNhomHolland(
+      { trang_thai: 1, page: 1, page_size: 100 },
+      { skipLoading: true },
+    )
+    nhomNghe.value = data.items || []
   } catch {
-    loi.value = 'Không tải được danh sách nhóm ngành.'
+    loiNhom.value = 'Không tải được nhóm ngành nghề.'
   } finally {
-    dangTai.value = false
+    dangTaiNhom.value = false
   }
 }
 
-onMounted(taiNhomNganh)
+async function taiNganh() {
+  dangTaiNganh.value = true
+  loiNganh.value = ''
+  try {
+    nganh.value = await taiHetNganh()
+  } catch {
+    loiNganh.value = 'Không tải được danh sách ngành.'
+  } finally {
+    dangTaiNganh.value = false
+  }
+}
+
+onMounted(() => {
+  taiNhomNghe()
+  taiNganh()
+})
 </script>
 
 <template>
@@ -155,73 +139,28 @@ onMounted(taiNhomNganh)
           <article class="intro-card">
             <h2 class="h2 mb-2">Bạn đã có ngành nghề mong muốn?</h2>
             <p class="text-secondary mb-0">
-              Chọn nhóm ngành, rồi đối chiếu trường đào tạo, tổ hợp môn và cách xét tuyển.
+              Chọn nhóm ngành nghề, rồi chọn ngành để đối chiếu trường đào tạo, tổ hợp môn và cách xét tuyển.
             </p>
           </article>
 
-          <div class="stages-card holland-overview mt-3">
-            <header class="holland-overview__header" v-if="false">
-              <h2 class="holland-overview__title">
-                {{ nhomDangXem ? nhomDangXem.ten_nhom_nganh : 'Nhóm ngành đào tạo' }}
-              </h2>
-              <p class="holland-overview__lead">
-                {{
-                  nhomDangXem
-                    ? 'Các ngành thuộc nhóm này.'
-                    : 'Lọc theo tên nhóm ngành và lĩnh vực.'
-                }}
-              </p>
-            </header>
-
-            <button v-if="nhomDangXem" type="button" class="nhom-back" @click="quayLaiNhom">
-              Quay lại nhóm ngành
-            </button>
-
-            <form v-else class="nhom-filter" @submit.prevent="timKiem">
-              <div class="nhom-filter__field nhom-filter__field--ten">
-                <label class="nhom-filter__label" for="loc-ten-nhom">Tên</label>
-                <CustomInput
-                  id="loc-ten-nhom"
-                  v-model="ten"
-                  placeholder="Nhập tên nhóm ngành"
-                  clearable
-                />
-              </div>
-              <div class="nhom-filter__field nhom-filter__field--linh-vuc">
-                <label class="nhom-filter__label" for="loc-linh-vuc">Lĩnh vực</label>
-                <CustomSelect
-                  id="loc-linh-vuc"
-                  v-model="maLinhVuc"
-                  class="nhom-filter__select"
-                  filterable
-                  placeholder="Tất cả lĩnh vực"
-                >
-                  <CustomOption
-                    v-for="item in linhVucOptions"
-                    :key="item.ma"
-                    :label="item.ten"
-                    :value="item.ma"
-                  />
-                </CustomSelect>
-              </div>
-              <button type="submit" class="btn btn-success btn-sm nhom-filter__submit">Tìm kiếm</button>
-            </form>
-
+          <article class="stages-card mt-3">
             <template v-if="nhomDangXem">
-              <p v-if="loiNganh" class="holland-note holland-note__text">{{ loiNganh }}</p>
-              <p v-else-if="dangTaiNganh" class="holland-overview__lead text-center">Đang tải ngành…</p>
-              <p v-else-if="!nganh.length" class="holland-note holland-note__text">
-                Nhóm này chưa có ngành.
-              </p>
+              <button type="button" class="nhom-back mb-3" @click="quayLaiNhom">
+                Quay lại nhóm ngành nghề
+              </button>
+              <h2 class="h4 mb-2">{{ nhomDangXem.ten_nhom }}</h2>
+              <p class="text-secondary mb-3">Các ngành thuộc nhóm này. Chọn ngành để xem trường đào tạo.</p>
+              <p v-if="loiNganh" class="text-secondary mb-0">{{ loiNganh }}</p>
+              <p v-else-if="dangTaiNganh" class="text-secondary mb-0">Đang tải ngành…</p>
+              <KhongCoDuLieu v-else-if="!nganhTheoNhom.length" text="Nhóm này chưa có ngành." />
               <div v-else class="row g-3">
-                <div v-for="item in nganhTrang" :key="item.id" class="col-12 col-md-6 col-lg-3">
+                <div v-for="item in nganhTrang" :key="item.id" class="col-12 col-md-6 col-lg-4">
                   <CardNganhDaoTao
                     class="h-100"
                     :ma="item.ma_nganh"
-                    :nhan="item.trinh_do"
                     :ten="item.ten_nganh"
                     :ten-tieng-anh="item.ten_tieng_anh"
-                    :mo-ta="item.mo_ta || ''"
+                    :mo-ta="moTaNganh(item)"
                     :hinh-anh="item.hinh_anh_mo_ta || ''"
                     :khoa="item.id"
                     hanh-dong="Chọn"
@@ -229,53 +168,44 @@ onMounted(taiNhomNganh)
                   />
                 </div>
               </div>
-              <div v-if="!dangTaiNganh && !loiNganh && nganh.length" class="nhom-pager">
+              <div v-if="!dangTaiNganh && !loiNganh && nganhTheoNhom.length" class="nhom-pager">
                 <CustomPagination
                   v-model:current-page="trangNganh"
                   :page-size="SO_MOI_TRANG"
-                  :total="nganh.length"
+                  :total="nganhTheoNhom.length"
                   layout="total, prev, pager, next"
                   background
                 />
               </div>
             </template>
 
-            <p v-else-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
-            <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải nhóm ngành…</p>
-            <p v-else-if="!ketQua.length" class="holland-note holland-note__text">
-              Không có nhóm ngành khớp bộ lọc.
-            </p>
-            <div v-else class="row g-3">
-              <div v-for="item in ketQuaTrang" :key="item.id" class="col-12 col-md-6 col-lg-4">
-                <CardNganhDaoTao
-                  class="h-100"
-                  :ma="item.ma_nhom_nganh"
-                  :nhan="item.ten_linh_vuc"
-                  :ten="item.ten_nhom_nganh"
-                  :ten-tieng-anh="item.ten_tieng_anh"
-                  :mo-ta="item.mo_ta || ''"
-                  :hinh-anh="item.hinh_anh_mo_ta || ''"
-                  :khoa="item.id"
-                  :hanh-dong="`${item.so_nganh || 0} Ngành`"
-                  @chon="xemNganh(item)"
-                />
+            <template v-else>
+              <h2 class="h4 mb-2">Nhóm ngành nghề</h2>
+              <p class="text-secondary mb-3">Chọn nhóm gần với ngành bạn đang hướng tới.</p>
+              <p v-if="loiNhom" class="text-secondary mb-0">{{ loiNhom }}</p>
+              <p v-else-if="dangTaiNhom" class="text-secondary mb-0">Đang tải nhóm ngành nghề…</p>
+              <KhongCoDuLieu v-else-if="!nhomNghe.length" text="Chưa có nhóm ngành nghề." />
+              <div v-else class="row g-3">
+                <div v-for="item in nhomNghe" :key="item.id" class="col-12 col-md-6 col-lg-4">
+                  <CardNganhDaoTao
+                    class="h-100"
+                    :ma="item.ma_nhom"
+                    :ten="item.ten_nhom"
+                    :ten-tieng-anh="item.ten_tieng_anh"
+                    :mo-ta="moTaHolland(item)"
+                    :hinh-anh="item.hinh_anh_mo_ta || ''"
+                    :khoa="item.id"
+                    hanh-dong="Chọn"
+                    @chon="chonNhom(item)"
+                  />
+                </div>
               </div>
-            </div>
-            <div v-if="!nhomDangXem && !dangTai && !loi && ketQua.length" class="nhom-pager">
-              <CustomPagination
-                v-model:current-page="trang"
-                :page-size="SO_MOI_TRANG"
-                :total="ketQua.length"
-                layout="total, prev, pager, next"
-                background
-              />
-            </div>
-          </div>
+            </template>
+          </article>
+
           <NhacKhaoSat class="mt-3" />
-          <!-- Hỗ trợ & FAQ -->
           <HoTroDinhHuong class="mt-3" />
           <CauHoiThuongGap class="mt-3" />
-          <!-- /Hỗ trợ & FAQ -->
         </div>
 
         <div class="col-lg-3">

@@ -31,7 +31,7 @@ function chonHuong(direction) {
 </script>
 
 <template>
-  <section class="py-4">
+  <section class="thi-dai-hoc py-4">
     <div class="container-fluid">
       <div class="row g-4">
         <div class="col-lg-9">
@@ -90,3 +90,17 @@ function chonHuong(direction) {
     </div>
   </section>
 </template>
+
+<style scoped>
+.thi-dai-hoc :deep(.stage-card__image) {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1024 / 617;
+  object-fit: cover;
+  object-position: center;
+}
+
+.thi-dai-hoc :deep(.stage-card__title) {
+  margin-top: 8px;
+}
+</style>

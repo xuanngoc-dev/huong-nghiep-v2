@@ -13,5 +13,7 @@ backend/logs/
 backend/data/.cache/
 backend/tai_lieu/*
 !backend/tai_lieu/.gitkeep
+backend/thu_vien/*
+!backend/thu_vien/.gitkeep
 **/__pycache__/
 *.py[cod]

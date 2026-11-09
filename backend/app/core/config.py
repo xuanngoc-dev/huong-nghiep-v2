@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     # Hỏi đáp tài liệu. Nếu để trống, tự động tìm data_dh_json ở thư mục gốc hoặc backend/tai_lieu.
     tai_lieu_dir: str = ""
     tai_lieu_max_bytes: int = 15 * 1024 * 1024
+    # Ảnh và video thư viện. Nếu để trống, lưu tại backend/thu_vien.
+    thu_vien_dir: str = ""
+    thu_vien_max_bytes: int = 100 * 1024 * 1024
     gemini_api_key: str = ""
     gemini_model: str = "gemini-3.5-flash-lite"
     openai_api_key: str = ""

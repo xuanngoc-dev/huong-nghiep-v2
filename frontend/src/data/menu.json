@@ -284,6 +284,19 @@
       ]
     },
     {
+      "header": "TÀI NGUYÊN",
+      "tooltip": "Kho tài nguyên dùng chung của hệ thống",
+      "abbr": "TNG",
+      "items": [
+        {
+          "index": "/admin/tai-nguyen/thu-vien",
+          "title": "Thư viện",
+          "tooltip": "Quản lý thư viện tài nguyên",
+          "icon": "FolderOpened"
+        }
+      ]
+    },
+    {
       "header": "TÀI KHOẢN",
       "tooltip": "Thông tin tài khoản quản trị",
       "abbr": "TK",

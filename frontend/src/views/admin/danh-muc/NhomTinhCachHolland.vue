@@ -394,6 +394,17 @@ onMounted(load)
         <CustomTableColumn label="STT" width="72" align="center">
           <template #default="{ $index }">{{ rowIndex($index) }}</template>
         </CustomTableColumn>
+        <CustomTableColumn label="Hình ảnh mô tả" width="120" align="center">
+          <template #default="{ row }">
+            <img
+              v-if="row.hinh_anh_mo_ta"
+              class="thumb"
+              :src="row.hinh_anh_mo_ta"
+              :alt="row.ten_nhom"
+            />
+            <span v-else>—</span>
+          </template>
+        </CustomTableColumn>
         <CustomTableColumn prop="ma_nhom" label="Mã nhóm" width="110" />
         <CustomTableColumn prop="ten_nhom" label="Tên nhóm" min-width="160" />
         <CustomTableColumn prop="ten_tieng_anh" label="Tên tiếng Anh" min-width="160" />
@@ -414,9 +425,6 @@ onMounted(load)
           
         >
           <template #default="{ row }">{{ row.vi_du_nghe_nghiep || '—' }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="hinh_anh_mo_ta" label="Hình ảnh mô tả" min-width="220">
-          <template #default="{ row }">{{ row.hinh_anh_mo_ta || '—' }}</template>
         </CustomTableColumn>
         <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
           <template #default="{ row }">
@@ -605,6 +613,15 @@ onMounted(load)
   stroke-width: 1.15;
   stroke-linejoin: round;
   paint-order: stroke fill;
+}
+
+.thumb {
+  width: 72px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--el-fill-color-light);
+  vertical-align: middle;
 }
 
 .filter-search {

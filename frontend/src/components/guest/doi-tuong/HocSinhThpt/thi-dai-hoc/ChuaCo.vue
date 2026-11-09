@@ -1,31 +1,46 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchNganh } from '@/api/nganhDaoTao'
+import { fetchNhomHolland } from '@/api/nhomTinhCachHolland'
 import { fetchTruongHoc } from '@/api/truongHoc'
 import anhChuaCo from '@/assets/guest/thanh-nien.jpg'
+import { noiMucLuong } from '@/utils/capTenGiaTri'
 import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
 import CardNganhDaoTao from './CardNganhDaoTao.vue'
-import { noiMucLuong } from '@/utils/capTenGiaTri'
 
 defineOptions({ name: 'ThptThiDaiHocChuaCo' })
 
-const MA_NGANH_NOI_BAT = ['480201', '480107', '480208', '480103', '340101', '220201', '720101', '380101']
+const MA_NGANH_NOI_BAT = [
+  '480201',
+  '480103',
+  '480107',
+  '480208',
+  '340101',
+  '340115',
+  '220201',
+  '720101',
+  '380101',
+]
 const MA_TRUONG_NOI_BAT = ['BKA', 'QSB', 'QSC', 'KHA', 'NTH', 'YHB', 'LPH', 'SPH']
 
 const stages = giaiDoanThiDaiHocList
 const route = useRoute()
 const router = useRouter()
 const currentStage = computed(() => route.meta.giaiDoan || '')
+const nhomHolland = ref([])
 const nganhNoiBat = ref([])
 const truongNoiBat = ref([])
+const dangTaiHolland = ref(false)
 const dangTaiNganh = ref(false)
 const dangTaiTruong = ref(false)
+const loiHolland = ref('')
 const loiNganh = ref('')
 const loiTruong = ref('')
 const chiTietMo = ref(false)
 const doiTuongChiTiet = ref(null)
+const maNhomDangChon = ref('')
 
 const NHAN_MUC_NGANH = {
   mo_ta: 'Mô tả',
@@ -71,6 +86,41 @@ async function layTheoMa(fetchFn, codes, key, params = {}) {
   }))
   return { items: items.filter(Boolean), coLoiMang }
 }
+
+function moTaHolland(item) {
+  return item.mo_ta || item.vi_du_nghe_nghiep || ''
+}
+
+function maHollandCua(item) {
+  const value = item?.ma_holand
+  if (Array.isArray(value)) return value.map((code) => String(code).toUpperCase())
+  if (typeof value === 'string' && value.trim()) return [value.trim().toUpperCase()]
+  return []
+}
+
+const nganhTheoNhom = computed(() => {
+  const ma = maNhomDangChon.value
+  if (!ma) return nganhNoiBat.value
+  return nganhNoiBat.value.filter((item) => maHollandCua(item).includes(ma))
+})
+
+function dieuHuongNhom(event) {
+  const items = nhomHolland.value
+  const index = items.findIndex((item) => item.ma_nhom === maNhomDangChon.value)
+  if (index < 0 || !items.length) return
+  const buoc = { ArrowRight: 1, ArrowLeft: -1, Home: -index, End: items.length - 1 - index }[event.key]
+  if (buoc == null) return
+  event.preventDefault()
+  const ke = (index + buoc + items.length) % items.length
+  maNhomDangChon.value = items[ke].ma_nhom
+  nextTick(() => document.getElementById(`nhom-nghe-${items[ke].ma_nhom}`)?.focus())
+}
+
+watch(nhomHolland, (items) => {
+  if (!items.some((item) => item.ma_nhom === maNhomDangChon.value)) {
+    maNhomDangChon.value = items[0]?.ma_nhom || ''
+  }
+})
 
 function moTaNganh(item) {
   if (item.mo_ta) return item.mo_ta
@@ -136,7 +186,9 @@ function gomHang(...hang) {
 const tieuDeChiTiet = computed(() => {
   const current = doiTuongChiTiet.value
   if (!current) return 'Chi tiết'
-  return current.loai === 'nganh' ? current.item.ten_nganh : current.item.ten_truong
+  if (current.loai === 'holland') return current.item.ten_nhom
+  if (current.loai === 'nganh') return current.item.ten_nganh
+  return current.item.ten_truong
 })
 
 const bangChiTiet = computed(() => {
@@ -146,7 +198,14 @@ const bangChiTiet = computed(() => {
   let gioiThieu = []
   let tieuChi = []
 
-  if (current.loai === 'nganh') {
+  if (current.loai === 'holland') {
+    gioiThieu = gomHang(
+      dongThongTin('Mã nhóm', item.ma_nhom),
+      dongThongTin('Tên tiếng Anh', item.ten_tieng_anh),
+      dongThongTin('Mô tả', item.mo_ta),
+    )
+    tieuChi = gomHang(dongThongTin('Ví dụ nghề nghiệp', item.vi_du_nghe_nghiep))
+  } else if (current.loai === 'nganh') {
     const { vanBan, json } = docChiTietNganh(item)
     const moTa = item.mo_ta || noiGiaTri(json?.mo_ta) || (!json ? vanBan : '')
     gioiThieu = gomHang(
@@ -210,6 +269,22 @@ const bangChiTiet = computed(() => {
   ].filter((nhom) => nhom.hang.length)
 })
 
+async function taiNhomHolland() {
+  dangTaiHolland.value = true
+  loiHolland.value = ''
+  try {
+    const data = await fetchNhomHolland(
+      { trang_thai: 1, page: 1, page_size: 100 },
+      { skipLoading: true },
+    )
+    nhomHolland.value = data.items || []
+  } catch {
+    loiHolland.value = 'Không tải được nhóm ngành nghề.'
+  } finally {
+    dangTaiHolland.value = false
+  }
+}
+
 async function taiNganhNoiBat() {
   dangTaiNganh.value = true
   loiNganh.value = ''
@@ -235,6 +310,7 @@ async function taiTruongNoiBat() {
 }
 
 onMounted(() => {
+  taiNhomHolland()
   taiNganhNoiBat()
   taiTruongNoiBat()
 })
@@ -270,13 +346,77 @@ onMounted(() => {
 
 
           <article class="stages-card mt-3">
-            <h2 class="h4 mb-2">Ngành nổi bật</h2>
-            <p class="text-secondary mb-3">Một số ngành nhiều thí sinh đang tìm hiểu, để bạn tham khảo trước khi làm khảo sát.</p>
-            <p v-if="loiNganh" class="holland-note holland-note__text mb-0">{{ loiNganh }}</p>
-            <p v-else-if="dangTaiNganh" class="text-secondary mb-0">Đang tải ngành…</p>
-            <KhongCoDuLieu v-else-if="!nganhNoiBat.length" text="Chưa có ngành nổi bật." />
+            <h2 class="h4 mb-2">Nhóm ngành nghề</h2>
+            <p class="text-secondary mb-3">Các nhóm ngành nghề để bạn tham khảo trước khi làm khảo sát.</p>
+            <p v-if="loiHolland" class="holland-note holland-note__text mb-0">{{ loiHolland }}</p>
+            <p v-else-if="dangTaiHolland" class="text-secondary mb-0">Đang tải nhóm ngành nghề…</p>
+            <KhongCoDuLieu v-else-if="!nhomHolland.length" text="Chưa có nhóm ngành nghề." />
             <div v-else class="row g-3">
-              <div v-for="item in nganhNoiBat" :key="item.id" class="col-12 col-md-6 col-lg-4">
+              <div v-for="item in nhomHolland" :key="item.id" class="col-12 col-md-6 col-lg-4">
+                <div class="the-card">
+                  <CardNganhDaoTao
+                    class="h-100"
+                    :ma="item.ma_nhom"
+                    :ten="item.ten_nhom"
+                    :ten-tieng-anh="item.ten_tieng_anh"
+                    :mo-ta="moTaHolland(item)"
+                    :hinh-anh="item.hinh_anh_mo_ta || ''"
+                    :khoa="item.id"
+                  />
+                  <div class="the-card__veil">
+                    <CustomButton
+                      class="the-card__detail"
+                      :aria-label="`Chi tiết nhóm ${item.ten_nhom}`"
+                      @click="moChiTiet('holland', item)"
+                    >
+                      Chi tiết
+                    </CustomButton>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="stages-card mt-3">
+            <h2 class="h4 mb-2">Ngành nghề nổi bật</h2>
+            <p class="text-secondary mb-3">Một số ngành nhiều thí sinh đang tìm hiểu, để bạn tham khảo trước khi làm khảo sát.</p>
+            <div
+              v-if="nhomHolland.length"
+              class="nhom-pills"
+              role="tablist"
+              aria-label="Nhóm ngành nghề"
+            >
+              <button
+                v-for="nhom in nhomHolland"
+                :id="`nhom-nghe-${nhom.ma_nhom}`"
+                :key="nhom.ma_nhom"
+                type="button"
+                role="tab"
+                class="nhom-pills__item"
+                :class="{ 'is-active': maNhomDangChon === nhom.ma_nhom }"
+                :aria-selected="maNhomDangChon === nhom.ma_nhom"
+                :aria-controls="`nganh-nhom-${nhom.ma_nhom}`"
+                :tabindex="maNhomDangChon === nhom.ma_nhom ? 0 : -1"
+                @click="maNhomDangChon = nhom.ma_nhom"
+                @keydown="dieuHuongNhom"
+              >
+                {{ nhom.ten_nhom }}
+              </button>
+            </div>
+            <p v-if="loiNganh" class="holland-note holland-note__text mb-0">{{ loiNganh }}</p>
+            <p v-else-if="dangTaiNganh || dangTaiHolland" class="text-secondary mb-0">Đang tải ngành…</p>
+            <KhongCoDuLieu
+              v-else-if="!nganhTheoNhom.length"
+              :text="maNhomDangChon ? 'Chưa có ngành nổi bật trong nhóm này.' : 'Chưa có ngành nổi bật.'"
+            />
+            <div
+              v-else
+              class="row g-3"
+              :id="maNhomDangChon ? `nganh-nhom-${maNhomDangChon}` : undefined"
+              :role="maNhomDangChon ? 'tabpanel' : undefined"
+              :aria-labelledby="maNhomDangChon ? `nhom-nghe-${maNhomDangChon}` : undefined"
+            >
+              <div v-for="item in nganhTheoNhom" :key="item.id" class="col-12 col-md-6 col-lg-4">
                 <div class="the-card">
                   <CardNganhDaoTao
                     class="h-100"
@@ -397,6 +537,35 @@ onMounted(() => {
   height: 240px;
   object-fit: cover;
   border-radius: 10px;
+}
+
+.nhom-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.nhom-pills__item {
+  margin: 0;
+  padding: 8px 16px;
+  border: 1px solid var(--guest-primary, #3f9643);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--guest-primary, #3f9643);
+  font-size: 0.95rem;
+  line-height: 1.3;
+  cursor: pointer;
+}
+
+.nhom-pills__item.is-active {
+  background: var(--guest-primary, #3f9643);
+  color: #fff;
+}
+
+.nhom-pills__item:focus-visible {
+  outline: 2px solid var(--guest-primary, #3f9643);
+  outline-offset: 2px;
 }
 
 .the-card {

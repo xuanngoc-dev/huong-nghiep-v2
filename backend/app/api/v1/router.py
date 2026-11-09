@@ -29,6 +29,7 @@ from app.api.v1.endpoints import (
     ho_so,
     kiem_tra_du_lieu,
     tai_lieu,
+    thu_vien,
     tn_cau_hoi,
     tn_phien_khao_sat,
 )
@@ -63,4 +64,5 @@ api_router.include_router(tn_cau_hoi.router)
 api_router.include_router(tn_phien_khao_sat.router)
 api_router.include_router(kiem_tra_du_lieu.router)
 api_router.include_router(tai_lieu.router)
+api_router.include_router(thu_vien.router)
 api_router.include_router(chat.router)
