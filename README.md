@@ -27,7 +27,14 @@ frontend/         Vue 3 + Vite
     views/        trang theo nghiệp vụ
 ```
 
-Khi dev, Vite chuyển mọi request `/api` sang `http://127.0.0.1:3060`. Prefix API là `/api/v1`.
+Frontend và backend chạy trên hai domain, giao tiếp qua REST. Prefix API là `/api/v1`.
+
+| | Local | Production (ví dụ) |
+| --- | --- | --- |
+| Frontend | http://localhost:5173 | https://dinhhuong.example.com |
+| Backend | http://127.0.0.1:3060 | https://api.example.com |
+
+Khi dev, trình duyệt gọi thẳng `http://127.0.0.1:3060/api/v1`. Proxy Vite chỉ còn tác dụng nếu đặt `VITE_API_BASE_URL` thành đường dẫn tương đối `/api/v1`.
 
 ## Khởi động nhanh trên Windows (1-Click)
 
@@ -65,13 +72,56 @@ dh-db              # check DB
 ```bash
 cd backend
 python3 -m venv .venv
-cp .env.example .env   # chỉnh DB_* nếu cần
+cp .env.example .env   # chỉnh DB_* và CORS_ORIGINS nếu cần
+cd ../frontend
+cp .env.example .env   # VITE_API_BASE_URL trỏ tới domain backend
 cd ..
 make install
 ```
 
-Tài liệu API: http://127.0.0.1:3060/docs  
-Frontend: http://localhost:5173
+Frontend: http://localhost:5173  
+API: http://127.0.0.1:3060/api/v1  
+Mở http://127.0.0.1:3060 sẽ vào Swagger (cùng trang với http://127.0.0.1:3060/docs). Gọi API đăng nhập hoặc đăng ký trên trang này sẽ lưu token và tự gửi kèm cho các API cần đăng nhập.  
+OpenAPI (nhập vào Postman hoặc Bruno): http://127.0.0.1:3060/openapi.json
+
+## Hai domain khi deploy
+
+Build frontend với URL tuyệt đối của backend. Biến này được gắn lúc `npm run build`, không đổi được sau khi đã build:
+
+```bash
+# frontend/.env
+VITE_API_BASE_URL=https://api.example.com/api/v1
+```
+
+Backend chỉ cần cho phép đúng domain frontend. Postman và Bruno gọi thẳng domain API, không cần khai báo trong danh sách này:
+
+```bash
+# backend/.env
+CORS_ORIGINS=https://dinhhuong.example.com
+API_PUBLIC_URL=https://api.example.com
+```
+
+`CORS_ORIGINS` nhận JSON (`["https://dinhhuong.example.com"]`) hoặc danh sách cách nhau bởi dấu phẩy. `API_PUBLIC_URL` là origin của API, không gồm `/api/v1`; khi có giá trị, file OpenAPI ghi server này để Postman/Bruno gọi đúng domain.
+
+Ảnh, video và liên kết nguồn do API trả về dạng `/api/v1/...`. Frontend tự ghép origin của `VITE_API_BASE_URL`, nên các đường dẫn đó vẫn mở trên domain backend.
+
+## Gọi API từ Postman hoặc Bruno
+
+1. Import `http://127.0.0.1:3060/openapi.json` (production: `https://api.example.com/openapi.json`). Có thể mở `/docs` để thử trực tiếp.
+2. Đặt base URL là origin backend. Các path trong spec đã có `/api/v1`.
+3. Đăng nhập để lấy token:
+
+```http
+POST /api/v1/auth/login
+Content-Type: application/json
+
+{"email":"ban@example.com","mat_khau":"mat-khau"}
+```
+
+4. Gắn header cho các request cần đăng nhập: `Authorization: Bearer <access_token>`.
+5. Kiểm tra sống: `GET /api/v1/health`.
+
+CORS chỉ áp dụng cho trình duyệt. Postman, Bruno và `curl` gọi được mọi endpoint đang mở trên domain backend.
 
 ## Chatbot tuyển sinh
 

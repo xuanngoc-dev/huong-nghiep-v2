@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import ChatMarkdown from './ChatMarkdown.vue'
+import { apiAssetUrl } from '@/api/apiUrl'
 import { safeLink } from '@/utils/chatMarkdown'
 
 defineProps({ message: { type: Object, required: true }, retryable: Boolean })
@@ -12,8 +13,7 @@ async function copy(text) {
 }
 function dataLink(source) {
   if (!source.duong_dan?.startsWith('/')) return null
-  const base = import.meta.env.VITE_API_BASE_URL
-  return safeLink(base?.startsWith('http') ? new URL(source.duong_dan, base).href : source.duong_dan)
+  return safeLink(apiAssetUrl(source.duong_dan))
 }
 function date(value) {
   const parsed = new Date(value)

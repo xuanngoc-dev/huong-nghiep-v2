@@ -1,13 +1,14 @@
 import axios from 'axios'
 import { ElLoading, ElMessage } from 'element-plus'
+import { apiBaseUrl } from '@/api/apiUrl'
 
 /**
  * Axios instance dùng chung cho toàn bộ API.
- * - baseURL lấy từ .env (mặc định /api/v1 — Vite proxy sang backend)
+ * - baseURL là domain backend (VITE_API_BASE_URL), ví dụ https://api.example.com/api/v1
  * - Tự gắn Bearer token từ localStorage khi có
  */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api/v1',
+  baseURL: apiBaseUrl(),
   timeout: 15000,
   headers: {
     Accept: 'application/json',

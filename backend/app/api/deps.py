@@ -6,7 +6,7 @@ from app.core.security import decode_access_token
 from app.db.session import get_db
 from app.models.nguoi_dung import NguoiDung
 
-bearer_scheme = HTTPBearer(auto_error=False)
+bearer_scheme = HTTPBearer(auto_error=False, scheme_name="BearerAuth")
 
 
 def get_current_user(

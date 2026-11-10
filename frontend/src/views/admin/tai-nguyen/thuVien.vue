@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { apiAssetUrl } from '@/api/apiUrl'
 import {
   compressThuVien,
   copyThuVien,
@@ -58,18 +59,7 @@ const crumbs = computed(() => {
 })
 
 function absoluteUrl(path) {
-  if (!path) return ''
-  if (/^https?:\/\//i.test(path)) return path
-  const normalized = path.startsWith('/') ? path : `/${path}`
-  const base = import.meta.env.VITE_API_BASE_URL || ''
-  if (typeof base === 'string' && base.startsWith('http')) {
-    try {
-      return `${new URL(base).origin}${normalized}`
-    } catch {
-      // Giữ domain trang đang mở khi cấu hình API không phải URL tuyệt đối.
-    }
-  }
-  return `${window.location.origin}${normalized}`
+  return apiAssetUrl(path)
 }
 
 function displayPath(item) {

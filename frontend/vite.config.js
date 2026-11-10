@@ -28,6 +28,8 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
+    // Chỉ dùng khi VITE_API_BASE_URL là đường dẫn tương đối (/api/v1).
+    // Mặc định frontend gọi thẳng domain backend.
     proxy: {
       '/api': {
         target: process.env.DEV_API_TARGET || 'http://127.0.0.1:3060',

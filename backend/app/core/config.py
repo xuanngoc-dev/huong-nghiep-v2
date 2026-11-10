@@ -1,13 +1,23 @@
+import json
+from typing import Annotated
 from urllib.parse import quote_plus
 
-from pydantic import Field, computed_field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field, computed_field, field_validator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
+
+_LOCAL_FRONTEND_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
 
 
 class Settings(BaseSettings):
     app_name: str = "Định hướng nghề"
     api_v1_prefix: str = "/api/v1"
-    cors_origins: list[str] = ["http://localhost:5173"]
+    # Domain frontend được phép gọi API từ trình duyệt. Postman/Bruno không cần nằm trong danh sách này.
+    cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=lambda: list(_LOCAL_FRONTEND_ORIGINS))
+    # Origin công khai của API, không gồm /api/v1. Để trống thì /docs dùng đúng host đang mở.
+    api_public_url: str = ""
     port: int = 3060
     log_retention_days: int = Field(default=14, ge=1)
 
@@ -43,6 +53,30 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
     )
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, value):
+        if value is None or value == "":
+            return list(_LOCAL_FRONTEND_ORIGINS)
+        if isinstance(value, str):
+            text = value.strip()
+            parsed = json.loads(text) if text.startswith("[") else text.split(",")
+        elif isinstance(value, (list, tuple)):
+            parsed = value
+        else:
+            return value
+        origins: list[str] = []
+        for item in parsed:
+            origin = str(item).strip().rstrip("/")
+            if origin and origin not in origins:
+                origins.append(origin)
+        return origins or list(_LOCAL_FRONTEND_ORIGINS)
+
+    @field_validator("api_public_url")
+    @classmethod
+    def strip_public_url(cls, value: str) -> str:
+        return value.strip().rstrip("/")
 
     @computed_field  # type: ignore[prop-decorator]
     @property
