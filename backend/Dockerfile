@@ -21,13 +21,7 @@ COPY backend/alembic ./alembic
 COPY backend/data ./data
 COPY backend/app ./app
 COPY data_dh_json /srv/data_dh_json
-
-# Chạy bằng user thường; logs và thu_vien là thư mục ghi được (nên mount volume)
-RUN useradd --system --uid 1000 --no-create-home app \
-    && mkdir -p logs thu_vien tai_lieu \
-    && chown -R app:app logs thu_vien tai_lieu
-RUN chown -R app:app /srv
-USER app
+RUN mkdir -p logs thu_vien tai_lieu
 
 EXPOSE 3060
 
