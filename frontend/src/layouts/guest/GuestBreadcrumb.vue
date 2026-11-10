@@ -29,6 +29,18 @@ const muc = computed(() => {
     if (route.name === routeNameDinhHuongThpt(route.meta.dinhHuong)) return [...goc, hienTai]
     if (route.meta.dinhHuong === 'thi-dai-hoc') {
       if (route.name === 'thpt-thi-dai-hoc-chon-truong') return [...goc, thiDaiHoc, daCoNganh, hienTai]
+      if (route.name === 'thpt-thi-dai-hoc-truong-phu-hop') {
+        return [
+          ...goc,
+          thiDaiHoc,
+          daCoNganh,
+          {
+            label: 'Chọn trường',
+            to: { name: 'thpt-thi-dai-hoc-chon-truong', params: { maNganh: route.params.maNganh } },
+          },
+          hienTai,
+        ]
+      }
       return [...goc, thiDaiHoc, hienTai]
     }
     return [...goc, hienTai]

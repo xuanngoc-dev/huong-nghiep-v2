@@ -116,6 +116,16 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
+    path: 'hoc-sinh-thpt/thi-dai-hoc/da-co/truong-phu-hop/:maNganh',
+    name: 'thpt-thi-dai-hoc-truong-phu-hop',
+    component: () => import('./thi-dai-hoc/TruongPhuHop.vue'),
+    meta: {
+      title: 'Trường phù hợp',
+      public: true,
+      dinhHuong: 'thi-dai-hoc',
+    },
+  },
+  {
     path: 'hoc-sinh-thpt/thi-dai-hoc/phan-van',
     name: 'thpt-thi-dai-hoc-phan-van',
     component: () => import('./thi-dai-hoc/PhanVan.vue'),

@@ -48,7 +48,9 @@
 }
 
 .chon-truong :is(.h2, .h4, .holland-overview__title, .nhom-card__name, .switch-card__name),
+.truong-phu-hop :is(.h2, .h4, .holland-overview__title, .nhom-card__name, .switch-card__name),
 .chon-truong .el-button,
+.truong-phu-hop .el-button,
 .chon-truong-dialog .el-button {
   font-weight: 400;
 }
@@ -199,7 +201,8 @@
   font-size: 16px;
 }
 
-.chon-truong .nhom-filter__label {
+.chon-truong .nhom-filter__label,
+.truong-phu-hop .nhom-filter__label {
   color: #3a4742;
   font-size: 0.8125rem;
 }
@@ -231,7 +234,8 @@
   justify-content: flex-end;
 }
 
-.chon-truong .nhom-pager {
+.chon-truong .nhom-pager,
+.truong-phu-hop .nhom-pager {
   margin-top: 16px;
 }
 
@@ -250,7 +254,8 @@
     max-width: none;
   }
 
-  .chon-truong .nhom-filter__actions {
+  .chon-truong .nhom-filter__actions,
+  .truong-phu-hop .nhom-filter__actions {
     flex: 1 1 100%;
   }
 }

@@ -44,7 +44,7 @@ const truongDaChon = ref([])
 const soSanhMo = ref(false)
 const chiTietMo = ref(false)
 const truongChiTiet = ref(null)
-const introMo = ref(['nganh'])
+const introMo = ref([])
 
 const ten = ref('')
 const khuVuc = ref('')
@@ -202,14 +202,6 @@ const tinhHoSo = computed(() => {
   return tinhTheoId.value.get(id) || null
 })
 
-const goiYHoSo = computed(() => {
-  const tinh = tinhHoSo.value
-  if (tinh?.ten && tinh.khu_vuc) {
-    return `Hồ sơ cá nhân bổ sung khu vực nơi bạn đang ở vào tìm kiếm trường. Hồ sơ đang ở ${tinh.ten}, khu vực ${tinh.khu_vuc}. Cập nhật tỉnh thành tại Hồ sơ của tôi.`
-  }
-  return 'Hồ sơ cá nhân bổ sung khu vực nơi bạn đang ở vào tìm kiếm trường. Cập nhật tỉnh thành tại Hồ sơ của tôi. Chưa có tài khoản thì đăng nhập hoặc tạo tài khoản.'
-})
-
 const biCatMap = ref({})
 
 function khoaTran(id, field) {
@@ -249,12 +241,13 @@ const vMotHang = {
   },
 }
 
-function diHoSo() {
-  if (!auth.isAuthenticated) {
-    router.push({ name: 'login', query: { redirect: '/member/tai-khoan/ho-so' } })
-    return
-  }
-  router.push({ name: 'ho-so' })
+function diTruongPhuHop() {
+  const ma = maNganh.value.trim()
+  if (!ma) return
+  router.push({
+    name: 'thpt-thi-dai-hoc-truong-phu-hop',
+    params: { maNganh: ma },
+  })
 }
 
 function apDungKhuVucHoSo() {
@@ -371,7 +364,7 @@ function chonNganhKhac(item) {
 
 watch(maNganh, (ma, truoc) => {
   if (!ma || ma === truoc) return
-  introMo.value = ['nganh']
+  introMo.value = []
   taiNganh()
 })
 
@@ -471,12 +464,6 @@ onMounted(() => {
               <p class="loi-the mb-0">
                 Bạn có muốn tham gia khảo sát để chắc chắn thêm về điều đó, hoặc chọn lại ngành nghề khác?
               </p>
-              <div class="intro-actions">
-                <CustomButton type="primary" :disabled="dangTaoPhien" :loading="dangTaoPhien" @click="thamGiaKhaoSat">
-                  Tham gia khảo sát
-                </CustomButton>
-                <CustomButton link type="primary" @click="quayLai">Chọn lại ngành</CustomButton>
-              </div>
             </el-collapse-item>
           </el-collapse>
         </template>
@@ -523,11 +510,7 @@ onMounted(() => {
                 </CustomBadge>
               </span>
             </CustomTooltip>
-            <CustomTooltip :content="goiYHoSo" placement="top">
-              <span class="nhom-filter__tooltip">
-                <CustomButton @click="diHoSo">Hồ sơ của tôi</CustomButton>
-              </span>
-            </CustomTooltip>
+            <CustomButton type="success" @click="diTruongPhuHop">Trường phù hợp</CustomButton>
           </div>
         </form>
 

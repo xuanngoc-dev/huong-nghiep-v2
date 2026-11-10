@@ -135,6 +135,7 @@ declare module 'vue' {
     TinTucMoi: typeof import('./components/guest/chung/TinTucMoi.vue')['default']
     TongQuan: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/TongQuan.vue')['default']
     TruongDaoTao: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/TruongDaoTao.vue')['default']
+    TruongPhuHop: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/TruongPhuHop.vue')['default']
     XuatKhauLaoDong: typeof import('./components/guest/doi-tuong/HocSinhThpt/XuatKhauLaoDong.vue')['default']
   }
   export interface GlobalDirectives {
