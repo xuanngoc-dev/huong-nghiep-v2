@@ -1,0 +1,4 @@
+# Chỉ gửi dist và cấu hình nginx vào build context, không gửi source code
+*
+!dist/
+!nginx/

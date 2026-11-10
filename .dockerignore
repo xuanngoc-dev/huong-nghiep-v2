@@ -1,0 +1,13 @@
+# Dùng cho build backend (context là thư mục gốc). Chỉ gửi những gì backend cần.
+*
+!backend/requirements.txt
+!backend/alembic.ini
+!backend/alembic/
+!backend/app/
+!backend/data/
+!data_dh_json/
+
+**/__pycache__
+**/*.py[cod]
+backend/data/.cache/
+**/.env

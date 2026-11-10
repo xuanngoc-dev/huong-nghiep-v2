@@ -1,0 +1,40 @@
+server {
+    listen 80;
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Upload thư viện ảnh/video (backend cho phép tối đa 100 MB/file)
+    client_max_body_size 110m;
+
+    gzip on;
+    gzip_types text/plain text/css application/javascript application/json image/svg+xml;
+    gzip_min_length 1024;
+
+    # Dùng khi frontend build với VITE_API_BASE_URL=/api/v1 (đường dẫn tương đối)
+    location /api/ {
+        proxy_pass ${BACKEND_URL};
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # Chat AI có thể chờ tới 75 giây
+        proxy_read_timeout 180s;
+        proxy_send_timeout 180s;
+    }
+
+    # File đã có hash trong tên, cache lâu
+    location /assets/ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # Vue Router dùng history mode: mọi đường dẫn khác trả về index.html
+    location / {
+        add_header Cache-Control "no-cache";
+        try_files $uri $uri/ /index.html;
+    }
+}
