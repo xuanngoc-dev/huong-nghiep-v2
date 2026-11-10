@@ -26,6 +26,7 @@ COPY data_dh_json /srv/data_dh_json
 RUN useradd --system --uid 1000 --no-create-home app \
     && mkdir -p logs thu_vien tai_lieu \
     && chown -R app:app logs thu_vien tai_lieu
+RUN chown -R app:app /srv
 USER app
 
 EXPOSE 3060
