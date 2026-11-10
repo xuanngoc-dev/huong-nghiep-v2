@@ -97,6 +97,10 @@ function diDangNhap() {
   router.push({ name: 'login', query: { redirect: route.fullPath } })
 }
 
+function diDangKy() {
+  router.push({ name: 'register', query: { redirect: route.fullPath } })
+}
+
 function diHoSo() {
   router.push({ name: 'ho-so' })
 }
@@ -223,21 +227,34 @@ onMounted(async () => {
 <template>
   <section class="truong-phu-hop py-4">
     <div class="container-fluid">
-      <CustomButton link type="primary" @click="quayLai">Quay lại chọn trường</CustomButton>
 
       <div class="stages-card holland-overview mt-3">
         <header class="holland-overview__header">
           <h2 class="holland-overview__title">Trường phù hợp</h2>
-          <p class="holland-overview__lead">
-            Trường có đào tạo ngành <strong>{{ tenNganh }}</strong>
-            <span v-if="maNganh"> ({{ maNganh }})</span>.
-          </p>
-          <p class="holland-overview__lead">{{ moTaHoSo }}</p>
-          <div class="truong-phu-hop__links">
-            <CustomButton v-if="!daDangNhap" link type="primary" @click="diDangNhap">Đăng nhập</CustomButton>
-            <CustomButton v-else link type="primary" @click="diHoSo">Hồ sơ của tôi</CustomButton>
-          </div>
+          <CustomButton link type="primary" @click="quayLai">Quay lại ngành</CustomButton>
         </header>
+
+        <article class="truong-phu-hop__hero">
+          <div class="truong-phu-hop__info">
+            <p class="holland-overview__lead">
+              Trường có đào tạo ngành <strong>{{ tenNganh }}</strong>
+              <span v-if="maNganh"> ({{ maNganh }})</span>.
+            </p>
+            <p class="holland-overview__lead">{{ moTaHoSo }}</p>
+          </div>
+          <aside v-if="!daDangNhap" class="truong-phu-hop__auth">
+            <p class="holland-note__text">
+              Cung cấp hồ sơ năng lực cũng như bằng cấp, chứng chỉ để tìm ra trường phù hợp với bạn.
+            </p>
+            <div class="truong-phu-hop__links">
+              <CustomButton type="primary" @click="diDangNhap">Đăng nhập</CustomButton>
+              <CustomButton @click="diDangKy">Đăng ký</CustomButton>
+            </div>
+          </aside>
+          <aside v-else class="truong-phu-hop__auth">
+            <CustomButton type="primary" @click="diHoSo">Hồ sơ của tôi</CustomButton>
+          </aside>
+        </article>
 
         <form class="nhom-filter" @submit.prevent="timKiem">
           <div class="nhom-filter__field nhom-filter__field--ten">
@@ -322,8 +339,56 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.truong-phu-hop__hero {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid #e3f0e6;
+  border-radius: 12px;
+  background: #f3faf4;
+  text-align: left;
+}
+
+.truong-phu-hop__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.truong-phu-hop__info :deep(strong) {
+  color: #1c2b23;
+}
+
+.truong-phu-hop__auth {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #e6ece8;
+  border-radius: 12px;
+  background: #fff;
+}
+
 .truong-phu-hop__links {
-  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 767px) {
+  .truong-phu-hop__hero {
+    flex-direction: column;
+  }
+
+  .truong-phu-hop__auth {
+    flex-basis: auto;
+  }
 }
 
 .nhom-filter__field--nam,

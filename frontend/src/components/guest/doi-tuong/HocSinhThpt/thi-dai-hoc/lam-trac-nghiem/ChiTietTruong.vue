@@ -1,8 +1,10 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { fetchNganh } from '@/api/nganhDaoTao'
 import { fetchTruongHoc } from '@/api/truongHoc'
 import anhMacDinh from '@/assets/guest/sinh-vien.jpg'
+import { docChiTiet, layChiTiet, noiGiaTri } from './chi-tiet/chiTiet'
 
 defineOptions({ name: 'ThptChiTietTruong' })
 
@@ -23,8 +25,20 @@ const maNganh = computed(() => String(route.query.ma_nganh || '').trim())
 const dangTai = ref(false)
 const loi = ref('')
 const truong = ref(null)
+const nganh = ref(null)
 const anhHong = ref(false)
 const tabDangChon = ref(TABS[0].id)
+
+const tenNganh = computed(() => String(nganh.value?.ten_nganh || '').trim())
+
+const moTaNganh = computed(() => {
+  const item = nganh.value
+  if (!item) return ''
+  const { vanBan, json } = docChiTiet(item)
+  return String(item.mo_ta || '').trim() || noiGiaTri(layChiTiet(json, ['tong_quan', 'mo_ta'])) || vanBan
+})
+
+const hienMoTaNganh = computed(() => tabDangChon.value === 'tong-quan' && Boolean(moTaNganh.value))
 
 const anh = computed(() => {
   const url = String(truong.value?.anh_dai_dien_url || truong.value?.logo_url || '').trim()
@@ -104,6 +118,21 @@ function quayLai() {
 }
 
 let lanTai = 0
+let lanTaiNganh = 0
+
+async function taiNganh(ma) {
+  const lan = ++lanTaiNganh
+  nganh.value = null
+  if (!ma) return
+  try {
+    const data = await fetchNganh({ q: ma, trang_thai: 1, page: 1, page_size: 20 }, { skipLoading: true })
+    if (lan !== lanTaiNganh) return
+    nganh.value = (data.items || []).find((item) => String(item.ma_nganh).toUpperCase() === ma.toUpperCase()) || null
+  } catch {
+    if (lan !== lanTaiNganh) return
+    nganh.value = null
+  }
+}
 
 async function taiTruong(ma) {
   const lan = ++lanTai
@@ -134,6 +163,7 @@ async function taiTruong(ma) {
 }
 
 watch(maTruong, taiTruong, { immediate: true })
+watch(maNganh, taiNganh, { immediate: true })
 </script>
 
 <template>
@@ -151,6 +181,9 @@ watch(maTruong, taiTruong, { immediate: true })
                 <p class="major-detail__code">{{ truong.ma_truong }}</p>
                 <h3 class="major-detail__name">{{ truong.ten_truong }}</h3>
                 <p v-if="truong.ten_tieng_anh" class="major-detail__en">{{ truong.ten_tieng_anh }}</p>
+                <div v-if="tenNganh" class="major-detail__tags">
+                  <CustomTag type="success" effect="plain">{{ tenNganh }}</CustomTag>
+                </div>
                 <p class="major-detail__text">{{ truong.gioi_thieu_ngan || 'Chưa có giới thiệu cho trường này.' }}</p>
                 <dl v-if="tomTat.length" class="major-facts">
                   <div v-for="item in tomTat" :key="item.nhan" class="major-facts__item">
@@ -186,6 +219,10 @@ watch(maTruong, taiTruong, { immediate: true })
               role="tabpanel"
               :aria-labelledby="idTab(tabDangChon)"
             >
+              <section v-if="hienMoTaNganh" class="nganh-mo-ta">
+                <h3>Ngành {{ tenNganh }}</h3>
+                <p>{{ moTaNganh }}</p>
+              </section>
               <dl v-if="hangTab.length" class="truong-chi-tiet">
                 <div v-for="item in hangTab" :key="item.nhan" class="truong-chi-tiet__row">
                   <dt>{{ item.nhan }}</dt>
@@ -195,7 +232,7 @@ watch(maTruong, taiTruong, { immediate: true })
                   </dd>
                 </div>
               </dl>
-              <KhongCoDuLieu v-else text="Chưa có thông tin cho mục này." />
+              <KhongCoDuLieu v-else-if="!hienMoTaNganh" text="Chưa có thông tin cho mục này." />
             </div>
           </div>
         </template>
@@ -211,6 +248,38 @@ watch(maTruong, taiTruong, { immediate: true })
 <style src="./quiz-type.scss"></style>
 
 <style scoped>
+.major-detail__tags {
+  margin-top: 10px;
+}
+
+.major-detail__tags :deep(.el-tag) {
+  height: auto;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.nganh-mo-ta {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #c5d5cc;
+}
+
+.nganh-mo-ta h3 {
+  margin: 0;
+  color: #0c5c34;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.nganh-mo-ta p {
+  margin: 8px 0 0;
+  color: #1c2836;
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
 .truong-chi-tiet {
   display: flex;
   flex-direction: column;
