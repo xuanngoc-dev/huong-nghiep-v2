@@ -636,50 +636,6 @@
   }
 }
 
-.auth-page {
-  min-height: 100svh;
-  padding-block: 24px;
-  background:
-    radial-gradient(circle at top left, rgba(31, 122, 77, 0.12), transparent 40%),
-    var(--el-bg-color-page);
-}
-
-.auth-page--register {
-  background:
-    radial-gradient(circle at top right, rgba(31, 122, 77, 0.12), transparent 40%),
-    var(--el-bg-color-page);
-}
-
-.auth-card {
-  border-radius: 8px;
-}
-
-.auth-brand {
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.auth-brand h1 {
-  margin: 12px 0 4px;
-  font-size: 28px;
-}
-
-.auth-brand p {
-  margin: 0;
-  color: var(--el-text-color-secondary);
-}
-
-.auth-page .submit-btn {
-  width: 100%;
-  margin-top: 8px;
-}
-
-.auth-footer {
-  margin: 20px 0 0;
-  text-align: center;
-  color: var(--el-text-color-secondary);
-}
-
 .guest-layout .guest-fab {
   display: inline-grid;
   place-items: center;

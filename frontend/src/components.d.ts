@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AuthShell: typeof import('./components/guest/auth/AuthShell.vue')['default']
     BieuDoRadar: typeof import('./components/guest/BieuDoRadar.vue')['default']
     BuocLamBai: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/BuocLamBai.vue')['default']
     CardMajor: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/CardMajor.vue')['default']
