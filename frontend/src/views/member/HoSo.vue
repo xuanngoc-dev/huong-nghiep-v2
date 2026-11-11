@@ -45,6 +45,12 @@ const RECORD_SECTIONS = [
   },
 ]
 
+defineProps({
+  // Nhúng trong drawer/dialog: ẩn tiêu đề card và bỏ khung viền.
+  embedded: { type: Boolean, default: false },
+})
+const emit = defineEmits(['saved'])
+
 const auth = useAuthStore()
 const formRef = ref()
 const loading = ref(false)
@@ -562,6 +568,7 @@ async function onSubmit() {
     syncAuthUser(data)
     if (auth.user?.id) storeHoSo(auth.user.id, data)
     ElMessage.success('Đã cập nhật thông tin cá nhân')
+    emit('saved', data)
   } catch (error) {
     ElMessage.error(errorMessage(error, 'Không lưu được thông tin cá nhân'))
   } finally {
@@ -573,8 +580,13 @@ onMounted(load)
 </script>
 
 <template>
-  <el-card v-loading="loading" shadow="never" class="profile-card">
-    <template #header>
+  <el-card
+    v-loading="loading"
+    shadow="never"
+    class="profile-card"
+    :class="{ 'profile-card--embedded': embedded }"
+  >
+    <template v-if="!embedded" #header>
       <div>
         <h1 class="profile-card__title">Cập nhật thông tin cá nhân</h1>
         <p class="profile-card__lead">
@@ -928,6 +940,15 @@ onMounted(load)
 <style scoped>
 .profile-card {
   border-radius: 12px;
+}
+
+.profile-card--embedded {
+  border: 0;
+  background: transparent;
+}
+
+.profile-card--embedded :deep(.el-card__body) {
+  padding: 0;
 }
 
 .profile-card__title {

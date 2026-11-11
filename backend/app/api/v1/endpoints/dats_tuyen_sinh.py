@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import String, and_, case, cast, func, or_, select
@@ -164,11 +165,19 @@ def list_truong_dao_tao(
     loai_co_so: str | None = Query(default=None, max_length=50),
     ten_tinh_thanh: str | None = Query(default=None, max_length=100),
     nam_tuyen_sinh: int | None = Query(default=None, ge=1990, le=2100),
+    sap_xep: Literal["ten_asc", "ten_desc", "chi_tieu_desc", "chuong_trinh_desc", "gan_toi"] = Query(
+        default="ten_asc"
+    ),
+    uu_tien_tinh: str | None = Query(default=None, max_length=100),
+    uu_tien_khu_vuc: str | None = Query(default=None, max_length=20),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=12, ge=1, le=100),
     db: Session = Depends(get_db),
 ) -> TruongDaoTaoPage:
-    """Liệt kê trường có chương trình của ngành trong một năm tuyển sinh. Không cần đăng nhập."""
+    """Liệt kê trường có chương trình của ngành trong một năm tuyển sinh. Không cần đăng nhập.
+
+    `gan_toi` đưa trường cùng tỉnh `uu_tien_tinh`, rồi cùng khu vực `uu_tien_khu_vuc` lên đầu.
+    """
     year = nam_tuyen_sinh if nam_tuyen_sinh is not None else datetime.now().year
     code = ma_nganh.strip()
     major = db.scalar(select(DmNganhDaoTao).where(DmNganhDaoTao.ma_nganh == code))
@@ -242,18 +251,39 @@ def list_truong_dao_tao(
     total = db.scalar(
         select(func.count(func.distinct(DmTruong.ma_truong))).select_from(joined).where(*filters)
     ) or 0
+    so_chuong_trinh = func.count(func.distinct(DatsChuongTrinhDaoTao.id))
+    tong_chi_tieu = func.sum(DatsChuongTrinhDaoTao.chi_tieu_tuyen_sinh)
+    theo_ten = [DmTruong.ten_truong.asc(), DmTruong.ma_truong.asc()]
+    if sap_xep == "ten_desc":
+        thu_tu = [DmTruong.ten_truong.desc(), DmTruong.ma_truong.asc()]
+    elif sap_xep == "chi_tieu_desc":
+        # Trường chưa có chỉ tiêu xếp cuối.
+        thu_tu = [tong_chi_tieu.is_(None), tong_chi_tieu.desc(), *theo_ten]
+    elif sap_xep == "chuong_trinh_desc":
+        thu_tu = [so_chuong_trinh.desc(), *theo_ten]
+    elif sap_xep == "gan_toi":
+        tinh_uu_tien = (uu_tien_tinh or "").strip()
+        khu_uu_tien = (uu_tien_khu_vuc or "").strip()
+        nhanh = []
+        if tinh_uu_tien:
+            nhanh.append((DmTruong.ten_tinh_thanh == tinh_uu_tien, 0))
+        if khu_uu_tien:
+            nhanh.append((func.max(khu_vuc_hien_thi) == khu_uu_tien, 1))
+        thu_tu = [case(*nhanh, else_=2), *theo_ten] if nhanh else theo_ten
+    else:
+        thu_tu = theo_ten
     rows = db.execute(
         select(
             *school_columns,
             func.max(loai_hien_thi),
             func.max(khu_vuc_hien_thi),
-            func.count(func.distinct(DatsChuongTrinhDaoTao.id)),
-            func.sum(DatsChuongTrinhDaoTao.chi_tieu_tuyen_sinh),
+            so_chuong_trinh,
+            tong_chi_tieu,
         )
         .select_from(joined)
         .where(*filters)
         .group_by(*school_columns)
-        .order_by(DmTruong.ten_truong.asc(), DmTruong.ma_truong.asc())
+        .order_by(*thu_tu)
         .offset((page - 1) * page_size)
         .limit(page_size)
     ).all()
