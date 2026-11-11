@@ -317,9 +317,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="chua-co">
+<section class="chua-co">
     <div class="container-fluid">
-      <div class="row g-4">
+      <div class="row g-4 mt-1">
         <div class="col-lg-9">
           <article class="intro-card">
             <div class="row g-3 align-items-center">
@@ -331,15 +331,28 @@ onMounted(() => {
                 />
               </div>
               <div class="col-md-7">
-                <h2 class="h2 mb-2">Bạn chưa rõ mình phù hợp với ngành nghề nào?</h2>
-                <p class="text-secondary mb-2">
-                  Làm khảo sát để hệ thống gợi ý ngành đào tạo gần với sở thích và năng lực của bạn.
-                </p>
-                <p class="text-secondary mb-3">
-                  Bài trắc nghiệm Holland giúp bạn hiểu nhóm tính cách nổi bật, rồi đối chiếu với các ngành đào tạo.
-                  Xem hướng dẫn trước khi làm bài.
-                </p>
-                <CustomButton type="primary" plain @click="moHuongDan">Bắt đầu khảo sát</CustomButton>
+                <div class="intro-card__body">
+                  <h2 class="h2 intro-card__title">Bạn chưa rõ mình phù hợp với ngành nghề nào?</h2>
+                  <p class="intro-card__lead">
+                    Làm khảo sát để hệ thống gợi ý ngành đào tạo gần với sở thích và năng lực của bạn.
+                  </p>
+                  <ol class="intro-card__steps">
+                    <li>
+                      <span class="intro-card__step-num" aria-hidden="true">1</span>
+                      <span>Làm bài trắc nghiệm Holland để hiểu nhóm tính cách nổi bật của bạn.</span>
+                    </li>
+                    <li>
+                      <span class="intro-card__step-num" aria-hidden="true">2</span>
+                      <span>Đối chiếu kết quả với các ngành đào tạo phù hợp.</span>
+                    </li>
+                  </ol>
+                  <div class="intro-card__actions">
+                    <CustomButton type="primary" class="intro-card__cta" @click="moHuongDan">
+                      Bắt đầu khảo sát
+                      <span class="intro-card__cta-arrow" aria-hidden="true">→</span>
+                    </CustomButton>
+                  </div>
+                </div>
               </div>
             </div>
           </article>
@@ -537,6 +550,135 @@ onMounted(() => {
   height: 240px;
   object-fit: cover;
   border-radius: 10px;
+}
+
+.intro-card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.intro-card__eyebrow {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(var(--guest-primary-rgb, 63, 150, 67), 0.12);
+  color: var(--guest-primary, #3f9643);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.intro-card__title {
+  margin: 0;
+  line-height: 1.25;
+}
+
+.intro-card__lead {
+  margin: 0;
+  color: #1c2b23;
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.intro-card__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: #5b6b62;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.intro-card__steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.intro-card__step-num {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: rgba(var(--guest-primary-rgb, 63, 150, 67), 0.12);
+  color: var(--guest-primary, #3f9643);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.intro-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-top: 4px;
+}
+
+.intro-card__cta {
+  height: auto;
+  margin: 0;
+  padding: 12px 28px;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(var(--guest-primary-rgb, 63, 150, 67), 0.32);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+  --el-button-bg-color: var(--guest-primary, #3f9643);
+  --el-button-border-color: var(--guest-primary, #3f9643);
+  --el-button-text-color: #fff;
+  --el-button-hover-bg-color: var(--guest-primary-hover, #37843b);
+  --el-button-hover-border-color: var(--guest-primary-hover, #37843b);
+  --el-button-hover-text-color: #fff;
+  --el-button-active-bg-color: var(--guest-primary-hover, #37843b);
+  --el-button-active-border-color: var(--guest-primary-hover, #37843b);
+  --el-button-active-text-color: #fff;
+}
+
+.intro-card__cta:hover,
+.intro-card__cta:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(var(--guest-primary-rgb, 63, 150, 67), 0.4);
+}
+
+.intro-card__cta:focus-visible {
+  outline: 2px solid var(--guest-primary, #3f9643);
+  outline-offset: 3px;
+}
+
+.intro-card__cta-arrow {
+  margin-left: 8px;
+  transition: transform 0.18s ease;
+}
+
+.intro-card__cta:hover .intro-card__cta-arrow {
+  transform: translateX(3px);
+}
+
+.intro-card__hint {
+  color: #6c7a72;
+  font-size: 0.875rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-card__cta,
+  .intro-card__cta-arrow {
+    transition: none;
+  }
+
+  .intro-card__cta:hover,
+  .intro-card__cta:hover .intro-card__cta-arrow {
+    transform: none;
+  }
 }
 
 .nhom-pills {

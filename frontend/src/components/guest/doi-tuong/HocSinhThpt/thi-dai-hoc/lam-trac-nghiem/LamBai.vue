@@ -354,6 +354,7 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
 
           <div class="quiz-nav">
             <CustomButton
+              class="quiz-nav__btn"
               plain
               type="primary"
               :disabled="viTriLoai <= 0 || dangDoiPhan || dangPhanTich"
@@ -364,6 +365,7 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
             </CustomButton>
             <span class="quiz-progress">Đã trả lời {{ daTraLoi }}/{{ cauHoiLoai.length }}</span>
             <CustomButton
+              class="quiz-nav__btn"
               type="primary"
               :disabled="dangPhanTich || dangDoiPhan"
               :loading="dangPhanTich || nutDangCho === 'tiep'"
@@ -453,8 +455,18 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 12px;
+  gap: 12px 20px;
   margin-top: 28px;
+  padding-bottom: 28px;
+}
+
+.quiz-nav__btn {
+  height: 42px;
+  margin: 0;
+  padding: 0 22px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .quiz-hint {
@@ -553,6 +565,20 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
   color: #2c3a4d;
   font-size: 0.92rem;
   font-weight: 400;
+}
+
+@media (max-width: 767px) {
+  .quiz-progress {
+    order: -1;
+    flex-basis: 100%;
+    text-align: center;
+  }
+
+  .quiz-nav__btn {
+    flex: 1 1 0;
+    height: 48px;
+    font-size: 1rem;
+  }
 }
 
 @media (min-width: 768px) {

@@ -3,8 +3,32 @@ import { useAuthStore } from '@/stores/auth'
 import { doiTuongList } from '@/data/doiTuong'
 import { dinhHuongThptRoutes } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
 
+// Chờ trang đủ cao (dữ liệu tải bất đồng bộ) rồi mới cuộn về vị trí cũ.
+function choDuChieuCao(top, thoiGianToiDa = 1500) {
+  return new Promise((resolve) => {
+    const batDau = performance.now()
+    const kiemTra = () => {
+      const duCao = document.documentElement.scrollHeight - window.innerHeight >= top
+      if (duCao || performance.now() - batDau > thoiGianToiDa) resolve()
+      else requestAnimationFrame(kiemTra)
+    }
+    kiemTra()
+  })
+}
+
 const router = createRouter({
   history: createWebHistory(),
+  async scrollBehavior(to, from, savedPosition) {
+    // Quay lại / tiến tới bằng nút trình duyệt: giữ vị trí trước đó.
+    if (savedPosition) {
+      await choDuChieuCao(savedPosition.top)
+      return savedPosition
+    }
+    if (to.hash) return { el: to.hash, behavior: 'smooth' }
+    // Chỉ đổi query trên cùng trang (lọc, phân trang…): không cuộn.
+    if (to.path === from.path) return false
+    return { top: 0 }
+  },
   routes: [
     {
       path: '/login',

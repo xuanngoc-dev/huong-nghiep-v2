@@ -35,16 +35,11 @@ const beforeTips = [
 ]
 
 const duringTips = [
+  'Đọc từng câu hỏi và chọn một đáp án mô tả đúng nhất về bản thân bạn.',
+  'Không có đáp án đúng hay sai — chỉ có đáp án phù hợp với bạn.',
   'Trả lời nhanh, tự nhiên, theo cảm nhận đầu tiên — đừng suy nghĩ quá nhiều.',
-  'Với mỗi mô tả, hãy chọn mức độ phù hợp với bạn theo 5 mức:',
-]
-
-const scores = [
-  { code: 'A', point: 5, tone: 'a' },
-  { code: 'B', point: 4, tone: 'b' },
-  { code: 'C', point: 3, tone: 'c' },
-  { code: 'D', point: 2, tone: 'd' },
-  { code: 'E', point: 1, tone: 'e' },
+  'Trả lời hết các câu trong mỗi phần để chuyển sang phần tiếp theo.',
+  'Khi đã trả lời đủ toàn bộ câu hỏi, bài làm sẽ được khoá để phân tích kết quả.',
 ]
 
 function chonGiaiDoan(stage) {
@@ -154,12 +149,10 @@ async function batDauHolland() {
                   <ul class="holland-list">
                     <li v-for="tip in duringTips" :key="tip">{{ tip }}</li>
                   </ul>
-                  <ul class="holland-scores">
-                    <li v-for="score in scores" :key="score.code" class="holland-score">
-                      <span class="holland-score__mark" :class="`is-${score.tone}`">{{ score.code }}</span>
-                      <span class="holland-score__point" :class="`is-${score.tone}`">{{ score.point }} điểm</span>
-                    </li>
-                  </ul>
+                  <p class="holland-keys">
+                    Mẹo: dùng phím <kbd>↑</kbd> <kbd>↓</kbd> để chuyển câu và phím
+                    <kbd>1</kbd>–<kbd>5</kbd> để chọn nhanh đáp án.
+                  </p>
                 </article>
               </div>
             </div>
@@ -216,3 +209,29 @@ async function batDauHolland() {
     </div>
   </section>
 </template>
+
+<style scoped>
+.holland-keys {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(var(--guest-primary-rgb, 63, 150, 67), 0.08);
+  color: #2c3a4d;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.holland-keys kbd {
+  display: inline-block;
+  min-width: 1.6em;
+  padding: 1px 6px;
+  border: 1px solid #c5d5cc;
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: #fff;
+  color: #1c2b23;
+  font-family: inherit;
+  font-size: 0.8rem;
+  text-align: center;
+}
+</style>
