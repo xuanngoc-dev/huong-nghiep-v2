@@ -178,6 +178,12 @@
           "title": "Quản lý tài khoản",
           "tooltip": "Thêm, sửa, xóa tài khoản người dùng",
           "icon": "UserFilled"
+        },
+        {
+          "index": "/admin/he-thong/ngan-hang-thanh-toan",
+          "title": "Ngân hàng thanh toán",
+          "tooltip": "Tài khoản ngân hàng nhận thanh toán",
+          "icon": "CreditCard"
         }
       ]
     },
