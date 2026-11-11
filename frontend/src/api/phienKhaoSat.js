@@ -28,6 +28,10 @@ export function fetchNganhPhuHop(ssid) {
     .then((res) => res.data)
 }
 
+export function fetchPhienKhaoSatQuanTri(params, config = {}) {
+  return api.get('/trac-nghiem/phien/quan-tri', { ...config, params }).then((res) => res.data)
+}
+
 export function fetchLichSuKhaoSat(params, config = {}) {
   return api.get('/trac-nghiem/phien/lich-su', { ...config, params }).then((res) => res.data)
 }

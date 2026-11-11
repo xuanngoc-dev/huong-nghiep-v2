@@ -102,3 +102,18 @@ class TnPhienLichSuPage(BaseModel):
     total: int
     page: int
     page_size: int
+
+
+class TnPhienQuanTriItem(TnPhienLichSuItem):
+    # Phiên của khách (chưa đăng nhập) không có người tham gia.
+    nguoi_khao_sat_id: int | None = None
+    ho_ten: str | None = None
+    email: str | None = None
+    so_dien_thoai: str | None = None
+
+
+class TnPhienQuanTriPage(BaseModel):
+    items: list[TnPhienQuanTriItem]
+    total: int
+    page: int
+    page_size: int

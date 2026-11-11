@@ -10,7 +10,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import case, func, or_, select
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user, get_optional_user
+from app.api.deps import get_admin_user, get_current_user, get_optional_user
 from app.db.session import get_db
 from app.models.dm_loai_cau_hoi import DmLoaiCauHoi
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
@@ -33,6 +33,8 @@ from app.schemas.tn_phien_khao_sat import (
     TnPhienLichSuPage,
     TnPhienNganhPhuHopItem,
     TnPhienNganhPhuHopPublic,
+    TnPhienQuanTriItem,
+    TnPhienQuanTriPage,
     TnPhienTraLoiWrite,
 )
 
@@ -160,19 +162,17 @@ def bat_dau_holland(
     )
 
 
-@router.get("/lich-su", response_model=TnPhienLichSuPage)
-def lich_su_khao_sat(
-    q: str | None = Query(default=None, max_length=64),
-    trang_thai: Literal["hoan-thanh", "dang-lam"] | None = Query(default=None),
-    tu_ngay: date | None = Query(default=None),
-    den_ngay: date | None = Query(default=None),
-    page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=100),
-    db: Session = Depends(get_db),
-    current_user: NguoiDung = Depends(get_current_user),
-) -> TnPhienLichSuPage:
-    """Lịch sử các phiên khảo sát của người dùng đang đăng nhập, mới nhất trước."""
-    dieu_kien = [TnPhienKhaoSat.nguoi_khao_sat_id == current_user.id]
+TrangThaiPhien = Literal["hoan-thanh", "dang-lam"]
+
+
+def _dieu_kien_loc(
+    q: str | None,
+    trang_thai: TrangThaiPhien | None,
+    tu_ngay: date | None,
+    den_ngay: date | None,
+) -> list:
+    """Điều kiện lọc phiên dùng chung cho lịch sử thành viên và trang quản trị."""
+    dieu_kien = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())
         dieu_kien.append(
@@ -196,15 +196,11 @@ def lich_su_khao_sat(
             dieu_kien.append(TnPhienKhaoSat.ssid.in_(da_xong_ssid))
         else:
             dieu_kien.append(TnPhienKhaoSat.ssid.not_in(da_xong_ssid))
+    return dieu_kien
 
-    total = db.scalar(select(func.count()).select_from(TnPhienKhaoSat).where(*dieu_kien)) or 0
-    phien_list = db.scalars(
-        select(TnPhienKhaoSat)
-        .where(*dieu_kien)
-        .order_by(TnPhienKhaoSat.created_at.desc(), TnPhienKhaoSat.id.desc())
-        .offset((page - 1) * page_size)
-        .limit(page_size)
-    ).all()
+
+def _tom_tat_phien(db: Session, phien_list) -> dict[str, dict]:
+    """Tiến độ, bước còn dở và mã Holland nổi bật của từng phiên, theo ssid."""
     ssids = [phien.ssid for phien in phien_list]
 
     dem: dict[str, list[int]] = defaultdict(lambda: [0, 0])
@@ -244,26 +240,118 @@ def lich_su_khao_sat(
         select(DmNhomTinhCachHolland.ma_nhom).where(DmNhomTinhCachHolland.trang_thai == 1)
     ).all()
 
-    items = []
+    tom_tat = {}
     for phien in phien_list:
         tong, da_tra_loi = dem.get(phien.ssid, (0, 0))
         diem_phien = diem.get(phien.ssid, {})
         # Cùng cách xếp hạng với _thong_ke_phien + _ma_noi_bat.
         xep_hang = sorted(ma_hoat_dong, key=lambda ma: (-diem_phien.get(ma, 0), ma))
-        items.append(
-            TnPhienLichSuItem(
-                id=phien.id,
-                ssid=phien.ssid,
-                ma_giao_dich=phien.ma_giao_dich,
-                so_cau_hoi=tong,
-                so_da_tra_loi=da_tra_loi,
-                da_xong=tong > 0 and da_tra_loi == tong,
-                loai_cau_hoi_id_tiep=buoc_tiep.get(phien.ssid),
-                ma_noi_bat="".join(ma for ma in xep_hang[:3] if diem_phien.get(ma, 0) > 0),
-                created_at=phien.created_at,
+        tom_tat[phien.ssid] = {
+            "id": phien.id,
+            "ssid": phien.ssid,
+            "ma_giao_dich": phien.ma_giao_dich,
+            "so_cau_hoi": tong,
+            "so_da_tra_loi": da_tra_loi,
+            "da_xong": tong > 0 and da_tra_loi == tong,
+            "loai_cau_hoi_id_tiep": buoc_tiep.get(phien.ssid),
+            "ma_noi_bat": "".join(ma for ma in xep_hang[:3] if diem_phien.get(ma, 0) > 0),
+            "created_at": phien.created_at,
+        }
+    return tom_tat
+
+
+@router.get("/lich-su", response_model=TnPhienLichSuPage)
+def lich_su_khao_sat(
+    q: str | None = Query(default=None, max_length=64),
+    trang_thai: TrangThaiPhien | None = Query(default=None),
+    tu_ngay: date | None = Query(default=None),
+    den_ngay: date | None = Query(default=None),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=10, ge=1, le=100),
+    db: Session = Depends(get_db),
+    current_user: NguoiDung = Depends(get_current_user),
+) -> TnPhienLichSuPage:
+    """Lịch sử các phiên khảo sát của người dùng đang đăng nhập, mới nhất trước."""
+    dieu_kien = [
+        TnPhienKhaoSat.nguoi_khao_sat_id == current_user.id,
+        *_dieu_kien_loc(q, trang_thai, tu_ngay, den_ngay),
+    ]
+    total = db.scalar(select(func.count()).select_from(TnPhienKhaoSat).where(*dieu_kien)) or 0
+    phien_list = db.scalars(
+        select(TnPhienKhaoSat)
+        .where(*dieu_kien)
+        .order_by(TnPhienKhaoSat.created_at.desc(), TnPhienKhaoSat.id.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    ).all()
+    tom_tat = _tom_tat_phien(db, phien_list)
+    items = [TnPhienLichSuItem(**tom_tat[phien.ssid]) for phien in phien_list]
+    return TnPhienLichSuPage(items=items, total=total, page=page, page_size=page_size)
+
+
+@router.get(
+    "/quan-tri",
+    response_model=TnPhienQuanTriPage,
+    dependencies=[Depends(get_admin_user)],
+)
+def danh_sach_phien_quan_tri(
+    q: str | None = Query(default=None, max_length=64),
+    nguoi_tham_gia: str | None = Query(default=None, max_length=255),
+    doi_tuong: Literal["thanh-vien", "khach"] | None = Query(default=None),
+    trang_thai: TrangThaiPhien | None = Query(default=None),
+    tu_ngay: date | None = Query(default=None),
+    den_ngay: date | None = Query(default=None),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, ge=1, le=200),
+    db: Session = Depends(get_db),
+) -> TnPhienQuanTriPage:
+    """Tất cả phiên khảo sát cho quản trị, mới nhất trước.
+
+    Lọc theo mã giao dịch/ssid (`q`), người tham gia (họ tên, email, số điện thoại),
+    thành viên hay khách, tình trạng hoàn thành và khoảng ngày tạo phiên.
+    """
+    dieu_kien = _dieu_kien_loc(q, trang_thai, tu_ngay, den_ngay)
+    if nguoi_tham_gia and nguoi_tham_gia.strip():
+        pattern = _like_pattern(nguoi_tham_gia.strip())
+        dieu_kien.append(
+            or_(
+                NguoiDung.ho_ten.like(pattern, escape="\\"),
+                NguoiDung.email.like(pattern, escape="\\"),
+                NguoiDung.so_dien_thoai.like(pattern, escape="\\"),
             )
         )
-    return TnPhienLichSuPage(items=items, total=total, page=page, page_size=page_size)
+    if doi_tuong == "thanh-vien":
+        dieu_kien.append(TnPhienKhaoSat.nguoi_khao_sat_id.is_not(None))
+    elif doi_tuong == "khach":
+        dieu_kien.append(TnPhienKhaoSat.nguoi_khao_sat_id.is_(None))
+
+    nguon = select(TnPhienKhaoSat, NguoiDung).outerjoin(
+        NguoiDung, TnPhienKhaoSat.nguoi_khao_sat_id == NguoiDung.id
+    )
+    total = db.scalar(
+        select(func.count())
+        .select_from(TnPhienKhaoSat)
+        .outerjoin(NguoiDung, TnPhienKhaoSat.nguoi_khao_sat_id == NguoiDung.id)
+        .where(*dieu_kien)
+    ) or 0
+    rows = db.execute(
+        nguon.where(*dieu_kien)
+        .order_by(TnPhienKhaoSat.created_at.desc(), TnPhienKhaoSat.id.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    ).all()
+    tom_tat = _tom_tat_phien(db, [phien for phien, _ in rows])
+    items = [
+        TnPhienQuanTriItem(
+            **tom_tat[phien.ssid],
+            nguoi_khao_sat_id=phien.nguoi_khao_sat_id,
+            ho_ten=nguoi.ho_ten if nguoi else None,
+            email=nguoi.email if nguoi else None,
+            so_dien_thoai=nguoi.so_dien_thoai if nguoi else None,
+        )
+        for phien, nguoi in rows
+    ]
+    return TnPhienQuanTriPage(items=items, total=total, page=page, page_size=page_size)
 
 
 def _noi_dung_hien_thi(text: str) -> str:
