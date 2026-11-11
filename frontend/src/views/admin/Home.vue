@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import BieuDoCot from '@/components/admin/charts/BieuDoCot.vue'
 import BieuDoDuong from '@/components/admin/charts/BieuDoDuong.vue'
 import BieuDoTron from '@/components/admin/charts/BieuDoTron.vue'
@@ -15,6 +16,7 @@ import {
   topNganh,
   topTinhThanh,
 } from '@/data/dashboardMock'
+import { useLayoutStore } from '@/stores/layout'
 
 const TRANG_THAI = {
   'hoan-thanh': { label: 'Hoàn thành', type: 'success' },
@@ -24,6 +26,9 @@ const TRANG_THAI = {
 
 const khoangThoiGian = ref([])
 const kieuBieuDo = ref('area')
+const { isDark } = storeToRefs(useLayoutStore())
+// Cột "Bỏ dở" dùng màu trung tính chìm theo nền để cột "Hoàn thành" nổi bật.
+const mauDoiTuong = computed(() => ['#1f7a4d', isDark.value ? '#3a4742' : '#c9d3cd'])
 const luotToiDa = Math.max(...topTinhThanh.map((item) => item.luot))
 </script>
 
@@ -122,7 +127,7 @@ const luotToiDa = Math.max(...topTinhThanh.map((item) => item.luot))
             stacked
             :series="theoDoiTuong.series"
             :categories="theoDoiTuong.categories"
-            :colors="['#1f7a4d', '#c9d3cd']"
+            :colors="mauDoiTuong"
             :height="320"
             donVi="lượt"
           />

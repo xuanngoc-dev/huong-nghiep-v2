@@ -105,7 +105,7 @@
             inline-prompt
             active-text="🌙"
             inactive-text="☀️"
-            @change="toggleDark"
+            :aria-label="isDark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'"
           />
 
           <el-dropdown trigger="click" @command="onCommand">
@@ -141,7 +141,7 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -174,7 +174,7 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const layoutStore = useLayoutStore()
-const { navbarFixed, sidebarFixed, sidebarPushContent } = storeToRefs(layoutStore)
+const { navbarFixed, sidebarFixed, sidebarPushContent, isDark } = storeToRefs(layoutStore)
 
 const brandName = 'Định hướng nghề'
 const menuGroups = computed(() => {
@@ -190,7 +190,6 @@ const pinnedCollapsed = ref(false)
 const hoverExpanded = ref(false)
 const isMobile = ref(false)
 const mobileMenuOpen = ref(false)
-const isDark = ref(document.documentElement.classList.contains('dark'))
 const settingsOpen = ref(false)
 const now = ref(new Date())
 const asideMountKey = ref(0)
@@ -315,11 +314,6 @@ function syncCollapseByViewport(e) {
   pinnedCollapsed.value = e.matches
 }
 
-function toggleDark(val) {
-  document.documentElement.classList.toggle('dark', val)
-  localStorage.setItem('darkMode', val ? '1' : '0')
-}
-
 async function onCommand(cmd) {
   if (cmd === 'logout') {
     authStore.logout()
@@ -327,6 +321,11 @@ async function onCommand(cmd) {
     router.push({ name: 'login' })
   }
 }
+
+// Chỉ khu vực quản trị / người dùng có chế độ tối; rời shell (sang trang khách) thì trả về sáng.
+watchEffect(() => {
+  document.documentElement.classList.toggle('dark', isDark.value)
+})
 
 watch(sidebarPushContent, async () => {
   clearHoverLeaveTimer()
@@ -344,12 +343,6 @@ watch(
 )
 
 onMounted(() => {
-  const saved = localStorage.getItem('darkMode')
-  if (saved === '1') {
-    isDark.value = true
-    document.documentElement.classList.add('dark')
-  }
-
   mediaQuery = window.matchMedia(`(max-width: ${COLLAPSE_BREAKPOINT - 1}px)`)
   isMobile.value = mediaQuery.matches
   mobileMenuOpen.value = false
@@ -362,6 +355,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  document.documentElement.classList.remove('dark')
   mediaQuery?.removeEventListener('change', syncCollapseByViewport)
   clearHoverLeaveTimer()
   if (clockTimer != null) window.clearInterval(clockTimer)
@@ -386,6 +380,13 @@ onUnmounted(() => {
   color: var(--layout-text);
   font-size: var(--app-font-size);
   text-rendering: geometricPrecision;
+
+  html.dark & {
+    --layout-line: color-mix(in srgb, var(--el-text-color-primary) 16%, var(--el-bg-color));
+    --el-border-color-light: color-mix(in srgb, var(--el-text-color-primary) 13%, var(--el-bg-color));
+    --el-border-color-lighter: color-mix(in srgb, var(--el-text-color-primary) 10%, var(--el-bg-color));
+    --layout-text-muted: color-mix(in srgb, var(--el-text-color-primary) 66%, var(--el-bg-color));
+  }
 
   &.is-navbar-fixed,
   &.is-sidebar-fixed {
@@ -446,6 +447,10 @@ onUnmounted(() => {
 
   &.is-hover-expanded {
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+
+    html.dark & {
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.45);
+    }
   }
 
   &.is-mobile-drawer {

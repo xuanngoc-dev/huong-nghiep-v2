@@ -4,7 +4,7 @@
  * labels: ['Kỹ thuật (R)', ...], values: [320, 210, ...]
  * nhanTong: nhãn hiển thị giữa vành khuyên (chỉ với type="donut").
  */
-import { BANG_MAU, cauHinhNen, useApexChart } from './useApexChart'
+import { BANG_MAU, cauHinhNen, mauGiaoDien, useApexChart } from './useApexChart'
 
 const props = defineProps({
   labels: { type: Array, default: () => [] },
@@ -22,13 +22,14 @@ function dinhDang(value) {
 
 function taoCauHinh() {
   const nen = cauHinhNen(props.height)
+  const mau = mauGiaoDien()
   return {
     ...nen,
     series: props.values,
     labels: props.labels,
     chart: { ...nen.chart, type: props.type },
     colors: props.colors,
-    stroke: { width: 2, colors: ['#fff'] },
+    stroke: { width: 2, colors: [mau.nen] },
     dataLabels: {
       enabled: true,
       formatter: (percent) => `${Math.round(percent)}%`,
@@ -44,10 +45,11 @@ function taoCauHinh() {
             total: {
               show: true,
               label: props.nhanTong,
+              color: mau.chu,
               formatter: (w) =>
                 w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('vi-VN'),
             },
-            value: { formatter: (v) => Number(v).toLocaleString('vi-VN') },
+            value: { color: mau.chuDam, formatter: (v) => Number(v).toLocaleString('vi-VN') },
           },
         },
       },

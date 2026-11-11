@@ -66,16 +66,8 @@ export function applyAppearance({ primaryColor, fontFamily, fontSize }) {
   const size = normalizeFontSize(fontSize)
   const family = fontStack(fontFamily)
 
-  root.style.setProperty('--el-color-primary', color)
-  for (let level = 1; level <= 9; level += 1) {
-    const weight = 100 - level * 10
-    root.style.setProperty(
-      `--el-color-primary-light-${level}`,
-      `color-mix(in srgb, ${color} ${weight}%, var(--el-bg-color))`,
-    )
-  }
-  root.style.setProperty('--el-color-primary-dark-2', `color-mix(in srgb, ${color} 80%, #000)`)
-  root.style.setProperty('--brand-accent-soft', `color-mix(in srgb, ${color} 14%, var(--el-bg-color))`)
+  // Các sắc độ primary được suy ra trong styles/index.scss theo chế độ sáng / tối.
+  root.style.setProperty('--app-primary', color)
 
   root.style.setProperty('--app-font-family', family)
   root.style.setProperty('--app-font-size', `${size}px`)
@@ -86,4 +78,24 @@ export function applyAppearance({ primaryColor, fontFamily, fontSize }) {
   root.style.setProperty('--el-font-size-medium', `${Math.round((size * 16) / 15)}px`)
   root.style.setProperty('--el-font-size-large', `${Math.round((size * 18) / 15)}px`)
   root.style.setProperty('--el-font-size-extra-large', `${Math.round((size * 20) / 15)}px`)
+}
+
+const DARK_MODE_KEY = 'darkMode'
+
+export function loadDarkMode() {
+  try {
+    const saved = localStorage.getItem(DARK_MODE_KEY)
+    if (saved === '1' || saved === '0') return saved === '1'
+  } catch {
+    // localStorage bị chặn: dùng mặc định theo biến môi trường.
+  }
+  return import.meta.env.VITE_DARK_MODE === 'true'
+}
+
+export function saveDarkMode(value) {
+  try {
+    localStorage.setItem(DARK_MODE_KEY, value ? '1' : '0')
+  } catch {
+    // Bỏ qua: chỉ mất ghi nhớ lựa chọn.
+  }
 }

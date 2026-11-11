@@ -1,6 +1,17 @@
+// Sinh các sắc độ primary từ màu gốc: light-N pha với màu nền (nền sáng → nhạt dần,
+// nền tối → chìm dần), dark-2 là màu hover/active.
+@mixin primary-shades($base, $hover-mix) {
+  --el-color-primary: #{$base};
+  @for $level from 1 through 9 {
+    --el-color-primary-light-#{$level}: color-mix(in srgb, #{$base} #{100 - $level * 10}%, var(--el-bg-color));
+  }
+  --el-color-primary-dark-2: color-mix(in srgb, #{$base} 80%, #{$hover-mix});
+  --brand-accent-soft: color-mix(in srgb, #{$base} 14%, var(--el-bg-color));
+}
+
 :root {
-  --el-color-primary: #1f7a4d;
-  --brand-accent-soft: #e7f5ee;
+  --app-primary: #1f7a4d;
+  @include primary-shades(var(--app-primary), #000);
   --app-font-family:
     'Helvetica Neue',
     Helvetica,
@@ -10,6 +21,44 @@
     Arial,
     sans-serif;
   --app-font-size: 16px;
+}
+
+// Chế độ tối: nền xám ngả xanh lá để ăn khớp màu thương hiệu thay vì xám trung tính
+// của Element Plus. Màu primary được nâng sáng để chữ/icon màu primary đủ tương phản.
+html.dark {
+  color-scheme: dark;
+
+  @include primary-shades(color-mix(in srgb, var(--app-primary) 78%, #fff), #fff);
+  --brand-accent-soft: color-mix(in srgb, var(--app-primary) 26%, var(--el-bg-color));
+
+  --el-bg-color-page: #0f1513;
+  --el-bg-color: #161d1a;
+  --el-bg-color-overlay: #1c2420;
+
+  --el-text-color-primary: #e4ebe7;
+  --el-text-color-regular: #c5cfca;
+  --el-text-color-secondary: #919d97;
+  --el-text-color-placeholder: #6c7772;
+  --el-text-color-disabled: #535c58;
+
+  --el-border-color-darker: #4a5751;
+  --el-border-color-dark: #3f4b45;
+  --el-border-color: #34403a;
+  --el-border-color-light: #2c3631;
+  --el-border-color-lighter: #252e2a;
+  --el-border-color-extra-light: #1f2724;
+
+  --el-fill-color-darker: #313c37;
+  --el-fill-color-dark: #2a3430;
+  --el-fill-color: #232c28;
+  --el-fill-color-light: #1e2723;
+  --el-fill-color-lighter: #1a221f;
+  --el-fill-color-extra-light: #18201c;
+  --el-fill-color-blank: var(--el-bg-color);
+
+  --el-mask-color: rgb(12 17 15 / 80%);
+  --el-mask-color-extra-light: rgb(12 17 15 / 30%);
+  --el-overlay-color-lighter: rgb(0 0 0 / 55%);
 }
 
 html,

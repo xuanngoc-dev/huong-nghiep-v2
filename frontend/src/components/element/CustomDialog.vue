@@ -1,7 +1,9 @@
 <script setup>
 /**
  * CustomDialog — wrapper el-dialog.
- * Mặc định: rộng khoảng 90% viewport, cao 90vh, căn giữa, destroy-on-close.
+ * Mặc định: rộng khoảng 90% viewport, căn giữa, destroy-on-close.
+ * Chiều cao mặc định co giãn theo nội dung, tối đa bằng viewport trừ lề; vượt quá thì body cuộn dọc.
+ * Kéo mép trên/dưới hoặc thu nhỏ sẽ chuyển sang chiều cao cố định.
  * Kéo mép trên/dưới/trái/phải để đổi kích thước.
  * Giữ header để kéo đổi vị trí.
  * Nút thu gọn (trước nút phóng/thu) ẩn body và footer, chỉ còn header.
@@ -25,8 +27,8 @@ const props = defineProps({
   title: { type: String, default: '' },
   /** Chiều rộng mặc định. VD: 780 | '780px' | '90%' */
   width: { type: [String, Number], default: '90%' },
-  /** Chiều cao mặc định. VD: '90vh' | 640 */
-  height: { type: [String, Number], default: '90vh' },
+  /** Chiều cao mặc định. 'auto' = theo nội dung. VD: 'auto' | '90vh' | 640 */
+  height: { type: [String, Number], default: 'auto' },
   destroyOnClose: { type: Boolean, default: true },
   appendToBody: { type: Boolean, default: true },
   alignCenter: { type: Boolean, default: true },
@@ -57,6 +59,11 @@ const resolvedWidth = computed(() =>
   typeof props.width === 'number' ? `${props.width}px` : props.width
 )
 
+const resolvedHeight = computed(() => {
+  if (isAutoHeight(props.height)) return ''
+  return typeof props.height === 'number' ? `${props.height}px` : props.height
+})
+
 const fallthroughAttrs = computed(() => {
   const { class: _class, style: _style, onOpened: _onOpened, ...rest } = attrs
   return rest
@@ -79,12 +86,11 @@ const dialogClass = computed(() => {
 const dialogStyle = computed(() => {
   const extra = attrs.style
   const style = extra && typeof extra === 'object' && !Array.isArray(extra) ? { ...extra } : {}
-  if (!props.fullscreen && box.value.width && box.value.height) {
-    style['--custom-dialog-width'] = `${box.value.width}px`
-    style['--custom-dialog-height'] = `${box.value.height}px`
-  } else if (!props.fullscreen) {
-    style['--custom-dialog-width'] = resolvedWidth.value
-    style['--custom-dialog-height'] = typeof props.height === 'number' ? `${props.height}px` : props.height
+  if (!props.fullscreen) {
+    style['--custom-dialog-width'] = box.value.width ? `${box.value.width}px` : resolvedWidth.value
+    // Không đặt biến chiều cao = height: auto (theo nội dung, chặn bởi max-height).
+    const height = box.value.height ? `${box.value.height}px` : box.value.width ? '' : resolvedHeight.value
+    if (height) style['--custom-dialog-height'] = height
   }
   if (!props.fullscreen && placed.value) {
     style.position = 'absolute'
@@ -100,6 +106,10 @@ const dialogWidth = computed(() => {
   if (box.value.width) return box.value.width
   return resolvedWidth.value
 })
+
+function isAutoHeight(value) {
+  return value == null || value === '' || value === 'auto'
+}
 
 function viewport() {
   if (typeof window === 'undefined') return { width: 1280, height: 800 }
@@ -119,6 +129,7 @@ function parseLength(value, axis) {
   return Number.isFinite(pixels) ? pixels : base * 0.9
 }
 
+/** height = null nghĩa là chiều cao tự động theo nội dung. */
 function clampBox(width, height) {
   const view = viewport()
   const maxWidth = Math.max(160, view.width - VIEWPORT_GAP)
@@ -127,17 +138,24 @@ function clampBox(width, height) {
   const minHeight = Math.min(MIN_HEIGHT, maxHeight)
   return {
     width: Math.round(Math.min(maxWidth, Math.max(minWidth, width))),
-    height: Math.round(Math.min(maxHeight, Math.max(minHeight, height))),
+    height: height == null ? null : Math.round(Math.min(maxHeight, Math.max(minHeight, height))),
   }
 }
 
 function defaultBox() {
-  return clampBox(parseLength(props.width, 'x'), parseLength(props.height, 'y'))
+  const height = isAutoHeight(props.height) ? null : parseLength(props.height, 'y')
+  return clampBox(parseLength(props.width, 'x'), height)
 }
 
 function compactBox() {
   const base = defaultBox()
-  return clampBox(base.width * COMPACT_WIDTH_RATIO, base.height * COMPACT_HEIGHT_RATIO)
+  const height = base.height ?? parseLength('90vh', 'y')
+  return clampBox(base.width * COMPACT_WIDTH_RATIO, height * COMPACT_HEIGHT_RATIO)
+}
+
+/** Chiều cao đang hiển thị: giá trị cố định, hoặc đo DOM khi đang ở chế độ tự động. */
+function currentHeight() {
+  return box.value.height ?? dialogEl()?.offsetHeight ?? 0
 }
 
 function clampPosition(left, top, width, height) {
@@ -154,8 +172,7 @@ function clampPosition(left, top, width, height) {
 
 function keepPlacedInView() {
   if (!placed.value) return
-  const el = dialogEl()
-  const height = minimized.value ? el?.offsetHeight || 48 : box.value.height
+  const height = minimized.value ? dialogEl()?.offsetHeight || 48 : currentHeight()
   placed.value = clampPosition(placed.value.left, placed.value.top, box.value.width, height)
 }
 
@@ -179,7 +196,7 @@ function toggleCompact() {
   const compact = compactBox()
   box.value = {
     width: Math.min(box.value.width, compact.width),
-    height: Math.min(box.value.height, compact.height),
+    height: Math.min(currentHeight() || compact.height, compact.height),
   }
   collapsed.value = true
   keepPlacedInView()
@@ -216,7 +233,8 @@ function onResizeStart(edge, event) {
     startX: event.clientX,
     startY: event.clientY,
     width: box.value.width,
-    height: box.value.height,
+    height: currentHeight(),
+    boxHeight: box.value.height,
     left: placed.value?.left ?? null,
     top: placed.value?.top ?? null,
     anchored: Boolean(placed.value),
@@ -238,15 +256,16 @@ function onResizeMove(event) {
   if (resizeSession.edge === 'w') width -= dx * horizontal
   if (resizeSession.edge === 's') height += dy * vertical
   if (resizeSession.edge === 'n') height -= dy * vertical
-  const next = clampBox(width, height)
-  if (minimized.value) next.height = resizeSession.height
+  // Kéo mép trái/phải giữ nguyên chế độ chiều cao (tự động hoặc cố định).
+  const isVerticalEdge = resizeSession.edge === 'n' || resizeSession.edge === 's'
+  const next = clampBox(width, isVerticalEdge ? height : resizeSession.boxHeight)
   box.value = next
   if (resizeSession.anchored) {
     let left = resizeSession.left
     let top = resizeSession.top
     if (resizeSession.edge === 'w') left += resizeSession.width - next.width
     if (resizeSession.edge === 'n') top += resizeSession.height - next.height
-    placed.value = clampPosition(left, top, next.width, minimized.value ? 48 : next.height)
+    placed.value = clampPosition(left, top, next.width, minimized.value ? 48 : next.height ?? resizeSession.height)
   }
   collapsed.value = false
   userSized.value = true
@@ -301,8 +320,7 @@ function onDragStart(event) {
 
 function onDragMove(event) {
   if (!dragSession || event.pointerId !== dragSession.pointerId) return
-  const el = dialogEl()
-  const height = minimized.value ? el?.offsetHeight || 48 : box.value.height
+  const height = minimized.value ? dialogEl()?.offsetHeight || 48 : currentHeight()
   placed.value = clampPosition(
     dragSession.left + event.clientX - dragSession.startX,
     dragSession.top + event.clientY - dragSession.startY,
@@ -478,7 +496,7 @@ resetOnOpen()
 .custom-dialog.el-dialog {
   width: min(var(--custom-dialog-width, 90%), calc(100vw - 32px)) !important;
   max-width: calc(100vw - 32px);
-  height: var(--custom-dialog-height, 90vh);
+  height: var(--custom-dialog-height, auto);
   max-height: calc(100vh - 32px);
   max-height: calc(100dvh - 32px);
   display: flex;

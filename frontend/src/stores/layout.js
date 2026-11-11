@@ -3,9 +3,11 @@ import { ref, watch } from 'vue'
 import {
   APPEARANCE_DEFAULTS,
   applyAppearance,
+  loadDarkMode,
   normalizeFontFamily,
   normalizeFontSize,
   normalizeHex,
+  saveDarkMode,
 } from '@/utils/theme'
 
 const STORAGE_KEY = 'dh-layout-settings'
@@ -56,6 +58,7 @@ export const useLayoutStore = defineStore('layout', () => {
   const primaryColor = ref(saved.primaryColor)
   const fontFamily = ref(saved.fontFamily)
   const fontSize = ref(saved.fontSize)
+  const isDark = ref(loadDarkMode())
 
   function snapshot() {
     return {
@@ -99,6 +102,8 @@ export const useLayoutStore = defineStore('layout', () => {
     persist,
   )
 
+  watch(isDark, saveDarkMode)
+
   function reset() {
     menuGroupCollapsible.value = defaults.menuGroupCollapsible
     menuUniqueOpened.value = defaults.menuUniqueOpened
@@ -121,6 +126,7 @@ export const useLayoutStore = defineStore('layout', () => {
     primaryColor,
     fontFamily,
     fontSize,
+    isDark,
     reset,
   }
 })
