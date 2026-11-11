@@ -6,7 +6,6 @@ import { fetchHoSo } from '@/api/hoSo'
 import { fetchNganh } from '@/api/nganhDaoTao'
 import { useAuthStore } from '@/stores/auth'
 import { fetchNhomHolland } from '@/api/nhomTinhCachHolland'
-import { batDauPhienHolland } from '@/api/phienKhaoSat'
 import { fetchTinhThanh } from '@/api/tinhThanh'
 import { fetchTruongHoc } from '@/api/truongHoc'
 import { noiMucLuong } from '@/utils/capTenGiaTri'
@@ -26,7 +25,6 @@ const nganh = ref(null)
 const holland = ref([])
 const dangTaiNganh = ref(false)
 const loiNganh = ref('')
-const dangTaoPhien = ref(false)
 const nganhCungNhom = ref([])
 const dangTaiCungNhom = ref(false)
 const loiCungNhom = ref('')
@@ -42,8 +40,6 @@ const trang = ref(1)
 const soMoiTrang = ref(12)
 const truongDaChon = ref([])
 const soSanhMo = ref(false)
-const chiTietMo = ref(false)
-const truongChiTiet = ref(null)
 const introMo = ref([])
 
 const ten = ref('')
@@ -61,6 +57,12 @@ function tachMoTa(value) {
 const tenNhom = computed(
   () => nganh.value?.ten_nhom_nganh || nganhCungNhom.value[0]?.ten_nhom_nganh || '',
 )
+
+const moTaNgan = computed(() => {
+  const item = nganh.value
+  if (!item) return ''
+  return tachMoTa(item.mo_ta)[0] || `Thuộc nhóm ngành ${item.ten_nhom_nganh || '—'}.`
+})
 
 const loiThe = computed(() => {
   const item = nganh.value
@@ -109,10 +111,6 @@ function khuVucCua(item) {
   return ''
 }
 
-function diaDiem(item) {
-  return [khuVucCua(item), item.ten_tinh_thanh].filter(Boolean).join(' · ') || 'Chưa rõ khu vực'
-}
-
 function diaChi(item) {
   return (item.dia_chi_tru_so || '').trim() || 'Chưa cập nhật'
 }
@@ -122,19 +120,6 @@ function hrefWebsite(value) {
   if (!text) return ''
   if (/^https?:\/\//i.test(text)) return text
   return `https://${text}`
-}
-
-function linhVucCua(item) {
-  const nguon = [...(item.linh_vuc_dao_tao_chinh || []), ...(item.linh_vuc_dao_tao_khac || [])]
-  const tags = []
-  const daCo = new Set()
-  for (const raw of nguon) {
-    const text = String(raw || '').trim()
-    if (!text || daCo.has(text)) continue
-    daCo.add(text)
-    tags.push(text)
-  }
-  return tags
 }
 
 const ketQua = computed(() => {
@@ -171,11 +156,6 @@ const hangSoSanh = [
   { label: 'Loại hình', lay: (item) => item.loai_hinh || '—' },
   { label: 'Tên tiếng Anh', lay: (item) => item.ten_tieng_anh || '—' },
 ]
-
-function moChiTiet(item) {
-  truongChiTiet.value = item
-  chiTietMo.value = true
-}
 
 function daChon(item) {
   return truongDaChon.value.some((truong) => truong.id === item.id)
@@ -271,22 +251,6 @@ function quayLai() {
   router.push({ name: 'thpt-thi-dai-hoc-da-co' })
 }
 
-async function thamGiaKhaoSat() {
-  if (dangTaoPhien.value) return
-  dangTaoPhien.value = true
-  try {
-    const phien = await batDauPhienHolland()
-    router.push({
-      name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
-      params: { ssid: phien.ssid, loaiCauHoiId: phien.loai_cau_hoi_id },
-    })
-  } catch (error) {
-    const detail = error.response?.data?.detail
-    ElMessage.error(typeof detail === 'string' ? detail : 'Không tạo được phiên khảo sát.')
-  } finally {
-    dangTaoPhien.value = false
-  }
-}
 
 let lanTaiNganh = 0
 
@@ -448,9 +412,8 @@ onMounted(() => {
             <el-collapse-item name="nganh">
               <template #title>
                 <div class="intro-collapse__title">
-                  <p class="nhom-card__field">{{ nganh.trinh_do }}</p>
-                  <h2 class="h2 mb-1">{{ nganh.ten_nganh }}</h2>
-                  <p v-if="nganh.ten_tieng_anh" class="nhom-card__en">{{ nganh.ten_tieng_anh }}</p>
+                  <h2 class="intro-collapse__name">{{ nganh.ten_nganh }}</h2>
+                  <p class="intro-collapse__desc">{{ moTaNgan }}</p>
                 </div>
               </template>
               <p class="loi-the">
@@ -593,9 +556,6 @@ onMounted(() => {
                     {{ item.gioi_thieu_ngan }}
                   </p> -->
                 </CustomTooltip>
-                <!-- <div class="nhom-card__detail">
-                  <CustomButton plain type="primary" @click.stop="moChiTiet(item)">Chi tiết</CustomButton>
-                </div> -->
               </div>
             </article>
           </div>
@@ -641,35 +601,6 @@ onMounted(() => {
         </div>
       </div>
     </div>
-
-    <CustomDialog class="chon-truong-dialog" v-model="chiTietMo" :title="truongChiTiet?.ten_truong || 'Chi tiết trường'" :width="720" :height="420">
-      <div v-if="truongChiTiet" class="chi-tiet">
-        <p class="nhom-card__field">{{ loaiCua(truongChiTiet) || 'Cơ sở đào tạo' }}</p>
-        <div v-if="linhVucCua(truongChiTiet).length" class="nhom-card__tags">
-          <CustomTag v-for="tag in linhVucCua(truongChiTiet)" :key="tag" effect="plain">{{ tag }}</CustomTag>
-        </div>
-        <p class="chi-tiet__addr">
-          <CustomIcon class="nhom-card__pin" aria-hidden="true"><Location /></CustomIcon>
-          <span>{{ diaChi(truongChiTiet) }}</span>
-        </p>
-        <p class="chi-tiet__row">
-          <CustomIcon class="nhom-card__pin" aria-hidden="true"><Link /></CustomIcon>
-          <a
-            v-if="truongChiTiet.website"
-            class="nhom-card__web"
-            :href="hrefWebsite(truongChiTiet.website)"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {{ truongChiTiet.website }}
-          </a>
-          <span v-else>Chưa cập nhật website</span>
-        </p>
-        <p class="chi-tiet__label">{{ diaDiem(truongChiTiet) }}</p>
-        <p v-if="truongChiTiet.gioi_thieu_ngan" class="chi-tiet__text">{{ truongChiTiet.gioi_thieu_ngan }}</p>
-        <p v-if="truongChiTiet.gioi_thieu_chi_tiet" class="chi-tiet__text">{{ truongChiTiet.gioi_thieu_chi_tiet }}</p>
-      </div>
-    </CustomDialog>
 
     <CustomDialog class="chon-truong-dialog" v-model="soSanhMo" title="So sánh trường" :width="960" height="70vh">
       <div class="so-sanh-wrap">

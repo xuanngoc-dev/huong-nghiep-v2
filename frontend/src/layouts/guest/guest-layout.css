@@ -390,7 +390,7 @@
 .guest-layout .chon-truong .intro-card {
   position: relative;
   overflow: hidden;
-  padding: 20px 20px 16px;
+  padding: 12px 16px;
   border: 2px solid #7eae8c;
   border-radius: 12px;
   background: #fff;
@@ -453,12 +453,30 @@
 }
 
 .intro-collapse__title {
-  padding: 2px 0 8px;
+  min-width: 0;
+  padding: 0 0 2px;
   text-align: left;
 }
 
-.intro-collapse__title .h2 {
+.intro-collapse__name {
+  margin: 0;
+  color: #1c2b23;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.intro-collapse__desc {
+  display: -webkit-box;
+  margin: 2px 0 0;
+  overflow: hidden;
+  color: #5c6b64;
+  font-size: 0.875rem;
   font-weight: 400;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .intro-actions {
@@ -520,8 +538,7 @@
   cursor: pointer;
 }
 
-.nhom-card__addr,
-.chi-tiet__addr {
+.nhom-card__addr {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -572,39 +589,6 @@
   font-weight: 400;
   line-height: 1.35;
   white-space: normal;
-}
-
-.nhom-card__detail {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: auto;
-  padding-top: 8px;
-}
-
-.chi-tiet {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  color: #3a4742;
-  font-weight: 400;
-}
-
-.chi-tiet__row,
-.chi-tiet__label,
-.chi-tiet__text {
-  margin: 0;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-.chi-tiet__row {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.chi-tiet__text {
-  white-space: pre-line;
 }
 
 .nhom-card__check input {
