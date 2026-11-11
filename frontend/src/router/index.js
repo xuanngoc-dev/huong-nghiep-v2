@@ -111,7 +111,7 @@ const router = createRouter({
         {
           path: 'trac-nghiem/lich-su',
           name: 'lich-su-trac-nghiem',
-          component: () => import('@/views/member/PagePlaceholder.vue'),
+          component: () => import('@/views/member/LichSuTracNghiem.vue'),
           meta: { title: 'Lịch sử trắc nghiệm', requiresAuth: true },
         },
         {

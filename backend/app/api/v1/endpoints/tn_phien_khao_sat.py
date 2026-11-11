@@ -2,14 +2,15 @@ import re
 import secrets
 import string
 from collections import defaultdict
-from datetime import datetime
+from datetime import date, datetime, time, timedelta
+from typing import Literal
 from zoneinfo import ZoneInfo
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import func, select
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import case, func, or_, select
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_optional_user
+from app.api.deps import get_current_user, get_optional_user
 from app.db.session import get_db
 from app.models.dm_loai_cau_hoi import DmLoaiCauHoi
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
@@ -28,6 +29,8 @@ from app.schemas.tn_phien_khao_sat import (
     TnPhienKetQuaPublic,
     TnPhienKhaoSatPublic,
     TnPhienLamBaiPublic,
+    TnPhienLichSuItem,
+    TnPhienLichSuPage,
     TnPhienNganhPhuHopItem,
     TnPhienNganhPhuHopPublic,
     TnPhienTraLoiWrite,
@@ -59,6 +62,12 @@ def _ma_giao_dich(phien_id: int) -> str:
     """Mã giao dịch dạng KS_dd/mm/yy_id theo giờ Việt Nam."""
     now = datetime.now(_VN_TZ)
     return f"KS_{now:%d/%m/%y}_{phien_id}"
+
+
+def _like_pattern(value: str) -> str:
+    """Tạo mẫu tìm kiếm LIKE an toàn: bọc dấu % và escape các ký tự %, _ cùng dấu gạch chéo ngược."""
+    escaped = value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+    return f"%{escaped}%"
 
 
 def _chon_cau_hoi(db: Session) -> list[tuple[int, int]]:
@@ -149,6 +158,112 @@ def bat_dau_holland(
         so_cau_hoi=len(picked),
         created_at=phien.created_at,
     )
+
+
+@router.get("/lich-su", response_model=TnPhienLichSuPage)
+def lich_su_khao_sat(
+    q: str | None = Query(default=None, max_length=64),
+    trang_thai: Literal["hoan-thanh", "dang-lam"] | None = Query(default=None),
+    tu_ngay: date | None = Query(default=None),
+    den_ngay: date | None = Query(default=None),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=10, ge=1, le=100),
+    db: Session = Depends(get_db),
+    current_user: NguoiDung = Depends(get_current_user),
+) -> TnPhienLichSuPage:
+    """Lịch sử các phiên khảo sát của người dùng đang đăng nhập, mới nhất trước."""
+    dieu_kien = [TnPhienKhaoSat.nguoi_khao_sat_id == current_user.id]
+    if q and q.strip():
+        pattern = _like_pattern(q.strip())
+        dieu_kien.append(
+            or_(
+                TnPhienKhaoSat.ma_giao_dich.like(pattern, escape="\\"),
+                TnPhienKhaoSat.ssid.like(pattern, escape="\\"),
+            )
+        )
+    if tu_ngay:
+        dieu_kien.append(TnPhienKhaoSat.created_at >= datetime.combine(tu_ngay, time.min))
+    if den_ngay:
+        dieu_kien.append(TnPhienKhaoSat.created_at < datetime.combine(den_ngay + timedelta(days=1), time.min))
+    if trang_thai:
+        # Phiên hoàn thành: có câu hỏi và mọi câu đều đã có đáp án.
+        da_xong_ssid = (
+            select(TnChiTietTraLoi.ssid)
+            .group_by(TnChiTietTraLoi.ssid)
+            .having(func.count(TnChiTietTraLoi.cau_tra_loi_id) == func.count())
+        )
+        if trang_thai == "hoan-thanh":
+            dieu_kien.append(TnPhienKhaoSat.ssid.in_(da_xong_ssid))
+        else:
+            dieu_kien.append(TnPhienKhaoSat.ssid.not_in(da_xong_ssid))
+
+    total = db.scalar(select(func.count()).select_from(TnPhienKhaoSat).where(*dieu_kien)) or 0
+    phien_list = db.scalars(
+        select(TnPhienKhaoSat)
+        .where(*dieu_kien)
+        .order_by(TnPhienKhaoSat.created_at.desc(), TnPhienKhaoSat.id.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    ).all()
+    ssids = [phien.ssid for phien in phien_list]
+
+    dem: dict[str, list[int]] = defaultdict(lambda: [0, 0])
+    buoc_tiep: dict[str, int] = {}
+    diem: dict[str, dict[str, int]] = defaultdict(dict)
+    if ssids:
+        # Đếm theo từng bước (loại câu hỏi) để biết bước đầu tiên còn câu chưa trả lời.
+        for ssid, loai_cau_hoi_id, tong, da_tra_loi in db.execute(
+            select(
+                TnChiTietTraLoi.ssid,
+                DmLoaiCauHoi.id,
+                func.count(),
+                func.sum(case((TnChiTietTraLoi.cau_tra_loi_id.is_not(None), 1), else_=0)),
+            )
+            .join(DmLoaiCauHoi, TnChiTietTraLoi.loai_cau_hoi_id == DmLoaiCauHoi.id)
+            .where(TnChiTietTraLoi.ssid.in_(ssids))
+            .group_by(TnChiTietTraLoi.ssid, DmLoaiCauHoi.id, DmLoaiCauHoi.thu_tu_uu_tien)
+            .order_by(DmLoaiCauHoi.thu_tu_uu_tien.asc())
+        ).all():
+            tong, da_tra_loi = int(tong or 0), int(da_tra_loi or 0)
+            dem[ssid][0] += tong
+            dem[ssid][1] += da_tra_loi
+            if da_tra_loi < tong:
+                buoc_tiep.setdefault(ssid, loai_cau_hoi_id)
+        for ssid, ma_holand, tong_diem in db.execute(
+            select(
+                TnChiTietTraLoi.ssid,
+                TnCauHoiTracNghiem.ma_holand,
+                func.coalesce(func.sum(TnChiTietTraLoi.diem_dat_duoc), 0),
+            )
+            .join(TnCauHoiTracNghiem, TnChiTietTraLoi.cau_hoi_id == TnCauHoiTracNghiem.id)
+            .where(TnChiTietTraLoi.ssid.in_(ssids))
+            .group_by(TnChiTietTraLoi.ssid, TnCauHoiTracNghiem.ma_holand)
+        ).all():
+            diem[ssid][ma_holand] = int(tong_diem or 0)
+    ma_hoat_dong = db.scalars(
+        select(DmNhomTinhCachHolland.ma_nhom).where(DmNhomTinhCachHolland.trang_thai == 1)
+    ).all()
+
+    items = []
+    for phien in phien_list:
+        tong, da_tra_loi = dem.get(phien.ssid, (0, 0))
+        diem_phien = diem.get(phien.ssid, {})
+        # Cùng cách xếp hạng với _thong_ke_phien + _ma_noi_bat.
+        xep_hang = sorted(ma_hoat_dong, key=lambda ma: (-diem_phien.get(ma, 0), ma))
+        items.append(
+            TnPhienLichSuItem(
+                id=phien.id,
+                ssid=phien.ssid,
+                ma_giao_dich=phien.ma_giao_dich,
+                so_cau_hoi=tong,
+                so_da_tra_loi=da_tra_loi,
+                da_xong=tong > 0 and da_tra_loi == tong,
+                loai_cau_hoi_id_tiep=buoc_tiep.get(phien.ssid),
+                ma_noi_bat="".join(ma for ma in xep_hang[:3] if diem_phien.get(ma, 0) > 0),
+                created_at=phien.created_at,
+            )
+        )
+    return TnPhienLichSuPage(items=items, total=total, page=page, page_size=page_size)
 
 
 def _noi_dung_hien_thi(text: str) -> str:

@@ -27,3 +27,7 @@ export function fetchNganhPhuHop(ssid) {
     .get(`/trac-nghiem/phien/${encodeURIComponent(ssid)}/nganh-phu-hop`, { skipLoading: true })
     .then((res) => res.data)
 }
+
+export function fetchLichSuKhaoSat(params, config = {}) {
+  return api.get('/trac-nghiem/phien/lich-su', { ...config, params }).then((res) => res.data)
+}

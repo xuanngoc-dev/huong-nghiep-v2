@@ -83,3 +83,22 @@ class TnPhienKhaoSatPublic(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class TnPhienLichSuItem(BaseModel):
+    id: int
+    ssid: str
+    ma_giao_dich: str | None
+    so_cau_hoi: int
+    so_da_tra_loi: int
+    da_xong: bool
+    loai_cau_hoi_id_tiep: int | None = None
+    ma_noi_bat: str
+    created_at: datetime
+
+
+class TnPhienLichSuPage(BaseModel):
+    items: list[TnPhienLichSuItem]
+    total: int
+    page: int
+    page_size: int
