@@ -43,7 +43,10 @@ def get_current_user(
 
 def get_admin_user(user: NguoiDung = Depends(get_current_user)) -> NguoiDung:
     if user.vai_tro != 1:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Chỉ quản trị viên được quản lý tài liệu.")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Chỉ quản trị viên mới được thực hiện thao tác này.",
+        )
     return user
 
 

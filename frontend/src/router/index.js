@@ -128,6 +128,12 @@ const router = createRouter({
           meta: { title: 'Hồ sơ của tôi', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'he-thong/quan-ly-tai-khoan',
+          name: 'quan-ly-tai-khoan',
+          component: () => import('@/views/admin/he-thong/QuanLyTaiKhoan.vue'),
+          meta: { title: 'Quản lý tài khoản', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'danh-muc/tinh-thanh',
           name: 'tinh-thanh',
           component: () => import('@/views/admin/danh-muc/TinhThanh.vue'),

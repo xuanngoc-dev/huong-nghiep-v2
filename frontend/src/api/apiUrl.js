@@ -1,11 +1,10 @@
-const LOCAL_API = 'http://127.0.0.1:3060/api/v1'
+const DEFAULT_API = 'https://huongnghiepapi.dtsgroup.com.vn/api/v1'
 
-/** Base URL của API, không có dấu / cuối. Dev mặc định gọi thẳng backend. */
+/** Base URL của API, không có dấu / cuối. */
 export function apiBaseUrl() {
   const configured = String(import.meta.env.VITE_API_BASE_URL || '').trim()
   if (configured) return configured.replace(/\/$/, '')
-  if (import.meta.env.DEV) return LOCAL_API
-  return '/api/v1'
+  return DEFAULT_API
 }
 
 /** Origin của API khi base là URL tuyệt đối. Rỗng khi dùng đường dẫn tương đối. */

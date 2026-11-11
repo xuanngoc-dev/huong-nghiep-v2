@@ -28,6 +28,7 @@ from app.api.v1.endpoints import (
     health,
     ho_so,
     kiem_tra_du_lieu,
+    nguoi_dung,
     tai_lieu,
     thu_vien,
     tn_cau_hoi,
@@ -37,6 +38,7 @@ from app.api.v1.endpoints import (
 api_router = APIRouter()
 api_router.include_router(health.router, tags=["health"])
 api_router.include_router(auth.router)
+api_router.include_router(nguoi_dung.router)
 api_router.include_router(ho_so.router)
 api_router.include_router(dm_tinh_thanh.router)
 api_router.include_router(dm_dan_toc.router)

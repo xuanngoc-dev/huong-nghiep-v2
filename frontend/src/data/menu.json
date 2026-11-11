@@ -169,6 +169,19 @@
       ]
     },
     {
+      "header": "HỆ THỐNG",
+      "tooltip": "Quản trị hệ thống và tài khoản",
+      "abbr": "HT",
+      "items": [
+        {
+          "index": "/admin/he-thong/quan-ly-tai-khoan",
+          "title": "Quản lý tài khoản",
+          "tooltip": "Thêm, sửa, xóa tài khoản người dùng",
+          "icon": "UserFilled"
+        }
+      ]
+    },
+    {
       "header": "DANH MỤC",
       "tooltip": "Các danh mục dùng chung của hệ thống",
       "abbr": "DM",
