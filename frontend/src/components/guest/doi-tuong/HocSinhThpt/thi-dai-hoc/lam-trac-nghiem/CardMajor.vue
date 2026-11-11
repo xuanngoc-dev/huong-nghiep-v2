@@ -162,21 +162,72 @@ watch(() => props.chon, () => nextTick(dongBoChon))
 
 <style scoped>
 .card-major {
+  /* Bảng màu của card, cùng tông với --app-primary (#1f7a4d). */
+  --cm-primary: #1f7a4d;
+  --cm-primary-deep: #145c38;
+  --cm-surface-start: #e6f3ec;
+  --cm-surface-mid: #eef6f1;
+  --cm-surface-end: #fbfdfc;
+  --cm-border: #d3e4da;
+  --cm-text: #1f2d26;
+  --cm-text-muted: #4a5f54;
+  --cm-shadow: rgba(20, 70, 45, 0.08);
+  --cm-shadow-hover: rgba(20, 70, 45, 0.16);
+
   position: relative;
   display: flex;
   margin: 0;
   min-height: 168px;
   padding: 14px;
   overflow: hidden;
-  border: 1px solid #c5d5cc;
-  border-radius: 10px;
-  background: linear-gradient(90deg, #cfffe5 0%, #cfe0d7 52%, #f4f8f6 80%);
-  box-shadow: 0 6px 16px rgba(28, 43, 35, 0.07);
+  border: 1px solid var(--cm-border);
+  border-radius: 12px;
+  background: linear-gradient(
+    100deg,
+    var(--cm-surface-start) 0%,
+    var(--cm-surface-mid) 50%,
+    var(--cm-surface-end) 82%
+  );
+  box-shadow: 0 4px 14px var(--cm-shadow);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* Viền nhấn bên trái, hiện dần khi hover / được chọn. */
+.card-major::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  width: 4px;
+  background: linear-gradient(180deg, var(--cm-primary), var(--cm-primary-deep));
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.3s ease;
+}
+
+.card-major:hover,
+.card-major:focus-within {
+  border-color: color-mix(in srgb, var(--cm-primary) 45%, var(--cm-border));
+  box-shadow: 0 12px 28px var(--cm-shadow-hover);
+  transform: translateY(-4px);
+}
+
+.card-major:hover::before,
+.card-major:focus-within::before,
+.card-major.is-selected::before {
+  transform: scaleY(1);
 }
 
 .card-major.is-selected {
-  border-color: #0c5c34;
-  box-shadow: 0 0 0 2px #0c5c34;
+  border-color: var(--cm-primary);
+  box-shadow:
+    0 0 0 2px var(--cm-primary),
+    0 8px 22px var(--cm-shadow-hover);
 }
 
 .card-major__image {
@@ -196,14 +247,34 @@ watch(() => props.chon, () => nextTick(dongBoChon))
   mask-repeat: no-repeat;
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
+  opacity: 0.92;
+  transform-origin: right center;
+  transition:
+    transform 0.5s ease,
+    opacity 0.3s ease;
+}
+
+.card-major:hover .card-major__image {
+  opacity: 1;
+  transform: scale(1.05);
 }
 
 .card-major__shade {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: linear-gradient(90deg, rgba(16, 62, 42, 0.16) 0%, rgba(16, 62, 42, 0.1) 46%, transparent 70%);
+  background: linear-gradient(
+    90deg,
+    rgba(20, 70, 45, 0.08) 0%,
+    rgba(20, 70, 45, 0.04) 46%,
+    transparent 70%
+  );
   pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.card-major:hover .card-major__shade {
+  opacity: 0.6;
 }
 
 .card-major--co-anh :is(.card-major__name, .card-major__desc) {
@@ -254,13 +325,21 @@ watch(() => props.chon, () => nextTick(dongBoChon))
   display: block;
   width: 18px;
   height: 18px;
-  border: 2px solid #0c5c34;
+  border: 2px solid var(--cm-primary);
   border-radius: 4px;
   background: #fff;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.card-major__check:hover .card-major__mark,
+.card-major__check input:focus-visible + .card-major__mark {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cm-primary) 22%, transparent);
 }
 
 .card-major.is-selected .card-major__mark {
-  background: #0c5c34;
+  background: var(--cm-primary);
 }
 
 .card-major.is-selected .card-major__mark::after {
@@ -278,17 +357,22 @@ watch(() => props.chon, () => nextTick(dongBoChon))
   flex: 1;
   min-width: 0;
   margin: 0;
-  color: #0c5c34;
+  color: var(--cm-primary-deep);
   font-size: 1.15rem;
   font-weight: 700;
   line-height: 1.35;
+  transition: color 0.2s ease;
+}
+
+.card-major:hover .card-major__name {
+  color: var(--cm-primary);
 }
 
 .card-major__desc {
   display: -webkit-box;
   margin: 8px 0 0;
   overflow: hidden;
-  color: #1c2836;
+  color: var(--cm-text);
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -317,12 +401,12 @@ watch(() => props.chon, () => nextTick(dongBoChon))
 }
 
 .card-major__fact dt {
-  color: #31483d;
+  color: var(--cm-text-muted);
   font-weight: 600;
 }
 
 .card-major__fact dd {
-  color: #121a28;
+  color: var(--cm-text);
   font-weight: 500;
 }
 
@@ -335,6 +419,31 @@ watch(() => props.chon, () => nextTick(dongBoChon))
 
 .card-major__footer :deep(.el-button) {
   margin: 0;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* Hover cả card thì nút "Khám phá ngay" chuyển sang dạng đặc. */
+.card-major:hover .card-major__footer :deep(.el-button) {
+  border-color: var(--cm-primary);
+  background-color: var(--cm-primary);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-major,
+  .card-major::before,
+  .card-major__image {
+    transition: none;
+  }
+
+  .card-major:hover,
+  .card-major:focus-within,
+  .card-major:hover .card-major__image {
+    transform: none;
+  }
 }
 
 </style>

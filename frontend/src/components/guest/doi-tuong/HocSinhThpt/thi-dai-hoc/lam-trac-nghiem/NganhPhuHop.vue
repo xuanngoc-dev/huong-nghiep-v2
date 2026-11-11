@@ -19,6 +19,9 @@ import { noiMucLuong } from '@/utils/capTenGiaTri'
 const ANH_NHOM = { R: anhR, I: anhI, A: anhA, S: anhS, E: anhE, C: anhC }
 const SO_NGANH_HIEN = 4
 const SO_NHOM_HIEN = 3
+const SO_NHOM_TOP = 3
+// Thứ tự lục giác Holland, giữ cố định trên biểu đồ radar.
+const THU_TU_HOLLAND = 'RIASEC'
 const SO_SANH_TOI_DA = 3
 const TIEU_CHI_SO_SANH = [
   { id: 'mo_ta', ten: 'Mô tả/ngành học' },
@@ -69,6 +72,26 @@ const nhomTheoDiem = computed(() =>
   [...(duLieu.value?.nhom || [])].sort((a, b) => b.diem - a.diem || a.ma_nhom.localeCompare(b.ma_nhom)),
 )
 const nhomCaoNhat = computed(() => nhomTheoDiem.value[0] || null)
+const nhomTop = computed(() => nhomTheoDiem.value.slice(0, SO_NHOM_TOP))
+const nhomBieuDo = computed(() =>
+  [...(duLieu.value?.nhom || [])].sort((a, b) => {
+    const viTri = (ma) => {
+      const index = THU_TU_HOLLAND.indexOf(ma)
+      return index < 0 ? THU_TU_HOLLAND.length : index
+    }
+    return viTri(a.ma_nhom) - viTri(b.ma_nhom) || a.ma_nhom.localeCompare(b.ma_nhom)
+  }),
+)
+const viTriNoiBat = computed(() => {
+  const maTop = nhomTop.value.map((item) => item.ma_nhom)
+  return nhomBieuDo.value.flatMap((item, index) => (maTop.includes(item.ma_nhom) ? [index] : []))
+})
+
+function tyLeDiem(nhom) {
+  const caoNhat = nhomCaoNhat.value?.diem || 0
+  if (caoNhat <= 0) return 0
+  return Math.round((nhom.diem / caoNhat) * 100)
+}
 const anhNhomHong = ref(false)
 const anhNhomCao = computed(() => {
   const ma = nhomCaoNhat.value?.ma_nhom
@@ -298,7 +321,7 @@ watch(ssid, taiNganh, { immediate: true })
 watch(nhomCaoNhat, () => {
   anhNhomHong.value = false
 })
-watch(nhomTheoDiem, () => nextTick(doMoTa))
+watch(nhomTop, () => nextTick(doMoTa))
 watch(bang, (el) => {
   if (!quanSatBang) quanSatBang = new ResizeObserver(() => doMoTa())
   quanSatBang.disconnect()
@@ -352,44 +375,54 @@ onBeforeUnmount(() => {
             </div>
           </article>
 
-          <div v-if="nhomTheoDiem.length" class="row g-3 profile">
-            <div class="col-12 col-md-4">
-              <article class="card h-100 profile__chart-card">
-                <header class="card-header">Điểm Holland</header>
-                <div class="card-body d-flex align-items-center justify-content-center">
+          <div v-if="nhomTop.length" class="row g-3 profile">
+            <div class="col-12 col-lg-5">
+              <article class="profile__panel profile__chart-card">
+                <header class="profile__head">
+                  <h3 class="profile__title">Biểu đồ Holland</h3>
+                  <p class="profile__sub">Đủ 6 nhóm, điểm đậm là 3 nhóm nổi bật</p>
+                </header>
+                <div class="profile__chart">
                   <BieuDoRadar
-                    :height="320"
-                    :categories="nhomTheoDiem.map((item) => item.ten_nhom)"
-                    :values="nhomTheoDiem.map((item) => item.diem)"
+                    :height="300"
+                    :categories="nhomBieuDo.map((item) => item.ten_nhom)"
+                    :values="nhomBieuDo.map((item) => item.diem)"
+                    :noi-bat="viTriNoiBat"
                     series-name="Điểm Holland"
                   />
                 </div>
               </article>
             </div>
-            <div class="col-12 col-md-8">
-              <article ref="bang" class="card h-100 profile__table">
-              <table>
-                <colgroup>
-                  <col class="col-stt" />
-                  <col class="col-name" />
-                  <col />
-                  <col class="col-score" />
-                  <col class="col-action" />
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th>STT</th>
-                    <th>Tên nhóm</th>
-                    <th>Mô tả</th>
-                    <th class="profile__score">Số điểm</th>
-                    <th>Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(item, index) in nhomTheoDiem" :key="item.ma_nhom">
-                    <td>{{ index + 1 }}</td>
-                    <td>[{{ item.ma_nhom }}]-{{ item.ten_nhom }}</td>
-                    <td>
+            <div class="col-12 col-lg-7">
+              <article ref="bang" class="profile__panel">
+                <header class="profile__head">
+                  <h3 class="profile__title">Top {{ nhomTop.length }} nhóm nổi bật</h3>
+                  <p class="profile__sub">Chọn một nhóm để xem các ngành phù hợp</p>
+                </header>
+                <ol class="rank-list">
+                  <li
+                    v-for="(item, index) in nhomTop"
+                    :key="item.ma_nhom"
+                    class="rank-item"
+                    :class="[`rank-item--${index + 1}`, { 'is-active': maDangChon === item.ma_nhom }]"
+                  >
+                    <span class="rank-item__no" aria-hidden="true">{{ index + 1 }}</span>
+                    <div class="rank-item__main">
+                      <div class="rank-item__heading">
+                        <span class="rank-item__code">{{ item.ma_nhom }}</span>
+                        <h4 class="rank-item__name">{{ item.ten_nhom }}</h4>
+                        <span class="rank-item__score">{{ item.diem }} điểm</span>
+                      </div>
+                      <div
+                        class="rank-item__bar"
+                        role="progressbar"
+                        :aria-valuenow="item.diem"
+                        aria-valuemin="0"
+                        :aria-valuemax="nhomCaoNhat?.diem || 0"
+                        :aria-label="`Điểm nhóm ${item.ten_nhom}`"
+                      >
+                        <span :style="{ width: `${tyLeDiem(item)}%` }" />
+                      </div>
                       <el-tooltip
                         :content="item.mo_ta || ''"
                         placement="top"
@@ -397,25 +430,21 @@ onBeforeUnmount(() => {
                         :show-after="200"
                         popper-class="profile-desc-tip"
                       >
-                        <p :ref="(el) => ganMoTa(item.ma_nhom, el)" class="profile__desc">
-                          {{ item.mo_ta || '—' }}
+                        <p :ref="(el) => ganMoTa(item.ma_nhom, el)" class="rank-item__desc">
+                          {{ item.mo_ta || 'Chưa có mô tả cho nhóm này.' }}
                         </p>
                       </el-tooltip>
-                    </td>
-                    <td class="profile__score">{{ item.diem }}</td>
-                    <td>
-                      <button
-                        type="button"
-                        class="btn btn-sm"
-                        :class="maDangChon === item.ma_nhom ? 'btn-success' : 'btn-outline-success'"
-                        @click="xemNganh(item.ma_nhom)"
-                      >
-                        {{ maDangChon === item.ma_nhom ? 'Đang xem' : 'Xem ngành' }}
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                    </div>
+                    <button
+                      type="button"
+                      class="rank-item__action"
+                      :aria-pressed="maDangChon === item.ma_nhom"
+                      @click="xemNganh(item.ma_nhom)"
+                    >
+                      {{ maDangChon === item.ma_nhom ? 'Đang xem' : 'Xem ngành' }}
+                    </button>
+                  </li>
+                </ol>
               </article>
             </div>
           </div>
@@ -633,85 +662,229 @@ onBeforeUnmount(() => {
 }
 
 .profile {
+  --pf-primary: #1f7a4d;
+  --pf-primary-deep: #145c38;
+  --pf-soft: #eaf5ef;
+  --pf-border: #dfeae3;
+  --pf-text: #1f2d26;
+  --pf-muted: #5f7268;
+
   margin-top: 28px;
 }
 
-.profile__chart-card,
-.profile__table {
-  border-color: #e3ebe6;
-  background: #f6faf7;
-  box-shadow: 0 8px 22px rgba(28, 43, 35, 0.08);
+.profile__panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 18px 20px;
+  border: 1px solid var(--pf-border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(20, 70, 45, 0.06);
 }
 
-.profile__chart-card .card-header {
-  color: #121a28;
-  font-weight: 500;
-  background: #f4f7fb;
-  border-bottom-color: #d5dee8;
+.profile__head {
+  margin-bottom: 12px;
 }
 
-.profile__table {
+.profile__title {
+  margin: 0;
+  color: var(--pf-text);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.profile__sub {
+  margin: 2px 0 0;
+  color: var(--pf-muted);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.profile__chart {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.rank-list {
+  display: grid;
+  flex: 1;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rank-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--pf-border);
+  border-radius: 12px;
+  background: #fbfdfc;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.rank-item:hover {
+  border-color: color-mix(in srgb, var(--pf-primary) 35%, var(--pf-border));
+  box-shadow: 0 4px 12px rgba(20, 70, 45, 0.08);
+}
+
+.rank-item.is-active {
+  border-color: var(--pf-primary);
+  background: var(--pf-soft);
+}
+
+.rank-item__no {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #eef2f0;
+  color: var(--pf-muted);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.rank-item--1 .rank-item__no {
+  background: var(--pf-primary);
+  color: #fff;
+}
+
+.rank-item--2 .rank-item__no {
+  background: #cfe7d9;
+  color: var(--pf-primary-deep);
+}
+
+.rank-item--3 .rank-item__no {
+  background: #e3f0e8;
+  color: var(--pf-primary-deep);
+}
+
+.rank-item__main {
   min-width: 0;
-  overflow-x: auto;
 }
 
-.profile__table table {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
-  color: #162033;
-  font-weight: 400;
+.rank-item__heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.col-stt { width: 44px; }
-.col-name { width: 22%; }
-.col-score { width: 72px; }
-.col-action { width: 108px; }
-
-.profile__table th,
-.profile__table td {
-  padding: 10px 12px;
-  border-bottom: 1px solid #d5dee8;
-  text-align: left;
-  vertical-align: top;
+.rank-item__code {
+  flex: 0 0 auto;
+  padding: 1px 8px;
+  border-radius: 6px;
+  background: var(--pf-soft);
+  color: var(--pf-primary-deep);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
-.profile__table th {
-  color: #121a28;
-  font-weight: 500;
-  background: #f4f7fb;
+.rank-item.is-active .rank-item__code {
+  background: #fff;
 }
 
-.profile__table td:first-child,
-.profile__table th:first-child,
-.profile__score {
-  text-align: center;
-  white-space: nowrap;
-}
-
-.profile__table th:nth-child(4),
-.profile__table th:last-child {
-  text-align: center;
-}
-
-.profile__table td:last-child {
-  text-align: center;
-}
-
-.profile__table .btn {
-  padding: 2px 8px;
-  font-size: 12px;
-  white-space: nowrap;
-}
-
-.profile__desc {
-  display: -webkit-box;
-  width: 100%;
+.rank-item__name {
+  flex: 1;
+  min-width: 0;
   margin: 0;
   overflow: hidden;
+  color: var(--pf-text);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rank-item__score {
+  flex: 0 0 auto;
+  color: var(--pf-primary-deep);
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.rank-item__bar {
+  height: 6px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8efeb;
+}
+
+.rank-item__bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #4fa877, var(--pf-primary));
+  transition: width 0.5s ease;
+}
+
+.rank-item__desc {
+  display: -webkit-box;
+  margin: 8px 0 0;
+  overflow: hidden;
+  color: var(--pf-muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-  line-height: 1.45;
+  line-clamp: 2;
+}
+
+.rank-item__action {
+  padding: 6px 12px;
+  border: 1px solid var(--pf-primary);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--pf-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.rank-item__action:hover,
+.rank-item.is-active .rank-item__action {
+  background: var(--pf-primary);
+  color: #fff;
+}
+
+.rank-item__action:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--pf-primary) 40%, transparent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 575.98px) {
+  .profile__panel {
+    padding: 14px;
+  }
+
+  .rank-item {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 10px 12px;
+  }
+
+  .rank-item__action {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
 }
 
 .major-list {
