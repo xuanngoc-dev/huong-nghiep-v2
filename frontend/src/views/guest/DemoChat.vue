@@ -4,7 +4,7 @@ defineOptions({ name: 'DemoChat' })
 </script>
 
 <template>
-  <section class="demo-chat">
+  <section class="demo-chat container-fluid px-0">
     <div class="demo-chat__shell">
       <header class="demo-chat__header">
         <div class="demo-chat__identity">

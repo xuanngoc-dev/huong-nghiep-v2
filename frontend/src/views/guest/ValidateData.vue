@@ -166,21 +166,23 @@ function tieuDeKhoi(khoi, index, nhanKhoi) {
 <template>
   <section v-loading="dangTaiDanhSach || dangTaiNoiDung" class="validate-data">
     <div class="container-fluid">
-      <header class="validate-data__head">
-        <div>
+      <header class="validate-data__head row g-3 align-items-end">
+        <div class="col-lg">
           <h1>Kiểm tra dữ liệu</h1>
           <p>Chọn trường để xem thông tin tuyển sinh, phương thức, ngành, điểm quy đổi và điểm ưu tiên, khuyến khích.</p>
         </div>
-        <el-select
-          v-model="tenTep"
-          class="school-select"
-          filterable
-          clearable
-          placeholder="Chọn trường"
-          no-data-text="Chưa có file tuyển sinh"
-        >
-          <el-option v-for="item in danhSach" :key="item.ten_tep" :label="nhanTruong(item)" :value="item.ten_tep" />
-        </el-select>
+        <div class="col-lg-5 col-xl-4">
+          <el-select
+            v-model="tenTep"
+            class="w-100"
+            filterable
+            clearable
+            placeholder="Chọn trường"
+            no-data-text="Chưa có file tuyển sinh"
+          >
+            <el-option v-for="item in danhSach" :key="item.ten_tep" :label="nhanTruong(item)" :value="item.ten_tep" />
+          </el-select>
+        </div>
       </header>
 
       <el-alert v-if="loi" class="validate-data__alert" :title="loi" type="error" :closable="false" show-icon />
@@ -222,8 +224,8 @@ function tieuDeKhoi(khoi, index, nhanKhoi) {
           </el-tab-pane>
 
           <el-tab-pane lazy :label="`Theo phương thức (${thongKe.soPhuongThuc})`" name="phuong-thuc">
-            <div class="work">
-              <aside class="picker">
+            <div class="row g-3 align-items-start">
+              <aside class="picker col-lg-4 col-xl-3">
                 <el-input v-model="tuKhoaPhuongThuc" clearable placeholder="Tìm phương thức" />
                 <p v-if="!nhomLoc.length" class="empty-note">Không có phương thức khớp.</p>
                 <div v-else class="picker__list">
@@ -241,47 +243,49 @@ function tieuDeKhoi(khoi, index, nhanKhoi) {
                 </div>
               </aside>
 
-              <div v-if="nhomDangChon" class="detail">
-                <h2>{{ nhomDangChon.ten }}</h2>
-                <p class="detail__lead">{{ [nhomDangChon.ma, nhomDangChon.loai].filter(Boolean).join(' · ') }}</p>
-                <el-alert
-                  v-if="nhomDangChon.apDung.length > 1 && !khacNhau.length"
-                  title="Các mục chính giống nhau ở mọi ngành trong phương thức này."
-                  type="success"
-                  :closable="false"
-                  show-icon
-                />
-                <el-alert
-                  v-else-if="khacNhau.length"
-                  :title="`Khác nhau theo ngành: ${khacNhau.join(', ')}`"
-                  type="info"
-                  :closable="false"
-                  show-icon
-                />
-                <el-input v-model="tuKhoaApDung" class="detail__search" clearable placeholder="Lọc ngành trong phương thức" />
-                <div class="picker__list picker__list--majors">
-                  <button
-                    v-for="item in apDungLoc"
-                    :key="item.khoa"
-                    type="button"
-                    :class="{ 'is-active': item.khoa === khoaApDung }"
-                    @click="khoaApDung = item.khoa"
-                  >
-                    <strong>{{ tenNganh(item.nganh) }}</strong>
-                    <small>{{ maNganh(item.nganh) || item.nganh.ten_nganh }}</small>
-                    <span>
-                      Chỉ tiêu {{ hienSo(item.phuongThuc.chi_tieu_phuong_thuc) }} · Điểm chuẩn {{ hienSo(item.phuongThuc.diem_chuan) }} · Điểm sàn {{ hienSo(item.phuongThuc.diem_san) }}
-                    </span>
-                  </button>
+              <div class="col-lg-8 col-xl-9">
+                <div v-if="nhomDangChon" class="detail">
+                  <h2>{{ nhomDangChon.ten }}</h2>
+                  <p class="detail__lead">{{ [nhomDangChon.ma, nhomDangChon.loai].filter(Boolean).join(' · ') }}</p>
+                  <el-alert
+                    v-if="nhomDangChon.apDung.length > 1 && !khacNhau.length"
+                    title="Các mục chính giống nhau ở mọi ngành trong phương thức này."
+                    type="success"
+                    :closable="false"
+                    show-icon
+                  />
+                  <el-alert
+                    v-else-if="khacNhau.length"
+                    :title="`Khác nhau theo ngành: ${khacNhau.join(', ')}`"
+                    type="info"
+                    :closable="false"
+                    show-icon
+                  />
+                  <el-input v-model="tuKhoaApDung" class="detail__search" clearable placeholder="Lọc ngành trong phương thức" />
+                  <div class="picker__list picker__list--majors">
+                    <button
+                      v-for="item in apDungLoc"
+                      :key="item.khoa"
+                      type="button"
+                      :class="{ 'is-active': item.khoa === khoaApDung }"
+                      @click="khoaApDung = item.khoa"
+                    >
+                      <strong>{{ tenNganh(item.nganh) }}</strong>
+                      <small>{{ maNganh(item.nganh) || item.nganh.ten_nganh }}</small>
+                      <span>
+                        Chỉ tiêu {{ hienSo(item.phuongThuc.chi_tieu_phuong_thuc) }} · Điểm chuẩn {{ hienSo(item.phuongThuc.diem_chuan) }} · Điểm sàn {{ hienSo(item.phuongThuc.diem_san) }}
+                      </span>
+                    </button>
+                  </div>
+                  <NoiDungPhuongThuc v-if="banDangChon" :phuong-thuc="banDangChon.phuongThuc" />
                 </div>
-                <NoiDungPhuongThuc v-if="banDangChon" :phuong-thuc="banDangChon.phuongThuc" />
               </div>
             </div>
           </el-tab-pane>
 
           <el-tab-pane lazy :label="`Theo ngành (${thongKe.soNganh})`" name="nganh">
-            <div class="work">
-              <aside class="picker">
+            <div class="row g-3 align-items-start">
+              <aside class="picker col-lg-4 col-xl-3">
                 <el-input v-model="tuKhoaNganh" clearable placeholder="Tìm ngành, mã ngành, mã xét tuyển" />
                 <p v-if="!nganhLoc.length" class="empty-note">Không có ngành khớp.</p>
                 <div v-else class="picker__list">
@@ -299,34 +303,36 @@ function tieuDeKhoi(khoi, index, nhanKhoi) {
                 </div>
               </aside>
 
-              <div v-if="nganhDangChon" class="detail">
-                <h2>{{ tenNganh(nganhDangChon.nganh) }}</h2>
-                <dl class="meta">
-                  <div v-for="key in KHOA_NGANH_META" :key="key">
-                    <dt>{{ nhan(key) }}</dt>
-                    <dd>{{ hienSo(nganhDangChon.nganh[key]) }}</dd>
-                  </div>
-                </dl>
-                <article class="extra-block">
-                  <h3>Điều kiện ngành</h3>
-                  <KhoiDuLieu :value="nganhDangChon.nganh.dieu_kien_nganh" />
-                </article>
-                <article v-if="coGiaTri(nganhConLai)" class="extra-block">
-                  <h3>Thông tin khác của ngành</h3>
-                  <KhoiDuLieu :value="nganhConLai" />
-                </article>
-                <h3 class="detail__methods">Phương thức của ngành ({{ phuongThucCuaNganh.length }})</h3>
-                <el-collapse v-if="phuongThucCuaNganh.length" v-model="moPhuongThuc" accordion>
-                  <el-collapse-item
-                    v-for="(phuongThuc, index) in phuongThucCuaNganh"
-                    :key="`${khoaNganh}-${index}`"
-                    :name="String(index)"
-                    :title="`${phuongThuc.ma_phuong_thuc || '—'} · ${phuongThuc.ten_phuong_thuc || 'Phương thức'}`"
-                  >
-                    <NoiDungPhuongThuc v-if="moPhuongThuc === String(index)" :phuong-thuc="phuongThuc" />
-                  </el-collapse-item>
-                </el-collapse>
-                <p v-else class="empty-note">Ngành này chưa có phương thức tuyển sinh.</p>
+              <div class="col-lg-8 col-xl-9">
+                <div v-if="nganhDangChon" class="detail">
+                  <h2>{{ tenNganh(nganhDangChon.nganh) }}</h2>
+                  <dl class="meta">
+                    <div v-for="key in KHOA_NGANH_META" :key="key">
+                      <dt>{{ nhan(key) }}</dt>
+                      <dd>{{ hienSo(nganhDangChon.nganh[key]) }}</dd>
+                    </div>
+                  </dl>
+                  <article class="extra-block">
+                    <h3>Điều kiện ngành</h3>
+                    <KhoiDuLieu :value="nganhDangChon.nganh.dieu_kien_nganh" />
+                  </article>
+                  <article v-if="coGiaTri(nganhConLai)" class="extra-block">
+                    <h3>Thông tin khác của ngành</h3>
+                    <KhoiDuLieu :value="nganhConLai" />
+                  </article>
+                  <h3 class="detail__methods">Phương thức của ngành ({{ phuongThucCuaNganh.length }})</h3>
+                  <el-collapse v-if="phuongThucCuaNganh.length" v-model="moPhuongThuc" accordion>
+                    <el-collapse-item
+                      v-for="(phuongThuc, index) in phuongThucCuaNganh"
+                      :key="`${khoaNganh}-${index}`"
+                      :name="String(index)"
+                      :title="`${phuongThuc.ma_phuong_thuc || '—'} · ${phuongThuc.ten_phuong_thuc || 'Phương thức'}`"
+                    >
+                      <NoiDungPhuongThuc v-if="moPhuongThuc === String(index)" :phuong-thuc="phuongThuc" />
+                    </el-collapse-item>
+                  </el-collapse>
+                  <p v-else class="empty-note">Ngành này chưa có phương thức tuyển sinh.</p>
+                </div>
               </div>
             </div>
           </el-tab-pane>
@@ -386,8 +392,6 @@ function tieuDeKhoi(khoi, index, nhanKhoi) {
 }
 
 .validate-data__head {
-  display: grid;
-  gap: 16px;
   margin-bottom: 16px;
 }
 
@@ -401,10 +405,6 @@ function tieuDeKhoi(khoi, index, nhanKhoi) {
 .empty-note {
   margin: 0;
   color: #5c6b62;
-}
-
-.school-select {
-  width: min(100%, 760px);
 }
 
 .validate-data__alert {
@@ -451,13 +451,6 @@ function tieuDeKhoi(khoi, index, nhanKhoi) {
 .usage-title,
 .detail__search {
   margin-top: 16px;
-}
-
-.work {
-  display: grid;
-  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
-  gap: 16px;
-  align-items: start;
 }
 
 .picker__list {
@@ -540,11 +533,7 @@ function tieuDeKhoi(khoi, index, nhanKhoi) {
   overflow: auto;
 }
 
-@media (max-width: 900px) {
-  .work {
-    grid-template-columns: 1fr;
-  }
-
+@media (max-width: 991.98px) {
   .picker__list,
   .picker__list--majors {
     max-height: 280px;

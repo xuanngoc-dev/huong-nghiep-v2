@@ -1,12 +1,17 @@
 <script setup>
-import { reactive, ref } from 'vue'
+import { onUnmounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
+import { mountGuestBootstrap, unmountGuestBootstrap } from '@/layouts/guest/bootstrap'
 
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
+
+// Trang đăng nhập/đăng ký nằm ngoài GuestLayout nên tự nạp CSS Bootstrap.
+mountGuestBootstrap()
+onUnmounted(unmountGuestBootstrap)
 
 function safePath(value) {
   if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) return ''
@@ -90,66 +95,70 @@ async function onSubmit() {
 </script>
 
 <template>
-  <div class="auth-page auth-page--register">
-    <el-card class="auth-card" shadow="hover">
-      <div class="auth-brand">
-        <el-icon :size="28" color="var(--el-color-primary)"><UserFilled /></el-icon>
-        <h1>Đăng ký</h1>
-        <p>Tạo tài khoản Định hướng nghề</p>
+  <div class="auth-page auth-page--register container-fluid d-flex align-items-center">
+    <div class="row justify-content-center flex-grow-1">
+      <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+        <el-card class="auth-card w-100" shadow="hover">
+          <div class="auth-brand">
+            <el-icon :size="28" color="var(--el-color-primary)"><UserFilled /></el-icon>
+            <h1>Đăng ký</h1>
+            <p>Tạo tài khoản Định hướng nghề</p>
+          </div>
+
+          <el-form
+            ref="formRef"
+            :model="form"
+            :rules="rules"
+            label-position="top"
+            size="large"
+            @submit.prevent="onSubmit"
+          >
+            <el-form-item label="Họ tên" prop="ho_ten">
+              <el-input v-model="form.ho_ten" placeholder="Nguyễn Văn A" clearable />
+            </el-form-item>
+
+            <el-form-item label="Email" prop="email">
+              <el-input v-model="form.email" placeholder="you@example.com" clearable />
+            </el-form-item>
+
+            <el-form-item label="Số điện thoại" prop="so_dien_thoai">
+              <el-input v-model="form.so_dien_thoai" placeholder="Tùy chọn" clearable />
+            </el-form-item>
+
+            <el-form-item label="Mật khẩu" prop="mat_khau">
+              <el-input
+                v-model="form.mat_khau"
+                type="password"
+                placeholder="Tối thiểu 6 ký tự"
+                show-password
+                clearable
+              />
+            </el-form-item>
+
+            <el-form-item label="Xác nhận mật khẩu" prop="xac_nhan_mat_khau">
+              <el-input
+                v-model="form.xac_nhan_mat_khau"
+                type="password"
+                placeholder="Nhập lại mật khẩu"
+                show-password
+                clearable
+                @keyup.enter="onSubmit"
+              />
+            </el-form-item>
+
+            <el-button type="primary" class="submit-btn" :loading="submitting" @click="onSubmit">
+              Tạo tài khoản
+            </el-button>
+          </el-form>
+
+          <p class="auth-footer">
+            Đã có tài khoản?
+            <RouterLink :to="{ name: 'login', query: route.query.redirect ? { redirect: route.query.redirect } : {} }">
+              Đăng nhập
+            </RouterLink>
+          </p>
+        </el-card>
       </div>
-
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-position="top"
-        size="large"
-        @submit.prevent="onSubmit"
-      >
-        <el-form-item label="Họ tên" prop="ho_ten">
-          <el-input v-model="form.ho_ten" placeholder="Nguyễn Văn A" clearable />
-        </el-form-item>
-
-        <el-form-item label="Email" prop="email">
-          <el-input v-model="form.email" placeholder="you@example.com" clearable />
-        </el-form-item>
-
-        <el-form-item label="Số điện thoại" prop="so_dien_thoai">
-          <el-input v-model="form.so_dien_thoai" placeholder="Tùy chọn" clearable />
-        </el-form-item>
-
-        <el-form-item label="Mật khẩu" prop="mat_khau">
-          <el-input
-            v-model="form.mat_khau"
-            type="password"
-            placeholder="Tối thiểu 6 ký tự"
-            show-password
-            clearable
-          />
-        </el-form-item>
-
-        <el-form-item label="Xác nhận mật khẩu" prop="xac_nhan_mat_khau">
-          <el-input
-            v-model="form.xac_nhan_mat_khau"
-            type="password"
-            placeholder="Nhập lại mật khẩu"
-            show-password
-            clearable
-            @keyup.enter="onSubmit"
-          />
-        </el-form-item>
-
-        <el-button type="primary" class="submit-btn" :loading="submitting" @click="onSubmit">
-          Tạo tài khoản
-        </el-button>
-      </el-form>
-
-      <p class="auth-footer">
-        Đã có tài khoản?
-        <RouterLink :to="{ name: 'login', query: route.query.redirect ? { redirect: route.query.redirect } : {} }">
-          Đăng nhập
-        </RouterLink>
-      </p>
-    </el-card>
+    </div>
   </div>
 </template>

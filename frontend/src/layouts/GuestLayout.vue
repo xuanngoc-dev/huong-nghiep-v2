@@ -5,12 +5,7 @@
     <main class="flex-grow-1">
       <RouterView />
     </main>
-    <footer class="border-top bg-white py-4">
-      <div class="container-fluid d-flex flex-column flex-md-row justify-content-between gap-2 small text-secondary">
-        <span>Định hướng nghề</span>
-        <span>Trắc nghiệm tính cách và gợi ý ngành học</span>
-      </div>
-    </footer>
+    <LandingFooter />
     <HoTroNhanh v-if="showAssist" />
     <div v-if="showAssist" class="guest-dock">
       <LenDauTrang />
@@ -24,7 +19,9 @@ import { computed, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import GuestHeader from '@/layouts/guest/GuestHeader.vue'
 import GuestBreadcrumb from '@/layouts/guest/GuestBreadcrumb.vue'
+import LandingFooter from '@/components/guest/landing/LandingFooter.vue'
 import '@/layouts/guest/guest-layout.css'
+import '@/components/guest/landing/landing.css'
 import HoTroNhanh from '@/components/guest/chung/HoTroNhanh.vue'
 import LenDauTrang from '@/components/guest/chung/LenDauTrang.vue'
 import Chatbot from '@/components/guest/chung/Chatbot.vue'

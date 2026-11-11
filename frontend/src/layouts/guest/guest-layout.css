@@ -704,3 +704,15 @@
   font-weight: 400;
   line-height: 1.45;
 }
+
+/* Khung toàn chiều rộng: mọi container-fluid trong layout khách có cùng lề hai bên
+   (20px trên mobile, 40px từ lg) để header, nội dung và footer thẳng hàng. */
+.guest-layout .container-fluid {
+  --bs-gutter-x: 40px;
+}
+
+@media (min-width: 992px) {
+  .guest-layout .container-fluid {
+    --bs-gutter-x: 80px;
+  }
+}

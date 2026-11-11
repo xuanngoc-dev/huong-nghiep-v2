@@ -638,9 +638,7 @@
 
 .auth-page {
   min-height: 100svh;
-  display: grid;
-  place-items: center;
-  padding: 24px;
+  padding-block: 24px;
   background:
     radial-gradient(circle at top left, rgba(31, 122, 77, 0.12), transparent 40%),
     var(--el-bg-color-page);
@@ -653,12 +651,7 @@
 }
 
 .auth-card {
-  width: min(420px, 100%);
-  border-radius: 16px;
-}
-
-.auth-page--register .auth-card {
-  width: min(480px, 100%);
+  border-radius: 8px;
 }
 
 .auth-brand {
@@ -1338,8 +1331,7 @@
 }
 
 .guest-layout .not-found__card {
-  max-width: 520px;
-  margin: 48px auto;
+  margin: 48px 0;
   padding: 36px 24px;
   border: 1px solid rgba(var(--guest-primary-rgb), 0.28);
   border-radius: var(--guest-radius);
