@@ -12,7 +12,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AuthShell: typeof import('./components/guest/auth/AuthShell.vue')['default']
+    BieuDoCot: typeof import('./components/admin/charts/BieuDoCot.vue')['default']
+    BieuDoDuong: typeof import('./components/admin/charts/BieuDoDuong.vue')['default']
     BieuDoRadar: typeof import('./components/guest/BieuDoRadar.vue')['default']
+    BieuDoTron: typeof import('./components/admin/charts/BieuDoTron.vue')['default']
     BuocLamBai: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/BuocLamBai.vue')['default']
     CardMajor: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/CardMajor.vue')['default']
     CardNganhDaoTao: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/CardNganhDaoTao.vue')['default']
@@ -99,6 +102,8 @@ declare module 'vue' {
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTag: typeof import('element-plus/es')['ElTag']
+    ElTimeline: typeof import('element-plus/es')['ElTimeline']
+    ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     HocSinhThcs: typeof import('./components/guest/doi-tuong/HocSinhThcs.vue')['default']
@@ -149,6 +154,7 @@ declare module 'vue' {
     SideMenu: typeof import('./components/SideMenu.vue')['default']
     SinhVien: typeof import('./components/guest/doi-tuong/SinhVien.vue')['default']
     ThanhNienNgoaiTruong: typeof import('./components/guest/doi-tuong/ThanhNienNgoaiTruong.vue')['default']
+    TheThongKe: typeof import('./components/admin/dashboard/TheThongKe.vue')['default']
     ThiDaiHoc: typeof import('./components/guest/doi-tuong/HocSinhThpt/ThiDaiHoc.vue')['default']
     TinTucMoi: typeof import('./components/guest/chung/TinTucMoi.vue')['default']
     TongQuan: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/TongQuan.vue')['default']
