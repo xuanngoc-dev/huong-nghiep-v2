@@ -172,7 +172,7 @@ onUnmounted(() => {
       </div>
 
       <ul
-        class="landing-hero__stats row g-lp row-cols-2 row-cols-lg-4 list-unstyled"
+        class="landing-hero__stats row g-lp row-cols-2 row-cols-lg-4 list-unstyled mt-2"
         aria-label="Nền tảng trong con số"
         data-stagger
       >

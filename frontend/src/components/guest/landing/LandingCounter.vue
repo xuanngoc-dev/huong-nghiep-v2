@@ -4,13 +4,14 @@ import { onMounted, onUnmounted, ref } from 'vue'
 const props = defineProps({
   value: { type: Number, required: true },
   suffix: { type: String, default: '' },
-  duration: { type: Number, default: 1400 },
+  duration: { type: Number, default: 1000 },
 })
 
 const root = ref(null)
 const display = ref(0)
 let observer = null
 let frame = 0
+let staggerItem = null
 
 function run() {
   const start = performance.now()
@@ -23,11 +24,26 @@ function run() {
   frame = requestAnimationFrame(tick)
 }
 
+function onStaggerStart(event) {
+  if (event.target !== staggerItem || event.animationName !== 'lp-rise') return
+  staggerItem.removeEventListener('animationstart', onStaggerStart)
+  run()
+}
+
 onMounted(() => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     display.value = props.value
     return
   }
+
+  // Trong khối data-stagger, phần tử chỉ hiện khi animation lp-rise của nó bắt đầu (sau độ trễ
+  // so le), nên bắt đầu đếm từ lúc đó để số chạy đúng lúc người dùng nhìn thấy.
+  staggerItem = root.value.closest('[data-stagger] > *')
+  if (staggerItem) {
+    staggerItem.addEventListener('animationstart', onStaggerStart)
+    return
+  }
+
   observer = new IntersectionObserver(
     ([entry]) => {
       if (!entry.isIntersecting) return
@@ -41,6 +57,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   observer?.disconnect()
+  staggerItem?.removeEventListener('animationstart', onStaggerStart)
   cancelAnimationFrame(frame)
 })
 </script>
