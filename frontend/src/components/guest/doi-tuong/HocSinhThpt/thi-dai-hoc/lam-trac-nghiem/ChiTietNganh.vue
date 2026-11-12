@@ -248,7 +248,7 @@ async function taiNganhCungNhom(maNhom, maHienTai, lan) {
   dangTaiCungNhom.value = true
   try {
     const data = await fetchNganh(
-      { ma_nhom_nganh: maNhom, trang_thai: 1, page: 1, page_size: 24 },
+      { ma_nhom_nganh: maNhom, trang_thai: 1, page: 1, page_size: 1000 },
       { skipLoading: true },
     )
     if (lan !== lanTai) return

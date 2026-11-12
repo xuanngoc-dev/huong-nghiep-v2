@@ -39,29 +39,24 @@
     <p v-else-if="dangTai" class="truong-dao-tao__status">Đang tải trường đào tạo…</p>
     <KhongCoDuLieu v-else-if="!danhSach.length" text="Chưa có trường đào tạo cho ngành này." />
     <div v-else class="row g-3 truong">
-      <div v-for="item in danhSach" :key="item.ma_truong" class="col-12 col-lg-4">
+      <div v-for="item in danhSach" :key="item.ma_truong" class="col-12 col-md-6 col-lg-4">
         <article class="truong__item" :class="{ 'truong__item--co-anh': anhNen(item) }">
           <span v-if="anhNen(item)" class="truong__bg" :style="styleNen(item)" aria-hidden="true" />
           <p class="truong__code">{{ item.ma_truong }}</p>
           <div class="truong__main">
             <h3>{{ item.ten_truong }}</h3>
-            <p v-if="item.ten_tieng_anh" class="truong__en">{{ item.ten_tieng_anh }}</p>
-            <p v-if="diaDiem(item) || item.loai_co_so" class="truong__meta">
-              {{ [item.loai_co_so, diaDiem(item)].filter(Boolean).join(' · ') }}
-            </p>
-            <p v-if="item.dia_chi_tru_so">{{ item.dia_chi_tru_so }}</p>
-            <p v-if="item.so_chuong_trinh || chiTieu(item.chi_tieu)">
-              <span v-if="item.so_chuong_trinh">{{ item.so_chuong_trinh }} chương trình</span>
-              <span v-if="item.so_chuong_trinh && chiTieu(item.chi_tieu)"> · </span>
-              <span v-if="chiTieu(item.chi_tieu)">Chỉ tiêu {{ chiTieu(item.chi_tieu) }}</span>
-            </p>
-            <p v-if="hrefWebsite(item.website_tuyen_sinh || item.website)" class="truong__web">
-              <a :href="hrefWebsite(item.website_tuyen_sinh || item.website)" target="_blank" rel="noopener noreferrer">
-                {{ item.website_tuyen_sinh || item.website }}
-              </a>
-            </p>
+            <p v-if="item.ten_viet_tat" class="truong__meta">{{ item.ten_viet_tat }}</p>
+            <dl class="truong__info">
+              <div v-for="dong in thongTin(item)" :key="dong.nhan" class="truong__info-row">
+                <dt>{{ dong.nhan }}</dt>
+                <dd>
+                  <a v-if="dong.link" :href="dong.link" target="_blank" rel="noopener noreferrer">{{ dong.giaTri }}</a>
+                  <template v-else>{{ dong.giaTri }}</template>
+                </dd>
+              </div>
+            </dl>
             <div class="truong__actions">
-              <CustomButton plain type="success" @click="diChiTiet(item)">Chi tiết</CustomButton>
+              <CustomButton plain size="small" type="success" @click="diChiTiet(item)">Chi tiết</CustomButton>
             </div>
           </div>
         </article>
@@ -147,13 +142,15 @@ function hrefWebsite(value) {
   return `https://${text}`
 }
 
-function diaDiem(item) {
-  return [item.vung_mien, item.ten_tinh_thanh].filter(Boolean).join(' · ')
-}
-
-function chiTieu(value) {
-  if (value == null || value === '') return ''
-  return Number(value).toLocaleString('vi-VN')
+function thongTin(item) {
+  const website = item.website_tuyen_sinh || item.website
+  return [
+    { nhan: 'Loại', giaTri: [item.loai_co_so, item.loai_hinh].filter(Boolean).join(' · ') },
+    // { nhan: 'Khu vực', giaTri: [item.ten_tinh_thanh, item.vung_mien].filter(Boolean).join(' · ') },
+    { nhan: 'Địa chỉ', giaTri: item.dia_chi_tru_so },
+    { nhan: 'Chương trình', giaTri: item.so_chuong_trinh ? `${item.so_chuong_trinh} chương trình` : '' },
+    { nhan: 'Website', giaTri: website, link: hrefWebsite(website) },
+  ].filter((dong) => dong.giaTri)
 }
 
 function anhNen(item) {
@@ -367,10 +364,10 @@ onMounted(() => {
   height: 100%;
   min-width: 0;
   margin: 0;
-  padding: 16px;
+  padding: 12px;
   overflow: hidden;
   border: 1px solid #c5d5cc;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #f6faf7;
 }
 
@@ -403,7 +400,7 @@ onMounted(() => {
   padding-right: 28px;
 }
 
-.truong__item--co-anh :is(h3, .truong__en, .truong__meta, .truong__main > p) {
+.truong__item--co-anh :is(h3, .truong__meta, .truong__info) {
   width: fit-content;
   max-width: 100%;
   text-shadow: 0 0 10px #fff, 0 0 5px #fff;
@@ -416,11 +413,11 @@ onMounted(() => {
   z-index: 2;
   width: 118px;
   margin: 0;
-  padding: 4px 0;
+  padding: 3px 0;
   background: var(--guest-primary, #0c5c34);
   box-shadow: 0 2px 6px rgba(28, 43, 35, 0.2);
   color: #fff;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 400;
   letter-spacing: 0.04em;
   line-height: 1.2;
@@ -431,35 +428,54 @@ onMounted(() => {
 .truong__item h3 {
   margin: 0;
   color: #0c5c34;
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   font-weight: 700;
   line-height: 1.4;
 }
 
-.truong__en,
-.truong__meta,
-.truong__main > p {
+.truong__meta {
   margin: 4px 0 0;
-  color: #1c2836;
+  color: #3d5c4c;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.truong__info {
+  display: grid;
+  gap: 5px;
+  margin: 10px 0 0;
+  font-size: 0.9375rem;
   line-height: 1.5;
 }
 
-.truong__en {
-  color: #3d5c4c;
+.truong__info-row {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: 10px;
 }
 
-.truong__web {
-  padding-top: 8px;
+.truong__info dt {
+  color: #5a6e63;
+  font-weight: 400;
 }
 
-.truong__actions {
-  margin-top: auto;
-  padding-top: 12px;
+.truong__info dd {
+  margin: 0;
+  color: #1c2836;
+  overflow-wrap: anywhere;
 }
 
-.truong__main a {
+.truong__info a {
   color: #0c5c34;
-  word-break: break-all;
+}
+
+/* Bù lại khoảng đệm phải của .truong__main để nút sát góc phải dưới thẻ. */
+.truong__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  margin-right: -28px;
+  padding-top: 12px;
 }
 
 @media (max-width: 767.98px) {
