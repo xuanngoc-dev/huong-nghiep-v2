@@ -1,5 +1,5 @@
 <template>
-  <article class="card-major h-100" :class="{ 'is-selected': chon, 'card-major--co-anh': anh }">
+  <article class="card-major h-100" :class="{ 'is-selected': chon, 'card-major--co-anh': anh }" @click="khiBamThe">
     <span v-if="anh" class="card-major__image" :style="styleNen" aria-hidden="true" />
     <span class="card-major__shade" aria-hidden="true" />
     <div class="card-major__body">
@@ -157,6 +157,12 @@ function khiChon() {
   nextTick(dongBoChon)
 }
 
+// Bấm vào bất kỳ đâu trên thẻ cũng chọn ngành; ô checkbox tự xử lý qua sự kiện change.
+function khiBamThe(event) {
+  if (event.target.closest('.card-major__check, button, a')) return
+  khiChon()
+}
+
 watch(() => props.chon, () => nextTick(dongBoChon))
 </script>
 
@@ -189,6 +195,8 @@ watch(() => props.chon, () => nextTick(dongBoChon))
     var(--cm-surface-end) 82%
   );
   box-shadow: 0 4px 14px var(--cm-shadow);
+  cursor: pointer;
+  user-select: none;
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,

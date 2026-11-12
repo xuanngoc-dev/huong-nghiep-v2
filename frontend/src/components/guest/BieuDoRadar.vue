@@ -44,7 +44,7 @@ function trucY() {
 
 function kichThuocRadar() {
   const rong = khung.value?.clientWidth || 360
-  return Math.max(44, Math.min(120, Math.round((rong - 180) / 2)))
+  return Math.max(44, Math.min(150, Math.round((rong - 170) / 2)))
 }
 
 function mauNhan() {
@@ -149,7 +149,7 @@ onBeforeUnmount(() => {
 <style scoped>
 .radar-chart {
   width: 100%;
-  max-width: 400px;
+  max-width: 480px;
   margin: 0 auto;
 }
 

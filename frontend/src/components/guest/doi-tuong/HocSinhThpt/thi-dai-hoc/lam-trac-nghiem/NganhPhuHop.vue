@@ -42,7 +42,7 @@
                 </header>
                 <div class="profile__chart">
                   <BieuDoRadar
-                    :height="300"
+                    :height="380"
                     :categories="nhomBieuDo.map((item) => item.ten_nhom)"
                     :values="nhomBieuDo.map((item) => item.diem)"
                     :noi-bat="viTriNoiBat"
@@ -110,11 +110,10 @@
           <p v-if="!duLieu.da_xong" class="holland-note holland-note__text">
             Hãy hoàn thành các phần trắc nghiệm để xem ngành phù hợp.
           </p>
-          <p v-else-if="!duLieu.nganh.length" class="holland-note holland-note__text">
-            Chưa có ngành đào tạo khớp với nhóm tính cách này.
-          </p>
+          <p v-else-if="loiNganh" class="holland-note holland-note__text">{{ loiNganh }}</p>
+          <p v-else-if="dangTaiNganh" class="holland-overview__lead text-center">Đang tải ngành…</p>
           <p v-else-if="!nhomNganhHienThi.length" class="holland-note holland-note__text">
-            Không có nhóm ngành khớp mã {{ maDangChon }}.
+            Chưa có ngành đào tạo khớp mã {{ maDangChon }}.
           </p>
           <template v-else>
             <ul class="major-list">
@@ -136,45 +135,41 @@
                       So sánh
                       <span v-if="maNganhDaChon(nhom).length">({{ maNganhDaChon(nhom).length }}/3)</span>
                     </button>
-                  <el-icon
-                    v-if="nhom.nganh.length > SO_NGANH_HIEN"
-                    class="major-card__more"
-                    :size="22"
-                    role="button"
-                    tabindex="0"
-                    :aria-expanded="!!nhomDaMo[nhom.ma]"
-                    :aria-label="
-                      nhomDaMo[nhom.ma]
-                        ? 'Thu gọn'
-                        : `Xem thêm ${nhom.nganh.length - SO_NGANH_HIEN} ngành`
-                    "
-                    @click="doiMoNhom(nhom.ma)"
-                    @keydown.enter.prevent="doiMoNhom(nhom.ma)"
-                    @keydown.space.prevent="doiMoNhom(nhom.ma)"
-                  >
-                    <ArrowUp v-if="nhomDaMo[nhom.ma]" />
-                    <ArrowDown v-else />
-                  </el-icon>
                   </div>
                 </div>
-                <div class="row g-2">
-                  <div
-                    v-for="nganh in nganhDangXem(nhom)"
-                    :key="nganh.ma_nganh"
-                    class="col-12 col-md-6 col-lg-3"
-                  >
-                    <CardMajor
-                      :ten="nganh.ten_nganh"
-                      :mo-ta="nganh.mo_ta || ''"
-                      :muc-luong="noiMucLuong(nganh.muc_luong_tham_khao, ' · ')"
-                      :thoi-gian="nganh.thoi_gian_dao_tao || ''"
-                      :hinh-anh="nganh.hinh_anh_mo_ta || ''"
-                      :chon="daChonNganh(nhom, nganh)"
-                      @chon="chonNganh(nhom, nganh)"
-                      @kham-pha="khamPhaNganh(nganh.ma_nganh)"
-                    />
+                <el-collapse-transition v-for="phan in phanNganh(nhom)" :key="phan.id">
+                  <div v-show="phan.hien" :class="{ 'major-card__extra': phan.id === 'them' }">
+                    <div class="row g-2">
+                      <div
+                        v-for="(nganh, index) in phan.nganh"
+                        :key="nganh.ma_nganh"
+                        class="col-12 col-md-6 col-lg-3 major-card__item"
+                        :style="{ '--delay': `${Math.min(index, 7) * 40}ms` }"
+                      >
+                        <CardMajor
+                          :ten="nganh.ten_nganh"
+                          :mo-ta="nganh.mo_ta || ''"
+                          :muc-luong="noiMucLuong(nganh.muc_luong_tham_khao, ' · ')"
+                          :thoi-gian="nganh.thoi_gian_dao_tao || ''"
+                          :hinh-anh="nganh.hinh_anh_mo_ta || ''"
+                          :chon="daChonNganh(nhom, nganh)"
+                          @chon="chonNganh(nhom, nganh)"
+                          @kham-pha="khamPhaNganh(nganh.ma_nganh)"
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </el-collapse-transition>
+                <button
+                  v-if="nhom.nganh.length > SO_NGANH_HIEN"
+                  type="button"
+                  class="major-card__more"
+                  :aria-expanded="!!nhomDaMo[nhom.ma]"
+                  @click="doiMoNhom(nhom.ma, $event)"
+                >
+                  {{ nhomDaMo[nhom.ma] ? 'Thu gọn' : `Xem thêm ${nhom.nganh.length - SO_NGANH_HIEN} ngành` }}
+                  <el-icon class="major-card__more-icon" :class="{ 'is-open': nhomDaMo[nhom.ma] }"><ArrowDown /></el-icon>
+                </button>
               </div>
             </li>
             </ul>
@@ -183,9 +178,11 @@
               type="button"
               class="major-list__more"
               :disabled="dangTaiThem"
+              :aria-busy="dangTaiThem"
               @click="taiThemNhom"
             >
-              Xem thêm
+              <el-icon v-if="dangTaiThem" class="is-loading"><Loading /></el-icon>
+              {{ dangTaiThem ? 'Đang tải…' : 'Xem thêm' }}
             </button>
           </template>
 
@@ -225,7 +222,6 @@
         </template>
       </div>
     </div>
-    <LoadingSuyNghi :visible="dangTaiThem" text="Đang tải thêm nhóm ngành…" />
   </section>
 </template>
 
@@ -233,9 +229,9 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { fetchNganh } from '@/api/nganhDaoTao'
 import { fetchNganhPhuHop, fetchPhienLamBai } from '@/api/phienKhaoSat'
 import BieuDoRadar from '@/components/guest/BieuDoRadar.vue'
-import LoadingSuyNghi from '@/components/guest/LoadingSuyNghi.vue'
 import CardMajor from './CardMajor.vue'
 import anhA from '@/assets/guest/holland/a.svg'
 import anhC from '@/assets/guest/holland/c.svg'
@@ -248,8 +244,8 @@ import BuocLamBai from './BuocLamBai.vue'
 import { noiMucLuong } from '@/utils/capTenGiaTri'
 
 const ANH_NHOM = { R: anhR, I: anhI, A: anhA, S: anhS, E: anhE, C: anhC }
-const SO_NGANH_HIEN = 4
 const SO_NHOM_HIEN = 3
+const SO_NGANH_HIEN = 4
 const SO_NHOM_TOP = 3
 // Thứ tự lục giác Holland, giữ cố định trên biểu đồ radar.
 const THU_TU_HOLLAND = 'RIASEC'
@@ -277,8 +273,8 @@ const duLieu = ref(null)
 const maDangXem = ref('')
 const soNhomHien = ref(SO_NHOM_HIEN)
 const dangTaiThem = ref(false)
-const nhomDaMo = ref({})
 const nganhDaChon = ref({})
+const nhomDaMo = ref({})
 const soSanhMo = ref(false)
 const nganhSoSanh = ref([])
 const bang = ref(null)
@@ -330,27 +326,65 @@ const anhNhomCao = computed(() => {
   return ANH_NHOM[ma] || anhMacDinh
 })
 const maDangChon = computed(() => maDangXem.value || nhomCaoNhat.value?.ma_nhom || '')
+const nganhTheoMa = ref({})
+const dangTaiNganh = ref(false)
+const loiNganh = ref('')
+let lanTaiNganh = 0
+
+function maHollandCua(nganh) {
+  return (nganh.ma_holand || []).map((ma) => String(ma).toUpperCase())
+}
+
+// Điểm của ngành theo kết quả trắc nghiệm: cộng điểm các nhóm Holland mà ngành có.
+function diemNganh(nganh) {
+  const diemTheoMa = new Map(nhomTheoDiem.value.map((nhom) => [nhom.ma_nhom, nhom.diem]))
+  return maHollandCua(nganh).reduce((tong, ma) => tong + (diemTheoMa.get(ma) || 0), 0)
+}
+
+// Ngành có mã Holland đang xem, gom các ngành cùng nhóm ngành vào một card.
 const nhomNganhHienThi = computed(() => {
   const ma = maDangChon.value
-  if (!ma) return []
+  const danhSach = nganhTheoMa.value[ma]
+  if (!ma || !danhSach) return []
   const groups = new Map()
-  for (const item of duLieu.value?.nganh || []) {
-    if (!item.ma_holand?.includes(ma)) continue
+  for (const item of danhSach) {
     const key = item.ma_nhom_nganh || item.ten_nhom_nganh
     if (!groups.has(key)) {
-      groups.set(key, { ma: key, ten: item.ten_nhom_nganh, nganh: [] })
+      groups.set(key, { ma: key, ten: item.ten_nhom_nganh, nganh: [], diem: 0 })
     }
-    groups.get(key).nganh.push(item)
+    const group = groups.get(key)
+    group.nganh.push(item)
+    group.diem = Math.max(group.diem, diemNganh(item))
   }
-  return [...groups.values()].map((group) => ({
-    ...group,
-    nganh: [...group.nganh].sort((a, b) => {
-      const uuA = a.ma_holand?.[0] === ma ? 0 : 1
-      const uuB = b.ma_holand?.[0] === ma ? 0 : 1
-      return uuA - uuB || a.ten_nganh.localeCompare(b.ten_nganh, 'vi')
-    }),
-  }))
+  return [...groups.values()]
+    .map((group) => ({
+      ...group,
+      nganh: [...group.nganh].sort((a, b) => {
+        const uuA = maHollandCua(a)[0] === ma ? 0 : 1
+        const uuB = maHollandCua(b)[0] === ma ? 0 : 1
+        return uuA - uuB || diemNganh(b) - diemNganh(a) || a.ten_nganh.localeCompare(b.ten_nganh, 'vi')
+      }),
+    }))
+    .sort((a, b) => b.diem - a.diem || b.nganh.length - a.nganh.length || a.ten.localeCompare(b.ten, 'vi'))
 })
+
+async function taiNganhTheoMa(ma) {
+  if (!ma || nganhTheoMa.value[ma]) return
+  const lan = ++lanTaiNganh
+  dangTaiNganh.value = true
+  loiNganh.value = ''
+  try {
+    const data = await fetchNganh(
+      { ma_holand: ma, trang_thai: 1, page: 1, page_size: 1000 },
+      { skipLoading: true },
+    )
+    nganhTheoMa.value = { ...nganhTheoMa.value, [ma]: data.items || [] }
+  } catch {
+    if (lan === lanTaiNganh) loiNganh.value = 'Không tải được ngành đào tạo.'
+  } finally {
+    if (lan === lanTaiNganh) dangTaiNganh.value = false
+  }
+}
 const nhomNganhDangXem = computed(() => nhomNganhHienThi.value.slice(0, soNhomHien.value))
 const conNhom = computed(() => Math.max(nhomNganhHienThi.value.length - soNhomHien.value, 0))
 
@@ -371,13 +405,24 @@ function taiThemNhom() {
   }, 1000)
 }
 
-function nganhDangXem(nhom) {
-  if (nhomDaMo.value[nhom.ma]) return nhom.nganh
-  return nhom.nganh.slice(0, SO_NGANH_HIEN)
+// Tách 4 ngành đầu và phần còn lại, phần còn lại mở/thu gọn có hiệu ứng.
+function phanNganh(nhom) {
+  const phan = [{ id: 'dau', nganh: nhom.nganh.slice(0, SO_NGANH_HIEN), hien: true }]
+  if (nhom.nganh.length > SO_NGANH_HIEN) {
+    phan.push({ id: 'them', nganh: nhom.nganh.slice(SO_NGANH_HIEN), hien: !!nhomDaMo.value[nhom.ma] })
+  }
+  return phan
 }
 
-function doiMoNhom(ma) {
-  nhomDaMo.value = { ...nhomDaMo.value, [ma]: !nhomDaMo.value[ma] }
+function doiMoNhom(ma, event) {
+  const dangMo = !!nhomDaMo.value[ma]
+  nhomDaMo.value = { ...nhomDaMo.value, [ma]: !dangMo }
+  if (!dangMo) return
+  // Thu gọn nhóm dài thì cuộn lại đầu card nếu đầu card đã trôi khỏi màn hình.
+  const card = event?.currentTarget?.closest('.major-card')
+  window.setTimeout(() => {
+    if (card && card.getBoundingClientRect().top < 0) card.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, 320)
 }
 
 function maNganhDaChon(nhom) {
@@ -463,8 +508,8 @@ function xemNganh(ma) {
   huyTaiThem()
   maDangXem.value = ma
   soNhomHien.value = SO_NHOM_HIEN
-  nhomDaMo.value = {}
   nganhDaChon.value = {}
+  nhomDaMo.value = {}
 }
 
 function ganMoTa(ma, el) {
@@ -504,8 +549,8 @@ async function taiNganh(value) {
   duLieu.value = null
   maDangXem.value = ''
   soNhomHien.value = SO_NHOM_HIEN
-  nhomDaMo.value = {}
   nganhDaChon.value = {}
+  nhomDaMo.value = {}
   soSanhMo.value = false
   nganhSoSanh.value = []
   loi.value = ''
@@ -549,6 +594,7 @@ function tiep() {
 }
 
 watch(ssid, taiNganh, { immediate: true })
+watch(maDangChon, taiNganhTheoMa, { immediate: true })
 watch(nhomCaoNhat, () => {
   anhNhomHong.value = false
 })
@@ -897,7 +943,10 @@ onBeforeUnmount(() => {
 }
 
 .major-list__more {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
   margin: 16px auto 0;
   padding: 8px 18px;
   border: 1px solid #0c5c34;
@@ -918,6 +967,63 @@ onBeforeUnmount(() => {
 .major-list__more:disabled {
   opacity: 0.65;
   cursor: wait;
+}
+
+.major-card__more {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px auto 0;
+  padding: 6px 16px;
+  border: 1px solid #0c5c34;
+  border-radius: 8px;
+  background: #fff;
+  color: #0c5c34;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.major-card__more:hover {
+  background: #0c5c34;
+  color: #fff;
+}
+
+.major-card__more-icon {
+  transition: transform 0.3s ease;
+}
+
+.major-card__more-icon.is-open {
+  transform: rotate(180deg);
+}
+
+/* Hàng tiếp nối lưới 4 ngành đầu, giữ khoảng cách bằng gutter của .row. */
+.major-card__extra {
+  padding-top: 0.5rem;
+}
+
+.major-card__extra .major-card__item {
+  animation: major-hien 0.35s ease both;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes major-hien {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .major-card__more-icon,
+  .major-card__extra .major-card__item {
+    animation: none;
+    transition: none;
+  }
 }
 
 .major-card {
@@ -970,16 +1076,6 @@ onBeforeUnmount(() => {
 .major-card__compare:hover {
   background: #0c5c34;
   color: #fff;
-}
-
-.major-card__more {
-  flex: 0 0 auto;
-  color: #0c5c34;
-  cursor: pointer;
-}
-
-.major-card__more:hover {
-  color: #084422;
 }
 
 .major-nav {
