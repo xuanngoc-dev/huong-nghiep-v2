@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import String, and_, case, cast, func, or_, select
+from sqlalchemy import String, case, cast, func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -12,7 +12,6 @@ from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
 from app.models.dats_trinh_do_nganh import DatsTrinhDoNganh
 from app.models.dats_tuyen_sinh import DatsTuyenSinh
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
-from app.models.dm_tinh_thanh import DmTinhThanh
 from app.models.dm_truong import DmTruong
 from app.models.nguoi_dung import NguoiDung
 from app.schemas.dats_tuyen_sinh import (
@@ -30,6 +29,9 @@ from app.schemas.dats_tuyen_sinh import (
 )
 from app.services.dats_detail import load_de_an_bang
 from app.services.dats_import import DatsImportError, delete_de_an_children, import_document
+from app.services.truong_hien_thi import join_tinh_thanh
+from app.services.truong_hien_thi import khu_vuc_hien_thi as khu_vuc_hien_thi_expr
+from app.services.truong_hien_thi import loai_hien_thi as loai_hien_thi_expr
 
 router = APIRouter(prefix="/de-an-tuyen-sinh", tags=["de-an-tuyen-sinh"])
 
@@ -203,14 +205,8 @@ def list_truong_dao_tao(
                 DmTruong.ten_tieng_anh.like(pattern, escape="\\"),
             )
         )
-    khu_vuc_hien_thi = func.coalesce(func.nullif(DmTruong.vung_mien, ""), DmTinhThanh.khu_vuc)
-    loai_hien_thi = case(
-        (and_(DmTruong.loai_co_so.isnot(None), DmTruong.loai_co_so != ""), DmTruong.loai_co_so),
-        (DmTruong.ten_truong.like("%Học viện%"), "Học viện"),
-        (DmTruong.ten_truong.like("%Cao đẳng%"), "Cao đẳng"),
-        (DmTruong.ten_truong.like("%Đại học%"), "Đại học"),
-        else_=None,
-    )
+    khu_vuc_hien_thi = khu_vuc_hien_thi_expr()
+    loai_hien_thi = loai_hien_thi_expr()
     if vung_mien and vung_mien.strip():
         filters.append(khu_vuc_hien_thi == vung_mien.strip())
     if loai_co_so and loai_co_so.strip():
@@ -218,23 +214,10 @@ def list_truong_dao_tao(
     if ten_tinh_thanh and ten_tinh_thanh.strip():
         filters.append(DmTruong.ten_tinh_thanh == ten_tinh_thanh.strip())
 
-    joined = (
-        DatsChuongTrinhDaoTao.__table__.join(DatsTuyenSinh, DatsChuongTrinhDaoTao.de_an_id == DatsTuyenSinh.id)
-        .join(DmTruong, DatsTuyenSinh.ma_truong == DmTruong.ma_truong)
-        .outerjoin(
-            DmTinhThanh,
-            or_(
-                and_(
-                    DmTruong.ma_tinh_thanh.isnot(None),
-                    DmTruong.ma_tinh_thanh != "",
-                    DmTruong.ma_tinh_thanh == DmTinhThanh.ma_tinh,
-                ),
-                and_(
-                    or_(DmTruong.ma_tinh_thanh.is_(None), DmTruong.ma_tinh_thanh == ""),
-                    DmTruong.ten_tinh_thanh == DmTinhThanh.ten_tinh,
-                ),
-            ),
-        )
+    joined = join_tinh_thanh(
+        DatsChuongTrinhDaoTao.__table__.join(
+            DatsTuyenSinh, DatsChuongTrinhDaoTao.de_an_id == DatsTuyenSinh.id
+        ).join(DmTruong, DatsTuyenSinh.ma_truong == DmTruong.ma_truong)
     )
     school_columns = (
         DmTruong.ma_truong,

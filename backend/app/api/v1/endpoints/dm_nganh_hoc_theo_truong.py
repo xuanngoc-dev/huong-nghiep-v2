@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
@@ -7,6 +9,7 @@ from app.api.deps import get_admin_user
 from app.db.session import get_db
 from app.models.dm_nganh_hoc_theo_truong import DmNganhHocTheoTruong
 from app.models.dm_truong import DmTruong
+from app.schemas.dats_tuyen_sinh import TruongDaoTaoPage, TruongDaoTaoPublic
 from app.schemas.dm_nganh_hoc_theo_truong import (
     DmNganhHocTheoTruongDeleteMany,
     DmNganhHocTheoTruongDeleteManyResult,
@@ -19,12 +22,16 @@ from app.schemas.dm_nganh_hoc_theo_truong import (
     DmNganhTheoTruongKiemTra,
     DmNganhTheoTruongKiemTraResult,
 )
+from app.services.truong_hien_thi import join_tinh_thanh, khu_vuc_hien_thi, loai_hien_thi
 
 router = APIRouter(
     prefix="/danh-muc/nganh-hoc-theo-truong",
     tags=["danh-muc"],
     dependencies=[Depends(get_admin_user)],
 )
+
+# Tra cứu công khai, không cần đăng nhập. Phải include trước `router` để không bị `/{item_id}` bắt mất.
+public_router = APIRouter(prefix="/danh-muc/nganh-hoc-theo-truong", tags=["danh-muc"])
 
 _LOI_LUU = "Không lưu được ngành đào tạo, hãy kiểm tra lại mã trường"
 _IMPORT_TOI_DA = 100
@@ -307,3 +314,97 @@ def delete_nganh_hoc_theo_truong(item_id: int, db: Session = Depends(get_db)) ->
     item = _get_or_404(db, item_id)
     db.delete(item)
     db.commit()
+
+
+@public_router.get("/truong-dao-tao", response_model=TruongDaoTaoPage)
+def list_truong_theo_nganh(
+    ma_nganh: str = Query(..., min_length=1, max_length=20),
+    q: str | None = Query(default=None, max_length=255),
+    vung_mien: str | None = Query(default=None, max_length=20),
+    loai_co_so: str | None = Query(default=None, max_length=50),
+    ten_tinh_thanh: str | None = Query(default=None, max_length=100),
+    nam_tuyen_sinh: int | None = Query(default=None, ge=2000, le=2100),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=12, ge=1, le=100),
+    db: Session = Depends(get_db),
+) -> TruongDaoTaoPage:
+    """Liệt kê trường đào tạo một ngành trong năm học, dựa trên dm_nganh_hoc_theo_truong.
+
+    Lấy các mã trường có mã ngành này, rồi ghép thông tin trường từ dm_truong.
+    """
+    year = nam_tuyen_sinh if nam_tuyen_sinh is not None else datetime.now().year
+    khu_vuc = khu_vuc_hien_thi()
+    loai = loai_hien_thi()
+    filters = [
+        DmNganhHocTheoTruong.ma_nganh == ma_nganh.strip().upper(),
+        DmNganhHocTheoTruong.nam_hoc == year,
+    ]
+    if q and q.strip():
+        pattern = _like_pattern(q.strip())
+        filters.append(
+            or_(
+                DmTruong.ten_truong.like(pattern, escape="\\"),
+                DmTruong.ma_truong.like(pattern, escape="\\"),
+                DmTruong.ten_viet_tat.like(pattern, escape="\\"),
+                DmTruong.ten_tieng_anh.like(pattern, escape="\\"),
+            )
+        )
+    if vung_mien and vung_mien.strip():
+        filters.append(khu_vuc == vung_mien.strip())
+    if loai_co_so and loai_co_so.strip():
+        filters.append(loai == loai_co_so.strip())
+    if ten_tinh_thanh and ten_tinh_thanh.strip():
+        filters.append(DmTruong.ten_tinh_thanh == ten_tinh_thanh.strip())
+
+    joined = join_tinh_thanh(
+        DmNganhHocTheoTruong.__table__.join(DmTruong, DmTruong.ma_truong == DmNganhHocTheoTruong.ma_truong)
+    )
+    school_columns = (
+        DmTruong.ma_truong,
+        DmTruong.ten_truong,
+        DmTruong.ten_viet_tat,
+        DmTruong.ten_tieng_anh,
+        DmTruong.loai_hinh,
+        DmTruong.ten_tinh_thanh,
+        DmTruong.dia_chi_tru_so,
+        DmTruong.website,
+        DmTruong.website_tuyen_sinh,
+        DmTruong.anh_dai_dien_url,
+    )
+    total = db.scalar(
+        select(func.count(func.distinct(DmTruong.ma_truong))).select_from(joined).where(*filters)
+    ) or 0
+    rows = db.execute(
+        select(
+            *school_columns,
+            func.max(loai),
+            func.max(khu_vuc),
+            func.count(DmNganhHocTheoTruong.id),
+        )
+        .select_from(joined)
+        .where(*filters)
+        .group_by(*school_columns)
+        .order_by(DmTruong.ten_truong.asc(), DmTruong.ma_truong.asc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    ).all()
+    items = [
+        TruongDaoTaoPublic(
+            ma_truong=row[0],
+            ten_truong=row[1],
+            ten_viet_tat=row[2],
+            ten_tieng_anh=row[3],
+            loai_hinh=row[4],
+            ten_tinh_thanh=row[5],
+            dia_chi_tru_so=row[6],
+            website=row[7],
+            website_tuyen_sinh=row[8],
+            anh_dai_dien_url=row[9],
+            loai_co_so=row[10],
+            vung_mien=row[11],
+            nam_tuyen_sinh=year,
+            so_chuong_trinh=int(row[12] or 0),
+        )
+        for row in rows
+    ]
+    return TruongDaoTaoPage(items=items, total=total, page=page, page_size=page_size)

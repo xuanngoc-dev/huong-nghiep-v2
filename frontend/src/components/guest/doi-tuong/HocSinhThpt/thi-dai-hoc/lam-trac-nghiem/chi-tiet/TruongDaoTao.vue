@@ -39,7 +39,7 @@
     <p v-else-if="dangTai" class="truong-dao-tao__status">Đang tải trường đào tạo…</p>
     <KhongCoDuLieu v-else-if="!danhSach.length" text="Chưa có trường đào tạo cho ngành này." />
     <div v-else class="row g-3 truong">
-      <div v-for="item in danhSach" :key="item.ma_truong" class="col-12 col-lg-3">
+      <div v-for="item in danhSach" :key="item.ma_truong" class="col-12 col-lg-4">
         <article class="truong__item" :class="{ 'truong__item--co-anh': anhNen(item) }">
           <span v-if="anhNen(item)" class="truong__bg" :style="styleNen(item)" aria-hidden="true" />
           <p class="truong__code">{{ item.ma_truong }}</p>
@@ -83,7 +83,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { fetchTruongDaoTao } from '@/api/deAnTuyenSinh'
+import { fetchTruongTheoNganh } from '@/api/nganhHocTheoTruong'
 import { fetchTinhThanh } from '@/api/tinhThanh'
 import { danhSachNamHoc, nhanNamHoc } from '@/constants/namHoc'
 import anhThpt from '@/assets/guest/thpt.jpg'
@@ -267,7 +267,7 @@ async function tai() {
     if (boLoc.value.khuVuc) params.vung_mien = boLoc.value.khuVuc
     if (boLoc.value.loai) params.loai_co_so = boLoc.value.loai
     if (boLoc.value.tinh) params.ten_tinh_thanh = boLoc.value.tinh
-    const data = await fetchTruongDaoTao(params, { skipLoading: true })
+    const data = await fetchTruongTheoNganh(params, { skipLoading: true })
     if (lan !== lanTai) return
     danhSach.value = data.items || []
     total.value = data.total || 0

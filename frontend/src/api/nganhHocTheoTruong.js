@@ -33,3 +33,7 @@ export function kiemTraTruongImport(maTruong) {
     .post('/danh-muc/nganh-hoc-theo-truong/bulk/kiem-tra', { ma_truong: maTruong }, { skipLoading: true })
     .then((res) => res.data)
 }
+
+export function fetchTruongTheoNganh(params, config = {}) {
+  return api.get('/danh-muc/nganh-hoc-theo-truong/truong-dao-tao', { ...config, params }).then((res) => res.data)
+}
