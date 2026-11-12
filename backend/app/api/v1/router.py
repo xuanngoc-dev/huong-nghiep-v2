@@ -27,6 +27,7 @@ from app.api.v1.endpoints import (
     dats_tuyen_sinh,
     dats_website,
     health,
+    ht_cau_hinh_tra_cuu,
     ht_ngan_hang_thanh_toan,
     ho_so,
     kiem_tra_du_lieu,
@@ -42,6 +43,7 @@ api_router.include_router(health.router, tags=["health"])
 api_router.include_router(auth.router)
 api_router.include_router(nguoi_dung.router)
 api_router.include_router(ht_ngan_hang_thanh_toan.router)
+api_router.include_router(ht_cau_hinh_tra_cuu.router)
 api_router.include_router(ho_so.router)
 api_router.include_router(dm_tinh_thanh.router)
 api_router.include_router(dm_dan_toc.router)

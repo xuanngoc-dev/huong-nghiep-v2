@@ -184,6 +184,12 @@
           "title": "Ngân hàng thanh toán",
           "tooltip": "Tài khoản ngân hàng nhận thanh toán",
           "icon": "CreditCard"
+        },
+        {
+          "index": "/admin/he-thong/cau-hinh-tra-cuu",
+          "title": "Cấu hình tra cứu",
+          "tooltip": "Hạn mức tra cứu, tư vấn AI và thanh toán",
+          "icon": "Operation"
         }
       ]
     },

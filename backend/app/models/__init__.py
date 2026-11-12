@@ -16,6 +16,7 @@ from app.models.dm_to_hop_mon_hoc import DmToHopMonHoc
 from app.models.dm_ton_giao import DmTonGiao
 from app.models.nguoi_dung import NguoiDung
 from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
+from app.models.ht_cau_hinh_tra_cuu import HtCauHinhTraCuu
 from app.models.ht_ngan_hang_thanh_toan import HtNganHangThanhToan
 from app.models.tn_cau_hoi_trac_nghiem import TnCauHoiTracNghiem
 from app.models.tn_cau_tra_loi import TnCauTraLoi
@@ -71,6 +72,7 @@ __all__ = [
     "DmTonGiao",
     "NguoiDung",
     "NguoiDungThongTin",
+    "HtCauHinhTraCuu",
     "HtNganHangThanhToan",
     "TnCauHoiTracNghiem",
     "TnCauTraLoi",
