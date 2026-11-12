@@ -26,6 +26,12 @@
           "title": "Lịch sử trắc nghiệm",
           "tooltip": "Xem lịch sử bài làm trắc nghiệm của người dùng",
           "icon": "Clock"
+        },
+        {
+          "index": "/admin/trac-nghiem/lich-su-tim-truong",
+          "title": "Lịch sử tìm trường",
+          "tooltip": "Xem lịch sử tìm trường phù hợp của người dùng",
+          "icon": "Search"
         }
       ]
     },
@@ -385,6 +391,12 @@
           "title": "Gợi ý nghề nghiệp",
           "tooltip": "Xem ngành và nghề được gợi ý theo kết quả đánh giá",
           "icon": "Opportunity"
+        },
+        {
+          "index": "/member/huong-nghiep/lich-su-tim-truong",
+          "title": "LS tìm trường",
+          "tooltip": "Lịch sử tìm trường phù hợp của bạn",
+          "icon": "Search"
         }
       ]
     },

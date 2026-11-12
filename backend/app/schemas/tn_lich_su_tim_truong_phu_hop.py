@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
@@ -12,6 +13,8 @@ class LuotTimTruong(BaseModel):
     # Chỉ đếm được cho thành viên; khách vãng lai do trình duyệt tự đếm.
     da_dung: int | None = None
     con_lai: int | None = None
+    # True: danh sách trường kết hợp thêm đề án/phương thức tuyển sinh (có chỉ tiêu).
+    ket_hop_phuong_thuc: bool = False
 
 
 class TieuChiTimTruong(BaseModel):
@@ -57,3 +60,42 @@ class TimTruongPhuHopResult(BaseModel):
     so_truong_tim_thay: int
     so_truong_phu_hop_so_bo: int
     luot: LuotTimTruong
+
+
+class LichSuTimTruongQuanTri(BaseModel):
+    id: int
+    ma_yeu_cau: str
+    tai_khoan_id: int
+    ho_ten: str | None = None
+    email: str | None = None
+    so_dien_thoai: str | None = None
+    ma_nganh: str
+    ten_nganh: str | None = None
+    nam_tuyen_sinh: int
+    tieu_chi_tim_kiem: dict[str, Any] | None = None
+    so_truong_tim_thay: int
+    so_truong_phu_hop_so_bo: int
+    loai_luot: str
+    da_tinh_luot: bool
+    da_mo_khoa_chuyen_sau: bool
+    trang_thai_xu_ly: str
+    thong_bao_loi: str | None = None
+    ngay_tao: datetime
+    ngay_hoan_thanh: datetime | None = None
+
+
+class LichSuTimTruongQuanTriChiTiet(LichSuTimTruongQuanTri):
+    du_lieu_nang_luc: dict[str, Any] | None = None
+    du_lieu_tai_chinh: dict[str, Any] | None = None
+    du_lieu_ket_qua: dict[str, Any] | None = None
+    phien_ban_thuat_toan: str | None = None
+    gia_bao_cao_tai_thoi_diem: int | None = None
+    giao_dich_thanh_toan_id: int | None = None
+    ngay_mo_khoa: datetime | None = None
+
+
+class LichSuTimTruongQuanTriPage(BaseModel):
+    items: list[LichSuTimTruongQuanTri]
+    total: int
+    page: int
+    page_size: int

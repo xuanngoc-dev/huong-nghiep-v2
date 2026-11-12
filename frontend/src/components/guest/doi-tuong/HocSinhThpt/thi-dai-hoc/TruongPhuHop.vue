@@ -280,13 +280,12 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { fetchTruongDaoTao } from '@/api/deAnTuyenSinh'
 import { fetchDoiTuongUuTien } from '@/api/doiTuongUuTien'
 import { fetchHoSo } from '@/api/hoSo'
 import { fetchKhuVucUuTien } from '@/api/khuVucUuTien'
 import { fetchMonHoc } from '@/api/monHoc'
 import { fetchNganh } from '@/api/nganhDaoTao'
-import { fetchLuotTimTruong, timTruongPhuHop } from '@/api/timTruongPhuHop'
+import { fetchLuotTimTruong, fetchTruongPhuHop, timTruongPhuHop } from '@/api/timTruongPhuHop'
 import { fetchTinhThanh } from '@/api/tinhThanh'
 import { fetchToHopMonHoc } from '@/api/toHopMonHoc'
 import { danhSachNamHoc, nhanNamHoc } from '@/constants/namHoc'
@@ -303,7 +302,7 @@ const SAP_XEP = [
   { value: 'gan_toi', label: 'Gần nơi ở nhất', canHoSo: true },
   { value: 'ten_asc', label: 'Tên trường A → Z' },
   { value: 'ten_desc', label: 'Tên trường Z → A' },
-  { value: 'chi_tieu_desc', label: 'Chỉ tiêu nhiều nhất' },
+  { value: 'chi_tieu_desc', label: 'Chỉ tiêu nhiều nhất', canDeAn: true },
   { value: 'chuong_trinh_desc', label: 'Nhiều chương trình nhất' },
 ]
 const NAM_HIEN_TAI = new Date().getFullYear()
@@ -418,7 +417,12 @@ const tomTatNganh = computed(() =>
     { nhan: 'Thời gian đào tạo', giaTri: nganh.value?.thoi_gian_dao_tao },
   ].filter((item) => item.giaTri),
 )
-const sapXepOptions = computed(() => SAP_XEP.filter((item) => !item.canHoSo || tinhHoSo.value))
+// Chỉ tiêu nằm trong đề án tuyển sinh, chỉ có khi backend bật kết hợp phương thức tuyển sinh.
+const sapXepOptions = computed(() =>
+  SAP_XEP.filter(
+    (item) => (!item.canHoSo || tinhHoSo.value) && (!item.canDeAn || cauHinhLuot.value.ket_hop_phuong_thuc),
+  ),
+)
 
 const moTaHoSo = computed(() => {
   if (!daDangNhap.value) {
@@ -653,7 +657,7 @@ async function tai() {
       params.uu_tien_tinh = tinhHoSo.value.ten
       if (tinhHoSo.value.khu_vuc) params.uu_tien_khu_vuc = tinhHoSo.value.khu_vuc
     }
-    const data = await fetchTruongDaoTao(params, { skipLoading: true })
+    const data = await fetchTruongPhuHop(params, { skipLoading: true })
     if (lan !== lanTai) return
     danhSach.value = data.items || []
     total.value = data.total || 0

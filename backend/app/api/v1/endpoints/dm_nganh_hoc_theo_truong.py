@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
@@ -9,7 +7,7 @@ from app.api.deps import get_admin_user
 from app.db.session import get_db
 from app.models.dm_nganh_hoc_theo_truong import DmNganhHocTheoTruong
 from app.models.dm_truong import DmTruong
-from app.schemas.dats_tuyen_sinh import TruongDaoTaoPage, TruongDaoTaoPublic
+from app.schemas.dats_tuyen_sinh import TruongDaoTaoPage
 from app.schemas.dm_nganh_hoc_theo_truong import (
     DmNganhHocTheoTruongDeleteMany,
     DmNganhHocTheoTruongDeleteManyResult,
@@ -22,7 +20,7 @@ from app.schemas.dm_nganh_hoc_theo_truong import (
     DmNganhTheoTruongKiemTra,
     DmNganhTheoTruongKiemTraResult,
 )
-from app.services.truong_hien_thi import join_tinh_thanh, khu_vuc_hien_thi, loai_hien_thi
+from app.services.tim_truong import truong_theo_nganh
 
 router = APIRouter(
     prefix="/danh-muc/nganh-hoc-theo-truong",
@@ -332,79 +330,15 @@ def list_truong_theo_nganh(
 
     Lấy các mã trường có mã ngành này, rồi ghép thông tin trường từ dm_truong.
     """
-    year = nam_tuyen_sinh if nam_tuyen_sinh is not None else datetime.now().year
-    khu_vuc = khu_vuc_hien_thi()
-    loai = loai_hien_thi()
-    filters = [
-        DmNganhHocTheoTruong.ma_nganh == ma_nganh.strip().upper(),
-        DmNganhHocTheoTruong.nam_hoc == year,
-    ]
-    if q and q.strip():
-        pattern = _like_pattern(q.strip())
-        filters.append(
-            or_(
-                DmTruong.ten_truong.like(pattern, escape="\\"),
-                DmTruong.ma_truong.like(pattern, escape="\\"),
-                DmTruong.ten_viet_tat.like(pattern, escape="\\"),
-                DmTruong.ten_tieng_anh.like(pattern, escape="\\"),
-            )
-        )
-    if vung_mien and vung_mien.strip():
-        filters.append(khu_vuc == vung_mien.strip())
-    if loai_co_so and loai_co_so.strip():
-        filters.append(loai == loai_co_so.strip())
-    if ten_tinh_thanh and ten_tinh_thanh.strip():
-        filters.append(DmTruong.ten_tinh_thanh == ten_tinh_thanh.strip())
-
-    joined = join_tinh_thanh(
-        DmNganhHocTheoTruong.__table__.join(DmTruong, DmTruong.ma_truong == DmNganhHocTheoTruong.ma_truong)
+    return truong_theo_nganh(
+        db,
+        ma_nganh=ma_nganh,
+        nam_tuyen_sinh=nam_tuyen_sinh,
+        q=q,
+        vung_mien=vung_mien,
+        loai_co_so=loai_co_so,
+        ten_tinh_thanh=ten_tinh_thanh,
+        page=page,
+        page_size=page_size,
+        ket_hop_phuong_thuc=False,
     )
-    school_columns = (
-        DmTruong.ma_truong,
-        DmTruong.ten_truong,
-        DmTruong.ten_viet_tat,
-        DmTruong.ten_tieng_anh,
-        DmTruong.loai_hinh,
-        DmTruong.ten_tinh_thanh,
-        DmTruong.dia_chi_tru_so,
-        DmTruong.website,
-        DmTruong.website_tuyen_sinh,
-        DmTruong.anh_dai_dien_url,
-    )
-    total = db.scalar(
-        select(func.count(func.distinct(DmTruong.ma_truong))).select_from(joined).where(*filters)
-    ) or 0
-    rows = db.execute(
-        select(
-            *school_columns,
-            func.max(loai),
-            func.max(khu_vuc),
-            func.count(DmNganhHocTheoTruong.id),
-        )
-        .select_from(joined)
-        .where(*filters)
-        .group_by(*school_columns)
-        .order_by(DmTruong.ten_truong.asc(), DmTruong.ma_truong.asc())
-        .offset((page - 1) * page_size)
-        .limit(page_size)
-    ).all()
-    items = [
-        TruongDaoTaoPublic(
-            ma_truong=row[0],
-            ten_truong=row[1],
-            ten_viet_tat=row[2],
-            ten_tieng_anh=row[3],
-            loai_hinh=row[4],
-            ten_tinh_thanh=row[5],
-            dia_chi_tru_so=row[6],
-            website=row[7],
-            website_tuyen_sinh=row[8],
-            anh_dai_dien_url=row[9],
-            loai_co_so=row[10],
-            vung_mien=row[11],
-            nam_tuyen_sinh=year,
-            so_chuong_trinh=int(row[12] or 0),
-        )
-        for row in rows
-    ]
-    return TruongDaoTaoPage(items=items, total=total, page=page, page_size=page_size)

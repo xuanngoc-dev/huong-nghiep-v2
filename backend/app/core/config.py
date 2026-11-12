@@ -47,6 +47,9 @@ class Settings(BaseSettings):
     chat_detail_context_max_chars: int = Field(default=100_000, ge=4_000, le=300_000)
     chat_planning_timeout_seconds: int = Field(default=20, ge=3, le=60)
     chat_score_margin: float = Field(default=1.0, ge=0, le=100)
+    # Tìm trường phù hợp: False chỉ dùng dm_nganh_hoc_theo_truong; True giữ thêm điều kiện
+    # trường có ngành trong đề án/phương thức tuyển sinh cùng năm. Env: TIM_TRUONG_KET_HOP_PHUONG_THUC.
+    tim_truong_ket_hop_phuong_thuc: bool = False
 
     model_config = SettingsConfigDict(
         env_file=(".env", "../.env", "backend/.env"),

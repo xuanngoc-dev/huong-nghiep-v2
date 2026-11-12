@@ -109,6 +109,12 @@ const router = createRouter({
           meta: { title: 'Gợi ý nghề nghiệp', requiresAuth: true },
         },
         {
+          path: 'huong-nghiep/lich-su-tim-truong',
+          name: 'lich-su-tim-truong',
+          component: () => import('@/views/member/LichSuTimTruong.vue'),
+          meta: { title: 'Lịch sử tìm trường', requiresAuth: true },
+        },
+        {
           path: 'trac-nghiem/lich-su',
           name: 'lich-su-trac-nghiem',
           component: () => import('@/views/member/LichSuTracNghiem.vue'),
@@ -144,6 +150,12 @@ const router = createRouter({
           name: 'admin-lich-su-trac-nghiem',
           component: () => import('@/views/admin/trac-nghiem/LichSuTracNghiem.vue'),
           meta: { title: 'Lịch sử trắc nghiệm', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'trac-nghiem/lich-su-tim-truong',
+          name: 'admin-lich-su-tim-truong',
+          component: () => import('@/views/admin/trac-nghiem/LichSuTimTruong.vue'),
+          meta: { title: 'Lịch sử tìm trường', requiresAuth: true, requiresAdmin: true },
         },
         {
           path: 'tai-khoan/ho-so',
