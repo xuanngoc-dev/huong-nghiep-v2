@@ -17,6 +17,7 @@ from app.schemas.dm_truong import (
     DmTruongPublic,
     DmTruongWrite,
 )
+from app.services.truong_hien_thi import loai_hien_thi
 
 router = APIRouter(prefix="/danh-muc/truong-hoc", tags=["danh-muc"])
 
@@ -66,11 +67,15 @@ def list_truong(
     loai_hinh: str | None = Query(default=None, max_length=50),
     loai_co_so: str | None = Query(default=None, max_length=50),
     trang_thai_hoat_dong: str | None = Query(default=None, max_length=30),
+    ngau_nhien: bool = Query(default=False),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
 ) -> DmTruongPage:
-    """Lấy danh sách trường học từ dm_truong, có phân trang, không cần đăng nhập."""
+    """Lấy danh sách trường học từ dm_truong, có phân trang, không cần đăng nhập.
+
+    `ngau_nhien` trả về theo thứ tự ngẫu nhiên.
+    """
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())
@@ -88,7 +93,8 @@ def list_truong(
     if loai_hinh and loai_hinh.strip():
         filters.append(DmTruong.loai_hinh == loai_hinh.strip())
     if loai_co_so and loai_co_so.strip():
-        filters.append(DmTruong.loai_co_so == loai_co_so.strip())
+        # Nhiều trường chưa khai báo loại cơ sở, nên lọc theo loại suy ra từ tên trường.
+        filters.append(loai_hien_thi() == loai_co_so.strip())
     if trang_thai_hoat_dong and trang_thai_hoat_dong.strip():
         filters.append(DmTruong.trang_thai_hoat_dong == trang_thai_hoat_dong.strip())
 
@@ -100,7 +106,7 @@ def list_truong(
 
     total = db.scalar(count_stmt) or 0
     items = db.scalars(
-        stmt.order_by(DmTruong.ten_truong.asc(), DmTruong.id.asc())
+        stmt.order_by(*([func.rand()] if ngau_nhien else [DmTruong.ten_truong.asc(), DmTruong.id.asc()]))
         .offset((page - 1) * page_size)
         .limit(page_size)
     ).all()

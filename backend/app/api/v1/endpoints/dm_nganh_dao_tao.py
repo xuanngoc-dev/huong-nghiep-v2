@@ -1,3 +1,5 @@
+import json
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import String, cast, func, or_, select
 from sqlalchemy.exc import IntegrityError
@@ -105,11 +107,17 @@ def list_nganh_dao_tao(
     q: str | None = Query(default=None, max_length=255),
     trang_thai: int | None = Query(default=None, ge=0, le=1),
     ma_nhom_nganh: str | None = Query(default=None, max_length=20),
+    ma_holand: str | None = Query(default=None, max_length=50),
+    ngau_nhien: bool = Query(default=False),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
 ) -> DmNganhDaoTaoPage:
-    """Lấy danh sách ngành đào tạo có phân trang, không cần đăng nhập. Lọc theo từ khóa, trạng thái và nhóm ngành cha."""
+    """Lấy danh sách ngành đào tạo có phân trang, không cần đăng nhập.
+
+    Lọc theo từ khóa, trạng thái, nhóm ngành cha và mã nhóm Holland. `ma_holand` nhận nhiều mã cách nhau
+    bởi dấu phẩy, ngành có ít nhất một mã là khớp. `ngau_nhien` trả về theo thứ tự ngẫu nhiên.
+    """
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())
@@ -133,6 +141,11 @@ def list_nganh_dao_tao(
         filters.append(DmNganhDaoTao.trang_thai == trang_thai)
     if ma_nhom_nganh and ma_nhom_nganh.strip():
         filters.append(DmNganhDaoTao.ma_nhom_nganh == ma_nhom_nganh.strip().upper())
+    ma_holland_loc = list(dict.fromkeys(code.strip().upper() for code in (ma_holand or "").split(",") if code.strip()))
+    if ma_holland_loc:
+        filters.append(
+            or_(*(func.json_contains(DmNganhDaoTao.ma_holand, json.dumps(code)) == 1 for code in ma_holland_loc))
+        )
 
     joined = DmNganhDaoTao.__table__.join(
         DmNhomNganhDaoTao, DmNganhDaoTao.ma_nhom_nganh == DmNhomNganhDaoTao.ma_nhom_nganh
@@ -147,7 +160,9 @@ def list_nganh_dao_tao(
 
     total = db.scalar(count_stmt) or 0
     rows = db.execute(
-        stmt.order_by(DmNganhDaoTao.ma_nganh.asc(), DmNganhDaoTao.id.asc())
+        stmt.order_by(
+            *([func.rand()] if ngau_nhien else [DmNganhDaoTao.ma_nganh.asc(), DmNganhDaoTao.id.asc()])
+        )
         .offset((page - 1) * page_size)
         .limit(page_size)
     ).all()

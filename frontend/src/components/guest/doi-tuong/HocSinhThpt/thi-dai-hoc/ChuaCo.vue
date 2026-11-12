@@ -101,7 +101,7 @@
             <p v-if="loiNganh" class="holland-note holland-note__text mb-0">{{ loiNganh }}</p>
             <p v-else-if="dangTaiNganh || dangTaiHolland" class="text-secondary mb-0">Đang tải ngành…</p>
             <KhongCoDuLieu
-              v-else-if="!nganhTheoNhom.length"
+              v-else-if="!nganhNoiBat.length"
               :text="maNhomDangChon ? 'Chưa có ngành nổi bật trong nhóm này.' : 'Chưa có ngành nổi bật.'"
             />
             <div
@@ -111,7 +111,7 @@
               :role="maNhomDangChon ? 'tabpanel' : undefined"
               :aria-labelledby="maNhomDangChon ? `nhom-nghe-${maNhomDangChon}` : undefined"
             >
-              <div v-for="item in nganhTheoNhom" :key="item.id" class="col-12 col-md-6 col-lg-4">
+              <div v-for="item in nganhNoiBat" :key="item.id" class="col-12 col-md-6 col-lg-4">
                 <div class="the-card">
                   <CardNganhDaoTao
                     class="h-100"
@@ -235,18 +235,10 @@ import CardNganhDaoTao from './CardNganhDaoTao.vue'
 
 defineOptions({ name: 'ThptThiDaiHocChuaCo' })
 
-const MA_NGANH_NOI_BAT = [
-  '480201',
-  '480103',
-  '480107',
-  '480208',
-  '340101',
-  '340115',
-  '220201',
-  '720101',
-  '380101',
-]
-const MA_TRUONG_NOI_BAT = ['BKA', 'QSB', 'QSC', 'KHA', 'NTH', 'YHB', 'LPH', 'SPH']
+// Mặc định mở nhóm Nghệ thuật (A).
+const MA_NHOM_MAC_DINH = 'A'
+const SO_NGANH_NOI_BAT = 6
+const SO_TRUONG_NOI_BAT = 6
 
 const stages = giaiDoanThiDaiHocList
 const route = useRoute()
@@ -263,7 +255,7 @@ const loiNganh = ref('')
 const loiTruong = ref('')
 const chiTietMo = ref(false)
 const doiTuongChiTiet = ref(null)
-const maNhomDangChon = ref('')
+const maNhomDangChon = ref(MA_NHOM_MAC_DINH)
 
 const NHAN_MUC_NGANH = {
   mo_ta: 'Mô tả',
@@ -293,39 +285,9 @@ function moHuongDan() {
   router.push({ name: 'thpt-thi-dai-hoc-huong-dan-khao-sat' })
 }
 
-async function layTheoMa(fetchFn, codes, key, params = {}) {
-  let coLoiMang = true
-  const items = await Promise.all(codes.map(async (code) => {
-    try {
-      const data = await fetchFn(
-        { page: 1, page_size: 20, q: code, ...params },
-        { skipLoading: true },
-      )
-      coLoiMang = false
-      return (data.items || []).find((item) => String(item[key] || '').toUpperCase() === code) || null
-    } catch {
-      return null
-    }
-  }))
-  return { items: items.filter(Boolean), coLoiMang }
-}
-
 function moTaHolland(item) {
   return item.mo_ta || item.vi_du_nghe_nghiep || ''
 }
-
-function maHollandCua(item) {
-  const value = item?.ma_holand
-  if (Array.isArray(value)) return value.map((code) => String(code).toUpperCase())
-  if (typeof value === 'string' && value.trim()) return [value.trim().toUpperCase()]
-  return []
-}
-
-const nganhTheoNhom = computed(() => {
-  const ma = maNhomDangChon.value
-  if (!ma) return nganhNoiBat.value
-  return nganhNoiBat.value.filter((item) => maHollandCua(item).includes(ma))
-})
 
 function dieuHuongNhom(event) {
   const items = nhomHolland.value
@@ -341,7 +303,8 @@ function dieuHuongNhom(event) {
 
 watch(nhomHolland, (items) => {
   if (!items.some((item) => item.ma_nhom === maNhomDangChon.value)) {
-    maNhomDangChon.value = items[0]?.ma_nhom || ''
+    const macDinh = items.find((item) => item.ma_nhom === MA_NHOM_MAC_DINH)
+    maNhomDangChon.value = (macDinh || items[0])?.ma_nhom || ''
   }
 })
 
@@ -508,25 +471,46 @@ async function taiNhomHolland() {
   }
 }
 
-async function taiNganhNoiBat() {
+let lanTaiNganh = 0
+
+async function taiNganhNoiBat(maNhom) {
+  const lan = ++lanTaiNganh
   dangTaiNganh.value = true
   loiNganh.value = ''
+  nganhNoiBat.value = []
   try {
-    const { items, coLoiMang } = await layTheoMa(fetchNganh, MA_NGANH_NOI_BAT, 'ma_nganh', { trang_thai: 1 })
-    nganhNoiBat.value = items
-    if (!items.length && coLoiMang) loiNganh.value = 'Không tải được ngành nổi bật.'
+    const params = { trang_thai: 1, ngau_nhien: true, page: 1, page_size: SO_NGANH_NOI_BAT }
+    if (maNhom) params.ma_holand = maNhom
+    const data = await fetchNganh(params, { skipLoading: true })
+    if (lan !== lanTaiNganh) return
+    nganhNoiBat.value = data.items || []
+  } catch {
+    if (lan !== lanTaiNganh) return
+    loiNganh.value = 'Không tải được ngành nổi bật.'
   } finally {
-    dangTaiNganh.value = false
+    if (lan === lanTaiNganh) dangTaiNganh.value = false
   }
 }
+
+watch(maNhomDangChon, taiNganhNoiBat, { immediate: true })
 
 async function taiTruongNoiBat() {
   dangTaiTruong.value = true
   loiTruong.value = ''
   try {
-    const { items, coLoiMang } = await layTheoMa(fetchTruongHoc, MA_TRUONG_NOI_BAT, 'ma_truong')
-    truongNoiBat.value = items
-    if (!items.length && coLoiMang) loiTruong.value = 'Không tải được trường nổi bật.'
+    const data = await fetchTruongHoc(
+      {
+        loai_co_so: 'Đại học',
+        trang_thai_hoat_dong: 'Đang hoạt động',
+        ngau_nhien: true,
+        page: 1,
+        page_size: SO_TRUONG_NOI_BAT,
+      },
+      { skipLoading: true },
+    )
+    truongNoiBat.value = data.items || []
+  } catch {
+    loiTruong.value = 'Không tải được trường nổi bật.'
   } finally {
     dangTaiTruong.value = false
   }
@@ -534,7 +518,6 @@ async function taiTruongNoiBat() {
 
 onMounted(() => {
   taiNhomHolland()
-  taiNganhNoiBat()
   taiTruongNoiBat()
 })
 </script>

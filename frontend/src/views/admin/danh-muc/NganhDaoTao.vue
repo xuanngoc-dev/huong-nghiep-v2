@@ -30,6 +30,23 @@
           />
         </CustomSelect>
         <CustomSelect
+          v-model="filters.ma_holand"
+          class="filter-parent"
+          placeholder="Nhóm Holland"
+          multiple
+          collapse-tags
+          collapse-tags-tooltip
+          clearable
+          @change="onSearch"
+        >
+          <CustomOption
+            v-for="item in hollandOptions"
+            :key="item.ma_nhom"
+            :label="hollandLabel(item)"
+            :value="item.ma_nhom"
+          />
+        </CustomSelect>
+        <CustomSelect
           v-model="filters.trang_thai"
           class="filter-status"
           placeholder="Trạng thái"
@@ -436,6 +453,7 @@ const filters = reactive({
   q: '',
   trang_thai: '',
   ma_nhom_nganh: '',
+  ma_holand: [],
 })
 
 const form = reactive(emptyForm())
@@ -701,6 +719,7 @@ async function load() {
       params.trang_thai = filters.trang_thai
     }
     if (filters.ma_nhom_nganh) params.ma_nhom_nganh = filters.ma_nhom_nganh
+    if (filters.ma_holand.length) params.ma_holand = filters.ma_holand.join(',')
     const data = await fetchNganh(params)
     rows.value = data.items
     total.value = data.total
