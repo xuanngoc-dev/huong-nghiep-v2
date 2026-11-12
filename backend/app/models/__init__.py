@@ -21,6 +21,7 @@ from app.models.ht_ngan_hang_thanh_toan import HtNganHangThanhToan
 from app.models.tn_cau_hoi_trac_nghiem import TnCauHoiTracNghiem
 from app.models.tn_cau_tra_loi import TnCauTraLoi
 from app.models.tn_chi_tiet_tra_loi import TnChiTietTraLoi
+from app.models.tn_lich_su_tim_truong_phu_hop import TnLichSuTimTruongPhuHop
 from app.models.tn_phien_khao_sat import TnPhienKhaoSat
 from app.models.truong_hoc_tuyen_sinh_theo_nam import TruongHocTuyenSinhTheoNam
 
@@ -77,6 +78,7 @@ __all__ = [
     "TnCauHoiTracNghiem",
     "TnCauTraLoi",
     "TnChiTietTraLoi",
+    "TnLichSuTimTruongPhuHop",
     "TnPhienKhaoSat",
     "TruongHocTuyenSinhTheoNam",
     "DmVanBan",
