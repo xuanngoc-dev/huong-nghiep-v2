@@ -1,5 +1,23 @@
 <template>
   <div class="truong-dao-tao">
+    <ol class="truong-tong-quan" aria-label="Tóm tắt trường đào tạo" :aria-busy="dangTaiThongKe">
+      <li v-for="(muc, index) in thongKe" :key="muc.id" class="truong-tong-quan__item" :class="`truong-tong-quan__item--${index + 1}`">
+        <p class="truong-tong-quan__label">{{ muc.nhan }}</p>
+        <p class="truong-tong-quan__value">
+          <template v-if="muc.so == null">…</template>
+          <template v-else>{{ muc.so }} trường</template>
+        </p>
+      </li>
+    </ol>
+    <p class="truong-tong-quan__hint">
+      <el-icon class="truong-tong-quan__hint-icon" aria-hidden="true"><InfoFilled /></el-icon>
+      <span>
+        Đây là danh sách các trường có đào tạo ngành bạn quan tâm. Để tìm ra những trường thực sự phù hợp với vị
+        trí, học lực, khả năng tài chính và nguyện vọng cá nhân, hãy sử dụng tính năng
+        <button type="button" class="truong-tong-quan__link" @click="diChonTruong">Tìm trường phù hợp</button>.
+      </span>
+    </p>
+
     <form class="nhom-filter" @submit.prevent="timKiem">
       <div class="nhom-filter__field nhom-filter__field--ten">
         <label class="nhom-filter__label" for="loc-tu-khoa-truong">Từ khóa</label>
@@ -76,7 +94,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchTruongTheoNganh } from '@/api/nganhHocTheoTruong'
 import { fetchTinhThanh } from '@/api/tinhThanh'
@@ -133,7 +151,29 @@ const trang = ref(1)
 const soMoiTrang = ref(12)
 const dangTai = ref(false)
 const loi = ref('')
+const soTruong = ref({ tong: null, viTri: null, phuHop: null })
+const dangTaiThongKe = ref(false)
 let lanTai = 0
+let lanTaiThongKe = 0
+
+function vietHoaDau(text) {
+  return text ? text.charAt(0).toUpperCase() + text.slice(1) : text
+}
+
+function moTaViTri(loc) {
+  const phan = []
+  if (loc.tinh) phan.push(`tại ${loc.tinh}`)
+  else if (loc.khuVuc) phan.push(`tại miền ${loc.khuVuc}`)
+  if (loc.loai) phan.push(`thuộc loại ${loc.loai.toLowerCase()}`)
+  return phan.length ? vietHoaDau(phan.join(', ')) : 'Chưa lọc khu vực hay loại cơ sở'
+}
+
+// Phễu 3 bước: có đào tạo ngành → khớp khu vực/loại cơ sở → khớp toàn bộ bộ lọc.
+const thongKe = computed(() => [
+  { id: 'tong', nhan: `Có đào tạo ${props.nganh?.ten_nganh || 'ngành này'}`, so: soTruong.value.tong },
+  { id: 'vi-tri', nhan: moTaViTri(boLoc.value), so: soTruong.value.viTri },
+  { id: 'phu-hop', nhan: 'Phù hợp sơ bộ', so: soTruong.value.phuHop },
+])
 
 function hrefWebsite(value) {
   const text = String(value || '').trim()
@@ -254,16 +294,7 @@ async function tai() {
   dangTai.value = true
   loi.value = ''
   try {
-    const params = {
-      ma_nganh: ma,
-      nam_tuyen_sinh: boLoc.value.namHoc || NAM_HIEN_TAI,
-      page: trang.value,
-      page_size: soMoiTrang.value,
-    }
-    if (boLoc.value.tuKhoa) params.q = boLoc.value.tuKhoa
-    if (boLoc.value.khuVuc) params.vung_mien = boLoc.value.khuVuc
-    if (boLoc.value.loai) params.loai_co_so = boLoc.value.loai
-    if (boLoc.value.tinh) params.ten_tinh_thanh = boLoc.value.tinh
+    const params = { ...paramsLoc(ma, boLoc.value), page: trang.value, page_size: soMoiTrang.value }
     const data = await fetchTruongTheoNganh(params, { skipLoading: true })
     if (lan !== lanTai) return
     danhSach.value = data.items || []
@@ -273,6 +304,53 @@ async function tai() {
     loi.value = 'Không tải được trường đào tạo.'
   } finally {
     if (lan === lanTai) dangTai.value = false
+  }
+}
+
+function paramsLoc(ma, loc, { viTri = true, tuKhoa = true } = {}) {
+  const params = { ma_nganh: ma, nam_tuyen_sinh: loc.namHoc || NAM_HIEN_TAI }
+  if (viTri) {
+    if (loc.khuVuc) params.vung_mien = loc.khuVuc
+    if (loc.loai) params.loai_co_so = loc.loai
+    if (loc.tinh) params.ten_tinh_thanh = loc.tinh
+  }
+  if (tuKhoa && loc.tuKhoa) params.q = loc.tuKhoa
+  return params
+}
+
+async function taiThongKe() {
+  const ma = String(props.nganh?.ma_nganh || '').trim()
+  const lan = ++lanTaiThongKe
+  soTruong.value = { tong: null, viTri: null, phuHop: null }
+  if (!ma) return
+  const loc = boLoc.value
+  const cacBuoc = {
+    tong: paramsLoc(ma, loc, { viTri: false, tuKhoa: false }),
+    viTri: paramsLoc(ma, loc, { tuKhoa: false }),
+    phuHop: paramsLoc(ma, loc),
+  }
+  // Các bước có cùng điều kiện lọc thì chỉ gọi API một lần.
+  const daGoi = new Map()
+  function dem(params) {
+    const khoa = JSON.stringify(params)
+    if (!daGoi.has(khoa)) {
+      daGoi.set(
+        khoa,
+        fetchTruongTheoNganh({ ...params, page: 1, page_size: 1 }, { skipLoading: true }).then((data) => data.total || 0),
+      )
+    }
+    return daGoi.get(khoa)
+  }
+  dangTaiThongKe.value = true
+  try {
+    const [tong, viTri, phuHop] = await Promise.all([dem(cacBuoc.tong), dem(cacBuoc.viTri), dem(cacBuoc.phuHop)])
+    if (lan !== lanTaiThongKe) return
+    soTruong.value = { tong, viTri, phuHop }
+  } catch {
+    if (lan !== lanTaiThongKe) return
+    soTruong.value = { tong: null, viTri: null, phuHop: null }
+  } finally {
+    if (lan === lanTaiThongKe) dangTaiThongKe.value = false
   }
 }
 
@@ -322,6 +400,7 @@ watch(
 )
 
 watch(trang, tai)
+watch([() => props.nganh?.ma_nganh, boLoc], taiThongKe, { immediate: true })
 watch(soMoiTrang, () => {
   if (trang.value !== 1) trang.value = 1
   else tai()
@@ -338,6 +417,97 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.truong-tong-quan {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.truong-tong-quan__item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid #c5d5cc;
+  border-left: 4px solid #8fbfa3;
+  border-radius: 10px;
+  background: #f6faf7;
+}
+
+.truong-tong-quan__item--2 {
+  border-left-color: #3f9466;
+}
+
+.truong-tong-quan__item--3 {
+  border-left-color: #0c5c34;
+  background: #e8f3ec;
+}
+
+.truong-tong-quan__label {
+  margin: 0;
+  color: #3d5c4c;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.truong-tong-quan__value {
+  margin: 0;
+  color: #0c5c34;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* Ghi chú full width ngay dưới các thẻ tóm tắt, sát hơn khoảng cách chung của khối. */
+.truong-tong-quan__hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: -4px 0 0;
+  padding: 10px 14px;
+  border: 1px solid #c5d5cc;
+  border-radius: 10px;
+  background: #fbfdfc;
+  color: #3a4742;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.truong-tong-quan__hint-icon {
+  flex: 0 0 auto;
+  margin-top: 3px;
+  color: #3f9466;
+  font-size: 16px;
+}
+
+.truong-tong-quan__link {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #0c5c34;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.truong-tong-quan__link:hover {
+  color: #084422;
+}
+
+@media (max-width: 767.98px) {
+  .truong-tong-quan {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .nhom-filter__field--nam,
