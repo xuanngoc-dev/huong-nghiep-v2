@@ -1,3 +1,18 @@
+<template>
+  <el-table-column
+    v-bind="restAttrs"
+    :fixed="resolvedFixed"
+    :width="resolvedWidth"
+    :min-width="resolvedMinWidth"
+    :class-name="mergedClassName"
+    :label-class-name="mergedLabelClassName"
+  >
+    <template v-for="(_, name) in slots" #[name]="scope">
+      <slot :name="name" v-bind="scope || {}" />
+    </template>
+  </el-table-column>
+</template>
+
 <script setup>
 /**
  * CustomTableColumn — wrapper el-table-column.
@@ -95,18 +110,3 @@ const restAttrs = computed(() => {
   return rest
 })
 </script>
-
-<template>
-  <el-table-column
-    v-bind="restAttrs"
-    :fixed="resolvedFixed"
-    :width="resolvedWidth"
-    :min-width="resolvedMinWidth"
-    :class-name="mergedClassName"
-    :label-class-name="mergedLabelClassName"
-  >
-    <template v-for="(_, name) in slots" #[name]="scope">
-      <slot :name="name" v-bind="scope || {}" />
-    </template>
-  </el-table-column>
-</template>

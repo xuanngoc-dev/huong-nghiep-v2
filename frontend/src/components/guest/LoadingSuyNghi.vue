@@ -1,10 +1,3 @@
-<script setup>
-defineProps({
-  visible: { type: Boolean, default: false },
-  text: { type: String, default: 'Đang phân tích kết quả…' },
-})
-</script>
-
 <template>
   <Teleport to="body">
     <Transition name="think-loading">
@@ -28,6 +21,13 @@ defineProps({
     </Transition>
   </Teleport>
 </template>
+
+<script setup>
+defineProps({
+  visible: { type: Boolean, default: false },
+  text: { type: String, default: 'Đang phân tích kết quả…' },
+})
+</script>
 
 <style scoped>
 .think-loading {

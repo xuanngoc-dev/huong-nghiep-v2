@@ -1,3 +1,101 @@
+<template>
+  <section class="quiz-flow">
+    <div class="container-fluid">
+      <div class="holland-overview">
+        <!-- <header class="holland-overview__header">
+          <h2 class="holland-overview__title">Chi tiết ngành</h2>
+          <p v-if="nganh" class="holland-overview__lead">
+            {{ [nganh.ma_nhom_nganh, nganh.ten_nhom_nganh].filter(Boolean).join(' · ') || nganh.ten_nganh }}
+          </p>
+          <p v-else class="holland-overview__lead">Thông tin đào tạo theo mã ngành trên đường dẫn.</p>
+        </header> -->
+
+        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
+        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải thông tin ngành…</p>
+
+        <template v-else-if="nganh">
+          <article class="major-detail">
+            <div class="major-detail__head">
+              <img class="major-detail__image" :src="anh" :alt="`Hình minh họa ngành ${nganh.ten_nganh}`" @error="anhHong = true" />
+              <div class="major-detail__intro">
+                <p class="major-detail__code">{{ nganh.ma_nganh }}</p>
+                <h3 class="major-detail__name">{{ nganh.ten_nganh }}</h3>
+                <p v-if="nganh.ten_tieng_anh" class="major-detail__en">{{ nganh.ten_tieng_anh }}</p>
+                <p class="major-detail__text">{{ moTa || 'Chưa có mô tả cho ngành này.' }}</p>
+                <dl v-if="tomTat.length" class="major-facts">
+                  <div v-for="item in tomTat" :key="item.nhan" class="major-facts__item">
+                    <dt>{{ item.nhan }}</dt>
+                    <dd>{{ item.giaTri }}</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </article>
+
+          <div class="major-tabs">
+            <div class="major-tabs__bar" role="tablist" aria-label="Nội dung chi tiết ngành">
+              <button
+                v-for="tab in TABS"
+                :id="idTab(tab.id)"
+                :key="tab.id"
+                type="button"
+                role="tab"
+                class="major-tabs__pill"
+                :class="{ 'is-active': tabDangChon === tab.id }"
+                :aria-selected="tabDangChon === tab.id"
+                :aria-controls="`major-panel-${maNganh}-${tab.id}`"
+                :tabindex="tabDangChon === tab.id ? 0 : -1"
+                @click="tabDangChon = tab.id"
+                @keydown="dieuHuongTab"
+              >
+                {{ tab.nhan }}
+              </button>
+            </div>
+            <div
+              :id="`major-panel-${maNganh}-${tabDangChon}`"
+              class="major-tabs__panel"
+              role="tabpanel"
+              :aria-labelledby="idTab(tabDangChon)"
+            >
+              <component :is="thanhPhanTab" :nganh="nganh" :chi-tiet="chiTiet.json" :van-ban="chiTiet.vanBan" />
+            </div>
+          </div>
+
+          <section class="major-peers" aria-labelledby="nganh-cung-nhom-title">
+            <h2 id="nganh-cung-nhom-title" class="major-peers__title">Một số ngành học cùng nhóm</h2>
+            <p v-if="tenNhom" class="major-peers__lead">{{ tenNhom }}</p>
+            <p v-if="loiCungNhom" class="holland-note holland-note__text">{{ loiCungNhom }}</p>
+            <p v-else-if="dangTaiCungNhom" class="major-peers__lead">Đang tải ngành cùng nhóm…</p>
+            <p v-else-if="!nganhCungNhom.length" class="major-peers__lead">Chưa có ngành khác trong nhóm này.</p>
+            <div v-else class="row g-3">
+              <div v-for="item in nganhCungNhom" :key="item.ma_nganh" class="col-12 col-md-6 col-xl-3">
+                <CardNganhDaoTao
+                  class="h-100"
+                  :ma="item.ma_nganh"
+                  :ten="item.ten_nganh"
+                  :ten-tieng-anh="item.ten_tieng_anh"
+                  :mo-ta="item.mo_ta || ''"
+                  :hinh-anh="item.hinh_anh_mo_ta || ''"
+                  :khoa="item.id || item.ma_nganh"
+                  hanh-dong="Xem chi tiết"
+                  @chon="xemNganh(item.ma_nganh)"
+                />
+              </div>
+            </div>
+          </section>
+
+          <HoTroDinhHuong class="mt-3" />
+          <CauHoiThuongGap class="mt-3" />
+        </template>
+
+        <div class="major-nav">
+          <button type="button" class="btn btn-outline-success" @click="quayLai">Quay lại ngành phù hợp</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
 <script setup>
 import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -203,103 +301,5 @@ async function taiNganh(ma) {
 
 watch(maNganh, taiNganh, { immediate: true })
 </script>
-
-<template>
-  <section class="quiz-flow">
-    <div class="container-fluid">
-      <div class="holland-overview">
-        <!-- <header class="holland-overview__header">
-          <h2 class="holland-overview__title">Chi tiết ngành</h2>
-          <p v-if="nganh" class="holland-overview__lead">
-            {{ [nganh.ma_nhom_nganh, nganh.ten_nhom_nganh].filter(Boolean).join(' · ') || nganh.ten_nganh }}
-          </p>
-          <p v-else class="holland-overview__lead">Thông tin đào tạo theo mã ngành trên đường dẫn.</p>
-        </header> -->
-
-        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
-        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải thông tin ngành…</p>
-
-        <template v-else-if="nganh">
-          <article class="major-detail">
-            <div class="major-detail__head">
-              <img class="major-detail__image" :src="anh" :alt="`Hình minh họa ngành ${nganh.ten_nganh}`" @error="anhHong = true" />
-              <div class="major-detail__intro">
-                <p class="major-detail__code">{{ nganh.ma_nganh }}</p>
-                <h3 class="major-detail__name">{{ nganh.ten_nganh }}</h3>
-                <p v-if="nganh.ten_tieng_anh" class="major-detail__en">{{ nganh.ten_tieng_anh }}</p>
-                <p class="major-detail__text">{{ moTa || 'Chưa có mô tả cho ngành này.' }}</p>
-                <dl v-if="tomTat.length" class="major-facts">
-                  <div v-for="item in tomTat" :key="item.nhan" class="major-facts__item">
-                    <dt>{{ item.nhan }}</dt>
-                    <dd>{{ item.giaTri }}</dd>
-                  </div>
-                </dl>
-              </div>
-            </div>
-          </article>
-
-          <div class="major-tabs">
-            <div class="major-tabs__bar" role="tablist" aria-label="Nội dung chi tiết ngành">
-              <button
-                v-for="tab in TABS"
-                :id="idTab(tab.id)"
-                :key="tab.id"
-                type="button"
-                role="tab"
-                class="major-tabs__pill"
-                :class="{ 'is-active': tabDangChon === tab.id }"
-                :aria-selected="tabDangChon === tab.id"
-                :aria-controls="`major-panel-${maNganh}-${tab.id}`"
-                :tabindex="tabDangChon === tab.id ? 0 : -1"
-                @click="tabDangChon = tab.id"
-                @keydown="dieuHuongTab"
-              >
-                {{ tab.nhan }}
-              </button>
-            </div>
-            <div
-              :id="`major-panel-${maNganh}-${tabDangChon}`"
-              class="major-tabs__panel"
-              role="tabpanel"
-              :aria-labelledby="idTab(tabDangChon)"
-            >
-              <component :is="thanhPhanTab" :nganh="nganh" :chi-tiet="chiTiet.json" :van-ban="chiTiet.vanBan" />
-            </div>
-          </div>
-
-          <section class="major-peers" aria-labelledby="nganh-cung-nhom-title">
-            <h2 id="nganh-cung-nhom-title" class="major-peers__title">Một số ngành học cùng nhóm</h2>
-            <p v-if="tenNhom" class="major-peers__lead">{{ tenNhom }}</p>
-            <p v-if="loiCungNhom" class="holland-note holland-note__text">{{ loiCungNhom }}</p>
-            <p v-else-if="dangTaiCungNhom" class="major-peers__lead">Đang tải ngành cùng nhóm…</p>
-            <p v-else-if="!nganhCungNhom.length" class="major-peers__lead">Chưa có ngành khác trong nhóm này.</p>
-            <div v-else class="row g-3">
-              <div v-for="item in nganhCungNhom" :key="item.ma_nganh" class="col-12 col-md-6 col-xl-3">
-                <CardNganhDaoTao
-                  class="h-100"
-                  :ma="item.ma_nganh"
-                  :ten="item.ten_nganh"
-                  :ten-tieng-anh="item.ten_tieng_anh"
-                  :mo-ta="item.mo_ta || ''"
-                  :hinh-anh="item.hinh_anh_mo_ta || ''"
-                  :khoa="item.id || item.ma_nganh"
-                  hanh-dong="Xem chi tiết"
-                  @chon="xemNganh(item.ma_nganh)"
-                />
-              </div>
-            </div>
-          </section>
-
-          <HoTroDinhHuong class="mt-3" />
-          <CauHoiThuongGap class="mt-3" />
-        </template>
-
-        <div class="major-nav">
-          <button type="button" class="btn btn-outline-success" @click="quayLai">Quay lại ngành phù hợp</button>
-        </div>
-      </div>
-    </div>
-  </section>
-</template>
 
 <style src="./quiz-type.scss"></style>

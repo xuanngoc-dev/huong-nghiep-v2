@@ -1,11 +1,3 @@
-<script setup>
-defineOptions({ name: 'KhongCoDuLieu' })
-
-defineProps({
-  text: { type: String, default: 'Không có dữ liệu.' },
-})
-</script>
-
 <template>
   <div class="khong-co-du-lieu" role="status">
     <svg class="khong-co-du-lieu__image" viewBox="0 0 160 120" aria-hidden="true">
@@ -20,6 +12,14 @@ defineProps({
     <p class="khong-co-du-lieu__text">{{ text }}</p>
   </div>
 </template>
+
+<script setup>
+defineOptions({ name: 'KhongCoDuLieu' })
+
+defineProps({
+  text: { type: String, default: 'Không có dữ liệu.' },
+})
+</script>
 
 <style scoped>
 .khong-co-du-lieu {

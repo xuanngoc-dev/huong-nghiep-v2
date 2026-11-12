@@ -1,33 +1,3 @@
-<script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useDoiTuongAudiences } from '@/composables/useDoiTuongAudiences'
-import { routeNameDinhHuongThpt } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
-import { DINH_HUONG_THPT_KEY, dinhHuongThptList } from '@/components/guest/doi-tuong/HocSinhThpt/dinhHuong'
-import DinhHuongTuongLai from '@/components/guest/chung/DinhHuongTuongLai.vue'
-import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
-import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
-
-defineOptions({ name: 'HocSinhThpt' })
-
-defineProps({
-  audience: { type: Object, required: true },
-})
-
-const directions = dinhHuongThptList
-
-const selectedDirection = ref(sessionStorage.getItem(DINH_HUONG_THPT_KEY) || '')
-const { audiences, selectedCode, chonDoiTuong } = useDoiTuongAudiences()
-const router = useRouter()
-
-function chonDinhHuong(direction) {
-  selectedDirection.value = direction.code
-  sessionStorage.setItem(DINH_HUONG_THPT_KEY, direction.code)
-  const name = routeNameDinhHuongThpt(direction.code)
-  if (name) router.push({ name })
-}
-</script>
-
 <template>
   <section class="py-4">
     <div class="container-fluid">
@@ -90,3 +60,33 @@ function chonDinhHuong(direction) {
     </div>
   </section>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useDoiTuongAudiences } from '@/composables/useDoiTuongAudiences'
+import { routeNameDinhHuongThpt } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
+import { DINH_HUONG_THPT_KEY, dinhHuongThptList } from '@/components/guest/doi-tuong/HocSinhThpt/dinhHuong'
+import DinhHuongTuongLai from '@/components/guest/chung/DinhHuongTuongLai.vue'
+import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
+import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
+
+defineOptions({ name: 'HocSinhThpt' })
+
+defineProps({
+  audience: { type: Object, required: true },
+})
+
+const directions = dinhHuongThptList
+
+const selectedDirection = ref(sessionStorage.getItem(DINH_HUONG_THPT_KEY) || '')
+const { audiences, selectedCode, chonDoiTuong } = useDoiTuongAudiences()
+const router = useRouter()
+
+function chonDinhHuong(direction) {
+  selectedDirection.value = direction.code
+  sessionStorage.setItem(DINH_HUONG_THPT_KEY, direction.code)
+  const name = routeNameDinhHuongThpt(direction.code)
+  if (name) router.push({ name })
+}
+</script>

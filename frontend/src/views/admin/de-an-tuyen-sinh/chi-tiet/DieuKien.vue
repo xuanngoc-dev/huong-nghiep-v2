@@ -1,3 +1,28 @@
+<template>
+  <div v-if="filterFields.length" class="filters">
+    <CustomSelect
+      v-for="field in filterFields"
+      :key="field.key"
+      v-model="filters[field.key]"
+      :class="field.width"
+      :placeholder="field.placeholder"
+      multiple
+      collapse-tags
+      collapse-tags-tooltip
+      clearable
+      filterable
+    >
+      <CustomOption
+        v-for="option in field.options"
+        :key="`${field.key}-${option.value}`"
+        :label="option.label"
+        :value="option.value"
+      />
+    </CustomSelect>
+  </div>
+  <BangChiTiet :rows="filteredRows" :columns="columns" :empty-text="emptyText" />
+</template>
+
 <script setup>
 import { computed, reactive } from 'vue'
 import BangChiTiet from './BangChiTiet.vue'
@@ -176,31 +201,6 @@ const emptyText = computed(() => {
 })
 </script>
 
-<template>
-  <div v-if="filterFields.length" class="filters">
-    <CustomSelect
-      v-for="field in filterFields"
-      :key="field.key"
-      v-model="filters[field.key]"
-      :class="field.width"
-      :placeholder="field.placeholder"
-      multiple
-      collapse-tags
-      collapse-tags-tooltip
-      clearable
-      filterable
-    >
-      <CustomOption
-        v-for="option in field.options"
-        :key="`${field.key}-${option.value}`"
-        :label="option.label"
-        :value="option.value"
-      />
-    </CustomSelect>
-  </div>
-  <BangChiTiet :rows="filteredRows" :columns="columns" :empty-text="emptyText" />
-</template>
-
 <style scoped>
 .filters {
   display: flex;
@@ -216,9 +216,5 @@ const emptyText = computed(() => {
 
 .filter-mid {
   width: 200px;
-}
-
-.filter-narrow {
-  width: 150px;
 }
 </style>

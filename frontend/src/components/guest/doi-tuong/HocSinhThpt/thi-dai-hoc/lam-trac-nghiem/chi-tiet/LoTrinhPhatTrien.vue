@@ -1,3 +1,15 @@
+<template>
+  <ol v-if="buoc.length" class="lo-trinh">
+    <li v-for="(item, index) in buoc" :key="`${index}-${item.tieuDe}`" class="lo-trinh__item">
+      <span class="lo-trinh__index">{{ index + 1 }}</span>
+      <h3>{{ item.tieuDe }}</h3>
+      <p v-if="item.noiDung">{{ item.noiDung }}</p>
+      <p v-if="item.ghiChu" class="lo-trinh__note">{{ item.ghiChu }}</p>
+    </li>
+  </ol>
+  <KhongCoDuLieu v-else text="Chưa có lộ trình phát triển cho ngành này." />
+</template>
+
 <script setup>
 import { computed } from 'vue'
 import { danhSachCap } from '@/utils/capTenGiaTri'
@@ -23,18 +35,6 @@ const buoc = computed(() => {
   return thanhBuoc(layChiTiet(props.chiTiet, ['lo_trinh_phat_trien', 'lo_trinh', 'lo_trinh_nghe_nghiep']))
 })
 </script>
-
-<template>
-  <ol v-if="buoc.length" class="lo-trinh">
-    <li v-for="(item, index) in buoc" :key="`${index}-${item.tieuDe}`" class="lo-trinh__item">
-      <span class="lo-trinh__index">{{ index + 1 }}</span>
-      <h3>{{ item.tieuDe }}</h3>
-      <p v-if="item.noiDung">{{ item.noiDung }}</p>
-      <p v-if="item.ghiChu" class="lo-trinh__note">{{ item.ghiChu }}</p>
-    </li>
-  </ol>
-  <KhongCoDuLieu v-else text="Chưa có lộ trình phát triển cho ngành này." />
-</template>
 
 <style scoped>
 .lo-trinh {

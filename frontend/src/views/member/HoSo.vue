@@ -1,3 +1,361 @@
+<template>
+  <el-card
+    v-loading="loading"
+    shadow="never"
+    class="profile-card"
+    :class="{ 'profile-card--embedded': embedded }"
+  >
+    <template v-if="!embedded" #header>
+      <div>
+        <h1 class="profile-card__title">Cập nhật thông tin cá nhân</h1>
+        <p class="profile-card__lead">
+          Thông tin này giúp hệ thống phân tích kết quả trắc nghiệm chính xác hơn.
+        </p>
+      </div>
+    </template>
+
+    <CustomForm ref="formRef" :model="form" :rules="rules" @submit.prevent="onSubmit">
+      <el-collapse v-model="openSections" class="profile-collapse">
+      <el-collapse-item name="ca-nhan" title="Thông tin cá nhân">
+        <CustomRow :gutter="16">
+          <CustomCol :span="4" :xs="12">
+            <CustomFormItem label="Họ tên" prop="ho_ten">
+              <CustomInput v-model="form.ho_ten" maxlength="150" placeholder="Nguyễn Văn A" clearable />
+            </CustomFormItem>
+          </CustomCol>
+          <CustomCol :span="4" :xs="12">
+            <CustomFormItem label="Email">
+              <CustomInput :model-value="email" disabled />
+            </CustomFormItem>
+          </CustomCol>
+          <CustomCol :span="4" :xs="12">
+            <CustomFormItem label="Số điện thoại" prop="so_dien_thoai">
+              <CustomInput v-model="form.so_dien_thoai" maxlength="20" placeholder="Tùy chọn" clearable />
+            </CustomFormItem>
+          </CustomCol>
+          <CustomCol :span="4" :xs="12">
+            <CustomFormItem label="Giới tính">
+              <CustomSelect v-model="form.gioi_tinh" placeholder="Chọn" clearable>
+                <CustomOption
+                  v-for="item in GIOI_TINH"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </CustomSelect>
+            </CustomFormItem>
+          </CustomCol>
+          <CustomCol :span="4" :xs="12">
+            <CustomFormItem label="Ngày sinh">
+              <CustomDatePicker
+                v-model="form.ngay_sinh"
+                type="date"
+                value-format="YYYY-MM-DD"
+                format="DD/MM/YYYY"
+                placeholder="Chọn ngày"
+                clearable
+                :disabled-date="disableFutureDate"
+              />
+            </CustomFormItem>
+          </CustomCol>
+          <CustomCol :span="4" :xs="12">
+            <CustomFormItem label="Tỉnh thành">
+              <CustomSelect v-model="form.tinh_thanh_id" placeholder="Chọn" clearable filterable>
+                <CustomOption
+                  v-for="item in provinceOptions"
+                  :key="item.id"
+                  :label="item.ten_tinh"
+                  :value="item.id"
+                />
+              </CustomSelect>
+            </CustomFormItem>
+          </CustomCol>
+          <CustomCol :span="4" :xs="12">
+            <CustomFormItem label="Dân tộc">
+              <CustomSelect
+                v-model="form.dan_toc"
+                placeholder="Chọn"
+                clearable
+                filterable
+                allow-create
+                default-first-option
+              >
+                <CustomOption v-for="item in ethnicSelectOptions" :key="item" :label="item" :value="item" />
+              </CustomSelect>
+            </CustomFormItem>
+          </CustomCol>
+          <CustomCol :span="4" :xs="12">
+            <CustomFormItem label="Tôn giáo">
+              <CustomSelect
+                v-model="form.ton_giao"
+                placeholder="Chọn"
+                clearable
+                filterable
+                allow-create
+                default-first-option
+              >
+                <CustomOption v-for="item in religionSelectOptions" :key="item" :label="item" :value="item" />
+              </CustomSelect>
+            </CustomFormItem>
+          </CustomCol>
+          <CustomCol :span="4" :xs="12">
+            <CustomFormItem label="Khu vực ưu tiên">
+              <CustomSelect v-model="form.khu_vuc_uu_tien_id" placeholder="Chọn" clearable filterable>
+                <CustomOption
+                  v-for="item in khuVucSelectOptions"
+                  :key="item.id"
+                  :label="item.label"
+                  :value="item.id"
+                />
+              </CustomSelect>
+            </CustomFormItem>
+          </CustomCol>
+          <CustomCol :span="4" :xs="12">
+            <CustomFormItem label="Đối tượng ưu tiên">
+              <CustomSelect v-model="form.doi_tuong_uu_tien_id" placeholder="Chọn" clearable filterable>
+                <CustomOption
+                  v-for="item in doiTuongSelectOptions"
+                  :key="item.id"
+                  :label="item.label"
+                  :value="item.id"
+                />
+              </CustomSelect>
+            </CustomFormItem>
+          </CustomCol>
+        </CustomRow>
+      </el-collapse-item>
+
+      <el-collapse-item name="hoc-ba" title="Điểm trung bình học bạ">
+        <p class="profile-section__lead">Học lực trung bình và hạnh kiểm của từng lớp. Học lực thang điểm 10.</p>
+        <CustomRow :gutter="16">
+          <CustomCol v-for="grade in GRADES" :key="`tb-${grade}`" :span="4" :xs="12">
+            <CustomFormItem :label="`Học lực trung bình lớp ${grade}`">
+              <CustomInputNumber
+                v-model="hocLucTb[grade]"
+                :min="0"
+                :max="10"
+                :step="0.1"
+                :precision="2"
+                :controls="false"
+                :value-on-clear="null"
+                placeholder="0–10"
+              />
+            </CustomFormItem>
+          </CustomCol>
+          <CustomCol v-for="grade in GRADES" :key="`hk-${grade}`" :span="4" :xs="12">
+            <CustomFormItem :label="`Hạnh kiểm lớp ${grade}`">
+              <CustomSelect v-model="hanhKiem[grade]" placeholder="Chọn">
+                <CustomOption v-for="item in HANH_KIEM" :key="item" :label="item" :value="item" />
+              </CustomSelect>
+            </CustomFormItem>
+          </CustomCol>
+        </CustomRow>
+        <p class="profile-section__lead">Điểm trung bình từng môn các lớp 10, 11 và 12, thang điểm 10.</p>
+        <CustomTable v-if="openSections.includes('hoc-ba')" :data="subjects" row-key="ma_mon_hoc" class="score-table">
+          <CustomTableColumn label="STT" width="72" align="center">
+            <template #default="{ $index }">{{ $index + 1 }}</template>
+          </CustomTableColumn>
+          <CustomTableColumn prop="ma_mon_hoc" label="Mã môn" width="110" />
+          <CustomTableColumn prop="ten_mon_hoc" label="Môn học" min-width="180" />
+          <CustomTableColumn v-for="grade in GRADES" :key="grade" :label="`Lớp ${grade}`" min-width="120">
+            <template #default="{ row }">
+              <CustomInputNumber
+                v-model="hocBa[grade][row.ma_mon_hoc]"
+                :min="0"
+                :max="10"
+                :step="0.1"
+                :precision="2"
+                :controls="false"
+                :value-on-clear="null"
+                placeholder="0–10"
+              />
+            </template>
+          </CustomTableColumn>
+          <template #empty>Chưa có môn học trong danh mục.</template>
+        </CustomTable>
+      </el-collapse-item>
+
+      <el-collapse-item name="thi-thpt" title="Điểm thi THPT Quốc gia">
+        <p class="profile-section__lead">Điểm dự kiến theo từng môn, thang điểm 10.</p>
+        <CustomTable v-if="openSections.includes('thi-thpt')" :data="subjects" row-key="ma_mon_hoc" class="score-table">
+          <CustomTableColumn label="STT" width="72" align="center">
+            <template #default="{ $index }">{{ $index + 1 }}</template>
+          </CustomTableColumn>
+          <CustomTableColumn prop="ma_mon_hoc" label="Mã môn" width="110" />
+          <CustomTableColumn prop="ten_mon_hoc" label="Môn học" min-width="180" />
+          <CustomTableColumn label="Điểm dự kiến" min-width="140">
+            <template #default="{ row }">
+              <CustomInputNumber
+                v-model="diemDuKien[row.ma_mon_hoc]"
+                :min="0"
+                :max="10"
+                :step="0.1"
+                :precision="2"
+                :controls="false"
+                :value-on-clear="null"
+                placeholder="0–10"
+              />
+            </template>
+          </CustomTableColumn>
+          <template #empty>Chưa có môn học trong danh mục.</template>
+        </CustomTable>
+      </el-collapse-item>
+
+      <el-collapse-item name="suc-khoe" title="Sức khỏe thể chất">
+        <CustomRow :gutter="16">
+          <CustomCol :span="4" :xs="12">
+            <CustomFormItem label="Chiều cao (cm)">
+              <CustomInputNumber
+                v-model="sucKhoe.chieu_cao"
+                :min="30"
+                :max="250"
+                :step="0.1"
+                :precision="1"
+                :controls="false"
+                :value-on-clear="null"
+                placeholder="cm"
+              />
+            </CustomFormItem>
+          </CustomCol>
+          <CustomCol :span="4" :xs="12">
+            <CustomFormItem label="Cân nặng (kg)">
+              <CustomInputNumber
+                v-model="sucKhoe.can_nang"
+                :min="5"
+                :max="300"
+                :step="0.1"
+                :precision="1"
+                :controls="false"
+                :value-on-clear="null"
+                placeholder="kg"
+              />
+            </CustomFormItem>
+          </CustomCol>
+          <CustomCol :span="16" :xs="24">
+            <CustomFormItem label="Tiền sử bệnh">
+              <CustomInput
+                v-model="sucKhoe.tien_su_benh"
+                maxlength="1000"
+                show-word-limit
+                placeholder="Bệnh mãn tính, dị ứng, khuyết tật hoặc ghi không có"
+              />
+            </CustomFormItem>
+          </CustomCol>
+        </CustomRow>
+      </el-collapse-item>
+
+      <el-collapse-item
+        v-for="section in recordSections"
+        :key="section.key"
+        :name="section.key"
+        :title="section.title"
+      >
+        <p class="profile-section__lead">{{ section.lead }}</p>
+        <CustomTable
+          v-if="openSections.includes(section.key)"
+          :data="recordGroups[section.key]"
+          row-key="_key"
+          class="score-table record-table"
+        >
+          <CustomTableColumn label="STT" width="72" align="center">
+            <template #default="{ $index }">{{ $index + 1 }}</template>
+          </CustomTableColumn>
+          <CustomTableColumn label="Nội dung" min-width="240">
+            <template #default="{ row }">
+              <CustomSelect
+                v-model="row.ma"
+                placeholder="Chọn"
+                filterable
+                :disabled="!row.editing"
+              >
+                <CustomOption
+                  v-for="item in section.options"
+                  :key="item.ma"
+                  :label="item.label"
+                  :value="item.ma"
+                />
+              </CustomSelect>
+            </template>
+          </CustomTableColumn>
+          <CustomTableColumn label="Thành tích" min-width="260">
+            <template #default="{ row }">
+              <CustomInput
+                v-model="row.thanh_tich"
+                maxlength="100"
+                :placeholder="scorePlaceholder(section.key, row.ma)"
+                :title="scoreTitle(section.key, row.ma)"
+                :disabled="!row.editing"
+              />
+            </template>
+          </CustomTableColumn>
+          <CustomTableColumn label="Thời gian cấp" min-width="170">
+            <template #default="{ row }">
+              <CustomDatePicker
+                v-model="row.thoi_gian_cap"
+                type="date"
+                value-format="YYYY-MM-DD"
+                format="DD/MM/YYYY"
+                placeholder="Chọn ngày"
+                clearable
+                :disabled="!row.editing"
+                :disabled-date="disableFutureDate"
+              />
+            </template>
+          </CustomTableColumn>
+          <CustomTableColumn label="Hành động" width="140" align="center">
+            <template #default="{ row, $index }">
+              <div class="row-actions">
+                <CustomButton
+                  v-if="!row.editing"
+                  link
+                  type="primary"
+                  native-type="button"
+                  @click="row.editing = true"
+                >
+                  Sửa
+                </CustomButton>
+                <CustomTooltip
+                  v-if="$index === recordGroups[section.key].length - 1"
+                  content="Thêm mới"
+                  placement="top"
+                >
+                  <CustomButton
+                    link
+                    type="primary"
+                    native-type="button"
+                    aria-label="Thêm mới"
+                    @click="addRecord(section.key)"
+                  >
+                    <CustomIcon><Plus /></CustomIcon>
+                  </CustomButton>
+                </CustomTooltip>
+                <CustomTooltip v-if="canRemove(section.key, row)" content="Xóa" placement="top">
+                  <CustomButton
+                    link
+                    type="danger"
+                    native-type="button"
+                    aria-label="Xóa"
+                    @click="removeRecord(section.key, $index)"
+                  >
+                    <CustomIcon><Delete /></CustomIcon>
+                  </CustomButton>
+                </CustomTooltip>
+              </div>
+            </template>
+          </CustomTableColumn>
+          <template #empty>Chưa có mục trong danh mục.</template>
+        </CustomTable>
+      </el-collapse-item>
+      </el-collapse>
+
+      <div class="profile-actions">
+        <CustomButton native-type="button" :disabled="loading" @click="fillSample">Điền dữ liệu mẫu</CustomButton>
+        <CustomButton type="primary" :loading="saving" @click="onSubmit">Lưu thông tin</CustomButton>
+      </div>
+    </CustomForm>
+  </el-card>
+</template>
+
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
@@ -578,364 +936,6 @@ async function onSubmit() {
 
 onMounted(load)
 </script>
-
-<template>
-  <el-card
-    v-loading="loading"
-    shadow="never"
-    class="profile-card"
-    :class="{ 'profile-card--embedded': embedded }"
-  >
-    <template v-if="!embedded" #header>
-      <div>
-        <h1 class="profile-card__title">Cập nhật thông tin cá nhân</h1>
-        <p class="profile-card__lead">
-          Thông tin này giúp hệ thống phân tích kết quả trắc nghiệm chính xác hơn.
-        </p>
-      </div>
-    </template>
-
-    <CustomForm ref="formRef" :model="form" :rules="rules" @submit.prevent="onSubmit">
-      <el-collapse v-model="openSections" class="profile-collapse">
-      <el-collapse-item name="ca-nhan" title="Thông tin cá nhân">
-        <CustomRow :gutter="16">
-          <CustomCol :span="4" :xs="12">
-            <CustomFormItem label="Họ tên" prop="ho_ten">
-              <CustomInput v-model="form.ho_ten" maxlength="150" placeholder="Nguyễn Văn A" clearable />
-            </CustomFormItem>
-          </CustomCol>
-          <CustomCol :span="4" :xs="12">
-            <CustomFormItem label="Email">
-              <CustomInput :model-value="email" disabled />
-            </CustomFormItem>
-          </CustomCol>
-          <CustomCol :span="4" :xs="12">
-            <CustomFormItem label="Số điện thoại" prop="so_dien_thoai">
-              <CustomInput v-model="form.so_dien_thoai" maxlength="20" placeholder="Tùy chọn" clearable />
-            </CustomFormItem>
-          </CustomCol>
-          <CustomCol :span="4" :xs="12">
-            <CustomFormItem label="Giới tính">
-              <CustomSelect v-model="form.gioi_tinh" placeholder="Chọn" clearable>
-                <CustomOption
-                  v-for="item in GIOI_TINH"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </CustomSelect>
-            </CustomFormItem>
-          </CustomCol>
-          <CustomCol :span="4" :xs="12">
-            <CustomFormItem label="Ngày sinh">
-              <CustomDatePicker
-                v-model="form.ngay_sinh"
-                type="date"
-                value-format="YYYY-MM-DD"
-                format="DD/MM/YYYY"
-                placeholder="Chọn ngày"
-                clearable
-                :disabled-date="disableFutureDate"
-              />
-            </CustomFormItem>
-          </CustomCol>
-          <CustomCol :span="4" :xs="12">
-            <CustomFormItem label="Tỉnh thành">
-              <CustomSelect v-model="form.tinh_thanh_id" placeholder="Chọn" clearable filterable>
-                <CustomOption
-                  v-for="item in provinceOptions"
-                  :key="item.id"
-                  :label="item.ten_tinh"
-                  :value="item.id"
-                />
-              </CustomSelect>
-            </CustomFormItem>
-          </CustomCol>
-          <CustomCol :span="4" :xs="12">
-            <CustomFormItem label="Dân tộc">
-              <CustomSelect
-                v-model="form.dan_toc"
-                placeholder="Chọn"
-                clearable
-                filterable
-                allow-create
-                default-first-option
-              >
-                <CustomOption v-for="item in ethnicSelectOptions" :key="item" :label="item" :value="item" />
-              </CustomSelect>
-            </CustomFormItem>
-          </CustomCol>
-          <CustomCol :span="4" :xs="12">
-            <CustomFormItem label="Tôn giáo">
-              <CustomSelect
-                v-model="form.ton_giao"
-                placeholder="Chọn"
-                clearable
-                filterable
-                allow-create
-                default-first-option
-              >
-                <CustomOption v-for="item in religionSelectOptions" :key="item" :label="item" :value="item" />
-              </CustomSelect>
-            </CustomFormItem>
-          </CustomCol>
-          <CustomCol :span="4" :xs="12">
-            <CustomFormItem label="Khu vực ưu tiên">
-              <CustomSelect v-model="form.khu_vuc_uu_tien_id" placeholder="Chọn" clearable filterable>
-                <CustomOption
-                  v-for="item in khuVucSelectOptions"
-                  :key="item.id"
-                  :label="item.label"
-                  :value="item.id"
-                />
-              </CustomSelect>
-            </CustomFormItem>
-          </CustomCol>
-          <CustomCol :span="4" :xs="12">
-            <CustomFormItem label="Đối tượng ưu tiên">
-              <CustomSelect v-model="form.doi_tuong_uu_tien_id" placeholder="Chọn" clearable filterable>
-                <CustomOption
-                  v-for="item in doiTuongSelectOptions"
-                  :key="item.id"
-                  :label="item.label"
-                  :value="item.id"
-                />
-              </CustomSelect>
-            </CustomFormItem>
-          </CustomCol>
-        </CustomRow>
-      </el-collapse-item>
-
-      <el-collapse-item name="hoc-ba" title="Điểm trung bình học bạ">
-        <p class="profile-section__lead">Học lực trung bình và hạnh kiểm của từng lớp. Học lực thang điểm 10.</p>
-        <CustomRow :gutter="16">
-          <CustomCol v-for="grade in GRADES" :key="`tb-${grade}`" :span="4" :xs="12">
-            <CustomFormItem :label="`Học lực trung bình lớp ${grade}`">
-              <CustomInputNumber
-                v-model="hocLucTb[grade]"
-                :min="0"
-                :max="10"
-                :step="0.1"
-                :precision="2"
-                :controls="false"
-                :value-on-clear="null"
-                placeholder="0–10"
-              />
-            </CustomFormItem>
-          </CustomCol>
-          <CustomCol v-for="grade in GRADES" :key="`hk-${grade}`" :span="4" :xs="12">
-            <CustomFormItem :label="`Hạnh kiểm lớp ${grade}`">
-              <CustomSelect v-model="hanhKiem[grade]" placeholder="Chọn">
-                <CustomOption v-for="item in HANH_KIEM" :key="item" :label="item" :value="item" />
-              </CustomSelect>
-            </CustomFormItem>
-          </CustomCol>
-        </CustomRow>
-        <p class="profile-section__lead">Điểm trung bình từng môn các lớp 10, 11 và 12, thang điểm 10.</p>
-        <CustomTable v-if="openSections.includes('hoc-ba')" :data="subjects" row-key="ma_mon_hoc" class="score-table">
-          <CustomTableColumn label="STT" width="72" align="center">
-            <template #default="{ $index }">{{ $index + 1 }}</template>
-          </CustomTableColumn>
-          <CustomTableColumn prop="ma_mon_hoc" label="Mã môn" width="110" />
-          <CustomTableColumn prop="ten_mon_hoc" label="Môn học" min-width="180" />
-          <CustomTableColumn v-for="grade in GRADES" :key="grade" :label="`Lớp ${grade}`" min-width="120">
-            <template #default="{ row }">
-              <CustomInputNumber
-                v-model="hocBa[grade][row.ma_mon_hoc]"
-                :min="0"
-                :max="10"
-                :step="0.1"
-                :precision="2"
-                :controls="false"
-                :value-on-clear="null"
-                placeholder="0–10"
-              />
-            </template>
-          </CustomTableColumn>
-          <template #empty>Chưa có môn học trong danh mục.</template>
-        </CustomTable>
-      </el-collapse-item>
-
-      <el-collapse-item name="thi-thpt" title="Điểm thi THPT Quốc gia">
-        <p class="profile-section__lead">Điểm dự kiến theo từng môn, thang điểm 10.</p>
-        <CustomTable v-if="openSections.includes('thi-thpt')" :data="subjects" row-key="ma_mon_hoc" class="score-table">
-          <CustomTableColumn label="STT" width="72" align="center">
-            <template #default="{ $index }">{{ $index + 1 }}</template>
-          </CustomTableColumn>
-          <CustomTableColumn prop="ma_mon_hoc" label="Mã môn" width="110" />
-          <CustomTableColumn prop="ten_mon_hoc" label="Môn học" min-width="180" />
-          <CustomTableColumn label="Điểm dự kiến" min-width="140">
-            <template #default="{ row }">
-              <CustomInputNumber
-                v-model="diemDuKien[row.ma_mon_hoc]"
-                :min="0"
-                :max="10"
-                :step="0.1"
-                :precision="2"
-                :controls="false"
-                :value-on-clear="null"
-                placeholder="0–10"
-              />
-            </template>
-          </CustomTableColumn>
-          <template #empty>Chưa có môn học trong danh mục.</template>
-        </CustomTable>
-      </el-collapse-item>
-
-      <el-collapse-item name="suc-khoe" title="Sức khỏe thể chất">
-        <CustomRow :gutter="16">
-          <CustomCol :span="4" :xs="12">
-            <CustomFormItem label="Chiều cao (cm)">
-              <CustomInputNumber
-                v-model="sucKhoe.chieu_cao"
-                :min="30"
-                :max="250"
-                :step="0.1"
-                :precision="1"
-                :controls="false"
-                :value-on-clear="null"
-                placeholder="cm"
-              />
-            </CustomFormItem>
-          </CustomCol>
-          <CustomCol :span="4" :xs="12">
-            <CustomFormItem label="Cân nặng (kg)">
-              <CustomInputNumber
-                v-model="sucKhoe.can_nang"
-                :min="5"
-                :max="300"
-                :step="0.1"
-                :precision="1"
-                :controls="false"
-                :value-on-clear="null"
-                placeholder="kg"
-              />
-            </CustomFormItem>
-          </CustomCol>
-          <CustomCol :span="16" :xs="24">
-            <CustomFormItem label="Tiền sử bệnh">
-              <CustomInput
-                v-model="sucKhoe.tien_su_benh"
-                maxlength="1000"
-                show-word-limit
-                placeholder="Bệnh mãn tính, dị ứng, khuyết tật hoặc ghi không có"
-              />
-            </CustomFormItem>
-          </CustomCol>
-        </CustomRow>
-      </el-collapse-item>
-
-      <el-collapse-item
-        v-for="section in recordSections"
-        :key="section.key"
-        :name="section.key"
-        :title="section.title"
-      >
-        <p class="profile-section__lead">{{ section.lead }}</p>
-        <CustomTable
-          v-if="openSections.includes(section.key)"
-          :data="recordGroups[section.key]"
-          row-key="_key"
-          class="score-table record-table"
-        >
-          <CustomTableColumn label="STT" width="72" align="center">
-            <template #default="{ $index }">{{ $index + 1 }}</template>
-          </CustomTableColumn>
-          <CustomTableColumn label="Nội dung" min-width="240">
-            <template #default="{ row }">
-              <CustomSelect
-                v-model="row.ma"
-                placeholder="Chọn"
-                filterable
-                :disabled="!row.editing"
-              >
-                <CustomOption
-                  v-for="item in section.options"
-                  :key="item.ma"
-                  :label="item.label"
-                  :value="item.ma"
-                />
-              </CustomSelect>
-            </template>
-          </CustomTableColumn>
-          <CustomTableColumn label="Thành tích" min-width="260">
-            <template #default="{ row }">
-              <CustomInput
-                v-model="row.thanh_tich"
-                maxlength="100"
-                :placeholder="scorePlaceholder(section.key, row.ma)"
-                :title="scoreTitle(section.key, row.ma)"
-                :disabled="!row.editing"
-              />
-            </template>
-          </CustomTableColumn>
-          <CustomTableColumn label="Thời gian cấp" min-width="170">
-            <template #default="{ row }">
-              <CustomDatePicker
-                v-model="row.thoi_gian_cap"
-                type="date"
-                value-format="YYYY-MM-DD"
-                format="DD/MM/YYYY"
-                placeholder="Chọn ngày"
-                clearable
-                :disabled="!row.editing"
-                :disabled-date="disableFutureDate"
-              />
-            </template>
-          </CustomTableColumn>
-          <CustomTableColumn label="Hành động" width="140" align="center">
-            <template #default="{ row, $index }">
-              <div class="row-actions">
-                <CustomButton
-                  v-if="!row.editing"
-                  link
-                  type="primary"
-                  native-type="button"
-                  @click="row.editing = true"
-                >
-                  Sửa
-                </CustomButton>
-                <CustomTooltip
-                  v-if="$index === recordGroups[section.key].length - 1"
-                  content="Thêm mới"
-                  placement="top"
-                >
-                  <CustomButton
-                    link
-                    type="primary"
-                    native-type="button"
-                    aria-label="Thêm mới"
-                    @click="addRecord(section.key)"
-                  >
-                    <CustomIcon><Plus /></CustomIcon>
-                  </CustomButton>
-                </CustomTooltip>
-                <CustomTooltip v-if="canRemove(section.key, row)" content="Xóa" placement="top">
-                  <CustomButton
-                    link
-                    type="danger"
-                    native-type="button"
-                    aria-label="Xóa"
-                    @click="removeRecord(section.key, $index)"
-                  >
-                    <CustomIcon><Delete /></CustomIcon>
-                  </CustomButton>
-                </CustomTooltip>
-              </div>
-            </template>
-          </CustomTableColumn>
-          <template #empty>Chưa có mục trong danh mục.</template>
-        </CustomTable>
-      </el-collapse-item>
-      </el-collapse>
-
-      <div class="profile-actions">
-        <CustomButton native-type="button" :disabled="loading" @click="fillSample">Điền dữ liệu mẫu</CustomButton>
-        <CustomButton type="primary" :loading="saving" @click="onSubmit">Lưu thông tin</CustomButton>
-      </div>
-    </CustomForm>
-  </el-card>
-</template>
 
 <style scoped>
 .profile-card {

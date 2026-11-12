@@ -1,9 +1,3 @@
-<script setup>
-import { studyPaths } from '@/data/landing'
-import LandingCarousel from './LandingCarousel.vue'
-import LandingImage from './LandingImage.vue'
-</script>
-
 <template>
   <section id="lo-trinh-hoc" class="landing__section landing__section--alt" aria-labelledby="study-paths-title">
     <div class="container-fluid">
@@ -41,3 +35,9 @@ import LandingImage from './LandingImage.vue'
     </div>
   </section>
 </template>
+
+<script setup>
+import { studyPaths } from '@/data/landing'
+import LandingCarousel from './LandingCarousel.vue'
+import LandingImage from './LandingImage.vue'
+</script>

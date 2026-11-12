@@ -1,3 +1,20 @@
+<template>
+  <el-config-provider :locale="datepickerLocale">
+    <el-date-picker
+      ref="pickerRef"
+      v-model="model"
+      v-bind="pickerAttrs"
+      :size="resolvedSize"
+      :popper-class="mergedPopperClass"
+      @visible-change="onVisibleChange"
+    >
+      <template v-for="(_, name) in slots" #[name]="slotData">
+        <slot :name="name" v-bind="slotData || {}" />
+      </template>
+    </el-date-picker>
+  </el-config-provider>
+</template>
+
 <script setup>
 /**
  * CustomDatePicker — wrapper el-date-picker.
@@ -124,20 +141,3 @@ defineExpose({
   handleClose: (...args) => pickerRef.value?.handleClose?.(...args),
 })
 </script>
-
-<template>
-  <el-config-provider :locale="datepickerLocale">
-    <el-date-picker
-      ref="pickerRef"
-      v-model="model"
-      v-bind="pickerAttrs"
-      :size="resolvedSize"
-      :popper-class="mergedPopperClass"
-      @visible-change="onVisibleChange"
-    >
-      <template v-for="(_, name) in slots" #[name]="slotData">
-        <slot :name="name" v-bind="slotData || {}" />
-      </template>
-    </el-date-picker>
-  </el-config-provider>
-</template>

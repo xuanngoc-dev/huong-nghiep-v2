@@ -1,168 +1,3 @@
-<script setup>
-import { computed, onMounted, ref, watch } from 'vue'
-import { danhSachTruong, noiDungTruong } from '@/api/kiemTraDuLieu'
-import KhoiDuLieu from '@/components/guest/kiem-tra-du-lieu/KhoiDuLieu.vue'
-import NoiDungPhuongThuc from '@/components/guest/kiem-tra-du-lieu/NoiDungPhuongThuc.vue'
-import {
-  KHOA_NGANH_META,
-  coGiaTri,
-  khop,
-  khoaConLai,
-  khoiTrungNhau,
-  maNganh,
-  mucKhacNhau,
-  nhan,
-  nhanTruong,
-  nhomPhuongThuc,
-  tenNganh,
-} from '@/components/guest/kiem-tra-du-lieu/nhanDuLieu'
-
-defineOptions({ name: 'ValidateData' })
-
-const danhSach = ref([])
-const tenTep = ref('')
-const noiDung = ref(null)
-const dangTaiDanhSach = ref(false)
-const dangTaiNoiDung = ref(false)
-const loi = ref('')
-const tab = ref('truong')
-const tuKhoaPhuongThuc = ref('')
-const tuKhoaNganh = ref('')
-const tuKhoaApDung = ref('')
-const khoaPhuongThuc = ref('')
-const khoaNganh = ref('')
-const khoaApDung = ref('')
-const moPhuongThuc = ref('0')
-const moQuyDoi = ref('')
-const moUuTien = ref('')
-const hienJsonTruong = ref(false)
-
-const truongChon = computed(() => danhSach.value.find((item) => item.ten_tep === tenTep.value) || null)
-const duLieu = computed(() => noiDung.value?.du_lieu ?? null)
-const truong = computed(() => (duLieu.value && typeof duLieu.value === 'object' && !Array.isArray(duLieu.value) ? duLieu.value.truong || {} : {}))
-const nganhs = computed(() => (Array.isArray(duLieu.value?.danh_sach_nganh) ? duLieu.value.danh_sach_nganh : []))
-const gocKhac = computed(() => {
-  if (!duLieu.value || typeof duLieu.value !== 'object' || Array.isArray(duLieu.value)) return {}
-  return khoaConLai(duLieu.value, ['truong', 'danh_sach_nganh'])
-})
-const jsonTruong = computed(() => JSON.stringify(truong.value, null, 2))
-
-const nganhCoKhoa = computed(() => nganhs.value.map((nganh, index) => ({ khoa: String(index), nganh })))
-const nhom = computed(() => nhomPhuongThuc(nganhs.value))
-const nhomLoc = computed(() =>
-  nhom.value.filter((item) => khop(tuKhoaPhuongThuc.value, item.ma, item.ten, item.loai)),
-)
-const nhomDangChon = computed(() => nhomLoc.value.find((item) => item.key === khoaPhuongThuc.value) || null)
-const khacNhau = computed(() => (nhomDangChon.value ? mucKhacNhau(nhomDangChon.value.apDung) : []))
-const apDungLoc = computed(() => {
-  const rows = nhomDangChon.value?.apDung || []
-  return rows.filter((item) =>
-    khop(tuKhoaApDung.value, tenNganh(item.nganh), maNganh(item.nganh), item.nganh.ten_nganh, item.nganh.ten_chuong_trinh),
-  )
-})
-const banDangChon = computed(() => apDungLoc.value.find((item) => item.khoa === khoaApDung.value) || null)
-
-const nganhLoc = computed(() =>
-  nganhCoKhoa.value.filter((item) =>
-    khop(tuKhoaNganh.value, tenNganh(item.nganh), maNganh(item.nganh), item.nganh.ten_nganh, item.nganh.ten_chuong_trinh),
-  ),
-)
-const nganhDangChon = computed(() => nganhLoc.value.find((item) => item.khoa === khoaNganh.value) || null)
-const phuongThucCuaNganh = computed(() =>
-  (Array.isArray(nganhDangChon.value?.nganh.phuong_thuc_tuyen_sinh) ? nganhDangChon.value.nganh.phuong_thuc_tuyen_sinh : []).filter(
-    (item) => item && typeof item === 'object',
-  ),
-)
-const nganhConLai = computed(() =>
-  khoaConLai(nganhDangChon.value?.nganh, [...KHOA_NGANH_META, 'dieu_kien_nganh', 'phuong_thuc_tuyen_sinh']),
-)
-
-const quyDoi = computed(() => khoiTrungNhau(nganhs.value, 'quy_doi_diem'))
-const uuTien = computed(() => khoiTrungNhau(nganhs.value, 'diem_cong_uu_tien'))
-
-const thongKe = computed(() => ({
-  soNganh: nganhs.value.length,
-  soPhuongThuc: nhom.value.length,
-  soBanGhi: nhom.value.reduce((total, item) => total + item.apDung.length, 0),
-  soQuyDoi: quyDoi.value.length,
-  soUuTien: uuTien.value.length,
-}))
-
-watch(nhomLoc, (list) => {
-  if (!list.some((item) => item.key === khoaPhuongThuc.value)) khoaPhuongThuc.value = list[0]?.key || ''
-})
-watch(apDungLoc, (list) => {
-  if (!list.some((item) => item.khoa === khoaApDung.value)) khoaApDung.value = list[0]?.khoa || ''
-})
-watch(nganhLoc, (list) => {
-  if (!list.some((item) => item.khoa === khoaNganh.value)) khoaNganh.value = list[0]?.khoa || ''
-})
-watch(khoaNganh, () => {
-  moPhuongThuc.value = '0'
-})
-watch(tenTep, (ten) => {
-  taiNoiDung(ten)
-})
-
-onMounted(taiDanhSach)
-
-async function taiDanhSach() {
-  dangTaiDanhSach.value = true
-  loi.value = ''
-  try {
-    danhSach.value = await danhSachTruong()
-  } catch (error) {
-    loi.value = thongBao(error)
-  } finally {
-    dangTaiDanhSach.value = false
-  }
-}
-
-async function taiNoiDung(ten) {
-  noiDung.value = null
-  hienJsonTruong.value = false
-  moQuyDoi.value = ''
-  moUuTien.value = ''
-  tuKhoaPhuongThuc.value = ''
-  tuKhoaNganh.value = ''
-  tuKhoaApDung.value = ''
-  if (!ten) return
-  dangTaiNoiDung.value = true
-  loi.value = ''
-  try {
-    noiDung.value = await noiDungTruong(ten)
-  } catch (error) {
-    loi.value = thongBao(error)
-  } finally {
-    dangTaiNoiDung.value = false
-  }
-}
-
-function thongBao(error) {
-  const detail = error?.response?.data?.detail
-  return typeof detail === 'string' ? detail : 'Không tải được dữ liệu tuyển sinh.'
-}
-
-function hienSo(value) {
-  if (value == null || value === '') return '—'
-  if (typeof value === 'object') return JSON.stringify(value)
-  return String(value)
-}
-
-function tomTat(khoi) {
-  const nganh = new Set(khoi.apDung.map((item) => `${item.ma}|${item.nganh}`))
-  const phuongThuc = [...new Set(khoi.apDung.map((item) => [item.maPhuongThuc, item.phuongThuc].filter(Boolean).join(' ')))]
-  return { soNganh: nganh.size, phuongThuc }
-}
-
-function tieuDeKhoi(khoi, index, nhanKhoi) {
-  const info = tomTat(khoi)
-  const mau = info.phuongThuc.slice(0, 2).join('; ')
-  const them = info.phuongThuc.length > 2 ? ` +${info.phuongThuc.length - 2}` : ''
-  return `${nhanKhoi} ${index + 1} · ${info.soNganh} ngành · ${mau}${them}`
-}
-</script>
-
 <template>
   <section v-loading="dangTaiDanhSach || dangTaiNoiDung" class="validate-data">
     <div class="container-fluid">
@@ -385,6 +220,171 @@ function tieuDeKhoi(khoi, index, nhanKhoi) {
     </div>
   </section>
 </template>
+
+<script setup>
+import { computed, onMounted, ref, watch } from 'vue'
+import { danhSachTruong, noiDungTruong } from '@/api/kiemTraDuLieu'
+import KhoiDuLieu from '@/components/guest/kiem-tra-du-lieu/KhoiDuLieu.vue'
+import NoiDungPhuongThuc from '@/components/guest/kiem-tra-du-lieu/NoiDungPhuongThuc.vue'
+import {
+  KHOA_NGANH_META,
+  coGiaTri,
+  khop,
+  khoaConLai,
+  khoiTrungNhau,
+  maNganh,
+  mucKhacNhau,
+  nhan,
+  nhanTruong,
+  nhomPhuongThuc,
+  tenNganh,
+} from '@/components/guest/kiem-tra-du-lieu/nhanDuLieu'
+
+defineOptions({ name: 'ValidateData' })
+
+const danhSach = ref([])
+const tenTep = ref('')
+const noiDung = ref(null)
+const dangTaiDanhSach = ref(false)
+const dangTaiNoiDung = ref(false)
+const loi = ref('')
+const tab = ref('truong')
+const tuKhoaPhuongThuc = ref('')
+const tuKhoaNganh = ref('')
+const tuKhoaApDung = ref('')
+const khoaPhuongThuc = ref('')
+const khoaNganh = ref('')
+const khoaApDung = ref('')
+const moPhuongThuc = ref('0')
+const moQuyDoi = ref('')
+const moUuTien = ref('')
+const hienJsonTruong = ref(false)
+
+const truongChon = computed(() => danhSach.value.find((item) => item.ten_tep === tenTep.value) || null)
+const duLieu = computed(() => noiDung.value?.du_lieu ?? null)
+const truong = computed(() => (duLieu.value && typeof duLieu.value === 'object' && !Array.isArray(duLieu.value) ? duLieu.value.truong || {} : {}))
+const nganhs = computed(() => (Array.isArray(duLieu.value?.danh_sach_nganh) ? duLieu.value.danh_sach_nganh : []))
+const gocKhac = computed(() => {
+  if (!duLieu.value || typeof duLieu.value !== 'object' || Array.isArray(duLieu.value)) return {}
+  return khoaConLai(duLieu.value, ['truong', 'danh_sach_nganh'])
+})
+const jsonTruong = computed(() => JSON.stringify(truong.value, null, 2))
+
+const nganhCoKhoa = computed(() => nganhs.value.map((nganh, index) => ({ khoa: String(index), nganh })))
+const nhom = computed(() => nhomPhuongThuc(nganhs.value))
+const nhomLoc = computed(() =>
+  nhom.value.filter((item) => khop(tuKhoaPhuongThuc.value, item.ma, item.ten, item.loai)),
+)
+const nhomDangChon = computed(() => nhomLoc.value.find((item) => item.key === khoaPhuongThuc.value) || null)
+const khacNhau = computed(() => (nhomDangChon.value ? mucKhacNhau(nhomDangChon.value.apDung) : []))
+const apDungLoc = computed(() => {
+  const rows = nhomDangChon.value?.apDung || []
+  return rows.filter((item) =>
+    khop(tuKhoaApDung.value, tenNganh(item.nganh), maNganh(item.nganh), item.nganh.ten_nganh, item.nganh.ten_chuong_trinh),
+  )
+})
+const banDangChon = computed(() => apDungLoc.value.find((item) => item.khoa === khoaApDung.value) || null)
+
+const nganhLoc = computed(() =>
+  nganhCoKhoa.value.filter((item) =>
+    khop(tuKhoaNganh.value, tenNganh(item.nganh), maNganh(item.nganh), item.nganh.ten_nganh, item.nganh.ten_chuong_trinh),
+  ),
+)
+const nganhDangChon = computed(() => nganhLoc.value.find((item) => item.khoa === khoaNganh.value) || null)
+const phuongThucCuaNganh = computed(() =>
+  (Array.isArray(nganhDangChon.value?.nganh.phuong_thuc_tuyen_sinh) ? nganhDangChon.value.nganh.phuong_thuc_tuyen_sinh : []).filter(
+    (item) => item && typeof item === 'object',
+  ),
+)
+const nganhConLai = computed(() =>
+  khoaConLai(nganhDangChon.value?.nganh, [...KHOA_NGANH_META, 'dieu_kien_nganh', 'phuong_thuc_tuyen_sinh']),
+)
+
+const quyDoi = computed(() => khoiTrungNhau(nganhs.value, 'quy_doi_diem'))
+const uuTien = computed(() => khoiTrungNhau(nganhs.value, 'diem_cong_uu_tien'))
+
+const thongKe = computed(() => ({
+  soNganh: nganhs.value.length,
+  soPhuongThuc: nhom.value.length,
+  soBanGhi: nhom.value.reduce((total, item) => total + item.apDung.length, 0),
+  soQuyDoi: quyDoi.value.length,
+  soUuTien: uuTien.value.length,
+}))
+
+watch(nhomLoc, (list) => {
+  if (!list.some((item) => item.key === khoaPhuongThuc.value)) khoaPhuongThuc.value = list[0]?.key || ''
+})
+watch(apDungLoc, (list) => {
+  if (!list.some((item) => item.khoa === khoaApDung.value)) khoaApDung.value = list[0]?.khoa || ''
+})
+watch(nganhLoc, (list) => {
+  if (!list.some((item) => item.khoa === khoaNganh.value)) khoaNganh.value = list[0]?.khoa || ''
+})
+watch(khoaNganh, () => {
+  moPhuongThuc.value = '0'
+})
+watch(tenTep, (ten) => {
+  taiNoiDung(ten)
+})
+
+onMounted(taiDanhSach)
+
+async function taiDanhSach() {
+  dangTaiDanhSach.value = true
+  loi.value = ''
+  try {
+    danhSach.value = await danhSachTruong()
+  } catch (error) {
+    loi.value = thongBao(error)
+  } finally {
+    dangTaiDanhSach.value = false
+  }
+}
+
+async function taiNoiDung(ten) {
+  noiDung.value = null
+  hienJsonTruong.value = false
+  moQuyDoi.value = ''
+  moUuTien.value = ''
+  tuKhoaPhuongThuc.value = ''
+  tuKhoaNganh.value = ''
+  tuKhoaApDung.value = ''
+  if (!ten) return
+  dangTaiNoiDung.value = true
+  loi.value = ''
+  try {
+    noiDung.value = await noiDungTruong(ten)
+  } catch (error) {
+    loi.value = thongBao(error)
+  } finally {
+    dangTaiNoiDung.value = false
+  }
+}
+
+function thongBao(error) {
+  const detail = error?.response?.data?.detail
+  return typeof detail === 'string' ? detail : 'Không tải được dữ liệu tuyển sinh.'
+}
+
+function hienSo(value) {
+  if (value == null || value === '') return '—'
+  if (typeof value === 'object') return JSON.stringify(value)
+  return String(value)
+}
+
+function tomTat(khoi) {
+  const nganh = new Set(khoi.apDung.map((item) => `${item.ma}|${item.nganh}`))
+  const phuongThuc = [...new Set(khoi.apDung.map((item) => [item.maPhuongThuc, item.phuongThuc].filter(Boolean).join(' ')))]
+  return { soNganh: nganh.size, phuongThuc }
+}
+
+function tieuDeKhoi(khoi, index, nhanKhoi) {
+  const info = tomTat(khoi)
+  const mau = info.phuongThuc.slice(0, 2).join('; ')
+  const them = info.phuongThuc.length > 2 ? ` +${info.phuongThuc.length - 2}` : ''
+  return `${nhanKhoi} ${index + 1} · ${info.soNganh} ngành · ${mau}${them}`
+}
+</script>
 
 <style scoped>
 .validate-data {

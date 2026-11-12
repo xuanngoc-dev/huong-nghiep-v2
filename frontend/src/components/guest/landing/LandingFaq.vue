@@ -1,14 +1,3 @@
-<script setup>
-import { ref } from 'vue'
-import { faqs } from '@/data/landing'
-
-const openId = ref(faqs[0].id)
-
-function toggle(id) {
-  openId.value = openId.value === id ? null : id
-}
-</script>
-
 <template>
   <section id="hoi-dap" class="landing__section landing__section--alt" aria-labelledby="faq-title">
     <div class="container-fluid">
@@ -63,3 +52,14 @@ function toggle(id) {
     </div>
   </section>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+import { faqs } from '@/data/landing'
+
+const openId = ref(faqs[0].id)
+
+function toggle(id) {
+  openId.value = openId.value === id ? null : id
+}
+</script>

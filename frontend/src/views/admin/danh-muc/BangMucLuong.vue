@@ -1,65 +1,3 @@
-<script setup>
-import { DON_VI_TIEN, DON_VI_TIEN_MAC_DINH } from '@/constants/donViTien'
-import { KY_LUONG, KY_LUONG_MAC_DINH } from '@/constants/kyLuong'
-
-defineOptions({ name: 'BangMucLuong' })
-
-const props = defineProps({
-  modelValue: { type: Array, default: () => [] },
-})
-
-const emit = defineEmits(['update:modelValue'])
-
-function dongTrong() {
-  return { name: '', min: '', max: '', unit: DON_VI_TIEN_MAC_DINH, period: KY_LUONG_MAC_DINH }
-}
-
-function capNhat(index, key, value) {
-  const next = props.modelValue.map((item, i) => (i === index ? { ...item, [key]: value } : { ...item }))
-  emit('update:modelValue', next)
-}
-
-function capNhatSo(index, key, value) {
-  capNhat(index, key, locSoTien(value))
-}
-
-function themDong() {
-  emit('update:modelValue', [...props.modelValue.map((item) => ({ ...item })), dongTrong()])
-}
-
-function xoaDong(index) {
-  emit(
-    'update:modelValue',
-    props.modelValue.filter((_, i) => i !== index).map((item) => ({ ...item })),
-  )
-}
-
-/** Chỉ giữ số không âm: chữ số và một dấu thập phân, không giới hạn độ dài. */
-function locSoTien(value) {
-  const cleaned = String(value ?? '').replace(',', '.').replace(/[^\d.]/g, '')
-  const dot = cleaned.indexOf('.')
-  const head = dot === -1 ? cleaned : cleaned.slice(0, dot)
-  const intPart = head.replace(/^0+(?=\d)/, '')
-  if (dot === -1) return intPart
-  const decimal = cleaned.slice(dot + 1).replace(/\./g, '')
-  return `${intPart || '0'}.${decimal}`
-}
-
-function donViOptions(current) {
-  if (current && !DON_VI_TIEN.some((item) => item.value === current)) {
-    return [...DON_VI_TIEN, { value: current, label: current }]
-  }
-  return DON_VI_TIEN
-}
-
-function kyOptions(current) {
-  if (current && !KY_LUONG.some((item) => item.value === current)) {
-    return [...KY_LUONG, { value: current, label: current }]
-  }
-  return KY_LUONG
-}
-</script>
-
 <template>
   <CustomTable :data="modelValue" class="cap-table">
     <CustomTableColumn label="Kinh nghiệm" min-width="160">
@@ -155,6 +93,68 @@ function kyOptions(current) {
     </template>
   </CustomTable>
 </template>
+
+<script setup>
+import { DON_VI_TIEN, DON_VI_TIEN_MAC_DINH } from '@/constants/donViTien'
+import { KY_LUONG, KY_LUONG_MAC_DINH } from '@/constants/kyLuong'
+
+defineOptions({ name: 'BangMucLuong' })
+
+const props = defineProps({
+  modelValue: { type: Array, default: () => [] },
+})
+
+const emit = defineEmits(['update:modelValue'])
+
+function dongTrong() {
+  return { name: '', min: '', max: '', unit: DON_VI_TIEN_MAC_DINH, period: KY_LUONG_MAC_DINH }
+}
+
+function capNhat(index, key, value) {
+  const next = props.modelValue.map((item, i) => (i === index ? { ...item, [key]: value } : { ...item }))
+  emit('update:modelValue', next)
+}
+
+function capNhatSo(index, key, value) {
+  capNhat(index, key, locSoTien(value))
+}
+
+function themDong() {
+  emit('update:modelValue', [...props.modelValue.map((item) => ({ ...item })), dongTrong()])
+}
+
+function xoaDong(index) {
+  emit(
+    'update:modelValue',
+    props.modelValue.filter((_, i) => i !== index).map((item) => ({ ...item })),
+  )
+}
+
+/** Chỉ giữ số không âm: chữ số và một dấu thập phân, không giới hạn độ dài. */
+function locSoTien(value) {
+  const cleaned = String(value ?? '').replace(',', '.').replace(/[^\d.]/g, '')
+  const dot = cleaned.indexOf('.')
+  const head = dot === -1 ? cleaned : cleaned.slice(0, dot)
+  const intPart = head.replace(/^0+(?=\d)/, '')
+  if (dot === -1) return intPart
+  const decimal = cleaned.slice(dot + 1).replace(/\./g, '')
+  return `${intPart || '0'}.${decimal}`
+}
+
+function donViOptions(current) {
+  if (current && !DON_VI_TIEN.some((item) => item.value === current)) {
+    return [...DON_VI_TIEN, { value: current, label: current }]
+  }
+  return DON_VI_TIEN
+}
+
+function kyOptions(current) {
+  if (current && !KY_LUONG.some((item) => item.value === current)) {
+    return [...KY_LUONG, { value: current, label: current }]
+  }
+  return KY_LUONG
+}
+</script>
 
 <style scoped>
 .cap-table {

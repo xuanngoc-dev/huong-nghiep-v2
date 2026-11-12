@@ -1,3 +1,11 @@
+<template>
+  <el-input-number v-model="model" v-bind="$attrs" :size="resolvedSize">
+    <template v-for="(_, name) in slots" #[name]="slotData">
+      <slot :name="name" v-bind="slotData || {}" />
+    </template>
+  </el-input-number>
+</template>
+
 <script setup>
 /**
  * CustomInputNumber — wrapper el-input-number.
@@ -12,11 +20,3 @@ const model = defineModel({ default: undefined })
 const slots = useSlots()
 const { resolvedSize } = useResponsiveComponentSize()
 </script>
-
-<template>
-  <el-input-number v-model="model" v-bind="$attrs" :size="resolvedSize">
-    <template v-for="(_, name) in slots" #[name]="slotData">
-      <slot :name="name" v-bind="slotData || {}" />
-    </template>
-  </el-input-number>
-</template>

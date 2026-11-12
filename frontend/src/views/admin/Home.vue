@@ -1,37 +1,3 @@
-<script setup>
-import { computed, ref } from 'vue'
-import { storeToRefs } from 'pinia'
-import BieuDoCot from '@/components/admin/charts/BieuDoCot.vue'
-import BieuDoDuong from '@/components/admin/charts/BieuDoDuong.vue'
-import BieuDoTron from '@/components/admin/charts/BieuDoTron.vue'
-import TheThongKe from '@/components/admin/dashboard/TheThongKe.vue'
-import {
-  THANG,
-  hoatDong,
-  luotGanDay,
-  luotTheoThang,
-  nhomHolland,
-  theThongKe,
-  theoDoiTuong,
-  topNganh,
-  topTinhThanh,
-} from '@/data/dashboardMock'
-import { useLayoutStore } from '@/stores/layout'
-
-const TRANG_THAI = {
-  'hoan-thanh': { label: 'Hoàn thành', type: 'success' },
-  'dang-lam': { label: 'Đang làm', type: 'warning' },
-  'bo-do': { label: 'Bỏ dở', type: 'info' },
-}
-
-const khoangThoiGian = ref([])
-const kieuBieuDo = ref('area')
-const { isDark } = storeToRefs(useLayoutStore())
-// Cột "Bỏ dở" dùng màu trung tính chìm theo nền để cột "Hoàn thành" nổi bật.
-const mauDoiTuong = computed(() => ['#1f7a4d', isDark.value ? '#3a4742' : '#c9d3cd'])
-const luotToiDa = Math.max(...topTinhThanh.map((item) => item.luot))
-</script>
-
 <template>
   <div class="dashboard">
     <div class="dashboard__header">
@@ -231,6 +197,40 @@ const luotToiDa = Math.max(...topTinhThanh.map((item) => item.luot))
     </el-row>
   </div>
 </template>
+
+<script setup>
+import { computed, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import BieuDoCot from '@/components/admin/charts/BieuDoCot.vue'
+import BieuDoDuong from '@/components/admin/charts/BieuDoDuong.vue'
+import BieuDoTron from '@/components/admin/charts/BieuDoTron.vue'
+import TheThongKe from '@/components/admin/dashboard/TheThongKe.vue'
+import {
+  THANG,
+  hoatDong,
+  luotGanDay,
+  luotTheoThang,
+  nhomHolland,
+  theThongKe,
+  theoDoiTuong,
+  topNganh,
+  topTinhThanh,
+} from '@/data/dashboardMock'
+import { useLayoutStore } from '@/stores/layout'
+
+const TRANG_THAI = {
+  'hoan-thanh': { label: 'Hoàn thành', type: 'success' },
+  'dang-lam': { label: 'Đang làm', type: 'warning' },
+  'bo-do': { label: 'Bỏ dở', type: 'info' },
+}
+
+const khoangThoiGian = ref([])
+const kieuBieuDo = ref('area')
+const { isDark } = storeToRefs(useLayoutStore())
+// Cột "Bỏ dở" dùng màu trung tính chìm theo nền để cột "Hoàn thành" nổi bật.
+const mauDoiTuong = computed(() => ['#1f7a4d', isDark.value ? '#3a4742' : '#c9d3cd'])
+const luotToiDa = Math.max(...topTinhThanh.map((item) => item.luot))
+</script>
 
 <style scoped>
 .dashboard__header {

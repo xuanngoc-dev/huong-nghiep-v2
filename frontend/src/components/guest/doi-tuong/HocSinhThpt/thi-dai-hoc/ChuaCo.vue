@@ -1,3 +1,226 @@
+<template>
+<section class="chua-co">
+    <div class="container-fluid">
+      <div class="row g-4 mt-1">
+        <div class="col-lg-9">
+          <article class="intro-card">
+            <div class="row g-3 align-items-center">
+              <div class="col-md-5">
+                <img
+                  class="intro-card__image"
+                  :src="anhChuaCo"
+                  alt="Nhóm học sinh cùng tìm hiểu một nghề thực hành"
+                />
+              </div>
+              <div class="col-md-7">
+                <div class="intro-card__body">
+                  <h2 class="h2 intro-card__title">Bạn chưa rõ mình phù hợp với ngành nghề nào?</h2>
+                  <p class="intro-card__lead">
+                    Làm khảo sát để hệ thống gợi ý ngành đào tạo gần với sở thích và năng lực của bạn.
+                  </p>
+                  <ol class="intro-card__steps">
+                    <li>
+                      <span class="intro-card__step-num" aria-hidden="true">1</span>
+                      <span>Làm bài trắc nghiệm Holland để hiểu nhóm tính cách nổi bật của bạn.</span>
+                    </li>
+                    <li>
+                      <span class="intro-card__step-num" aria-hidden="true">2</span>
+                      <span>Đối chiếu kết quả với các ngành đào tạo phù hợp.</span>
+                    </li>
+                  </ol>
+                  <div class="intro-card__actions">
+                    <CustomButton type="primary" class="intro-card__cta" @click="moHuongDan">
+                      Bắt đầu khảo sát
+                      <span class="intro-card__cta-arrow" aria-hidden="true">→</span>
+                    </CustomButton>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+
+          <article class="stages-card mt-3">
+            <h2 class="h4 mb-2">Nhóm ngành nghề</h2>
+            <p class="text-secondary mb-3">Các nhóm ngành nghề để bạn tham khảo trước khi làm khảo sát.</p>
+            <p v-if="loiHolland" class="holland-note holland-note__text mb-0">{{ loiHolland }}</p>
+            <p v-else-if="dangTaiHolland" class="text-secondary mb-0">Đang tải nhóm ngành nghề…</p>
+            <KhongCoDuLieu v-else-if="!nhomHolland.length" text="Chưa có nhóm ngành nghề." />
+            <div v-else class="row g-3">
+              <div v-for="item in nhomHolland" :key="item.id" class="col-12 col-md-6 col-lg-4">
+                <div class="the-card">
+                  <CardNganhDaoTao
+                    class="h-100"
+                    :ma="item.ma_nhom"
+                    :ten="item.ten_nhom"
+                    :ten-tieng-anh="item.ten_tieng_anh"
+                    :mo-ta="moTaHolland(item)"
+                    :hinh-anh="item.hinh_anh_mo_ta || ''"
+                    :khoa="item.id"
+                  />
+                  <div class="the-card__veil">
+                    <CustomButton
+                      class="the-card__detail"
+                      :aria-label="`Chi tiết nhóm ${item.ten_nhom}`"
+                      @click="moChiTiet('holland', item)"
+                    >
+                      Chi tiết
+                    </CustomButton>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="stages-card mt-3">
+            <h2 class="h4 mb-2">Ngành nghề nổi bật</h2>
+            <p class="text-secondary mb-3">Một số ngành nhiều thí sinh đang tìm hiểu, để bạn tham khảo trước khi làm khảo sát.</p>
+            <div
+              v-if="nhomHolland.length"
+              class="nhom-pills"
+              role="tablist"
+              aria-label="Nhóm ngành nghề"
+            >
+              <button
+                v-for="nhom in nhomHolland"
+                :id="`nhom-nghe-${nhom.ma_nhom}`"
+                :key="nhom.ma_nhom"
+                type="button"
+                role="tab"
+                class="nhom-pills__item"
+                :class="{ 'is-active': maNhomDangChon === nhom.ma_nhom }"
+                :aria-selected="maNhomDangChon === nhom.ma_nhom"
+                :aria-controls="`nganh-nhom-${nhom.ma_nhom}`"
+                :tabindex="maNhomDangChon === nhom.ma_nhom ? 0 : -1"
+                @click="maNhomDangChon = nhom.ma_nhom"
+                @keydown="dieuHuongNhom"
+              >
+                {{ nhom.ten_nhom }}
+              </button>
+            </div>
+            <p v-if="loiNganh" class="holland-note holland-note__text mb-0">{{ loiNganh }}</p>
+            <p v-else-if="dangTaiNganh || dangTaiHolland" class="text-secondary mb-0">Đang tải ngành…</p>
+            <KhongCoDuLieu
+              v-else-if="!nganhTheoNhom.length"
+              :text="maNhomDangChon ? 'Chưa có ngành nổi bật trong nhóm này.' : 'Chưa có ngành nổi bật.'"
+            />
+            <div
+              v-else
+              class="row g-3"
+              :id="maNhomDangChon ? `nganh-nhom-${maNhomDangChon}` : undefined"
+              :role="maNhomDangChon ? 'tabpanel' : undefined"
+              :aria-labelledby="maNhomDangChon ? `nhom-nghe-${maNhomDangChon}` : undefined"
+            >
+              <div v-for="item in nganhTheoNhom" :key="item.id" class="col-12 col-md-6 col-lg-4">
+                <div class="the-card">
+                  <CardNganhDaoTao
+                    class="h-100"
+                    :ma="item.ma_nganh"
+                    :ten="item.ten_nganh"
+                    :ten-tieng-anh="item.ten_tieng_anh"
+                    :mo-ta="moTaNganh(item)"
+                    :hinh-anh="item.hinh_anh_mo_ta || ''"
+                    :khoa="item.id"
+                  />
+                  <div class="the-card__veil">
+                    <CustomButton
+                      class="the-card__detail"
+                      :aria-label="`Chi tiết ngành ${item.ten_nganh}`"
+                      @click="moChiTiet('nganh', item)"
+                    >
+                      Chi tiết
+                    </CustomButton>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="stages-card mt-3">
+            <h2 class="h4 mb-2">Trường nổi bật</h2>
+            <p class="text-secondary mb-3">Một số cơ sở đào tạo để bạn xem thêm khi đang tìm hướng đi.</p>
+            <p v-if="loiTruong" class="holland-note holland-note__text mb-0">{{ loiTruong }}</p>
+            <p v-else-if="dangTaiTruong" class="text-secondary mb-0">Đang tải trường…</p>
+            <KhongCoDuLieu v-else-if="!truongNoiBat.length" text="Chưa có trường nổi bật." />
+            <div v-else class="row g-3">
+              <div v-for="item in truongNoiBat" :key="item.id" class="col-12 col-md-6 col-lg-4">
+                <div class="the-card">
+                  <CardNganhDaoTao
+                    class="h-100"
+                    :ma="item.ma_truong"
+                    :ten="item.ten_truong"
+                    :ten-tieng-anh="item.ten_tieng_anh || ''"
+                    :mo-ta="item.gioi_thieu_ngan || moTaTruong(item)"
+                    :hinh-anh="item.anh_dai_dien_url || item.logo_url || ''"
+                    :khoa="item.id"
+                  />
+                  <div class="the-card__veil">
+                    <CustomButton
+                      class="the-card__detail"
+                      :aria-label="`Chi tiết trường ${item.ten_truong}`"
+                      @click="moChiTiet('truong', item)"
+                    >
+                      Chi tiết
+                    </CustomButton>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <HoTroDinhHuong class="mt-3" />
+          <CauHoiThuongGap class="mt-3" />
+        </div>
+
+        <div class="col-lg-3">
+          <div class="paths-card">
+            <h2 id="chon-lai-giai-doan" class="h4 mb-3">Chọn lại giai đoạn</h2>
+            <div class="d-flex flex-column gap-3" aria-labelledby="chon-lai-giai-doan">
+              <CustomButton
+                v-for="stage in stages"
+                :key="stage.code"
+                class="switch-card"
+                :class="{ 'is-selected': currentStage === stage.code }"
+                @click="chonGiaiDoan(stage)"
+              >
+                <img class="switch-card__image" :src="stage.image" :alt="stage.name" />
+                <span class="switch-card__body">
+                  <span class="switch-card__name">{{ stage.name }}</span>
+                  <span class="switch-card__text">{{ stage.description }}</span>
+                </span>
+              </CustomButton>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <CustomDialog v-model="chiTietMo" :title="tieuDeChiTiet" :width="760" :height="560">
+      <div v-if="bangChiTiet.length" class="chi-tiet-wrap">
+        <table class="chi-tiet-bang">
+          <tbody v-for="nhom in bangChiTiet" :key="nhom.id">
+            <tr>
+              <th class="chi-tiet-bang__nhom" colspan="2">{{ nhom.ten }}</th>
+            </tr>
+            <tr v-for="(hang, index) in nhom.hang" :key="`${nhom.id}-${index}`">
+              <th>{{ hang.label }}</th>
+              <td>
+                <a v-if="hang.href" :href="hang.href" target="_blank" rel="noopener noreferrer">{{ hang.value }}</a>
+                <template v-else>{{ hang.value }}</template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <template #footer>
+        <div class="chi-tiet__footer">
+          <CustomButton @click="chiTietMo = false">Đóng</CustomButton>
+        </div>
+      </template>
+    </CustomDialog>
+  </section>
+</template>
+
 <script setup>
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -315,229 +538,6 @@ onMounted(() => {
   taiTruongNoiBat()
 })
 </script>
-
-<template>
-<section class="chua-co">
-    <div class="container-fluid">
-      <div class="row g-4 mt-1">
-        <div class="col-lg-9">
-          <article class="intro-card">
-            <div class="row g-3 align-items-center">
-              <div class="col-md-5">
-                <img
-                  class="intro-card__image"
-                  :src="anhChuaCo"
-                  alt="Nhóm học sinh cùng tìm hiểu một nghề thực hành"
-                />
-              </div>
-              <div class="col-md-7">
-                <div class="intro-card__body">
-                  <h2 class="h2 intro-card__title">Bạn chưa rõ mình phù hợp với ngành nghề nào?</h2>
-                  <p class="intro-card__lead">
-                    Làm khảo sát để hệ thống gợi ý ngành đào tạo gần với sở thích và năng lực của bạn.
-                  </p>
-                  <ol class="intro-card__steps">
-                    <li>
-                      <span class="intro-card__step-num" aria-hidden="true">1</span>
-                      <span>Làm bài trắc nghiệm Holland để hiểu nhóm tính cách nổi bật của bạn.</span>
-                    </li>
-                    <li>
-                      <span class="intro-card__step-num" aria-hidden="true">2</span>
-                      <span>Đối chiếu kết quả với các ngành đào tạo phù hợp.</span>
-                    </li>
-                  </ol>
-                  <div class="intro-card__actions">
-                    <CustomButton type="primary" class="intro-card__cta" @click="moHuongDan">
-                      Bắt đầu khảo sát
-                      <span class="intro-card__cta-arrow" aria-hidden="true">→</span>
-                    </CustomButton>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-
-          <article class="stages-card mt-3">
-            <h2 class="h4 mb-2">Nhóm ngành nghề</h2>
-            <p class="text-secondary mb-3">Các nhóm ngành nghề để bạn tham khảo trước khi làm khảo sát.</p>
-            <p v-if="loiHolland" class="holland-note holland-note__text mb-0">{{ loiHolland }}</p>
-            <p v-else-if="dangTaiHolland" class="text-secondary mb-0">Đang tải nhóm ngành nghề…</p>
-            <KhongCoDuLieu v-else-if="!nhomHolland.length" text="Chưa có nhóm ngành nghề." />
-            <div v-else class="row g-3">
-              <div v-for="item in nhomHolland" :key="item.id" class="col-12 col-md-6 col-lg-4">
-                <div class="the-card">
-                  <CardNganhDaoTao
-                    class="h-100"
-                    :ma="item.ma_nhom"
-                    :ten="item.ten_nhom"
-                    :ten-tieng-anh="item.ten_tieng_anh"
-                    :mo-ta="moTaHolland(item)"
-                    :hinh-anh="item.hinh_anh_mo_ta || ''"
-                    :khoa="item.id"
-                  />
-                  <div class="the-card__veil">
-                    <CustomButton
-                      class="the-card__detail"
-                      :aria-label="`Chi tiết nhóm ${item.ten_nhom}`"
-                      @click="moChiTiet('holland', item)"
-                    >
-                      Chi tiết
-                    </CustomButton>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="stages-card mt-3">
-            <h2 class="h4 mb-2">Ngành nghề nổi bật</h2>
-            <p class="text-secondary mb-3">Một số ngành nhiều thí sinh đang tìm hiểu, để bạn tham khảo trước khi làm khảo sát.</p>
-            <div
-              v-if="nhomHolland.length"
-              class="nhom-pills"
-              role="tablist"
-              aria-label="Nhóm ngành nghề"
-            >
-              <button
-                v-for="nhom in nhomHolland"
-                :id="`nhom-nghe-${nhom.ma_nhom}`"
-                :key="nhom.ma_nhom"
-                type="button"
-                role="tab"
-                class="nhom-pills__item"
-                :class="{ 'is-active': maNhomDangChon === nhom.ma_nhom }"
-                :aria-selected="maNhomDangChon === nhom.ma_nhom"
-                :aria-controls="`nganh-nhom-${nhom.ma_nhom}`"
-                :tabindex="maNhomDangChon === nhom.ma_nhom ? 0 : -1"
-                @click="maNhomDangChon = nhom.ma_nhom"
-                @keydown="dieuHuongNhom"
-              >
-                {{ nhom.ten_nhom }}
-              </button>
-            </div>
-            <p v-if="loiNganh" class="holland-note holland-note__text mb-0">{{ loiNganh }}</p>
-            <p v-else-if="dangTaiNganh || dangTaiHolland" class="text-secondary mb-0">Đang tải ngành…</p>
-            <KhongCoDuLieu
-              v-else-if="!nganhTheoNhom.length"
-              :text="maNhomDangChon ? 'Chưa có ngành nổi bật trong nhóm này.' : 'Chưa có ngành nổi bật.'"
-            />
-            <div
-              v-else
-              class="row g-3"
-              :id="maNhomDangChon ? `nganh-nhom-${maNhomDangChon}` : undefined"
-              :role="maNhomDangChon ? 'tabpanel' : undefined"
-              :aria-labelledby="maNhomDangChon ? `nhom-nghe-${maNhomDangChon}` : undefined"
-            >
-              <div v-for="item in nganhTheoNhom" :key="item.id" class="col-12 col-md-6 col-lg-4">
-                <div class="the-card">
-                  <CardNganhDaoTao
-                    class="h-100"
-                    :ma="item.ma_nganh"
-                    :ten="item.ten_nganh"
-                    :ten-tieng-anh="item.ten_tieng_anh"
-                    :mo-ta="moTaNganh(item)"
-                    :hinh-anh="item.hinh_anh_mo_ta || ''"
-                    :khoa="item.id"
-                  />
-                  <div class="the-card__veil">
-                    <CustomButton
-                      class="the-card__detail"
-                      :aria-label="`Chi tiết ngành ${item.ten_nganh}`"
-                      @click="moChiTiet('nganh', item)"
-                    >
-                      Chi tiết
-                    </CustomButton>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="stages-card mt-3">
-            <h2 class="h4 mb-2">Trường nổi bật</h2>
-            <p class="text-secondary mb-3">Một số cơ sở đào tạo để bạn xem thêm khi đang tìm hướng đi.</p>
-            <p v-if="loiTruong" class="holland-note holland-note__text mb-0">{{ loiTruong }}</p>
-            <p v-else-if="dangTaiTruong" class="text-secondary mb-0">Đang tải trường…</p>
-            <KhongCoDuLieu v-else-if="!truongNoiBat.length" text="Chưa có trường nổi bật." />
-            <div v-else class="row g-3">
-              <div v-for="item in truongNoiBat" :key="item.id" class="col-12 col-md-6 col-lg-4">
-                <div class="the-card">
-                  <CardNganhDaoTao
-                    class="h-100"
-                    :ma="item.ma_truong"
-                    :ten="item.ten_truong"
-                    :ten-tieng-anh="item.ten_tieng_anh || ''"
-                    :mo-ta="item.gioi_thieu_ngan || moTaTruong(item)"
-                    :hinh-anh="item.anh_dai_dien_url || item.logo_url || ''"
-                    :khoa="item.id"
-                  />
-                  <div class="the-card__veil">
-                    <CustomButton
-                      class="the-card__detail"
-                      :aria-label="`Chi tiết trường ${item.ten_truong}`"
-                      @click="moChiTiet('truong', item)"
-                    >
-                      Chi tiết
-                    </CustomButton>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <HoTroDinhHuong class="mt-3" />
-          <CauHoiThuongGap class="mt-3" />
-        </div>
-
-        <div class="col-lg-3">
-          <div class="paths-card">
-            <h2 id="chon-lai-giai-doan" class="h4 mb-3">Chọn lại giai đoạn</h2>
-            <div class="d-flex flex-column gap-3" aria-labelledby="chon-lai-giai-doan">
-              <CustomButton
-                v-for="stage in stages"
-                :key="stage.code"
-                class="switch-card"
-                :class="{ 'is-selected': currentStage === stage.code }"
-                @click="chonGiaiDoan(stage)"
-              >
-                <img class="switch-card__image" :src="stage.image" :alt="stage.name" />
-                <span class="switch-card__body">
-                  <span class="switch-card__name">{{ stage.name }}</span>
-                  <span class="switch-card__text">{{ stage.description }}</span>
-                </span>
-              </CustomButton>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <CustomDialog v-model="chiTietMo" :title="tieuDeChiTiet" :width="760" :height="560">
-      <div v-if="bangChiTiet.length" class="chi-tiet-wrap">
-        <table class="chi-tiet-bang">
-          <tbody v-for="nhom in bangChiTiet" :key="nhom.id">
-            <tr>
-              <th class="chi-tiet-bang__nhom" colspan="2">{{ nhom.ten }}</th>
-            </tr>
-            <tr v-for="(hang, index) in nhom.hang" :key="`${nhom.id}-${index}`">
-              <th>{{ hang.label }}</th>
-              <td>
-                <a v-if="hang.href" :href="hang.href" target="_blank" rel="noopener noreferrer">{{ hang.value }}</a>
-                <template v-else>{{ hang.value }}</template>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <template #footer>
-        <div class="chi-tiet__footer">
-          <CustomButton @click="chiTietMo = false">Đóng</CustomButton>
-        </div>
-      </template>
-    </CustomDialog>
-  </section>
-</template>
 
 <style scoped>
 .chua-co :is(.h2, .h4, .switch-card__name) {

@@ -1,3 +1,185 @@
+<template>
+  <section class="phan-van py-4">
+    <div class="container-fluid">
+      <div class="row g-4">
+        <div class="col-lg-9">
+          <article class="intro-card">
+            <h2 class="h2 mb-2">Bạn đang phân vân giữa vài ngành nghề?</h2>
+            <p class="text-secondary mb-0">
+              Chọn nhóm ngành nghề, rồi đánh dấu những ngành bạn đang cân nhắc để so sánh.
+            </p>
+          </article>
+
+          <article class="stages-card mt-3">
+            <div class="phan-van-list mb-3">
+              <p class="phan-van-list__label">
+                Danh sách phân vân
+                <span>({{ danhSachPhanVan.length }}/{{ SO_NGANH_PHAN_VAN_TOI_DA }})</span>
+              </p>
+              <p v-if="!danhSachPhanVan.length" class="phan-van-list__empty">
+                Chưa chọn ngành. Mở một nhóm ngành nghề và đánh dấu ngành bạn đang cân nhắc.
+              </p>
+              <div class="phan-van-list__bar">
+                <ul v-if="danhSachPhanVan.length" class="phan-van-list__items">
+                  <li v-for="item in danhSachPhanVan" :key="item.ma_nganh">
+                    <span>{{ item.ten_nganh }}</span>
+                    <CustomButton
+                      text
+                      circle
+                      type="danger"
+                      size="small"
+                      class="phan-van-list__remove"
+                      :aria-label="`Bỏ ${item.ten_nganh}`"
+                      @click="doiPhanVan(item)"
+                    >
+                      <CustomIcon :size="14"><Close /></CustomIcon>
+                    </CustomButton>
+                  </li>
+                </ul>
+                <div class="phan-van-list__actions">
+                  <CustomTooltip
+                    content="Chọn từ 2 đến 3 ngành để so sánh."
+                    placement="top"
+                    :disabled="coTheSoSanh"
+                  >
+                    <span class="phan-van-list__tooltip">
+                      <CustomBadge :value="danhSachPhanVan.length" :max="SO_NGANH_PHAN_VAN_TOI_DA" show-zero>
+                        <CustomButton type="primary" :disabled="!coTheSoSanh" @click="moSoSanh">
+                          So sánh
+                        </CustomButton>
+                      </CustomBadge>
+                    </span>
+                  </CustomTooltip>
+                </div>
+              </div>
+            </div>
+
+            <template v-if="nhomDangXem">
+              <button type="button" class="nhom-back mb-3" @click="quayLaiNhom">
+                Quay lại nhóm ngành nghề
+              </button>
+              <h2 class="h4 mb-2">{{ nhomDangXem.ten_nhom }}</h2>
+              <p class="text-secondary mb-3">
+                Đánh dấu ngành bạn đang cân nhắc. Có thể chọn tối đa {{ SO_NGANH_PHAN_VAN_TOI_DA }} ngành từ các nhóm khác nhau.
+              </p>
+              <p v-if="loiNganh" class="text-secondary mb-0">{{ loiNganh }}</p>
+              <p v-else-if="dangTaiNganh" class="text-secondary mb-0">Đang tải ngành…</p>
+              <KhongCoDuLieu v-else-if="!nganhTheoNhom.length" text="Nhóm này chưa có ngành." />
+              <div v-else class="row g-3">
+                <div v-for="item in nganhTrang" :key="item.id" class="col-12 col-md-6 col-lg-4">
+                  <CardNganhDaoTao
+                    class="h-100"
+                    :ma="item.ma_nganh"
+                    :ten="item.ten_nganh"
+                    :ten-tieng-anh="item.ten_tieng_anh"
+                    :mo-ta="moTaNganh(item)"
+                    :hinh-anh="item.hinh_anh_mo_ta || ''"
+                    :khoa="item.id"
+                    co-the-chon
+                    :da-chon="daChon(item)"
+                    :khoa-chon="!daChon(item) && hetCho()"
+                    :href-kham-pha="hrefChonTruong(item)"
+                    @doi-chon="doiPhanVan(item)"
+                    @het-cho="baoHetCho"
+                  />
+                </div>
+              </div>
+              <div v-if="!dangTaiNganh && !loiNganh && nganhTheoNhom.length" class="nhom-pager">
+                <CustomPagination
+                  v-model:current-page="trangNganh"
+                  :page-size="SO_MOI_TRANG"
+                  :total="nganhTheoNhom.length"
+                  layout="total, prev, pager, next"
+                  background
+                />
+              </div>
+            </template>
+
+            <template v-else>
+              <h2 class="h4 mb-2">Nhóm ngành nghề</h2>
+              <p class="text-secondary mb-3">Chọn nhóm gần với ngành bạn đang phân vân.</p>
+              <p v-if="loiNhom" class="text-secondary mb-0">{{ loiNhom }}</p>
+              <p v-else-if="dangTaiNhom" class="text-secondary mb-0">Đang tải nhóm ngành nghề…</p>
+              <KhongCoDuLieu v-else-if="!nhomNghe.length" text="Chưa có nhóm ngành nghề." />
+              <div v-else class="row g-3">
+                <div v-for="item in nhomNghe" :key="item.id" class="col-12 col-md-6 col-lg-4">
+                  <CardNganhDaoTao
+                    class="h-100"
+                    :ma="item.ma_nhom"
+                    :ten="item.ten_nhom"
+                    :ten-tieng-anh="item.ten_tieng_anh"
+                    :mo-ta="moTaHolland(item)"
+                    :hinh-anh="item.hinh_anh_mo_ta || ''"
+                    :khoa="item.id"
+                    hanh-dong="Chọn"
+                    @chon="chonNhom(item)"
+                  />
+                </div>
+              </div>
+            </template>
+          </article>
+
+          <NhacKhaoSat class="mt-3" />
+          <HoTroDinhHuong class="mt-3" />
+          <CauHoiThuongGap class="mt-3" />
+        </div>
+
+        <div class="col-lg-3">
+          <div class="paths-card">
+            <h2 id="chon-lai-giai-doan" class="h4 mb-3">Chọn lại giai đoạn</h2>
+            <div class="d-flex flex-column gap-3" aria-labelledby="chon-lai-giai-doan">
+              <button
+                v-for="stage in stages"
+                :key="stage.code"
+                type="button"
+                class="switch-card"
+                :class="{ 'is-selected': currentStage === stage.code }"
+                @click="chonGiaiDoan(stage)"
+              >
+                <img class="switch-card__image" :src="stage.image" :alt="stage.name" />
+                <span class="switch-card__body">
+                  <span class="switch-card__name">{{ stage.name }}</span>
+                  <span class="switch-card__text">{{ stage.description }}</span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <CustomDialog v-model="soSanhMo" title="So sánh ngành" :width="960" height="70vh">
+      <p v-if="loiSoSanh" class="so-sanh-trang-thai">{{ loiSoSanh }}</p>
+      <p v-else-if="dangTaiSoSanh" class="so-sanh-trang-thai">Đang tải dữ liệu so sánh…</p>
+      <div v-else class="so-sanh-wrap">
+        <table class="so-sanh so-sanh--nganh">
+          <thead>
+            <tr>
+              <th>Tiêu chí</th>
+              <th v-for="item in nganhSoSanh" :key="item.ma_nganh">{{ item.ten_nganh }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="hang in TIEU_CHI_SO_SANH" :key="hang.id">
+              <th>{{ hang.ten }}</th>
+              <td v-for="item in nganhSoSanh" :key="item.ma_nganh">{{ giaTriTieuChi(item, hang.id) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <template #footer>
+        <div class="so-sanh-footer">
+          <p class="so-sanh-footer__text">Tham gia khảo sát để lựa chọn ngành phù hợp.</p>
+          <div class="so-sanh-footer__actions">
+            <CustomButton @click="soSanhMo = false">Đóng</CustomButton>
+            <CustomButton type="primary" @click="lamKhaoSat">Làm khảo sát</CustomButton>
+          </div>
+        </div>
+      </template>
+    </CustomDialog>
+  </section>
+</template>
+
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
@@ -286,185 +468,3 @@ onMounted(() => {
   taiNganh()
 })
 </script>
-
-<template>
-  <section class="phan-van py-4">
-    <div class="container-fluid">
-      <div class="row g-4">
-        <div class="col-lg-9">
-          <article class="intro-card">
-            <h2 class="h2 mb-2">Bạn đang phân vân giữa vài ngành nghề?</h2>
-            <p class="text-secondary mb-0">
-              Chọn nhóm ngành nghề, rồi đánh dấu những ngành bạn đang cân nhắc để so sánh.
-            </p>
-          </article>
-
-          <article class="stages-card mt-3">
-            <div class="phan-van-list mb-3">
-              <p class="phan-van-list__label">
-                Danh sách phân vân
-                <span>({{ danhSachPhanVan.length }}/{{ SO_NGANH_PHAN_VAN_TOI_DA }})</span>
-              </p>
-              <p v-if="!danhSachPhanVan.length" class="phan-van-list__empty">
-                Chưa chọn ngành. Mở một nhóm ngành nghề và đánh dấu ngành bạn đang cân nhắc.
-              </p>
-              <div class="phan-van-list__bar">
-                <ul v-if="danhSachPhanVan.length" class="phan-van-list__items">
-                  <li v-for="item in danhSachPhanVan" :key="item.ma_nganh">
-                    <span>{{ item.ten_nganh }}</span>
-                    <CustomButton
-                      text
-                      circle
-                      type="danger"
-                      size="small"
-                      class="phan-van-list__remove"
-                      :aria-label="`Bỏ ${item.ten_nganh}`"
-                      @click="doiPhanVan(item)"
-                    >
-                      <CustomIcon :size="14"><Close /></CustomIcon>
-                    </CustomButton>
-                  </li>
-                </ul>
-                <div class="phan-van-list__actions">
-                  <CustomTooltip
-                    content="Chọn từ 2 đến 3 ngành để so sánh."
-                    placement="top"
-                    :disabled="coTheSoSanh"
-                  >
-                    <span class="phan-van-list__tooltip">
-                      <CustomBadge :value="danhSachPhanVan.length" :max="SO_NGANH_PHAN_VAN_TOI_DA" show-zero>
-                        <CustomButton type="primary" :disabled="!coTheSoSanh" @click="moSoSanh">
-                          So sánh
-                        </CustomButton>
-                      </CustomBadge>
-                    </span>
-                  </CustomTooltip>
-                </div>
-              </div>
-            </div>
-
-            <template v-if="nhomDangXem">
-              <button type="button" class="nhom-back mb-3" @click="quayLaiNhom">
-                Quay lại nhóm ngành nghề
-              </button>
-              <h2 class="h4 mb-2">{{ nhomDangXem.ten_nhom }}</h2>
-              <p class="text-secondary mb-3">
-                Đánh dấu ngành bạn đang cân nhắc. Có thể chọn tối đa {{ SO_NGANH_PHAN_VAN_TOI_DA }} ngành từ các nhóm khác nhau.
-              </p>
-              <p v-if="loiNganh" class="text-secondary mb-0">{{ loiNganh }}</p>
-              <p v-else-if="dangTaiNganh" class="text-secondary mb-0">Đang tải ngành…</p>
-              <KhongCoDuLieu v-else-if="!nganhTheoNhom.length" text="Nhóm này chưa có ngành." />
-              <div v-else class="row g-3">
-                <div v-for="item in nganhTrang" :key="item.id" class="col-12 col-md-6 col-lg-4">
-                  <CardNganhDaoTao
-                    class="h-100"
-                    :ma="item.ma_nganh"
-                    :ten="item.ten_nganh"
-                    :ten-tieng-anh="item.ten_tieng_anh"
-                    :mo-ta="moTaNganh(item)"
-                    :hinh-anh="item.hinh_anh_mo_ta || ''"
-                    :khoa="item.id"
-                    co-the-chon
-                    :da-chon="daChon(item)"
-                    :khoa-chon="!daChon(item) && hetCho()"
-                    :href-kham-pha="hrefChonTruong(item)"
-                    @doi-chon="doiPhanVan(item)"
-                    @het-cho="baoHetCho"
-                  />
-                </div>
-              </div>
-              <div v-if="!dangTaiNganh && !loiNganh && nganhTheoNhom.length" class="nhom-pager">
-                <CustomPagination
-                  v-model:current-page="trangNganh"
-                  :page-size="SO_MOI_TRANG"
-                  :total="nganhTheoNhom.length"
-                  layout="total, prev, pager, next"
-                  background
-                />
-              </div>
-            </template>
-
-            <template v-else>
-              <h2 class="h4 mb-2">Nhóm ngành nghề</h2>
-              <p class="text-secondary mb-3">Chọn nhóm gần với ngành bạn đang phân vân.</p>
-              <p v-if="loiNhom" class="text-secondary mb-0">{{ loiNhom }}</p>
-              <p v-else-if="dangTaiNhom" class="text-secondary mb-0">Đang tải nhóm ngành nghề…</p>
-              <KhongCoDuLieu v-else-if="!nhomNghe.length" text="Chưa có nhóm ngành nghề." />
-              <div v-else class="row g-3">
-                <div v-for="item in nhomNghe" :key="item.id" class="col-12 col-md-6 col-lg-4">
-                  <CardNganhDaoTao
-                    class="h-100"
-                    :ma="item.ma_nhom"
-                    :ten="item.ten_nhom"
-                    :ten-tieng-anh="item.ten_tieng_anh"
-                    :mo-ta="moTaHolland(item)"
-                    :hinh-anh="item.hinh_anh_mo_ta || ''"
-                    :khoa="item.id"
-                    hanh-dong="Chọn"
-                    @chon="chonNhom(item)"
-                  />
-                </div>
-              </div>
-            </template>
-          </article>
-
-          <NhacKhaoSat class="mt-3" />
-          <HoTroDinhHuong class="mt-3" />
-          <CauHoiThuongGap class="mt-3" />
-        </div>
-
-        <div class="col-lg-3">
-          <div class="paths-card">
-            <h2 id="chon-lai-giai-doan" class="h4 mb-3">Chọn lại giai đoạn</h2>
-            <div class="d-flex flex-column gap-3" aria-labelledby="chon-lai-giai-doan">
-              <button
-                v-for="stage in stages"
-                :key="stage.code"
-                type="button"
-                class="switch-card"
-                :class="{ 'is-selected': currentStage === stage.code }"
-                @click="chonGiaiDoan(stage)"
-              >
-                <img class="switch-card__image" :src="stage.image" :alt="stage.name" />
-                <span class="switch-card__body">
-                  <span class="switch-card__name">{{ stage.name }}</span>
-                  <span class="switch-card__text">{{ stage.description }}</span>
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <CustomDialog v-model="soSanhMo" title="So sánh ngành" :width="960" height="70vh">
-      <p v-if="loiSoSanh" class="so-sanh-trang-thai">{{ loiSoSanh }}</p>
-      <p v-else-if="dangTaiSoSanh" class="so-sanh-trang-thai">Đang tải dữ liệu so sánh…</p>
-      <div v-else class="so-sanh-wrap">
-        <table class="so-sanh so-sanh--nganh">
-          <thead>
-            <tr>
-              <th>Tiêu chí</th>
-              <th v-for="item in nganhSoSanh" :key="item.ma_nganh">{{ item.ten_nganh }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="hang in TIEU_CHI_SO_SANH" :key="hang.id">
-              <th>{{ hang.ten }}</th>
-              <td v-for="item in nganhSoSanh" :key="item.ma_nganh">{{ giaTriTieuChi(item, hang.id) }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <template #footer>
-        <div class="so-sanh-footer">
-          <p class="so-sanh-footer__text">Tham gia khảo sát để lựa chọn ngành phù hợp.</p>
-          <div class="so-sanh-footer__actions">
-            <CustomButton @click="soSanhMo = false">Đóng</CustomButton>
-            <CustomButton type="primary" @click="lamKhaoSat">Làm khảo sát</CustomButton>
-          </div>
-        </div>
-      </template>
-    </CustomDialog>
-  </section>
-</template>

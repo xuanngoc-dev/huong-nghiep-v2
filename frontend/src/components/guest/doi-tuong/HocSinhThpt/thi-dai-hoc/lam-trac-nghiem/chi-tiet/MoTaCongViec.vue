@@ -1,25 +1,3 @@
-<script setup>
-import { computed } from 'vue'
-import { danhSachCap } from '@/utils/capTenGiaTri'
-import { layChiTiet, tachDong } from './chiTiet'
-
-defineOptions({ name: 'ChiTietMoTaCongViec' })
-
-const props = defineProps({
-  nganh: { type: Object, required: true },
-  chiTiet: { type: Object, default: null },
-  vanBan: { type: String, default: '' },
-})
-
-const tuCot = computed(() => danhSachCap(props.nganh?.mo_ta_cong_viec))
-const moTa = computed(() => (
-  tuCot.value.length ? [] : tachDong(layChiTiet(props.chiTiet, ['mo_ta_cong_viec', 'cong_viec', 'nhiem_vu']))
-))
-const coHoi = computed(() => tachDong(layChiTiet(props.chiTiet, ['co_hoi_nghe_nghiep'])))
-const congCu = computed(() => tachDong(layChiTiet(props.chiTiet, ['cong_cu'])))
-const coDuLieu = computed(() => tuCot.value.length || moTa.value.length || coHoi.value.length || congCu.value.length)
-</script>
-
 <template>
   <div v-if="coDuLieu" class="cong-viec">
     <section v-for="(item, index) in tuCot" :key="`${index}-${item.name}`">
@@ -43,6 +21,28 @@ const coDuLieu = computed(() => tuCot.value.length || moTa.value.length || coHoi
   </div>
   <KhongCoDuLieu v-else text="Chưa có mô tả công việc cho ngành này." />
 </template>
+
+<script setup>
+import { computed } from 'vue'
+import { danhSachCap } from '@/utils/capTenGiaTri'
+import { layChiTiet, tachDong } from './chiTiet'
+
+defineOptions({ name: 'ChiTietMoTaCongViec' })
+
+const props = defineProps({
+  nganh: { type: Object, required: true },
+  chiTiet: { type: Object, default: null },
+  vanBan: { type: String, default: '' },
+})
+
+const tuCot = computed(() => danhSachCap(props.nganh?.mo_ta_cong_viec))
+const moTa = computed(() => (
+  tuCot.value.length ? [] : tachDong(layChiTiet(props.chiTiet, ['mo_ta_cong_viec', 'cong_viec', 'nhiem_vu']))
+))
+const coHoi = computed(() => tachDong(layChiTiet(props.chiTiet, ['co_hoi_nghe_nghiep'])))
+const congCu = computed(() => tachDong(layChiTiet(props.chiTiet, ['cong_cu'])))
+const coDuLieu = computed(() => tuCot.value.length || moTa.value.length || coHoi.value.length || congCu.value.length)
+</script>
 
 <style scoped>
 .cong-viec {

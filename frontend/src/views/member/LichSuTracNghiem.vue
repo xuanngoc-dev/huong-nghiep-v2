@@ -1,116 +1,3 @@
-<script setup>
-import { onMounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { fetchLichSuKhaoSat } from '@/api/phienKhaoSat'
-
-const TRANG_THAI_OPTIONS = [
-  { value: 'hoan-thanh', label: 'Hoàn thành' },
-  { value: 'dang-lam', label: 'Đang làm' },
-]
-
-const router = useRouter()
-const loading = ref(false)
-const rows = ref([])
-const total = ref(0)
-const page = ref(1)
-const pageSize = ref(10)
-
-const filters = reactive(emptyFilters())
-
-function emptyFilters() {
-  return {
-    q: '',
-    trang_thai: '',
-    khoang_ngay: null,
-  }
-}
-
-function errorMessage(error, fallback) {
-  const detail = error?.response?.data?.detail
-  if (typeof detail === 'string') return detail
-  if (Array.isArray(detail) && detail[0]?.msg) return detail[0].msg
-  return fallback
-}
-
-function formatThoiGian(value) {
-  if (!value) return '—'
-  return new Date(value).toLocaleString('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
-
-function tienDo(row) {
-  if (!row.so_cau_hoi) return 0
-  return Math.round((row.so_da_tra_loi / row.so_cau_hoi) * 100)
-}
-
-async function load() {
-  loading.value = true
-  try {
-    const params = {
-      page: page.value,
-      page_size: pageSize.value,
-    }
-    if (filters.q.trim()) params.q = filters.q.trim()
-    if (filters.trang_thai) params.trang_thai = filters.trang_thai
-    if (filters.khoang_ngay?.length === 2) {
-      ;[params.tu_ngay, params.den_ngay] = filters.khoang_ngay
-    }
-    const data = await fetchLichSuKhaoSat(params)
-    rows.value = data.items
-    total.value = data.total
-  } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không tải được lịch sử trắc nghiệm'))
-  } finally {
-    loading.value = false
-  }
-}
-
-function onPageChange() {
-  load()
-}
-
-function onSizeChange() {
-  page.value = 1
-  load()
-}
-
-function onSearch() {
-  if (page.value !== 1) {
-    page.value = 1
-    return
-  }
-  load()
-}
-
-function onResetFilters() {
-  Object.assign(filters, emptyFilters())
-  onSearch()
-}
-
-function xemKetQua(row) {
-  router.push({ name: 'thpt-thi-dai-hoc-ket-qua', params: { ssid: row.ssid } })
-}
-
-function xemNganhPhuHop(row) {
-  router.push({ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid: row.ssid } })
-}
-
-function lamTiep(row) {
-  router.push({
-    name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
-    params: { ssid: row.ssid, loaiCauHoiId: row.loai_cau_hoi_id_tiep },
-  })
-}
-
-onMounted(load)
-</script>
-
 <template>
   <el-card v-loading="loading" shadow="never" class="history-card">
     <template #header>
@@ -234,6 +121,119 @@ onMounted(load)
     </div>
   </el-card>
 </template>
+
+<script setup>
+import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { fetchLichSuKhaoSat } from '@/api/phienKhaoSat'
+
+const TRANG_THAI_OPTIONS = [
+  { value: 'hoan-thanh', label: 'Hoàn thành' },
+  { value: 'dang-lam', label: 'Đang làm' },
+]
+
+const router = useRouter()
+const loading = ref(false)
+const rows = ref([])
+const total = ref(0)
+const page = ref(1)
+const pageSize = ref(10)
+
+const filters = reactive(emptyFilters())
+
+function emptyFilters() {
+  return {
+    q: '',
+    trang_thai: '',
+    khoang_ngay: null,
+  }
+}
+
+function errorMessage(error, fallback) {
+  const detail = error?.response?.data?.detail
+  if (typeof detail === 'string') return detail
+  if (Array.isArray(detail) && detail[0]?.msg) return detail[0].msg
+  return fallback
+}
+
+function formatThoiGian(value) {
+  if (!value) return '—'
+  return new Date(value).toLocaleString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+function tienDo(row) {
+  if (!row.so_cau_hoi) return 0
+  return Math.round((row.so_da_tra_loi / row.so_cau_hoi) * 100)
+}
+
+async function load() {
+  loading.value = true
+  try {
+    const params = {
+      page: page.value,
+      page_size: pageSize.value,
+    }
+    if (filters.q.trim()) params.q = filters.q.trim()
+    if (filters.trang_thai) params.trang_thai = filters.trang_thai
+    if (filters.khoang_ngay?.length === 2) {
+      ;[params.tu_ngay, params.den_ngay] = filters.khoang_ngay
+    }
+    const data = await fetchLichSuKhaoSat(params)
+    rows.value = data.items
+    total.value = data.total
+  } catch (error) {
+    ElMessage.error(errorMessage(error, 'Không tải được lịch sử trắc nghiệm'))
+  } finally {
+    loading.value = false
+  }
+}
+
+function onPageChange() {
+  load()
+}
+
+function onSizeChange() {
+  page.value = 1
+  load()
+}
+
+function onSearch() {
+  if (page.value !== 1) {
+    page.value = 1
+    return
+  }
+  load()
+}
+
+function onResetFilters() {
+  Object.assign(filters, emptyFilters())
+  onSearch()
+}
+
+function xemKetQua(row) {
+  router.push({ name: 'thpt-thi-dai-hoc-ket-qua', params: { ssid: row.ssid } })
+}
+
+function xemNganhPhuHop(row) {
+  router.push({ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid: row.ssid } })
+}
+
+function lamTiep(row) {
+  router.push({
+    name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
+    params: { ssid: row.ssid, loaiCauHoiId: row.loai_cau_hoi_id_tiep },
+  })
+}
+
+onMounted(load)
+</script>
 
 <style scoped>
 .history-card {

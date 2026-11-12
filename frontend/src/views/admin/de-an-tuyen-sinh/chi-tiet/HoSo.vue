@@ -1,3 +1,7 @@
+<template>
+  <BangChiTiet :rows="rows" :columns="columns" />
+</template>
+
 <script setup>
 import BangChiTiet from './BangChiTiet.vue'
 import { col, cotChung } from './cot'
@@ -19,7 +23,3 @@ const columns = [
   ghiChu,
 ]
 </script>
-
-<template>
-  <BangChiTiet :rows="rows" :columns="columns" />
-</template>

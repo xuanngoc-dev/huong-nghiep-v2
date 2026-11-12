@@ -1,3 +1,30 @@
+<template>
+  <section class="faq-card" aria-labelledby="cau-hoi-thuong-gap-title">
+    <h2 id="cau-hoi-thuong-gap-title" class="faq-card__title">Câu hỏi thường gặp</h2>
+    <div class="faq-list">
+      <div v-for="item in items" :key="item.id" class="faq-item" :class="{ 'is-open': openId === item.id }">
+        <h3 class="faq-item__heading">
+          <button
+            type="button"
+            class="faq-item__button"
+            :aria-expanded="openId === item.id"
+            :aria-controls="`faq-${item.id}`"
+            @click="toggle(item.id)"
+          >
+            <span>{{ item.question }}</span>
+            <span class="faq-item__mark" aria-hidden="true">{{ openId === item.id ? '−' : '+' }}</span>
+          </button>
+        </h3>
+        <div :id="`faq-${item.id}`" class="faq-item__panel" role="region">
+          <div class="faq-item__inner">
+            <p>{{ item.answer }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
 <script setup>
 import { ref } from 'vue'
 
@@ -34,30 +61,3 @@ function toggle(id) {
   openId.value = openId.value === id ? '' : id
 }
 </script>
-
-<template>
-  <section class="faq-card" aria-labelledby="cau-hoi-thuong-gap-title">
-    <h2 id="cau-hoi-thuong-gap-title" class="faq-card__title">Câu hỏi thường gặp</h2>
-    <div class="faq-list">
-      <div v-for="item in items" :key="item.id" class="faq-item" :class="{ 'is-open': openId === item.id }">
-        <h3 class="faq-item__heading">
-          <button
-            type="button"
-            class="faq-item__button"
-            :aria-expanded="openId === item.id"
-            :aria-controls="`faq-${item.id}`"
-            @click="toggle(item.id)"
-          >
-            <span>{{ item.question }}</span>
-            <span class="faq-item__mark" aria-hidden="true">{{ openId === item.id ? '−' : '+' }}</span>
-          </button>
-        </h3>
-        <div :id="`faq-${item.id}`" class="faq-item__panel" role="region">
-          <div class="faq-item__inner">
-            <p>{{ item.answer }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-</template>

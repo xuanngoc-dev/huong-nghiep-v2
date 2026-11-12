@@ -1,6 +1,3 @@
-<script setup>
-</script>
-
 <template>
   <!-- dats_tieu_chi_xet_tuyen -->
   <el-card shadow="never" class="placeholder-card">
@@ -8,8 +5,5 @@
   </el-card>
 </template>
 
-<style scoped>
-.placeholder-card {
-  border-radius: 12px;
-}
-</style>
+<script setup>
+</script>

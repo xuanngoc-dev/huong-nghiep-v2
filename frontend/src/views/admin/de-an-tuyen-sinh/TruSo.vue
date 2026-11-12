@@ -1,3 +1,326 @@
+<template>
+  <div class="catalog-page">
+    <CustomCard shadow="never" class="catalog-card">
+      <div class="filters">
+        <CustomInput
+          v-model="filters.q"
+          class="filter-search"
+          placeholder="Tìm tên cơ sở, địa chỉ, điện thoại hoặc đề án"
+          clearable
+          @keyup.enter="onSearch"
+          @clear="onSearch"
+        >
+          <template #prefix>
+            <CustomIcon><Search /></CustomIcon>
+          </template>
+        </CustomInput>
+        <CustomSelect
+          v-model="filters.ma_truong"
+          class="filter-school"
+          placeholder="Trường"
+          clearable
+          filterable
+          @change="onFilterScopeChange"
+        >
+          <CustomOption
+            v-for="item in truongOptions"
+            :key="item.id"
+            :label="schoolLabel(item)"
+            :value="item.ma_truong"
+          />
+        </CustomSelect>
+        <CustomSelect
+          v-model="filters.nam_tuyen_sinh"
+          class="filter-year"
+          placeholder="Năm học"
+          clearable
+          @change="onFilterScopeChange"
+        >
+          <CustomOption v-for="nam in NAM_HOC" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
+        </CustomSelect>
+        <CustomSelect
+          v-model="filters.de_an_id"
+          class="filter-proposal"
+          placeholder="Đề án tuyển sinh"
+          clearable
+          filterable
+          :disabled="!filterDeAnReady"
+          :loading="filterDeAnLoading"
+          @change="onSearch"
+        >
+          <CustomOption
+            v-for="item in filterDeAnOptions"
+            :key="item.id"
+            :label="deAnOptionLabel(item)"
+            :value="item.id"
+          />
+        </CustomSelect>
+        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+      </div>
+    </CustomCard>
+
+    <CustomCard shadow="never" class="catalog-card">
+      <div class="toolbar">
+        <h2 class="toolbar__title">Danh sách trụ sở</h2>
+        <div class="toolbar__actions">
+          <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
+            <CustomButton
+              type="danger"
+              plain
+              :disabled="!selectedRows.length"
+              :loading="deleting"
+              @click="onDeleteSelected"
+            >
+              <CustomIcon><Delete /></CustomIcon>
+              Xóa
+            </CustomButton>
+          </CustomBadge>
+          <CustomButton type="primary" @click="openCreate">
+            <CustomIcon><Plus /></CustomIcon>
+            Thêm trụ sở
+          </CustomButton>
+        </div>
+      </div>
+
+      <CustomTable
+        ref="tableRef"
+        :loading="loading"
+        :data="rows"
+        row-key="id"
+        stripe
+        border
+        @selection-change="onSelectionChange"
+      >
+        <CustomTableColumn type="selection" width="48" reserve-selection align="center" />
+        <CustomTableColumn label="STT" width="72" align="center">
+          <template #default="{ $index }">{{ rowIndex($index) }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn prop="nam_tuyen_sinh" label="Năm" width="90" align="center" />
+        <CustomTableColumn label="Trường" min-width="220" show-overflow-tooltip>
+          <template #default="{ row }">{{ schoolLabel(row) }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Đề án" min-width="240" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.ten_de_an || `Đề án #${row.de_an_id}` }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Vai trò" width="110">
+          <template #default="{ row }">{{ codeLabel(row.vai_tro, VAI_TRO_OPTIONS) }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn prop="ten_co_so" label="Tên cơ sở" min-width="200" show-overflow-tooltip />
+        <CustomTableColumn label="Loại cơ sở" width="130">
+          <template #default="{ row }">{{ codeLabel(row.loai_co_so, LOAI_CO_SO_OPTIONS) }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn prop="dia_chi" label="Địa chỉ" min-width="240" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.dia_chi || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn prop="so_dien_thoai" label="Điện thoại" width="140">
+          <template #default="{ row }">{{ row.so_dien_thoai || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn prop="ghi_chu" label="Ghi chú" min-width="200" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.ghi_chu || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
+          <template #default="{ row }">
+            <div class="row-actions">
+              <CustomTooltip content="Sửa" placement="top">
+                <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
+                  <CustomIcon><Edit /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+              <CustomTooltip content="Xóa" placement="top">
+                <CustomButton link type="danger" aria-label="Xóa" @click="onDelete(row)">
+                  <CustomIcon><Delete /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+            </div>
+          </template>
+        </CustomTableColumn>
+        <template #empty>
+          <CustomEmpty description="Chưa có trụ sở nào." />
+        </template>
+      </CustomTable>
+
+      <div class="pager">
+        <CustomPagination
+          v-model:current-page="page"
+          v-model:page-size="pageSize"
+          :total="total"
+          layout="total, sizes, prev, pager, next"
+          background
+          @current-change="onPageChange"
+          @size-change="onSizeChange"
+        />
+      </div>
+    </CustomCard>
+  </div>
+
+  <CustomDialog
+    v-model="dialogVisible"
+    :title="editingId ? 'Cập nhật trụ sở' : 'Thêm trụ sở'"
+    width="90%"
+    destroy-on-close
+    @closed="resetForm"
+  >
+    <CustomRow :gutter="16" align="bottom" class="json-meta">
+      <CustomCol :span="8">
+        <span class="json-field__label">Trường</span>
+        <CustomSelect
+          v-model="context.ma_truong"
+          filterable
+          placeholder="Chọn trường"
+          style="width: 100%"
+          @change="onContextFilterChange"
+        >
+          <CustomOption
+            v-for="item in truongOptions"
+            :key="item.id"
+            :label="schoolLabel(item)"
+            :value="item.ma_truong"
+          />
+        </CustomSelect>
+      </CustomCol>
+      <CustomCol :span="4">
+        <span class="json-field__label">Năm học</span>
+        <CustomSelect
+          v-model="context.nam_tuyen_sinh"
+          placeholder="Năm học"
+          style="width: 100%"
+          @change="onContextFilterChange"
+        >
+          <CustomOption v-for="nam in NAM_HOC" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
+        </CustomSelect>
+      </CustomCol>
+      <CustomCol :span="8">
+        <span class="json-field__label">Đề án tuyển sinh</span>
+        <CustomSelect
+          v-model="context.de_an_id"
+          filterable
+          :disabled="!contextReady"
+          :loading="deAnLoading"
+          placeholder="Chọn đề án"
+          style="width: 100%"
+        >
+          <CustomOption
+            v-for="item in deAnOptions"
+            :key="item.id"
+            :label="item.ten_de_an || `Đề án #${item.id}`"
+            :value="item.id"
+          />
+        </CustomSelect>
+      </CustomCol>
+    </CustomRow>
+    <p v-if="contextReady && !deAnLoading && !deAnOptions.length" class="context-hint">
+      Chưa có đề án tuyển sinh cho trường và năm này.
+    </p>
+
+    <CustomRadioGroup v-if="!editingId" v-model="createMode" class="create-mode">
+      <CustomRadioButton value="form">Nhập form</CustomRadioButton>
+      <CustomRadioButton value="json">Dán JSON</CustomRadioButton>
+    </CustomRadioGroup>
+
+    <div v-if="!editingId && createMode === 'json'" class="json-panel">
+      <div class="json-panel__head">
+        <p>
+          Chọn trường, năm và đề án, rồi dán mảng JSON trụ sở.
+          <code>de_an_id</code> lấy từ đề án đã chọn. <code>id</code> trong file không được lưu.
+        </p>
+        <div class="json-panel__actions">
+          <JsonFileButton v-model="jsonText" :disabled="!context.de_an_id" />
+          <CustomButton text type="primary" :disabled="!context.de_an_id" @click="fillJsonSample">
+            Điền mẫu
+          </CustomButton>
+        </div>
+      </div>
+      <CustomInput
+        v-model="jsonText"
+        class="json-input"
+        type="textarea"
+        :rows="16"
+        :disabled="!context.de_an_id"
+        placeholder="Chọn đề án tuyển sinh để dán JSON"
+      />
+    </div>
+
+    <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
+      <CustomRow :gutter="16">
+        <CustomCol v-bind="formCol">
+          <CustomFormItem label="Tên cơ sở" prop="ten_co_so">
+            <CustomInput v-model="form.ten_co_so" maxlength="255" placeholder="Tên trụ sở, cơ sở hoặc phân hiệu" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol v-bind="formCol">
+          <CustomFormItem label="Vai trò" prop="vai_tro">
+            <CustomSelect
+              v-model="form.vai_tro"
+              filterable
+              allow-create
+              default-first-option
+              clearable
+              placeholder="Chính hoặc phụ"
+              style="width: 100%"
+            >
+              <CustomOption
+                v-for="item in VAI_TRO_OPTIONS"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </CustomSelect>
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol v-bind="formCol">
+          <CustomFormItem label="Loại cơ sở" prop="loai_co_so">
+            <CustomSelect
+              v-model="form.loai_co_so"
+              filterable
+              allow-create
+              default-first-option
+              clearable
+              placeholder="Trụ sở, cơ sở hoặc phân hiệu"
+              style="width: 100%"
+            >
+              <CustomOption
+                v-for="item in LOAI_CO_SO_OPTIONS"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </CustomSelect>
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol v-bind="formCol">
+          <CustomFormItem label="Điện thoại" prop="so_dien_thoai">
+            <CustomInput v-model="form.so_dien_thoai" maxlength="30" placeholder="Số liên hệ tại địa điểm" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol v-bind="formCol">
+          <CustomFormItem label="Địa chỉ" prop="dia_chi">
+            <CustomInput v-model="form.dia_chi" maxlength="500" placeholder="Địa chỉ đầy đủ" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol v-bind="formCol">
+          <CustomFormItem label="Ghi chú" prop="ghi_chu">
+            <CustomInput
+              v-model="form.ghi_chu"
+              type="text"
+              :maxlength="20000"
+              placeholder="Thông tin bổ sung"
+            />
+          </CustomFormItem>
+        </CustomCol>
+      </CustomRow>
+    </CustomForm>
+    <template #footer>
+      <JsonImportDialogFooter
+        :batch="jsonImport"
+        :saving="saving"
+        :show-progress="false"
+        @cancel="dialogVisible = false"
+        @save="onSubmit"
+      />
+    </template>
+  </CustomDialog>
+</template>
+
 <script setup>
 import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
@@ -491,449 +814,3 @@ onMounted(async () => {
   await Promise.all([load(), loadTruongOptions().catch(() => {})])
 })
 </script>
-
-<template>
-  <div class="catalog-page">
-    <CustomCard shadow="never" class="catalog-card">
-      <div class="filters">
-        <CustomInput
-          v-model="filters.q"
-          class="filter-search"
-          placeholder="Tìm tên cơ sở, địa chỉ, điện thoại hoặc đề án"
-          clearable
-          @keyup.enter="onSearch"
-          @clear="onSearch"
-        >
-          <template #prefix>
-            <CustomIcon><Search /></CustomIcon>
-          </template>
-        </CustomInput>
-        <CustomSelect
-          v-model="filters.ma_truong"
-          class="filter-school"
-          placeholder="Trường"
-          clearable
-          filterable
-          @change="onFilterScopeChange"
-        >
-          <CustomOption
-            v-for="item in truongOptions"
-            :key="item.id"
-            :label="schoolLabel(item)"
-            :value="item.ma_truong"
-          />
-        </CustomSelect>
-        <CustomSelect
-          v-model="filters.nam_tuyen_sinh"
-          class="filter-year"
-          placeholder="Năm học"
-          clearable
-          @change="onFilterScopeChange"
-        >
-          <CustomOption v-for="nam in NAM_HOC" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
-        </CustomSelect>
-        <CustomSelect
-          v-model="filters.de_an_id"
-          class="filter-proposal"
-          placeholder="Đề án tuyển sinh"
-          clearable
-          filterable
-          :disabled="!filterDeAnReady"
-          :loading="filterDeAnLoading"
-          @change="onSearch"
-        >
-          <CustomOption
-            v-for="item in filterDeAnOptions"
-            :key="item.id"
-            :label="deAnOptionLabel(item)"
-            :value="item.id"
-          />
-        </CustomSelect>
-        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-      </div>
-    </CustomCard>
-
-    <CustomCard shadow="never" class="catalog-card">
-      <div class="toolbar">
-        <h2 class="toolbar__title">Danh sách trụ sở</h2>
-        <div class="toolbar__actions">
-          <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
-            <CustomButton
-              type="danger"
-              plain
-              :disabled="!selectedRows.length"
-              :loading="deleting"
-              @click="onDeleteSelected"
-            >
-              <CustomIcon><Delete /></CustomIcon>
-              Xóa
-            </CustomButton>
-          </CustomBadge>
-          <CustomButton type="primary" @click="openCreate">
-            <CustomIcon><Plus /></CustomIcon>
-            Thêm trụ sở
-          </CustomButton>
-        </div>
-      </div>
-
-      <CustomTable
-        ref="tableRef"
-        :loading="loading"
-        :data="rows"
-        row-key="id"
-        stripe
-        border
-        @selection-change="onSelectionChange"
-      >
-        <CustomTableColumn type="selection" width="48" reserve-selection align="center" />
-        <CustomTableColumn label="STT" width="72" align="center">
-          <template #default="{ $index }">{{ rowIndex($index) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="nam_tuyen_sinh" label="Năm" width="90" align="center" />
-        <CustomTableColumn label="Trường" min-width="220" show-overflow-tooltip>
-          <template #default="{ row }">{{ schoolLabel(row) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Đề án" min-width="240" show-overflow-tooltip>
-          <template #default="{ row }">{{ row.ten_de_an || `Đề án #${row.de_an_id}` }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Vai trò" width="110">
-          <template #default="{ row }">{{ codeLabel(row.vai_tro, VAI_TRO_OPTIONS) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="ten_co_so" label="Tên cơ sở" min-width="200" show-overflow-tooltip />
-        <CustomTableColumn label="Loại cơ sở" width="130">
-          <template #default="{ row }">{{ codeLabel(row.loai_co_so, LOAI_CO_SO_OPTIONS) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="dia_chi" label="Địa chỉ" min-width="240" show-overflow-tooltip>
-          <template #default="{ row }">{{ row.dia_chi || '—' }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="so_dien_thoai" label="Điện thoại" width="140">
-          <template #default="{ row }">{{ row.so_dien_thoai || '—' }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="ghi_chu" label="Ghi chú" min-width="200" show-overflow-tooltip>
-          <template #default="{ row }">{{ row.ghi_chu || '—' }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
-          <template #default="{ row }">
-            <div class="row-actions">
-              <CustomTooltip content="Sửa" placement="top">
-                <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
-                  <CustomIcon><Edit /></CustomIcon>
-                </CustomButton>
-              </CustomTooltip>
-              <CustomTooltip content="Xóa" placement="top">
-                <CustomButton link type="danger" aria-label="Xóa" @click="onDelete(row)">
-                  <CustomIcon><Delete /></CustomIcon>
-                </CustomButton>
-              </CustomTooltip>
-            </div>
-          </template>
-        </CustomTableColumn>
-        <template #empty>
-          <CustomEmpty description="Chưa có trụ sở nào." />
-        </template>
-      </CustomTable>
-
-      <div class="pager">
-        <CustomPagination
-          v-model:current-page="page"
-          v-model:page-size="pageSize"
-          :total="total"
-          layout="total, sizes, prev, pager, next"
-          background
-          @current-change="onPageChange"
-          @size-change="onSizeChange"
-        />
-      </div>
-    </CustomCard>
-  </div>
-
-  <CustomDialog
-    v-model="dialogVisible"
-    :title="editingId ? 'Cập nhật trụ sở' : 'Thêm trụ sở'"
-    width="90%"
-    destroy-on-close
-    @closed="resetForm"
-  >
-    <CustomRow :gutter="16" align="bottom" class="json-meta">
-      <CustomCol :span="8">
-        <span class="json-field__label">Trường</span>
-        <CustomSelect
-          v-model="context.ma_truong"
-          filterable
-          placeholder="Chọn trường"
-          style="width: 100%"
-          @change="onContextFilterChange"
-        >
-          <CustomOption
-            v-for="item in truongOptions"
-            :key="item.id"
-            :label="schoolLabel(item)"
-            :value="item.ma_truong"
-          />
-        </CustomSelect>
-      </CustomCol>
-      <CustomCol :span="4">
-        <span class="json-field__label">Năm học</span>
-        <CustomSelect
-          v-model="context.nam_tuyen_sinh"
-          placeholder="Năm học"
-          style="width: 100%"
-          @change="onContextFilterChange"
-        >
-          <CustomOption v-for="nam in NAM_HOC" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
-        </CustomSelect>
-      </CustomCol>
-      <CustomCol :span="8">
-        <span class="json-field__label">Đề án tuyển sinh</span>
-        <CustomSelect
-          v-model="context.de_an_id"
-          filterable
-          :disabled="!contextReady"
-          :loading="deAnLoading"
-          placeholder="Chọn đề án"
-          style="width: 100%"
-        >
-          <CustomOption
-            v-for="item in deAnOptions"
-            :key="item.id"
-            :label="item.ten_de_an || `Đề án #${item.id}`"
-            :value="item.id"
-          />
-        </CustomSelect>
-      </CustomCol>
-    </CustomRow>
-    <p v-if="contextReady && !deAnLoading && !deAnOptions.length" class="context-hint">
-      Chưa có đề án tuyển sinh cho trường và năm này.
-    </p>
-
-    <CustomRadioGroup v-if="!editingId" v-model="createMode" class="create-mode">
-      <CustomRadioButton value="form">Nhập form</CustomRadioButton>
-      <CustomRadioButton value="json">Dán JSON</CustomRadioButton>
-    </CustomRadioGroup>
-
-    <div v-if="!editingId && createMode === 'json'" class="json-panel">
-      <div class="json-panel__head">
-        <p>
-          Chọn trường, năm và đề án, rồi dán mảng JSON trụ sở.
-          <code>de_an_id</code> lấy từ đề án đã chọn. <code>id</code> trong file không được lưu.
-        </p>
-        <CustomButton text type="primary" :disabled="!context.de_an_id" @click="fillJsonSample">
-          Điền mẫu
-        </CustomButton>
-      </div>
-      <CustomInput
-        v-model="jsonText"
-        class="json-input"
-        type="textarea"
-        :rows="16"
-        :disabled="!context.de_an_id"
-        placeholder="Chọn đề án tuyển sinh để dán JSON"
-      />
-    </div>
-
-    <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomRow :gutter="16">
-        <CustomCol v-bind="formCol">
-          <CustomFormItem label="Tên cơ sở" prop="ten_co_so">
-            <CustomInput v-model="form.ten_co_so" maxlength="255" placeholder="Tên trụ sở, cơ sở hoặc phân hiệu" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol v-bind="formCol">
-          <CustomFormItem label="Vai trò" prop="vai_tro">
-            <CustomSelect
-              v-model="form.vai_tro"
-              filterable
-              allow-create
-              default-first-option
-              clearable
-              placeholder="Chính hoặc phụ"
-              style="width: 100%"
-            >
-              <CustomOption
-                v-for="item in VAI_TRO_OPTIONS"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol v-bind="formCol">
-          <CustomFormItem label="Loại cơ sở" prop="loai_co_so">
-            <CustomSelect
-              v-model="form.loai_co_so"
-              filterable
-              allow-create
-              default-first-option
-              clearable
-              placeholder="Trụ sở, cơ sở hoặc phân hiệu"
-              style="width: 100%"
-            >
-              <CustomOption
-                v-for="item in LOAI_CO_SO_OPTIONS"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol v-bind="formCol">
-          <CustomFormItem label="Điện thoại" prop="so_dien_thoai">
-            <CustomInput v-model="form.so_dien_thoai" maxlength="30" placeholder="Số liên hệ tại địa điểm" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol v-bind="formCol">
-          <CustomFormItem label="Địa chỉ" prop="dia_chi">
-            <CustomInput v-model="form.dia_chi" maxlength="500" placeholder="Địa chỉ đầy đủ" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol v-bind="formCol">
-          <CustomFormItem label="Ghi chú" prop="ghi_chu">
-            <CustomInput
-              v-model="form.ghi_chu"
-              type="text"
-              :maxlength="20000"
-              placeholder="Thông tin bổ sung"
-            />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
-    </CustomForm>
-    <template #footer>
-      <JsonImportDialogFooter
-        :batch="jsonImport"
-        :saving="saving"
-        :show-progress="false"
-        @cancel="dialogVisible = false"
-        @save="onSubmit"
-      />
-    </template>
-  </CustomDialog>
-</template>
-
-<style scoped>
-.catalog-page {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.catalog-card {
-  border-radius: 12px;
-}
-
-.filters,
-.toolbar__actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.toolbar__title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--el-text-color-primary);
-}
-
-.row-actions {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.row-actions :deep(.el-icon) {
-  font-size: 20px !important;
-}
-
-.row-actions :deep(.el-icon svg) {
-  stroke: currentColor;
-  stroke-width: 1.15;
-  stroke-linejoin: round;
-  paint-order: stroke fill;
-}
-
-.filter-search,
-.filter-school,
-.filter-proposal {
-  width: 280px;
-}
-
-.filter-year {
-  width: 168px;
-}
-
-.create-mode {
-  margin-bottom: 16px;
-}
-
-.json-panel__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.json-panel__head p,
-.context-hint {
-  margin: 0;
-  color: var(--el-text-color-secondary);
-  line-height: 1.5;
-}
-
-.context-hint {
-  margin: -4px 0 12px;
-}
-
-.json-meta {
-  margin-bottom: 12px;
-}
-
-.json-field__label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 14px;
-  line-height: 22px;
-  color: var(--el-text-color-regular);
-}
-
-.json-field__label::before {
-  content: '*';
-  margin-right: 4px;
-  color: var(--el-color-danger);
-}
-
-.json-input :deep(textarea) {
-  font-family: ui-monospace, Consolas, monospace;
-  font-size: 13px;
-}
-
-.pager {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
-}
-
-@media (max-width: 640px) {
-  .filter-search,
-  .filter-school,
-  .filter-year,
-  .filter-proposal {
-    width: 100%;
-    max-width: none;
-  }
-}
-</style>

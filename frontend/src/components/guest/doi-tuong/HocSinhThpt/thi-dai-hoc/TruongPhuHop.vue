@@ -1,3 +1,182 @@
+<template>
+  <section class="truong-phu-hop py-4">
+    <div class="container-fluid">
+
+      <div class="stages-card holland-overview mt-3">
+        <header class="holland-overview__header truong-phu-hop__header">
+          <h2 class="holland-overview__title">Trường phù hợp</h2>
+          <CustomButton link type="primary" @click="quayLai">Quay lại</CustomButton>
+        </header>
+
+        <article class="truong-phu-hop__hero">
+          <div class="truong-phu-hop__info">
+            <p class="holland-overview__lead">
+              Trường có đào tạo ngành <strong>{{ tenNganh }}</strong>
+              <span v-if="maNganh"> ({{ maNganh }})</span>.
+            </p>
+            <p class="holland-overview__lead">{{ moTaHoSo }}</p>
+          </div>
+          <aside v-if="!daDangNhap" class="truong-phu-hop__auth">
+            <p class="holland-note__text">
+              Cung cấp hồ sơ năng lực cũng như bằng cấp, chứng chỉ để tìm ra trường phù hợp với bạn.
+            </p>
+            <div class="truong-phu-hop__links">
+              <CustomButton type="primary" @click="diDangNhap">Đăng nhập</CustomButton>
+              <CustomButton @click="diDangKy">Đăng ký</CustomButton>
+            </div>
+          </aside>
+        </article>
+
+        <article v-if="daDangNhap && hoSo" class="ho-so-tom-tat">
+          <header class="ho-so-tom-tat__head">
+            <div>
+              <h3 class="ho-so-tom-tat__title">Thông tin của bạn</h3>
+              <p class="ho-so-tom-tat__sub">
+                {{ hoSo.ho_ten }}
+                <span v-if="soMucThieu"> · còn {{ soMucThieu }} mục chưa cập nhật</span>
+              </p>
+            </div>
+            <CustomButton type="primary" plain @click="hoSoMo = true">
+              <CustomIcon><User /></CustomIcon>
+              <span>Xem & cập nhật hồ sơ</span>
+            </CustomButton>
+          </header>
+          <ul class="ho-so-tom-tat__list">
+            <li
+              v-for="item in thongTinHoSo"
+              :key="item.id"
+              class="ho-so-chip"
+              :class="{ 'ho-so-chip--trong': !item.giaTri }"
+            >
+              <CustomIcon class="ho-so-chip__icon"><component :is="item.icon" /></CustomIcon>
+              <div class="ho-so-chip__body">
+                <span class="ho-so-chip__label">{{ item.nhan }}</span>
+                <CustomTooltip :content="item.goiY" placement="top" :disabled="!item.goiY">
+                  <span class="ho-so-chip__value">{{ item.giaTri || 'Chưa cập nhật' }}</span>
+                </CustomTooltip>
+              </div>
+            </li>
+          </ul>
+        </article>
+
+        <div class="loai-co-so" role="group" aria-label="Loại cơ sở đào tạo">
+          <button
+            type="button"
+            class="loai-co-so__chip"
+            :class="{ 'is-active': !boLoc.loai }"
+            :aria-pressed="!boLoc.loai"
+            @click="chonLoai('')"
+          >
+            Tất cả
+          </button>
+          <button
+            v-for="item in LOAI_CO_SO"
+            :key="item"
+            type="button"
+            class="loai-co-so__chip"
+            :class="{ 'is-active': boLoc.loai === item }"
+            :aria-pressed="boLoc.loai === item"
+            @click="chonLoai(item)"
+          >
+            {{ item }}
+          </button>
+        </div>
+
+        <form class="nhom-filter" @submit.prevent="timKiem">
+          <div class="nhom-filter__field nhom-filter__field--ten">
+            <label class="nhom-filter__label" for="phu-hop-tu-khoa">Từ khóa</label>
+            <CustomInput id="phu-hop-tu-khoa" v-model="tuKhoa" placeholder="Tên hoặc mã trường" clearable />
+          </div>
+          <div class="nhom-filter__field nhom-filter__field--khu-vuc">
+            <label class="nhom-filter__label" for="phu-hop-khu-vuc">Khu vực</label>
+            <CustomSelect id="phu-hop-khu-vuc" v-model="khuVuc" class="nhom-filter__select" clearable placeholder="Tất cả khu vực">
+              <CustomOption v-for="item in KHU_VUC" :key="item" :label="item" :value="item" />
+            </CustomSelect>
+          </div>
+          <div class="nhom-filter__field nhom-filter__field--tinh">
+            <label class="nhom-filter__label" for="phu-hop-tinh">Tỉnh/thành</label>
+            <CustomSelect id="phu-hop-tinh" v-model="tinh" class="nhom-filter__select" filterable clearable placeholder="Tất cả tỉnh/thành">
+              <CustomOption v-for="item in tinhOptions" :key="item.id" :label="item.ten_tinh" :value="item.ten_tinh" />
+            </CustomSelect>
+          </div>
+          <div class="nhom-filter__field nhom-filter__field--nam">
+            <label class="nhom-filter__label" for="phu-hop-nam">Năm học</label>
+            <CustomSelect id="phu-hop-nam" v-model="namHoc" class="nhom-filter__select" placeholder="Năm học">
+              <CustomOption v-for="nam in namOptions" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
+            </CustomSelect>
+          </div>
+          <div class="nhom-filter__field nhom-filter__field--sap-xep">
+            <label class="nhom-filter__label" for="phu-hop-sap-xep">Sắp xếp</label>
+            <CustomSelect id="phu-hop-sap-xep" v-model="sapXep" class="nhom-filter__select" @change="timKiem">
+              <CustomOption v-for="item in sapXepOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </CustomSelect>
+          </div>
+          <div class="nhom-filter__actions">
+            <CustomButton type="primary" native-type="submit">Tìm kiếm</CustomButton>
+            <CustomButton v-if="dangLocTheoHoSo" native-type="button" @click="boLocHoSo">Bỏ lọc hồ sơ</CustomButton>
+            <CustomButton v-else-if="tinhHoSo" native-type="button" @click="locTheoHoSo">Lọc theo hồ sơ</CustomButton>
+          </div>
+        </form>
+
+        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
+        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải trường phù hợp…</p>
+        <KhongCoDuLieu v-else-if="!danhSach.length" :text="thongBaoTrong" />
+        <div v-else class="row g-3">
+          <div v-for="item in danhSach" :key="item.ma_truong" class="col-12 col-md-6 col-lg-3">
+            <article class="nhom-card h-100">
+              <p class="nhom-card__code">{{ item.ma_truong }}</p>
+              <div class="nhom-card__main">
+                <p class="nhom-card__field">{{ item.loai_co_so || 'Cơ sở đào tạo' }}</p>
+                <h3 class="nhom-card__name">{{ item.ten_truong }}</h3>
+                <p v-if="item.ten_tieng_anh" class="nhom-card__en">{{ item.ten_tieng_anh }}</p>
+                <p v-if="diaDiem(item)" class="nhom-card__meta">{{ diaDiem(item) }}</p>
+                <p v-if="item.dia_chi_tru_so" class="nhom-card__meta">{{ item.dia_chi_tru_so }}</p>
+                <p v-if="item.so_chuong_trinh || chiTieu(item.chi_tieu)" class="nhom-card__meta">
+                  <span v-if="item.so_chuong_trinh">{{ item.so_chuong_trinh }} chương trình</span>
+                  <span v-if="item.so_chuong_trinh && chiTieu(item.chi_tieu)"> · </span>
+                  <span v-if="chiTieu(item.chi_tieu)">Chỉ tiêu {{ chiTieu(item.chi_tieu) }}</span>
+                </p>
+                <p v-if="hrefWebsite(item.website_tuyen_sinh || item.website)" class="nhom-card__addr">
+                  <a
+                    class="nhom-card__web"
+                    :href="hrefWebsite(item.website_tuyen_sinh || item.website)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {{ item.website_tuyen_sinh || item.website }}
+                  </a>
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+        <div v-if="!dangTai && !loi && total > soMoiTrang" class="nhom-pager">
+          <CustomPagination
+            v-model:current-page="trang"
+            v-model:page-size="soMoiTrang"
+            :total="total"
+            :page-sizes="[12, 24, 48]"
+            layout="total, sizes, prev, pager, next"
+            background
+          />
+        </div>
+      </div>
+    </div>
+
+    <el-drawer
+      v-model="hoSoMo"
+      title="Hồ sơ của tôi"
+      direction="rtl"
+      size="min(960px, 100%)"
+      append-to-body
+      destroy-on-close
+      class="ho-so-drawer"
+    >
+      <HoSo embedded @saved="daLuuHoSo" />
+    </el-drawer>
+  </section>
+</template>
+
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -366,185 +545,6 @@ onMounted(async () => {
   tai()
 })
 </script>
-
-<template>
-  <section class="truong-phu-hop py-4">
-    <div class="container-fluid">
-
-      <div class="stages-card holland-overview mt-3">
-        <header class="holland-overview__header truong-phu-hop__header">
-          <h2 class="holland-overview__title">Trường phù hợp</h2>
-          <CustomButton link type="primary" @click="quayLai">Quay lại</CustomButton>
-        </header>
-
-        <article class="truong-phu-hop__hero">
-          <div class="truong-phu-hop__info">
-            <p class="holland-overview__lead">
-              Trường có đào tạo ngành <strong>{{ tenNganh }}</strong>
-              <span v-if="maNganh"> ({{ maNganh }})</span>.
-            </p>
-            <p class="holland-overview__lead">{{ moTaHoSo }}</p>
-          </div>
-          <aside v-if="!daDangNhap" class="truong-phu-hop__auth">
-            <p class="holland-note__text">
-              Cung cấp hồ sơ năng lực cũng như bằng cấp, chứng chỉ để tìm ra trường phù hợp với bạn.
-            </p>
-            <div class="truong-phu-hop__links">
-              <CustomButton type="primary" @click="diDangNhap">Đăng nhập</CustomButton>
-              <CustomButton @click="diDangKy">Đăng ký</CustomButton>
-            </div>
-          </aside>
-        </article>
-
-        <article v-if="daDangNhap && hoSo" class="ho-so-tom-tat">
-          <header class="ho-so-tom-tat__head">
-            <div>
-              <h3 class="ho-so-tom-tat__title">Thông tin của bạn</h3>
-              <p class="ho-so-tom-tat__sub">
-                {{ hoSo.ho_ten }}
-                <span v-if="soMucThieu"> · còn {{ soMucThieu }} mục chưa cập nhật</span>
-              </p>
-            </div>
-            <CustomButton type="primary" plain @click="hoSoMo = true">
-              <CustomIcon><User /></CustomIcon>
-              <span>Xem & cập nhật hồ sơ</span>
-            </CustomButton>
-          </header>
-          <ul class="ho-so-tom-tat__list">
-            <li
-              v-for="item in thongTinHoSo"
-              :key="item.id"
-              class="ho-so-chip"
-              :class="{ 'ho-so-chip--trong': !item.giaTri }"
-            >
-              <CustomIcon class="ho-so-chip__icon"><component :is="item.icon" /></CustomIcon>
-              <div class="ho-so-chip__body">
-                <span class="ho-so-chip__label">{{ item.nhan }}</span>
-                <CustomTooltip :content="item.goiY" placement="top" :disabled="!item.goiY">
-                  <span class="ho-so-chip__value">{{ item.giaTri || 'Chưa cập nhật' }}</span>
-                </CustomTooltip>
-              </div>
-            </li>
-          </ul>
-        </article>
-
-        <div class="loai-co-so" role="group" aria-label="Loại cơ sở đào tạo">
-          <button
-            type="button"
-            class="loai-co-so__chip"
-            :class="{ 'is-active': !boLoc.loai }"
-            :aria-pressed="!boLoc.loai"
-            @click="chonLoai('')"
-          >
-            Tất cả
-          </button>
-          <button
-            v-for="item in LOAI_CO_SO"
-            :key="item"
-            type="button"
-            class="loai-co-so__chip"
-            :class="{ 'is-active': boLoc.loai === item }"
-            :aria-pressed="boLoc.loai === item"
-            @click="chonLoai(item)"
-          >
-            {{ item }}
-          </button>
-        </div>
-
-        <form class="nhom-filter" @submit.prevent="timKiem">
-          <div class="nhom-filter__field nhom-filter__field--ten">
-            <label class="nhom-filter__label" for="phu-hop-tu-khoa">Từ khóa</label>
-            <CustomInput id="phu-hop-tu-khoa" v-model="tuKhoa" placeholder="Tên hoặc mã trường" clearable />
-          </div>
-          <div class="nhom-filter__field nhom-filter__field--khu-vuc">
-            <label class="nhom-filter__label" for="phu-hop-khu-vuc">Khu vực</label>
-            <CustomSelect id="phu-hop-khu-vuc" v-model="khuVuc" class="nhom-filter__select" clearable placeholder="Tất cả khu vực">
-              <CustomOption v-for="item in KHU_VUC" :key="item" :label="item" :value="item" />
-            </CustomSelect>
-          </div>
-          <div class="nhom-filter__field nhom-filter__field--tinh">
-            <label class="nhom-filter__label" for="phu-hop-tinh">Tỉnh/thành</label>
-            <CustomSelect id="phu-hop-tinh" v-model="tinh" class="nhom-filter__select" filterable clearable placeholder="Tất cả tỉnh/thành">
-              <CustomOption v-for="item in tinhOptions" :key="item.id" :label="item.ten_tinh" :value="item.ten_tinh" />
-            </CustomSelect>
-          </div>
-          <div class="nhom-filter__field nhom-filter__field--nam">
-            <label class="nhom-filter__label" for="phu-hop-nam">Năm học</label>
-            <CustomSelect id="phu-hop-nam" v-model="namHoc" class="nhom-filter__select" placeholder="Năm học">
-              <CustomOption v-for="nam in namOptions" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
-            </CustomSelect>
-          </div>
-          <div class="nhom-filter__field nhom-filter__field--sap-xep">
-            <label class="nhom-filter__label" for="phu-hop-sap-xep">Sắp xếp</label>
-            <CustomSelect id="phu-hop-sap-xep" v-model="sapXep" class="nhom-filter__select" @change="timKiem">
-              <CustomOption v-for="item in sapXepOptions" :key="item.value" :label="item.label" :value="item.value" />
-            </CustomSelect>
-          </div>
-          <div class="nhom-filter__actions">
-            <CustomButton type="primary" native-type="submit">Tìm kiếm</CustomButton>
-            <CustomButton v-if="dangLocTheoHoSo" native-type="button" @click="boLocHoSo">Bỏ lọc hồ sơ</CustomButton>
-            <CustomButton v-else-if="tinhHoSo" native-type="button" @click="locTheoHoSo">Lọc theo hồ sơ</CustomButton>
-          </div>
-        </form>
-
-        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
-        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải trường phù hợp…</p>
-        <KhongCoDuLieu v-else-if="!danhSach.length" :text="thongBaoTrong" />
-        <div v-else class="row g-3">
-          <div v-for="item in danhSach" :key="item.ma_truong" class="col-12 col-md-6 col-lg-3">
-            <article class="nhom-card h-100">
-              <p class="nhom-card__code">{{ item.ma_truong }}</p>
-              <div class="nhom-card__main">
-                <p class="nhom-card__field">{{ item.loai_co_so || 'Cơ sở đào tạo' }}</p>
-                <h3 class="nhom-card__name">{{ item.ten_truong }}</h3>
-                <p v-if="item.ten_tieng_anh" class="nhom-card__en">{{ item.ten_tieng_anh }}</p>
-                <p v-if="diaDiem(item)" class="nhom-card__meta">{{ diaDiem(item) }}</p>
-                <p v-if="item.dia_chi_tru_so" class="nhom-card__meta">{{ item.dia_chi_tru_so }}</p>
-                <p v-if="item.so_chuong_trinh || chiTieu(item.chi_tieu)" class="nhom-card__meta">
-                  <span v-if="item.so_chuong_trinh">{{ item.so_chuong_trinh }} chương trình</span>
-                  <span v-if="item.so_chuong_trinh && chiTieu(item.chi_tieu)"> · </span>
-                  <span v-if="chiTieu(item.chi_tieu)">Chỉ tiêu {{ chiTieu(item.chi_tieu) }}</span>
-                </p>
-                <p v-if="hrefWebsite(item.website_tuyen_sinh || item.website)" class="nhom-card__addr">
-                  <a
-                    class="nhom-card__web"
-                    :href="hrefWebsite(item.website_tuyen_sinh || item.website)"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {{ item.website_tuyen_sinh || item.website }}
-                  </a>
-                </p>
-              </div>
-            </article>
-          </div>
-        </div>
-        <div v-if="!dangTai && !loi && total > soMoiTrang" class="nhom-pager">
-          <CustomPagination
-            v-model:current-page="trang"
-            v-model:page-size="soMoiTrang"
-            :total="total"
-            :page-sizes="[12, 24, 48]"
-            layout="total, sizes, prev, pager, next"
-            background
-          />
-        </div>
-      </div>
-    </div>
-
-    <el-drawer
-      v-model="hoSoMo"
-      title="Hồ sơ của tôi"
-      direction="rtl"
-      size="min(960px, 100%)"
-      append-to-body
-      destroy-on-close
-      class="ho-so-drawer"
-    >
-      <HoSo embedded @saved="daLuuHoSo" />
-    </el-drawer>
-  </section>
-</template>
 
 <style scoped>
 /* Tiêu đề trái, nút quay lại phải. Thêm .truong-phu-hop để thắng rule căn giữa dùng chung. */

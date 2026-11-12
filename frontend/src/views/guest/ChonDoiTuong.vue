@@ -1,11 +1,3 @@
-<script setup>
-import DoiTuongCard from '@/components/guest/chung/DoiTuongCard.vue'
-import TinTucMoi from '@/components/guest/chung/TinTucMoi.vue'
-import { useDoiTuongAudiences } from '@/composables/useDoiTuongAudiences'
-
-const { audiences, selectedCode, chonDoiTuong } = useDoiTuongAudiences()
-</script>
-
 <template>
   <section class="py-5">
     <div class="container-fluid">
@@ -39,3 +31,11 @@ const { audiences, selectedCode, chonDoiTuong } = useDoiTuongAudiences()
     </div>
   </section>
 </template>
+
+<script setup>
+import DoiTuongCard from '@/components/guest/chung/DoiTuongCard.vue'
+import TinTucMoi from '@/components/guest/chung/TinTucMoi.vue'
+import { useDoiTuongAudiences } from '@/composables/useDoiTuongAudiences'
+
+const { audiences, selectedCode, chonDoiTuong } = useDoiTuongAudiences()
+</script>

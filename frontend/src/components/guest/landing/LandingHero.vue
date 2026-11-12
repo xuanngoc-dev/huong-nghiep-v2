@@ -1,75 +1,3 @@
-<script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { audiences, heroSlides, hollandGroups, steps, studyPaths } from '@/data/landing'
-import LandingCounter from './LandingCounter.vue'
-
-const INTERVAL = 6500
-
-const active = ref(0)
-const hovered = ref(false)
-const focused = ref(false)
-const stopped = ref(false)
-const pageHidden = ref(false)
-const reduceMotion = ref(false)
-
-const paused = computed(
-  () => stopped.value || hovered.value || focused.value || pageHidden.value || reduceMotion.value,
-)
-
-const stats = [
-  { value: audiences.length, label: 'Nhóm đối tượng được hỗ trợ' },
-  { value: hollandGroups.length, label: 'Nhóm tính cách Holland' },
-  { value: studyPaths.length, label: 'Lộ trình sau tốt nghiệp THPT' },
-  { value: steps.length, label: 'Bước định hướng rõ ràng' },
-]
-
-function goTo(index) {
-  const total = heroSlides.length
-  active.value = ((index % total) + total) % total
-}
-
-const next = () => goTo(active.value + 1)
-const prev = () => goTo(active.value - 1)
-
-function linkTo(link) {
-  return link.hash ? { ...link.to, hash: link.hash } : link.to
-}
-
-function onKeydown(event) {
-  if (event.key === 'ArrowRight') next()
-  else if (event.key === 'ArrowLeft') prev()
-}
-
-function onFocusOut(event) {
-  if (!event.currentTarget.contains(event.relatedTarget)) focused.value = false
-}
-
-let startX = null
-function onPointerDown(event) {
-  startX = event.clientX
-}
-function onPointerUp(event) {
-  if (startX === null) return
-  const delta = event.clientX - startX
-  startX = null
-  if (Math.abs(delta) < 50) return
-  delta < 0 ? next() : prev()
-}
-
-const onVisibility = () => {
-  pageHidden.value = document.hidden
-}
-
-onMounted(() => {
-  reduceMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  document.addEventListener('visibilitychange', onVisibility)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('visibilitychange', onVisibility)
-})
-</script>
-
 <template>
   <section class="landing-hero" aria-labelledby="landing-hero-title">
     <h1 id="landing-hero-title" class="visually-hidden">
@@ -186,3 +114,75 @@ onUnmounted(() => {
     </div>
   </section>
 </template>
+
+<script setup>
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { audiences, heroSlides, hollandGroups, steps, studyPaths } from '@/data/landing'
+import LandingCounter from './LandingCounter.vue'
+
+const INTERVAL = 6500
+
+const active = ref(0)
+const hovered = ref(false)
+const focused = ref(false)
+const stopped = ref(false)
+const pageHidden = ref(false)
+const reduceMotion = ref(false)
+
+const paused = computed(
+  () => stopped.value || hovered.value || focused.value || pageHidden.value || reduceMotion.value,
+)
+
+const stats = [
+  { value: audiences.length, label: 'Nhóm đối tượng được hỗ trợ' },
+  { value: hollandGroups.length, label: 'Nhóm tính cách Holland' },
+  { value: studyPaths.length, label: 'Lộ trình sau tốt nghiệp THPT' },
+  { value: steps.length, label: 'Bước định hướng rõ ràng' },
+]
+
+function goTo(index) {
+  const total = heroSlides.length
+  active.value = ((index % total) + total) % total
+}
+
+const next = () => goTo(active.value + 1)
+const prev = () => goTo(active.value - 1)
+
+function linkTo(link) {
+  return link.hash ? { ...link.to, hash: link.hash } : link.to
+}
+
+function onKeydown(event) {
+  if (event.key === 'ArrowRight') next()
+  else if (event.key === 'ArrowLeft') prev()
+}
+
+function onFocusOut(event) {
+  if (!event.currentTarget.contains(event.relatedTarget)) focused.value = false
+}
+
+let startX = null
+function onPointerDown(event) {
+  startX = event.clientX
+}
+function onPointerUp(event) {
+  if (startX === null) return
+  const delta = event.clientX - startX
+  startX = null
+  if (Math.abs(delta) < 50) return
+  delta < 0 ? next() : prev()
+}
+
+const onVisibility = () => {
+  pageHidden.value = document.hidden
+}
+
+onMounted(() => {
+  reduceMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  document.addEventListener('visibilitychange', onVisibility)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('visibilitychange', onVisibility)
+})
+</script>

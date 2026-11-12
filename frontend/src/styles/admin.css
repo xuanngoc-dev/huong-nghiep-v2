@@ -1,0 +1,186 @@
+/*
+ * CSS dùng chung cho các màn trong khu quản trị (/admin), được import ở layouts/MainLayout.vue.
+ *
+ * - Style của trang nằm dưới .admin-layout để không ảnh hưởng giao diện khách/thành viên.
+ *   Phần .admin-layout bọc trong :where() nên chỉ tính độ ưu tiên của class phía sau:
+ *   style scoped trong từng màn luôn ghi đè được khi màn đó cần khác đi.
+ * - Dialog/drawer của Element Plus được gắn ra ngoài body (không nằm trong .admin-layout),
+ *   nên style dùng trong dialog không bọc theo layout; tên class của chúng chỉ dùng ở admin.
+ * - Style chỉ dùng ở một màn thì để trong <style scoped> của màn đó.
+ */
+
+/* Khung trang danh mục */
+:where(.admin-layout) .catalog-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+:where(.admin-layout) .catalog-card {
+  border-radius: 12px;
+}
+
+:where(.admin-layout) .placeholder-card {
+  border-radius: 12px;
+}
+
+/* Bộ lọc và thanh công cụ */
+:where(.admin-layout) .filters,
+:where(.admin-layout) .toolbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+:where(.admin-layout) .toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+:where(.admin-layout) .toolbar__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--el-text-color-primary);
+}
+
+/* Độ rộng mặc định các ô lọc (màn nào cần khác thì ghi đè trong màn đó) */
+:where(.admin-layout) .filter-search,
+:where(.admin-layout) .filter-parent,
+:where(.admin-layout) .filter-school,
+:where(.admin-layout) .filter-proposal {
+  width: 280px;
+}
+
+:where(.admin-layout) .filter-status {
+  width: 170px;
+}
+
+:where(.admin-layout) .filter-year {
+  width: 168px;
+}
+
+:where(.admin-layout) .filter-narrow {
+  width: 150px;
+}
+
+/* Bảng: cột thao tác, ô nhiều dòng, phân trang */
+:where(.admin-layout) .row-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+:where(.admin-layout) .row-actions .el-icon {
+  font-size: 20px !important;
+}
+
+:where(.admin-layout) .row-actions .el-icon svg {
+  stroke: currentColor;
+  stroke-width: 1.15;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+}
+
+:where(.admin-layout) .cell-stack {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+:where(.admin-layout) .cell-sub {
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
+}
+
+:where(.admin-layout) .cell-link {
+  color: var(--el-color-primary);
+  overflow-wrap: anywhere;
+}
+
+:where(.admin-layout) .pager {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* Dialog thêm/sửa: chọn kiểu nhập, khung import JSON, gợi ý dưới ô nhập */
+.create-mode {
+  margin-bottom: 16px;
+}
+
+.json-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.json-panel__head p,
+.context-hint {
+  margin: 0;
+  color: var(--el-text-color-secondary);
+  line-height: 1.5;
+}
+
+.context-hint {
+  margin: -4px 0 12px;
+}
+
+.json-input textarea {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 13px;
+}
+
+.json-meta {
+  margin-bottom: 12px;
+}
+
+.json-field__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--el-text-color-regular);
+}
+
+.json-field__label::before {
+  content: '*';
+  margin-right: 4px;
+  color: var(--el-color-danger);
+}
+
+.field-hint {
+  margin: 6px 0 0;
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.json-panel__actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Mobile: ô lọc giãn hết chiều ngang */
+@media (max-width: 640px) {
+  :where(.admin-layout) .filter-search,
+  :where(.admin-layout) .filter-status,
+  :where(.admin-layout) .filter-parent,
+  :where(.admin-layout) .filter-school,
+  :where(.admin-layout) .filter-year,
+  :where(.admin-layout) .filter-proposal {
+    width: 100%;
+    max-width: none;
+  }
+}

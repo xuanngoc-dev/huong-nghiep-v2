@@ -1,3 +1,94 @@
+<template>
+  <AuthShell
+    :image="bannerImage"
+    title="Bắt đầu khám phá bản thân miễn phí"
+    text="Tạo tài khoản để lưu kết quả trắc nghiệm và nhận gợi ý định hướng phù hợp với bạn."
+    :highlights="['Trắc nghiệm Holland RIASEC', 'Lưu hồ sơ và lịch sử trắc nghiệm', 'Gợi ý lộ trình học tập, nghề nghiệp']"
+  >
+    <div class="auth-brand">
+      <h1>Đăng ký</h1>
+      <p>Tạo tài khoản Định hướng nghề</p>
+    </div>
+
+    <el-form
+      ref="formRef"
+      :model="form"
+      :rules="rules"
+      label-position="top"
+      size="large"
+      @submit.prevent="onSubmit"
+    >
+      <el-form-item label="Họ tên" prop="ho_ten">
+        <el-input v-model="form.ho_ten" placeholder="Nguyễn Văn A" clearable>
+          <template #prefix>
+            <el-icon><User /></el-icon>
+          </template>
+        </el-input>
+      </el-form-item>
+
+      <el-form-item label="Email" prop="email">
+        <el-input v-model="form.email" placeholder="you@example.com" clearable>
+          <template #prefix>
+            <el-icon><Message /></el-icon>
+          </template>
+        </el-input>
+      </el-form-item>
+
+      <el-form-item label="Số điện thoại" prop="so_dien_thoai">
+        <el-input v-model="form.so_dien_thoai" placeholder="Tùy chọn" clearable>
+          <template #prefix>
+            <el-icon><Iphone /></el-icon>
+          </template>
+        </el-input>
+      </el-form-item>
+
+      <div class="row gx-3">
+        <div class="col-sm-6">
+          <el-form-item label="Mật khẩu" prop="mat_khau">
+            <el-input
+              v-model="form.mat_khau"
+              type="password"
+              placeholder="Ít nhất 6 ký tự"
+              show-password
+            >
+              <template #prefix>
+                <el-icon><Lock /></el-icon>
+              </template>
+            </el-input>
+          </el-form-item>
+        </div>
+        <div class="col-sm-6">
+          <el-form-item label="Xác nhận mật khẩu" prop="xac_nhan_mat_khau">
+            <el-input
+              v-model="form.xac_nhan_mat_khau"
+              type="password"
+              placeholder="Nhập lại"
+              show-password
+              @keyup.enter="onSubmit"
+            >
+              <template #prefix>
+                <el-icon><Lock /></el-icon>
+              </template>
+            </el-input>
+          </el-form-item>
+        </div>
+      </div>
+
+      <el-button type="primary" class="submit-btn" :loading="submitting" @click="onSubmit">
+        Tạo tài khoản
+        <el-icon aria-hidden="true"><Right /></el-icon>
+      </el-button>
+    </el-form>
+
+    <p class="auth-footer">
+      Đã có tài khoản?
+      <RouterLink :to="{ name: 'login', query: route.query.redirect ? { redirect: route.query.redirect } : {} }">
+        Đăng nhập
+      </RouterLink>
+    </p>
+  </AuthShell>
+</template>
+
 <script setup>
 import { onUnmounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -95,94 +186,3 @@ async function onSubmit() {
   }
 }
 </script>
-
-<template>
-  <AuthShell
-    :image="bannerImage"
-    title="Bắt đầu khám phá bản thân miễn phí"
-    text="Tạo tài khoản để lưu kết quả trắc nghiệm và nhận gợi ý định hướng phù hợp với bạn."
-    :highlights="['Trắc nghiệm Holland RIASEC', 'Lưu hồ sơ và lịch sử trắc nghiệm', 'Gợi ý lộ trình học tập, nghề nghiệp']"
-  >
-    <div class="auth-brand">
-      <h1>Đăng ký</h1>
-      <p>Tạo tài khoản Định hướng nghề</p>
-    </div>
-
-    <el-form
-      ref="formRef"
-      :model="form"
-      :rules="rules"
-      label-position="top"
-      size="large"
-      @submit.prevent="onSubmit"
-    >
-      <el-form-item label="Họ tên" prop="ho_ten">
-        <el-input v-model="form.ho_ten" placeholder="Nguyễn Văn A" clearable>
-          <template #prefix>
-            <el-icon><User /></el-icon>
-          </template>
-        </el-input>
-      </el-form-item>
-
-      <el-form-item label="Email" prop="email">
-        <el-input v-model="form.email" placeholder="you@example.com" clearable>
-          <template #prefix>
-            <el-icon><Message /></el-icon>
-          </template>
-        </el-input>
-      </el-form-item>
-
-      <el-form-item label="Số điện thoại" prop="so_dien_thoai">
-        <el-input v-model="form.so_dien_thoai" placeholder="Tùy chọn" clearable>
-          <template #prefix>
-            <el-icon><Iphone /></el-icon>
-          </template>
-        </el-input>
-      </el-form-item>
-
-      <div class="row gx-3">
-        <div class="col-sm-6">
-          <el-form-item label="Mật khẩu" prop="mat_khau">
-            <el-input
-              v-model="form.mat_khau"
-              type="password"
-              placeholder="Ít nhất 6 ký tự"
-              show-password
-            >
-              <template #prefix>
-                <el-icon><Lock /></el-icon>
-              </template>
-            </el-input>
-          </el-form-item>
-        </div>
-        <div class="col-sm-6">
-          <el-form-item label="Xác nhận mật khẩu" prop="xac_nhan_mat_khau">
-            <el-input
-              v-model="form.xac_nhan_mat_khau"
-              type="password"
-              placeholder="Nhập lại"
-              show-password
-              @keyup.enter="onSubmit"
-            >
-              <template #prefix>
-                <el-icon><Lock /></el-icon>
-              </template>
-            </el-input>
-          </el-form-item>
-        </div>
-      </div>
-
-      <el-button type="primary" class="submit-btn" :loading="submitting" @click="onSubmit">
-        Tạo tài khoản
-        <el-icon aria-hidden="true"><Right /></el-icon>
-      </el-button>
-    </el-form>
-
-    <p class="auth-footer">
-      Đã có tài khoản?
-      <RouterLink :to="{ name: 'login', query: route.query.redirect ? { redirect: route.query.redirect } : {} }">
-        Đăng nhập
-      </RouterLink>
-    </p>
-  </AuthShell>
-</template>

@@ -1,3 +1,24 @@
+<template>
+  <p v-if="dang === 'trong'" class="khoi-trong">Không có</p>
+  <p v-else-if="dang === 'chu'" class="khoi-chu">{{ chu(value) }}</p>
+  <p v-else-if="dang === 'chu-list'" class="khoi-chu">{{ value.map((item) => chu(item)).join(', ') }}</p>
+  <dl v-else-if="dang === 'doi-tuong'" class="khoi-dl">
+    <div v-for="field in truong" :key="field.key" class="khoi-row">
+      <dt>{{ field.label }}</dt>
+      <dd><KhoiDuLieu :value="field.value" :depth="depth + 1" /></dd>
+    </div>
+  </dl>
+  <div v-else class="khoi-list">
+    <article v-for="item in muc" :key="item.key" class="khoi-card" :class="{ 'is-nested': depth > 0 }">
+      <template v-if="item.value && typeof item.value === 'object'">
+        <h4>{{ item.title }}</h4>
+        <KhoiDuLieu :value="item.value" :depth="depth + 1" />
+      </template>
+      <p v-else class="khoi-chu">{{ chu(item.value) }}</p>
+    </article>
+  </div>
+</template>
+
 <script setup>
 import { computed } from 'vue'
 import { nhan } from './nhanDuLieu'
@@ -48,27 +69,6 @@ function chu(value) {
   return String(value)
 }
 </script>
-
-<template>
-  <p v-if="dang === 'trong'" class="khoi-trong">Không có</p>
-  <p v-else-if="dang === 'chu'" class="khoi-chu">{{ chu(value) }}</p>
-  <p v-else-if="dang === 'chu-list'" class="khoi-chu">{{ value.map((item) => chu(item)).join(', ') }}</p>
-  <dl v-else-if="dang === 'doi-tuong'" class="khoi-dl">
-    <div v-for="field in truong" :key="field.key" class="khoi-row">
-      <dt>{{ field.label }}</dt>
-      <dd><KhoiDuLieu :value="field.value" :depth="depth + 1" /></dd>
-    </div>
-  </dl>
-  <div v-else class="khoi-list">
-    <article v-for="item in muc" :key="item.key" class="khoi-card" :class="{ 'is-nested': depth > 0 }">
-      <template v-if="item.value && typeof item.value === 'object'">
-        <h4>{{ item.title }}</h4>
-        <KhoiDuLieu :value="item.value" :depth="depth + 1" />
-      </template>
-      <p v-else class="khoi-chu">{{ chu(item.value) }}</p>
-    </article>
-  </div>
-</template>
 
 <style scoped>
 .khoi-trong {

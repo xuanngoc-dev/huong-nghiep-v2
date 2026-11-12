@@ -1,3 +1,26 @@
+<template>
+  <el-select ref="selectRef" v-model="model" clearable v-bind="$attrs" :size="resolvedSize">
+    <template v-if="showSelectAllCheckbox" #header>
+      <div class="custom-select__select-all" @click.stop @mousedown.stop>
+        <el-checkbox
+          :model-value="isAllSelected"
+          :indeterminate="isIndeterminate"
+          :disabled="!selectableValues.length"
+          :size="resolvedSize"
+          @change="toggleSelectAll"
+        >
+          {{ selectAllLabel }}
+        </el-checkbox>
+      </div>
+      <slot name="header" />
+    </template>
+
+    <template v-for="name in forwardedSlotNames" :key="name" #[name]="slotData">
+      <slot :name="name" v-bind="slotData || {}" />
+    </template>
+  </el-select>
+</template>
+
 <script setup>
 /**
  * CustomSelect — wrapper el-select.
@@ -89,29 +112,6 @@ defineExpose({
   blur: (...args) => selectRef.value?.blur?.(...args),
 })
 </script>
-
-<template>
-  <el-select ref="selectRef" v-model="model" clearable v-bind="$attrs" :size="resolvedSize">
-    <template v-if="showSelectAllCheckbox" #header>
-      <div class="custom-select__select-all" @click.stop @mousedown.stop>
-        <el-checkbox
-          :model-value="isAllSelected"
-          :indeterminate="isIndeterminate"
-          :disabled="!selectableValues.length"
-          :size="resolvedSize"
-          @change="toggleSelectAll"
-        >
-          {{ selectAllLabel }}
-        </el-checkbox>
-      </div>
-      <slot name="header" />
-    </template>
-
-    <template v-for="name in forwardedSlotNames" :key="name" #[name]="slotData">
-      <slot :name="name" v-bind="slotData || {}" />
-    </template>
-  </el-select>
-</template>
 
 <style scoped lang="scss">
 .custom-select__select-all {

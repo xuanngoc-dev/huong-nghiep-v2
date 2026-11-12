@@ -1,3 +1,22 @@
+<template>
+  <section class="support-card" aria-labelledby="ho-tro-dinh-huong-title">
+    <h2 id="ho-tro-dinh-huong-title" class="support-card__title">Hỗ trợ</h2>
+    <div class="row g-3">
+      <div v-for="card in cards" :key="card.title" class="col-md-4">
+        <article class="support-item h-100">
+          <span class="support-item__icon" aria-hidden="true">
+            <el-icon :size="28"><component :is="card.icon" /></el-icon>
+          </span>
+          <span class="support-item__body">
+            <h3>{{ card.title }}</h3>
+            <p>{{ card.text }}</p>
+          </span>
+        </article>
+      </div>
+    </div>
+  </section>
+</template>
+
 <script setup>
 defineOptions({ name: 'HoTroDinhHuong' })
 
@@ -19,22 +38,3 @@ const cards = [
   },
 ]
 </script>
-
-<template>
-  <section class="support-card" aria-labelledby="ho-tro-dinh-huong-title">
-    <h2 id="ho-tro-dinh-huong-title" class="support-card__title">Hỗ trợ</h2>
-    <div class="row g-3">
-      <div v-for="card in cards" :key="card.title" class="col-md-4">
-        <article class="support-item h-100">
-          <span class="support-item__icon" aria-hidden="true">
-            <el-icon :size="28"><component :is="card.icon" /></el-icon>
-          </span>
-          <span class="support-item__body">
-            <h3>{{ card.title }}</h3>
-            <p>{{ card.text }}</p>
-          </span>
-        </article>
-      </div>
-    </div>
-  </section>
-</template>

@@ -1,3 +1,21 @@
+<template>
+  <div class="landing">
+    <LandingHero />
+    <LandingAudiences />
+    <LandingFeatures />
+    <LandingExplore />
+    <LandingHolland />
+    <LandingStudyPaths />
+    <LandingAiAdvisor />
+    <LandingInstitutions />
+    <LandingHowItWorks />
+    <LandingTestimonials />
+    <LandingResources />
+    <LandingFaq />
+    <LandingFinalCta />
+  </div>
+</template>
+
 <script setup>
 import { nextTick, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -68,21 +86,3 @@ onUnmounted(() => {
   else metaDescription.remove()
 })
 </script>
-
-<template>
-  <div class="landing">
-    <LandingHero />
-    <LandingAudiences />
-    <LandingFeatures />
-    <LandingExplore />
-    <LandingHolland />
-    <LandingStudyPaths />
-    <LandingAiAdvisor />
-    <LandingInstitutions />
-    <LandingHowItWorks />
-    <LandingTestimonials />
-    <LandingResources />
-    <LandingFaq />
-    <LandingFinalCta />
-  </div>
-</template>

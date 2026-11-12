@@ -1,3 +1,85 @@
+<template>
+  <div class="truong-dao-tao">
+    <form class="nhom-filter" @submit.prevent="timKiem">
+      <div class="nhom-filter__field nhom-filter__field--ten">
+        <label class="nhom-filter__label" for="loc-tu-khoa-truong">Từ khóa</label>
+        <CustomInput id="loc-tu-khoa-truong" v-model="tuKhoa" placeholder="Tên hoặc mã trường" clearable />
+      </div>
+      <div class="nhom-filter__field nhom-filter__field--khu-vuc">
+        <label class="nhom-filter__label" for="loc-khu-vuc-truong">Khu vực</label>
+        <CustomSelect id="loc-khu-vuc-truong" v-model="khuVuc" class="nhom-filter__select" clearable placeholder="Tất cả khu vực">
+          <CustomOption v-for="item in KHU_VUC" :key="item" :label="item" :value="item" />
+        </CustomSelect>
+      </div>
+      <div class="nhom-filter__field nhom-filter__field--nam">
+        <label class="nhom-filter__label" for="loc-nam-hoc-truong">Năm học</label>
+        <CustomSelect id="loc-nam-hoc-truong" v-model="namHoc" class="nhom-filter__select" placeholder="Năm học">
+          <CustomOption v-for="nam in namOptions" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
+        </CustomSelect>
+      </div>
+      <div class="nhom-filter__field nhom-filter__field--loai">
+        <label class="nhom-filter__label" for="loc-loai-truong">Loại cơ sở</label>
+        <CustomSelect id="loc-loai-truong" v-model="loai" class="nhom-filter__select" clearable placeholder="Tất cả loại">
+          <CustomOption v-for="item in LOAI_CO_SO" :key="item" :label="item" :value="item" />
+        </CustomSelect>
+      </div>
+      <div class="nhom-filter__field nhom-filter__field--tinh">
+        <label class="nhom-filter__label" for="loc-tinh-truong">Tỉnh/thành</label>
+        <CustomSelect id="loc-tinh-truong" v-model="tinh" class="nhom-filter__select" filterable clearable placeholder="Tất cả tỉnh/thành">
+          <CustomOption v-for="item in tinhOptions" :key="item.id" :label="item.ten_tinh" :value="item.ten_tinh" />
+        </CustomSelect>
+      </div>
+      <div class="nhom-filter__actions">
+        <CustomButton type="primary" native-type="submit">Tìm kiếm</CustomButton>
+        <CustomButton native-type="button" type="success" @click="diChonTruong">Trường phù hợp</CustomButton>
+      </div>
+    </form>
+
+    <p v-if="loi" class="truong-dao-tao__status">{{ loi }}</p>
+    <p v-else-if="dangTai" class="truong-dao-tao__status">Đang tải trường đào tạo…</p>
+    <KhongCoDuLieu v-else-if="!danhSach.length" text="Chưa có trường đào tạo cho ngành này." />
+    <div v-else class="row g-3 truong">
+      <div v-for="item in danhSach" :key="item.ma_truong" class="col-12 col-lg-3">
+        <article class="truong__item" :class="{ 'truong__item--co-anh': anhNen(item) }">
+          <span v-if="anhNen(item)" class="truong__bg" :style="styleNen(item)" aria-hidden="true" />
+          <p class="truong__code">{{ item.ma_truong }}</p>
+          <div class="truong__main">
+            <h3>{{ item.ten_truong }}</h3>
+            <p v-if="item.ten_tieng_anh" class="truong__en">{{ item.ten_tieng_anh }}</p>
+            <p v-if="diaDiem(item) || item.loai_co_so" class="truong__meta">
+              {{ [item.loai_co_so, diaDiem(item)].filter(Boolean).join(' · ') }}
+            </p>
+            <p v-if="item.dia_chi_tru_so">{{ item.dia_chi_tru_so }}</p>
+            <p v-if="item.so_chuong_trinh || chiTieu(item.chi_tieu)">
+              <span v-if="item.so_chuong_trinh">{{ item.so_chuong_trinh }} chương trình</span>
+              <span v-if="item.so_chuong_trinh && chiTieu(item.chi_tieu)"> · </span>
+              <span v-if="chiTieu(item.chi_tieu)">Chỉ tiêu {{ chiTieu(item.chi_tieu) }}</span>
+            </p>
+            <p v-if="hrefWebsite(item.website_tuyen_sinh || item.website)" class="truong__web">
+              <a :href="hrefWebsite(item.website_tuyen_sinh || item.website)" target="_blank" rel="noopener noreferrer">
+                {{ item.website_tuyen_sinh || item.website }}
+              </a>
+            </p>
+            <div class="truong__actions">
+              <CustomButton plain type="success" @click="diChiTiet(item)">Chi tiết</CustomButton>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+    <div v-if="!dangTai && !loi && total > soMoiTrang" class="nhom-pager">
+      <CustomPagination
+        v-model:current-page="trang"
+        v-model:page-size="soMoiTrang"
+        :total="total"
+        :page-sizes="[12, 24, 48]"
+        layout="total, sizes, prev, pager, next"
+        background
+      />
+    </div>
+  </div>
+</template>
+
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -253,88 +335,6 @@ onMounted(() => {
   tai()
 })
 </script>
-
-<template>
-  <div class="truong-dao-tao">
-    <form class="nhom-filter" @submit.prevent="timKiem">
-      <div class="nhom-filter__field nhom-filter__field--ten">
-        <label class="nhom-filter__label" for="loc-tu-khoa-truong">Từ khóa</label>
-        <CustomInput id="loc-tu-khoa-truong" v-model="tuKhoa" placeholder="Tên hoặc mã trường" clearable />
-      </div>
-      <div class="nhom-filter__field nhom-filter__field--khu-vuc">
-        <label class="nhom-filter__label" for="loc-khu-vuc-truong">Khu vực</label>
-        <CustomSelect id="loc-khu-vuc-truong" v-model="khuVuc" class="nhom-filter__select" clearable placeholder="Tất cả khu vực">
-          <CustomOption v-for="item in KHU_VUC" :key="item" :label="item" :value="item" />
-        </CustomSelect>
-      </div>
-      <div class="nhom-filter__field nhom-filter__field--nam">
-        <label class="nhom-filter__label" for="loc-nam-hoc-truong">Năm học</label>
-        <CustomSelect id="loc-nam-hoc-truong" v-model="namHoc" class="nhom-filter__select" placeholder="Năm học">
-          <CustomOption v-for="nam in namOptions" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
-        </CustomSelect>
-      </div>
-      <div class="nhom-filter__field nhom-filter__field--loai">
-        <label class="nhom-filter__label" for="loc-loai-truong">Loại cơ sở</label>
-        <CustomSelect id="loc-loai-truong" v-model="loai" class="nhom-filter__select" clearable placeholder="Tất cả loại">
-          <CustomOption v-for="item in LOAI_CO_SO" :key="item" :label="item" :value="item" />
-        </CustomSelect>
-      </div>
-      <div class="nhom-filter__field nhom-filter__field--tinh">
-        <label class="nhom-filter__label" for="loc-tinh-truong">Tỉnh/thành</label>
-        <CustomSelect id="loc-tinh-truong" v-model="tinh" class="nhom-filter__select" filterable clearable placeholder="Tất cả tỉnh/thành">
-          <CustomOption v-for="item in tinhOptions" :key="item.id" :label="item.ten_tinh" :value="item.ten_tinh" />
-        </CustomSelect>
-      </div>
-      <div class="nhom-filter__actions">
-        <CustomButton type="primary" native-type="submit">Tìm kiếm</CustomButton>
-        <CustomButton native-type="button" type="success" @click="diChonTruong">Trường phù hợp</CustomButton>
-      </div>
-    </form>
-
-    <p v-if="loi" class="truong-dao-tao__status">{{ loi }}</p>
-    <p v-else-if="dangTai" class="truong-dao-tao__status">Đang tải trường đào tạo…</p>
-    <KhongCoDuLieu v-else-if="!danhSach.length" text="Chưa có trường đào tạo cho ngành này." />
-    <div v-else class="row g-3 truong">
-      <div v-for="item in danhSach" :key="item.ma_truong" class="col-12 col-lg-3">
-        <article class="truong__item" :class="{ 'truong__item--co-anh': anhNen(item) }">
-          <span v-if="anhNen(item)" class="truong__bg" :style="styleNen(item)" aria-hidden="true" />
-          <p class="truong__code">{{ item.ma_truong }}</p>
-          <div class="truong__main">
-            <h3>{{ item.ten_truong }}</h3>
-            <p v-if="item.ten_tieng_anh" class="truong__en">{{ item.ten_tieng_anh }}</p>
-            <p v-if="diaDiem(item) || item.loai_co_so" class="truong__meta">
-              {{ [item.loai_co_so, diaDiem(item)].filter(Boolean).join(' · ') }}
-            </p>
-            <p v-if="item.dia_chi_tru_so">{{ item.dia_chi_tru_so }}</p>
-            <p v-if="item.so_chuong_trinh || chiTieu(item.chi_tieu)">
-              <span v-if="item.so_chuong_trinh">{{ item.so_chuong_trinh }} chương trình</span>
-              <span v-if="item.so_chuong_trinh && chiTieu(item.chi_tieu)"> · </span>
-              <span v-if="chiTieu(item.chi_tieu)">Chỉ tiêu {{ chiTieu(item.chi_tieu) }}</span>
-            </p>
-            <p v-if="hrefWebsite(item.website_tuyen_sinh || item.website)" class="truong__web">
-              <a :href="hrefWebsite(item.website_tuyen_sinh || item.website)" target="_blank" rel="noopener noreferrer">
-                {{ item.website_tuyen_sinh || item.website }}
-              </a>
-            </p>
-            <div class="truong__actions">
-              <CustomButton plain type="success" @click="diChiTiet(item)">Chi tiết</CustomButton>
-            </div>
-          </div>
-        </article>
-      </div>
-    </div>
-    <div v-if="!dangTai && !loi && total > soMoiTrang" class="nhom-pager">
-      <CustomPagination
-        v-model:current-page="trang"
-        v-model:page-size="soMoiTrang"
-        :total="total"
-        :page-sizes="[12, 24, 48]"
-        layout="total, sizes, prev, pager, next"
-        background
-      />
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .truong-dao-tao {

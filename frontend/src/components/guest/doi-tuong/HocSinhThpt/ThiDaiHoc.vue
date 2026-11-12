@@ -1,35 +1,3 @@
-<script setup>
-import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
-import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
-import { DINH_HUONG_THPT_KEY, dinhHuongThptList } from './dinhHuong'
-import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './thi-dai-hoc/giaiDoan'
-import { routeNameDinhHuongThpt, routeNameGiaiDoanThiDaiHoc } from './routes'
-
-defineOptions({ name: 'ThptThiDaiHoc' })
-
-const stages = giaiDoanThiDaiHocList
-
-const selectedStage = ref(sessionStorage.getItem(GIAI_DOAN_THI_DAI_HOC_KEY) || '')
-const route = useRoute()
-const router = useRouter()
-const currentDirection = computed(() => route.meta.dinhHuong || '')
-
-function chonGiaiDoan(stage) {
-  selectedStage.value = stage.code
-  sessionStorage.setItem(GIAI_DOAN_THI_DAI_HOC_KEY, stage.code)
-  const name = routeNameGiaiDoanThiDaiHoc(stage.code)
-  if (name && name !== route.name) router.push({ name })
-}
-
-function chonHuong(direction) {
-  sessionStorage.setItem(DINH_HUONG_THPT_KEY, direction.code)
-  const name = routeNameDinhHuongThpt(direction.code)
-  if (name && name !== route.name) router.push({ name })
-}
-</script>
-
 <template>
   <section class="thi-dai-hoc py-4">
     <div class="container-fluid">
@@ -90,6 +58,38 @@ function chonHuong(direction) {
     </div>
   </section>
 </template>
+
+<script setup>
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
+import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
+import { DINH_HUONG_THPT_KEY, dinhHuongThptList } from './dinhHuong'
+import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './thi-dai-hoc/giaiDoan'
+import { routeNameDinhHuongThpt, routeNameGiaiDoanThiDaiHoc } from './routes'
+
+defineOptions({ name: 'ThptThiDaiHoc' })
+
+const stages = giaiDoanThiDaiHocList
+
+const selectedStage = ref(sessionStorage.getItem(GIAI_DOAN_THI_DAI_HOC_KEY) || '')
+const route = useRoute()
+const router = useRouter()
+const currentDirection = computed(() => route.meta.dinhHuong || '')
+
+function chonGiaiDoan(stage) {
+  selectedStage.value = stage.code
+  sessionStorage.setItem(GIAI_DOAN_THI_DAI_HOC_KEY, stage.code)
+  const name = routeNameGiaiDoanThiDaiHoc(stage.code)
+  if (name && name !== route.name) router.push({ name })
+}
+
+function chonHuong(direction) {
+  sessionStorage.setItem(DINH_HUONG_THPT_KEY, direction.code)
+  const name = routeNameDinhHuongThpt(direction.code)
+  if (name && name !== route.name) router.push({ name })
+}
+</script>
 
 <style scoped>
 .thi-dai-hoc :deep(.stage-card__image) {

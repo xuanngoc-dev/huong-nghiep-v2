@@ -1,33 +1,3 @@
-<script setup>
-defineOptions({ name: 'BangTenGiaTri' })
-
-const props = defineProps({
-  modelValue: { type: Array, default: () => [] },
-  nameLabel: { type: String, required: true },
-  valueLabel: { type: String, required: true },
-  namePlaceholder: { type: String, default: '' },
-  valuePlaceholder: { type: String, default: '' },
-})
-
-const emit = defineEmits(['update:modelValue'])
-
-function capNhat(index, key, value) {
-  const next = props.modelValue.map((item, i) => (i === index ? { ...item, [key]: value } : { ...item }))
-  emit('update:modelValue', next)
-}
-
-function themDong() {
-  emit('update:modelValue', [...props.modelValue.map((item) => ({ ...item })), { name: '', value: '', ghi_chu: '' }])
-}
-
-function xoaDong(index) {
-  emit(
-    'update:modelValue',
-    props.modelValue.filter((_, i) => i !== index).map((item) => ({ ...item })),
-  )
-}
-</script>
-
 <template>
   <CustomTable :data="modelValue" class="cap-table">
     <CustomTableColumn :label="nameLabel" min-width="180">
@@ -91,6 +61,36 @@ function xoaDong(index) {
     </template>
   </CustomTable>
 </template>
+
+<script setup>
+defineOptions({ name: 'BangTenGiaTri' })
+
+const props = defineProps({
+  modelValue: { type: Array, default: () => [] },
+  nameLabel: { type: String, required: true },
+  valueLabel: { type: String, required: true },
+  namePlaceholder: { type: String, default: '' },
+  valuePlaceholder: { type: String, default: '' },
+})
+
+const emit = defineEmits(['update:modelValue'])
+
+function capNhat(index, key, value) {
+  const next = props.modelValue.map((item, i) => (i === index ? { ...item, [key]: value } : { ...item }))
+  emit('update:modelValue', next)
+}
+
+function themDong() {
+  emit('update:modelValue', [...props.modelValue.map((item) => ({ ...item })), { name: '', value: '', ghi_chu: '' }])
+}
+
+function xoaDong(index) {
+  emit(
+    'update:modelValue',
+    props.modelValue.filter((_, i) => i !== index).map((item) => ({ ...item })),
+  )
+}
+</script>
 
 <style scoped>
 .cap-table {

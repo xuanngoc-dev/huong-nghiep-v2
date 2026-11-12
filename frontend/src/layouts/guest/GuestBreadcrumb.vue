@@ -1,3 +1,16 @@
+<template>
+  <nav v-if="muc.length" class="guest-breadcrumb" aria-label="Đường dẫn">
+    <div class="container-fluid">
+      <ol>
+        <li v-for="(item, index) in muc" :key="`${item.label}-${index}`">
+          <RouterLink v-if="item.to" :to="item.to">{{ item.label }}</RouterLink>
+          <span v-else aria-current="page">{{ item.label }}</span>
+        </li>
+      </ol>
+    </div>
+  </nav>
+</template>
+
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
@@ -49,16 +62,3 @@ const muc = computed(() => {
   return [trangChu, hienTai]
 })
 </script>
-
-<template>
-  <nav v-if="muc.length" class="guest-breadcrumb" aria-label="Đường dẫn">
-    <div class="container-fluid">
-      <ol>
-        <li v-for="(item, index) in muc" :key="`${item.label}-${index}`">
-          <RouterLink v-if="item.to" :to="item.to">{{ item.label }}</RouterLink>
-          <span v-else aria-current="page">{{ item.label }}</span>
-        </li>
-      </ol>
-    </div>
-  </nav>
-</template>

@@ -1,3 +1,11 @@
+<template>
+  <el-button v-bind="$attrs" :size="resolvedSize">
+    <template v-for="(_, name) in slots" #[name]="slotData">
+      <slot :name="name" v-bind="slotData || {}" />
+    </template>
+  </el-button>
+</template>
+
 <script setup>
 /**
  * CustomButton — wrapper el-button.
@@ -14,11 +22,3 @@ const slots = useSlots()
 const inheritedSize = inject(BULK_ACTION_BTN_SIZE_KEY, null)
 const { resolvedSize } = useResponsiveComponentSize({ inherited: inheritedSize })
 </script>
-
-<template>
-  <el-button v-bind="$attrs" :size="resolvedSize">
-    <template v-for="(_, name) in slots" #[name]="slotData">
-      <slot :name="name" v-bind="slotData || {}" />
-    </template>
-  </el-button>
-</template>

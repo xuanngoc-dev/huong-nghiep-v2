@@ -1,3 +1,7 @@
+<template>
+  <div ref="khung" class="bieu-do" />
+</template>
+
 <script setup>
 /**
  * BieuDoTron — biểu đồ tròn / vành khuyên thể hiện tỷ trọng.
@@ -60,10 +64,6 @@ function taoCauHinh() {
 
 const { khung } = useApexChart(taoCauHinh, () => [props.labels, props.values, props.type, props.colors])
 </script>
-
-<template>
-  <div ref="khung" class="bieu-do" />
-</template>
 
 <style scoped>
 .bieu-do {

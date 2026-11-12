@@ -1,18 +1,3 @@
-<script setup>
-import { testimonials } from '@/data/landing'
-import LandingCarousel from './LandingCarousel.vue'
-
-function initials(name) {
-  return String(name || '')
-    .split(' ')
-    .filter(Boolean)
-    .slice(-2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase()
-}
-</script>
-
 <template>
   <section id="cau-chuyen" class="landing__section landing__section--alt" aria-labelledby="testimonials-title">
     <div class="container-fluid">
@@ -57,3 +42,18 @@ function initials(name) {
     </div>
   </section>
 </template>
+
+<script setup>
+import { testimonials } from '@/data/landing'
+import LandingCarousel from './LandingCarousel.vue'
+
+function initials(name) {
+  return String(name || '')
+    .split(' ')
+    .filter(Boolean)
+    .slice(-2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase()
+}
+</script>

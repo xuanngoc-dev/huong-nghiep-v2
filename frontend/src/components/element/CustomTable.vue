@@ -1,3 +1,23 @@
+<template>
+  <el-table
+    ref="tableRef"
+    v-loading="loading&&false"
+    class="custom-table"
+    :class="{ 'is-mobile-compact': isMobile }"
+    border
+    :key="columnSettings?.fixedSignature || undefined"
+    v-bind="$attrs"
+  >
+    <slot />
+    <template v-if="$slots.append" #append>
+      <slot name="append" />
+    </template>
+    <template v-if="$slots.empty" #empty>
+      <slot name="empty" />
+    </template>
+  </el-table>
+</template>
+
 <script setup>
 /**
  * CustomTable — wrapper el-table.
@@ -60,26 +80,6 @@ defineExpose({
   sort: (...args) => tableRef.value?.sort?.(...args),
 })
 </script>
-
-<template>
-  <el-table
-    ref="tableRef"
-    v-loading="loading&&false"
-    class="custom-table"
-    :class="{ 'is-mobile-compact': isMobile }"
-    border
-    :key="columnSettings?.fixedSignature || undefined"
-    v-bind="$attrs"
-  >
-    <slot />
-    <template v-if="$slots.append" #append>
-      <slot name="append" />
-    </template>
-    <template v-if="$slots.empty" #empty>
-      <slot name="empty" />
-    </template>
-  </el-table>
-</template>
 
 <style scoped>
 .custom-table {

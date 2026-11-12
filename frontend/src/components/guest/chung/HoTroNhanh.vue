@@ -1,3 +1,41 @@
+<template>
+  <div ref="rootEl" class="quick-support">
+    <div v-if="open" id="quick-support-panel" class="quick-support__panel">
+      <p class="quick-support__title">Kênh hỗ trợ</p>
+      <a
+        v-for="channel in channels"
+        :key="channel.name"
+        class="quick-support__link"
+        :href="channel.href"
+        :target="channel.external ? '_blank' : undefined"
+        :rel="channel.external ? 'noopener noreferrer' : undefined"
+      >
+        <span class="quick-support__mark">
+          <img :src="channel.icon" alt="" width="24" height="24" />
+        </span>
+        <span>
+          <strong>{{ channel.name }}</strong>
+          <small>{{ channel.text }}</small>
+        </span>
+      </a>
+    </div>
+    <button
+      type="button"
+      class="guest-fab quick-support__fab"
+      aria-label="Kênh hỗ trợ"
+      aria-controls="quick-support-panel"
+      :aria-expanded="open"
+      @click="toggle"
+    >
+      <span class="quick-support__waves" aria-hidden="true">
+        <span></span>
+        <span></span>
+      </span>
+      <el-icon :size="22"><Service /></el-icon>
+    </button>
+  </div>
+</template>
+
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 
@@ -53,41 +91,3 @@ onUnmounted(() => {
   document.removeEventListener('keydown', onKeydown)
 })
 </script>
-
-<template>
-  <div ref="rootEl" class="quick-support">
-    <div v-if="open" id="quick-support-panel" class="quick-support__panel">
-      <p class="quick-support__title">Kênh hỗ trợ</p>
-      <a
-        v-for="channel in channels"
-        :key="channel.name"
-        class="quick-support__link"
-        :href="channel.href"
-        :target="channel.external ? '_blank' : undefined"
-        :rel="channel.external ? 'noopener noreferrer' : undefined"
-      >
-        <span class="quick-support__mark">
-          <img :src="channel.icon" alt="" width="24" height="24" />
-        </span>
-        <span>
-          <strong>{{ channel.name }}</strong>
-          <small>{{ channel.text }}</small>
-        </span>
-      </a>
-    </div>
-    <button
-      type="button"
-      class="guest-fab quick-support__fab"
-      aria-label="Kênh hỗ trợ"
-      aria-controls="quick-support-panel"
-      :aria-expanded="open"
-      @click="toggle"
-    >
-      <span class="quick-support__waves" aria-hidden="true">
-        <span></span>
-        <span></span>
-      </span>
-      <el-icon :size="22"><Service /></el-icon>
-    </button>
-  </div>
-</template>

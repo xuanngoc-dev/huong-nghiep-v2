@@ -1,3 +1,23 @@
+<template>
+  <div class="dialog-footer">
+    <div v-if="showProgress && batch.progress.total > 1" class="json-progress">
+      <el-progress
+        :percentage="percent"
+        :status="status || undefined"
+        :stroke-width="14"
+        :striped="batch.progress.active"
+        striped-flow
+      />
+      <p class="json-progress__text">{{ text }}</p>
+    </div>
+    <div class="dialog-footer__actions">
+      <slot />
+      <CustomButton :disabled="saving" @click="$emit('cancel')">Hủy</CustomButton>
+      <CustomButton type="primary" :loading="saving" @click="$emit('save')">Lưu</CustomButton>
+    </div>
+  </div>
+</template>
+
 <script setup>
 import { computed } from 'vue'
 
@@ -42,26 +62,6 @@ const text = computed(() => {
   return `Đã lưu ${done} / ${total} ${label}`
 })
 </script>
-
-<template>
-  <div class="dialog-footer">
-    <div v-if="showProgress && batch.progress.total > 1" class="json-progress">
-      <el-progress
-        :percentage="percent"
-        :status="status || undefined"
-        :stroke-width="14"
-        :striped="batch.progress.active"
-        striped-flow
-      />
-      <p class="json-progress__text">{{ text }}</p>
-    </div>
-    <div class="dialog-footer__actions">
-      <slot />
-      <CustomButton :disabled="saving" @click="$emit('cancel')">Hủy</CustomButton>
-      <CustomButton type="primary" :loading="saving" @click="$emit('save')">Lưu</CustomButton>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .dialog-footer {

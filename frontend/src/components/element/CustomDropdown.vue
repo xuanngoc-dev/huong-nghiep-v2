@@ -1,3 +1,43 @@
+<template>
+  <el-dropdown
+    ref="dropdownRef"
+    v-bind="$attrs"
+    :size="resolvedSize"
+    :popper-class="popperClass"
+    @command="onCommand"
+    @visible-change="onVisibleChange"
+    @click="onClick"
+  >
+    <slot>
+      <span class="custom-dropdown__trigger el-dropdown-link">
+        {{ triggerText }}
+        <el-icon v-if="showArrow" class="el-icon--right">
+          <ArrowDown />
+        </el-icon>
+      </span>
+    </slot>
+
+    <template v-if="useItemsMenu" #dropdown>
+      <el-dropdown-menu>
+        <el-dropdown-item
+          v-for="(item, index) in items"
+          :key="item.command ?? item.label ?? index"
+          :command="item.command"
+          :disabled="item.disabled"
+          :divided="item.divided"
+          :icon="item.icon"
+          :class="itemClass(item)"
+        >
+          {{ item.label }}
+        </el-dropdown-item>
+      </el-dropdown-menu>
+    </template>
+    <template v-else-if="slots.dropdown" #dropdown="slotData">
+      <slot name="dropdown" v-bind="slotData || {}" />
+    </template>
+  </el-dropdown>
+</template>
+
 <script setup>
 /**
  * CustomDropdown — wrapper el-dropdown.
@@ -70,46 +110,6 @@ defineExpose({
   handleClose: (...args) => dropdownRef.value?.handleClose?.(...args),
 })
 </script>
-
-<template>
-  <el-dropdown
-    ref="dropdownRef"
-    v-bind="$attrs"
-    :size="resolvedSize"
-    :popper-class="popperClass"
-    @command="onCommand"
-    @visible-change="onVisibleChange"
-    @click="onClick"
-  >
-    <slot>
-      <span class="custom-dropdown__trigger el-dropdown-link">
-        {{ triggerText }}
-        <el-icon v-if="showArrow" class="el-icon--right">
-          <ArrowDown />
-        </el-icon>
-      </span>
-    </slot>
-
-    <template v-if="useItemsMenu" #dropdown>
-      <el-dropdown-menu>
-        <el-dropdown-item
-          v-for="(item, index) in items"
-          :key="item.command ?? item.label ?? index"
-          :command="item.command"
-          :disabled="item.disabled"
-          :divided="item.divided"
-          :icon="item.icon"
-          :class="itemClass(item)"
-        >
-          {{ item.label }}
-        </el-dropdown-item>
-      </el-dropdown-menu>
-    </template>
-    <template v-else-if="slots.dropdown" #dropdown="slotData">
-      <slot name="dropdown" v-bind="slotData || {}" />
-    </template>
-  </el-dropdown>
-</template>
 
 <style scoped lang="scss">
 .custom-dropdown__trigger {

@@ -1,9 +1,3 @@
-<script setup>
-import { footerColumns } from '@/data/landing'
-
-const year = new Date().getFullYear()
-</script>
-
 <template>
   <footer class="landing-footer">
     <div class="container-fluid">
@@ -54,3 +48,9 @@ const year = new Date().getFullYear()
     </div>
   </footer>
 </template>
+
+<script setup>
+import { footerColumns } from '@/data/landing'
+
+const year = new Date().getFullYear()
+</script>

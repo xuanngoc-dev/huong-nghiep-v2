@@ -1,3 +1,46 @@
+<template>
+  <article
+    class="card-dao-tao"
+    :class="{
+      'card-dao-tao--co-anh': anh,
+      'card-dao-tao--co-chon': coTheChon,
+      'card-dao-tao--co-kham-pha': hrefKhamPha,
+      'is-selected': daChon,
+    }"
+  >
+    <span v-if="anh" class="card-dao-tao__bg" :style="styleNen" aria-hidden="true" />
+    <label v-if="coTheChon" class="card-dao-tao__check" @click="clickCheck">
+      <input
+        type="checkbox"
+        :checked="daChon"
+        :disabled="khoaChon"
+        :aria-label="daChon ? `Bỏ ${ten} khỏi danh sách phân vân` : `Đưa ${ten} vào danh sách phân vân`"
+        @change="doiTrangThai"
+      />
+      <span class="card-dao-tao__mark" aria-hidden="true"></span>
+    </label>
+    <p class="card-dao-tao__code">{{ ma }}</p>
+    <div class="card-dao-tao__main">
+      <!-- <p class="card-dao-tao__field">{{ nhan }}</p> -->
+      <h3 class="card-dao-tao__name">{{ ten }}</h3>
+      <p class="card-dao-tao__en">{{ tenTiengAnh }}</p>
+      <p v-if="moTa" class="card-dao-tao__text">{{ moTa }}</p>
+    </div>
+    <button v-if="hanhDong" type="button" class="card-dao-tao__action" @click="emit('chon')">
+      {{ hanhDong }}
+    </button>
+    <a
+      v-if="hrefKhamPha"
+      class="card-dao-tao__kham-pha"
+      :href="hrefKhamPha"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Khám phá
+    </a>
+  </article>
+</template>
+
 <script setup>
 import { computed } from 'vue'
 import anhThpt from '@/assets/guest/thpt.jpg'
@@ -131,49 +174,6 @@ function matTiepGiap(hash) {
   return matSong(hash)
 }
 </script>
-
-<template>
-  <article
-    class="card-dao-tao"
-    :class="{
-      'card-dao-tao--co-anh': anh,
-      'card-dao-tao--co-chon': coTheChon,
-      'card-dao-tao--co-kham-pha': hrefKhamPha,
-      'is-selected': daChon,
-    }"
-  >
-    <span v-if="anh" class="card-dao-tao__bg" :style="styleNen" aria-hidden="true" />
-    <label v-if="coTheChon" class="card-dao-tao__check" @click="clickCheck">
-      <input
-        type="checkbox"
-        :checked="daChon"
-        :disabled="khoaChon"
-        :aria-label="daChon ? `Bỏ ${ten} khỏi danh sách phân vân` : `Đưa ${ten} vào danh sách phân vân`"
-        @change="doiTrangThai"
-      />
-      <span class="card-dao-tao__mark" aria-hidden="true"></span>
-    </label>
-    <p class="card-dao-tao__code">{{ ma }}</p>
-    <div class="card-dao-tao__main">
-      <!-- <p class="card-dao-tao__field">{{ nhan }}</p> -->
-      <h3 class="card-dao-tao__name">{{ ten }}</h3>
-      <p class="card-dao-tao__en">{{ tenTiengAnh }}</p>
-      <p v-if="moTa" class="card-dao-tao__text">{{ moTa }}</p>
-    </div>
-    <button v-if="hanhDong" type="button" class="card-dao-tao__action" @click="emit('chon')">
-      {{ hanhDong }}
-    </button>
-    <a
-      v-if="hrefKhamPha"
-      class="card-dao-tao__kham-pha"
-      :href="hrefKhamPha"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      Khám phá
-    </a>
-  </article>
-</template>
 
 <style scoped>
 .card-dao-tao {

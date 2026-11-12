@@ -1,9 +1,3 @@
-<script setup>
-import { usePageLoading } from '@/composables/usePageLoading'
-
-const { visible } = usePageLoading()
-</script>
-
 <template>
   <Transition name="page-loading">
     <div
@@ -17,6 +11,12 @@ const { visible } = usePageLoading()
     </div>
   </Transition>
 </template>
+
+<script setup>
+import { usePageLoading } from '@/composables/usePageLoading'
+
+const { visible } = usePageLoading()
+</script>
 
 <style scoped>
 .page-loading {

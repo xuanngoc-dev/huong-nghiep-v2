@@ -1,3 +1,11 @@
+<template>
+  <el-pagination v-bind="$attrs" :page-sizes="PAGE_SIZES">
+    <template v-for="(_, name) in slots" #[name]="slotData">
+      <slot :name="name" v-bind="slotData || {}" />
+    </template>
+  </el-pagination>
+</template>
+
 <script setup>
 /**
  * CustomPagination — wrapper el-pagination.
@@ -11,11 +19,3 @@ const PAGE_SIZES = [8, 10, 20, 50, 100, 200, 500, 1000]
 
 const slots = useSlots()
 </script>
-
-<template>
-  <el-pagination v-bind="$attrs" :page-sizes="PAGE_SIZES">
-    <template v-for="(_, name) in slots" #[name]="slotData">
-      <slot :name="name" v-bind="slotData || {}" />
-    </template>
-  </el-pagination>
-</template>

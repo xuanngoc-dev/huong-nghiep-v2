@@ -1,3 +1,414 @@
+<template>
+  <div class="library-page">
+    <CustomCard shadow="never" class="library-card">
+      <div class="toolbar">
+        <div class="toolbar__lead">
+          <h2 class="toolbar__title">Thư viện</h2>
+          <nav class="crumbs" aria-label="Đường dẫn thư mục">
+            <button type="button" :class="{ 'is-current': !thuMuc }" @click="openFolder('')">Gốc</button>
+            <template v-for="crumb in crumbs" :key="crumb.path">
+              <span>/</span>
+              <button
+                type="button"
+                :class="{ 'is-current': crumb.path === thuMuc }"
+                @click="openFolder(crumb.path)"
+              >
+                {{ crumb.ten }}
+              </button>
+            </template>
+          </nav>
+        </div>
+        <div class="toolbar__actions">
+          <CustomInput v-model="keyword" class="filter-search" placeholder="Tìm theo tên hoặc đường dẫn" clearable>
+            <template #prefix>
+              <CustomIcon><Search /></CustomIcon>
+            </template>
+          </CustomInput>
+          <CustomSelect v-model="loai" class="filter-type" placeholder="Loại file" clearable>
+            <CustomOption label="Hình ảnh" value="hinh_anh" />
+            <CustomOption label="Video" value="video" />
+            <CustomOption label="Tệp nén" value="nen" />
+            <CustomOption label="Tệp khác" value="tep" />
+          </CustomSelect>
+          <div class="toolbar__buttons">
+            <CustomTooltip v-if="selected.length" content="Nén các mục đã chọn thành file ZIP" placement="top">
+              <span class="toolbar__tip">
+                <CustomButton :loading="compressing" @click="onCompress">
+                  <CustomIcon><Box /></CustomIcon>
+                </CustomButton>
+              </span>
+            </CustomTooltip>
+            <CustomTooltip v-if="selected.length" content="Chọn thư mục đích rồi bấm Dán để di chuyển" placement="top">
+              <span class="toolbar__tip">
+                <CustomButton @click="rememberClipboard('di_chuyen')">
+                  <CustomIcon><Rank /></CustomIcon>
+                </CustomButton>
+              </span>
+            </CustomTooltip>
+            <CustomTooltip v-if="selected.length" content="Sao chép các mục đã chọn để dán sang thư mục khác" placement="top">
+              <span class="toolbar__tip">
+                <CustomButton @click="rememberClipboard('sao_chep')">
+                  <CustomIcon><DocumentCopy /></CustomIcon>
+                </CustomButton>
+              </span>
+            </CustomTooltip>
+            <CustomTooltip
+              v-if="selected.length || clipboard"
+              :content="clipboard ? 'Dán vào thư mục đang mở' : 'Hãy sao chép hoặc di chuyển trước khi dán'"
+              placement="top"
+            >
+              <span class="toolbar__tip">
+                <CustomButton :disabled="!clipboard" :loading="pasting" @click="onPaste">
+                  <CustomIcon><DocumentAdd /></CustomIcon>
+                </CustomButton>
+              </span>
+            </CustomTooltip>
+            <CustomTooltip v-if="selected.length" content="Xóa các mục đã chọn" placement="top">
+              <span class="toolbar__tip">
+                <CustomButton type="danger" plain :loading="deletingMany" @click="onDeleteSelected">
+                  <CustomIcon><Delete /></CustomIcon>
+                </CustomButton>
+              </span>
+            </CustomTooltip>
+            <CustomTooltip content="Tạo thư mục trong chỗ đang mở" placement="top">
+              <span class="toolbar__tip">
+                <CustomButton @click="onCreateFolder">
+                  <CustomIcon><FolderAdd /></CustomIcon>
+                </CustomButton>
+              </span>
+            </CustomTooltip>
+            <CustomTooltip content="Tải ảnh, video hoặc file nén" placement="top">
+              <span class="toolbar__tip">
+                <CustomButton type="primary" @click="openCreate">
+                  <CustomIcon><Upload /></CustomIcon>
+                </CustomButton>
+              </span>
+            </CustomTooltip>
+            <CustomRadioGroup v-model="viewMode" class="view-switch">
+              <CustomRadioButton value="bang" title="Dạng bảng" aria-label="Dạng bảng">
+                <CustomIcon><List /></CustomIcon>
+              </CustomRadioButton>
+              <CustomRadioButton value="luoi" title="Dạng lưới" aria-label="Dạng lưới">
+                <CustomIcon><Grid /></CustomIcon>
+              </CustomRadioButton>
+            </CustomRadioGroup>
+          </div>
+        </div>
+      </div>
+
+      <CustomTable
+        v-if="viewMode === 'bang'"
+        :loading="loading"
+        :data="filtered"
+        row-key="duong_dan_tuong_doi"
+        stripe
+        border
+        @selection-change="onSelectionChange"
+      >
+        <CustomTableColumn type="selection" width="48" align="center" />
+        <CustomTableColumn label="STT" width="72" align="center">
+          <template #default="{ $index }">{{ rowIndex($index) }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Xem trước" width="108" align="center">
+          <template #default="{ row }">
+            <button
+              v-if="row.la_thu_muc"
+              type="button"
+              class="thumb-button"
+              aria-label="Mở thư mục"
+              @click="openFolder(row.duong_dan_tuong_doi)"
+            >
+              <CustomIcon class="thumb-icon" :size="28"><Folder /></CustomIcon>
+            </button>
+            <img v-else-if="row.loai === 'hinh_anh'" class="thumb" :src="absoluteUrl(row.duong_dan)" :alt="row.ten" />
+            <video v-else-if="row.loai === 'video'" class="thumb" :src="absoluteUrl(row.duong_dan)" muted preload="metadata" />
+            <CustomIcon v-else class="thumb-icon" :size="28">
+              <Files v-if="row.loai === 'nen'" />
+              <Document v-else />
+            </CustomIcon>
+          </template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Tên" min-width="220" show-overflow-tooltip>
+          <template #default="{ row }">
+            <button
+              v-if="row.la_thu_muc"
+              type="button"
+              class="folder-link"
+              @click="openFolder(row.duong_dan_tuong_doi)"
+            >
+              {{ row.ten }}
+            </button>
+            <span v-else>{{ row.ten }}</span>
+          </template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Loại" width="120" align="center">
+          <template #default="{ row }">
+            <CustomTag :type="loaiTag(row.loai)" effect="light">{{ LOAI_LABEL[row.loai] }}</CustomTag>
+          </template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Dung lượng" width="120" align="right">
+          <template #default="{ row }">{{ formatSize(row.kich_thuoc) }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Đường dẫn" min-width="240" show-overflow-tooltip>
+          <template #default="{ row }">{{ displayPath(row) }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Thao tác" width="300" fixed="right" align="center">
+          <template #default="{ row }">
+            <div class="icon-actions">
+              <CustomTooltip v-if="canPreview(row)" content="Xem" placement="top">
+                <CustomButton link type="primary" aria-label="Xem" @click="openView(row)">
+                  <CustomIcon><View /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+              <CustomTooltip content="Sao chép đường dẫn" placement="top">
+                <CustomButton link type="primary" aria-label="Sao chép đường dẫn" @click="copyPath(row)">
+                  <CustomIcon><CopyDocument /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+              <CustomTooltip content="Sao chép file" placement="top">
+                <CustomButton link type="primary" aria-label="Sao chép file" @click="rememberClipboard('sao_chep', row)">
+                  <CustomIcon><DocumentCopy /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+              <CustomTooltip content="Di chuyển" placement="top">
+                <CustomButton link type="primary" aria-label="Di chuyển" @click="rememberClipboard('di_chuyen', row)">
+                  <CustomIcon><Rank /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+              <CustomTooltip v-if="row.loai === 'nen'" content="Giải nén" placement="top">
+                <CustomButton
+                  link
+                  type="primary"
+                  aria-label="Giải nén"
+                  :loading="extractingPath === row.duong_dan_tuong_doi"
+                  @click="onExtract(row)"
+                >
+                  <CustomIcon><FolderOpened /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+              <CustomTooltip content="Đổi tên" placement="top">
+                <CustomButton link type="primary" aria-label="Đổi tên" @click="onRename(row)">
+                  <CustomIcon><EditPen /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+              <CustomTooltip content="Xóa" placement="top">
+                <CustomButton
+                  link
+                  type="danger"
+                  aria-label="Xóa"
+                  :loading="deletingPath === row.duong_dan_tuong_doi"
+                  @click="onDelete(row)"
+                >
+                  <CustomIcon><Delete /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+            </div>
+          </template>
+        </CustomTableColumn>
+        <template #empty>
+          <CustomEmpty description="Thư mục trống." />
+        </template>
+      </CustomTable>
+
+      <div v-else v-loading="loading" class="grid-wrap">
+        <div v-if="filtered.length" class="media-grid">
+          <article v-for="item in filtered" :key="item.duong_dan_tuong_doi" class="media-card">
+            <div class="media-preview">
+              <el-checkbox
+                class="media-check"
+                :model-value="isSelected(item)"
+                @change="(checked) => toggleSelected(item, checked)"
+                @click.stop
+              />
+              <button
+                v-if="item.la_thu_muc"
+                type="button"
+                class="preview-open"
+                aria-label="Mở thư mục"
+                @click="openFolder(item.duong_dan_tuong_doi)"
+              >
+                <CustomIcon :size="42"><Folder /></CustomIcon>
+              </button>
+              <img v-else-if="item.loai === 'hinh_anh'" :src="absoluteUrl(item.duong_dan)" :alt="item.ten" />
+              <video v-else-if="item.loai === 'video'" :src="absoluteUrl(item.duong_dan)" controls preload="metadata" />
+              <CustomIcon v-else :size="42">
+                <Files v-if="item.loai === 'nen'" />
+                <Document v-else />
+              </CustomIcon>
+            </div>
+            <div class="media-body">
+              <button
+                v-if="item.la_thu_muc"
+                type="button"
+                class="media-name folder-link"
+                :title="item.ten"
+                @click="openFolder(item.duong_dan_tuong_doi)"
+              >
+                {{ item.ten }}
+              </button>
+              <p v-else class="media-name" :title="displayPath(item) || item.ten">{{ item.ten }}</p>
+              <!-- <div class="media-meta">
+                <CustomTag :type="loaiTag(item.loai)" effect="light">{{ LOAI_LABEL[item.loai] }}</CustomTag>
+                <span>{{ formatSize(item.kich_thuoc) }}</span>
+              </div> -->
+              <div class="icon-actions">
+                <CustomTooltip v-if="canPreview(item)" content="Xem" placement="top">
+                  <CustomButton link type="primary" aria-label="Xem" @click="openView(item)">
+                    <CustomIcon><View /></CustomIcon>
+                  </CustomButton>
+                </CustomTooltip>
+                <CustomTooltip content="Sao chép đường dẫn" placement="top">
+                  <CustomButton link type="primary" aria-label="Sao chép đường dẫn" @click="copyPath(item)">
+                    <CustomIcon><CopyDocument /></CustomIcon>
+                  </CustomButton>
+                </CustomTooltip>
+                <CustomTooltip content="Sao chép file" placement="top">
+                  <CustomButton link type="primary" aria-label="Sao chép file" @click="rememberClipboard('sao_chep', item)">
+                    <CustomIcon><DocumentCopy /></CustomIcon>
+                  </CustomButton>
+                </CustomTooltip>
+                <CustomTooltip content="Di chuyển" placement="top">
+                  <CustomButton link type="primary" aria-label="Di chuyển" @click="rememberClipboard('di_chuyen', item)">
+                    <CustomIcon><Rank /></CustomIcon>
+                  </CustomButton>
+                </CustomTooltip>
+                <CustomTooltip v-if="item.loai === 'nen'" content="Giải nén" placement="top">
+                  <CustomButton
+                    link
+                    type="primary"
+                    aria-label="Giải nén"
+                    :loading="extractingPath === item.duong_dan_tuong_doi"
+                    @click="onExtract(item)"
+                  >
+                    <CustomIcon><FolderOpened /></CustomIcon>
+                  </CustomButton>
+                </CustomTooltip>
+                <CustomTooltip content="Đổi tên" placement="top">
+                  <CustomButton link type="primary" aria-label="Đổi tên" @click="onRename(item)">
+                    <CustomIcon><EditPen /></CustomIcon>
+                  </CustomButton>
+                </CustomTooltip>
+                <CustomTooltip content="Xóa" placement="top">
+                  <CustomButton
+                    link
+                    type="danger"
+                    aria-label="Xóa"
+                    :loading="deletingPath === item.duong_dan_tuong_doi"
+                    @click="onDelete(item)"
+                  >
+                    <CustomIcon><Delete /></CustomIcon>
+                  </CustomButton>
+                </CustomTooltip>
+              </div>
+            </div>
+          </article>
+        </div>
+        <CustomEmpty v-else-if="!loading" description="Thư mục trống." />
+      </div>
+    </CustomCard>
+  </div>
+
+  <CustomDialog v-model="dialogVisible" title="Thêm file" width="640px" height="680px">
+    <el-upload
+      ref="uploadRef"
+      class="uploader"
+      drag
+      multiple
+      :accept="ACCEPT"
+      :auto-upload="false"
+      :show-file-list="false"
+      :on-change="syncPending"
+      :on-remove="syncPending"
+      :disabled="uploading || importingUrl"
+    >
+      <CustomIcon class="uploader__icon" :size="36"><UploadFilled /></CustomIcon>
+      <div class="el-upload__text">
+        Kéo thả ảnh, video hoặc file nén vào đây, hoặc <em>bấm để chọn</em>
+      </div>
+      <template #tip>
+        <p class="uploader__tip">
+          Ảnh, video, hoặc file nén ZIP, RAR, 7Z, TAR. Mỗi file tối đa 100 MB. File được lưu vào thư mục đang mở.
+        </p>
+      </template>
+    </el-upload>
+
+    <div class="url-import">
+      <p class="url-import__label">Hoặc thêm từ URL</p>
+      <div class="url-import__row">
+        <CustomInput
+          v-model="sourceUrl"
+          placeholder="Dán URL http hoặc https của file"
+          clearable
+          :disabled="importingUrl"
+          @keyup.enter="onImportUrl"
+        />
+        <CustomButton type="primary" :loading="importingUrl" :disabled="uploading" @click="onImportUrl">
+          Tải về
+        </CustomButton>
+      </div>
+      <div v-if="previewKind" class="url-preview">
+        <img v-if="previewKind === 'hinh_anh'" :src="sourceUrl.trim()" alt="Xem trước ảnh" />
+        <video v-else :src="sourceUrl.trim()" controls preload="metadata" />
+      </div>
+      <p v-if="previewKind" class="uploader__tip">Xem trước trước khi tải về thư viện.</p>
+    </div>
+
+    <ul v-if="pendingFiles.length" class="picked-files">
+      <li v-for="file in pendingFiles" :key="file.uid" class="picked-files__item">
+        <span class="picked-files__name" :title="file.name">{{ file.name }}</span>
+        <span class="picked-files__size">{{ formatSize(file.size ?? file.raw?.size) }}</span>
+        <CustomButton link type="danger" aria-label="Bỏ file" :disabled="uploading" @click="removePending(file)">
+          <CustomIcon><Close /></CustomIcon>
+        </CustomButton>
+      </li>
+    </ul>
+    <template #footer>
+      <CustomButton :disabled="uploading || importingUrl" @click="dialogVisible = false">Đóng</CustomButton>
+      <CustomButton
+        type="primary"
+        :loading="uploading"
+        :disabled="!pendingFiles.length || importingUrl"
+        @click="onUploadSelected"
+      >
+        Tải lên
+      </CustomButton>
+    </template>
+  </CustomDialog>
+
+  <CustomDialog
+    :model-value="!!viewing"
+    :title="viewing?.ten || 'Xem chi tiết'"
+    width="920px"
+    height="780px"
+    @update:model-value="(open) => { if (!open) viewing = null }"
+  >
+    <div v-if="viewing" class="viewer">
+      <div class="viewer__stage">
+        <img v-if="viewing.loai === 'hinh_anh'" :src="absoluteUrl(viewing.duong_dan)" :alt="viewing.ten" />
+        <video v-else :src="absoluteUrl(viewing.duong_dan)" controls autoplay />
+      </div>
+      <dl class="viewer__meta">
+        <div>
+          <dt>Loại</dt>
+          <dd>{{ LOAI_LABEL[viewing.loai] }}</dd>
+        </div>
+        <div>
+          <dt>Dung lượng</dt>
+          <dd>{{ formatSize(viewing.kich_thuoc) }}</dd>
+        </div>
+        <div>
+          <dt>Đường dẫn</dt>
+          <dd>{{ displayPath(viewing) }}</dd>
+        </div>
+      </dl>
+    </div>
+    <template #footer>
+      <CustomButton @click="copyPath(viewing)">Sao chép đường dẫn</CustomButton>
+      <CustomButton type="primary" @click="viewing = null">Đóng</CustomButton>
+    </template>
+  </CustomDialog>
+</template>
+
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -458,417 +869,6 @@ async function onDelete(item) {
 onMounted(load)
 </script>
 
-<template>
-  <div class="library-page">
-    <CustomCard shadow="never" class="library-card">
-      <div class="toolbar">
-        <div class="toolbar__lead">
-          <h2 class="toolbar__title">Thư viện</h2>
-          <nav class="crumbs" aria-label="Đường dẫn thư mục">
-            <button type="button" :class="{ 'is-current': !thuMuc }" @click="openFolder('')">Gốc</button>
-            <template v-for="crumb in crumbs" :key="crumb.path">
-              <span>/</span>
-              <button
-                type="button"
-                :class="{ 'is-current': crumb.path === thuMuc }"
-                @click="openFolder(crumb.path)"
-              >
-                {{ crumb.ten }}
-              </button>
-            </template>
-          </nav>
-        </div>
-        <div class="toolbar__actions">
-          <CustomInput v-model="keyword" class="filter-search" placeholder="Tìm theo tên hoặc đường dẫn" clearable>
-            <template #prefix>
-              <CustomIcon><Search /></CustomIcon>
-            </template>
-          </CustomInput>
-          <CustomSelect v-model="loai" class="filter-type" placeholder="Loại file" clearable>
-            <CustomOption label="Hình ảnh" value="hinh_anh" />
-            <CustomOption label="Video" value="video" />
-            <CustomOption label="Tệp nén" value="nen" />
-            <CustomOption label="Tệp khác" value="tep" />
-          </CustomSelect>
-          <div class="toolbar__buttons">
-            <CustomTooltip v-if="selected.length" content="Nén các mục đã chọn thành file ZIP" placement="top">
-              <span class="toolbar__tip">
-                <CustomButton :loading="compressing" @click="onCompress">
-                  <CustomIcon><Box /></CustomIcon>
-                </CustomButton>
-              </span>
-            </CustomTooltip>
-            <CustomTooltip v-if="selected.length" content="Chọn thư mục đích rồi bấm Dán để di chuyển" placement="top">
-              <span class="toolbar__tip">
-                <CustomButton @click="rememberClipboard('di_chuyen')">
-                  <CustomIcon><Rank /></CustomIcon>
-                </CustomButton>
-              </span>
-            </CustomTooltip>
-            <CustomTooltip v-if="selected.length" content="Sao chép các mục đã chọn để dán sang thư mục khác" placement="top">
-              <span class="toolbar__tip">
-                <CustomButton @click="rememberClipboard('sao_chep')">
-                  <CustomIcon><DocumentCopy /></CustomIcon>
-                </CustomButton>
-              </span>
-            </CustomTooltip>
-            <CustomTooltip
-              v-if="selected.length || clipboard"
-              :content="clipboard ? 'Dán vào thư mục đang mở' : 'Hãy sao chép hoặc di chuyển trước khi dán'"
-              placement="top"
-            >
-              <span class="toolbar__tip">
-                <CustomButton :disabled="!clipboard" :loading="pasting" @click="onPaste">
-                  <CustomIcon><DocumentAdd /></CustomIcon>
-                </CustomButton>
-              </span>
-            </CustomTooltip>
-            <CustomTooltip v-if="selected.length" content="Xóa các mục đã chọn" placement="top">
-              <span class="toolbar__tip">
-                <CustomButton type="danger" plain :loading="deletingMany" @click="onDeleteSelected">
-                  <CustomIcon><Delete /></CustomIcon>
-                </CustomButton>
-              </span>
-            </CustomTooltip>
-            <CustomTooltip content="Tạo thư mục trong chỗ đang mở" placement="top">
-              <span class="toolbar__tip">
-                <CustomButton @click="onCreateFolder">
-                  <CustomIcon><FolderAdd /></CustomIcon>
-                </CustomButton>
-              </span>
-            </CustomTooltip>
-            <CustomTooltip content="Tải ảnh, video hoặc file nén" placement="top">
-              <span class="toolbar__tip">
-                <CustomButton type="primary" @click="openCreate">
-                  <CustomIcon><Upload /></CustomIcon>
-                </CustomButton>
-              </span>
-            </CustomTooltip>
-            <CustomRadioGroup v-model="viewMode" class="view-switch">
-              <CustomRadioButton value="bang" title="Dạng bảng" aria-label="Dạng bảng">
-                <CustomIcon><List /></CustomIcon>
-              </CustomRadioButton>
-              <CustomRadioButton value="luoi" title="Dạng lưới" aria-label="Dạng lưới">
-                <CustomIcon><Grid /></CustomIcon>
-              </CustomRadioButton>
-            </CustomRadioGroup>
-          </div>
-        </div>
-      </div>
-
-      <CustomTable
-        v-if="viewMode === 'bang'"
-        :loading="loading"
-        :data="filtered"
-        row-key="duong_dan_tuong_doi"
-        stripe
-        border
-        @selection-change="onSelectionChange"
-      >
-        <CustomTableColumn type="selection" width="48" align="center" />
-        <CustomTableColumn label="STT" width="72" align="center">
-          <template #default="{ $index }">{{ rowIndex($index) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Xem trước" width="108" align="center">
-          <template #default="{ row }">
-            <button
-              v-if="row.la_thu_muc"
-              type="button"
-              class="thumb-button"
-              aria-label="Mở thư mục"
-              @click="openFolder(row.duong_dan_tuong_doi)"
-            >
-              <CustomIcon class="thumb-icon" :size="28"><Folder /></CustomIcon>
-            </button>
-            <img v-else-if="row.loai === 'hinh_anh'" class="thumb" :src="absoluteUrl(row.duong_dan)" :alt="row.ten" />
-            <video v-else-if="row.loai === 'video'" class="thumb" :src="absoluteUrl(row.duong_dan)" muted preload="metadata" />
-            <CustomIcon v-else class="thumb-icon" :size="28">
-              <Files v-if="row.loai === 'nen'" />
-              <Document v-else />
-            </CustomIcon>
-          </template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Tên" min-width="220" show-overflow-tooltip>
-          <template #default="{ row }">
-            <button
-              v-if="row.la_thu_muc"
-              type="button"
-              class="folder-link"
-              @click="openFolder(row.duong_dan_tuong_doi)"
-            >
-              {{ row.ten }}
-            </button>
-            <span v-else>{{ row.ten }}</span>
-          </template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Loại" width="120" align="center">
-          <template #default="{ row }">
-            <CustomTag :type="loaiTag(row.loai)" effect="light">{{ LOAI_LABEL[row.loai] }}</CustomTag>
-          </template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Dung lượng" width="120" align="right">
-          <template #default="{ row }">{{ formatSize(row.kich_thuoc) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Đường dẫn" min-width="240" show-overflow-tooltip>
-          <template #default="{ row }">{{ displayPath(row) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Thao tác" width="300" fixed="right" align="center">
-          <template #default="{ row }">
-            <div class="icon-actions">
-              <CustomTooltip v-if="canPreview(row)" content="Xem" placement="top">
-                <CustomButton link type="primary" aria-label="Xem" @click="openView(row)">
-                  <CustomIcon><View /></CustomIcon>
-                </CustomButton>
-              </CustomTooltip>
-              <CustomTooltip content="Sao chép đường dẫn" placement="top">
-                <CustomButton link type="primary" aria-label="Sao chép đường dẫn" @click="copyPath(row)">
-                  <CustomIcon><CopyDocument /></CustomIcon>
-                </CustomButton>
-              </CustomTooltip>
-              <CustomTooltip content="Sao chép file" placement="top">
-                <CustomButton link type="primary" aria-label="Sao chép file" @click="rememberClipboard('sao_chep', row)">
-                  <CustomIcon><DocumentCopy /></CustomIcon>
-                </CustomButton>
-              </CustomTooltip>
-              <CustomTooltip content="Di chuyển" placement="top">
-                <CustomButton link type="primary" aria-label="Di chuyển" @click="rememberClipboard('di_chuyen', row)">
-                  <CustomIcon><Rank /></CustomIcon>
-                </CustomButton>
-              </CustomTooltip>
-              <CustomTooltip v-if="row.loai === 'nen'" content="Giải nén" placement="top">
-                <CustomButton
-                  link
-                  type="primary"
-                  aria-label="Giải nén"
-                  :loading="extractingPath === row.duong_dan_tuong_doi"
-                  @click="onExtract(row)"
-                >
-                  <CustomIcon><FolderOpened /></CustomIcon>
-                </CustomButton>
-              </CustomTooltip>
-              <CustomTooltip content="Đổi tên" placement="top">
-                <CustomButton link type="primary" aria-label="Đổi tên" @click="onRename(row)">
-                  <CustomIcon><EditPen /></CustomIcon>
-                </CustomButton>
-              </CustomTooltip>
-              <CustomTooltip content="Xóa" placement="top">
-                <CustomButton
-                  link
-                  type="danger"
-                  aria-label="Xóa"
-                  :loading="deletingPath === row.duong_dan_tuong_doi"
-                  @click="onDelete(row)"
-                >
-                  <CustomIcon><Delete /></CustomIcon>
-                </CustomButton>
-              </CustomTooltip>
-            </div>
-          </template>
-        </CustomTableColumn>
-        <template #empty>
-          <CustomEmpty description="Thư mục trống." />
-        </template>
-      </CustomTable>
-
-      <div v-else v-loading="loading" class="grid-wrap">
-        <div v-if="filtered.length" class="media-grid">
-          <article v-for="item in filtered" :key="item.duong_dan_tuong_doi" class="media-card">
-            <div class="media-preview">
-              <el-checkbox
-                class="media-check"
-                :model-value="isSelected(item)"
-                @change="(checked) => toggleSelected(item, checked)"
-                @click.stop
-              />
-              <button
-                v-if="item.la_thu_muc"
-                type="button"
-                class="preview-open"
-                aria-label="Mở thư mục"
-                @click="openFolder(item.duong_dan_tuong_doi)"
-              >
-                <CustomIcon :size="42"><Folder /></CustomIcon>
-              </button>
-              <img v-else-if="item.loai === 'hinh_anh'" :src="absoluteUrl(item.duong_dan)" :alt="item.ten" />
-              <video v-else-if="item.loai === 'video'" :src="absoluteUrl(item.duong_dan)" controls preload="metadata" />
-              <CustomIcon v-else :size="42">
-                <Files v-if="item.loai === 'nen'" />
-                <Document v-else />
-              </CustomIcon>
-            </div>
-            <div class="media-body">
-              <button
-                v-if="item.la_thu_muc"
-                type="button"
-                class="media-name folder-link"
-                :title="item.ten"
-                @click="openFolder(item.duong_dan_tuong_doi)"
-              >
-                {{ item.ten }}
-              </button>
-              <p v-else class="media-name" :title="displayPath(item) || item.ten">{{ item.ten }}</p>
-              <!-- <div class="media-meta">
-                <CustomTag :type="loaiTag(item.loai)" effect="light">{{ LOAI_LABEL[item.loai] }}</CustomTag>
-                <span>{{ formatSize(item.kich_thuoc) }}</span>
-              </div> -->
-              <div class="icon-actions">
-                <CustomTooltip v-if="canPreview(item)" content="Xem" placement="top">
-                  <CustomButton link type="primary" aria-label="Xem" @click="openView(item)">
-                    <CustomIcon><View /></CustomIcon>
-                  </CustomButton>
-                </CustomTooltip>
-                <CustomTooltip content="Sao chép đường dẫn" placement="top">
-                  <CustomButton link type="primary" aria-label="Sao chép đường dẫn" @click="copyPath(item)">
-                    <CustomIcon><CopyDocument /></CustomIcon>
-                  </CustomButton>
-                </CustomTooltip>
-                <CustomTooltip content="Sao chép file" placement="top">
-                  <CustomButton link type="primary" aria-label="Sao chép file" @click="rememberClipboard('sao_chep', item)">
-                    <CustomIcon><DocumentCopy /></CustomIcon>
-                  </CustomButton>
-                </CustomTooltip>
-                <CustomTooltip content="Di chuyển" placement="top">
-                  <CustomButton link type="primary" aria-label="Di chuyển" @click="rememberClipboard('di_chuyen', item)">
-                    <CustomIcon><Rank /></CustomIcon>
-                  </CustomButton>
-                </CustomTooltip>
-                <CustomTooltip v-if="item.loai === 'nen'" content="Giải nén" placement="top">
-                  <CustomButton
-                    link
-                    type="primary"
-                    aria-label="Giải nén"
-                    :loading="extractingPath === item.duong_dan_tuong_doi"
-                    @click="onExtract(item)"
-                  >
-                    <CustomIcon><FolderOpened /></CustomIcon>
-                  </CustomButton>
-                </CustomTooltip>
-                <CustomTooltip content="Đổi tên" placement="top">
-                  <CustomButton link type="primary" aria-label="Đổi tên" @click="onRename(item)">
-                    <CustomIcon><EditPen /></CustomIcon>
-                  </CustomButton>
-                </CustomTooltip>
-                <CustomTooltip content="Xóa" placement="top">
-                  <CustomButton
-                    link
-                    type="danger"
-                    aria-label="Xóa"
-                    :loading="deletingPath === item.duong_dan_tuong_doi"
-                    @click="onDelete(item)"
-                  >
-                    <CustomIcon><Delete /></CustomIcon>
-                  </CustomButton>
-                </CustomTooltip>
-              </div>
-            </div>
-          </article>
-        </div>
-        <CustomEmpty v-else-if="!loading" description="Thư mục trống." />
-      </div>
-    </CustomCard>
-  </div>
-
-  <CustomDialog v-model="dialogVisible" title="Thêm file" width="640px" height="680px">
-    <el-upload
-      ref="uploadRef"
-      class="uploader"
-      drag
-      multiple
-      :accept="ACCEPT"
-      :auto-upload="false"
-      :show-file-list="false"
-      :on-change="syncPending"
-      :on-remove="syncPending"
-      :disabled="uploading || importingUrl"
-    >
-      <CustomIcon class="uploader__icon" :size="36"><UploadFilled /></CustomIcon>
-      <div class="el-upload__text">
-        Kéo thả ảnh, video hoặc file nén vào đây, hoặc <em>bấm để chọn</em>
-      </div>
-      <template #tip>
-        <p class="uploader__tip">
-          Ảnh, video, hoặc file nén ZIP, RAR, 7Z, TAR. Mỗi file tối đa 100 MB. File được lưu vào thư mục đang mở.
-        </p>
-      </template>
-    </el-upload>
-
-    <div class="url-import">
-      <p class="url-import__label">Hoặc thêm từ URL</p>
-      <div class="url-import__row">
-        <CustomInput
-          v-model="sourceUrl"
-          placeholder="Dán URL http hoặc https của file"
-          clearable
-          :disabled="importingUrl"
-          @keyup.enter="onImportUrl"
-        />
-        <CustomButton type="primary" :loading="importingUrl" :disabled="uploading" @click="onImportUrl">
-          Tải về
-        </CustomButton>
-      </div>
-      <div v-if="previewKind" class="url-preview">
-        <img v-if="previewKind === 'hinh_anh'" :src="sourceUrl.trim()" alt="Xem trước ảnh" />
-        <video v-else :src="sourceUrl.trim()" controls preload="metadata" />
-      </div>
-      <p v-if="previewKind" class="uploader__tip">Xem trước trước khi tải về thư viện.</p>
-    </div>
-
-    <ul v-if="pendingFiles.length" class="picked-files">
-      <li v-for="file in pendingFiles" :key="file.uid" class="picked-files__item">
-        <span class="picked-files__name" :title="file.name">{{ file.name }}</span>
-        <span class="picked-files__size">{{ formatSize(file.size ?? file.raw?.size) }}</span>
-        <CustomButton link type="danger" aria-label="Bỏ file" :disabled="uploading" @click="removePending(file)">
-          <CustomIcon><Close /></CustomIcon>
-        </CustomButton>
-      </li>
-    </ul>
-    <template #footer>
-      <CustomButton :disabled="uploading || importingUrl" @click="dialogVisible = false">Đóng</CustomButton>
-      <CustomButton
-        type="primary"
-        :loading="uploading"
-        :disabled="!pendingFiles.length || importingUrl"
-        @click="onUploadSelected"
-      >
-        Tải lên
-      </CustomButton>
-    </template>
-  </CustomDialog>
-
-  <CustomDialog
-    :model-value="!!viewing"
-    :title="viewing?.ten || 'Xem chi tiết'"
-    width="920px"
-    height="780px"
-    @update:model-value="(open) => { if (!open) viewing = null }"
-  >
-    <div v-if="viewing" class="viewer">
-      <div class="viewer__stage">
-        <img v-if="viewing.loai === 'hinh_anh'" :src="absoluteUrl(viewing.duong_dan)" :alt="viewing.ten" />
-        <video v-else :src="absoluteUrl(viewing.duong_dan)" controls autoplay />
-      </div>
-      <dl class="viewer__meta">
-        <div>
-          <dt>Loại</dt>
-          <dd>{{ LOAI_LABEL[viewing.loai] }}</dd>
-        </div>
-        <div>
-          <dt>Dung lượng</dt>
-          <dd>{{ formatSize(viewing.kich_thuoc) }}</dd>
-        </div>
-        <div>
-          <dt>Đường dẫn</dt>
-          <dd>{{ displayPath(viewing) }}</dd>
-        </div>
-      </dl>
-    </div>
-    <template #footer>
-      <CustomButton @click="copyPath(viewing)">Sao chép đường dẫn</CustomButton>
-      <CustomButton type="primary" @click="viewing = null">Đóng</CustomButton>
-    </template>
-  </CustomDialog>
-</template>
-
 <style scoped>
 .library-page {
   display: flex;
@@ -893,14 +893,6 @@ onMounted(load)
   flex-direction: column;
   gap: 6px;
   min-width: 0;
-}
-
-.toolbar__title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--el-text-color-primary);
 }
 
 .crumbs {
@@ -948,10 +940,6 @@ onMounted(load)
 
 .toolbar__buttons :deep(.el-button) {
   margin: 0;
-}
-
-.filter-search {
-  width: 260px;
 }
 
 .filter-type {
@@ -1267,7 +1255,6 @@ onMounted(load)
     margin-left: 0;
   }
 
-  .filter-search,
   .filter-type {
     width: 100%;
   }

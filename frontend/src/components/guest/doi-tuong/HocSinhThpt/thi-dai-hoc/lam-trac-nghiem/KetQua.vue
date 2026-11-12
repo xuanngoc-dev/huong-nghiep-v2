@@ -1,3 +1,45 @@
+<template>
+  <section class="quiz-flow">
+    <div class="container-fluid">
+      <div class="holland-overview">
+        <header class="holland-overview__header">
+          <h2 class="holland-overview__title">Kết quả trắc nghiệm Holland</h2>
+          <p v-if="ketQua" class="holland-overview__lead">
+            Đã trả lời {{ ketQua.so_da_tra_loi }}/{{ ketQua.so_cau_hoi }} câu.
+          </p>
+        </header>
+
+        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
+        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải kết quả…</p>
+
+        <template v-else-if="ketQua">
+          <BuocLamBai :ssid="ssid" :buoc="buoc" hien-tai="ket-qua" />
+
+          <article class="holland-panel">
+            <p class="holland-kicker">Mã nổi bật</p>
+            <h3 class="holland-panel__title">{{ ketQua.ma_noi_bat || 'Chưa đủ đáp án' }}</h3>
+            <p v-if="!ketQua.ma_noi_bat" class="quiz-note">
+              Hãy hoàn thành các phần phía trước để hệ thống cộng điểm theo nhóm tính cách.
+            </p>
+            <ul class="quiz-scores">
+              <li v-for="item in ketQua.nhom" :key="item.ma_nhom" class="quiz-score">
+                <span class="quiz-score__code">{{ item.ma_nhom }}</span>
+                <span class="quiz-score__body">
+                  <span class="quiz-score__name">{{ item.ten_nhom }}</span>
+                  <span class="quiz-score__track">
+                    <span class="quiz-score__bar" :style="{ width: `${(item.diem / diemCaoNhat) * 100}%` }" />
+                  </span>
+                </span>
+                <strong class="quiz-score__point">{{ item.diem }}</strong>
+              </li>
+            </ul>
+          </article>
+        </template>
+      </div>
+    </div>
+  </section>
+</template>
+
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -40,48 +82,6 @@ async function taiKetQua(value) {
 
 watch(ssid, taiKetQua, { immediate: true })
 </script>
-
-<template>
-  <section class="quiz-flow">
-    <div class="container-fluid">
-      <div class="holland-overview">
-        <header class="holland-overview__header">
-          <h2 class="holland-overview__title">Kết quả trắc nghiệm Holland</h2>
-          <p v-if="ketQua" class="holland-overview__lead">
-            Đã trả lời {{ ketQua.so_da_tra_loi }}/{{ ketQua.so_cau_hoi }} câu.
-          </p>
-        </header>
-
-        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
-        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải kết quả…</p>
-
-        <template v-else-if="ketQua">
-          <BuocLamBai :ssid="ssid" :buoc="buoc" hien-tai="ket-qua" />
-
-          <article class="holland-panel">
-            <p class="holland-kicker">Mã nổi bật</p>
-            <h3 class="holland-panel__title">{{ ketQua.ma_noi_bat || 'Chưa đủ đáp án' }}</h3>
-            <p v-if="!ketQua.ma_noi_bat" class="quiz-note">
-              Hãy hoàn thành các phần phía trước để hệ thống cộng điểm theo nhóm tính cách.
-            </p>
-            <ul class="quiz-scores">
-              <li v-for="item in ketQua.nhom" :key="item.ma_nhom" class="quiz-score">
-                <span class="quiz-score__code">{{ item.ma_nhom }}</span>
-                <span class="quiz-score__body">
-                  <span class="quiz-score__name">{{ item.ten_nhom }}</span>
-                  <span class="quiz-score__track">
-                    <span class="quiz-score__bar" :style="{ width: `${(item.diem / diemCaoNhat) * 100}%` }" />
-                  </span>
-                </span>
-                <strong class="quiz-score__point">{{ item.diem }}</strong>
-              </li>
-            </ul>
-          </article>
-        </template>
-      </div>
-    </div>
-  </section>
-</template>
 
 <style src="./quiz-type.scss"></style>
 

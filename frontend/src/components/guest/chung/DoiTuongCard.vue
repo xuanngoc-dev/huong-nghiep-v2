@@ -1,17 +1,3 @@
-<script setup>
-defineOptions({ name: 'DoiTuongCard' })
-
-defineProps({
-  image: { type: String, required: true },
-  name: { type: String, required: true },
-  description: { type: String, default: '' },
-  ma: { type: String, default: '' },
-  selected: { type: Boolean, default: false },
-})
-
-const emit = defineEmits(['select'])
-</script>
-
 <template>
   <article class="audience-card h-100" :class="{ 'is-selected': selected }">
     <div class="audience-card__media">
@@ -25,3 +11,17 @@ const emit = defineEmits(['select'])
     <p class="audience-card__text">{{ description }}</p>
   </article>
 </template>
+
+<script setup>
+defineOptions({ name: 'DoiTuongCard' })
+
+defineProps({
+  image: { type: String, required: true },
+  name: { type: String, required: true },
+  description: { type: String, default: '' },
+  ma: { type: String, default: '' },
+  selected: { type: Boolean, default: false },
+})
+
+const emit = defineEmits(['select'])
+</script>

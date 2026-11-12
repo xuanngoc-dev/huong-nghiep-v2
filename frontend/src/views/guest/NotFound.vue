@@ -1,7 +1,3 @@
-<script setup>
-defineOptions({ name: 'NotFound' })
-</script>
-
 <template>
   <section class="not-found py-5">
     <div class="container-fluid">
@@ -18,3 +14,7 @@ defineOptions({ name: 'NotFound' })
     </div>
   </section>
 </template>
+
+<script setup>
+defineOptions({ name: 'NotFound' })
+</script>

@@ -1,3 +1,240 @@
+<template>
+  <section class="chon-truong py-4">
+    <div class="container-fluid">
+      <div class="row g-4">
+        <div class="col-lg-9">
+      <CustomButton link type="primary" @click="quayLai">Quay lại ngành</CustomButton>
+
+      <article class="intro-card mt-3">
+        <p v-if="loiNganh" class="holland-note holland-note__text mb-0">{{ loiNganh }}</p>
+        <p v-else-if="dangTaiNganh" class="holland-overview__lead mb-0">Đang tải ngành…</p>
+        <template v-else-if="nganh">
+          <p class="nhom-card__code">{{ nganh.ma_nganh }}</p>
+          <el-collapse v-model="introMo" class="intro-collapse" expand-icon-position="left">
+            <el-collapse-item name="nganh">
+              <template #title>
+                <div class="intro-collapse__title">
+                  <h2 class="intro-collapse__name">{{ nganh.ten_nganh }}</h2>
+                  <p class="intro-collapse__desc">{{ moTaNgan }}</p>
+                </div>
+              </template>
+              <p class="loi-the">
+                Bạn đã chọn ngành <span class="intro-card__emph">{{ nganh.ten_nganh }}</span>, trực thuộc nhóm ngành
+                nghề <span class="intro-card__emph">{{ nganh.ten_nhom_nganh }}</span>. Ngành này có những lợi thế:
+              </p>
+              <ul v-if="loiThe.length" class="loi-the-list">
+                <li v-for="(item, index) in loiThe" :key="index">{{ item }}</li>
+              </ul>
+              <p v-else class="loi-the">Danh mục chưa có mô tả lợi thế cho ngành này.</p>
+              <p class="loi-the mb-0">
+                Bạn có muốn tham gia khảo sát để chắc chắn thêm về điều đó, hoặc chọn lại ngành nghề khác?
+              </p>
+            </el-collapse-item>
+          </el-collapse>
+        </template>
+      </article>
+
+      <div class="stages-card holland-overview mt-3">
+        <header class="holland-overview__header">
+          <h2 class="holland-overview__title">Trường đại học, cao đẳng</h2>
+          <p class="holland-overview__lead">
+            Dưới đây là danh sách các trường đại học, cao đẳng tuyển sinh ngành học mà bạn quan tâm.
+          </p>
+          <p class="holland-overview__lead">Lọc theo khu vực, tên trường và loại cơ sở.</p>
+        </header>
+
+        <form class="nhom-filter" @submit.prevent="timKiem">
+          <div class="nhom-filter__field nhom-filter__field--ten">
+            <label class="nhom-filter__label" for="loc-ten-truong">Tên</label>
+            <CustomInput id="loc-ten-truong" v-model="ten" placeholder="Nhập tên trường" clearable />
+          </div>
+          <div class="nhom-filter__field nhom-filter__field--khu-vuc">
+            <label class="nhom-filter__label" for="loc-khu-vuc">Khu vực</label>
+            <CustomSelect id="loc-khu-vuc" v-model="khuVuc" class="nhom-filter__select" filterable clearable placeholder="Tất cả khu vực">
+              <CustomOption v-for="item in KHU_VUC" :key="item" :label="item" :value="item" />
+            </CustomSelect>
+          </div>
+          <div class="nhom-filter__field nhom-filter__field--loai">
+            <label class="nhom-filter__label" for="loc-loai-co-so">Loại cơ sở</label>
+            <CustomSelect id="loc-loai-co-so" v-model="loai" class="nhom-filter__select" filterable clearable placeholder="Tất cả loại">
+              <CustomOption v-for="item in LOAI_CO_SO" :key="item" :label="item" :value="item" />
+            </CustomSelect>
+          </div>
+          <div class="nhom-filter__actions">
+            <CustomButton type="primary" native-type="submit">Tìm kiếm</CustomButton>
+            <CustomTooltip
+              content="Chọn từ 2 đến 3 trường để so sánh."
+              placement="top"
+              :disabled="coTheSoSanh"
+            >
+              <span class="nhom-filter__tooltip">
+                <CustomBadge :value="truongDaChon.length" :max="SO_TRUONG_TOI_DA">
+                  <CustomButton type="primary" :disabled="!coTheSoSanh" @click="soSanhMo = true">
+                    So sánh
+                  </CustomButton>
+                </CustomBadge>
+              </span>
+            </CustomTooltip>
+            <CustomButton type="success" @click="diTruongPhuHop">Trường phù hợp</CustomButton>
+          </div>
+        </form>
+
+        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
+        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải trường…</p>
+        <p v-else-if="!ketQua.length" class="holland-note holland-note__text">Không có trường khớp bộ lọc.</p>
+        <div v-else class="row g-3">
+          <div v-for="item in truongTrang" :key="item.id" class="col-12 col-md-6 col-lg-3">
+            <article class="nhom-card h-100" :class="{ 'is-selected': daChon(item) }" @click="doiChon(item)">
+              <p class="nhom-card__code">{{ item.ma_truong }}</p>
+              <label class="nhom-card__check" @click.stop>
+                <input
+                  type="checkbox"
+                  :checked="daChon(item)"
+                  :disabled="!daChon(item) && truongDaChon.length >= SO_TRUONG_TOI_DA"
+                  :aria-label="`Chọn ${item.ten_truong}`"
+                  @change="doiChon(item)"
+                />
+                <span class="nhom-card__mark" aria-hidden="true"></span>
+              </label>
+              <div class="nhom-card__main">
+                <CustomTooltip
+                  :content="loaiCua(item) || 'Cơ sở đào tạo'"
+                  placement="top"
+                  :disabled="!biCat(item.id, 'loai')"
+                >
+                  <p v-mot-hang="khoaTran(item.id, 'loai')" class="nhom-card__line nhom-card__field">
+                    {{ loaiCua(item) || 'Cơ sở đào tạo' }}
+                  </p>
+                </CustomTooltip>
+                <!-- <div v-if="linhVucCua(item).length" class="nhom-card__tags">
+                  <CustomTag v-for="tag in linhVucCua(item)" :key="tag" effect="plain">{{ tag }}</CustomTag>
+                </div> -->
+                <CustomTooltip :content="item.ten_truong" placement="top" :disabled="!biCat(item.id, 'ten')">
+                  <h3 v-mot-hang="khoaTran(item.id, 'ten')" class="nhom-card__line nhom-card__name">
+                    {{ item.ten_truong }}
+                  </h3>
+                </CustomTooltip>
+                <CustomTooltip :content="diaChi(item)" placement="top" :disabled="!item.dia_chi_tru_so || !biCat(item.id, 'diachi')">
+                  <p class="nhom-card__addr">
+                    <CustomIcon class="nhom-card__pin" aria-hidden="true"><Location /></CustomIcon>
+                    <span v-mot-hang="khoaTran(item.id, 'diachi')" class="nhom-card__line nhom-card__meta">
+                      {{ diaChi(item) }}
+                    </span>
+                  </p>
+                </CustomTooltip>
+                <CustomTooltip
+                  :content="item.website || 'Chưa cập nhật'"
+                  placement="top"
+                  :disabled="!item.website || !biCat(item.id, 'web')"
+                >
+                  <p class="nhom-card__addr">
+                    <CustomIcon class="nhom-card__pin" aria-hidden="true"><Link /></CustomIcon>
+                    <a
+                      v-if="item.website"
+                      v-mot-hang="khoaTran(item.id, 'web')"
+                      class="nhom-card__line nhom-card__web"
+                      :href="hrefWebsite(item.website)"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      @click.stop
+                    >
+                      {{ item.website }}
+                    </a>
+                    <span v-else class="nhom-card__line nhom-card__meta">Chưa cập nhật</span>
+                  </p>
+                </CustomTooltip>
+                <!-- <CustomTooltip :content="diaDiem(item)" placement="top" :disabled="!biCat(item.id, 'dia')">
+                  <p v-mot-hang="khoaTran(item.id, 'dia')" class="nhom-card__line nhom-card__meta">
+                    {{ diaDiem(item) }}
+                  </p>
+                </CustomTooltip> -->
+                <CustomTooltip
+                  v-if="item.gioi_thieu_ngan"
+                  :content="item.gioi_thieu_ngan"
+                  placement="top"
+                  :disabled="!biCat(item.id, 'gioi')"
+                >
+                  <!-- <p v-mot-hang="khoaTran(item.id, 'gioi')" class="nhom-card__line nhom-card__text">
+                    {{ item.gioi_thieu_ngan }}
+                  </p> -->
+                </CustomTooltip>
+              </div>
+            </article>
+          </div>
+        </div>
+        <div v-if="!dangTai && !loi && ketQua.length" class="nhom-pager">
+          <CustomPagination
+            v-model:current-page="trang"
+            v-model:page-size="soMoiTrang"
+            :total="ketQua.length"
+            layout="total, sizes, prev, pager, next"
+            background
+          />
+        </div>
+      </div>
+        </div>
+
+        <div class="col-lg-3">
+          <div class="paths-card">
+            <h2 id="nganh-cung-nhom" class="h4 mb-2">Ngành cùng nhóm</h2>
+            <p v-if="tenNhom" class="side-lead">{{ tenNhom }}</p>
+            <p v-if="loiCungNhom" class="holland-note holland-note__text mb-0">{{ loiCungNhom }}</p>
+            <p v-else-if="dangTaiCungNhom || (dangTaiNganh && !nganhCungNhom.length)" class="side-lead mb-0">
+              Đang tải ngành…
+            </p>
+            <p v-else-if="!nganhCungNhom.length" class="side-lead mb-0">Chưa có ngành trong nhóm này.</p>
+            <div v-else class="d-flex flex-column gap-2" aria-labelledby="nganh-cung-nhom">
+              <button
+                v-for="item in nganhCungNhom"
+                :key="item.id"
+                type="button"
+                class="switch-card side-nganh"
+                :class="{ 'is-selected': item.ma_nganh === maNganh }"
+                @click="chonNganhKhac(item)"
+              >
+                <span class="side-nganh__code">{{ item.ma_nganh }}</span>
+                <span class="switch-card__body">
+                  <span class="switch-card__name">{{ item.ten_nganh }}</span>
+                  <span v-if="item.ten_tieng_anh" class="switch-card__text">{{ item.ten_tieng_anh }}</span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <CustomDialog class="chon-truong-dialog" v-model="soSanhMo" title="So sánh trường" :width="960" height="70vh">
+      <div class="so-sanh-wrap">
+        <table class="so-sanh so-sanh--truong">
+          <thead>
+            <tr>
+              <th>Thông tin</th>
+              <th v-for="item in truongDaChon" :key="item.id">{{ item.ten_truong }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="hang in hangSoSanh" :key="hang.label">
+              <th>{{ hang.label }}</th>
+              <td v-for="item in truongDaChon" :key="item.id">
+                <a
+                  v-if="hang.link && hang.lay(item)"
+                  :href="hang.lay(item)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {{ hang.lay(item) }}
+                </a>
+                <template v-else>{{ hang.lay(item) || '—' }}</template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </CustomDialog>
+  </section>
+</template>
+
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -395,241 +632,3 @@ onMounted(() => {
   taiHoSo()
 })
 </script>
-
-<template>
-  <section class="chon-truong py-4">
-    <div class="container-fluid">
-      <div class="row g-4">
-        <div class="col-lg-9">
-      <CustomButton link type="primary" @click="quayLai">Quay lại ngành</CustomButton>
-
-      <article class="intro-card mt-3">
-        <p v-if="loiNganh" class="holland-note holland-note__text mb-0">{{ loiNganh }}</p>
-        <p v-else-if="dangTaiNganh" class="holland-overview__lead mb-0">Đang tải ngành…</p>
-        <template v-else-if="nganh">
-          <p class="nhom-card__code">{{ nganh.ma_nganh }}</p>
-          <el-collapse v-model="introMo" class="intro-collapse" expand-icon-position="left">
-            <el-collapse-item name="nganh">
-              <template #title>
-                <div class="intro-collapse__title">
-                  <h2 class="intro-collapse__name">{{ nganh.ten_nganh }}</h2>
-                  <p class="intro-collapse__desc">{{ moTaNgan }}</p>
-                </div>
-              </template>
-              <p class="loi-the">
-                Bạn đã chọn ngành <span class="intro-card__emph">{{ nganh.ten_nganh }}</span>, trực thuộc nhóm ngành
-                nghề <span class="intro-card__emph">{{ nganh.ten_nhom_nganh }}</span>. Ngành này có những lợi thế:
-              </p>
-              <ul v-if="loiThe.length" class="loi-the-list">
-                <li v-for="(item, index) in loiThe" :key="index">{{ item }}</li>
-              </ul>
-              <p v-else class="loi-the">Danh mục chưa có mô tả lợi thế cho ngành này.</p>
-              <p class="loi-the mb-0">
-                Bạn có muốn tham gia khảo sát để chắc chắn thêm về điều đó, hoặc chọn lại ngành nghề khác?
-              </p>
-            </el-collapse-item>
-          </el-collapse>
-        </template>
-      </article>
-
-      <div class="stages-card holland-overview mt-3">
-        <header class="holland-overview__header">
-          <h2 class="holland-overview__title">Trường đại học, cao đẳng</h2>
-          <p class="holland-overview__lead">
-            Dưới đây là danh sách các trường đại học, cao đẳng tuyển sinh ngành học mà bạn quan tâm.
-          </p>
-          <p class="holland-overview__lead">Lọc theo khu vực, tên trường và loại cơ sở.</p>
-        </header>
-
-        <form class="nhom-filter" @submit.prevent="timKiem">
-          <div class="nhom-filter__field nhom-filter__field--ten">
-            <label class="nhom-filter__label" for="loc-ten-truong">Tên</label>
-            <CustomInput id="loc-ten-truong" v-model="ten" placeholder="Nhập tên trường" clearable />
-          </div>
-          <div class="nhom-filter__field nhom-filter__field--khu-vuc">
-            <label class="nhom-filter__label" for="loc-khu-vuc">Khu vực</label>
-            <CustomSelect id="loc-khu-vuc" v-model="khuVuc" class="nhom-filter__select" filterable clearable placeholder="Tất cả khu vực">
-              <CustomOption v-for="item in KHU_VUC" :key="item" :label="item" :value="item" />
-            </CustomSelect>
-          </div>
-          <div class="nhom-filter__field nhom-filter__field--loai">
-            <label class="nhom-filter__label" for="loc-loai-co-so">Loại cơ sở</label>
-            <CustomSelect id="loc-loai-co-so" v-model="loai" class="nhom-filter__select" filterable clearable placeholder="Tất cả loại">
-              <CustomOption v-for="item in LOAI_CO_SO" :key="item" :label="item" :value="item" />
-            </CustomSelect>
-          </div>
-          <div class="nhom-filter__actions">
-            <CustomButton type="primary" native-type="submit">Tìm kiếm</CustomButton>
-            <CustomTooltip
-              content="Chọn từ 2 đến 3 trường để so sánh."
-              placement="top"
-              :disabled="coTheSoSanh"
-            >
-              <span class="nhom-filter__tooltip">
-                <CustomBadge :value="truongDaChon.length" :max="SO_TRUONG_TOI_DA">
-                  <CustomButton type="primary" :disabled="!coTheSoSanh" @click="soSanhMo = true">
-                    So sánh
-                  </CustomButton>
-                </CustomBadge>
-              </span>
-            </CustomTooltip>
-            <CustomButton type="success" @click="diTruongPhuHop">Trường phù hợp</CustomButton>
-          </div>
-        </form>
-
-        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
-        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải trường…</p>
-        <p v-else-if="!ketQua.length" class="holland-note holland-note__text">Không có trường khớp bộ lọc.</p>
-        <div v-else class="row g-3">
-          <div v-for="item in truongTrang" :key="item.id" class="col-12 col-md-6 col-lg-3">
-            <article class="nhom-card h-100" :class="{ 'is-selected': daChon(item) }" @click="doiChon(item)">
-              <p class="nhom-card__code">{{ item.ma_truong }}</p>
-              <label class="nhom-card__check" @click.stop>
-                <input
-                  type="checkbox"
-                  :checked="daChon(item)"
-                  :disabled="!daChon(item) && truongDaChon.length >= SO_TRUONG_TOI_DA"
-                  :aria-label="`Chọn ${item.ten_truong}`"
-                  @change="doiChon(item)"
-                />
-                <span class="nhom-card__mark" aria-hidden="true"></span>
-              </label>
-              <div class="nhom-card__main">
-                <CustomTooltip
-                  :content="loaiCua(item) || 'Cơ sở đào tạo'"
-                  placement="top"
-                  :disabled="!biCat(item.id, 'loai')"
-                >
-                  <p v-mot-hang="khoaTran(item.id, 'loai')" class="nhom-card__line nhom-card__field">
-                    {{ loaiCua(item) || 'Cơ sở đào tạo' }}
-                  </p>
-                </CustomTooltip>
-                <!-- <div v-if="linhVucCua(item).length" class="nhom-card__tags">
-                  <CustomTag v-for="tag in linhVucCua(item)" :key="tag" effect="plain">{{ tag }}</CustomTag>
-                </div> -->
-                <CustomTooltip :content="item.ten_truong" placement="top" :disabled="!biCat(item.id, 'ten')">
-                  <h3 v-mot-hang="khoaTran(item.id, 'ten')" class="nhom-card__line nhom-card__name">
-                    {{ item.ten_truong }}
-                  </h3>
-                </CustomTooltip>
-                <CustomTooltip :content="diaChi(item)" placement="top" :disabled="!item.dia_chi_tru_so || !biCat(item.id, 'diachi')">
-                  <p class="nhom-card__addr">
-                    <CustomIcon class="nhom-card__pin" aria-hidden="true"><Location /></CustomIcon>
-                    <span v-mot-hang="khoaTran(item.id, 'diachi')" class="nhom-card__line nhom-card__meta">
-                      {{ diaChi(item) }}
-                    </span>
-                  </p>
-                </CustomTooltip>
-                <CustomTooltip
-                  :content="item.website || 'Chưa cập nhật'"
-                  placement="top"
-                  :disabled="!item.website || !biCat(item.id, 'web')"
-                >
-                  <p class="nhom-card__addr">
-                    <CustomIcon class="nhom-card__pin" aria-hidden="true"><Link /></CustomIcon>
-                    <a
-                      v-if="item.website"
-                      v-mot-hang="khoaTran(item.id, 'web')"
-                      class="nhom-card__line nhom-card__web"
-                      :href="hrefWebsite(item.website)"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      @click.stop
-                    >
-                      {{ item.website }}
-                    </a>
-                    <span v-else class="nhom-card__line nhom-card__meta">Chưa cập nhật</span>
-                  </p>
-                </CustomTooltip>
-                <!-- <CustomTooltip :content="diaDiem(item)" placement="top" :disabled="!biCat(item.id, 'dia')">
-                  <p v-mot-hang="khoaTran(item.id, 'dia')" class="nhom-card__line nhom-card__meta">
-                    {{ diaDiem(item) }}
-                  </p>
-                </CustomTooltip> -->
-                <CustomTooltip
-                  v-if="item.gioi_thieu_ngan"
-                  :content="item.gioi_thieu_ngan"
-                  placement="top"
-                  :disabled="!biCat(item.id, 'gioi')"
-                >
-                  <!-- <p v-mot-hang="khoaTran(item.id, 'gioi')" class="nhom-card__line nhom-card__text">
-                    {{ item.gioi_thieu_ngan }}
-                  </p> -->
-                </CustomTooltip>
-              </div>
-            </article>
-          </div>
-        </div>
-        <div v-if="!dangTai && !loi && ketQua.length" class="nhom-pager">
-          <CustomPagination
-            v-model:current-page="trang"
-            v-model:page-size="soMoiTrang"
-            :total="ketQua.length"
-            layout="total, sizes, prev, pager, next"
-            background
-          />
-        </div>
-      </div>
-        </div>
-
-        <div class="col-lg-3">
-          <div class="paths-card">
-            <h2 id="nganh-cung-nhom" class="h4 mb-2">Ngành cùng nhóm</h2>
-            <p v-if="tenNhom" class="side-lead">{{ tenNhom }}</p>
-            <p v-if="loiCungNhom" class="holland-note holland-note__text mb-0">{{ loiCungNhom }}</p>
-            <p v-else-if="dangTaiCungNhom || (dangTaiNganh && !nganhCungNhom.length)" class="side-lead mb-0">
-              Đang tải ngành…
-            </p>
-            <p v-else-if="!nganhCungNhom.length" class="side-lead mb-0">Chưa có ngành trong nhóm này.</p>
-            <div v-else class="d-flex flex-column gap-2" aria-labelledby="nganh-cung-nhom">
-              <button
-                v-for="item in nganhCungNhom"
-                :key="item.id"
-                type="button"
-                class="switch-card side-nganh"
-                :class="{ 'is-selected': item.ma_nganh === maNganh }"
-                @click="chonNganhKhac(item)"
-              >
-                <span class="side-nganh__code">{{ item.ma_nganh }}</span>
-                <span class="switch-card__body">
-                  <span class="switch-card__name">{{ item.ten_nganh }}</span>
-                  <span v-if="item.ten_tieng_anh" class="switch-card__text">{{ item.ten_tieng_anh }}</span>
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <CustomDialog class="chon-truong-dialog" v-model="soSanhMo" title="So sánh trường" :width="960" height="70vh">
-      <div class="so-sanh-wrap">
-        <table class="so-sanh so-sanh--truong">
-          <thead>
-            <tr>
-              <th>Thông tin</th>
-              <th v-for="item in truongDaChon" :key="item.id">{{ item.ten_truong }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="hang in hangSoSanh" :key="hang.label">
-              <th>{{ hang.label }}</th>
-              <td v-for="item in truongDaChon" :key="item.id">
-                <a
-                  v-if="hang.link && hang.lay(item)"
-                  :href="hang.lay(item)"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {{ hang.lay(item) }}
-                </a>
-                <template v-else>{{ hang.lay(item) || '—' }}</template>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </CustomDialog>
-  </section>
-</template>
-

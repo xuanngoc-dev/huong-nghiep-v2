@@ -1,3 +1,7 @@
+<template>
+  <div ref="khung" class="bieu-do" />
+</template>
+
 <script setup>
 /**
  * BieuDoDuong — biểu đồ đường / vùng theo thời gian.
@@ -45,10 +49,6 @@ function taoCauHinh() {
 
 const { khung } = useApexChart(taoCauHinh, () => [props.series, props.categories, props.type, props.colors])
 </script>
-
-<template>
-  <div ref="khung" class="bieu-do" />
-</template>
 
 <style scoped>
 .bieu-do {

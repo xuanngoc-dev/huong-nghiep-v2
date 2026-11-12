@@ -1,3 +1,11 @@
+<template>
+  <el-icon v-bind="$attrs">
+    <template v-for="(_, name) in slots" #[name]="slotData">
+      <slot :name="name" v-bind="slotData || {}" />
+    </template>
+  </el-icon>
+</template>
+
 <script setup>
 /**
  * CustomIcon — wrapper el-icon.
@@ -8,11 +16,3 @@ defineOptions({ name: 'CustomIcon', inheritAttrs: false })
 
 const slots = useSlots()
 </script>
-
-<template>
-  <el-icon v-bind="$attrs">
-    <template v-for="(_, name) in slots" #[name]="slotData">
-      <slot :name="name" v-bind="slotData || {}" />
-    </template>
-  </el-icon>
-</template>

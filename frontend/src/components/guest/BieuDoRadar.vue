@@ -1,3 +1,7 @@
+<template>
+  <div ref="khung" class="radar-chart" />
+</template>
+
 <script setup>
 import ApexCharts from 'apexcharts'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -141,10 +145,6 @@ onBeforeUnmount(() => {
   bieuDo = null
 })
 </script>
-
-<template>
-  <div ref="khung" class="radar-chart" />
-</template>
 
 <style scoped>
 .radar-chart {

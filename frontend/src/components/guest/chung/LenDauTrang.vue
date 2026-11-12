@@ -1,3 +1,15 @@
+<template>
+  <button
+    v-show="visible"
+    type="button"
+    class="guest-fab"
+    aria-label="Lên đầu trang"
+    @click="lenDauTrang"
+  >
+    <el-icon :size="22"><Top /></el-icon>
+  </button>
+</template>
+
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 
@@ -22,15 +34,3 @@ onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
 })
 </script>
-
-<template>
-  <button
-    v-show="visible"
-    type="button"
-    class="guest-fab"
-    aria-label="Lên đầu trang"
-    @click="lenDauTrang"
-  >
-    <el-icon :size="22"><Top /></el-icon>
-  </button>
-</template>

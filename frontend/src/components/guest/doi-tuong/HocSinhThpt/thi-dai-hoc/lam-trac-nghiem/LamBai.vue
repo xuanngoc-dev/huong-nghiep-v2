@@ -1,3 +1,97 @@
+<template>
+  <section ref="khuVucBai" class="quiz-flow" :aria-busy="dangDoiPhan">
+    <div class="container-fluid">
+      <div class="holland-overview">
+        <header class="holland-overview__header">
+          <h2 class="holland-overview__title">Làm trắc nghiệm Holland</h2>
+          <p class="holland-overview__lead">Chọn mức độ phù hợp với bạn theo cảm nhận đầu tiên.</p>
+        </header>
+
+        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
+
+        <template v-else-if="cauHoiLoai.length">
+          <BuocLamBai :ssid="ssid" :buoc="buoc" :hien-tai="loaiCauHoiId" />
+          <div class="quiz-list" :class="{ 'is-switching': dangDoiPhan }">
+            <article
+              v-for="(cau, cauIndex) in cauHoiLoai"
+              :key="cau.id"
+              :ref="(el) => ganTheCau(cauIndex, el)"
+              class="holland-panel quiz-question"
+              :class="{ 'is-active': cauIndex === chiSo }"
+              tabindex="-1"
+              @click="chonCau(cauIndex, false)"
+            >
+              <h3 class="holland-panel__title">Câu {{ cauIndex + 1 }}. {{ cau.noi_dung_cau_hoi }}</h3>
+              <div
+                class="quiz-choices"
+                role="radiogroup"
+                :aria-label="`Câu ${cauIndex + 1}`"
+                :aria-disabled="khoaTraLoi"
+              >
+                <label
+                  v-for="(answer, index) in cau.cau_tra_loi"
+                  :key="answer.id"
+                  class="quiz-choice"
+                  :class="{ 'is-selected': daChon[cau.id] === answer.id, 'is-locked': khoaTraLoi }"
+                >
+                  <input
+                    class="quiz-choice__radio"
+                    type="radio"
+                    :name="`cau-${cau.id}`"
+                    :value="answer.id"
+                    :checked="daChon[cau.id] === answer.id"
+                    :disabled="khoaTraLoi"
+                    @change="chonDapAn(cau, answer.id)"
+                  />
+                  <span class="quiz-choice__num">{{ index + 1 }}</span>
+                  <span class="quiz-choice__text">{{ answer.noi_dung_cau_tra_loi }}</span>
+                </label>
+              </div>
+            </article>
+          </div>
+
+          <div class="quiz-nav">
+            <CustomButton
+              class="quiz-nav__btn"
+              plain
+              type="primary"
+              :disabled="viTriLoai <= 0 || dangDoiPhan || dangPhanTich"
+              :loading="nutDangCho === 'lui'"
+              @click="lui"
+            >
+              Phần trước
+            </CustomButton>
+            <span class="quiz-progress">Đã trả lời {{ daTraLoi }}/{{ cauHoiLoai.length }}</span>
+            <CustomButton
+              class="quiz-nav__btn"
+              type="primary"
+              :disabled="dangPhanTich || dangDoiPhan"
+              :loading="dangPhanTich || nutDangCho === 'tiep'"
+              @click="tiep"
+            >
+              {{ nutTiep }}
+            </CustomButton>
+          </div>
+        </template>
+
+        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải bài làm…</p>
+      </div>
+    </div>
+    <LoadingSuyNghi :visible="dangPhanTich" />
+    <Transition name="quiz-switch">
+      <div
+        v-if="dangDoiPhan"
+        class="quiz-switch"
+        role="status"
+        aria-live="polite"
+        aria-label="Đang chuyển phần"
+      >
+        <span class="quiz-switch__spin" />
+      </div>
+    </Transition>
+  </section>
+</template>
+
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -299,100 +393,6 @@ async function taiDeBai(value) {
 watch(ssid, taiDeBai, { immediate: true })
 watch([phien, loaiCauHoiId], sapXepNgauNhien)
 </script>
-
-<template>
-  <section ref="khuVucBai" class="quiz-flow" :aria-busy="dangDoiPhan">
-    <div class="container-fluid">
-      <div class="holland-overview">
-        <header class="holland-overview__header">
-          <h2 class="holland-overview__title">Làm trắc nghiệm Holland</h2>
-          <p class="holland-overview__lead">Chọn mức độ phù hợp với bạn theo cảm nhận đầu tiên.</p>
-        </header>
-
-        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
-
-        <template v-else-if="cauHoiLoai.length">
-          <BuocLamBai :ssid="ssid" :buoc="buoc" :hien-tai="loaiCauHoiId" />
-          <div class="quiz-list" :class="{ 'is-switching': dangDoiPhan }">
-            <article
-              v-for="(cau, cauIndex) in cauHoiLoai"
-              :key="cau.id"
-              :ref="(el) => ganTheCau(cauIndex, el)"
-              class="holland-panel quiz-question"
-              :class="{ 'is-active': cauIndex === chiSo }"
-              tabindex="-1"
-              @click="chonCau(cauIndex, false)"
-            >
-              <h3 class="holland-panel__title">Câu {{ cauIndex + 1 }}. {{ cau.noi_dung_cau_hoi }}</h3>
-              <div
-                class="quiz-choices"
-                role="radiogroup"
-                :aria-label="`Câu ${cauIndex + 1}`"
-                :aria-disabled="khoaTraLoi"
-              >
-                <label
-                  v-for="(answer, index) in cau.cau_tra_loi"
-                  :key="answer.id"
-                  class="quiz-choice"
-                  :class="{ 'is-selected': daChon[cau.id] === answer.id, 'is-locked': khoaTraLoi }"
-                >
-                  <input
-                    class="quiz-choice__radio"
-                    type="radio"
-                    :name="`cau-${cau.id}`"
-                    :value="answer.id"
-                    :checked="daChon[cau.id] === answer.id"
-                    :disabled="khoaTraLoi"
-                    @change="chonDapAn(cau, answer.id)"
-                  />
-                  <span class="quiz-choice__num">{{ index + 1 }}</span>
-                  <span class="quiz-choice__text">{{ answer.noi_dung_cau_tra_loi }}</span>
-                </label>
-              </div>
-            </article>
-          </div>
-
-          <div class="quiz-nav">
-            <CustomButton
-              class="quiz-nav__btn"
-              plain
-              type="primary"
-              :disabled="viTriLoai <= 0 || dangDoiPhan || dangPhanTich"
-              :loading="nutDangCho === 'lui'"
-              @click="lui"
-            >
-              Phần trước
-            </CustomButton>
-            <span class="quiz-progress">Đã trả lời {{ daTraLoi }}/{{ cauHoiLoai.length }}</span>
-            <CustomButton
-              class="quiz-nav__btn"
-              type="primary"
-              :disabled="dangPhanTich || dangDoiPhan"
-              :loading="dangPhanTich || nutDangCho === 'tiep'"
-              @click="tiep"
-            >
-              {{ nutTiep }}
-            </CustomButton>
-          </div>
-        </template>
-
-        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải bài làm…</p>
-      </div>
-    </div>
-    <LoadingSuyNghi :visible="dangPhanTich" />
-    <Transition name="quiz-switch">
-      <div
-        v-if="dangDoiPhan"
-        class="quiz-switch"
-        role="status"
-        aria-live="polite"
-        aria-label="Đang chuyển phần"
-      >
-        <span class="quiz-switch__spin" />
-      </div>
-    </Transition>
-  </section>
-</template>
 
 <style src="./quiz-type.scss"></style>
 

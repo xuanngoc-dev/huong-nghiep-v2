@@ -1,3 +1,29 @@
+<template>
+  <ol class="holland-path quiz-steps">
+    <li
+      v-for="(step, index) in buoc"
+      :key="step.id"
+      class="holland-path__item"
+      :class="{
+        'is-current': trangThai(step) === 'dang',
+        'is-done': trangThai(step) === 'xong',
+      }"
+    >
+      <button type="button" class="holland-path__link" :disabled="biKhoa(index)" @click="mo(step, index)">
+        <span class="holland-path__index">
+          <template v-if="trangThai(step) === 'dang'">
+            <span class="quiz-ripple" aria-hidden="true" />
+            <span class="quiz-ripple quiz-ripple--mid" aria-hidden="true" />
+            <span class="quiz-ripple quiz-ripple--late" aria-hidden="true" />
+          </template>
+          {{ index + 1 }}
+        </span>
+        <span class="holland-path__label">{{ step.ten }}</span>
+      </button>
+    </li>
+  </ol>
+</template>
+
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
 
@@ -53,32 +79,6 @@ function mo(step, index) {
   })
 }
 </script>
-
-<template>
-  <ol class="holland-path quiz-steps">
-    <li
-      v-for="(step, index) in buoc"
-      :key="step.id"
-      class="holland-path__item"
-      :class="{
-        'is-current': trangThai(step) === 'dang',
-        'is-done': trangThai(step) === 'xong',
-      }"
-    >
-      <button type="button" class="holland-path__link" :disabled="biKhoa(index)" @click="mo(step, index)">
-        <span class="holland-path__index">
-          <template v-if="trangThai(step) === 'dang'">
-            <span class="quiz-ripple" aria-hidden="true" />
-            <span class="quiz-ripple quiz-ripple--mid" aria-hidden="true" />
-            <span class="quiz-ripple quiz-ripple--late" aria-hidden="true" />
-          </template>
-          {{ index + 1 }}
-        </span>
-        <span class="holland-path__label">{{ step.ten }}</span>
-      </button>
-    </li>
-  </ol>
-</template>
 
 <style scoped>
 .holland-path__link {

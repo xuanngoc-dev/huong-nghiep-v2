@@ -1,9 +1,3 @@
-<script setup>
-import nhaTruongImage from '@/assets/guest/nha-truong.jpg'
-import nhaTuyenDungImage from '@/assets/guest/nha-tuyen-dung.jpg'
-import { employerBenefits, schoolBenefits } from '@/data/landing'
-</script>
-
 <template>
   <section id="to-chuc" class="landing__section landing__section--alt" aria-labelledby="institutions-title">
     <div class="container-fluid">
@@ -54,3 +48,9 @@ import { employerBenefits, schoolBenefits } from '@/data/landing'
     </div>
   </section>
 </template>
+
+<script setup>
+import nhaTruongImage from '@/assets/guest/nha-truong.jpg'
+import nhaTuyenDungImage from '@/assets/guest/nha-tuyen-dung.jpg'
+import { employerBenefits, schoolBenefits } from '@/data/landing'
+</script>

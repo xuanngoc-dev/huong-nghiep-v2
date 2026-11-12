@@ -1,3 +1,19 @@
+<template>
+  <el-form
+    ref="formRef"
+    :model="props.model"
+    :rules="props.rules"
+    :label-position="props.labelPosition"
+    :label-width="props.labelWidth"
+    v-bind="$attrs"
+    :size="resolvedSize"
+  >
+    <template v-for="(_, name) in slots" #[name]="slotData">
+      <slot :name="name" v-bind="slotData || {}" />
+    </template>
+  </el-form>
+</template>
+
 <script setup>
 /**
  * CustomForm — wrapper el-form.
@@ -28,19 +44,3 @@ defineExpose({
   scrollToField: (...args) => formRef.value?.scrollToField?.(...args),
 })
 </script>
-
-<template>
-  <el-form
-    ref="formRef"
-    :model="props.model"
-    :rules="props.rules"
-    :label-position="props.labelPosition"
-    :label-width="props.labelWidth"
-    v-bind="$attrs"
-    :size="resolvedSize"
-  >
-    <template v-for="(_, name) in slots" #[name]="slotData">
-      <slot :name="name" v-bind="slotData || {}" />
-    </template>
-  </el-form>
-</template>

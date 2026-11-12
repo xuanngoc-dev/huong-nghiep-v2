@@ -1,15 +1,3 @@
-<script setup>
-// Khung chung cho màn đăng nhập/đăng ký: desktop có banner ảnh bên trái và form bên phải,
-// mobile chỉ hiển thị form. Nội dung form truyền qua slot mặc định.
-defineProps({
-  image: { type: String, required: true },
-  eyebrow: { type: String, default: 'Định hướng nghề' },
-  title: { type: String, required: true },
-  text: { type: String, default: '' },
-  highlights: { type: Array, default: () => [] },
-})
-</script>
-
 <template>
   <div class="auth-page container-fluid">
     <div class="row min-vh-100">
@@ -51,6 +39,18 @@ defineProps({
     </div>
   </div>
 </template>
+
+<script setup>
+// Khung chung cho màn đăng nhập/đăng ký: desktop có banner ảnh bên trái và form bên phải,
+// mobile chỉ hiển thị form. Nội dung form truyền qua slot mặc định.
+defineProps({
+  image: { type: String, required: true },
+  eyebrow: { type: String, default: 'Định hướng nghề' },
+  title: { type: String, required: true },
+  text: { type: String, default: '' },
+  highlights: { type: Array, default: () => [] },
+})
+</script>
 
 <style scoped>
 /* Phong cách "kính tối": nền tối có lưới chấm và luồng sáng, thẻ form kính mờ viền phát sáng,

@@ -1,126 +1,3 @@
-<script setup>
-import { onMounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { fetchPhienKhaoSatQuanTri } from '@/api/phienKhaoSat'
-
-const TRANG_THAI_OPTIONS = [
-  { value: 'hoan-thanh', label: 'Hoàn thành' },
-  { value: 'dang-lam', label: 'Chưa hoàn thành' },
-]
-const DOI_TUONG_OPTIONS = [
-  { value: 'thanh-vien', label: 'Thành viên' },
-  { value: 'khach', label: 'Khách' },
-]
-
-const router = useRouter()
-const loading = ref(false)
-const rows = ref([])
-const total = ref(0)
-const page = ref(1)
-const pageSize = ref(20)
-
-const filters = reactive(emptyFilters())
-
-function emptyFilters() {
-  return {
-    q: '',
-    nguoi_tham_gia: '',
-    doi_tuong: '',
-    trang_thai: '',
-    khoang_ngay: null,
-  }
-}
-
-function errorMessage(error, fallback) {
-  const detail = error?.response?.data?.detail
-  if (typeof detail === 'string') return detail
-  if (Array.isArray(detail) && detail[0]?.msg) return detail[0].msg
-  return fallback
-}
-
-function formatThoiGian(value) {
-  if (!value) return '—'
-  return new Date(value).toLocaleString('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
-
-function tienDo(row) {
-  if (!row.so_cau_hoi) return 0
-  return Math.round((row.so_da_tra_loi / row.so_cau_hoi) * 100)
-}
-
-function rowIndex(index) {
-  return (page.value - 1) * pageSize.value + index + 1
-}
-
-async function load() {
-  loading.value = true
-  try {
-    const params = {
-      page: page.value,
-      page_size: pageSize.value,
-    }
-    if (filters.q.trim()) params.q = filters.q.trim()
-    if (filters.nguoi_tham_gia.trim()) params.nguoi_tham_gia = filters.nguoi_tham_gia.trim()
-    if (filters.doi_tuong) params.doi_tuong = filters.doi_tuong
-    if (filters.trang_thai) params.trang_thai = filters.trang_thai
-    if (filters.khoang_ngay?.length === 2) {
-      ;[params.tu_ngay, params.den_ngay] = filters.khoang_ngay
-    }
-    const data = await fetchPhienKhaoSatQuanTri(params)
-    rows.value = data.items
-    total.value = data.total
-  } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không tải được lịch sử trắc nghiệm'))
-  } finally {
-    loading.value = false
-  }
-}
-
-function onSearch() {
-  if (page.value !== 1) {
-    page.value = 1
-    return
-  }
-  load()
-}
-
-function onPageChange() {
-  load()
-}
-
-function onSizeChange() {
-  if (page.value !== 1) {
-    page.value = 1
-    return
-  }
-  load()
-}
-
-// Trang kết quả nằm ở giao diện khách, mở tab mới để không rời trang quản trị.
-function moTab(name, row) {
-  const href = router.resolve({ name, params: { ssid: row.ssid } }).href
-  window.open(href, '_blank', 'noopener')
-}
-
-async function copySsid(row) {
-  try {
-    await navigator.clipboard.writeText(row.ssid)
-    ElMessage.success('Đã sao chép mã phiên')
-  } catch {
-    ElMessage.error('Không sao chép được mã phiên')
-  }
-}
-
-onMounted(load)
-</script>
-
 <template>
   <div class="catalog-page">
   <CustomCard shadow="never" class="catalog-card">
@@ -285,26 +162,135 @@ onMounted(load)
   </div>
 </template>
 
+<script setup>
+import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { fetchPhienKhaoSatQuanTri } from '@/api/phienKhaoSat'
+
+const TRANG_THAI_OPTIONS = [
+  { value: 'hoan-thanh', label: 'Hoàn thành' },
+  { value: 'dang-lam', label: 'Chưa hoàn thành' },
+]
+const DOI_TUONG_OPTIONS = [
+  { value: 'thanh-vien', label: 'Thành viên' },
+  { value: 'khach', label: 'Khách' },
+]
+
+const router = useRouter()
+const loading = ref(false)
+const rows = ref([])
+const total = ref(0)
+const page = ref(1)
+const pageSize = ref(20)
+
+const filters = reactive(emptyFilters())
+
+function emptyFilters() {
+  return {
+    q: '',
+    nguoi_tham_gia: '',
+    doi_tuong: '',
+    trang_thai: '',
+    khoang_ngay: null,
+  }
+}
+
+function errorMessage(error, fallback) {
+  const detail = error?.response?.data?.detail
+  if (typeof detail === 'string') return detail
+  if (Array.isArray(detail) && detail[0]?.msg) return detail[0].msg
+  return fallback
+}
+
+function formatThoiGian(value) {
+  if (!value) return '—'
+  return new Date(value).toLocaleString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+function tienDo(row) {
+  if (!row.so_cau_hoi) return 0
+  return Math.round((row.so_da_tra_loi / row.so_cau_hoi) * 100)
+}
+
+function rowIndex(index) {
+  return (page.value - 1) * pageSize.value + index + 1
+}
+
+async function load() {
+  loading.value = true
+  try {
+    const params = {
+      page: page.value,
+      page_size: pageSize.value,
+    }
+    if (filters.q.trim()) params.q = filters.q.trim()
+    if (filters.nguoi_tham_gia.trim()) params.nguoi_tham_gia = filters.nguoi_tham_gia.trim()
+    if (filters.doi_tuong) params.doi_tuong = filters.doi_tuong
+    if (filters.trang_thai) params.trang_thai = filters.trang_thai
+    if (filters.khoang_ngay?.length === 2) {
+      ;[params.tu_ngay, params.den_ngay] = filters.khoang_ngay
+    }
+    const data = await fetchPhienKhaoSatQuanTri(params)
+    rows.value = data.items
+    total.value = data.total
+  } catch (error) {
+    ElMessage.error(errorMessage(error, 'Không tải được lịch sử trắc nghiệm'))
+  } finally {
+    loading.value = false
+  }
+}
+
+function onSearch() {
+  if (page.value !== 1) {
+    page.value = 1
+    return
+  }
+  load()
+}
+
+function onPageChange() {
+  load()
+}
+
+function onSizeChange() {
+  if (page.value !== 1) {
+    page.value = 1
+    return
+  }
+  load()
+}
+
+// Trang kết quả nằm ở giao diện khách, mở tab mới để không rời trang quản trị.
+function moTab(name, row) {
+  const href = router.resolve({ name, params: { ssid: row.ssid } }).href
+  window.open(href, '_blank', 'noopener')
+}
+
+async function copySsid(row) {
+  try {
+    await navigator.clipboard.writeText(row.ssid)
+    ElMessage.success('Đã sao chép mã phiên')
+  } catch {
+    ElMessage.error('Không sao chép được mã phiên')
+  }
+}
+
+onMounted(load)
+</script>
+
 <style scoped>
-.catalog-page {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.catalog-card {
-  border-radius: 12px;
-}
-
 .filters {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-}
-
-.filter-search {
-  width: 200px;
 }
 
 .filter-code {
@@ -319,37 +305,9 @@ onMounted(load)
   max-width: 240px;
 }
 
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.toolbar__title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--el-text-color-primary);
-}
-
 .toolbar__count {
   color: var(--el-text-color-secondary);
   font-size: 13px;
-}
-
-.cell-stack {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  line-height: 1.4;
-}
-
-.cell-sub {
-  color: var(--el-text-color-secondary);
-  font-size: 12px;
 }
 
 .cell-ssid {
@@ -359,25 +317,7 @@ onMounted(load)
   font-family: ui-monospace, Consolas, monospace;
 }
 
-.row-actions {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.row-actions :deep(.el-icon) {
-  font-size: 20px !important;
-}
-
-.pager {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
-}
-
 @media (max-width: 640px) {
-  .filter-search,
   .filter-code,
   .filter-select,
   .filter-date {

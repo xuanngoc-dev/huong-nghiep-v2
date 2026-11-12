@@ -1,11 +1,3 @@
-<script setup>
-defineOptions({ name: 'NhaTuyenDung' })
-
-defineProps({
-  audience: { type: Object, required: true },
-})
-</script>
-
 <template>
   <section class="py-5">
     <div class="container">
@@ -15,3 +7,11 @@ defineProps({
     </div>
   </section>
 </template>
+
+<script setup>
+defineOptions({ name: 'NhaTuyenDung' })
+
+defineProps({
+  audience: { type: Object, required: true },
+})
+</script>

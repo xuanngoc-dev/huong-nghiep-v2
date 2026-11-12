@@ -1,3 +1,17 @@
+<template>
+  <div class="lp-image" :class="{ 'is-loaded': loaded }" :style="{ aspectRatio: ratio }">
+    <img
+      :src="current"
+      :alt="alt"
+      :loading="eager ? 'eager' : 'lazy'"
+      decoding="async"
+      @load="loaded = true"
+      @error="onError"
+    />
+    <slot />
+  </div>
+</template>
+
 <script setup>
 import { ref, watch } from 'vue'
 
@@ -28,17 +42,3 @@ function onError() {
   loaded.value = true
 }
 </script>
-
-<template>
-  <div class="lp-image" :class="{ 'is-loaded': loaded }" :style="{ aspectRatio: ratio }">
-    <img
-      :src="current"
-      :alt="alt"
-      :loading="eager ? 'eager' : 'lazy'"
-      decoding="async"
-      @load="loaded = true"
-      @error="onError"
-    />
-    <slot />
-  </div>
-</template>

@@ -1,3 +1,13 @@
+<template>
+  <HocSinhThcs v-if="audience?.ma === 'THCS'" :audience="audience" />
+  <HocSinhThpt v-else-if="audience?.ma === 'THPT'" :audience="audience" />
+  <PhuHuynh v-else-if="audience?.ma === 'PH'" :audience="audience" />
+  <NhaTruong v-else-if="audience?.ma === 'NTR'" :audience="audience" />
+  <SinhVien v-else-if="audience?.ma === 'SV'" :audience="audience" />
+  <ThanhNienNgoaiTruong v-else-if="audience?.ma === 'TN'" :audience="audience" />
+  <NhaTuyenDung v-else-if="audience?.ma === 'NTD'" :audience="audience" />
+</template>
+
 <script setup>
 import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -22,13 +32,3 @@ watch(
   { immediate: true },
 )
 </script>
-
-<template>
-  <HocSinhThcs v-if="audience?.ma === 'THCS'" :audience="audience" />
-  <HocSinhThpt v-else-if="audience?.ma === 'THPT'" :audience="audience" />
-  <PhuHuynh v-else-if="audience?.ma === 'PH'" :audience="audience" />
-  <NhaTruong v-else-if="audience?.ma === 'NTR'" :audience="audience" />
-  <SinhVien v-else-if="audience?.ma === 'SV'" :audience="audience" />
-  <ThanhNienNgoaiTruong v-else-if="audience?.ma === 'TN'" :audience="audience" />
-  <NhaTuyenDung v-else-if="audience?.ma === 'NTD'" :audience="audience" />
-</template>

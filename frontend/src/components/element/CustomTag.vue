@@ -1,3 +1,11 @@
+<template>
+  <el-tag v-bind="$attrs" :size="resolvedSize">
+    <template v-for="(_, name) in slots" #[name]="slotData">
+      <slot :name="name" v-bind="slotData || {}" />
+    </template>
+  </el-tag>
+</template>
+
 <script setup>
 /**
  * CustomTag — wrapper el-tag.
@@ -11,11 +19,3 @@ defineOptions({ name: 'CustomTag', inheritAttrs: false })
 const slots = useSlots()
 const { resolvedSize } = useResponsiveComponentSize()
 </script>
-
-<template>
-  <el-tag v-bind="$attrs" :size="resolvedSize">
-    <template v-for="(_, name) in slots" #[name]="slotData">
-      <slot :name="name" v-bind="slotData || {}" />
-    </template>
-  </el-tag>
-</template>

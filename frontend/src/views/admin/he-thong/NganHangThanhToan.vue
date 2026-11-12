@@ -1,3 +1,293 @@
+<template>
+  <div class="catalog-page">
+  <CustomCard shadow="never" class="catalog-card">
+    <div class="filters">
+      <CustomInput
+        v-model="filters.q"
+        class="filter-search"
+        placeholder="Tìm ngân hàng, số tài khoản, chủ tài khoản"
+        clearable
+        @keyup.enter="onSearch"
+        @clear="onSearch"
+      >
+        <template #prefix>
+          <CustomIcon><Search /></CustomIcon>
+        </template>
+      </CustomInput>
+      <CustomSelect
+        v-model="filters.ngan_hang"
+        class="filter-bank"
+        placeholder="Ngân hàng"
+        filterable
+        clearable
+        @change="onSearch"
+      >
+        <CustomOption
+          v-for="item in nganHangOptions"
+          :key="item.ten_ngan_hang_viet_tat"
+          :label="item.ten_ngan_hang_viet_tat"
+          :value="item.ten_ngan_hang_viet_tat"
+        >
+          <span class="bank-option">
+            <strong>{{ item.ten_ngan_hang_viet_tat }}</strong>
+            <small>{{ item.ten_ngan_hang }}</small>
+          </span>
+        </CustomOption>
+      </CustomSelect>
+      <CustomSelect
+        v-model="filters.co_logo"
+        class="filter-logo"
+        placeholder="Logo"
+        clearable
+        @change="onSearch"
+      >
+        <CustomOption label="Đã có logo" :value="true" />
+        <CustomOption label="Chưa có logo" :value="false" />
+      </CustomSelect>
+      <CustomSelect
+        v-model="filters.trang_thai"
+        class="filter-status"
+        placeholder="Trạng thái"
+        clearable
+        @change="onSearch"
+      >
+        <CustomOption label="Hoạt động" :value="1" />
+        <CustomOption label="Ngừng sử dụng" :value="0" />
+      </CustomSelect>
+      <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+      <CustomButton @click="onResetFilters">
+        <CustomIcon><RefreshLeft /></CustomIcon>
+        <span>Đặt lại</span>
+      </CustomButton>
+    </div>
+  </CustomCard>
+
+  <CustomCard shadow="never" class="catalog-card">
+    <div class="toolbar">
+      <h2 class="toolbar__title">Danh sách ngân hàng thanh toán</h2>
+      <div class="toolbar__actions">
+        <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
+          <CustomButton
+            type="danger"
+            plain
+            :disabled="!selectedRows.length"
+            :loading="deleting"
+            @click="onDeleteSelected"
+          >
+            <CustomIcon><Delete /></CustomIcon>
+            Xóa
+          </CustomButton>
+        </CustomBadge>
+        <CustomButton type="primary" @click="openCreate">
+          <CustomIcon><Plus /></CustomIcon>
+          Thêm ngân hàng
+        </CustomButton>
+      </div>
+    </div>
+
+    <CustomTable
+      ref="tableRef"
+      :loading="loading"
+      :data="rows"
+      row-key="id"
+      stripe
+      border
+      @selection-change="onSelectionChange"
+    >
+      <CustomTableColumn type="selection" width="48" reserve-selection align="center" />
+      <CustomTableColumn label="STT" width="72" align="center">
+        <template #default="{ $index }">{{ rowIndex($index) }}</template>
+      </CustomTableColumn>
+      <CustomTableColumn label="Logo" width="96" align="center">
+        <template #default="{ row }">
+          <img
+            v-if="row.logo_ngan_hang"
+            class="bank-logo"
+            :src="apiAssetUrl(row.logo_ngan_hang)"
+            :alt="`Logo ${row.ten_ngan_hang_viet_tat}`"
+          />
+          <span v-else class="bank-logo bank-logo--text">{{ row.ten_ngan_hang_viet_tat.slice(0, 4) }}</span>
+        </template>
+      </CustomTableColumn>
+      <CustomTableColumn label="Ngân hàng" min-width="260">
+        <template #default="{ row }">
+          <div class="bank-name">
+            <strong>{{ row.ten_ngan_hang_viet_tat }}</strong>
+            <span>{{ row.ten_ngan_hang }}</span>
+            <small v-if="row.ten_ngan_hang_tieng_anh">{{ row.ten_ngan_hang_tieng_anh }}</small>
+          </div>
+        </template>
+      </CustomTableColumn>
+      <CustomTableColumn label="Số tài khoản" min-width="170">
+        <template #default="{ row }">
+          <span class="account-no">
+            <span>{{ row.so_tai_khoan }}</span>
+            <CustomTooltip content="Sao chép" placement="top">
+              <CustomButton link type="primary" aria-label="Sao chép số tài khoản" @click="copySoTaiKhoan(row)">
+                <CustomIcon><CopyDocument /></CustomIcon>
+              </CustomButton>
+            </CustomTooltip>
+          </span>
+        </template>
+      </CustomTableColumn>
+      <CustomTableColumn prop="chu_tai_khoan" label="Chủ tài khoản" min-width="180" />
+      <CustomTableColumn label="Trạng thái" width="150" align="center">
+        <template #default="{ row }">
+          <CustomSwitch
+            :model-value="row.trang_thai"
+            :active-value="1"
+            :inactive-value="0"
+            active-text="Hoạt động"
+            inactive-text="Ngừng"
+            :loading="!!dangDoiTrangThai[row.id]"
+            :before-change="() => doiTrangThai(row)"
+            :aria-label="`Trạng thái ${row.ten_ngan_hang_viet_tat} ${row.so_tai_khoan}`"
+          />
+        </template>
+      </CustomTableColumn>
+      <CustomTableColumn prop="ghi_chu" label="Ghi chú" min-width="200">
+        <template #default="{ row }">{{ row.ghi_chu || '—' }}</template>
+      </CustomTableColumn>
+      <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
+        <template #default="{ row }">
+          <div class="row-actions">
+            <CustomTooltip content="Sửa" placement="top">
+              <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
+                <CustomIcon><Edit /></CustomIcon>
+              </CustomButton>
+            </CustomTooltip>
+            <CustomTooltip content="Xóa" placement="top">
+              <CustomButton link type="danger" aria-label="Xóa" @click="onDelete(row)">
+                <CustomIcon><Delete /></CustomIcon>
+              </CustomButton>
+            </CustomTooltip>
+          </div>
+        </template>
+      </CustomTableColumn>
+      <template #empty>
+        <CustomEmpty description="Chưa có ngân hàng thanh toán nào." />
+      </template>
+    </CustomTable>
+
+    <div class="pager">
+      <CustomPagination
+        v-model:current-page="page"
+        v-model:page-size="pageSize"
+        :total="total"
+        layout="total, sizes, prev, pager, next"
+        background
+        @current-change="onPageChange"
+        @size-change="onSizeChange"
+      />
+    </div>
+  </CustomCard>
+  </div>
+
+  <CustomDialog
+    v-model="dialogVisible"
+    :title="editingId ? 'Cập nhật ngân hàng thanh toán' : 'Thêm ngân hàng thanh toán'"
+    width="760px"
+    destroy-on-close
+    @closed="resetForm"
+  >
+    <CustomForm ref="formRef" :model="form" :rules="rules" label-position="top">
+      <CustomFormItem label="Logo ngân hàng" prop="logo_ngan_hang" class="logo-field">
+        <div class="logo-box" v-loading="dangTaiLogo">
+          <div class="logo-preview" aria-label="Xem trước logo">
+            <img
+              v-if="form.logo_ngan_hang && !logoLoi"
+              :src="apiAssetUrl(form.logo_ngan_hang)"
+              alt="Xem trước logo"
+              @error="logoLoi = true"
+            />
+            <span v-else>{{ logoLoi ? 'Không tải được ảnh' : 'Chưa có logo' }}</span>
+          </div>
+          <div class="logo-box__input">
+            <CustomInput
+              v-model="form.logo_ngan_hang"
+              maxlength="500"
+              placeholder="Dán URL logo, ví dụ https://…/vcb.png"
+              clearable
+              @input="logoLoi = false"
+            />
+            <div class="logo-box__actions">
+              <CustomButton type="primary" plain :loading="dangTaiLogo" @click="chonFileLogo">
+                <CustomIcon><Upload /></CustomIcon>
+                <span>Chọn file</span>
+              </CustomButton>
+              <CustomButton v-if="form.logo_ngan_hang" link type="danger" @click="xoaLogo">Bỏ logo</CustomButton>
+              <span class="logo-box__hint">PNG, JPG, WEBP hoặc GIF, tối đa {{ LOGO_TOI_DA_MB }}MB.</span>
+            </div>
+            <input
+              ref="logoInput"
+              type="file"
+              :accept="LOGO_LOAI.join(',')"
+              hidden
+              @change="onChonLogo"
+            />
+          </div>
+        </div>
+      </CustomFormItem>
+
+      <CustomRow :gutter="16">
+        <CustomCol :span="8" :xs="12">
+          <CustomFormItem label="Tên viết tắt" prop="ten_ngan_hang_viet_tat">
+            <CustomInput v-model="form.ten_ngan_hang_viet_tat" maxlength="50" placeholder="Ví dụ: VCB" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="8" :xs="12">
+          <CustomFormItem label="Tên ngân hàng" prop="ten_ngan_hang">
+            <CustomInput
+              v-model="form.ten_ngan_hang"
+              maxlength="255"
+              placeholder="Ví dụ: Ngân hàng TMCP Ngoại thương Việt Nam"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="8" :xs="12">
+          <CustomFormItem label="Tên tiếng Anh" prop="ten_ngan_hang_tieng_anh">
+            <CustomInput v-model="form.ten_ngan_hang_tieng_anh" maxlength="255" placeholder="Ví dụ: Vietcombank" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="8" :xs="12">
+          <CustomFormItem label="Số tài khoản" prop="so_tai_khoan">
+            <CustomInput v-model="form.so_tai_khoan" maxlength="60" placeholder="Ví dụ: 0123456789" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="8" :xs="12">
+          <CustomFormItem label="Chủ tài khoản" prop="chu_tai_khoan">
+            <CustomInput v-model="form.chu_tai_khoan" maxlength="255" placeholder="Ví dụ: CONG TY CP DTS" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="8" :xs="12">
+          <CustomFormItem label="Trạng thái" prop="trang_thai">
+            <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
+              <CustomOption label="Hoạt động" :value="1" />
+              <CustomOption label="Ngừng sử dụng" :value="0" />
+            </CustomSelect>
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="24">
+          <CustomFormItem label="Ghi chú" prop="ghi_chu">
+            <CustomInput
+              v-model="form.ghi_chu"
+              type="textarea"
+              :rows="3"
+              maxlength="2000"
+              show-word-limit
+              placeholder="Ví dụ: chi nhánh, nội dung chuyển khoản…"
+            />
+          </CustomFormItem>
+        </CustomCol>
+      </CustomRow>
+    </CustomForm>
+    <template #footer>
+      <CustomButton @click="dialogVisible = false">Hủy</CustomButton>
+      <CustomButton type="primary" :loading="saving" @click="onSubmit">Lưu</CustomButton>
+    </template>
+  </CustomDialog>
+</template>
+
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -381,349 +671,7 @@ onMounted(() => {
 })
 </script>
 
-<template>
-  <div class="catalog-page">
-  <CustomCard shadow="never" class="catalog-card">
-    <div class="filters">
-      <CustomInput
-        v-model="filters.q"
-        class="filter-search"
-        placeholder="Tìm ngân hàng, số tài khoản, chủ tài khoản"
-        clearable
-        @keyup.enter="onSearch"
-        @clear="onSearch"
-      >
-        <template #prefix>
-          <CustomIcon><Search /></CustomIcon>
-        </template>
-      </CustomInput>
-      <CustomSelect
-        v-model="filters.ngan_hang"
-        class="filter-bank"
-        placeholder="Ngân hàng"
-        filterable
-        clearable
-        @change="onSearch"
-      >
-        <CustomOption
-          v-for="item in nganHangOptions"
-          :key="item.ten_ngan_hang_viet_tat"
-          :label="item.ten_ngan_hang_viet_tat"
-          :value="item.ten_ngan_hang_viet_tat"
-        >
-          <span class="bank-option">
-            <strong>{{ item.ten_ngan_hang_viet_tat }}</strong>
-            <small>{{ item.ten_ngan_hang }}</small>
-          </span>
-        </CustomOption>
-      </CustomSelect>
-      <CustomSelect
-        v-model="filters.co_logo"
-        class="filter-logo"
-        placeholder="Logo"
-        clearable
-        @change="onSearch"
-      >
-        <CustomOption label="Đã có logo" :value="true" />
-        <CustomOption label="Chưa có logo" :value="false" />
-      </CustomSelect>
-      <CustomSelect
-        v-model="filters.trang_thai"
-        class="filter-status"
-        placeholder="Trạng thái"
-        clearable
-        @change="onSearch"
-      >
-        <CustomOption label="Hoạt động" :value="1" />
-        <CustomOption label="Ngừng sử dụng" :value="0" />
-      </CustomSelect>
-      <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-      <CustomButton @click="onResetFilters">
-        <CustomIcon><RefreshLeft /></CustomIcon>
-        <span>Đặt lại</span>
-      </CustomButton>
-    </div>
-  </CustomCard>
-
-  <CustomCard shadow="never" class="catalog-card">
-    <div class="toolbar">
-      <h2 class="toolbar__title">Danh sách ngân hàng thanh toán</h2>
-      <div class="toolbar__actions">
-        <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
-          <CustomButton
-            type="danger"
-            plain
-            :disabled="!selectedRows.length"
-            :loading="deleting"
-            @click="onDeleteSelected"
-          >
-            <CustomIcon><Delete /></CustomIcon>
-            Xóa
-          </CustomButton>
-        </CustomBadge>
-        <CustomButton type="primary" @click="openCreate">
-          <CustomIcon><Plus /></CustomIcon>
-          Thêm ngân hàng
-        </CustomButton>
-      </div>
-    </div>
-
-    <CustomTable
-      ref="tableRef"
-      :loading="loading"
-      :data="rows"
-      row-key="id"
-      stripe
-      border
-      @selection-change="onSelectionChange"
-    >
-      <CustomTableColumn type="selection" width="48" reserve-selection align="center" />
-      <CustomTableColumn label="STT" width="72" align="center">
-        <template #default="{ $index }">{{ rowIndex($index) }}</template>
-      </CustomTableColumn>
-      <CustomTableColumn label="Logo" width="96" align="center">
-        <template #default="{ row }">
-          <img
-            v-if="row.logo_ngan_hang"
-            class="bank-logo"
-            :src="apiAssetUrl(row.logo_ngan_hang)"
-            :alt="`Logo ${row.ten_ngan_hang_viet_tat}`"
-          />
-          <span v-else class="bank-logo bank-logo--text">{{ row.ten_ngan_hang_viet_tat.slice(0, 4) }}</span>
-        </template>
-      </CustomTableColumn>
-      <CustomTableColumn label="Ngân hàng" min-width="260">
-        <template #default="{ row }">
-          <div class="bank-name">
-            <strong>{{ row.ten_ngan_hang_viet_tat }}</strong>
-            <span>{{ row.ten_ngan_hang }}</span>
-            <small v-if="row.ten_ngan_hang_tieng_anh">{{ row.ten_ngan_hang_tieng_anh }}</small>
-          </div>
-        </template>
-      </CustomTableColumn>
-      <CustomTableColumn label="Số tài khoản" min-width="170">
-        <template #default="{ row }">
-          <span class="account-no">
-            <span>{{ row.so_tai_khoan }}</span>
-            <CustomTooltip content="Sao chép" placement="top">
-              <CustomButton link type="primary" aria-label="Sao chép số tài khoản" @click="copySoTaiKhoan(row)">
-                <CustomIcon><CopyDocument /></CustomIcon>
-              </CustomButton>
-            </CustomTooltip>
-          </span>
-        </template>
-      </CustomTableColumn>
-      <CustomTableColumn prop="chu_tai_khoan" label="Chủ tài khoản" min-width="180" />
-      <CustomTableColumn label="Trạng thái" width="150" align="center">
-        <template #default="{ row }">
-          <CustomSwitch
-            :model-value="row.trang_thai"
-            :active-value="1"
-            :inactive-value="0"
-            active-text="Hoạt động"
-            inactive-text="Ngừng"
-            :loading="!!dangDoiTrangThai[row.id]"
-            :before-change="() => doiTrangThai(row)"
-            :aria-label="`Trạng thái ${row.ten_ngan_hang_viet_tat} ${row.so_tai_khoan}`"
-          />
-        </template>
-      </CustomTableColumn>
-      <CustomTableColumn prop="ghi_chu" label="Ghi chú" min-width="200">
-        <template #default="{ row }">{{ row.ghi_chu || '—' }}</template>
-      </CustomTableColumn>
-      <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
-        <template #default="{ row }">
-          <div class="row-actions">
-            <CustomTooltip content="Sửa" placement="top">
-              <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
-                <CustomIcon><Edit /></CustomIcon>
-              </CustomButton>
-            </CustomTooltip>
-            <CustomTooltip content="Xóa" placement="top">
-              <CustomButton link type="danger" aria-label="Xóa" @click="onDelete(row)">
-                <CustomIcon><Delete /></CustomIcon>
-              </CustomButton>
-            </CustomTooltip>
-          </div>
-        </template>
-      </CustomTableColumn>
-      <template #empty>
-        <CustomEmpty description="Chưa có ngân hàng thanh toán nào." />
-      </template>
-    </CustomTable>
-
-    <div class="pager">
-      <CustomPagination
-        v-model:current-page="page"
-        v-model:page-size="pageSize"
-        :total="total"
-        layout="total, sizes, prev, pager, next"
-        background
-        @current-change="onPageChange"
-        @size-change="onSizeChange"
-      />
-    </div>
-  </CustomCard>
-  </div>
-
-  <CustomDialog
-    v-model="dialogVisible"
-    :title="editingId ? 'Cập nhật ngân hàng thanh toán' : 'Thêm ngân hàng thanh toán'"
-    width="760px"
-    destroy-on-close
-    @closed="resetForm"
-  >
-    <CustomForm ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomFormItem label="Logo ngân hàng" prop="logo_ngan_hang" class="logo-field">
-        <div class="logo-box" v-loading="dangTaiLogo">
-          <div class="logo-preview" aria-label="Xem trước logo">
-            <img
-              v-if="form.logo_ngan_hang && !logoLoi"
-              :src="apiAssetUrl(form.logo_ngan_hang)"
-              alt="Xem trước logo"
-              @error="logoLoi = true"
-            />
-            <span v-else>{{ logoLoi ? 'Không tải được ảnh' : 'Chưa có logo' }}</span>
-          </div>
-          <div class="logo-box__input">
-            <CustomInput
-              v-model="form.logo_ngan_hang"
-              maxlength="500"
-              placeholder="Dán URL logo, ví dụ https://…/vcb.png"
-              clearable
-              @input="logoLoi = false"
-            />
-            <div class="logo-box__actions">
-              <CustomButton type="primary" plain :loading="dangTaiLogo" @click="chonFileLogo">
-                <CustomIcon><Upload /></CustomIcon>
-                <span>Chọn file</span>
-              </CustomButton>
-              <CustomButton v-if="form.logo_ngan_hang" link type="danger" @click="xoaLogo">Bỏ logo</CustomButton>
-              <span class="logo-box__hint">PNG, JPG, WEBP hoặc GIF, tối đa {{ LOGO_TOI_DA_MB }}MB.</span>
-            </div>
-            <input
-              ref="logoInput"
-              type="file"
-              :accept="LOGO_LOAI.join(',')"
-              hidden
-              @change="onChonLogo"
-            />
-          </div>
-        </div>
-      </CustomFormItem>
-
-      <CustomRow :gutter="16">
-        <CustomCol :span="8" :xs="12">
-          <CustomFormItem label="Tên viết tắt" prop="ten_ngan_hang_viet_tat">
-            <CustomInput v-model="form.ten_ngan_hang_viet_tat" maxlength="50" placeholder="Ví dụ: VCB" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="12">
-          <CustomFormItem label="Tên ngân hàng" prop="ten_ngan_hang">
-            <CustomInput
-              v-model="form.ten_ngan_hang"
-              maxlength="255"
-              placeholder="Ví dụ: Ngân hàng TMCP Ngoại thương Việt Nam"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="12">
-          <CustomFormItem label="Tên tiếng Anh" prop="ten_ngan_hang_tieng_anh">
-            <CustomInput v-model="form.ten_ngan_hang_tieng_anh" maxlength="255" placeholder="Ví dụ: Vietcombank" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="12">
-          <CustomFormItem label="Số tài khoản" prop="so_tai_khoan">
-            <CustomInput v-model="form.so_tai_khoan" maxlength="60" placeholder="Ví dụ: 0123456789" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="12">
-          <CustomFormItem label="Chủ tài khoản" prop="chu_tai_khoan">
-            <CustomInput v-model="form.chu_tai_khoan" maxlength="255" placeholder="Ví dụ: CONG TY CP DTS" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="12">
-          <CustomFormItem label="Trạng thái" prop="trang_thai">
-            <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
-              <CustomOption label="Hoạt động" :value="1" />
-              <CustomOption label="Ngừng sử dụng" :value="0" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Ghi chú" prop="ghi_chu">
-            <CustomInput
-              v-model="form.ghi_chu"
-              type="textarea"
-              :rows="3"
-              maxlength="2000"
-              show-word-limit
-              placeholder="Ví dụ: chi nhánh, nội dung chuyển khoản…"
-            />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
-    </CustomForm>
-    <template #footer>
-      <CustomButton @click="dialogVisible = false">Hủy</CustomButton>
-      <CustomButton type="primary" :loading="saving" @click="onSubmit">Lưu</CustomButton>
-    </template>
-  </CustomDialog>
-</template>
-
 <style scoped>
-.catalog-page {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.catalog-card {
-  border-radius: 12px;
-}
-
-.filters,
-.toolbar__actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.toolbar__title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--el-text-color-primary);
-}
-
-.row-actions {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.row-actions :deep(.el-icon) {
-  font-size: 20px !important;
-}
-
-.row-actions :deep(.el-icon svg) {
-  stroke: currentColor;
-  stroke-width: 1.15;
-  stroke-linejoin: round;
-  paint-order: stroke fill;
-}
-
 .bank-logo {
   display: inline-flex;
   align-items: center;
@@ -822,10 +770,6 @@ onMounted(() => {
   line-height: 1.4;
 }
 
-.filter-search {
-  width: 300px;
-}
-
 .filter-status,
 .filter-logo {
   width: 170px;
@@ -847,14 +791,7 @@ onMounted(() => {
   text-overflow: ellipsis;
 }
 
-.pager {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
-}
-
 @media (max-width: 640px) {
-  .filter-search,
   .filter-bank,
   .filter-logo,
   .filter-status {

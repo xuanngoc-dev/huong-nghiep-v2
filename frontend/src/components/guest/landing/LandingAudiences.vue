@@ -1,29 +1,3 @@
-<script setup>
-import { computed, nextTick, ref } from 'vue'
-import { audiences } from '@/data/landing'
-
-const activeId = ref(audiences[0].id)
-const active = computed(() => audiences.find((item) => item.id === activeId.value) || audiences[0])
-const tabRefs = ref([])
-
-function selectAudience(id) {
-  activeId.value = id
-}
-
-async function onTabKeydown(event, index) {
-  const keys = { ArrowRight: 1, ArrowLeft: -1 }
-  let target = null
-  if (event.key in keys) target = (index + keys[event.key] + audiences.length) % audiences.length
-  else if (event.key === 'Home') target = 0
-  else if (event.key === 'End') target = audiences.length - 1
-  if (target === null) return
-  event.preventDefault()
-  selectAudience(audiences[target].id)
-  await nextTick()
-  tabRefs.value[target]?.focus()
-}
-</script>
-
 <template>
   <section id="doi-tuong" class="landing__section landing__section--alt" aria-labelledby="audiences-title">
     <div class="container-fluid">
@@ -98,3 +72,29 @@ async function onTabKeydown(event, index) {
     </div>
   </section>
 </template>
+
+<script setup>
+import { computed, nextTick, ref } from 'vue'
+import { audiences } from '@/data/landing'
+
+const activeId = ref(audiences[0].id)
+const active = computed(() => audiences.find((item) => item.id === activeId.value) || audiences[0])
+const tabRefs = ref([])
+
+function selectAudience(id) {
+  activeId.value = id
+}
+
+async function onTabKeydown(event, index) {
+  const keys = { ArrowRight: 1, ArrowLeft: -1 }
+  let target = null
+  if (event.key in keys) target = (index + keys[event.key] + audiences.length) % audiences.length
+  else if (event.key === 'Home') target = 0
+  else if (event.key === 'End') target = audiences.length - 1
+  if (target === null) return
+  event.preventDefault()
+  selectAudience(audiences[target].id)
+  await nextTick()
+  tabRefs.value[target]?.focus()
+}
+</script>

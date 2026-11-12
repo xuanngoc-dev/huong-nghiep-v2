@@ -1,3 +1,63 @@
+<template>
+  <div
+    class="lp-carousel"
+    :class="`lp-carousel--${tone}`"
+    role="region"
+    aria-roledescription="carousel"
+    :aria-label="label"
+    :style="cssVars"
+    @mouseenter="hovered = true"
+    @mouseleave="hovered = false"
+    @focusin="focused = true"
+    @focusout="onFocusOut"
+  >
+    <div ref="track" class="lp-carousel__track" tabindex="0" @scroll.passive="onScroll" @keydown="onKeydown">
+      <div
+        v-for="(item, index) in items"
+        :key="item[itemKey] ?? index"
+        class="lp-carousel__slide"
+        role="group"
+        aria-roledescription="slide"
+        :aria-label="`${index + 1} / ${items.length}`"
+      >
+        <slot :item="item" :index="index" />
+      </div>
+    </div>
+
+    <div v-if="pageCount > 1" class="lp-carousel__controls">
+      <div class="lp-carousel__dots">
+        <button
+          v-for="page in pageCount"
+          :key="page"
+          type="button"
+          class="lp-carousel__dot"
+          :class="{ 'is-active': page - 1 === active }"
+          :aria-label="`Đến vị trí ${page}`"
+          :aria-current="page - 1 === active ? 'true' : undefined"
+          @click="goTo(page - 1)"
+        ></button>
+      </div>
+      <div class="lp-carousel__nav">
+        <button
+          v-if="canAutoplay"
+          type="button"
+          class="lp-carousel__btn"
+          :aria-label="stopped ? 'Tiếp tục tự chạy' : 'Tạm dừng tự chạy'"
+          @click="stopped = !stopped"
+        >
+          <el-icon aria-hidden="true"><component :is="stopped ? 'VideoPlay' : 'VideoPause'" /></el-icon>
+        </button>
+        <button type="button" class="lp-carousel__btn" aria-label="Trước" @click="prev">
+          <el-icon aria-hidden="true"><ArrowLeft /></el-icon>
+        </button>
+        <button type="button" class="lp-carousel__btn" aria-label="Tiếp theo" @click="next">
+          <el-icon aria-hidden="true"><ArrowRight /></el-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
@@ -118,63 +178,3 @@ onUnmounted(() => {
   document.removeEventListener('visibilitychange', onVisibility)
 })
 </script>
-
-<template>
-  <div
-    class="lp-carousel"
-    :class="`lp-carousel--${tone}`"
-    role="region"
-    aria-roledescription="carousel"
-    :aria-label="label"
-    :style="cssVars"
-    @mouseenter="hovered = true"
-    @mouseleave="hovered = false"
-    @focusin="focused = true"
-    @focusout="onFocusOut"
-  >
-    <div ref="track" class="lp-carousel__track" tabindex="0" @scroll.passive="onScroll" @keydown="onKeydown">
-      <div
-        v-for="(item, index) in items"
-        :key="item[itemKey] ?? index"
-        class="lp-carousel__slide"
-        role="group"
-        aria-roledescription="slide"
-        :aria-label="`${index + 1} / ${items.length}`"
-      >
-        <slot :item="item" :index="index" />
-      </div>
-    </div>
-
-    <div v-if="pageCount > 1" class="lp-carousel__controls">
-      <div class="lp-carousel__dots">
-        <button
-          v-for="page in pageCount"
-          :key="page"
-          type="button"
-          class="lp-carousel__dot"
-          :class="{ 'is-active': page - 1 === active }"
-          :aria-label="`Đến vị trí ${page}`"
-          :aria-current="page - 1 === active ? 'true' : undefined"
-          @click="goTo(page - 1)"
-        ></button>
-      </div>
-      <div class="lp-carousel__nav">
-        <button
-          v-if="canAutoplay"
-          type="button"
-          class="lp-carousel__btn"
-          :aria-label="stopped ? 'Tiếp tục tự chạy' : 'Tạm dừng tự chạy'"
-          @click="stopped = !stopped"
-        >
-          <el-icon aria-hidden="true"><component :is="stopped ? 'VideoPlay' : 'VideoPause'" /></el-icon>
-        </button>
-        <button type="button" class="lp-carousel__btn" aria-label="Trước" @click="prev">
-          <el-icon aria-hidden="true"><ArrowLeft /></el-icon>
-        </button>
-        <button type="button" class="lp-carousel__btn" aria-label="Tiếp theo" @click="next">
-          <el-icon aria-hidden="true"><ArrowRight /></el-icon>
-        </button>
-      </div>
-    </div>
-  </div>
-</template>

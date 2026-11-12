@@ -1,13 +1,3 @@
-<script setup>
-import { formatCell } from './format'
-
-defineProps({
-  rows: { type: Array, default: () => [] },
-  columns: { type: Array, default: () => [] },
-  emptyText: { type: String, default: 'Chưa có dữ liệu.' },
-})
-</script>
-
 <template>
   <CustomTable :data="rows" row-key="row_key" stripe border max-height="480">
     <CustomTableColumn label="STT" width="72" align="center">
@@ -40,9 +30,12 @@ defineProps({
   </CustomTable>
 </template>
 
-<style scoped>
-.cell-link {
-  color: var(--el-color-primary);
-  overflow-wrap: anywhere;
-}
-</style>
+<script setup>
+import { formatCell } from './format'
+
+defineProps({
+  rows: { type: Array, default: () => [] },
+  columns: { type: Array, default: () => [] },
+  emptyText: { type: String, default: 'Chưa có dữ liệu.' },
+})
+</script>

@@ -1,8 +1,3 @@
-<script setup>
-import ChatPanel from '@/components/guest/chung/ChatPanel.vue'
-defineOptions({ name: 'DemoChat' })
-</script>
-
 <template>
   <section class="demo-chat container-fluid px-0">
     <div class="demo-chat__shell">
@@ -19,6 +14,11 @@ defineOptions({ name: 'DemoChat' })
     </div>
   </section>
 </template>
+
+<script setup>
+import ChatPanel from '@/components/guest/chung/ChatPanel.vue'
+defineOptions({ name: 'DemoChat' })
+</script>
 
 <style scoped>
 .demo-chat { width: 100%; height: 100%; min-height: 0; }

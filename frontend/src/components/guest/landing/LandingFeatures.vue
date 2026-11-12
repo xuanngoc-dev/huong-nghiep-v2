@@ -1,16 +1,3 @@
-<script setup>
-import { features } from '@/data/landing'
-import LandingImage from './LandingImage.vue'
-
-// Bố cục so le trên desktop: thẻ 1, 4, 5 rộng gấp đôi.
-const WIDE = [0, 3, 4]
-
-function colClass(index) {
-  if (index === 0) return 'col-12 col-lg-8'
-  return WIDE.includes(index) ? 'col-md-6 col-lg-8' : 'col-md-6 col-lg-4'
-}
-</script>
-
 <template>
   <section id="tinh-nang" class="landing__section" aria-labelledby="features-title">
     <div class="container-fluid">
@@ -39,3 +26,16 @@ function colClass(index) {
     </div>
   </section>
 </template>
+
+<script setup>
+import { features } from '@/data/landing'
+import LandingImage from './LandingImage.vue'
+
+// Bố cục so le trên desktop: thẻ 1, 4, 5 rộng gấp đôi.
+const WIDE = [0, 3, 4]
+
+function colClass(index) {
+  if (index === 0) return 'col-12 col-lg-8'
+  return WIDE.includes(index) ? 'col-md-6 col-lg-8' : 'col-md-6 col-lg-4'
+}
+</script>

@@ -1,3 +1,44 @@
+<template>
+  <CustomDialog
+    v-model="visible"
+    class="de-an-detail-dialog"
+    title="Chi tiết đề án tuyển sinh"
+    width="94%"
+    destroy-on-close
+  >
+    <div v-loading="loading" class="detail">
+      <p v-if="subtitle" class="detail__subtitle">{{ subtitle }}</p>
+      <el-tabs v-model="activeTab" class="detail__tabs">
+        <el-tab-pane
+          v-for="tab in tabs"
+          :key="tab.key"
+          :name="tab.key"
+          :label="tabLabel(tab)"
+          lazy
+        >
+          <component
+            :is="tab.component"
+            v-if="tab.overview"
+            :de-an="deAn"
+            :loading="loading"
+          />
+          <component
+            :is="tab.component"
+            v-else-if="tab.merged"
+            :programs="rowsOf('dats_chuong_trinh_dao_tao')"
+            :methods="rowsOf('dats_phuong_thuc')"
+            :criteria="rowsOf('dats_tieu_chi_xet_tuyen')"
+          />
+          <component :is="tab.component" v-else :rows="rowsOf(tab.key)" />
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+    <template #footer>
+      <CustomButton @click="visible = false">Đóng</CustomButton>
+    </template>
+  </CustomDialog>
+</template>
+
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
@@ -111,47 +152,6 @@ watch(
   },
 )
 </script>
-
-<template>
-  <CustomDialog
-    v-model="visible"
-    class="de-an-detail-dialog"
-    title="Chi tiết đề án tuyển sinh"
-    width="94%"
-    destroy-on-close
-  >
-    <div v-loading="loading" class="detail">
-      <p v-if="subtitle" class="detail__subtitle">{{ subtitle }}</p>
-      <el-tabs v-model="activeTab" class="detail__tabs">
-        <el-tab-pane
-          v-for="tab in tabs"
-          :key="tab.key"
-          :name="tab.key"
-          :label="tabLabel(tab)"
-          lazy
-        >
-          <component
-            :is="tab.component"
-            v-if="tab.overview"
-            :de-an="deAn"
-            :loading="loading"
-          />
-          <component
-            :is="tab.component"
-            v-else-if="tab.merged"
-            :programs="rowsOf('dats_chuong_trinh_dao_tao')"
-            :methods="rowsOf('dats_phuong_thuc')"
-            :criteria="rowsOf('dats_tieu_chi_xet_tuyen')"
-          />
-          <component :is="tab.component" v-else :rows="rowsOf(tab.key)" />
-        </el-tab-pane>
-      </el-tabs>
-    </div>
-    <template #footer>
-      <CustomButton @click="visible = false">Đóng</CustomButton>
-    </template>
-  </CustomDialog>
-</template>
 
 <style scoped>
 

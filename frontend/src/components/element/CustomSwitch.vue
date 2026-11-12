@@ -1,3 +1,29 @@
+<template>
+  <span class="custom-switch">
+    <el-switch
+      v-bind="attrs"
+      :model-value="modelValue"
+      :active-value="activeValue"
+      :inactive-value="inactiveValue"
+      :size="resolvedSize"
+      :inline-prompt="inlinePrompt"
+      :active-text="inlinePrompt ? activeText : undefined"
+      :inactive-text="inlinePrompt ? inactiveText : undefined"
+    >
+      <template v-for="(_, name) in slots" #[name]="slotData">
+        <slot :name="name" v-bind="slotData || {}" />
+      </template>
+    </el-switch>
+    <span
+      v-if="!inlinePrompt && label"
+      class="custom-switch__label"
+      :class="isOn ? 'is-on' : 'is-off'"
+    >
+      {{ label }}
+    </span>
+  </span>
+</template>
+
 <script setup>
 /**
  * CustomSwitch — wrapper el-switch.
@@ -26,32 +52,6 @@ const { resolvedSize } = useResponsiveComponentSize()
 const isOn = computed(() => props.modelValue === props.activeValue)
 const label = computed(() => (isOn.value ? props.activeText : props.inactiveText))
 </script>
-
-<template>
-  <span class="custom-switch">
-    <el-switch
-      v-bind="attrs"
-      :model-value="modelValue"
-      :active-value="activeValue"
-      :inactive-value="inactiveValue"
-      :size="resolvedSize"
-      :inline-prompt="inlinePrompt"
-      :active-text="inlinePrompt ? activeText : undefined"
-      :inactive-text="inlinePrompt ? inactiveText : undefined"
-    >
-      <template v-for="(_, name) in slots" #[name]="slotData">
-        <slot :name="name" v-bind="slotData || {}" />
-      </template>
-    </el-switch>
-    <span
-      v-if="!inlinePrompt && label"
-      class="custom-switch__label"
-      :class="isOn ? 'is-on' : 'is-off'"
-    >
-      {{ label }}
-    </span>
-  </span>
-</template>
 
 <style scoped>
 .custom-switch {

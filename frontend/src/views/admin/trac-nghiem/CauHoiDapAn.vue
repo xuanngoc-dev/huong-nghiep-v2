@@ -1,3 +1,369 @@
+<template>
+  <div class="catalog-page">
+    <CustomCard shadow="never" class="catalog-card">
+      <div class="filters">
+        <CustomInput
+          v-model="filters.q"
+          class="filter-search"
+          placeholder="Tìm nội dung, ghi chú hoặc loại câu hỏi"
+          clearable
+          @keyup.enter="onSearch"
+          @clear="onSearch"
+        >
+          <template #prefix>
+            <CustomIcon><Search /></CustomIcon>
+          </template>
+        </CustomInput>
+        <CustomSelect
+          v-model="filters.ma_holand"
+          class="filter-status"
+          placeholder="Holland"
+          clearable
+          filterable
+          @change="onSearch"
+        >
+          <CustomOption
+            v-for="item in hollandOptions"
+            :key="item.id"
+            :label="hollandLabel(item)"
+            :value="item.ma_nhom"
+          />
+        </CustomSelect>
+        <CustomSelect
+          v-model="filters.loai_cau_hoi_id"
+          class="filter-parent"
+          placeholder="Loại câu hỏi"
+          clearable
+          filterable
+          @change="onSearch"
+        >
+          <CustomOption
+            v-for="item in loaiOptions"
+            :key="item.id"
+            :label="loaiLabel(item)"
+            :value="item.id"
+          />
+        </CustomSelect>
+        <CustomSelect
+          v-model="filters.trang_thai"
+          class="filter-status"
+          placeholder="Trạng thái"
+          clearable
+          @change="onSearch"
+        >
+          <CustomOption label="Hoạt động" :value="1" />
+          <CustomOption label="Ngừng sử dụng" :value="0" />
+        </CustomSelect>
+        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+      </div>
+    </CustomCard>
+
+    <CustomCard shadow="never" class="catalog-card">
+      <div class="toolbar">
+        <h2 class="toolbar__title">Danh sách câu hỏi - đáp án</h2>
+        <div class="toolbar__actions">
+          <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
+            <CustomButton
+              type="danger"
+              plain
+              :disabled="!selectedRows.length"
+              :loading="deleting"
+              @click="onDeleteSelected"
+            >
+              <CustomIcon><Delete /></CustomIcon>
+              Xóa
+            </CustomButton>
+          </CustomBadge>
+          <CustomButton type="primary" @click="openCreate">
+            <CustomIcon><Plus /></CustomIcon>
+            Thêm câu hỏi
+          </CustomButton>
+        </div>
+      </div>
+
+      <CustomTable
+        ref="tableRef"
+        :loading="loading"
+        :data="rows"
+        row-key="id"
+        stripe
+        border
+        @selection-change="onSelectionChange"
+      >
+        <CustomTableColumn type="selection" width="48" reserve-selection align="center" />
+        <CustomTableColumn type="expand" width="48">
+          <template #default="{ row }">
+            <div class="answer-panel">
+              <CustomTable
+                class="answer-table"
+                :data="answerTableRows(row)"
+                row-key="id"
+                border
+                @row-dblclick="(answer) => onAnswerDblClick(row, answer)"
+              >
+                <CustomTableColumn label="STT" width="72" align="center">
+                  <template #default="{ row: answer, $index }">
+                    {{ answer.empty ? '—' : $index + 1 }}
+                  </template>
+                </CustomTableColumn>
+                <CustomTableColumn label="Đáp án" min-width="240">
+                  <template #default="{ row: answer }">
+                    <CustomInput
+                      v-if="answer.draft || isEditingAnswer(row.id, answer.id)"
+                      v-model="answerEditor.noi_dung_cau_tra_loi"
+                      maxlength="2000"
+                      placeholder="Nội dung đáp án"
+                    />
+                    <span v-else-if="!answer.empty">{{ answer.noi_dung_cau_tra_loi }}</span>
+                  </template>
+                </CustomTableColumn>
+                <CustomTableColumn label="Điểm" width="150" align="center">
+                  <template #default="{ row: answer }">
+                    <CustomInputNumber
+                      v-if="answer.draft || isEditingAnswer(row.id, answer.id)"
+                      v-model="answerEditor.diem"
+                      :min="-9999"
+                      :max="9999"
+                      :step="1"
+                      :precision="0"
+                      controls-position="right"
+                    />
+                    <span v-else-if="!answer.empty">{{ answer.diem }}</span>
+                  </template>
+                </CustomTableColumn>
+                <CustomTableColumn label="Thao tác" width="120" align="center">
+                  <template #default="{ row: answer, $index }">
+                    <div class="row-actions">
+                      <template v-if="answer.draft || isEditingAnswer(row.id, answer.id)">
+                        <CustomButton type="primary" link :loading="answerSaving" @click="saveAnswer(row)">
+                          Lưu
+                        </CustomButton>
+                        <CustomButton link @click="cancelAnswerEdit">Hủy</CustomButton>
+                      </template>
+                      <template v-else>
+                        <CustomTooltip v-if="!answer.empty" content="Xóa" placement="top">
+                          <CustomButton
+                            link
+                            type="danger"
+                            aria-label="Xóa đáp án"
+                            @click.stop="onDeleteAnswer(row, answer)"
+                          >
+                            <CustomIcon><Delete /></CustomIcon>
+                          </CustomButton>
+                        </CustomTooltip>
+                        <CustomTooltip
+                          v-if="$index === answerTableRows(row).length - 1"
+                          content="Thêm đáp án"
+                          placement="top"
+                        >
+                          <CustomButton link type="primary" aria-label="Thêm đáp án" @click.stop="startAddAnswer(row)">
+                            <CustomIcon><Plus /></CustomIcon>
+                          </CustomButton>
+                        </CustomTooltip>
+                      </template>
+                    </div>
+                  </template>
+                </CustomTableColumn>
+              </CustomTable>
+            </div>
+          </template>
+        </CustomTableColumn>
+        <CustomTableColumn label="STT" width="72" align="center">
+          <template #default="{ $index }">{{ rowIndex($index) }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Holland" min-width="180">
+          <template #default="{ row }">{{ hollandListLabel(row.ma_holand) }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn prop="ten_loai_cau_hoi" label="Loại câu hỏi" min-width="160" />
+        <CustomTableColumn prop="noi_dung_cau_hoi" label="Nội dung câu hỏi" min-width="280" />
+        <CustomTableColumn label="Trạng thái" width="150" align="center">
+          <template #default="{ row }">
+            <CustomTag :type="row.trang_thai === 1 ? 'success' : 'info'" effect="light">
+              {{ row.trang_thai === 1 ? 'Hoạt động' : 'Ngừng sử dụng' }}
+            </CustomTag>
+          </template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Ghi chú" min-width="160">
+          <template #default="{ row }">{{ row.ghi_chu || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
+          <template #default="{ row }">
+            <div class="row-actions">
+              <CustomTooltip content="Sửa" placement="top">
+                <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
+                  <CustomIcon><Edit /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+              <CustomTooltip content="Xóa" placement="top">
+                <CustomButton link type="danger" aria-label="Xóa" @click="onDelete(row)">
+                  <CustomIcon><Delete /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+            </div>
+          </template>
+        </CustomTableColumn>
+        <template #empty>
+          <CustomEmpty description="Chưa có câu hỏi nào." />
+        </template>
+      </CustomTable>
+
+      <div class="pager">
+        <CustomPagination
+          v-model:current-page="page"
+          v-model:page-size="pageSize"
+          :total="total"
+          layout="total, sizes, prev, pager, next"
+          background
+          @current-change="onPageChange"
+          @size-change="onSizeChange"
+        />
+      </div>
+    </CustomCard>
+  </div>
+
+  <CustomDialog
+    v-model="dialogVisible"
+    :title="editingId ? 'Cập nhật câu hỏi' : 'Thêm câu hỏi'"
+    width="920px"
+    destroy-on-close
+    :close-on-click-modal="!saving"
+    :close-on-press-escape="!saving"
+    :show-close="!saving"
+    @closed="resetForm"
+  >
+    <CustomRadioGroup v-if="!editingId" v-model="createMode" class="create-mode" :disabled="saving">
+      <CustomRadioButton value="form">Nhập form</CustomRadioButton>
+      <CustomRadioButton value="json">Dán JSON</CustomRadioButton>
+    </CustomRadioGroup>
+
+    <div v-if="!editingId && createMode === 'json'" class="json-panel">
+      <div class="json-panel__head">
+        <div class="json-panel__actions">
+          <JsonFileButton v-model="jsonText" :disabled="saving" />
+          <CustomButton text type="primary" :disabled="saving" @click="fillJsonSample">Điền mẫu</CustomButton>
+        </div>
+      </div>
+      <CustomInput
+        v-model="jsonText"
+        class="json-input"
+        type="textarea"
+        :rows="16"
+        :disabled="saving"
+        placeholder="Dán mảng JSON vào đây"
+      />
+    </div>
+
+    <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
+      <CustomRow :gutter="16">
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Mã Holland" prop="ma_holand">
+            <CustomSelect
+              v-model="form.ma_holand"
+              filterable
+              placeholder="Chọn mã Holland"
+              style="width: 100%"
+              :disabled="!hollandOptions.length"
+            >
+              <CustomOption
+                v-for="item in hollandOptions"
+                :key="item.id"
+                :label="hollandLabel(item)"
+                :value="item.ma_nhom"
+              />
+            </CustomSelect>
+            <p v-if="!hollandOptions.length" class="field-hint">
+              Chưa có nhóm Holland. Hãy thêm ở danh mục Nhóm Holland trước.
+            </p>
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Loại câu hỏi" prop="loai_cau_hoi_id">
+            <CustomSelect
+              v-model="form.loai_cau_hoi_id"
+              filterable
+              placeholder="Chọn loại câu hỏi"
+              style="width: 100%"
+              :disabled="!loaiOptions.length"
+            >
+              <CustomOption
+                v-for="item in loaiOptions"
+                :key="item.id"
+                :label="loaiLabel(item)"
+                :value="item.id"
+              />
+            </CustomSelect>
+            <p v-if="!loaiOptions.length" class="field-hint">
+              Chưa có loại câu hỏi. Hãy thêm ở danh mục Loại câu hỏi trước.
+            </p>
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="24">
+          <CustomFormItem label="Nội dung câu hỏi" prop="noi_dung_cau_hoi">
+            <CustomInput
+              v-model="form.noi_dung_cau_hoi"
+              type="textarea"
+              :rows="3"
+              maxlength="5000"
+              show-word-limit
+              placeholder="Nhập nội dung câu hỏi"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Trạng thái" prop="trang_thai">
+            <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
+              <CustomOption label="Hoạt động" :value="1" />
+              <CustomOption label="Ngừng sử dụng" :value="0" />
+            </CustomSelect>
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="24">
+          <CustomFormItem label="Ghi chú" prop="ghi_chu">
+            <CustomInput v-model="form.ghi_chu" maxlength="2000" placeholder="Ghi chú (nếu có)" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol v-if="!editingId" :span="24">
+          <div class="answers-head">
+            <span>Đáp án</span>
+            <CustomButton text type="primary" @click="addAnswer">
+              <CustomIcon><Plus /></CustomIcon>
+              Thêm đáp án
+            </CustomButton>
+          </div>
+          <p v-if="!form.cau_tra_loi.length" class="field-hint">Chưa có đáp án. Có thể thêm sau.</p>
+          <div v-for="(answer, index) in form.cau_tra_loi" :key="answer.id || index" class="answer-row">
+            <CustomInput
+              v-model="answer.noi_dung_cau_tra_loi"
+              maxlength="2000"
+              :placeholder="`Nội dung đáp án ${index + 1}`"
+            />
+            <CustomInputNumber
+              v-model="answer.diem"
+              :min="-9999"
+              :max="9999"
+              :step="1"
+              :precision="0"
+              controls-position="right"
+            />
+            <CustomButton link type="danger" aria-label="Xóa đáp án" @click="removeAnswer(index)">
+              <CustomIcon><Delete /></CustomIcon>
+            </CustomButton>
+          </div>
+        </CustomCol>
+      </CustomRow>
+    </CustomForm>
+    <template #footer>
+      <JsonImportDialogFooter
+        :batch="jsonImport"
+        :saving="saving"
+        :show-progress="!editingId && createMode === 'json'"
+        @cancel="dialogVisible = false"
+        @save="onSubmit"
+      />
+    </template>
+  </CustomDialog>
+</template>
+
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
@@ -536,467 +902,9 @@ onMounted(async () => {
 })
 </script>
 
-<template>
-  <div class="catalog-page">
-    <CustomCard shadow="never" class="catalog-card">
-      <div class="filters">
-        <CustomInput
-          v-model="filters.q"
-          class="filter-search"
-          placeholder="Tìm nội dung, ghi chú hoặc loại câu hỏi"
-          clearable
-          @keyup.enter="onSearch"
-          @clear="onSearch"
-        >
-          <template #prefix>
-            <CustomIcon><Search /></CustomIcon>
-          </template>
-        </CustomInput>
-        <CustomSelect
-          v-model="filters.ma_holand"
-          class="filter-status"
-          placeholder="Holland"
-          clearable
-          filterable
-          @change="onSearch"
-        >
-          <CustomOption
-            v-for="item in hollandOptions"
-            :key="item.id"
-            :label="hollandLabel(item)"
-            :value="item.ma_nhom"
-          />
-        </CustomSelect>
-        <CustomSelect
-          v-model="filters.loai_cau_hoi_id"
-          class="filter-parent"
-          placeholder="Loại câu hỏi"
-          clearable
-          filterable
-          @change="onSearch"
-        >
-          <CustomOption
-            v-for="item in loaiOptions"
-            :key="item.id"
-            :label="loaiLabel(item)"
-            :value="item.id"
-          />
-        </CustomSelect>
-        <CustomSelect
-          v-model="filters.trang_thai"
-          class="filter-status"
-          placeholder="Trạng thái"
-          clearable
-          @change="onSearch"
-        >
-          <CustomOption label="Hoạt động" :value="1" />
-          <CustomOption label="Ngừng sử dụng" :value="0" />
-        </CustomSelect>
-        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-      </div>
-    </CustomCard>
-
-    <CustomCard shadow="never" class="catalog-card">
-      <div class="toolbar">
-        <h2 class="toolbar__title">Danh sách câu hỏi - đáp án</h2>
-        <div class="toolbar__actions">
-          <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
-            <CustomButton
-              type="danger"
-              plain
-              :disabled="!selectedRows.length"
-              :loading="deleting"
-              @click="onDeleteSelected"
-            >
-              <CustomIcon><Delete /></CustomIcon>
-              Xóa
-            </CustomButton>
-          </CustomBadge>
-          <CustomButton type="primary" @click="openCreate">
-            <CustomIcon><Plus /></CustomIcon>
-            Thêm câu hỏi
-          </CustomButton>
-        </div>
-      </div>
-
-      <CustomTable
-        ref="tableRef"
-        :loading="loading"
-        :data="rows"
-        row-key="id"
-        stripe
-        border
-        @selection-change="onSelectionChange"
-      >
-        <CustomTableColumn type="selection" width="48" reserve-selection align="center" />
-        <CustomTableColumn type="expand" width="48">
-          <template #default="{ row }">
-            <div class="answer-panel">
-              <CustomTable
-                class="answer-table"
-                :data="answerTableRows(row)"
-                row-key="id"
-                border
-                @row-dblclick="(answer) => onAnswerDblClick(row, answer)"
-              >
-                <CustomTableColumn label="STT" width="72" align="center">
-                  <template #default="{ row: answer, $index }">
-                    {{ answer.empty ? '—' : $index + 1 }}
-                  </template>
-                </CustomTableColumn>
-                <CustomTableColumn label="Đáp án" min-width="240">
-                  <template #default="{ row: answer }">
-                    <CustomInput
-                      v-if="answer.draft || isEditingAnswer(row.id, answer.id)"
-                      v-model="answerEditor.noi_dung_cau_tra_loi"
-                      maxlength="2000"
-                      placeholder="Nội dung đáp án"
-                    />
-                    <span v-else-if="!answer.empty">{{ answer.noi_dung_cau_tra_loi }}</span>
-                  </template>
-                </CustomTableColumn>
-                <CustomTableColumn label="Điểm" width="150" align="center">
-                  <template #default="{ row: answer }">
-                    <CustomInputNumber
-                      v-if="answer.draft || isEditingAnswer(row.id, answer.id)"
-                      v-model="answerEditor.diem"
-                      :min="-9999"
-                      :max="9999"
-                      :step="1"
-                      :precision="0"
-                      controls-position="right"
-                    />
-                    <span v-else-if="!answer.empty">{{ answer.diem }}</span>
-                  </template>
-                </CustomTableColumn>
-                <CustomTableColumn label="Thao tác" width="120" align="center">
-                  <template #default="{ row: answer, $index }">
-                    <div class="row-actions">
-                      <template v-if="answer.draft || isEditingAnswer(row.id, answer.id)">
-                        <CustomButton type="primary" link :loading="answerSaving" @click="saveAnswer(row)">
-                          Lưu
-                        </CustomButton>
-                        <CustomButton link @click="cancelAnswerEdit">Hủy</CustomButton>
-                      </template>
-                      <template v-else>
-                        <CustomTooltip v-if="!answer.empty" content="Xóa" placement="top">
-                          <CustomButton
-                            link
-                            type="danger"
-                            aria-label="Xóa đáp án"
-                            @click.stop="onDeleteAnswer(row, answer)"
-                          >
-                            <CustomIcon><Delete /></CustomIcon>
-                          </CustomButton>
-                        </CustomTooltip>
-                        <CustomTooltip
-                          v-if="$index === answerTableRows(row).length - 1"
-                          content="Thêm đáp án"
-                          placement="top"
-                        >
-                          <CustomButton link type="primary" aria-label="Thêm đáp án" @click.stop="startAddAnswer(row)">
-                            <CustomIcon><Plus /></CustomIcon>
-                          </CustomButton>
-                        </CustomTooltip>
-                      </template>
-                    </div>
-                  </template>
-                </CustomTableColumn>
-              </CustomTable>
-            </div>
-          </template>
-        </CustomTableColumn>
-        <CustomTableColumn label="STT" width="72" align="center">
-          <template #default="{ $index }">{{ rowIndex($index) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Holland" min-width="180">
-          <template #default="{ row }">{{ hollandListLabel(row.ma_holand) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn prop="ten_loai_cau_hoi" label="Loại câu hỏi" min-width="160" />
-        <CustomTableColumn prop="noi_dung_cau_hoi" label="Nội dung câu hỏi" min-width="280" />
-        <CustomTableColumn label="Trạng thái" width="150" align="center">
-          <template #default="{ row }">
-            <CustomTag :type="row.trang_thai === 1 ? 'success' : 'info'" effect="light">
-              {{ row.trang_thai === 1 ? 'Hoạt động' : 'Ngừng sử dụng' }}
-            </CustomTag>
-          </template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Ghi chú" min-width="160">
-          <template #default="{ row }">{{ row.ghi_chu || '—' }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
-          <template #default="{ row }">
-            <div class="row-actions">
-              <CustomTooltip content="Sửa" placement="top">
-                <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
-                  <CustomIcon><Edit /></CustomIcon>
-                </CustomButton>
-              </CustomTooltip>
-              <CustomTooltip content="Xóa" placement="top">
-                <CustomButton link type="danger" aria-label="Xóa" @click="onDelete(row)">
-                  <CustomIcon><Delete /></CustomIcon>
-                </CustomButton>
-              </CustomTooltip>
-            </div>
-          </template>
-        </CustomTableColumn>
-        <template #empty>
-          <CustomEmpty description="Chưa có câu hỏi nào." />
-        </template>
-      </CustomTable>
-
-      <div class="pager">
-        <CustomPagination
-          v-model:current-page="page"
-          v-model:page-size="pageSize"
-          :total="total"
-          layout="total, sizes, prev, pager, next"
-          background
-          @current-change="onPageChange"
-          @size-change="onSizeChange"
-        />
-      </div>
-    </CustomCard>
-  </div>
-
-  <CustomDialog
-    v-model="dialogVisible"
-    :title="editingId ? 'Cập nhật câu hỏi' : 'Thêm câu hỏi'"
-    width="920px"
-    destroy-on-close
-    :close-on-click-modal="!saving"
-    :close-on-press-escape="!saving"
-    :show-close="!saving"
-    @closed="resetForm"
-  >
-    <CustomRadioGroup v-if="!editingId" v-model="createMode" class="create-mode" :disabled="saving">
-      <CustomRadioButton value="form">Nhập form</CustomRadioButton>
-      <CustomRadioButton value="json">Dán JSON</CustomRadioButton>
-    </CustomRadioGroup>
-
-    <div v-if="!editingId && createMode === 'json'" class="json-panel">
-      <div class="json-panel__head">
-        <p>
-          Dán một mảng JSON. Mỗi phần tử cần <code>noi_dung_cau_hoi</code>, <code>ma_holand</code> và
-          <code>loai_cau_hoi_id</code>. <code>cau_tra_loi</code> là mảng
-          <code>{ "noi_dung_cau_tra_loi", "diem" }</code>.
-        </p>
-        <CustomButton text type="primary" :disabled="saving" @click="fillJsonSample">Điền mẫu</CustomButton>
-      </div>
-      <CustomInput
-        v-model="jsonText"
-        class="json-input"
-        type="textarea"
-        :rows="16"
-        :disabled="saving"
-        placeholder="Dán mảng JSON vào đây"
-      />
-    </div>
-
-    <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomRow :gutter="16">
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Mã Holland" prop="ma_holand">
-            <CustomSelect
-              v-model="form.ma_holand"
-              filterable
-              placeholder="Chọn mã Holland"
-              style="width: 100%"
-              :disabled="!hollandOptions.length"
-            >
-              <CustomOption
-                v-for="item in hollandOptions"
-                :key="item.id"
-                :label="hollandLabel(item)"
-                :value="item.ma_nhom"
-              />
-            </CustomSelect>
-            <p v-if="!hollandOptions.length" class="field-hint">
-              Chưa có nhóm Holland. Hãy thêm ở danh mục Nhóm Holland trước.
-            </p>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Loại câu hỏi" prop="loai_cau_hoi_id">
-            <CustomSelect
-              v-model="form.loai_cau_hoi_id"
-              filterable
-              placeholder="Chọn loại câu hỏi"
-              style="width: 100%"
-              :disabled="!loaiOptions.length"
-            >
-              <CustomOption
-                v-for="item in loaiOptions"
-                :key="item.id"
-                :label="loaiLabel(item)"
-                :value="item.id"
-              />
-            </CustomSelect>
-            <p v-if="!loaiOptions.length" class="field-hint">
-              Chưa có loại câu hỏi. Hãy thêm ở danh mục Loại câu hỏi trước.
-            </p>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Nội dung câu hỏi" prop="noi_dung_cau_hoi">
-            <CustomInput
-              v-model="form.noi_dung_cau_hoi"
-              type="textarea"
-              :rows="3"
-              maxlength="5000"
-              show-word-limit
-              placeholder="Nhập nội dung câu hỏi"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Trạng thái" prop="trang_thai">
-            <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
-              <CustomOption label="Hoạt động" :value="1" />
-              <CustomOption label="Ngừng sử dụng" :value="0" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Ghi chú" prop="ghi_chu">
-            <CustomInput v-model="form.ghi_chu" maxlength="2000" placeholder="Ghi chú (nếu có)" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol v-if="!editingId" :span="24">
-          <div class="answers-head">
-            <span>Đáp án</span>
-            <CustomButton text type="primary" @click="addAnswer">
-              <CustomIcon><Plus /></CustomIcon>
-              Thêm đáp án
-            </CustomButton>
-          </div>
-          <p v-if="!form.cau_tra_loi.length" class="field-hint">Chưa có đáp án. Có thể thêm sau.</p>
-          <div v-for="(answer, index) in form.cau_tra_loi" :key="answer.id || index" class="answer-row">
-            <CustomInput
-              v-model="answer.noi_dung_cau_tra_loi"
-              maxlength="2000"
-              :placeholder="`Nội dung đáp án ${index + 1}`"
-            />
-            <CustomInputNumber
-              v-model="answer.diem"
-              :min="-9999"
-              :max="9999"
-              :step="1"
-              :precision="0"
-              controls-position="right"
-            />
-            <CustomButton link type="danger" aria-label="Xóa đáp án" @click="removeAnswer(index)">
-              <CustomIcon><Delete /></CustomIcon>
-            </CustomButton>
-          </div>
-        </CustomCol>
-      </CustomRow>
-    </CustomForm>
-    <template #footer>
-      <JsonImportDialogFooter
-        :batch="jsonImport"
-        :saving="saving"
-        :show-progress="!editingId && createMode === 'json'"
-        @cancel="dialogVisible = false"
-        @save="onSubmit"
-      />
-    </template>
-  </CustomDialog>
-</template>
-
 <style scoped>
-.catalog-page {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.catalog-card {
-  border-radius: 12px;
-}
-
-.filters,
-.toolbar__actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.toolbar__title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--el-text-color-primary);
-}
-
-.row-actions {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.row-actions :deep(.el-icon) {
-  font-size: 20px !important;
-}
-
-.row-actions :deep(.el-icon svg) {
-  stroke: currentColor;
-  stroke-width: 1.15;
-  stroke-linejoin: round;
-  paint-order: stroke fill;
-}
-
-.filter-search {
-  width: 320px;
-}
-
 .filter-parent {
   width: 240px;
-}
-
-.filter-status {
-  width: 170px;
-}
-
-.create-mode {
-  margin-bottom: 16px;
-}
-
-.json-panel__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.json-panel__head p {
-  margin: 0;
-  color: var(--el-text-color-secondary);
-  line-height: 1.5;
-}
-
-.json-input :deep(textarea) {
-  font-family: ui-monospace, Consolas, monospace;
-  font-size: 13px;
-}
-
-.field-hint {
-  margin: 6px 0 0;
-  color: var(--el-text-color-secondary);
-  font-size: 12px;
-  line-height: 1.4;
 }
 
 .answers-head {
@@ -1023,14 +931,7 @@ onMounted(async () => {
   width: 120px;
 }
 
-.pager {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
-}
-
 @media (max-width: 640px) {
-  .filter-search,
   .filter-parent,
   .filter-status,
   .answer-row {

@@ -1,3 +1,234 @@
+<template>
+  <section class="quiz-flow">
+    <div class="container-fluid">
+      <div class="holland-overview">
+        <header class="holland-overview__header">
+          <h2 class="holland-overview__title">Ngành phù hợp</h2>
+          <p v-if="duLieu?.ma_noi_bat" class="holland-overview__lead">
+            Gợi ý theo nhóm tính cách nổi bật {{ duLieu.ma_noi_bat }}.
+          </p>
+          <p v-else class="holland-overview__lead">Ngành đào tạo gần với kết quả trắc nghiệm Holland của bạn.</p>
+        </header>
+
+        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
+        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải ngành phù hợp…</p>
+
+        <template v-else-if="duLieu">
+          <BuocLamBai :ssid="ssid" :buoc="buoc" hien-tai="nganh-phu-hop" />
+
+          <article v-if="nhomCaoNhat" class="top-group">
+            <img
+              class="top-group__image"
+              :src="anhNhomCao"
+              :alt="`Hình minh họa nhóm ${nhomCaoNhat.ten_nhom}`"
+              @error="anhNhomHong = true"
+            />
+            <div class="top-group__body">
+              <p class="top-group__kicker">Nhóm điểm cao nhất</p>
+              <div class="top-group__heading">
+                <h3 class="top-group__name">[{{ nhomCaoNhat.ma_nhom }}]-{{ nhomCaoNhat.ten_nhom }}</h3>
+                <p class="top-group__score">{{ nhomCaoNhat.diem }} điểm</p>
+              </div>
+              <p class="top-group__text">{{ nhomCaoNhat.mo_ta || 'Chưa có mô tả cho nhóm này.' }}</p>
+            </div>
+          </article>
+
+          <div v-if="nhomTop.length" class="row g-3 profile">
+            <div class="col-12 col-lg-5">
+              <article class="profile__panel profile__chart-card">
+                <header class="profile__head">
+                  <h3 class="profile__title">Biểu đồ Holland</h3>
+                  <p class="profile__sub">Đủ 6 nhóm, điểm đậm là 3 nhóm nổi bật</p>
+                </header>
+                <div class="profile__chart">
+                  <BieuDoRadar
+                    :height="300"
+                    :categories="nhomBieuDo.map((item) => item.ten_nhom)"
+                    :values="nhomBieuDo.map((item) => item.diem)"
+                    :noi-bat="viTriNoiBat"
+                    series-name="Điểm Holland"
+                  />
+                </div>
+              </article>
+            </div>
+            <div class="col-12 col-lg-7">
+              <article ref="bang" class="profile__panel">
+                <header class="profile__head">
+                  <h3 class="profile__title">Top {{ nhomTop.length }} nhóm nổi bật</h3>
+                  <p class="profile__sub">Chọn một nhóm để xem các ngành phù hợp</p>
+                </header>
+                <ol class="rank-list">
+                  <li
+                    v-for="(item, index) in nhomTop"
+                    :key="item.ma_nhom"
+                    class="rank-item"
+                    :class="[`rank-item--${index + 1}`, { 'is-active': maDangChon === item.ma_nhom }]"
+                  >
+                    <span class="rank-item__no" aria-hidden="true">{{ index + 1 }}</span>
+                    <div class="rank-item__main">
+                      <div class="rank-item__heading">
+                        <span class="rank-item__code">{{ item.ma_nhom }}</span>
+                        <h4 class="rank-item__name">{{ item.ten_nhom }}</h4>
+                        <span class="rank-item__score">{{ item.diem }} điểm</span>
+                      </div>
+                      <div
+                        class="rank-item__bar"
+                        role="progressbar"
+                        :aria-valuenow="item.diem"
+                        aria-valuemin="0"
+                        :aria-valuemax="nhomCaoNhat?.diem || 0"
+                        :aria-label="`Điểm nhóm ${item.ten_nhom}`"
+                      >
+                        <span :style="{ width: `${tyLeDiem(item)}%` }" />
+                      </div>
+                      <el-tooltip
+                        :content="item.mo_ta || ''"
+                        placement="top"
+                        :disabled="!biCat[item.ma_nhom]"
+                        :show-after="200"
+                        popper-class="profile-desc-tip"
+                      >
+                        <p :ref="(el) => ganMoTa(item.ma_nhom, el)" class="rank-item__desc">
+                          {{ item.mo_ta || 'Chưa có mô tả cho nhóm này.' }}
+                        </p>
+                      </el-tooltip>
+                    </div>
+                    <button
+                      type="button"
+                      class="rank-item__action"
+                      :aria-pressed="maDangChon === item.ma_nhom"
+                      @click="xemNganh(item.ma_nhom)"
+                    >
+                      {{ maDangChon === item.ma_nhom ? 'Đang xem' : 'Xem ngành' }}
+                    </button>
+                  </li>
+                </ol>
+              </article>
+            </div>
+          </div>
+
+          <p v-if="!duLieu.da_xong" class="holland-note holland-note__text">
+            Hãy hoàn thành các phần trắc nghiệm để xem ngành phù hợp.
+          </p>
+          <p v-else-if="!duLieu.nganh.length" class="holland-note holland-note__text">
+            Chưa có ngành đào tạo khớp với nhóm tính cách này.
+          </p>
+          <p v-else-if="!nhomNganhHienThi.length" class="holland-note holland-note__text">
+            Không có nhóm ngành khớp mã {{ maDangChon }}.
+          </p>
+          <template v-else>
+            <ul class="major-list">
+              <li v-for="nhom in nhomNganhDangXem" :key="nhom.ma" class="card major-card">
+              <div class="card-body">
+                <div class="major-card__title">
+                  <h3>
+                    {{ nhom.ten }}
+                    <el-tooltip
+                      :content="`Nhóm này có ${nhom.nganh.length} ngành`"
+                      placement="top"
+                      :show-after="200"
+                    >
+                      <span class="major-card__count">[{{ nhom.nganh.length }}]</span>
+                    </el-tooltip>
+                  </h3>
+                  <div class="major-card__tools">
+                    <button type="button" class="major-card__compare" @click="moSoSanh(nhom)">
+                      So sánh
+                      <span v-if="maNganhDaChon(nhom).length">({{ maNganhDaChon(nhom).length }}/3)</span>
+                    </button>
+                  <el-icon
+                    v-if="nhom.nganh.length > SO_NGANH_HIEN"
+                    class="major-card__more"
+                    :size="22"
+                    role="button"
+                    tabindex="0"
+                    :aria-expanded="!!nhomDaMo[nhom.ma]"
+                    :aria-label="
+                      nhomDaMo[nhom.ma]
+                        ? 'Thu gọn'
+                        : `Xem thêm ${nhom.nganh.length - SO_NGANH_HIEN} ngành`
+                    "
+                    @click="doiMoNhom(nhom.ma)"
+                    @keydown.enter.prevent="doiMoNhom(nhom.ma)"
+                    @keydown.space.prevent="doiMoNhom(nhom.ma)"
+                  >
+                    <ArrowUp v-if="nhomDaMo[nhom.ma]" />
+                    <ArrowDown v-else />
+                  </el-icon>
+                  </div>
+                </div>
+                <div class="row g-2">
+                  <div
+                    v-for="nganh in nganhDangXem(nhom)"
+                    :key="nganh.ma_nganh"
+                    class="col-12 col-md-6 col-lg-3"
+                  >
+                    <CardMajor
+                      :ten="nganh.ten_nganh"
+                      :mo-ta="nganh.mo_ta || ''"
+                      :muc-luong="noiMucLuong(nganh.muc_luong_tham_khao, ' · ')"
+                      :thoi-gian="nganh.thoi_gian_dao_tao || ''"
+                      :hinh-anh="nganh.hinh_anh_mo_ta || ''"
+                      :chon="daChonNganh(nhom, nganh)"
+                      @chon="chonNganh(nhom, nganh)"
+                      @kham-pha="khamPhaNganh(nganh.ma_nganh)"
+                    />
+                  </div>
+                </div>
+              </div>
+            </li>
+            </ul>
+            <button
+              v-if="conNhom"
+              type="button"
+              class="major-list__more"
+              :disabled="dangTaiThem"
+              @click="taiThemNhom"
+            >
+              Xem thêm
+            </button>
+          </template>
+
+          <el-dialog
+            v-model="soSanhMo"
+            title="So sánh ngành"
+            width="min(1100px, 94vw)"
+            append-to-body
+            class="major-compare-dialog"
+          >
+            <div class="compare-wrap">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Tiêu chí</th>
+                    <th v-for="nganh in nganhSoSanh" :key="nganh.ma_nganh">{{ nganh.ten_nganh }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="tieuChi in TIEU_CHI_SO_SANH" :key="tieuChi.id">
+                    <th>{{ tieuChi.ten }}</th>
+                    <td v-for="nganh in nganhSoSanh" :key="nganh.ma_nganh">
+                      {{ giaTriTieuChi(nganh, tieuChi.id) }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </el-dialog>
+
+          <div class="major-nav d-flex flex-wrap justify-content-between gap-2">
+            <button type="button" class="btn btn-outline-success" :disabled="!buocTruoc" @click="lui">
+              Phần trước
+            </button>
+            <button type="button" class="btn btn-success" @click="tiep">Xem kết quả</button>
+          </div>
+        </template>
+      </div>
+    </div>
+    <LoadingSuyNghi :visible="dangTaiThem" text="Đang tải thêm nhóm ngành…" />
+  </section>
+</template>
+
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -339,237 +570,6 @@ onBeforeUnmount(() => {
   quanSatBang = null
 })
 </script>
-
-<template>
-  <section class="quiz-flow">
-    <div class="container-fluid">
-      <div class="holland-overview">
-        <header class="holland-overview__header">
-          <h2 class="holland-overview__title">Ngành phù hợp</h2>
-          <p v-if="duLieu?.ma_noi_bat" class="holland-overview__lead">
-            Gợi ý theo nhóm tính cách nổi bật {{ duLieu.ma_noi_bat }}.
-          </p>
-          <p v-else class="holland-overview__lead">Ngành đào tạo gần với kết quả trắc nghiệm Holland của bạn.</p>
-        </header>
-
-        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
-        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải ngành phù hợp…</p>
-
-        <template v-else-if="duLieu">
-          <BuocLamBai :ssid="ssid" :buoc="buoc" hien-tai="nganh-phu-hop" />
-
-          <article v-if="nhomCaoNhat" class="top-group">
-            <img
-              class="top-group__image"
-              :src="anhNhomCao"
-              :alt="`Hình minh họa nhóm ${nhomCaoNhat.ten_nhom}`"
-              @error="anhNhomHong = true"
-            />
-            <div class="top-group__body">
-              <p class="top-group__kicker">Nhóm điểm cao nhất</p>
-              <div class="top-group__heading">
-                <h3 class="top-group__name">[{{ nhomCaoNhat.ma_nhom }}]-{{ nhomCaoNhat.ten_nhom }}</h3>
-                <p class="top-group__score">{{ nhomCaoNhat.diem }} điểm</p>
-              </div>
-              <p class="top-group__text">{{ nhomCaoNhat.mo_ta || 'Chưa có mô tả cho nhóm này.' }}</p>
-            </div>
-          </article>
-
-          <div v-if="nhomTop.length" class="row g-3 profile">
-            <div class="col-12 col-lg-5">
-              <article class="profile__panel profile__chart-card">
-                <header class="profile__head">
-                  <h3 class="profile__title">Biểu đồ Holland</h3>
-                  <p class="profile__sub">Đủ 6 nhóm, điểm đậm là 3 nhóm nổi bật</p>
-                </header>
-                <div class="profile__chart">
-                  <BieuDoRadar
-                    :height="300"
-                    :categories="nhomBieuDo.map((item) => item.ten_nhom)"
-                    :values="nhomBieuDo.map((item) => item.diem)"
-                    :noi-bat="viTriNoiBat"
-                    series-name="Điểm Holland"
-                  />
-                </div>
-              </article>
-            </div>
-            <div class="col-12 col-lg-7">
-              <article ref="bang" class="profile__panel">
-                <header class="profile__head">
-                  <h3 class="profile__title">Top {{ nhomTop.length }} nhóm nổi bật</h3>
-                  <p class="profile__sub">Chọn một nhóm để xem các ngành phù hợp</p>
-                </header>
-                <ol class="rank-list">
-                  <li
-                    v-for="(item, index) in nhomTop"
-                    :key="item.ma_nhom"
-                    class="rank-item"
-                    :class="[`rank-item--${index + 1}`, { 'is-active': maDangChon === item.ma_nhom }]"
-                  >
-                    <span class="rank-item__no" aria-hidden="true">{{ index + 1 }}</span>
-                    <div class="rank-item__main">
-                      <div class="rank-item__heading">
-                        <span class="rank-item__code">{{ item.ma_nhom }}</span>
-                        <h4 class="rank-item__name">{{ item.ten_nhom }}</h4>
-                        <span class="rank-item__score">{{ item.diem }} điểm</span>
-                      </div>
-                      <div
-                        class="rank-item__bar"
-                        role="progressbar"
-                        :aria-valuenow="item.diem"
-                        aria-valuemin="0"
-                        :aria-valuemax="nhomCaoNhat?.diem || 0"
-                        :aria-label="`Điểm nhóm ${item.ten_nhom}`"
-                      >
-                        <span :style="{ width: `${tyLeDiem(item)}%` }" />
-                      </div>
-                      <el-tooltip
-                        :content="item.mo_ta || ''"
-                        placement="top"
-                        :disabled="!biCat[item.ma_nhom]"
-                        :show-after="200"
-                        popper-class="profile-desc-tip"
-                      >
-                        <p :ref="(el) => ganMoTa(item.ma_nhom, el)" class="rank-item__desc">
-                          {{ item.mo_ta || 'Chưa có mô tả cho nhóm này.' }}
-                        </p>
-                      </el-tooltip>
-                    </div>
-                    <button
-                      type="button"
-                      class="rank-item__action"
-                      :aria-pressed="maDangChon === item.ma_nhom"
-                      @click="xemNganh(item.ma_nhom)"
-                    >
-                      {{ maDangChon === item.ma_nhom ? 'Đang xem' : 'Xem ngành' }}
-                    </button>
-                  </li>
-                </ol>
-              </article>
-            </div>
-          </div>
-
-          <p v-if="!duLieu.da_xong" class="holland-note holland-note__text">
-            Hãy hoàn thành các phần trắc nghiệm để xem ngành phù hợp.
-          </p>
-          <p v-else-if="!duLieu.nganh.length" class="holland-note holland-note__text">
-            Chưa có ngành đào tạo khớp với nhóm tính cách này.
-          </p>
-          <p v-else-if="!nhomNganhHienThi.length" class="holland-note holland-note__text">
-            Không có nhóm ngành khớp mã {{ maDangChon }}.
-          </p>
-          <template v-else>
-            <ul class="major-list">
-              <li v-for="nhom in nhomNganhDangXem" :key="nhom.ma" class="card major-card">
-              <div class="card-body">
-                <div class="major-card__title">
-                  <h3>
-                    {{ nhom.ten }}
-                    <el-tooltip
-                      :content="`Nhóm này có ${nhom.nganh.length} ngành`"
-                      placement="top"
-                      :show-after="200"
-                    >
-                      <span class="major-card__count">[{{ nhom.nganh.length }}]</span>
-                    </el-tooltip>
-                  </h3>
-                  <div class="major-card__tools">
-                    <button type="button" class="major-card__compare" @click="moSoSanh(nhom)">
-                      So sánh
-                      <span v-if="maNganhDaChon(nhom).length">({{ maNganhDaChon(nhom).length }}/3)</span>
-                    </button>
-                  <el-icon
-                    v-if="nhom.nganh.length > SO_NGANH_HIEN"
-                    class="major-card__more"
-                    :size="22"
-                    role="button"
-                    tabindex="0"
-                    :aria-expanded="!!nhomDaMo[nhom.ma]"
-                    :aria-label="
-                      nhomDaMo[nhom.ma]
-                        ? 'Thu gọn'
-                        : `Xem thêm ${nhom.nganh.length - SO_NGANH_HIEN} ngành`
-                    "
-                    @click="doiMoNhom(nhom.ma)"
-                    @keydown.enter.prevent="doiMoNhom(nhom.ma)"
-                    @keydown.space.prevent="doiMoNhom(nhom.ma)"
-                  >
-                    <ArrowUp v-if="nhomDaMo[nhom.ma]" />
-                    <ArrowDown v-else />
-                  </el-icon>
-                  </div>
-                </div>
-                <div class="row g-2">
-                  <div
-                    v-for="nganh in nganhDangXem(nhom)"
-                    :key="nganh.ma_nganh"
-                    class="col-12 col-md-6 col-lg-3"
-                  >
-                    <CardMajor
-                      :ten="nganh.ten_nganh"
-                      :mo-ta="nganh.mo_ta || ''"
-                      :muc-luong="noiMucLuong(nganh.muc_luong_tham_khao, ' · ')"
-                      :thoi-gian="nganh.thoi_gian_dao_tao || ''"
-                      :hinh-anh="nganh.hinh_anh_mo_ta || ''"
-                      :chon="daChonNganh(nhom, nganh)"
-                      @chon="chonNganh(nhom, nganh)"
-                      @kham-pha="khamPhaNganh(nganh.ma_nganh)"
-                    />
-                  </div>
-                </div>
-              </div>
-            </li>
-            </ul>
-            <button
-              v-if="conNhom"
-              type="button"
-              class="major-list__more"
-              :disabled="dangTaiThem"
-              @click="taiThemNhom"
-            >
-              Xem thêm
-            </button>
-          </template>
-
-          <el-dialog
-            v-model="soSanhMo"
-            title="So sánh ngành"
-            width="min(1100px, 94vw)"
-            append-to-body
-            class="major-compare-dialog"
-          >
-            <div class="compare-wrap">
-              <table class="compare-table">
-                <thead>
-                  <tr>
-                    <th>Tiêu chí</th>
-                    <th v-for="nganh in nganhSoSanh" :key="nganh.ma_nganh">{{ nganh.ten_nganh }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="tieuChi in TIEU_CHI_SO_SANH" :key="tieuChi.id">
-                    <th>{{ tieuChi.ten }}</th>
-                    <td v-for="nganh in nganhSoSanh" :key="nganh.ma_nganh">
-                      {{ giaTriTieuChi(nganh, tieuChi.id) }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </el-dialog>
-
-          <div class="major-nav d-flex flex-wrap justify-content-between gap-2">
-            <button type="button" class="btn btn-outline-success" :disabled="!buocTruoc" @click="lui">
-              Phần trước
-            </button>
-            <button type="button" class="btn btn-success" @click="tiep">Xem kết quả</button>
-          </div>
-        </template>
-      </div>
-    </div>
-    <LoadingSuyNghi :visible="dangTaiThem" text="Đang tải thêm nhóm ngành…" />
-  </section>
-</template>
 
 <style src="./quiz-type.scss"></style>
 

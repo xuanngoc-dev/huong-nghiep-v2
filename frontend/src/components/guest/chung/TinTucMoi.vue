@@ -1,3 +1,18 @@
+<template>
+  <aside class="news-panel" aria-labelledby="tin-tuc-moi-title">
+    <h2 id="tin-tuc-moi-title" class="news-panel__title">{{ title }}</h2>
+    <ul class="news-panel__list">
+      <li v-for="item in items" :key="item.id">
+        <article class="news-item">
+          <time class="news-item__date" :datetime="item.date">{{ formatDate(item.date) }}</time>
+          <h3 class="news-item__title">{{ item.title }}</h3>
+          <p class="news-item__summary">{{ item.summary }}</p>
+        </article>
+      </li>
+    </ul>
+  </aside>
+</template>
+
 <script>
 const defaultItems = [
   {
@@ -47,18 +62,3 @@ function formatDate(value) {
   return `${day}/${month}/${year}`
 }
 </script>
-
-<template>
-  <aside class="news-panel" aria-labelledby="tin-tuc-moi-title">
-    <h2 id="tin-tuc-moi-title" class="news-panel__title">{{ title }}</h2>
-    <ul class="news-panel__list">
-      <li v-for="item in items" :key="item.id">
-        <article class="news-item">
-          <time class="news-item__date" :datetime="item.date">{{ formatDate(item.date) }}</time>
-          <h3 class="news-item__title">{{ item.title }}</h3>
-          <p class="news-item__summary">{{ item.summary }}</p>
-        </article>
-      </li>
-    </ul>
-  </aside>
-</template>

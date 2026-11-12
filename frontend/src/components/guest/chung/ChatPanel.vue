@@ -1,3 +1,37 @@
+<template>
+  <div class="ai-chat" :class="{ 'is-compact': compact }">
+    <p v-if="chat.state.storageWarning" class="ai-chat__notice" role="status">{{ chat.state.storageWarning }}</p>
+    <p v-if="chat.state.error" class="ai-chat__error" role="alert">{{ chat.state.error }}</p>
+    <div ref="list" class="ai-chat__thread" role="log" aria-label="Hội thoại tuyển sinh" aria-live="polite" aria-relevant="additions" :aria-busy="chat.state.sending" @scroll="onScroll">
+      <ChatMessage v-for="(message, index) in chat.state.messages" :key="message.id" :message="message"
+        :retryable="index === chat.state.messages.length - 1 && message.role === 'bot' && message.id !== 'welcome' && !chat.state.sending"
+        @retry="chat.retry" />
+    </div>
+    <div v-if="suggestions.length" class="ai-chat__suggestions">
+      <button v-for="question in suggestions" :key="question" type="button" :disabled="chat.state.sending" @click="submit(question)">{{ question }}</button>
+    </div>
+    <form class="ai-chat__composer" @submit.prevent="submit()">
+      <div class="ai-chat__toolbar">
+        <label>Mô hình AI
+          <select v-model="chat.state.modelId" :disabled="chat.state.sending || chat.state.loadingModels" aria-label="Chọn mô hình AI">
+            <option v-if="!chat.state.models.length" value="">{{ chat.state.loadingModels ? 'Đang tải…' : 'Chưa có model' }}</option>
+            <option v-for="model in chat.state.models" :key="model.id" :value="model.id">{{ model.ten }}{{ model.san_sang ? '' : ' · Chưa sẵn sàng' }}</option>
+          </select>
+        </label>
+        <button v-if="!chat.state.models.length && !chat.state.loadingModels" type="button" @click="chat.loadModels">Tải lại</button>
+        <button type="button" :disabled="!hasUser && !chat.state.sending" @click="chat.clear">Hội thoại mới</button>
+      </div>
+      <div class="ai-chat__composer-row">
+        <textarea ref="input" v-model="chat.state.draft" maxlength="4000" :rows="compact ? 2 : 3" aria-label="Nội dung câu hỏi"
+          placeholder="Hỏi về trường, ngành, tổ hợp, điểm hoặc điều kiện xét tuyển…" @keydown="keydown" />
+        <button v-if="chat.state.sending" type="button" class="ai-chat__stop" @click="chat.stop()">Dừng</button>
+        <button v-else type="submit" :disabled="!chat.state.draft.trim() || !chat.state.modelId">Gửi</button>
+      </div>
+    </form>
+    <small class="ai-chat__hint">Enter để gửi · Shift + Enter để xuống dòng · Kiểm tra nguồn trước khi quyết định.</small>
+  </div>
+</template>
+
 <script setup>
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useChatStore } from '@/stores/chat'
@@ -32,40 +66,6 @@ function keydown(event) {
 watch(() => [chat.state.messages.length, chat.state.messages.at(-1)?.text, chat.state.sending], scroll)
 onMounted(() => { chat.loadModels(); scroll(); if (props.compact) input.value?.focus() })
 </script>
-
-<template>
-  <div class="ai-chat" :class="{ 'is-compact': compact }">
-    <p v-if="chat.state.storageWarning" class="ai-chat__notice" role="status">{{ chat.state.storageWarning }}</p>
-    <p v-if="chat.state.error" class="ai-chat__error" role="alert">{{ chat.state.error }}</p>
-    <div ref="list" class="ai-chat__thread" role="log" aria-label="Hội thoại tuyển sinh" aria-live="polite" aria-relevant="additions" :aria-busy="chat.state.sending" @scroll="onScroll">
-      <ChatMessage v-for="(message, index) in chat.state.messages" :key="message.id" :message="message"
-        :retryable="index === chat.state.messages.length - 1 && message.role === 'bot' && message.id !== 'welcome' && !chat.state.sending"
-        @retry="chat.retry" />
-    </div>
-    <div v-if="suggestions.length" class="ai-chat__suggestions">
-      <button v-for="question in suggestions" :key="question" type="button" :disabled="chat.state.sending" @click="submit(question)">{{ question }}</button>
-    </div>
-    <form class="ai-chat__composer" @submit.prevent="submit()">
-      <div class="ai-chat__toolbar">
-        <label>Mô hình AI
-          <select v-model="chat.state.modelId" :disabled="chat.state.sending || chat.state.loadingModels" aria-label="Chọn mô hình AI">
-            <option v-if="!chat.state.models.length" value="">{{ chat.state.loadingModels ? 'Đang tải…' : 'Chưa có model' }}</option>
-            <option v-for="model in chat.state.models" :key="model.id" :value="model.id">{{ model.ten }}{{ model.san_sang ? '' : ' · Chưa sẵn sàng' }}</option>
-          </select>
-        </label>
-        <button v-if="!chat.state.models.length && !chat.state.loadingModels" type="button" @click="chat.loadModels">Tải lại</button>
-        <button type="button" :disabled="!hasUser && !chat.state.sending" @click="chat.clear">Hội thoại mới</button>
-      </div>
-      <div class="ai-chat__composer-row">
-        <textarea ref="input" v-model="chat.state.draft" maxlength="4000" :rows="compact ? 2 : 3" aria-label="Nội dung câu hỏi"
-          placeholder="Hỏi về trường, ngành, tổ hợp, điểm hoặc điều kiện xét tuyển…" @keydown="keydown" />
-        <button v-if="chat.state.sending" type="button" class="ai-chat__stop" @click="chat.stop()">Dừng</button>
-        <button v-else type="submit" :disabled="!chat.state.draft.trim() || !chat.state.modelId">Gửi</button>
-      </div>
-    </form>
-    <small class="ai-chat__hint">Enter để gửi · Shift + Enter để xuống dòng · Kiểm tra nguồn trước khi quyết định.</small>
-  </div>
-</template>
 
 <style lang="scss">
 .ai-chat { display:flex; flex-direction:column; flex:1; min-height:0; color:#1c2b23; font-size:14px;

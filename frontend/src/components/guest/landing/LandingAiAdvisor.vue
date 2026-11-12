@@ -1,7 +1,3 @@
-<script setup>
-import { aiMessages, aiPrompts } from '@/data/landing'
-</script>
-
 <template>
   <section id="tu-van-ai" class="landing__section" aria-labelledby="ai-title">
     <div class="container-fluid">
@@ -56,3 +52,7 @@ import { aiMessages, aiPrompts } from '@/data/landing'
     </div>
   </section>
 </template>
+
+<script setup>
+import { aiMessages, aiPrompts } from '@/data/landing'
+</script>

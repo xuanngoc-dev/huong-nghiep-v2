@@ -1,12 +1,3 @@
-<script setup>
-defineOptions({ name: 'DinhHuongPlaceholder' })
-
-defineProps({
-  title: { type: String, required: true },
-  description: { type: String, default: '' },
-})
-</script>
-
 <template>
   <section class="py-4">
     <div class="container-fluid">
@@ -19,3 +10,12 @@ defineProps({
     </div>
   </section>
 </template>
+
+<script setup>
+defineOptions({ name: 'DinhHuongPlaceholder' })
+
+defineProps({
+  title: { type: String, required: true },
+  description: { type: String, default: '' },
+})
+</script>

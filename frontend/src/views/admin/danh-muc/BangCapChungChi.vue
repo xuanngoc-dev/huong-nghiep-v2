@@ -1,3 +1,346 @@
+<template>
+  <div class="catalog-page">
+    <CustomCard shadow="never" class="catalog-card">
+      <div class="filters">
+        <CustomInput
+          v-model="filters.q"
+          class="filter-search"
+          placeholder="Tìm tên, mã, lĩnh vực, môn hoặc ngôn ngữ"
+          clearable
+          @keyup.enter="onSearch"
+          @clear="onSearch"
+        >
+          <template #prefix>
+            <CustomIcon><Search /></CustomIcon>
+          </template>
+        </CustomInput>
+        <CustomSelect
+          v-model="filters.loai_chung_chi"
+          class="filter-status"
+          placeholder="Loại"
+          clearable
+          filterable
+          allow-create
+          default-first-option
+          @change="onSearch"
+        >
+          <CustomOption v-for="item in LOAI" :key="item.value" :label="item.label" :value="item.value" />
+        </CustomSelect>
+        <CustomSelect
+          v-model="filters.trang_thai"
+          class="filter-status"
+          placeholder="Trạng thái"
+          clearable
+          filterable
+          allow-create
+          default-first-option
+          @change="onSearch"
+        >
+          <CustomOption v-for="item in TRANG_THAI" :key="item" :label="item" :value="item" />
+        </CustomSelect>
+        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+      </div>
+    </CustomCard>
+
+    <CustomCard shadow="never" class="catalog-card">
+      <div class="toolbar">
+        <h2 class="toolbar__title">Danh sách bằng cấp chứng chỉ</h2>
+        <div class="toolbar__actions">
+          <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
+            <CustomButton
+              type="danger"
+              plain
+              :disabled="!selectedRows.length"
+              :loading="deleting"
+              @click="onDeleteSelected"
+            >
+              <CustomIcon><Delete /></CustomIcon>
+              Xóa
+            </CustomButton>
+          </CustomBadge>
+          <CustomButton type="primary" @click="openCreate">
+            <CustomIcon><Plus /></CustomIcon>
+            Thêm bằng cấp
+          </CustomButton>
+        </div>
+      </div>
+
+      <CustomTable
+        ref="tableRef"
+        :loading="loading"
+        :data="rows"
+        row-key="id"
+        stripe
+        border
+        @selection-change="onSelectionChange"
+      >
+        <CustomTableColumn type="selection" width="48" reserve-selection align="center" />
+        <CustomTableColumn label="STT" width="72" align="center">
+          <template #default="{ $index }">{{ rowIndex($index) }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn
+          v-for="column in COLUMNS"
+          :key="column.key"
+          :prop="column.key"
+          :label="column.label"
+          :width="column.width"
+          :min-width="column.minWidth"
+          :align="column.align"
+          show-overflow-tooltip
+        >
+          <template #default="{ row }">
+            <CustomTag
+              v-if="column.key === 'trang_thai' && row.trang_thai"
+              :type="statusType(row.trang_thai)"
+              effect="light"
+            >
+              {{ row.trang_thai }}
+            </CustomTag>
+            <span v-else>{{ formatCell(row, column) }}</span>
+          </template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
+          <template #default="{ row }">
+            <div class="row-actions">
+              <CustomTooltip content="Sửa" placement="top">
+                <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
+                  <CustomIcon><Edit /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+              <CustomTooltip content="Xóa" placement="top">
+                <CustomButton link type="danger" aria-label="Xóa" @click="onDelete(row)">
+                  <CustomIcon><Delete /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+            </div>
+          </template>
+        </CustomTableColumn>
+        <template #empty>
+          <CustomEmpty description="Chưa có bằng cấp chứng chỉ nào." />
+        </template>
+      </CustomTable>
+
+      <div class="pager">
+        <CustomPagination
+          v-model:current-page="page"
+          v-model:page-size="pageSize"
+          :total="total"
+          layout="total, sizes, prev, pager, next"
+          background
+          @current-change="onPageChange"
+          @size-change="onSizeChange"
+        />
+      </div>
+    </CustomCard>
+  </div>
+
+  <CustomDialog
+    v-model="dialogVisible"
+    :title="editingId ? 'Cập nhật bằng cấp chứng chỉ' : 'Thêm bằng cấp chứng chỉ'"
+    width="90%"
+    destroy-on-close
+    @closed="resetForm"
+  >
+    <CustomRadioGroup v-if="!editingId" v-model="createMode" class="create-mode">
+      <CustomRadioButton value="form">Nhập form</CustomRadioButton>
+      <CustomRadioButton value="json">Dán JSON</CustomRadioButton>
+    </CustomRadioGroup>
+
+    <div v-if="!editingId && createMode === 'json'" class="json-panel">
+      <div class="json-panel__head">
+        <div class="json-panel__actions">
+          <JsonFileButton v-model="jsonText" />
+          <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
+        </div>
+      </div>
+      <CustomInput
+        v-model="jsonText"
+        class="json-input"
+        type="textarea"
+        :rows="26"
+        placeholder="Dán mảng JSON vào đây"
+      />
+    </div>
+
+    <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
+      <CustomRow :gutter="16">
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Tên chứng chỉ" prop="ten_chung_chi">
+            <CustomInput v-model="form.ten_chung_chi" maxlength="255" placeholder="Ví dụ: IELTS Academic" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Mã chứng chỉ" prop="ma_chung_chi">
+            <CustomInput v-model="form.ma_chung_chi" maxlength="50" placeholder="Ví dụ: IELTS" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Loại">
+            <CustomSelect v-model="form.loai_chung_chi" filterable allow-create default-first-option clearable style="width: 100%">
+              <CustomOption v-for="item in LOAI" :key="item.value" :label="item.label" :value="item.value" />
+            </CustomSelect>
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Lĩnh vực">
+            <CustomInput v-model="form.linh_vuc" maxlength="150" placeholder="Ví dụ: Ngoại ngữ" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Môn">
+            <CustomInput v-model="form.mon" maxlength="150" placeholder="Ví dụ: Tiếng Anh" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Mã ngôn ngữ">
+            <CustomInput v-model="form.ma_ngon_ngu" maxlength="10" placeholder="Ví dụ: en" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Tên ngôn ngữ">
+            <CustomInput v-model="form.ten_ngon_ngu" maxlength="100" placeholder="Ví dụ: Tiếng Anh" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Đơn vị cấp">
+            <CustomInput v-model="form.don_vi_cap" maxlength="255" placeholder="Ví dụ: British Council" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Trạng thái" prop="trang_thai">
+            <CustomSelect v-model="form.trang_thai" filterable allow-create default-first-option style="width: 100%">
+              <CustomOption v-for="item in TRANG_THAI" :key="item" :label="item" :value="item" />
+            </CustomSelect>
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Thang điểm">
+            <CustomInput v-model="form.thang_diem" maxlength="100" placeholder="Ví dụ: 0-9" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Điểm thấp nhất">
+            <CustomInputNumber
+              v-model="form.thang_diem_min"
+              :min="0"
+              :max="9999.99"
+              :precision="2"
+              :step="0.5"
+              :value-on-clear="null"
+              controls-position="right"
+              style="width: 100%"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Điểm cao nhất">
+            <CustomInputNumber
+              v-model="form.thang_diem_max"
+              :min="0"
+              :max="9999.99"
+              :precision="2"
+              :step="0.5"
+              :value-on-clear="null"
+              controls-position="right"
+              style="width: 100%"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Đơn vị điểm">
+            <CustomInput v-model="form.don_vi_diem" maxlength="30" placeholder="Ví dụ: band" />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="4" :xs="12">
+          <CustomFormItem label="Hiệu lực (tháng)">
+            <CustomInputNumber
+              v-model="form.thoi_han_hieu_luc_thang"
+              :min="0"
+              :max="65535"
+              :precision="0"
+              :step="1"
+              :value-on-clear="null"
+              controls-position="right"
+              style="width: 100%"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="12" :sm="8" :md="6" :lg="4">
+          <CustomFormItem label="Tên chi tiết">
+            <CustomInput v-model="form.ten_chi_tiet" maxlength="500" placeholder="Tên đầy đủ hoặc mô tả ngắn" />
+          </CustomFormItem>
+        </CustomCol>
+        </CustomRow>
+        <CustomRow :gutter="16">
+        <CustomCol :span="12" :xs="12">
+          <CustomFormItem label="Kỹ năng được đánh giá">
+            <CustomInput
+              v-model="form.ky_nang_duoc_danh_gia"
+              type="textarea"
+              :rows="2"
+              maxlength="5000"
+              placeholder="Phân tách bằng dấu phẩy. Ví dụ: Nghe, Nói, Đọc, Viết"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="12">
+          <CustomFormItem label="Hình thức thi">
+            <CustomInput
+              v-model="form.hinh_thuc_thi"
+              type="textarea"
+              :rows="2"
+              maxlength="5000"
+              placeholder="Phân tách bằng dấu phẩy. Ví dụ: Giấy, Máy tính"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="12">
+          <CustomFormItem label="Ghi chú hình thức thi">
+            <CustomInput
+              v-model="form.ghi_chu_hinh_thuc_thi"
+              type="textarea"
+              :rows="2"
+              maxlength="2000"
+              placeholder="Mô tả hoặc lưu ý về hình thức thi"
+            />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol v-if="editingId" :span="12" :xs="12">
+          <CustomFormItem label="Tạo lúc">
+            <CustomInput :model-value="formatDateTime(form.tao_luc)" disabled />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol v-if="editingId" :span="12" :xs="12">
+          <CustomFormItem label="Cập nhật lúc">
+            <CustomInput :model-value="formatDateTime(form.cap_nhat_luc)" disabled />
+          </CustomFormItem>
+        </CustomCol>
+        <CustomCol :span="12" :xs="12">
+          <CustomFormItem label="Ghi chú">
+            <CustomInput
+              v-model="form.ghi_chu"
+              type="textarea"
+              :rows="2"
+              maxlength="2000"
+              show-word-limit
+              placeholder="Ghi chú thêm (nếu có)"
+            />
+          </CustomFormItem>
+        </CustomCol>
+      </CustomRow>
+    </CustomForm>
+    <template #footer>
+      <JsonImportDialogFooter
+        :batch="jsonImport"
+        :saving="saving"
+        :show-progress="!editingId && createMode === 'json'"
+        @cancel="dialogVisible = false"
+        @save="onSubmit"
+      />
+    </template>
+  </CustomDialog>
+</template>
+
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
@@ -534,448 +877,3 @@ async function onDeleteSelected() {
 
 onMounted(load)
 </script>
-
-<template>
-  <div class="catalog-page">
-    <CustomCard shadow="never" class="catalog-card">
-      <div class="filters">
-        <CustomInput
-          v-model="filters.q"
-          class="filter-search"
-          placeholder="Tìm tên, mã, lĩnh vực, môn hoặc ngôn ngữ"
-          clearable
-          @keyup.enter="onSearch"
-          @clear="onSearch"
-        >
-          <template #prefix>
-            <CustomIcon><Search /></CustomIcon>
-          </template>
-        </CustomInput>
-        <CustomSelect
-          v-model="filters.loai_chung_chi"
-          class="filter-status"
-          placeholder="Loại"
-          clearable
-          filterable
-          allow-create
-          default-first-option
-          @change="onSearch"
-        >
-          <CustomOption v-for="item in LOAI" :key="item.value" :label="item.label" :value="item.value" />
-        </CustomSelect>
-        <CustomSelect
-          v-model="filters.trang_thai"
-          class="filter-status"
-          placeholder="Trạng thái"
-          clearable
-          filterable
-          allow-create
-          default-first-option
-          @change="onSearch"
-        >
-          <CustomOption v-for="item in TRANG_THAI" :key="item" :label="item" :value="item" />
-        </CustomSelect>
-        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-      </div>
-    </CustomCard>
-
-    <CustomCard shadow="never" class="catalog-card">
-      <div class="toolbar">
-        <h2 class="toolbar__title">Danh sách bằng cấp chứng chỉ</h2>
-        <div class="toolbar__actions">
-          <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
-            <CustomButton
-              type="danger"
-              plain
-              :disabled="!selectedRows.length"
-              :loading="deleting"
-              @click="onDeleteSelected"
-            >
-              <CustomIcon><Delete /></CustomIcon>
-              Xóa
-            </CustomButton>
-          </CustomBadge>
-          <CustomButton type="primary" @click="openCreate">
-            <CustomIcon><Plus /></CustomIcon>
-            Thêm bằng cấp
-          </CustomButton>
-        </div>
-      </div>
-
-      <CustomTable
-        ref="tableRef"
-        :loading="loading"
-        :data="rows"
-        row-key="id"
-        stripe
-        border
-        @selection-change="onSelectionChange"
-      >
-        <CustomTableColumn type="selection" width="48" reserve-selection align="center" />
-        <CustomTableColumn label="STT" width="72" align="center">
-          <template #default="{ $index }">{{ rowIndex($index) }}</template>
-        </CustomTableColumn>
-        <CustomTableColumn
-          v-for="column in COLUMNS"
-          :key="column.key"
-          :prop="column.key"
-          :label="column.label"
-          :width="column.width"
-          :min-width="column.minWidth"
-          :align="column.align"
-          show-overflow-tooltip
-        >
-          <template #default="{ row }">
-            <CustomTag
-              v-if="column.key === 'trang_thai' && row.trang_thai"
-              :type="statusType(row.trang_thai)"
-              effect="light"
-            >
-              {{ row.trang_thai }}
-            </CustomTag>
-            <span v-else>{{ formatCell(row, column) }}</span>
-          </template>
-        </CustomTableColumn>
-        <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
-          <template #default="{ row }">
-            <div class="row-actions">
-              <CustomTooltip content="Sửa" placement="top">
-                <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
-                  <CustomIcon><Edit /></CustomIcon>
-                </CustomButton>
-              </CustomTooltip>
-              <CustomTooltip content="Xóa" placement="top">
-                <CustomButton link type="danger" aria-label="Xóa" @click="onDelete(row)">
-                  <CustomIcon><Delete /></CustomIcon>
-                </CustomButton>
-              </CustomTooltip>
-            </div>
-          </template>
-        </CustomTableColumn>
-        <template #empty>
-          <CustomEmpty description="Chưa có bằng cấp chứng chỉ nào." />
-        </template>
-      </CustomTable>
-
-      <div class="pager">
-        <CustomPagination
-          v-model:current-page="page"
-          v-model:page-size="pageSize"
-          :total="total"
-          layout="total, sizes, prev, pager, next"
-          background
-          @current-change="onPageChange"
-          @size-change="onSizeChange"
-        />
-      </div>
-    </CustomCard>
-  </div>
-
-  <CustomDialog
-    v-model="dialogVisible"
-    :title="editingId ? 'Cập nhật bằng cấp chứng chỉ' : 'Thêm bằng cấp chứng chỉ'"
-    width="90%"
-    destroy-on-close
-    @closed="resetForm"
-  >
-    <CustomRadioGroup v-if="!editingId" v-model="createMode" class="create-mode">
-      <CustomRadioButton value="form">Nhập form</CustomRadioButton>
-      <CustomRadioButton value="json">Dán JSON</CustomRadioButton>
-    </CustomRadioGroup>
-
-    <div v-if="!editingId && createMode === 'json'" class="json-panel">
-      <div class="json-panel__head">
-        <p>
-          Dán một mảng JSON. Mỗi phần tử cần <code>ten_chung_chi</code> và <code>ma_chung_chi</code>.
-          <code>loai_chung_chi</code> dùng <code>trong_nuoc</code> hoặc <code>quoc_te</code>.
-          <code>ky_nang_duoc_danh_gia</code> và <code>hinh_thuc_thi</code> là mảng chuỗi.
-          Các cột còn lại có thể để trống. <code>id</code>, <code>tao_luc</code> và
-          <code>cap_nhat_luc</code> do hệ thống ghi.
-        </p>
-        <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
-      </div>
-      <CustomInput
-        v-model="jsonText"
-        class="json-input"
-        type="textarea"
-        :rows="26"
-        placeholder="Dán mảng JSON vào đây"
-      />
-    </div>
-
-    <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomRow :gutter="16">
-        <CustomCol :span="4" :xs="12">
-          <CustomFormItem label="Tên chứng chỉ" prop="ten_chung_chi">
-            <CustomInput v-model="form.ten_chung_chi" maxlength="255" placeholder="Ví dụ: IELTS Academic" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="4" :xs="12">
-          <CustomFormItem label="Mã chứng chỉ" prop="ma_chung_chi">
-            <CustomInput v-model="form.ma_chung_chi" maxlength="50" placeholder="Ví dụ: IELTS" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="4" :xs="12">
-          <CustomFormItem label="Loại">
-            <CustomSelect v-model="form.loai_chung_chi" filterable allow-create default-first-option clearable style="width: 100%">
-              <CustomOption v-for="item in LOAI" :key="item.value" :label="item.label" :value="item.value" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="4" :xs="12">
-          <CustomFormItem label="Lĩnh vực">
-            <CustomInput v-model="form.linh_vuc" maxlength="150" placeholder="Ví dụ: Ngoại ngữ" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="4" :xs="12">
-          <CustomFormItem label="Môn">
-            <CustomInput v-model="form.mon" maxlength="150" placeholder="Ví dụ: Tiếng Anh" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="4" :xs="12">
-          <CustomFormItem label="Mã ngôn ngữ">
-            <CustomInput v-model="form.ma_ngon_ngu" maxlength="10" placeholder="Ví dụ: en" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="4" :xs="12">
-          <CustomFormItem label="Tên ngôn ngữ">
-            <CustomInput v-model="form.ten_ngon_ngu" maxlength="100" placeholder="Ví dụ: Tiếng Anh" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="4" :xs="12">
-          <CustomFormItem label="Đơn vị cấp">
-            <CustomInput v-model="form.don_vi_cap" maxlength="255" placeholder="Ví dụ: British Council" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="4" :xs="12">
-          <CustomFormItem label="Trạng thái" prop="trang_thai">
-            <CustomSelect v-model="form.trang_thai" filterable allow-create default-first-option style="width: 100%">
-              <CustomOption v-for="item in TRANG_THAI" :key="item" :label="item" :value="item" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="4" :xs="12">
-          <CustomFormItem label="Thang điểm">
-            <CustomInput v-model="form.thang_diem" maxlength="100" placeholder="Ví dụ: 0-9" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="4" :xs="12">
-          <CustomFormItem label="Điểm thấp nhất">
-            <CustomInputNumber
-              v-model="form.thang_diem_min"
-              :min="0"
-              :max="9999.99"
-              :precision="2"
-              :step="0.5"
-              :value-on-clear="null"
-              controls-position="right"
-              style="width: 100%"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="4" :xs="12">
-          <CustomFormItem label="Điểm cao nhất">
-            <CustomInputNumber
-              v-model="form.thang_diem_max"
-              :min="0"
-              :max="9999.99"
-              :precision="2"
-              :step="0.5"
-              :value-on-clear="null"
-              controls-position="right"
-              style="width: 100%"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="4" :xs="12">
-          <CustomFormItem label="Đơn vị điểm">
-            <CustomInput v-model="form.don_vi_diem" maxlength="30" placeholder="Ví dụ: band" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="4" :xs="12">
-          <CustomFormItem label="Hiệu lực (tháng)">
-            <CustomInputNumber
-              v-model="form.thoi_han_hieu_luc_thang"
-              :min="0"
-              :max="65535"
-              :precision="0"
-              :step="1"
-              :value-on-clear="null"
-              controls-position="right"
-              style="width: 100%"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="12" :sm="8" :md="6" :lg="4">
-          <CustomFormItem label="Tên chi tiết">
-            <CustomInput v-model="form.ten_chi_tiet" maxlength="500" placeholder="Tên đầy đủ hoặc mô tả ngắn" />
-          </CustomFormItem>
-        </CustomCol>
-        </CustomRow>
-        <CustomRow :gutter="16">
-        <CustomCol :span="12" :xs="12">
-          <CustomFormItem label="Kỹ năng được đánh giá">
-            <CustomInput
-              v-model="form.ky_nang_duoc_danh_gia"
-              type="textarea"
-              :rows="2"
-              maxlength="5000"
-              placeholder="Phân tách bằng dấu phẩy. Ví dụ: Nghe, Nói, Đọc, Viết"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="12">
-          <CustomFormItem label="Hình thức thi">
-            <CustomInput
-              v-model="form.hinh_thuc_thi"
-              type="textarea"
-              :rows="2"
-              maxlength="5000"
-              placeholder="Phân tách bằng dấu phẩy. Ví dụ: Giấy, Máy tính"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="12">
-          <CustomFormItem label="Ghi chú hình thức thi">
-            <CustomInput
-              v-model="form.ghi_chu_hinh_thuc_thi"
-              type="textarea"
-              :rows="2"
-              maxlength="2000"
-              placeholder="Mô tả hoặc lưu ý về hình thức thi"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol v-if="editingId" :span="12" :xs="12">
-          <CustomFormItem label="Tạo lúc">
-            <CustomInput :model-value="formatDateTime(form.tao_luc)" disabled />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol v-if="editingId" :span="12" :xs="12">
-          <CustomFormItem label="Cập nhật lúc">
-            <CustomInput :model-value="formatDateTime(form.cap_nhat_luc)" disabled />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="12">
-          <CustomFormItem label="Ghi chú">
-            <CustomInput
-              v-model="form.ghi_chu"
-              type="textarea"
-              :rows="2"
-              maxlength="2000"
-              show-word-limit
-              placeholder="Ghi chú thêm (nếu có)"
-            />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
-    </CustomForm>
-    <template #footer>
-      <JsonImportDialogFooter
-        :batch="jsonImport"
-        :saving="saving"
-        :show-progress="!editingId && createMode === 'json'"
-        @cancel="dialogVisible = false"
-        @save="onSubmit"
-      />
-    </template>
-  </CustomDialog>
-</template>
-
-<style scoped>
-.catalog-page {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.catalog-card {
-  border-radius: 12px;
-}
-
-.filters,
-.toolbar__actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.toolbar__title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--el-text-color-primary);
-}
-
-.row-actions {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.row-actions :deep(.el-icon) {
-  font-size: 20px !important;
-}
-
-.row-actions :deep(.el-icon svg) {
-  stroke: currentColor;
-  stroke-width: 1.15;
-  stroke-linejoin: round;
-  paint-order: stroke fill;
-}
-
-.filter-search {
-  width: 320px;
-}
-
-.create-mode {
-  margin-bottom: 16px;
-}
-
-.json-panel__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.json-panel__head p {
-  margin: 0;
-  color: var(--el-text-color-secondary);
-  line-height: 1.5;
-}
-
-.json-input :deep(textarea) {
-  font-family: ui-monospace, Consolas, monospace;
-  font-size: 13px;
-}
-
-.filter-status {
-  width: 170px;
-}
-
-.pager {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
-}
-
-@media (max-width: 640px) {
-  .filter-search,
-  .filter-status {
-    width: 100%;
-  }
-}
-</style>

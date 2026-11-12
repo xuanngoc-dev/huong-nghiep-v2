@@ -1,16 +1,3 @@
-<script setup>
-import { useRouter } from 'vue-router'
-import anhPhanVan from '@/assets/guest/phan-van.jpg'
-
-defineOptions({ name: 'ThptNhacKhaoSat' })
-
-const router = useRouter()
-
-function thamGia() {
-  router.push({ name: 'thpt-thi-dai-hoc-huong-dan-khao-sat' })
-}
-</script>
-
 <template>
   <article class="holland-note nhac-khao-sat">
     <img
@@ -31,6 +18,19 @@ function thamGia() {
     </div>
   </article>
 </template>
+
+<script setup>
+import { useRouter } from 'vue-router'
+import anhPhanVan from '@/assets/guest/phan-van.jpg'
+
+defineOptions({ name: 'ThptNhacKhaoSat' })
+
+const router = useRouter()
+
+function thamGia() {
+  router.push({ name: 'thpt-thi-dai-hoc-huong-dan-khao-sat' })
+}
+</script>
 
 <style scoped>
 .nhac-khao-sat {

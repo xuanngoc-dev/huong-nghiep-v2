@@ -1,30 +1,3 @@
-<script setup>
-/**
- * TheThongKe — thẻ chỉ số tổng quan trên dashboard.
- * trend: % thay đổi so với kỳ trước (dương = tăng, âm = giảm).
- * xuHuong: mảng số liệu vẽ sparkline phía dưới (tùy chọn).
- */
-import { computed } from 'vue'
-import BieuDoDuong from '@/components/admin/charts/BieuDoDuong.vue'
-
-const props = defineProps({
-  title: { type: String, required: true },
-  value: { type: [Number, String], default: 0 },
-  donVi: { type: String, default: '' },
-  icon: { type: String, default: 'DataLine' },
-  color: { type: String, default: '#1f7a4d' },
-  trend: { type: Number, default: null },
-  trendLabel: { type: String, default: 'so với tháng trước' },
-  xuHuong: { type: Array, default: () => [] },
-})
-
-const giaTri = computed(() =>
-  typeof props.value === 'number' ? props.value.toLocaleString('vi-VN') : props.value,
-)
-const tang = computed(() => (props.trend ?? 0) >= 0)
-const sparkSeries = computed(() => [{ name: props.title, data: props.xuHuong }])
-</script>
-
 <template>
   <el-card shadow="never" class="the-thong-ke" :style="{ '--mau': color }">
     <div class="the-thong-ke__head">
@@ -56,6 +29,33 @@ const sparkSeries = computed(() => [{ name: props.title, data: props.xuHuong }])
     />
   </el-card>
 </template>
+
+<script setup>
+/**
+ * TheThongKe — thẻ chỉ số tổng quan trên dashboard.
+ * trend: % thay đổi so với kỳ trước (dương = tăng, âm = giảm).
+ * xuHuong: mảng số liệu vẽ sparkline phía dưới (tùy chọn).
+ */
+import { computed } from 'vue'
+import BieuDoDuong from '@/components/admin/charts/BieuDoDuong.vue'
+
+const props = defineProps({
+  title: { type: String, required: true },
+  value: { type: [Number, String], default: 0 },
+  donVi: { type: String, default: '' },
+  icon: { type: String, default: 'DataLine' },
+  color: { type: String, default: '#1f7a4d' },
+  trend: { type: Number, default: null },
+  trendLabel: { type: String, default: 'so với tháng trước' },
+  xuHuong: { type: Array, default: () => [] },
+})
+
+const giaTri = computed(() =>
+  typeof props.value === 'number' ? props.value.toLocaleString('vi-VN') : props.value,
+)
+const tang = computed(() => (props.trend ?? 0) >= 0)
+const sparkSeries = computed(() => [{ name: props.title, data: props.xuHuong }])
+</script>
 
 <style scoped>
 .the-thong-ke {

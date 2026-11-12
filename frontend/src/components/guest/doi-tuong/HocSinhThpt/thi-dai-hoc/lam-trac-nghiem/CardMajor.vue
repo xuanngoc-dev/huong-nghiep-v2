@@ -1,3 +1,39 @@
+<template>
+  <article class="card-major h-100" :class="{ 'is-selected': chon, 'card-major--co-anh': anh }">
+    <span v-if="anh" class="card-major__image" :style="styleNen" aria-hidden="true" />
+    <span class="card-major__shade" aria-hidden="true" />
+    <div class="card-major__body">
+      <div class="card-major__heading">
+        <label class="card-major__check">
+          <input
+            ref="oChon"
+            type="checkbox"
+            :checked="chon"
+            :aria-label="`Chọn so sánh ${ten}`"
+            @change="khiChon"
+          />
+          <span class="card-major__mark" aria-hidden="true"></span>
+        </label>
+        <h4 class="card-major__name">{{ ten }}</h4>
+      </div>
+      <p class="card-major__desc">{{ moTa || 'Chưa có mô tả.' }}</p>
+      <dl class="card-major__facts">
+        <div class="card-major__fact">
+          <dt>Dải lương</dt>
+          <dd>{{ mucLuong || '—' }}</dd>
+        </div>
+        <div class="card-major__fact">
+          <dt>Thời gian đào tạo</dt>
+          <dd>{{ thoiGian || '—' }}</dd>
+        </div>
+      </dl>
+      <div class="card-major__footer">
+        <CustomButton type="primary" plain @click.stop="emit('khamPha')">Khám phá ngay</CustomButton>
+      </div>
+    </div>
+  </article>
+</template>
+
 <script setup>
 import { computed, nextTick, ref, watch } from 'vue'
 import anhMacDinh from '@/assets/guest/sinh-vien.jpg'
@@ -123,42 +159,6 @@ function khiChon() {
 
 watch(() => props.chon, () => nextTick(dongBoChon))
 </script>
-
-<template>
-  <article class="card-major h-100" :class="{ 'is-selected': chon, 'card-major--co-anh': anh }">
-    <span v-if="anh" class="card-major__image" :style="styleNen" aria-hidden="true" />
-    <span class="card-major__shade" aria-hidden="true" />
-    <div class="card-major__body">
-      <div class="card-major__heading">
-        <label class="card-major__check">
-          <input
-            ref="oChon"
-            type="checkbox"
-            :checked="chon"
-            :aria-label="`Chọn so sánh ${ten}`"
-            @change="khiChon"
-          />
-          <span class="card-major__mark" aria-hidden="true"></span>
-        </label>
-        <h4 class="card-major__name">{{ ten }}</h4>
-      </div>
-      <p class="card-major__desc">{{ moTa || 'Chưa có mô tả.' }}</p>
-      <dl class="card-major__facts">
-        <div class="card-major__fact">
-          <dt>Dải lương</dt>
-          <dd>{{ mucLuong || '—' }}</dd>
-        </div>
-        <div class="card-major__fact">
-          <dt>Thời gian đào tạo</dt>
-          <dd>{{ thoiGian || '—' }}</dd>
-        </div>
-      </dl>
-      <div class="card-major__footer">
-        <CustomButton type="primary" plain @click.stop="emit('khamPha')">Khám phá ngay</CustomButton>
-      </div>
-    </div>
-  </article>
-</template>
 
 <style scoped>
 .card-major {

@@ -1,3 +1,65 @@
+<template>
+  <div class="catalog-page">
+    <CustomCard shadow="never" class="catalog-card">
+      <div class="scope">
+        <CustomSelect
+          v-model="filters.ma_truong"
+          class="filter-school"
+          placeholder="Trường"
+          clearable
+          filterable
+          @change="onScopeChange"
+        >
+          <CustomOption
+            v-for="item in truongOptions"
+            :key="item.id"
+            :label="schoolLabel(item)"
+            :value="item.ma_truong"
+          />
+        </CustomSelect>
+        <CustomSelect
+          v-model="filters.nam_tuyen_sinh"
+          class="filter-year"
+          placeholder="Năm học"
+          clearable
+          @change="onScopeChange"
+        >
+          <CustomOption v-for="nam in NAM_HOC" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
+        </CustomSelect>
+        <CustomSelect
+          v-model="filters.de_an_id"
+          class="filter-proposal"
+          placeholder="Đề án tuyển sinh"
+          clearable
+          filterable
+          :disabled="!filterDeAnReady"
+          :loading="deAnLoading"
+          @change="loadDetail"
+        >
+          <CustomOption
+            v-for="item in deAnOptions"
+            :key="item.id"
+            :label="deAnOptionLabel(item)"
+            :value="item.id"
+          />
+        </CustomSelect>
+      </div>
+    </CustomCard>
+
+    <CustomCard v-loading="loading" shadow="never" class="catalog-card">
+      <p v-if="selectedDeAn" class="scope-caption">{{ deAnOptionLabel(selectedDeAn) }}</p>
+      <ChuongTrinh
+        v-if="filters.de_an_id"
+        :key="filters.de_an_id"
+        :programs="programs"
+        :methods="methods"
+        :criteria="criteria"
+      />
+      <CustomEmpty v-else description="Chọn trường hoặc năm, rồi chọn đề án để xem chương trình và phương thức." />
+    </CustomCard>
+  </div>
+</template>
+
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
@@ -118,79 +180,7 @@ onMounted(() => {
 })
 </script>
 
-<template>
-  <div class="catalog-page">
-    <CustomCard shadow="never" class="catalog-card">
-      <div class="scope">
-        <CustomSelect
-          v-model="filters.ma_truong"
-          class="filter-school"
-          placeholder="Trường"
-          clearable
-          filterable
-          @change="onScopeChange"
-        >
-          <CustomOption
-            v-for="item in truongOptions"
-            :key="item.id"
-            :label="schoolLabel(item)"
-            :value="item.ma_truong"
-          />
-        </CustomSelect>
-        <CustomSelect
-          v-model="filters.nam_tuyen_sinh"
-          class="filter-year"
-          placeholder="Năm học"
-          clearable
-          @change="onScopeChange"
-        >
-          <CustomOption v-for="nam in NAM_HOC" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
-        </CustomSelect>
-        <CustomSelect
-          v-model="filters.de_an_id"
-          class="filter-proposal"
-          placeholder="Đề án tuyển sinh"
-          clearable
-          filterable
-          :disabled="!filterDeAnReady"
-          :loading="deAnLoading"
-          @change="loadDetail"
-        >
-          <CustomOption
-            v-for="item in deAnOptions"
-            :key="item.id"
-            :label="deAnOptionLabel(item)"
-            :value="item.id"
-          />
-        </CustomSelect>
-      </div>
-    </CustomCard>
-
-    <CustomCard v-loading="loading" shadow="never" class="catalog-card">
-      <p v-if="selectedDeAn" class="scope-caption">{{ deAnOptionLabel(selectedDeAn) }}</p>
-      <ChuongTrinh
-        v-if="filters.de_an_id"
-        :key="filters.de_an_id"
-        :programs="programs"
-        :methods="methods"
-        :criteria="criteria"
-      />
-      <CustomEmpty v-else description="Chọn trường hoặc năm, rồi chọn đề án để xem chương trình và phương thức." />
-    </CustomCard>
-  </div>
-</template>
-
 <style scoped>
-.catalog-page {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.catalog-card {
-  border-radius: 12px;
-}
-
 .scope {
   display: flex;
   flex-wrap: wrap;
@@ -201,10 +191,6 @@ onMounted(() => {
 .filter-school,
 .filter-proposal {
   width: 320px;
-}
-
-.filter-year {
-  width: 168px;
 }
 
 .scope-caption {

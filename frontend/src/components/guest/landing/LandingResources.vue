@@ -1,14 +1,3 @@
-<script setup>
-import { articles } from '@/data/landing'
-import LandingImage from './LandingImage.vue'
-
-function formatDate(value) {
-  const [year, month, day] = String(value).split('-')
-  if (!year || !month || !day) return value
-  return `${day}/${month}/${year}`
-}
-</script>
-
 <template>
   <section id="cam-nang" class="landing__section" aria-labelledby="resources-title">
     <div class="container-fluid">
@@ -39,3 +28,14 @@ function formatDate(value) {
     </div>
   </section>
 </template>
+
+<script setup>
+import { articles } from '@/data/landing'
+import LandingImage from './LandingImage.vue'
+
+function formatDate(value) {
+  const [year, month, day] = String(value).split('-')
+  if (!year || !month || !day) return value
+  return `${day}/${month}/${year}`
+}
+</script>

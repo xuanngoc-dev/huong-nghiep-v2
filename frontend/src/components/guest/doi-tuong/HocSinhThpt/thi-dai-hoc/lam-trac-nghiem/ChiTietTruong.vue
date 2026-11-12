@@ -1,3 +1,82 @@
+<template>
+  <section class="quiz-flow">
+    <div class="container-fluid">
+      <div class="holland-overview">
+        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
+        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải thông tin trường…</p>
+
+        <template v-else-if="truong">
+          <article class="major-detail">
+            <div class="major-detail__head">
+              <img class="major-detail__image" :src="anh" :alt="`Hình minh họa ${truong.ten_truong}`" @error="anhHong = true" />
+              <div class="major-detail__intro">
+                <p class="major-detail__code">{{ truong.ma_truong }}</p>
+                <h3 class="major-detail__name">{{ truong.ten_truong }}</h3>
+                <p v-if="truong.ten_tieng_anh" class="major-detail__en">{{ truong.ten_tieng_anh }}</p>
+                <div v-if="tenNganh" class="major-detail__tags">
+                  <CustomTag type="success" effect="plain">{{ tenNganh }}</CustomTag>
+                </div>
+                <p class="major-detail__text">{{ truong.gioi_thieu_ngan || 'Chưa có giới thiệu cho trường này.' }}</p>
+                <dl v-if="tomTat.length" class="major-facts">
+                  <div v-for="item in tomTat" :key="item.nhan" class="major-facts__item">
+                    <dt>{{ item.nhan }}</dt>
+                    <dd>{{ item.text }}</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </article>
+
+          <div class="major-tabs">
+            <div class="major-tabs__bar" role="tablist" aria-label="Nội dung chi tiết trường">
+              <button
+                v-for="tab in TABS"
+                :id="idTab(tab.id)"
+                :key="tab.id"
+                type="button"
+                role="tab"
+                class="major-tabs__pill"
+                :class="{ 'is-active': tabDangChon === tab.id }"
+                :aria-selected="tabDangChon === tab.id"
+                :aria-controls="`school-panel-${maTruong}-${tab.id}`"
+                :tabindex="tabDangChon === tab.id ? 0 : -1"
+                @click="tabDangChon = tab.id"
+              >
+                {{ tab.nhan }}
+              </button>
+            </div>
+            <div
+              :id="`school-panel-${maTruong}-${tabDangChon}`"
+              class="major-tabs__panel"
+              role="tabpanel"
+              :aria-labelledby="idTab(tabDangChon)"
+            >
+              <section v-if="hienMoTaNganh" class="nganh-mo-ta">
+                <h3>Ngành {{ tenNganh }}</h3>
+                <p>{{ moTaNganh }}</p>
+              </section>
+              <dl v-if="hangTab.length" class="truong-chi-tiet">
+                <div v-for="item in hangTab" :key="item.nhan" class="truong-chi-tiet__row">
+                  <dt>{{ item.nhan }}</dt>
+                  <dd>
+                    <a v-if="item.href" :href="item.href" target="_blank" rel="noopener noreferrer">{{ item.text }}</a>
+                    <template v-else>{{ item.text }}</template>
+                  </dd>
+                </div>
+              </dl>
+              <KhongCoDuLieu v-else-if="!hienMoTaNganh" text="Chưa có thông tin cho mục này." />
+            </div>
+          </div>
+        </template>
+
+        <div class="major-nav">
+          <button type="button" class="btn btn-outline-success" @click="quayLai">Quay lại chi tiết ngành</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -165,85 +244,6 @@ async function taiTruong(ma) {
 watch(maTruong, taiTruong, { immediate: true })
 watch(maNganh, taiNganh, { immediate: true })
 </script>
-
-<template>
-  <section class="quiz-flow">
-    <div class="container-fluid">
-      <div class="holland-overview">
-        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
-        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải thông tin trường…</p>
-
-        <template v-else-if="truong">
-          <article class="major-detail">
-            <div class="major-detail__head">
-              <img class="major-detail__image" :src="anh" :alt="`Hình minh họa ${truong.ten_truong}`" @error="anhHong = true" />
-              <div class="major-detail__intro">
-                <p class="major-detail__code">{{ truong.ma_truong }}</p>
-                <h3 class="major-detail__name">{{ truong.ten_truong }}</h3>
-                <p v-if="truong.ten_tieng_anh" class="major-detail__en">{{ truong.ten_tieng_anh }}</p>
-                <div v-if="tenNganh" class="major-detail__tags">
-                  <CustomTag type="success" effect="plain">{{ tenNganh }}</CustomTag>
-                </div>
-                <p class="major-detail__text">{{ truong.gioi_thieu_ngan || 'Chưa có giới thiệu cho trường này.' }}</p>
-                <dl v-if="tomTat.length" class="major-facts">
-                  <div v-for="item in tomTat" :key="item.nhan" class="major-facts__item">
-                    <dt>{{ item.nhan }}</dt>
-                    <dd>{{ item.text }}</dd>
-                  </div>
-                </dl>
-              </div>
-            </div>
-          </article>
-
-          <div class="major-tabs">
-            <div class="major-tabs__bar" role="tablist" aria-label="Nội dung chi tiết trường">
-              <button
-                v-for="tab in TABS"
-                :id="idTab(tab.id)"
-                :key="tab.id"
-                type="button"
-                role="tab"
-                class="major-tabs__pill"
-                :class="{ 'is-active': tabDangChon === tab.id }"
-                :aria-selected="tabDangChon === tab.id"
-                :aria-controls="`school-panel-${maTruong}-${tab.id}`"
-                :tabindex="tabDangChon === tab.id ? 0 : -1"
-                @click="tabDangChon = tab.id"
-              >
-                {{ tab.nhan }}
-              </button>
-            </div>
-            <div
-              :id="`school-panel-${maTruong}-${tabDangChon}`"
-              class="major-tabs__panel"
-              role="tabpanel"
-              :aria-labelledby="idTab(tabDangChon)"
-            >
-              <section v-if="hienMoTaNganh" class="nganh-mo-ta">
-                <h3>Ngành {{ tenNganh }}</h3>
-                <p>{{ moTaNganh }}</p>
-              </section>
-              <dl v-if="hangTab.length" class="truong-chi-tiet">
-                <div v-for="item in hangTab" :key="item.nhan" class="truong-chi-tiet__row">
-                  <dt>{{ item.nhan }}</dt>
-                  <dd>
-                    <a v-if="item.href" :href="item.href" target="_blank" rel="noopener noreferrer">{{ item.text }}</a>
-                    <template v-else>{{ item.text }}</template>
-                  </dd>
-                </div>
-              </dl>
-              <KhongCoDuLieu v-else-if="!hienMoTaNganh" text="Chưa có thông tin cho mục này." />
-            </div>
-          </div>
-        </template>
-
-        <div class="major-nav">
-          <button type="button" class="btn btn-outline-success" @click="quayLai">Quay lại chi tiết ngành</button>
-        </div>
-      </div>
-    </div>
-  </section>
-</template>
 
 <style src="./quiz-type.scss"></style>
 

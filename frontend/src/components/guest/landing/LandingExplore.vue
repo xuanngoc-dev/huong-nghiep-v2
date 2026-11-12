@@ -1,20 +1,3 @@
-<script setup>
-import { computed, ref } from 'vue'
-import { careerCategories, explorePreview, exploreTabs } from '@/data/landing'
-import LandingCarousel from './LandingCarousel.vue'
-import LandingImage from './LandingImage.vue'
-
-const activeTab = ref(exploreTabs[0].id)
-const query = ref('')
-
-const previewItems = computed(() => {
-  const items = explorePreview[activeTab.value] || []
-  const q = query.value.trim().toLowerCase()
-  if (!q) return items
-  return items.filter((item) => item.toLowerCase().includes(q))
-})
-</script>
-
 <template>
   <section id="kham-pha" class="landing__section landing__section--alt" aria-labelledby="explore-title">
     <div class="container-fluid">
@@ -91,3 +74,20 @@ const previewItems = computed(() => {
     </div>
   </section>
 </template>
+
+<script setup>
+import { computed, ref } from 'vue'
+import { careerCategories, explorePreview, exploreTabs } from '@/data/landing'
+import LandingCarousel from './LandingCarousel.vue'
+import LandingImage from './LandingImage.vue'
+
+const activeTab = ref(exploreTabs[0].id)
+const query = ref('')
+
+const previewItems = computed(() => {
+  const items = explorePreview[activeTab.value] || []
+  const q = query.value.trim().toLowerCase()
+  if (!q) return items
+  return items.filter((item) => item.toLowerCase().includes(q))
+})
+</script>

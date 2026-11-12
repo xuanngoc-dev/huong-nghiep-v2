@@ -1,18 +1,3 @@
-<script setup>
-import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import ChatPanel from './ChatPanel.vue'
-
-defineOptions({ name: 'Chatbot' })
-const open = ref(false)
-const route = useRoute()
-const router = useRouter()
-function expand() {
-  open.value = false
-  router.push('/demo-chat')
-}
-</script>
-
 <template>
   <div v-if="route.name !== 'demo-chat'" class="chatbot">
     <section v-if="open" id="chatbot-panel" class="chatbot__panel" aria-label="Trợ lý tuyển sinh">
@@ -34,6 +19,21 @@ function expand() {
     </button>
   </div>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import ChatPanel from './ChatPanel.vue'
+
+defineOptions({ name: 'Chatbot' })
+const open = ref(false)
+const route = useRoute()
+const router = useRouter()
+function expand() {
+  open.value = false
+  router.push('/demo-chat')
+}
+</script>
 
 <style scoped>
 .chatbot__panel { height: min(680px, calc(100dvh - 110px)) !important; width: min(440px, calc(100vw - 24px)) !important; }

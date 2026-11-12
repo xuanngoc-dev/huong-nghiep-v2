@@ -1,3 +1,176 @@
+<template>
+  <div class="filters">
+    <CustomSelect
+      v-model="filters.ten"
+      class="filter-program"
+      placeholder="Chương trình/ngành đào tạo"
+      multiple
+      collapse-tags
+      collapse-tags-tooltip
+      clearable
+      filterable
+    >
+      <CustomOption v-for="name in programOptions" :key="name" :label="name" :value="name" />
+    </CustomSelect>
+    <CustomSelect
+      v-model="filters.ma"
+      class="filter-code"
+      placeholder="Mã xét tuyển"
+      multiple
+      collapse-tags
+      collapse-tags-tooltip
+      clearable
+      filterable
+    >
+      <CustomOption v-for="code in codeOptions" :key="code" :label="code" :value="code" />
+    </CustomSelect>
+    <CustomSelect
+      v-model="filters.phuongThuc"
+      class="filter-method"
+      placeholder="Phương thức tuyển sinh"
+      multiple
+      collapse-tags
+      collapse-tags-tooltip
+      clearable
+      filterable
+    >
+      <CustomOption
+        v-for="item in catalogMethods"
+        :key="item.id"
+        :label="catalogLabel(item)"
+        :value="item.ma_phuong_thuc"
+      />
+    </CustomSelect>
+    <CustomSelect
+      v-model="filters.toHop"
+      class="filter-combo"
+      placeholder="Tổ hợp môn học"
+      multiple
+      collapse-tags
+      collapse-tags-tooltip
+      clearable
+      filterable
+    >
+      <CustomOption v-for="code in comboOptions" :key="code" :label="code" :value="code" />
+    </CustomSelect>
+  </div>
+  <CustomTable :data="filteredRows" row-key="row_key" stripe border max-height="520" class="program-method-table">
+    <el-table-column label="TT" width="64" align="center">
+      <template #default="{ $index }">{{ $index + 1 }}</template>
+    </el-table-column>
+    <el-table-column prop="ten" label="Chương trình/ngành đào tạo" min-width="260" />
+    <el-table-column prop="chiTieu" label="Chỉ tiêu dự kiến" width="120" align="center" />
+    <el-table-column prop="ma" label="Mã xét tuyển" width="130" align="center" />
+    <el-table-column
+      v-if="visibleColumns.length"
+      label="Phương thức tuyển sinh/Tổ hợp xét tuyển"
+      align="center"
+    >
+      <el-table-column
+        v-for="column in visibleColumns"
+        :key="column.key"
+        :label="column.label"
+        min-width="160"
+        align="center"
+        class-name="combo-cell"
+      >
+        <template #header>
+          <div class="method-heading">
+            <CustomTooltip placement="top" :disabled="!column.hint">
+              <template #content>
+                <div class="method-tip">{{ column.hint }}</div>
+              </template>
+              <span class="method-name">{{ column.label }}</span>
+            </CustomTooltip>
+            <CustomTooltip content="Xem chi tiết" placement="top">
+              <button
+                type="button"
+                class="method-detail"
+                aria-label="Xem chi tiết"
+                @click.stop="openMethodDetail(column)"
+              >
+                <CustomIcon><View /></CustomIcon>
+              </button>
+            </CustomTooltip>
+          </div>
+        </template>
+        <template #default="{ row }">
+          <span v-if="row.cells[column.key].combos.length" class="combo-list">
+            {{ row.cells[column.key].combos.join(', ') }}
+          </span>
+          <CustomIcon
+            v-else-if="row.cells[column.key].used"
+            class="mark mark--yes"
+            aria-label="Có sử dụng"
+          >
+            <Check />
+          </CustomIcon>
+          <CustomIcon v-else class="mark mark--no" aria-label="Không sử dụng">
+            <Close />
+          </CustomIcon>
+        </template>
+      </el-table-column>
+    </el-table-column>
+    <template #empty>
+      <CustomEmpty :description="emptyText" />
+    </template>
+  </CustomTable>
+
+  <CustomDialog
+    v-model="detailVisible"
+    class="method-detail-dialog"
+    :title="activeDetail?.title || 'Chi tiết phương thức'"
+    width="90%"
+    append-to-body
+  >
+    <p v-if="activeDetail?.subtitle" class="detail-sub">{{ activeDetail.subtitle }}</p>
+    <div v-if="activeDetail?.sections.length" class="detail-body">
+      <section v-for="section in activeDetail.sections" :key="section.key" class="detail-section">
+        <h3>{{ section.title }}</h3>
+        <article v-for="(block, index) in section.blocks" :key="`${section.key}-${index}`" class="detail-block">
+          <h4 v-if="block.title">{{ block.title }}</h4>
+          <p v-if="block.kind === 'text'" class="detail-text">{{ block.text }}</p>
+          <p v-else-if="block.kind === 'formula'" class="formula">{{ block.formula }}</p>
+          <div
+            v-else-if="block.kind === 'table'"
+            class="detail-table"
+            :class="{ 'detail-table--wide': block.columns.length > 4 }"
+          >
+            <CustomTable :data="block.rows" border max-height="480">
+              <el-table-column
+                v-for="column in block.columns"
+                :key="column.key"
+                :label="column.label"
+                :min-width="column.minWidth"
+                show-overflow-tooltip
+              >
+                <template #default="{ row }">{{ cellText(row[column.key]) }}</template>
+              </el-table-column>
+            </CustomTable>
+          </div>
+          <div v-else-if="block.kind === 'groups'" class="score-groups">
+            <div v-for="group in block.groups" :key="group.title" class="score-group">
+              <h5>{{ group.title }}</h5>
+              <CustomTable :data="group.rows" border max-height="480">
+                <el-table-column label="Mức" min-width="160">
+                  <template #default="{ row }">{{ row.loai }}</template>
+                </el-table-column>
+                <el-table-column label="Điểm" width="100" align="center">
+                  <template #default="{ row }">{{ cellText(row.diem) }}</template>
+                </el-table-column>
+              </CustomTable>
+            </div>
+          </div>
+          <ul v-if="block.notes?.length" class="detail-notes">
+            <li v-for="note in block.notes" :key="note">{{ note }}</li>
+          </ul>
+        </article>
+      </section>
+    </div>
+    <CustomEmpty v-else description="Phương thức này chưa có quy định quy đổi điểm hoặc cách tính điểm." />
+  </CustomDialog>
+</template>
+
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
@@ -217,179 +390,6 @@ function cellText(value) {
   return String(value)
 }
 </script>
-
-<template>
-  <div class="filters">
-    <CustomSelect
-      v-model="filters.ten"
-      class="filter-program"
-      placeholder="Chương trình/ngành đào tạo"
-      multiple
-      collapse-tags
-      collapse-tags-tooltip
-      clearable
-      filterable
-    >
-      <CustomOption v-for="name in programOptions" :key="name" :label="name" :value="name" />
-    </CustomSelect>
-    <CustomSelect
-      v-model="filters.ma"
-      class="filter-code"
-      placeholder="Mã xét tuyển"
-      multiple
-      collapse-tags
-      collapse-tags-tooltip
-      clearable
-      filterable
-    >
-      <CustomOption v-for="code in codeOptions" :key="code" :label="code" :value="code" />
-    </CustomSelect>
-    <CustomSelect
-      v-model="filters.phuongThuc"
-      class="filter-method"
-      placeholder="Phương thức tuyển sinh"
-      multiple
-      collapse-tags
-      collapse-tags-tooltip
-      clearable
-      filterable
-    >
-      <CustomOption
-        v-for="item in catalogMethods"
-        :key="item.id"
-        :label="catalogLabel(item)"
-        :value="item.ma_phuong_thuc"
-      />
-    </CustomSelect>
-    <CustomSelect
-      v-model="filters.toHop"
-      class="filter-combo"
-      placeholder="Tổ hợp môn học"
-      multiple
-      collapse-tags
-      collapse-tags-tooltip
-      clearable
-      filterable
-    >
-      <CustomOption v-for="code in comboOptions" :key="code" :label="code" :value="code" />
-    </CustomSelect>
-  </div>
-  <CustomTable :data="filteredRows" row-key="row_key" stripe border max-height="520" class="program-method-table">
-    <el-table-column label="TT" width="64" align="center">
-      <template #default="{ $index }">{{ $index + 1 }}</template>
-    </el-table-column>
-    <el-table-column prop="ten" label="Chương trình/ngành đào tạo" min-width="260" />
-    <el-table-column prop="chiTieu" label="Chỉ tiêu dự kiến" width="120" align="center" />
-    <el-table-column prop="ma" label="Mã xét tuyển" width="130" align="center" />
-    <el-table-column
-      v-if="visibleColumns.length"
-      label="Phương thức tuyển sinh/Tổ hợp xét tuyển"
-      align="center"
-    >
-      <el-table-column
-        v-for="column in visibleColumns"
-        :key="column.key"
-        :label="column.label"
-        min-width="160"
-        align="center"
-        class-name="combo-cell"
-      >
-        <template #header>
-          <div class="method-heading">
-            <CustomTooltip placement="top" :disabled="!column.hint">
-              <template #content>
-                <div class="method-tip">{{ column.hint }}</div>
-              </template>
-              <span class="method-name">{{ column.label }}</span>
-            </CustomTooltip>
-            <CustomTooltip content="Xem chi tiết" placement="top">
-              <button
-                type="button"
-                class="method-detail"
-                aria-label="Xem chi tiết"
-                @click.stop="openMethodDetail(column)"
-              >
-                <CustomIcon><View /></CustomIcon>
-              </button>
-            </CustomTooltip>
-          </div>
-        </template>
-        <template #default="{ row }">
-          <span v-if="row.cells[column.key].combos.length" class="combo-list">
-            {{ row.cells[column.key].combos.join(', ') }}
-          </span>
-          <CustomIcon
-            v-else-if="row.cells[column.key].used"
-            class="mark mark--yes"
-            aria-label="Có sử dụng"
-          >
-            <Check />
-          </CustomIcon>
-          <CustomIcon v-else class="mark mark--no" aria-label="Không sử dụng">
-            <Close />
-          </CustomIcon>
-        </template>
-      </el-table-column>
-    </el-table-column>
-    <template #empty>
-      <CustomEmpty :description="emptyText" />
-    </template>
-  </CustomTable>
-
-  <CustomDialog
-    v-model="detailVisible"
-    class="method-detail-dialog"
-    :title="activeDetail?.title || 'Chi tiết phương thức'"
-    width="90%"
-    append-to-body
-  >
-    <p v-if="activeDetail?.subtitle" class="detail-sub">{{ activeDetail.subtitle }}</p>
-    <div v-if="activeDetail?.sections.length" class="detail-body">
-      <section v-for="section in activeDetail.sections" :key="section.key" class="detail-section">
-        <h3>{{ section.title }}</h3>
-        <article v-for="(block, index) in section.blocks" :key="`${section.key}-${index}`" class="detail-block">
-          <h4 v-if="block.title">{{ block.title }}</h4>
-          <p v-if="block.kind === 'text'" class="detail-text">{{ block.text }}</p>
-          <p v-else-if="block.kind === 'formula'" class="formula">{{ block.formula }}</p>
-          <div
-            v-else-if="block.kind === 'table'"
-            class="detail-table"
-            :class="{ 'detail-table--wide': block.columns.length > 4 }"
-          >
-            <CustomTable :data="block.rows" border max-height="480">
-              <el-table-column
-                v-for="column in block.columns"
-                :key="column.key"
-                :label="column.label"
-                :min-width="column.minWidth"
-                show-overflow-tooltip
-              >
-                <template #default="{ row }">{{ cellText(row[column.key]) }}</template>
-              </el-table-column>
-            </CustomTable>
-          </div>
-          <div v-else-if="block.kind === 'groups'" class="score-groups">
-            <div v-for="group in block.groups" :key="group.title" class="score-group">
-              <h5>{{ group.title }}</h5>
-              <CustomTable :data="group.rows" border max-height="480">
-                <el-table-column label="Mức" min-width="160">
-                  <template #default="{ row }">{{ row.loai }}</template>
-                </el-table-column>
-                <el-table-column label="Điểm" width="100" align="center">
-                  <template #default="{ row }">{{ cellText(row.diem) }}</template>
-                </el-table-column>
-              </CustomTable>
-            </div>
-          </div>
-          <ul v-if="block.notes?.length" class="detail-notes">
-            <li v-for="note in block.notes" :key="note">{{ note }}</li>
-          </ul>
-        </article>
-      </section>
-    </div>
-    <CustomEmpty v-else description="Phương thức này chưa có quy định quy đổi điểm hoặc cách tính điểm." />
-  </CustomDialog>
-</template>
 
 <style scoped>
 .filters {

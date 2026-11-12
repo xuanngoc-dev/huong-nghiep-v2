@@ -1,54 +1,3 @@
-<script setup>
-import { computed, ref } from 'vue'
-import KhoiDuLieu from './KhoiDuLieu.vue'
-import {
-  KHOA_PHUONG_THUC_KHOI,
-  KHOA_PHUONG_THUC_META,
-  coGiaTri,
-  heSoMon,
-  khoaConLai,
-  nhan,
-  tenMon,
-} from './nhanDuLieu'
-
-const props = defineProps({
-  phuongThuc: { type: Object, required: true },
-})
-
-const hienJson = ref(false)
-
-const meta = computed(() =>
-  KHOA_PHUONG_THUC_META.filter((key) => key in props.phuongThuc).map((key) => ({
-    key,
-    label: nhan(key),
-    value: props.phuongThuc[key],
-  })),
-)
-
-const khoi = computed(() =>
-  KHOA_PHUONG_THUC_KHOI.filter(([key]) => coGiaTri(props.phuongThuc[key])).map(([key, label]) => ({
-    key,
-    label,
-    value: props.phuongThuc[key],
-  })),
-)
-
-const toHop = computed(() => (Array.isArray(props.phuongThuc.to_hop_mon) ? props.phuongThuc.to_hop_mon : null))
-
-const conLai = computed(() =>
-  khoaConLai(props.phuongThuc, [...KHOA_PHUONG_THUC_META, ...KHOA_PHUONG_THUC_KHOI.map(([key]) => key), 'ghi_chu']),
-)
-
-const json = computed(() => JSON.stringify(props.phuongThuc, null, 2))
-
-function hien(value) {
-  if (value == null || value === '') return 'Không có'
-  if (typeof value === 'boolean') return value ? 'Có' : 'Không'
-  if (typeof value === 'object') return JSON.stringify(value)
-  return String(value)
-}
-</script>
-
 <template>
   <section class="phuong-thuc">
     <div class="phuong-thuc__bar">
@@ -103,6 +52,57 @@ function hien(value) {
     </template>
   </section>
 </template>
+
+<script setup>
+import { computed, ref } from 'vue'
+import KhoiDuLieu from './KhoiDuLieu.vue'
+import {
+  KHOA_PHUONG_THUC_KHOI,
+  KHOA_PHUONG_THUC_META,
+  coGiaTri,
+  heSoMon,
+  khoaConLai,
+  nhan,
+  tenMon,
+} from './nhanDuLieu'
+
+const props = defineProps({
+  phuongThuc: { type: Object, required: true },
+})
+
+const hienJson = ref(false)
+
+const meta = computed(() =>
+  KHOA_PHUONG_THUC_META.filter((key) => key in props.phuongThuc).map((key) => ({
+    key,
+    label: nhan(key),
+    value: props.phuongThuc[key],
+  })),
+)
+
+const khoi = computed(() =>
+  KHOA_PHUONG_THUC_KHOI.filter(([key]) => coGiaTri(props.phuongThuc[key])).map(([key, label]) => ({
+    key,
+    label,
+    value: props.phuongThuc[key],
+  })),
+)
+
+const toHop = computed(() => (Array.isArray(props.phuongThuc.to_hop_mon) ? props.phuongThuc.to_hop_mon : null))
+
+const conLai = computed(() =>
+  khoaConLai(props.phuongThuc, [...KHOA_PHUONG_THUC_META, ...KHOA_PHUONG_THUC_KHOI.map(([key]) => key), 'ghi_chu']),
+)
+
+const json = computed(() => JSON.stringify(props.phuongThuc, null, 2))
+
+function hien(value) {
+  if (value == null || value === '') return 'Không có'
+  if (typeof value === 'boolean') return value ? 'Có' : 'Không'
+  if (typeof value === 'object') return JSON.stringify(value)
+  return String(value)
+}
+</script>
 
 <style scoped>
 .phuong-thuc__bar {

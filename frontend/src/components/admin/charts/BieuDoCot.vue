@@ -1,3 +1,7 @@
+<template>
+  <div ref="khung" class="bieu-do" />
+</template>
+
 <script setup>
 /**
  * BieuDoCot — biểu đồ cột dọc / thanh ngang.
@@ -64,10 +68,6 @@ const { khung } = useApexChart(taoCauHinh, () => [
   props.colors,
 ])
 </script>
-
-<template>
-  <div ref="khung" class="bieu-do" />
-</template>
 
 <style scoped>
 .bieu-do {

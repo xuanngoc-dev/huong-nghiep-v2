@@ -1,31 +1,3 @@
-<script setup>
-import { computed } from 'vue'
-import { STATUS_LABELS, formatDate, formatQuota } from './format'
-
-const props = defineProps({
-  deAn: { type: Object, default: null },
-  loading: { type: Boolean, default: false },
-})
-
-const schoolLabel = computed(() => {
-  const item = props.deAn
-  if (!item) return ''
-  return item.ma_truong ? `${item.ma_truong} — ${item.ten_truong}` : item.ten_truong
-})
-
-const statusMeta = computed(() => {
-  const value = props.deAn?.trang_thai
-  if (!value) return null
-  const tag = value === 'cong_bo' ? 'success' : value === 'het_hieu_luc' ? 'warning' : 'info'
-  return { label: STATUS_LABELS[value] || value, tag }
-})
-
-function formatForms(value) {
-  if (!Array.isArray(value) || !value.length) return '—'
-  return value.join(', ')
-}
-</script>
-
 <template>
   <div v-if="deAn" class="overview">
     <div>
@@ -82,6 +54,34 @@ function formatForms(value) {
   </div>
   <CustomEmpty v-else-if="!loading" description="Không có dữ liệu đề án." />
 </template>
+
+<script setup>
+import { computed } from 'vue'
+import { STATUS_LABELS, formatDate, formatQuota } from './format'
+
+const props = defineProps({
+  deAn: { type: Object, default: null },
+  loading: { type: Boolean, default: false },
+})
+
+const schoolLabel = computed(() => {
+  const item = props.deAn
+  if (!item) return ''
+  return item.ma_truong ? `${item.ma_truong} — ${item.ten_truong}` : item.ten_truong
+})
+
+const statusMeta = computed(() => {
+  const value = props.deAn?.trang_thai
+  if (!value) return null
+  const tag = value === 'cong_bo' ? 'success' : value === 'het_hieu_luc' ? 'warning' : 'info'
+  return { label: STATUS_LABELS[value] || value, tag }
+})
+
+function formatForms(value) {
+  if (!Array.isArray(value) || !value.length) return '—'
+  return value.join(', ')
+}
+</script>
 
 <style scoped>
 .overview {

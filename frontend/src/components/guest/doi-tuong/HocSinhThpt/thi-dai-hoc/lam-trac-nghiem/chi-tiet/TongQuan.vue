@@ -1,3 +1,16 @@
+<template>
+  <div v-if="muc.length" class="tong-quan">
+    <section v-for="item in muc" :key="item.id" class="tong-quan__muc">
+      <h3>{{ item.nhan }}</h3>
+      <ul v-if="item.dong.length > 1">
+        <li v-for="dong in item.dong" :key="dong">{{ dong }}</li>
+      </ul>
+      <p v-else>{{ item.dong[0] }}</p>
+    </section>
+  </div>
+  <KhongCoDuLieu v-else text="Chưa có thông tin tổng quan cho ngành này." />
+</template>
+
 <script setup>
 import { computed } from 'vue'
 import { layChiTiet, tachDong } from './chiTiet'
@@ -25,19 +38,6 @@ const muc = computed(() => {
   return items
 })
 </script>
-
-<template>
-  <div v-if="muc.length" class="tong-quan">
-    <section v-for="item in muc" :key="item.id" class="tong-quan__muc">
-      <h3>{{ item.nhan }}</h3>
-      <ul v-if="item.dong.length > 1">
-        <li v-for="dong in item.dong" :key="dong">{{ dong }}</li>
-      </ul>
-      <p v-else>{{ item.dong[0] }}</p>
-    </section>
-  </div>
-  <KhongCoDuLieu v-else text="Chưa có thông tin tổng quan cho ngành này." />
-</template>
 
 <style scoped>
 .tong-quan {

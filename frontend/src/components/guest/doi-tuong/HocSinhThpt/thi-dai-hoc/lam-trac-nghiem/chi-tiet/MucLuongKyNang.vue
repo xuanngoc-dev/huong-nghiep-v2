@@ -1,3 +1,24 @@
+<template>
+  <div v-if="coDuLieu" class="luong">
+    <section v-if="luong.length">
+      <h3>Mức lương tham khảo</h3>
+      <div class="luong__cards">
+        <article v-for="(item, index) in luong" :key="`${index}-${item.name}`" class="luong__card">
+          <p class="luong__ten">{{ item.name || 'Tham khảo' }}</p>
+          <p class="luong__gia">{{ hienMucLuong(item) }}</p>
+        </article>
+      </div>
+    </section>
+    <section v-if="kyNang.length">
+      <h3>Kỹ năng phù hợp</h3>
+      <ul class="luong__chip">
+        <li v-for="item in kyNang" :key="item">{{ item }}</li>
+      </ul>
+    </section>
+  </div>
+  <KhongCoDuLieu v-else text="Chưa có mức lương và kỹ năng cho ngành này." />
+</template>
+
 <script setup>
 import { computed } from 'vue'
 import { danhSachMucLuong, hienMucLuong } from '@/utils/capTenGiaTri'
@@ -20,27 +41,6 @@ const luong = computed(() => {
 const kyNang = computed(() => tachDong(layChiTiet(props.chiTiet, ['ky_nang_phu_hop', 'ky_nang'])))
 const coDuLieu = computed(() => luong.value.length > 0 || kyNang.value.length > 0)
 </script>
-
-<template>
-  <div v-if="coDuLieu" class="luong">
-    <section v-if="luong.length">
-      <h3>Mức lương tham khảo</h3>
-      <div class="luong__cards">
-        <article v-for="(item, index) in luong" :key="`${index}-${item.name}`" class="luong__card">
-          <p class="luong__ten">{{ item.name || 'Tham khảo' }}</p>
-          <p class="luong__gia">{{ hienMucLuong(item) }}</p>
-        </article>
-      </div>
-    </section>
-    <section v-if="kyNang.length">
-      <h3>Kỹ năng phù hợp</h3>
-      <ul class="luong__chip">
-        <li v-for="item in kyNang" :key="item">{{ item }}</li>
-      </ul>
-    </section>
-  </div>
-  <KhongCoDuLieu v-else text="Chưa có mức lương và kỹ năng cho ngành này." />
-</template>
 
 <style scoped>
 .luong {

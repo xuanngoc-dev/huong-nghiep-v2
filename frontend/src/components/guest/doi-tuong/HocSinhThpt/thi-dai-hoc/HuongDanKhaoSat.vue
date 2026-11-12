@@ -1,84 +1,3 @@
-<script setup>
-import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { useAuthStore } from '@/stores/auth'
-import { batDauPhienHolland } from '@/api/phienKhaoSat'
-import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
-import { routeNameGiaiDoanThiDaiHoc } from '../routes'
-
-defineOptions({ name: 'HuongDanKhaoSat' })
-
-const stages = giaiDoanThiDaiHocList
-const auth = useAuthStore()
-const route = useRoute()
-const router = useRouter()
-const currentStage = computed(() => route.meta.giaiDoan || '')
-const dangTaoPhien = ref(false)
-
-const pathSteps = [
-  { label: 'Bắt đầu', current: true },
-  { label: 'Sở thích & đam mê' },
-  { label: 'Kỹ năng & khả năng' },
-  { label: 'Môi trường làm việc' },
-  { label: 'Phong cách làm việc' },
-  { label: 'Ngành phù hợp' },
-  { label: 'Kết quả' },
-]
-
-const beforeTips = [
-  'Dành khoảng 5 phút để thư giãn và tập trung.',
-  'Nhập thông tin của bản thân để hệ thống giúp phân tích kết quả 1 cách chuẩn xác nhất.',
-  'Hiểu rằng trắc nghiệm này nhằm giúp bạn hiểu mình hơn, không phải để tạo hình ảnh “hoàn hảo” cho người khác.',
-  'Trung thực với bản thân, không khen hoặc chê quá mức.',
-  'Hoàn thành bài trong khoảng 20 phút để kết quả phản ánh đúng nhất.',
-]
-
-const duringTips = [
-  'Đọc từng câu hỏi và chọn một đáp án mô tả đúng nhất về bản thân bạn.',
-  'Không có đáp án đúng hay sai — chỉ có đáp án phù hợp với bạn.',
-  'Trả lời nhanh, tự nhiên, theo cảm nhận đầu tiên — đừng suy nghĩ quá nhiều.',
-  'Trả lời hết các câu trong mỗi phần để chuyển sang phần tiếp theo.',
-  'Khi đã trả lời đủ toàn bộ câu hỏi, bài làm sẽ được khoá để phân tích kết quả.',
-]
-
-function chonGiaiDoan(stage) {
-  sessionStorage.setItem(GIAI_DOAN_THI_DAI_HOC_KEY, stage.code)
-  const name = routeNameGiaiDoanThiDaiHoc(stage.code)
-  if (name && name !== route.name) {
-    router.push({ name })
-    return
-  }
-  if (!name) router.push({ name: 'thpt-thi-dai-hoc' })
-}
-
-function queryMaNganh() {
-  const ma = route.query.ma_nganh
-  return ma ? { ma_nganh: ma } : {}
-}
-
-async function batDauHolland() {
-  if (dangTaoPhien.value) return
-  dangTaoPhien.value = true
-  try {
-    const phien = await batDauPhienHolland()
-    router.push({
-      name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
-      params: { ssid: phien.ssid, loaiCauHoiId: phien.loai_cau_hoi_id },
-      query: queryMaNganh(),
-    })
-  } catch (error) {
-    const status = error.response?.status
-    const detail = error.response?.data?.detail
-    if (status === 400) {
-      ElMessage.error(typeof detail === 'string' ? detail : 'Không tạo được phiên khảo sát.')
-    }
-  } finally {
-    dangTaoPhien.value = false
-  }
-}
-</script>
-
 <template>
   <section class="py-4">
     <div class="container-fluid">
@@ -209,6 +128,87 @@ async function batDauHolland() {
     </div>
   </section>
 </template>
+
+<script setup>
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { useAuthStore } from '@/stores/auth'
+import { batDauPhienHolland } from '@/api/phienKhaoSat'
+import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
+import { routeNameGiaiDoanThiDaiHoc } from '../routes'
+
+defineOptions({ name: 'HuongDanKhaoSat' })
+
+const stages = giaiDoanThiDaiHocList
+const auth = useAuthStore()
+const route = useRoute()
+const router = useRouter()
+const currentStage = computed(() => route.meta.giaiDoan || '')
+const dangTaoPhien = ref(false)
+
+const pathSteps = [
+  { label: 'Bắt đầu', current: true },
+  { label: 'Sở thích & đam mê' },
+  { label: 'Kỹ năng & khả năng' },
+  { label: 'Môi trường làm việc' },
+  { label: 'Phong cách làm việc' },
+  { label: 'Ngành phù hợp' },
+  { label: 'Kết quả' },
+]
+
+const beforeTips = [
+  'Dành khoảng 5 phút để thư giãn và tập trung.',
+  'Nhập thông tin của bản thân để hệ thống giúp phân tích kết quả 1 cách chuẩn xác nhất.',
+  'Hiểu rằng trắc nghiệm này nhằm giúp bạn hiểu mình hơn, không phải để tạo hình ảnh “hoàn hảo” cho người khác.',
+  'Trung thực với bản thân, không khen hoặc chê quá mức.',
+  'Hoàn thành bài trong khoảng 20 phút để kết quả phản ánh đúng nhất.',
+]
+
+const duringTips = [
+  'Đọc từng câu hỏi và chọn một đáp án mô tả đúng nhất về bản thân bạn.',
+  'Không có đáp án đúng hay sai — chỉ có đáp án phù hợp với bạn.',
+  'Trả lời nhanh, tự nhiên, theo cảm nhận đầu tiên — đừng suy nghĩ quá nhiều.',
+  'Trả lời hết các câu trong mỗi phần để chuyển sang phần tiếp theo.',
+  'Khi đã trả lời đủ toàn bộ câu hỏi, bài làm sẽ được khoá để phân tích kết quả.',
+]
+
+function chonGiaiDoan(stage) {
+  sessionStorage.setItem(GIAI_DOAN_THI_DAI_HOC_KEY, stage.code)
+  const name = routeNameGiaiDoanThiDaiHoc(stage.code)
+  if (name && name !== route.name) {
+    router.push({ name })
+    return
+  }
+  if (!name) router.push({ name: 'thpt-thi-dai-hoc' })
+}
+
+function queryMaNganh() {
+  const ma = route.query.ma_nganh
+  return ma ? { ma_nganh: ma } : {}
+}
+
+async function batDauHolland() {
+  if (dangTaoPhien.value) return
+  dangTaoPhien.value = true
+  try {
+    const phien = await batDauPhienHolland()
+    router.push({
+      name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
+      params: { ssid: phien.ssid, loaiCauHoiId: phien.loai_cau_hoi_id },
+      query: queryMaNganh(),
+    })
+  } catch (error) {
+    const status = error.response?.status
+    const detail = error.response?.data?.detail
+    if (status === 400) {
+      ElMessage.error(typeof detail === 'string' ? detail : 'Không tạo được phiên khảo sát.')
+    }
+  } finally {
+    dangTaoPhien.value = false
+  }
+}
+</script>
 
 <style scoped>
 .holland-keys {

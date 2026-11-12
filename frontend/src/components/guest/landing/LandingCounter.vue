@@ -1,3 +1,10 @@
+<template>
+  <span ref="root" class="lp-counter">
+    <span aria-hidden="true">{{ display }}{{ suffix }}</span>
+    <span class="visually-hidden">{{ value }}{{ suffix }}</span>
+  </span>
+</template>
+
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 
@@ -61,10 +68,3 @@ onUnmounted(() => {
   cancelAnimationFrame(frame)
 })
 </script>
-
-<template>
-  <span ref="root" class="lp-counter">
-    <span aria-hidden="true">{{ display }}{{ suffix }}</span>
-    <span class="visually-hidden">{{ value }}{{ suffix }}</span>
-  </span>
-</template>

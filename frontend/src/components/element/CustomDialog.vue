@@ -1,3 +1,99 @@
+<template>
+  <el-dialog
+    ref="dialogComponent"
+    v-model="visible"
+    :title="title"
+    :width="dialogWidth"
+    :fullscreen="fullscreen"
+    :align-center="alignCenter"
+    :destroy-on-close="destroyOnClose"
+    :append-to-body="appendToBody"
+    :class="dialogClass"
+    :style="dialogStyle"
+    v-bind="fallthroughAttrs"
+    @opened="handleOpened"
+  >
+    <template #header="headerSlot">
+      <slot v-if="slots.header" name="header" v-bind="headerSlot || {}" />
+      <span v-else class="el-dialog__title" role="heading" aria-level="2">{{ title }}</span>
+      <button
+        v-if="!fullscreen"
+        type="button"
+        class="custom-dialog__icon-btn custom-dialog__minimize-btn"
+        :aria-label="minimized ? 'Hiện nội dung' : 'Thu gọn'"
+        :title="minimized ? 'Hiện nội dung' : 'Thu gọn'"
+        @pointerdown.stop
+        @click="toggleMinimize"
+      >
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path
+            v-if="minimized"
+            d="M2.5 3.5h11v9h-11z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linejoin="round"
+          />
+          <path
+            v-else
+            d="M2.5 8h11"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+          />
+        </svg>
+      </button>
+      <button
+        v-if="!fullscreen"
+        type="button"
+        class="custom-dialog__icon-btn custom-dialog__size-btn"
+        :aria-label="collapsed ? 'Phóng to' : 'Thu nhỏ'"
+        :title="collapsed ? 'Phóng to' : 'Thu nhỏ'"
+        @pointerdown.stop
+        @click="toggleCompact"
+      >
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path
+            v-if="collapsed"
+            d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            v-else
+            d="M6 2v4H2M10 2v4h4M14 10h-4v4M2 10h4v4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+      <template v-if="!fullscreen">
+        <div
+          v-for="edge in activeEdges"
+          :key="edge"
+          :class="['custom-dialog__edge', `custom-dialog__edge--${edge}`]"
+          aria-hidden="true"
+          @pointerdown="onResizeStart(edge, $event)"
+          @pointermove="onResizeMove"
+          @pointerup="onResizeEnd"
+          @pointercancel="onResizeEnd"
+        />
+      </template>
+    </template>
+
+    <template v-for="name in Object.keys(slots).filter((slotName) => slotName !== 'header')" :key="name" #[name]="slotData">
+      <slot :name="name" v-bind="slotData || {}" />
+    </template>
+  </el-dialog>
+</template>
+
 <script setup>
 /**
  * CustomDialog — wrapper el-dialog.
@@ -395,102 +491,6 @@ onBeforeUnmount(() => {
 
 resetOnOpen()
 </script>
-
-<template>
-  <el-dialog
-    ref="dialogComponent"
-    v-model="visible"
-    :title="title"
-    :width="dialogWidth"
-    :fullscreen="fullscreen"
-    :align-center="alignCenter"
-    :destroy-on-close="destroyOnClose"
-    :append-to-body="appendToBody"
-    :class="dialogClass"
-    :style="dialogStyle"
-    v-bind="fallthroughAttrs"
-    @opened="handleOpened"
-  >
-    <template #header="headerSlot">
-      <slot v-if="slots.header" name="header" v-bind="headerSlot || {}" />
-      <span v-else class="el-dialog__title" role="heading" aria-level="2">{{ title }}</span>
-      <button
-        v-if="!fullscreen"
-        type="button"
-        class="custom-dialog__icon-btn custom-dialog__minimize-btn"
-        :aria-label="minimized ? 'Hiện nội dung' : 'Thu gọn'"
-        :title="minimized ? 'Hiện nội dung' : 'Thu gọn'"
-        @pointerdown.stop
-        @click="toggleMinimize"
-      >
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          <path
-            v-if="minimized"
-            d="M2.5 3.5h11v9h-11z"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.4"
-            stroke-linejoin="round"
-          />
-          <path
-            v-else
-            d="M2.5 8h11"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.4"
-            stroke-linecap="round"
-          />
-        </svg>
-      </button>
-      <button
-        v-if="!fullscreen"
-        type="button"
-        class="custom-dialog__icon-btn custom-dialog__size-btn"
-        :aria-label="collapsed ? 'Phóng to' : 'Thu nhỏ'"
-        :title="collapsed ? 'Phóng to' : 'Thu nhỏ'"
-        @pointerdown.stop
-        @click="toggleCompact"
-      >
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          <path
-            v-if="collapsed"
-            d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.4"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            v-else
-            d="M6 2v4H2M10 2v4h4M14 10h-4v4M2 10h4v4"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.4"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </button>
-      <template v-if="!fullscreen">
-        <div
-          v-for="edge in activeEdges"
-          :key="edge"
-          :class="['custom-dialog__edge', `custom-dialog__edge--${edge}`]"
-          aria-hidden="true"
-          @pointerdown="onResizeStart(edge, $event)"
-          @pointermove="onResizeMove"
-          @pointerup="onResizeEnd"
-          @pointercancel="onResizeEnd"
-        />
-      </template>
-    </template>
-
-    <template v-for="name in Object.keys(slots).filter((slotName) => slotName !== 'header')" :key="name" #[name]="slotData">
-      <slot :name="name" v-bind="slotData || {}" />
-    </template>
-  </el-dialog>
-</template>
 
 <style>
 .custom-dialog.el-dialog {

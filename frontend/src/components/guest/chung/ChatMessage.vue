@@ -1,26 +1,3 @@
-<script setup>
-import { ref } from 'vue'
-import ChatMarkdown from './ChatMarkdown.vue'
-import { apiAssetUrl } from '@/api/apiUrl'
-import { safeLink } from '@/utils/chatMarkdown'
-
-defineProps({ message: { type: Object, required: true }, retryable: Boolean })
-defineEmits(['retry'])
-const copyStatus = ref('')
-async function copy(text) {
-  try { await navigator.clipboard.writeText(text); copyStatus.value = 'Đã sao chép' }
-  catch { copyStatus.value = 'Không thể sao chép' }
-}
-function dataLink(source) {
-  if (!source.duong_dan?.startsWith('/')) return null
-  return safeLink(apiAssetUrl(source.duong_dan))
-}
-function date(value) {
-  const parsed = new Date(value)
-  return Number.isNaN(parsed.getTime()) ? '' : parsed.toLocaleDateString('vi-VN')
-}
-</script>
-
 <template>
   <article class="ai-chat__message" :class="[`is-${message.role}`, `is-${message.status}`]">
     <ChatMarkdown v-if="message.role === 'bot'" :text="message.text" />
@@ -50,3 +27,26 @@ function date(value) {
     </footer>
   </article>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+import ChatMarkdown from './ChatMarkdown.vue'
+import { apiAssetUrl } from '@/api/apiUrl'
+import { safeLink } from '@/utils/chatMarkdown'
+
+defineProps({ message: { type: Object, required: true }, retryable: Boolean })
+defineEmits(['retry'])
+const copyStatus = ref('')
+async function copy(text) {
+  try { await navigator.clipboard.writeText(text); copyStatus.value = 'Đã sao chép' }
+  catch { copyStatus.value = 'Không thể sao chép' }
+}
+function dataLink(source) {
+  if (!source.duong_dan?.startsWith('/')) return null
+  return safeLink(apiAssetUrl(source.duong_dan))
+}
+function date(value) {
+  const parsed = new Date(value)
+  return Number.isNaN(parsed.getTime()) ? '' : parsed.toLocaleDateString('vi-VN')
+}
+</script>

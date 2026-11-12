@@ -1,7 +1,3 @@
-<script setup>
-import { hollandGroups } from '@/data/landing'
-</script>
-
 <template>
   <section id="holland" class="landing__section" aria-labelledby="holland-title">
     <div class="container-fluid">
@@ -44,3 +40,7 @@ import { hollandGroups } from '@/data/landing'
     </div>
   </section>
 </template>
+
+<script setup>
+import { hollandGroups } from '@/data/landing'
+</script>

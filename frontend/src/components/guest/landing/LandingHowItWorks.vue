@@ -1,7 +1,3 @@
-<script setup>
-import { steps } from '@/data/landing'
-</script>
-
 <template>
   <section id="cach-hoat-dong" class="landing__section" aria-labelledby="steps-title">
     <div class="container-fluid">
@@ -28,3 +24,7 @@ import { steps } from '@/data/landing'
     </div>
   </section>
 </template>
+
+<script setup>
+import { steps } from '@/data/landing'
+</script>

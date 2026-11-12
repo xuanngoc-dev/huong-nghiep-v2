@@ -1,3 +1,18 @@
+<template>
+  <el-input
+    ref="inputRef"
+    :model-value="isNumberInput ? displayValue : model"
+    v-bind="inputAttrs"
+    :size="resolvedSize"
+    @update:model-value="onUpdate"
+    @blur="onBlur"
+  >
+    <template v-for="(_, name) in slots" #[name]="slotData">
+      <slot :name="name" v-bind="slotData || {}" />
+    </template>
+  </el-input>
+</template>
+
 <script setup>
 /**
  * CustomInput — wrapper el-input.
@@ -76,18 +91,3 @@ defineExpose({
   clear: (...args) => inputRef.value?.clear?.(...args),
 })
 </script>
-
-<template>
-  <el-input
-    ref="inputRef"
-    :model-value="isNumberInput ? displayValue : model"
-    v-bind="inputAttrs"
-    :size="resolvedSize"
-    @update:model-value="onUpdate"
-    @blur="onBlur"
-  >
-    <template v-for="(_, name) in slots" #[name]="slotData">
-      <slot :name="name" v-bind="slotData || {}" />
-    </template>
-  </el-input>
-</template>
