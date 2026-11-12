@@ -40,9 +40,8 @@ def list_ton_giao(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
 ) -> DmTonGiaoPage:
-    """Lấy danh sách tôn giáo có phân trang. Lọc theo từ khóa (tên, mã) và trạng thái."""
+    """Lấy danh sách tôn giáo có phân trang. Lọc theo từ khóa (tên, mã) và trạng thái. Không cần đăng nhập."""
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())

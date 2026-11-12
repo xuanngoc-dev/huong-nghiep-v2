@@ -44,9 +44,8 @@ def list_chung_chi_ngoai_ngu(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
 ) -> DmChungChiNgoaiNguPage:
-    """Lấy danh sách chứng chỉ ngoại ngữ có phân trang."""
+    """Lấy danh sách chứng chỉ ngoại ngữ có phân trang, không cần đăng nhập."""
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())

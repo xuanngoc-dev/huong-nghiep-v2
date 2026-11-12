@@ -48,9 +48,8 @@ def list_linh_vuc_dao_tao(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
 ) -> DmLinhVucDaoTaoPage:
-    """Lấy danh sách lĩnh vực đào tạo có phân trang. Lọc theo từ khóa (tên, mã, tên tiếng Anh) và trạng thái."""
+    """Lấy danh sách lĩnh vực đào tạo có phân trang. Lọc theo từ khóa (tên, mã, tên tiếng Anh) và trạng thái. Không cần đăng nhập."""
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())

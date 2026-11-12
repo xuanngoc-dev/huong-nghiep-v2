@@ -223,31 +223,6 @@
           </div>
         </article>
 
-        <div class="loai-co-so" role="group" aria-label="Loại cơ sở đào tạo">
-          <button
-            type="button"
-            class="loai-co-so__chip"
-            :class="{ 'is-active': !boLoc.loai }"
-            :aria-pressed="!boLoc.loai"
-            :disabled="!conLuot"
-            @click="chonLoai('')"
-          >
-            Tất cả
-          </button>
-          <button
-            v-for="item in LOAI_CO_SO"
-            :key="item"
-            type="button"
-            class="loai-co-so__chip"
-            :class="{ 'is-active': boLoc.loai === item }"
-            :aria-pressed="boLoc.loai === item"
-            :disabled="!conLuot"
-            @click="chonLoai(item)"
-          >
-            {{ item }}
-          </button>
-        </div>
-
         <form class="nhom-filter" @submit.prevent="timCoLuot">
           <div class="nhom-filter__field nhom-filter__field--ten">
             <label class="nhom-filter__label" for="phu-hop-tu-khoa">Từ khóa</label>
@@ -265,6 +240,12 @@
               <CustomOption v-for="item in tinhOptions" :key="item.id" :label="item.ten_tinh" :value="item.ten_tinh" />
             </CustomSelect>
           </div>
+          <div class="nhom-filter__field nhom-filter__field--loai">
+            <label class="nhom-filter__label" for="phu-hop-loai">Loại cơ sở</label>
+            <CustomSelect id="phu-hop-loai" v-model="loai" class="nhom-filter__select" clearable placeholder="Tất cả loại">
+              <CustomOption v-for="item in LOAI_CO_SO" :key="item" :label="item" :value="item" />
+            </CustomSelect>
+          </div>
           <div class="nhom-filter__field nhom-filter__field--nam">
             <label class="nhom-filter__label" for="phu-hop-nam">Năm học</label>
             <CustomSelect id="phu-hop-nam" v-model="namHoc" class="nhom-filter__select" placeholder="Năm học">
@@ -273,7 +254,7 @@
           </div>
           <div class="nhom-filter__field nhom-filter__field--sap-xep">
             <label class="nhom-filter__label" for="phu-hop-sap-xep">Sắp xếp</label>
-            <CustomSelect id="phu-hop-sap-xep" v-model="sapXep" class="nhom-filter__select" :disabled="!conLuot" @change="timCoLuot">
+            <CustomSelect id="phu-hop-sap-xep" v-model="sapXep" class="nhom-filter__select">
               <CustomOption v-for="item in sapXepOptions" :key="item.value" :label="item.label" :value="item.value" />
             </CustomSelect>
           </div>
@@ -291,7 +272,11 @@
         </form>
 
         <HetLuotTimTruong v-if="!conLuot" @kham-pha="diNapTien" />
-        <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
+        <p v-if="!daTim" class="truong-phu-hop__cho-tim">
+          <CustomIcon><Search /></CustomIcon>
+          <span>Chọn tiêu chí ở bộ lọc rồi bấm <strong>Tìm kiếm</strong> để xem các trường phù hợp với bạn.</span>
+        </p>
+        <p v-else-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
         <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải trường phù hợp…</p>
         <KhongCoDuLieu v-else-if="!danhSach.length" :text="thongBaoTrong" />
         <div v-else class="row g-3">
@@ -443,6 +428,7 @@ const soMoiTrang = ref(12)
 const dangTai = ref(false)
 const loi = ref('')
 const sanSang = ref(false)
+const daTim = ref(false)
 const hoSoKhach = ref(hoSoKhachTrong())
 const hienFormKhach = ref(true)
 const luotDaDung = ref(0)
@@ -771,6 +757,7 @@ async function tai() {
 }
 
 function timKiem() {
+  daTim.value = true
   const nam = Number(namHoc.value)
   boLoc.value = {
     tuKhoa: tuKhoa.value.trim(),
@@ -874,12 +861,6 @@ async function timCoLuot() {
   }
 }
 
-function chonLoai(value) {
-  if (!conLuot.value) return
-  loai.value = value
-  timCoLuot()
-}
-
 function boLocHoSo() {
   khuVuc.value = ''
   tinh.value = ''
@@ -959,34 +940,38 @@ function timTheoHoSoKhach() {
   timCoLuot()
 }
 
+// Lưu hồ sơ chỉ cập nhật bộ lọc; danh sách đang hiển thị (nếu đã tìm) được tải lại, không tính lượt.
 function daLuuHoSo(data) {
   hoSo.value = data
   hoSoMo.value = false
   apDungHoSo()
-  timKiem()
+  if (daTim.value) timKiem()
 }
 
+// Đổi ngành thì quay về trạng thái chưa tìm, chờ người dùng bấm Tìm kiếm.
 watch(maNganh, (ma, truoc) => {
   if (!sanSang.value || !ma || ma === truoc) return
   taiNganh(ma)
-  if (trang.value !== 1) trang.value = 1
-  else tai()
+  daTim.value = false
+  danhSach.value = []
+  total.value = 0
+  trang.value = 1
 })
 
 watch(trang, () => {
-  if (sanSang.value) tai()
+  if (sanSang.value && daTim.value) tai()
 })
 
 watch(soMoiTrang, () => {
-  if (!sanSang.value) return
+  if (!sanSang.value || !daTim.value) return
   if (trang.value !== 1) trang.value = 1
   else tai()
 })
 
+// Không tự tìm khi mở trang: chỉ gọi API danh sách sau khi bấm Tìm kiếm.
 onMounted(async () => {
   await Promise.all([taiNganh(maNganh.value), chuanBiHoSo()])
   sanSang.value = true
-  tai()
 })
 </script>
 
@@ -1416,43 +1401,25 @@ onMounted(async () => {
   font-weight: 400;
 }
 
-.loai-co-so {
+.truong-phu-hop__cho-tim {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
-  margin-top: 16px;
+  margin: 16px 0 0;
+  padding: 20px 16px;
+  border: 1px dashed #b7d0c2;
+  border-radius: 12px;
+  background: #f6faf7;
+  color: #3a4742;
+  line-height: 1.5;
+  text-align: center;
 }
 
-.loai-co-so__chip {
-  padding: 6px 16px;
-  border: 1px solid #cfe1d6;
-  border-radius: 999px;
-  background: #fff;
-  color: #31483d;
-  font-size: 0.9rem;
-  font-weight: 500;
-  line-height: 1.4;
-  cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease;
-}
-
-.loai-co-so__chip:hover {
-  border-color: #1f7a4d;
-  color: #1f7a4d;
-}
-
-.loai-co-so__chip.is-active {
-  border-color: #1f7a4d;
-  background: #1f7a4d;
-  color: #fff;
-}
-
-.loai-co-so__chip:focus-visible {
-  outline: 2px solid rgba(31, 122, 77, 0.4);
-  outline-offset: 2px;
+.truong-phu-hop__cho-tim :deep(.el-icon) {
+  flex: 0 0 auto;
+  color: #3f9466;
+  font-size: 18px;
 }
 
 @media (max-width: 767px) {
@@ -1465,6 +1432,7 @@ onMounted(async () => {
   }
 }
 
+.nhom-filter__field--loai,
 .nhom-filter__field--nam,
 .nhom-filter__field--tinh,
 .nhom-filter__field--sap-xep {

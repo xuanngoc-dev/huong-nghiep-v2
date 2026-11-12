@@ -28,7 +28,8 @@ router = APIRouter(
     dependencies=[Depends(get_admin_user)],
 )
 
-# Tra cứu công khai, không cần đăng nhập. Phải include trước `router` để không bị `/{item_id}` bắt mất.
+# Đọc danh sách và tra cứu công khai, không cần đăng nhập. Phải include trước `router` để không bị
+# `/{item_id}` bắt mất; thêm, sửa, xóa và xem chi tiết vẫn ở `router` (bắt buộc admin).
 public_router = APIRouter(prefix="/danh-muc/nganh-hoc-theo-truong", tags=["danh-muc"])
 
 _LOI_LUU = "Không lưu được ngành đào tạo, hãy kiểm tra lại mã trường"
@@ -67,7 +68,7 @@ def _ensure_truong(db: Session, ma_truong: str) -> str:
     return ten
 
 
-@router.get("", response_model=DmNganhHocTheoTruongPage)
+@public_router.get("", response_model=DmNganhHocTheoTruongPage)
 def list_nganh_hoc_theo_truong(
     q: str | None = Query(default=None, max_length=255),
     ma_truong: str | None = Query(default=None, max_length=20),
@@ -76,7 +77,7 @@ def list_nganh_hoc_theo_truong(
     page_size: int = Query(default=20, ge=1, le=1000),
     db: Session = Depends(get_db),
 ) -> DmNganhHocTheoTruongPage:
-    """Lấy danh sách ngành đào tạo theo trường có phân trang.
+    """Lấy danh sách ngành đào tạo theo trường có phân trang. Không cần đăng nhập.
 
     Lọc theo từ khóa (mã ngành, mã xét tuyển, tên ngành, tên chương trình), mã trường và năm học.
     """
@@ -123,9 +124,9 @@ def list_nganh_hoc_theo_truong(
     )
 
 
-@router.get("/nam-hoc", response_model=list[int])
+@public_router.get("/nam-hoc", response_model=list[int])
 def list_nam_hoc(db: Session = Depends(get_db)) -> list[int]:
-    """Các năm học đang có dữ liệu, mới nhất trước, dùng cho bộ lọc."""
+    """Các năm học đang có dữ liệu, mới nhất trước, dùng cho bộ lọc. Không cần đăng nhập."""
     return list(
         db.scalars(
             select(DmNganhHocTheoTruong.nam_hoc)

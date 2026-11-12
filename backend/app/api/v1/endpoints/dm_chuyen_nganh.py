@@ -96,9 +96,8 @@ def list_chuyen_nganh(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
 ) -> DmChuyenNganhPage:
-    """Lấy danh sách chuyên ngành có phân trang. Lọc theo từ khóa, trạng thái và ngành cha."""
+    """Lấy danh sách chuyên ngành có phân trang. Lọc theo từ khóa, trạng thái và ngành cha. Không cần đăng nhập."""
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())
