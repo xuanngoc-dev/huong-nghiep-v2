@@ -358,7 +358,7 @@ function diChonTruong() {
   const ma = String(props.nganh?.ma_nganh || '').trim()
   if (!ma) return
   router.push({
-    name: 'thpt-thi-dai-hoc-chon-truong',
+    name: 'thpt-thi-dai-hoc-truong-phu-hop',
     params: { maNganh: ma },
   })
 }
