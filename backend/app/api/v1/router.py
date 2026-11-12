@@ -36,6 +36,7 @@ from app.api.v1.endpoints import (
     thu_vien,
     tn_cau_hoi,
     tn_phien_khao_sat,
+    tn_tim_truong_phu_hop,
 )
 
 api_router = APIRouter()
@@ -71,6 +72,7 @@ api_router.include_router(dats_tru_so.router)
 api_router.include_router(dats_website.router)
 api_router.include_router(tn_cau_hoi.router)
 api_router.include_router(tn_phien_khao_sat.router)
+api_router.include_router(tn_tim_truong_phu_hop.router)
 api_router.include_router(kiem_tra_du_lieu.router)
 api_router.include_router(tai_lieu.router)
 api_router.include_router(thu_vien.router)

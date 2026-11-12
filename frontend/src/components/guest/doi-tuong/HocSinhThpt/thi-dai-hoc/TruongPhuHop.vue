@@ -123,12 +123,14 @@
               />
             </div>
             <div class="ho-so-khach__submit">
-              <CustomButton type="primary" native-type="submit" :disabled="!conLuot">Tìm trường phù hợp</CustomButton>
+              <CustomButton type="primary" native-type="submit" :disabled="!conLuot">
+                Tìm trường phù hợp
+              </CustomButton>
             </div>
           </form>
           <div class="ho-so-khach__cta">
             <p>
-              Đăng ký tài khoản để được tìm <strong>{{ SO_LUOT_THANH_VIEN }} lượt mỗi ngày</strong> và lưu hồ sơ đầy đủ:
+              Đăng ký tài khoản để được tìm <strong>{{ soLuotThanhVien }} lượt mỗi ngày</strong> và lưu hồ sơ đầy đủ:
               học lực, điểm thi thử từng môn, ưu tiên tuyển sinh, chứng chỉ và bài thi đánh giá năng lực.
             </p>
             <div class="truong-phu-hop__links">
@@ -193,7 +195,9 @@
             </CustomSelect>
           </div>
           <div class="nhom-filter__actions">
-            <CustomButton type="primary" native-type="submit" :disabled="!conLuot">Tìm kiếm</CustomButton>
+            <CustomButton type="primary" native-type="submit" :disabled="!conLuot" :loading="dangGhiLuot">
+              Tìm kiếm
+            </CustomButton>
             <CustomButton v-if="dangLocTheoHoSo" native-type="button" :disabled="!conLuot" @click="boLocHoSo">
               Bỏ lọc hồ sơ
             </CustomButton>
@@ -205,13 +209,13 @@
 
         <p v-if="!conLuot" class="luot-tim__het-note">
           <template v-if="daDangNhap">
-            Bạn đã dùng hết {{ SO_LUOT_THANH_VIEN }} lượt tìm trường phù hợp hôm nay. Hãy quay lại vào ngày mai.
+            Bạn đã dùng hết {{ soLuotThanhVien }} lượt tìm trường phù hợp hôm nay. Hãy quay lại vào ngày mai.
           </template>
           <template v-else>
-            Bạn đã dùng lượt tìm thử.
+            Bạn đã dùng hết lượt tìm thử hôm nay.
             <button type="button" class="luot-tim__link" @click="diDangKy">Đăng ký</button> hoặc
             <button type="button" class="luot-tim__link" @click="diDangNhap">đăng nhập</button>
-            để được tìm {{ SO_LUOT_THANH_VIEN }} lượt mỗi ngày.
+            để được tìm {{ soLuotThanhVien }} lượt mỗi ngày.
           </template>
         </p>
         <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
@@ -282,6 +286,7 @@ import { fetchHoSo } from '@/api/hoSo'
 import { fetchKhuVucUuTien } from '@/api/khuVucUuTien'
 import { fetchMonHoc } from '@/api/monHoc'
 import { fetchNganh } from '@/api/nganhDaoTao'
+import { fetchLuotTimTruong, timTruongPhuHop } from '@/api/timTruongPhuHop'
 import { fetchTinhThanh } from '@/api/tinhThanh'
 import { fetchToHopMonHoc } from '@/api/toHopMonHoc'
 import { danhSachNamHoc, nhanNamHoc } from '@/constants/namHoc'
@@ -302,10 +307,9 @@ const SAP_XEP = [
   { value: 'chuong_trinh_desc', label: 'Nhiều chương trình nhất' },
 ]
 const NAM_HIEN_TAI = new Date().getFullYear()
-// Lượt tìm trường phù hợp: thành viên N lượt mỗi ngày, khách 1 lượt dùng thử.
-// Tạm đếm ở trình duyệt để lên giao diện, sẽ chuyển sang API khi có.
-const SO_LUOT_THANH_VIEN = 5
-const SO_LUOT_KHACH = 1
+// Lượt tìm trường phù hợp mỗi ngày lấy từ cấu hình tra cứu đang áp dụng.
+// Thành viên: server đếm và lưu lịch sử. Khách vãng lai: chưa có tài khoản để lưu nên trình duyệt tự đếm.
+const LUOT_MAC_DINH = { so_luot_khach_ngay: 1, so_luot_thanh_vien_ngay: 5 }
 const KHOA_LUOT = 'thpt-tim-truong-phu-hop-luot'
 
 const route = useRoute()
@@ -344,42 +348,58 @@ const loi = ref('')
 const sanSang = ref(false)
 const hoSoKhach = ref({ tinhId: null, toHop: '', diem: null })
 const luotDaDung = ref(0)
+const cauHinhLuot = ref(LUOT_MAC_DINH)
+const dangGhiLuot = ref(false)
 let lanTai = 0
 
 function homNay() {
   return new Date().toLocaleDateString('sv-SE')
 }
 
-function khoaLuot() {
-  return daDangNhap.value ? `${KHOA_LUOT}:${auth.user?.id || 'tai-khoan'}` : `${KHOA_LUOT}:khach`
-}
-
-function docLuot() {
+// Lượt của khách vãng lai, đếm theo ngày trong trình duyệt.
+function docLuotKhach() {
   try {
-    const data = JSON.parse(localStorage.getItem(khoaLuot()) || 'null')
-    // Lượt của thành viên tính theo ngày, của khách không bao giờ làm mới.
-    if (!data || (daDangNhap.value && data.ngay !== homNay())) return 0
+    const data = JSON.parse(localStorage.getItem(`${KHOA_LUOT}:khach`) || 'null')
+    if (!data || data.ngay !== homNay()) return 0
     return Number(data.da_dung) || 0
   } catch {
     return 0
   }
 }
 
-function ghiLuot(soLuot) {
+function ghiLuotKhach(soLuot) {
   luotDaDung.value = soLuot
   try {
-    localStorage.setItem(khoaLuot(), JSON.stringify({ ngay: homNay(), da_dung: soLuot }))
+    localStorage.setItem(`${KHOA_LUOT}:khach`, JSON.stringify({ ngay: homNay(), da_dung: soLuot }))
   } catch {
     // Trình duyệt chặn lưu trữ thì chỉ đếm trong phiên hiện tại.
   }
 }
 
-const tongLuot = computed(() => (daDangNhap.value ? SO_LUOT_THANH_VIEN : SO_LUOT_KHACH))
+async function taiLuot() {
+  try {
+    const data = await fetchLuotTimTruong()
+    cauHinhLuot.value = data
+    luotDaDung.value = data.la_thanh_vien ? data.da_dung || 0 : docLuotKhach()
+  } catch {
+    cauHinhLuot.value = LUOT_MAC_DINH
+    luotDaDung.value = daDangNhap.value ? 0 : docLuotKhach()
+  }
+}
+
+function maYeuCau() {
+  if (globalThis.crypto?.randomUUID) return crypto.randomUUID()
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`
+}
+
+const soLuotThanhVien = computed(() => cauHinhLuot.value.so_luot_thanh_vien_ngay)
+const soLuotKhach = computed(() => cauHinhLuot.value.so_luot_khach_ngay)
+const tongLuot = computed(() => (daDangNhap.value ? soLuotThanhVien.value : soLuotKhach.value))
 const luotConLai = computed(() => Math.max(tongLuot.value - luotDaDung.value, 0))
 const conLuot = computed(() => luotConLai.value > 0)
 const nhanLuot = computed(() => {
-  if (daDangNhap.value) return `Hôm nay còn ${luotConLai.value}/${SO_LUOT_THANH_VIEN} lượt tìm`
-  return conLuot.value ? 'Còn 1 lượt tìm thử' : 'Đã dùng lượt tìm thử'
+  if (daDangNhap.value) return `Hôm nay còn ${luotConLai.value}/${tongLuot.value} lượt tìm`
+  return `Hôm nay còn ${luotConLai.value}/${tongLuot.value} lượt tìm thử`
 })
 const toHopOptions = computed(() =>
   danhMuc.value.toHop.filter((item) => item.trang_thai === 1 && item.ds_mon_hoc?.length === 3),
@@ -588,8 +608,7 @@ async function chuanBiHoSo() {
   }
   tinhOptions.value = tinhItems
   if (!auth.isAuthenticated) {
-    luotDaDung.value = docLuot()
-    await taiDanhMucHoSo()
+    await Promise.all([taiDanhMucHoSo(), taiLuot()])
     return
   }
   try {
@@ -599,10 +618,10 @@ async function chuanBiHoSo() {
   } catch {
     hoSo.value = null
     daDangNhap.value = false
-    luotDaDung.value = docLuot()
+    await taiLuot()
     return
   }
-  luotDaDung.value = docLuot()
+  await taiLuot()
   apDungHoSo()
   boLoc.value = { ...boLoc.value, tinh: tinh.value, khuVuc: khuVuc.value, sapXep: sapXep.value }
 }
@@ -660,20 +679,79 @@ function timKiem() {
   else tai()
 }
 
+// Dữ liệu năng lực trong hồ sơ, lưu kèm lịch sử tìm kiếm.
+function nangLucHoSo() {
+  const hocVan = hoSo.value?.trinh_do_hoc_van || {}
+  return {
+    diem_thi_thu: diemThiThu.value,
+    to_hop_cao_nhat: toHopManh.value[0] || null,
+    hoc_luc_trung_binh: hocVan.hoc_luc_trung_binh || null,
+    khu_vuc_uu_tien_id: hoSo.value?.khu_vuc_uu_tien_id ?? null,
+    doi_tuong_uu_tien_id: hoSo.value?.doi_tuong_uu_tien_id ?? null,
+    chung_chi_ngoai_ngu: hocVan.chung_chi_ngoai_ngu || [],
+    bai_thi_danh_gia_nang_luc: hocVan.bai_thi_danh_gia_nang_luc || [],
+  }
+}
+
+// Tiêu chí lấy từ ô lọc đang nhập, đúng với bộ lọc mà timKiem() sắp áp dụng.
+function payloadTimKiem() {
+  const nam = Number(namHoc.value)
+  const sx = sapXep.value || 'ten_asc'
+  return {
+    ma_yeu_cau: maYeuCau(),
+    ma_nganh: maNganh.value,
+    nam_tuyen_sinh: Number.isInteger(nam) ? nam : NAM_HIEN_TAI,
+    du_lieu_nang_luc: nangLucHoSo(),
+    du_lieu_tai_chinh: {},
+    tieu_chi_tim_kiem: {
+      tu_khoa: tuKhoa.value.trim() || null,
+      khu_vuc: khuVuc.value || null,
+      loai_co_so: loai.value || null,
+      tinh: tinh.value || null,
+      sap_xep: sx,
+      uu_tien_tinh: sx === 'gan_toi' ? tinhHoSo.value?.ten || null : null,
+      uu_tien_khu_vuc: sx === 'gan_toi' ? tinhHoSo.value?.khu_vuc || null : null,
+    },
+  }
+}
+
 // Mỗi lần người dùng chủ động tìm (bấm Tìm kiếm, đổi loại, sắp xếp, lọc hồ sơ) trừ 1 lượt.
 // Chuyển trang và lần tải đầu không tính.
-function timCoLuot() {
+async function timCoLuot() {
+  if (dangGhiLuot.value) return false
   if (!conLuot.value) {
     ElMessage.warning(
       daDangNhap.value
         ? 'Bạn đã dùng hết lượt tìm trường phù hợp hôm nay.'
-        : 'Bạn đã dùng lượt tìm thử. Đăng ký hoặc đăng nhập để tìm tiếp.',
+        : 'Bạn đã dùng hết lượt tìm thử hôm nay. Đăng ký hoặc đăng nhập để tìm tiếp.',
     )
     return false
   }
-  ghiLuot(luotDaDung.value + 1)
-  timKiem()
-  return true
+  if (!daDangNhap.value) {
+    ghiLuotKhach(luotDaDung.value + 1)
+    timKiem()
+    return true
+  }
+  // Thành viên: server kiểm tra lượt, lưu lịch sử rồi mới tải danh sách.
+  dangGhiLuot.value = true
+  try {
+    const data = await timTruongPhuHop(payloadTimKiem())
+    cauHinhLuot.value = data.luot
+    luotDaDung.value = data.luot.da_dung || 0
+    timKiem()
+    return true
+  } catch (error) {
+    const detail = error?.response?.data?.detail
+    if (error?.response?.status === 429) {
+      luotDaDung.value = tongLuot.value
+      ElMessage.warning(typeof detail === 'string' ? detail : 'Bạn đã dùng hết lượt tìm trường phù hợp hôm nay.')
+    } else {
+      ElMessage.error(typeof detail === 'string' ? detail : 'Không ghi nhận được lượt tìm kiếm.')
+    }
+    return false
+  } finally {
+    dangGhiLuot.value = false
+  }
 }
 
 function chonLoai(value) {
