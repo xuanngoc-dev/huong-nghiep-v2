@@ -216,7 +216,7 @@ function resolveIcon(name) {
   :deep(.el-menu-item.is-active) {
     background-color: color-mix(in srgb, var(--el-color-primary) 22%, var(--el-bg-color));
     color: var(--el-color-primary);
-    font-weight: 600;
+    font-weight: 400;
   }
 
   :deep(.el-menu-item.is-active:hover) {
@@ -341,7 +341,7 @@ function resolveIcon(name) {
 
   &__header {
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: 0.04em;
     color: var(--el-text-color-secondary);
     line-height: 1.2;

@@ -299,6 +299,12 @@
           "title": "Trường học",
           "tooltip": "Quản lý danh mục trường đại học",
           "icon": "School"
+        },
+        {
+          "index": "/admin/danh-muc/nganh-hoc-theo-truong",
+          "title": "Ngành theo trường",
+          "tooltip": "Quản lý ngành đào tạo của từng trường theo năm học",
+          "icon": "Notebook"
         }
       ]
     },

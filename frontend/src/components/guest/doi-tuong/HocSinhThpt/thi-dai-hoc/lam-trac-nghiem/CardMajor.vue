@@ -402,7 +402,7 @@ watch(() => props.chon, () => nextTick(dongBoChon))
 
 .card-major__fact dt {
   color: var(--cm-text-muted);
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .card-major__fact dd {

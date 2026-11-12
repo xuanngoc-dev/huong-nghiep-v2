@@ -495,7 +495,7 @@ onUnmounted(() => {
   }
 
   :deep(.el-menu-item.is-active) {
-    font-weight: 600;
+    font-weight: 400;
   }
 }
 
@@ -590,7 +590,7 @@ onUnmounted(() => {
 
 .header-datetime__date {
   font-size: 0.87em;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--layout-text-muted);
 }
 
@@ -644,7 +644,7 @@ onUnmounted(() => {
   min-width: 0;
   max-width: 160px;
   font-size: 1em;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--layout-text);
   white-space: nowrap;
   overflow: hidden;

@@ -6,6 +6,7 @@ from app.models.dm_linh_vuc_dao_tao import DmLinhVucDaoTao
 from app.models.dm_loai_cau_hoi import DmLoaiCauHoi
 from app.models.dm_mon_hoc import DmMonHoc
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
+from app.models.dm_nganh_hoc_theo_truong import DmNganhHocTheoTruong
 from app.models.dm_nhom_nganh_dao_tao import DmNhomNganhDaoTao
 from app.models.dm_nhom_tinh_cach_holland import DmNhomTinhCachHolland
 from app.models.dm_phuong_thuc_tuyen_sinh import DmPhuongThucTuyenSinh

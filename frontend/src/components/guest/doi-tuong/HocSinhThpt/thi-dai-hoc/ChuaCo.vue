@@ -566,7 +566,7 @@ onMounted(() => {
   background: rgba(var(--guest-primary-rgb, 63, 150, 67), 0.12);
   color: var(--guest-primary, #3f9643);
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -613,7 +613,7 @@ onMounted(() => {
   background: rgba(var(--guest-primary-rgb, 63, 150, 67), 0.12);
   color: var(--guest-primary, #3f9643);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .intro-card__actions {
@@ -630,7 +630,7 @@ onMounted(() => {
   padding: 12px 28px;
   border-radius: 0.5rem;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 400;
   box-shadow: 0 8px 20px rgba(var(--guest-primary-rgb, 63, 150, 67), 0.32);
   transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
   --el-button-bg-color: var(--guest-primary, #3f9643);
@@ -836,14 +836,14 @@ onMounted(() => {
 .chi-tiet-bang__nhom {
   background: #3f9643;
   color: #fff;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .chi-tiet-bang tbody th:not(.chi-tiet-bang__nhom) {
   width: 190px;
   background: #e5f2ea;
   color: #3f9643;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .chi-tiet-bang td {

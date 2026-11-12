@@ -13,6 +13,7 @@ from app.api.v1.endpoints import (
     dm_loai_cau_hoi,
     dm_mon_hoc,
     dm_nganh_dao_tao,
+    dm_nganh_hoc_theo_truong,
     dm_nhom_nganh_dao_tao,
     dm_nhom_tinh_cach_holland,
     dm_phuong_thuc_tuyen_sinh,
@@ -60,6 +61,7 @@ api_router.include_router(dm_chung_chi_ngoai_ngu.router)
 api_router.include_router(dm_bai_thi_danh_gia_nang_luc.router)
 api_router.include_router(dm_thanh_tich_hoc_tap_nghien_cuu.router)
 api_router.include_router(dm_truong.router)
+api_router.include_router(dm_nganh_hoc_theo_truong.router)
 api_router.include_router(dats_tuyen_sinh.router)
 api_router.include_router(dats_chuong_trinh_dao_tao.router)
 api_router.include_router(dats_tru_so.router)

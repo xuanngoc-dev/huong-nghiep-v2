@@ -75,7 +75,7 @@ const coDuLieu = computed(() => luong.value.length > 0 || kyNang.value.length > 
   margin: 0;
   color: #31483d;
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
@@ -103,6 +103,6 @@ const coDuLieu = computed(() => luong.value.length > 0 || kyNang.value.length > 
   border-radius: 0.375rem;
   background: #e7f5ec;
   color: #0c5c34;
-  font-weight: 600;
+  font-weight: 400;
 }
 </style>

@@ -272,6 +272,12 @@ const router = createRouter({
           meta: { title: 'Trường học', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'danh-muc/nganh-hoc-theo-truong',
+          name: 'nganh-hoc-theo-truong',
+          component: () => import('@/views/admin/danh-muc/NganhHocTheoTruong.vue'),
+          meta: { title: 'Ngành theo trường', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'tai-nguyen/thu-vien',
           name: 'thu-vien',
           component: () => import('@/views/admin/tai-nguyen/thuVien.vue'),

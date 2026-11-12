@@ -183,7 +183,7 @@ async function onReset() {
   align-items: center;
   justify-content: space-between;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--el-text-color-primary);
 }
 
@@ -235,7 +235,7 @@ async function onReset() {
   gap: 12px;
   min-height: 32px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--el-text-color-primary);
 }
 

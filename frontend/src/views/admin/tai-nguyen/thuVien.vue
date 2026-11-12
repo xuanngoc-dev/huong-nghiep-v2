@@ -898,7 +898,7 @@ onMounted(load)
 .toolbar__title {
   margin: 0;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.4;
   color: var(--el-text-color-primary);
 }
@@ -922,7 +922,7 @@ onMounted(load)
 
 .crumbs button.is-current {
   color: var(--el-text-color-primary);
-  font-weight: 600;
+  font-weight: 400;
   cursor: default;
 }
 
@@ -994,7 +994,7 @@ onMounted(load)
   background: transparent;
   color: var(--el-color-primary);
   font: inherit;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
 }
 
@@ -1100,7 +1100,7 @@ onMounted(load)
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight: 600;
+  font-weight: 400;
   text-align: left;
 }
 
@@ -1168,7 +1168,7 @@ onMounted(load)
 
 .url-import__label {
   margin: 0;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .url-import__row {

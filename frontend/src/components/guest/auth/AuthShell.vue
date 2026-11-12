@@ -124,7 +124,7 @@ defineProps({
   margin: 0 0 12px;
   color: var(--auth-accent);
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -133,7 +133,7 @@ defineProps({
   margin: 0;
   color: #fff;
   font-size: clamp(1.6rem, 2.4vw, 2.2rem);
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.25;
 }
 
@@ -167,7 +167,7 @@ defineProps({
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-weight: 600;
+  font-weight: 400;
   text-decoration: none;
 }
 
@@ -299,7 +299,7 @@ defineProps({
   background-clip: text;
   color: transparent;
   font-size: 1.9rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .auth-form :deep(.auth-brand p) {
@@ -393,7 +393,7 @@ defineProps({
   box-shadow: 0 12px 28px rgba(10, 40, 16, 0.3);
   color: var(--auth-primary-strong);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 400;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
@@ -420,7 +420,7 @@ defineProps({
 .auth-form :deep(.auth-footer a) {
   margin-left: 4px;
   color: #fff;
-  font-weight: 600;
+  font-weight: 400;
   text-decoration: underline;
   text-underline-offset: 3px;
 }

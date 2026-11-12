@@ -142,7 +142,7 @@ function hien(value) {
 
 .meta dd {
   margin: 2px 0 0;
-  font-weight: 600;
+  font-weight: 400;
   word-break: break-word;
 }
 

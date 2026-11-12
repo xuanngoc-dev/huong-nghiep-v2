@@ -39,7 +39,7 @@
   padding: 2px 8px;
   border-radius: 0.375rem;
   color: var(--guest-primary);
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .da-co :is(.h2, .h4, .holland-overview__title, .switch-card__name, .nhom-filter__submit),
@@ -292,7 +292,7 @@
 .so-sanh--nganh thead th {
   background: #3f9643;
   color: #fff;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .so-sanh--nganh tbody th {
@@ -462,7 +462,7 @@
   margin: 0;
   color: #1c2b23;
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.35;
 }
 

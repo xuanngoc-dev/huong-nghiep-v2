@@ -123,7 +123,7 @@ const sparkSeries = computed(() => [{ name: props.title, data: props.xuHuong }])
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .the-thong-ke__trend .is-up {

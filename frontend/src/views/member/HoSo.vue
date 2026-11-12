@@ -972,7 +972,7 @@ onMounted(load)
 
 .profile-collapse :deep(.el-collapse-item__header) {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .profile-collapse :deep(.el-collapse-item__content) {

@@ -644,7 +644,7 @@ onBeforeUnmount(() => {
   border-radius: 0.375rem;
   background: #e7f5ea;
   color: #0c5c34;
-  font-weight: 600;
+  font-weight: 400;
   white-space: nowrap;
 }
 
@@ -802,7 +802,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
   color: var(--pf-text);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.4;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -851,7 +851,7 @@ onBeforeUnmount(() => {
   background: #fff;
   color: var(--pf-primary);
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.3;
   white-space: nowrap;
   cursor: pointer;
@@ -905,7 +905,7 @@ onBeforeUnmount(() => {
   background: #fff;
   color: #0c5c34;
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.4;
   cursor: pointer;
 }
@@ -963,7 +963,7 @@ onBeforeUnmount(() => {
   background: #fff;
   color: #0c5c34;
   font-size: 0.92rem;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.4;
 }
 
@@ -1016,7 +1016,7 @@ onBeforeUnmount(() => {
 .compare-table thead th {
   background: #0c5c34;
   color: #fff;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .compare-table tbody th {

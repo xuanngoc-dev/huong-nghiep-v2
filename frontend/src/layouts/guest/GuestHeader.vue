@@ -114,7 +114,7 @@ function isActive(item) {
   gap: 0.65rem;
   color: #0f172a;
   font-family: 'Be Vietnam Pro', sans-serif;
-  font-weight: 600;
+  font-weight: 400;
   text-decoration: none;
 }
 
@@ -177,7 +177,7 @@ function isActive(item) {
   border: 1px solid rgba(63, 150, 67, 0.28);
   color: #2f7a33;
   background: #fff;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .landing-nav__outline:hover {
@@ -201,7 +201,7 @@ function isActive(item) {
   border: 0;
   color: #fff;
   background: linear-gradient(135deg, #3f9643, #2f7a33);
-  font-weight: 600;
+  font-weight: 400;
   box-shadow: 0 10px 22px rgba(63, 150, 67, 0.22);
 }
 

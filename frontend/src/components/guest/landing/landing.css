@@ -60,7 +60,7 @@
   margin: 0 0 var(--lp-gap-sm);
   color: var(--lp-primary-strong);
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -76,7 +76,7 @@
 .landing__title {
   margin: 0;
   font-size: clamp(1.25rem, 1rem + 1vw, 1.6rem);
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.18;
   text-wrap: balance;
 }
@@ -84,7 +84,7 @@
 .landing__subtitle {
   margin: 0 0 var(--lp-gap);
   font-size: 1.15rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .landing__lead {
@@ -133,7 +133,7 @@
   padding: var(--lp-gap-sm) var(--lp-gap);
   border-radius: var(--lp-radius);
   border: 1px solid transparent;
-  font-weight: 600;
+  font-weight: 400;
   text-decoration: none;
   cursor: pointer;
   transition:
@@ -341,7 +341,7 @@ a.lp-media-card:hover,
 .lp-media-card__body h3 {
   margin: 0;
   font-size: 1.08rem;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.35;
 }
 
@@ -377,7 +377,7 @@ a.lp-media-card:hover,
   margin: 0;
   color: #fff;
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .lp-media-card__overlay p {
@@ -396,7 +396,7 @@ a.lp-media-card:hover,
   background: rgba(255, 255, 255, 0.16);
   color: #fff;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 400;
   backdrop-filter: blur(6px);
 }
 
@@ -418,7 +418,7 @@ a.lp-media-card:hover,
   gap: 6px;
   margin-top: 4px;
   color: var(--lp-primary-strong);
-  font-weight: 600;
+  font-weight: 400;
   font-size: 0.92rem;
 }
 
@@ -670,7 +670,7 @@ a.lp-media-card:hover,
   border-radius: var(--lp-radius);
   background: rgba(255, 255, 255, 0.12);
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0.04em;
   backdrop-filter: blur(8px);
 }
@@ -679,7 +679,7 @@ a.lp-media-card:hover,
   margin: 0;
   color: #fff;
   font-size: clamp(1.6rem, 3.2vw, 2.6rem);
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.12;
   text-wrap: balance;
 }
@@ -827,7 +827,7 @@ a.lp-media-card:hover,
   color: transparent;
   font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 2.1rem;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
@@ -873,7 +873,7 @@ a.lp-media-card:hover,
 .landing-features__content h3 {
   margin: var(--lp-gap-xs) 0 0;
   font-size: 1.08rem;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.35;
 }
 
@@ -1063,7 +1063,7 @@ a.lp-media-card:hover,
   color: #fff;
   font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 1.15rem;
-  font-weight: 600;
+  font-weight: 400;
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
   animation: lp-float 6s ease-in-out infinite;
 }
@@ -1134,14 +1134,14 @@ a.lp-media-card:hover,
   border-radius: var(--lp-radius);
   background: var(--c);
   color: #fff;
-  font-weight: 600;
+  font-weight: 400;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
 }
 
 .landing-holland__card h3 {
   margin: 0 0.25rem;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .landing-holland__card h3 small {
@@ -1199,7 +1199,7 @@ a.lp-media-card:hover,
   height: 44px;
   border-radius: var(--lp-radius);
   background: var(--lp-gradient);
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .landing-ai__chat-top strong {
@@ -1318,7 +1318,7 @@ a.lp-media-card:hover,
   background: var(--lp-primary-soft);
   color: var(--lp-primary-strong);
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 /* Audiences */
@@ -1406,7 +1406,7 @@ a.lp-media-card:hover,
 .landing-audiences__body h3 {
   margin: 0;
   font-size: clamp(1.1rem, 1.8vw, 1.35rem);
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.45;
 }
 
@@ -1495,7 +1495,7 @@ a.lp-media-card:hover,
   background: var(--lp-primary-soft);
   color: var(--lp-primary-strong);
   font-size: 0.7rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .landing-institutions__card .landing__btn {
@@ -1567,7 +1567,7 @@ a.lp-media-card:hover,
   margin-bottom: 0.35rem;
   color: var(--lp-primary-strong);
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -1575,7 +1575,7 @@ a.lp-media-card:hover,
 .landing-steps__item h3 {
   margin: 0 0 var(--lp-gap-xs);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .landing-steps__item p {
@@ -1627,7 +1627,7 @@ a.lp-media-card:hover,
   background: rgba(234, 88, 12, 0.1);
   color: var(--lp-orange);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .landing-testimonials__body blockquote {
@@ -1653,7 +1653,7 @@ a.lp-media-card:hover,
   border-radius: 50%;
   background: var(--lp-gradient);
   color: #fff;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .landing-testimonials__meta strong {
@@ -1676,7 +1676,7 @@ a.lp-media-card:hover,
 .landing-resources__cat {
   color: var(--lp-primary-strong);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -1684,7 +1684,7 @@ a.lp-media-card:hover,
 .landing-resources__body h3 {
   margin: var(--lp-gap-xs) 0;
   font-size: 1.02rem;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.4;
 }
 
@@ -1906,7 +1906,7 @@ a.lp-media-card:hover,
   color: #fff;
   font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 1.3rem;
-  font-weight: 600;
+  font-weight: 400;
   text-decoration: none;
 }
 

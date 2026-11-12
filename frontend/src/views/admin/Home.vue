@@ -290,7 +290,7 @@ const luotToiDa = Math.max(...topTinhThanh.map((item) => item.luot))
 .card-header__title {
   display: block;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.4;
   color: var(--el-text-color-primary);
 }
@@ -326,7 +326,7 @@ const luotToiDa = Math.max(...topTinhThanh.map((item) => item.luot))
   height: 26px;
   border-radius: 8px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--el-color-primary);
   background: var(--brand-accent-soft);
 }
@@ -354,7 +354,7 @@ const luotToiDa = Math.max(...topTinhThanh.map((item) => item.luot))
 }
 
 .top-list__value {
-  font-weight: 600;
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
 }
 

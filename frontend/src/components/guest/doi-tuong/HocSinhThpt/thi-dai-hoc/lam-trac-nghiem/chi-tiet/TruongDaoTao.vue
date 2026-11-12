@@ -421,7 +421,7 @@ onMounted(() => {
   box-shadow: 0 2px 6px rgba(28, 43, 35, 0.2);
   color: #fff;
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0.04em;
   line-height: 1.2;
   text-align: center;

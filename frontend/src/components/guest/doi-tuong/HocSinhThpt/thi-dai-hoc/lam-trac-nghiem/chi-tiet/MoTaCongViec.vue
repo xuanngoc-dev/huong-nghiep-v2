@@ -103,6 +103,6 @@ const coDuLieu = computed(() => tuCot.value.length || moTa.value.length || coHoi
   border-radius: 0.375rem;
   background: #e7f5ec;
   color: #0c5c34;
-  font-weight: 600;
+  font-weight: 400;
 }
 </style>

@@ -509,7 +509,7 @@ function cellText(value) {
 .detail-section h3 {
   margin: 0 0 10px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.4;
   color: var(--el-text-color-primary);
 }
@@ -522,7 +522,7 @@ function cellText(value) {
 .score-group h5 {
   margin: 0 0 8px;
   font-size: inherit;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.4;
   color: var(--el-text-color-primary);
 }
@@ -543,7 +543,7 @@ function cellText(value) {
   padding: 10px 12px;
   background: var(--el-fill-color-light);
   border-radius: 8px;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .detail-notes {

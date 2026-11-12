@@ -934,7 +934,7 @@ onMounted(async () => {
 .toolbar__title {
   margin: 0;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.4;
   color: var(--el-text-color-primary);
 }
@@ -1004,7 +1004,7 @@ onMounted(async () => {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .answer-row {

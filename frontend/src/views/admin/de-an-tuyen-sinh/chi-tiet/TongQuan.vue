@@ -107,7 +107,7 @@ function formatForms(value) {
 }
 
 .overview strong {
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
