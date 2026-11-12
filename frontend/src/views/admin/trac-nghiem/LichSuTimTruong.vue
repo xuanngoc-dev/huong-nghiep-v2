@@ -27,6 +27,16 @@
         </template>
       </CustomInput>
       <CustomSelect
+        v-model="filters.doi_tuong"
+        class="filter-select"
+        placeholder="Đối tượng"
+        clearable
+        @change="onSearch"
+      >
+        <CustomOption label="Thành viên" value="thanh-vien" />
+        <CustomOption label="Khách" value="khach" />
+      </CustomSelect>
+      <CustomSelect
         v-model="filters.nam_tuyen_sinh"
         class="filter-select"
         placeholder="Năm tuyển sinh"
@@ -99,7 +109,10 @@
       <CustomTableColumn label="Người tìm" min-width="200">
         <template #default="{ row }">
           <div class="cell-stack">
-            <strong>{{ row.ho_ten || `#${row.tai_khoan_id}` }}</strong>
+            <span class="nguoi-tim">
+              <strong>{{ row.ho_ten || (row.la_khach ? 'Khách chưa nhập tên' : `#${row.tai_khoan_id}`) }}</strong>
+              <CustomTag v-if="row.la_khach" type="info" size="small" effect="plain">Khách</CustomTag>
+            </span>
             <span v-if="row.email" class="cell-sub">{{ row.email }}</span>
             <span v-if="row.so_dien_thoai" class="cell-sub">{{ row.so_dien_thoai }}</span>
           </div>
@@ -262,6 +275,7 @@ function emptyFilters() {
   return {
     nguoi_dung: '',
     q: '',
+    doi_tuong: '',
     nam_tuyen_sinh: '',
     trang_thai_xu_ly: '',
     loai_luot: '',
@@ -311,7 +325,13 @@ const thongTinChung = computed(() => {
   if (!item) return []
   return [
     { nhan: 'Mã yêu cầu', giaTri: item.ma_yeu_cau },
-    { nhan: 'Người tìm', giaTri: [item.ho_ten, item.email].filter(Boolean).join(' · ') || `#${item.tai_khoan_id}` },
+    {
+      nhan: 'Người tìm',
+      giaTri:
+        [item.la_khach ? 'Khách' : '', item.ho_ten, item.email, item.so_dien_thoai].filter(Boolean).join(' · ') ||
+        `#${item.tai_khoan_id}`,
+    },
+    { nhan: 'Mã thiết bị', giaTri: item.la_khach ? item.ma_thiet_bi : '' },
     { nhan: 'Ngành', giaTri: `${item.ma_nganh}${item.ten_nganh ? ` · ${item.ten_nganh}` : ''}` },
     { nhan: 'Năm tuyển sinh', giaTri: String(item.nam_tuyen_sinh) },
     { nhan: 'Thời gian tạo', giaTri: formatThoiGian(item.ngay_tao) },
@@ -345,6 +365,7 @@ async function load() {
     }
     if (filters.nguoi_dung.trim()) params.nguoi_dung = filters.nguoi_dung.trim()
     if (filters.q.trim()) params.q = filters.q.trim()
+    if (filters.doi_tuong) params.doi_tuong = filters.doi_tuong
     if (filters.nam_tuyen_sinh) params.nam_tuyen_sinh = filters.nam_tuyen_sinh
     if (filters.trang_thai_xu_ly) params.trang_thai_xu_ly = filters.trang_thai_xu_ly
     if (filters.loai_luot) params.loai_luot = filters.loai_luot
@@ -420,6 +441,13 @@ onMounted(load)
 .toolbar__count {
   color: var(--el-text-color-secondary);
   font-size: 13px;
+}
+
+.nguoi-tim {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
 }
 
 .cell-center {

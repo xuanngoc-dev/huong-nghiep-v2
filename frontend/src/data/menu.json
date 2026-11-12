@@ -423,6 +423,12 @@
           "title": "Hồ sơ của tôi",
           "tooltip": "Xem và cập nhật hồ sơ cá nhân",
           "icon": "User"
+        },
+        {
+          "index": "/member/tai-khoan/nap-tien",
+          "title": "Nạp tiền",
+          "tooltip": "Mua thêm lượt tìm trường phù hợp",
+          "icon": "Wallet"
         }
       ]
     }

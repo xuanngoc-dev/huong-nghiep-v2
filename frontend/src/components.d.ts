@@ -108,6 +108,7 @@ declare module 'vue' {
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    HetLuotTimTruong: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/HetLuotTimTruong.vue')['default']
     HocSinhThcs: typeof import('./components/guest/doi-tuong/HocSinhThcs.vue')['default']
     HocSinhThpt: typeof import('./components/guest/doi-tuong/HocSinhThpt.vue')['default']
     HoTroDinhHuong: typeof import('./components/guest/chung/HoTroDinhHuong.vue')['default']

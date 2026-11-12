@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from typing import Any, Literal
 
@@ -10,7 +11,7 @@ class LuotTimTruong(BaseModel):
     so_luot_ngay: int
     so_luot_khach_ngay: int
     so_luot_thanh_vien_ngay: int
-    # Chỉ đếm được cho thành viên; khách vãng lai do trình duyệt tự đếm.
+    # Thành viên đếm theo tài khoản; khách đếm theo ma_thiet_bi (không gửi mã thì không đếm được).
     da_dung: int | None = None
     con_lai: int | None = None
     # True: danh sách trường kết hợp thêm đề án/phương thức tuyển sinh (có chỉ tiêu).
@@ -35,6 +36,47 @@ class TieuChiTimTruong(BaseModel):
         return cleaned or None
 
 
+_EMAIL = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+_SO_DIEN_THOAI = re.compile(r"^(\+84|0)\d{9,10}$")
+MA_THIET_BI_PATTERN = r"^[A-Za-z0-9_-]{8,64}$"
+
+
+class ThongTinKhach(BaseModel):
+    """Thông tin liên hệ khách vãng lai tự nhập, đều không bắt buộc."""
+
+    ho_ten: str | None = Field(default=None, max_length=150)
+    email: str | None = Field(default=None, max_length=255)
+    so_dien_thoai: str | None = Field(default=None, max_length=20)
+
+    @field_validator("ho_ten")
+    @classmethod
+    def clean_ho_ten(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        cleaned = " ".join(value.split())
+        return cleaned or None
+
+    @field_validator("email")
+    @classmethod
+    def check_email(cls, value: str | None) -> str | None:
+        if value is None or not value.strip():
+            return None
+        cleaned = value.strip().lower()
+        if not _EMAIL.fullmatch(cleaned):
+            raise ValueError("Email chưa đúng định dạng")
+        return cleaned
+
+    @field_validator("so_dien_thoai")
+    @classmethod
+    def check_so_dien_thoai(cls, value: str | None) -> str | None:
+        if value is None or not value.strip():
+            return None
+        cleaned = re.sub(r"[\s.-]", "", value)
+        if not _SO_DIEN_THOAI.fullmatch(cleaned):
+            raise ValueError("Số điện thoại chưa đúng định dạng")
+        return cleaned
+
+
 class TimTruongPhuHopRequest(BaseModel):
     # Client sinh một mã cho mỗi lần bấm tìm; gửi lại cùng mã thì không bị trừ thêm lượt.
     ma_yeu_cau: str = Field(..., min_length=8, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
@@ -43,6 +85,9 @@ class TimTruongPhuHopRequest(BaseModel):
     du_lieu_nang_luc: dict[str, Any] = Field(default_factory=dict)
     du_lieu_tai_chinh: dict[str, Any] = Field(default_factory=dict)
     tieu_chi_tim_kiem: TieuChiTimTruong = Field(default_factory=TieuChiTimTruong)
+    # Khách vãng lai: mã thiết bị (bắt buộc với khách) và thông tin liên hệ tự nhập.
+    ma_thiet_bi: str | None = Field(default=None, pattern=MA_THIET_BI_PATTERN)
+    thong_tin_khach: ThongTinKhach | None = None
 
     @field_validator("ma_nganh")
     @classmethod
@@ -65,7 +110,10 @@ class TimTruongPhuHopResult(BaseModel):
 class LichSuTimTruongQuanTri(BaseModel):
     id: int
     ma_yeu_cau: str
-    tai_khoan_id: int
+    tai_khoan_id: int | None = None
+    la_khach: bool = False
+    ma_thiet_bi: str | None = None
+    thong_tin_khach: dict[str, Any] | None = None
     ho_ten: str | None = None
     email: str | None = None
     so_dien_thoai: str | None = None

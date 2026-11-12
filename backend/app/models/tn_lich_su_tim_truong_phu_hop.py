@@ -20,6 +20,7 @@ class TnLichSuTimTruongPhuHop(Base):
         UniqueConstraint("ma_yeu_cau", name="uq_tn_lich_su_tim_truong_ma_yeu_cau"),
         # Đếm lượt đã dùng trong ngày của một tài khoản.
         Index("idx_tn_lich_su_tim_truong_tai_khoan_ngay", "tai_khoan_id", "ngay_tao"),
+        Index("idx_tn_lich_su_tim_truong_thiet_bi_ngay", "ma_thiet_bi", "ngay_tao"),
         Index("idx_tn_lich_su_tim_truong_ma_nganh", "ma_nganh", "nam_tuyen_sinh"),
         Index("idx_tn_lich_su_tim_truong_trang_thai", "trang_thai_xu_ly"),
         {
@@ -30,8 +31,11 @@ class TnLichSuTimTruongPhuHop(Base):
     )
 
     id: Mapped[int] = mapped_column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
-    # Không đặt khóa ngoại: nguoi_dung.id là INT nên không khớp kiểu BIGINT UNSIGNED.
-    tai_khoan_id: Mapped[int] = mapped_column(BIGINT(unsigned=True), nullable=False)
+    # Không đặt khóa ngoại: nguoi_dung.id là INT nên không khớp kiểu BIGINT UNSIGNED. Trống nếu là khách.
+    tai_khoan_id: Mapped[int | None] = mapped_column(BIGINT(unsigned=True))
+    # Khách vãng lai: mã thiết bị do trình duyệt sinh để đếm lượt, và thông tin liên hệ khách tự nhập.
+    ma_thiet_bi: Mapped[str | None] = mapped_column(String(64))
+    thong_tin_khach: Mapped[Any | None] = mapped_column(JSON)
     # Mã yêu cầu do client sinh, gửi lại cùng mã thì không xử lý và trừ lượt lần nữa.
     ma_yeu_cau: Mapped[str] = mapped_column(String(64), nullable=False)
     ma_nganh: Mapped[str] = mapped_column(String(20), nullable=False)

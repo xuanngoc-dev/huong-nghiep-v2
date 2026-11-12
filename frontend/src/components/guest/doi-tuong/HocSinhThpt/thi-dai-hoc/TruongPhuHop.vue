@@ -74,60 +74,143 @@
               <h3 class="ho-so-tom-tat__title">Thông tin của bạn</h3>
               <p class="ho-so-tom-tat__sub">Nhập vài thông tin cơ bản để dùng thử tính năng tìm trường phù hợp.</p>
             </div>
-            <span class="luot-tim" :class="{ 'luot-tim--het': !conLuot }">{{ nhanLuot }}</span>
-          </header>
-          <form class="ho-so-khach" @submit.prevent="timTheoHoSoKhach">
-            <div class="ho-so-khach__field">
-              <label class="nhom-filter__label" for="khach-tinh">Nơi ở</label>
-              <CustomSelect
-                id="khach-tinh"
-                v-model="hoSoKhach.tinhId"
-                filterable
-                clearable
-                placeholder="Chọn tỉnh/thành"
-                :disabled="!conLuot"
+            <div class="ho-so-tom-tat__actions">
+              <span class="luot-tim" :class="{ 'luot-tim--het': !conLuot }">{{ nhanLuot }}</span>
+              <CustomButton
+                plain
+                type="primary"
+                :aria-expanded="hienFormKhach"
+                aria-controls="form-khach"
+                @click="hienFormKhach = !hienFormKhach"
               >
-                <CustomOption v-for="item in tinhOptions" :key="item.id" :label="item.ten_tinh" :value="item.id" />
-              </CustomSelect>
-            </div>
-            <div class="ho-so-khach__field">
-              <label class="nhom-filter__label" for="khach-to-hop">Tổ hợp xét tuyển</label>
-              <CustomSelect
-                id="khach-to-hop"
-                v-model="hoSoKhach.toHop"
-                filterable
-                clearable
-                placeholder="Chọn tổ hợp"
-                :disabled="!conLuot"
-              >
-                <CustomOption
-                  v-for="item in toHopOptions"
-                  :key="item.id"
-                  :label="`${item.ma_to_hop} · ${item.ten_to_hop}`"
-                  :value="item.ma_to_hop"
-                />
-              </CustomSelect>
-            </div>
-            <div class="ho-so-khach__field ho-so-khach__field--diem">
-              <label class="nhom-filter__label" for="khach-diem">Điểm dự kiến</label>
-              <CustomInputNumber
-                id="khach-diem"
-                v-model="hoSoKhach.diem"
-                :min="0"
-                :max="30"
-                :step="0.25"
-                :precision="2"
-                controls-position="right"
-                placeholder="Thang 30"
-                :disabled="!conLuot"
-              />
-            </div>
-            <div class="ho-so-khach__submit">
-              <CustomButton type="primary" native-type="submit" :disabled="!conLuot">
-                Tìm trường phù hợp
+                <span>{{ hienFormKhach ? 'Ẩn thông tin' : 'Nhập thông tin' }}</span>
+                <CustomIcon class="ho-so-khach__toggle" :class="{ 'is-open': hienFormKhach }"><ArrowDown /></CustomIcon>
               </CustomButton>
             </div>
-          </form>
+          </header>
+          <el-collapse-transition>
+            <form v-show="hienFormKhach" id="form-khach" class="ho-so-khach" @submit.prevent="timTheoHoSoKhach">
+              <fieldset class="ho-so-khach__group" :disabled="!conLuot">
+                <legend>Liên hệ</legend>
+                <div class="ho-so-khach__grid">
+                  <div class="ho-so-khach__field">
+                    <label class="nhom-filter__label" for="khach-ho-ten">Họ tên</label>
+                    <CustomInput id="khach-ho-ten" v-model="hoSoKhach.hoTen" maxlength="150" placeholder="Nguyễn Văn A" />
+                  </div>
+                  <div class="ho-so-khach__field">
+                    <label class="nhom-filter__label" for="khach-email">Email</label>
+                    <CustomInput
+                      id="khach-email"
+                      v-model="hoSoKhach.email"
+                      type="email"
+                      maxlength="255"
+                      placeholder="ban@email.com"
+                    />
+                  </div>
+                  <div class="ho-so-khach__field">
+                    <label class="nhom-filter__label" for="khach-sdt">Số điện thoại</label>
+                    <CustomInput
+                      id="khach-sdt"
+                      v-model="hoSoKhach.soDienThoai"
+                      type="tel"
+                      maxlength="15"
+                      placeholder="0912345678"
+                    />
+                  </div>
+                  <div class="ho-so-khach__field">
+                    <label class="nhom-filter__label" for="khach-tinh">Nơi ở</label>
+                    <CustomSelect
+                      id="khach-tinh"
+                      v-model="hoSoKhach.tinhId"
+                      filterable
+                      clearable
+                      placeholder="Chọn tỉnh/thành"
+                      :disabled="!conLuot"
+                    >
+                      <CustomOption v-for="item in tinhOptions" :key="item.id" :label="item.ten_tinh" :value="item.id" />
+                    </CustomSelect>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="ho-so-khach__group" :disabled="!conLuot">
+                <legend>Điểm trung bình học tập</legend>
+                <div class="ho-so-khach__grid ho-so-khach__grid--diem">
+                  <div v-for="lop in LOP_HOC" :key="lop" class="ho-so-khach__field">
+                    <label class="nhom-filter__label" :for="`khach-lop-${lop}`">Lớp {{ lop }}</label>
+                    <CustomInputNumber
+                      :id="`khach-lop-${lop}`"
+                      v-model="hoSoKhach.diemTrungBinh[lop]"
+                      :min="0"
+                      :max="10"
+                      :step="0.1"
+                      :precision="2"
+                      controls-position="right"
+                      placeholder="Thang 10"
+                      :disabled="!conLuot"
+                    />
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="ho-so-khach__group" :disabled="!conLuot">
+                <legend>Điểm thi thử THPT theo khối</legend>
+                <div class="ho-so-khach__grid ho-so-khach__grid--diem">
+                  <div v-for="khoi in khoiThiThu" :key="khoi.ma" class="ho-so-khach__field">
+                    <CustomTooltip :content="khoi.ten" placement="top" :disabled="!khoi.ten">
+                      <label class="nhom-filter__label" :for="`khach-khoi-${khoi.ma}`">{{ khoi.ma }}</label>
+                    </CustomTooltip>
+                    <CustomInputNumber
+                      :id="`khach-khoi-${khoi.ma}`"
+                      v-model="hoSoKhach.diemThiThu[khoi.ma]"
+                      :min="0"
+                      :max="30"
+                      :step="0.25"
+                      :precision="2"
+                      controls-position="right"
+                      placeholder="Thang 30"
+                      :disabled="!conLuot"
+                    />
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="ho-so-khach__group" :disabled="!conLuot">
+                <legend>Tài chính</legend>
+                <div class="ho-so-khach__grid">
+                  <div class="ho-so-khach__field">
+                    <label class="nhom-filter__label" for="khach-hoc-phi">Mức chi trả học phí / năm</label>
+                    <CustomSelect
+                      id="khach-hoc-phi"
+                      v-model="hoSoKhach.mucHocPhi"
+                      clearable
+                      placeholder="Chọn mức học phí"
+                      :disabled="!conLuot"
+                    >
+                      <CustomOption v-for="item in MUC_HOC_PHI" :key="item.value" :label="item.label" :value="item.value" />
+                    </CustomSelect>
+                  </div>
+                </div>
+              </fieldset>
+
+              <p class="ho-so-khach__luu-y">
+                <CustomIcon><InfoFilled /></CustomIcon>
+                <span>
+                  Để có thông tin chính xác nhất, hãy
+                  <button type="button" class="ho-so-khach__link" @click="diDangNhap">đăng nhập</button> hoặc
+                  <button type="button" class="ho-so-khach__link" @click="diDangKy">đăng ký</button>
+                  để cung cấp đầy đủ thông tin. Khi đó kết quả tìm kiếm sẽ được phân tích một cách chính xác nhất.
+                </span>
+              </p>
+
+              <div class="ho-so-khach__submit">
+                <CustomButton native-type="button" :disabled="!conLuot" @click="xoaHoSoKhach">Nhập lại</CustomButton>
+                <CustomButton type="primary" native-type="submit" :disabled="!conLuot" :loading="dangGhiLuot">
+                  Tìm trường phù hợp
+                </CustomButton>
+              </div>
+            </form>
+          </el-collapse-transition>
           <div class="ho-so-khach__cta">
             <p>
               Đăng ký tài khoản để được tìm <strong>{{ soLuotThanhVien }} lượt mỗi ngày</strong> và lưu hồ sơ đầy đủ:
@@ -207,17 +290,7 @@
           </div>
         </form>
 
-        <p v-if="!conLuot" class="luot-tim__het-note">
-          <template v-if="daDangNhap">
-            Bạn đã dùng hết {{ soLuotThanhVien }} lượt tìm trường phù hợp hôm nay. Hãy quay lại vào ngày mai.
-          </template>
-          <template v-else>
-            Bạn đã dùng hết lượt tìm thử hôm nay.
-            <button type="button" class="luot-tim__link" @click="diDangKy">Đăng ký</button> hoặc
-            <button type="button" class="luot-tim__link" @click="diDangNhap">đăng nhập</button>
-            để được tìm {{ soLuotThanhVien }} lượt mỗi ngày.
-          </template>
-        </p>
+        <HetLuotTimTruong v-if="!conLuot" @kham-pha="diNapTien" />
         <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
         <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải trường phù hợp…</p>
         <KhongCoDuLieu v-else-if="!danhSach.length" :text="thongBaoTrong" />
@@ -293,6 +366,7 @@ import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import anhMacDinh from '@/assets/guest/sinh-vien.jpg'
 import HoSo from '@/views/member/HoSo.vue'
+import HetLuotTimTruong from './HetLuotTimTruong.vue'
 
 defineOptions({ name: 'ThptThiDaiHocTruongPhuHop' })
 
@@ -306,10 +380,34 @@ const SAP_XEP = [
   { value: 'chuong_trinh_desc', label: 'Nhiều chương trình nhất' },
 ]
 const NAM_HIEN_TAI = new Date().getFullYear()
+const LOP_HOC = ['10', '11', '12']
+const KHOI_THI_THU = ['A00', 'A01', 'B00', 'C00', 'D01', 'D07']
+const MUC_HOC_PHI = [
+  { value: 'duoi_15', label: 'Dưới 15 triệu' },
+  { value: '15_30', label: '15 – 30 triệu' },
+  { value: '30_50', label: '30 – 50 triệu' },
+  { value: '50_100', label: '50 – 100 triệu' },
+  { value: 'tren_100', label: 'Trên 100 triệu' },
+]
+const KHOA_HO_SO_KHACH = 'thpt-tim-truong-phu-hop-ho-so-khach'
+const EMAIL_HOP_LE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const SDT_HOP_LE = /^(\+84|0)\d{9,10}$/
+
+function hoSoKhachTrong() {
+  return {
+    hoTen: '',
+    email: '',
+    soDienThoai: '',
+    tinhId: null,
+    diemTrungBinh: { 10: null, 11: null, 12: null },
+    diemThiThu: {},
+    mucHocPhi: '',
+  }
+}
 // Lượt tìm trường phù hợp mỗi ngày lấy từ cấu hình tra cứu đang áp dụng.
-// Thành viên: server đếm và lưu lịch sử. Khách vãng lai: chưa có tài khoản để lưu nên trình duyệt tự đếm.
+// Server đếm và lưu lịch sử: thành viên theo tài khoản, khách vãng lai theo mã thiết bị.
 const LUOT_MAC_DINH = { so_luot_khach_ngay: 1, so_luot_thanh_vien_ngay: 5 }
-const KHOA_LUOT = 'thpt-tim-truong-phu-hop-luot'
+const KHOA_THIET_BI = 'thpt-tim-truong-phu-hop-thiet-bi'
 
 const route = useRoute()
 const router = useRouter()
@@ -345,44 +443,39 @@ const soMoiTrang = ref(12)
 const dangTai = ref(false)
 const loi = ref('')
 const sanSang = ref(false)
-const hoSoKhach = ref({ tinhId: null, toHop: '', diem: null })
+const hoSoKhach = ref(hoSoKhachTrong())
+const hienFormKhach = ref(true)
 const luotDaDung = ref(0)
 const cauHinhLuot = ref(LUOT_MAC_DINH)
 const dangGhiLuot = ref(false)
 let lanTai = 0
 
-function homNay() {
-  return new Date().toLocaleDateString('sv-SE')
-}
+// Khách vãng lai được nhận diện bằng mã thiết bị lưu trên trình duyệt; server đếm lượt theo mã này.
+let maThietBiTam = ''
 
-// Lượt của khách vãng lai, đếm theo ngày trong trình duyệt.
-function docLuotKhach() {
+function maThietBi() {
   try {
-    const data = JSON.parse(localStorage.getItem(`${KHOA_LUOT}:khach`) || 'null')
-    if (!data || data.ngay !== homNay()) return 0
-    return Number(data.da_dung) || 0
+    let ma = localStorage.getItem(KHOA_THIET_BI)
+    if (!ma) {
+      ma = maYeuCau()
+      localStorage.setItem(KHOA_THIET_BI, ma)
+    }
+    return ma
   } catch {
-    return 0
-  }
-}
-
-function ghiLuotKhach(soLuot) {
-  luotDaDung.value = soLuot
-  try {
-    localStorage.setItem(`${KHOA_LUOT}:khach`, JSON.stringify({ ngay: homNay(), da_dung: soLuot }))
-  } catch {
-    // Trình duyệt chặn lưu trữ thì chỉ đếm trong phiên hiện tại.
+    // Trình duyệt chặn lưu trữ thì dùng mã tạm trong phiên này.
+    maThietBiTam ||= maYeuCau()
+    return maThietBiTam
   }
 }
 
 async function taiLuot() {
   try {
-    const data = await fetchLuotTimTruong()
+    const data = await fetchLuotTimTruong(daDangNhap.value ? {} : { ma_thiet_bi: maThietBi() })
     cauHinhLuot.value = data
-    luotDaDung.value = data.la_thanh_vien ? data.da_dung || 0 : docLuotKhach()
+    luotDaDung.value = data.da_dung || 0
   } catch {
     cauHinhLuot.value = LUOT_MAC_DINH
-    luotDaDung.value = daDangNhap.value ? 0 : docLuotKhach()
+    luotDaDung.value = 0
   }
 }
 
@@ -397,12 +490,14 @@ const tongLuot = computed(() => (daDangNhap.value ? soLuotThanhVien.value : soLu
 const luotConLai = computed(() => Math.max(tongLuot.value - luotDaDung.value, 0))
 const conLuot = computed(() => luotConLai.value > 0)
 const nhanLuot = computed(() => {
-  if (daDangNhap.value) return `Hôm nay còn ${luotConLai.value}/${tongLuot.value} lượt tìm`
-  return `Hôm nay còn ${luotConLai.value}/${tongLuot.value} lượt tìm thử`
+  if (daDangNhap.value) return `Còn lại ${luotConLai.value}/${tongLuot.value} lượt tìm`
+  return `Còn lại ${luotConLai.value}/${tongLuot.value} lượt tìm thử`
 })
-const toHopOptions = computed(() =>
-  danhMuc.value.toHop.filter((item) => item.trang_thai === 1 && item.ds_mon_hoc?.length === 3),
-)
+// Khách chỉ nhập điểm thi thử theo các khối phổ biến; thành viên nhập đủ từng môn trong hồ sơ.
+const khoiThiThu = computed(() => {
+  const theoMa = new Map(danhMuc.value.toHop.map((item) => [item.ma_to_hop, item]))
+  return KHOI_THI_THU.map((ma) => ({ ma, ten: theoMa.get(ma)?.ten_to_hop || '' }))
+})
 
 const tenNganh = computed(() => nganh.value?.ten_nganh || maNganh.value)
 const anhNganhHong = ref(false)
@@ -553,6 +648,11 @@ function diDangNhap() {
   router.push({ name: 'login', query: { redirect: route.fullPath } })
 }
 
+// Hết lượt: sang màn nạp tiền của thành viên; khách sẽ được chuyển qua đăng nhập trước.
+function diNapTien() {
+  router.push({ name: 'nap-tien', query: { redirect: route.fullPath } })
+}
+
 function diDangKy() {
   router.push({ name: 'register', query: { redirect: route.fullPath } })
 }
@@ -612,6 +712,7 @@ async function chuanBiHoSo() {
   }
   tinhOptions.value = tinhItems
   if (!auth.isAuthenticated) {
+    docHoSoKhach()
     await Promise.all([taiDanhMucHoSo(), taiLuot()])
     return
   }
@@ -697,6 +798,27 @@ function nangLucHoSo() {
   }
 }
 
+// Khách: thông tin liên hệ, điểm và mức học phí nhập ở form "Thông tin của bạn".
+function duLieuKhach() {
+  const khach = hoSoKhach.value
+  const chiCoGiaTri = (obj) =>
+    Object.fromEntries(Object.entries(obj || {}).filter(([, value]) => value !== null && value !== ''))
+  return {
+    ma_thiet_bi: maThietBi(),
+    thong_tin_khach: {
+      ho_ten: khach.hoTen.trim() || null,
+      email: khach.email.trim() || null,
+      so_dien_thoai: khach.soDienThoai.trim() || null,
+    },
+    du_lieu_nang_luc: {
+      tinh_thanh_id: khach.tinhId,
+      diem_trung_binh: chiCoGiaTri(khach.diemTrungBinh),
+      diem_thi_thu: chiCoGiaTri(khach.diemThiThu),
+    },
+    du_lieu_tai_chinh: khach.mucHocPhi ? { muc_hoc_phi: khach.mucHocPhi } : {},
+  }
+}
+
 // Tiêu chí lấy từ ô lọc đang nhập, đúng với bộ lọc mà timKiem() sắp áp dụng.
 function payloadTimKiem() {
   const nam = Number(namHoc.value)
@@ -705,8 +827,7 @@ function payloadTimKiem() {
     ma_yeu_cau: maYeuCau(),
     ma_nganh: maNganh.value,
     nam_tuyen_sinh: Number.isInteger(nam) ? nam : NAM_HIEN_TAI,
-    du_lieu_nang_luc: nangLucHoSo(),
-    du_lieu_tai_chinh: {},
+    ...(daDangNhap.value ? { du_lieu_nang_luc: nangLucHoSo(), du_lieu_tai_chinh: {} } : duLieuKhach()),
     tieu_chi_tim_kiem: {
       tu_khoa: tuKhoa.value.trim() || null,
       khu_vuc: khuVuc.value || null,
@@ -731,12 +852,7 @@ async function timCoLuot() {
     )
     return false
   }
-  if (!daDangNhap.value) {
-    ghiLuotKhach(luotDaDung.value + 1)
-    timKiem()
-    return true
-  }
-  // Thành viên: server kiểm tra lượt, lưu lịch sử rồi mới tải danh sách.
+  // Server kiểm tra lượt, lưu lịch sử (thành viên hoặc khách) rồi mới tải danh sách.
   dangGhiLuot.value = true
   try {
     const data = await timTruongPhuHop(payloadTimKiem())
@@ -777,9 +893,58 @@ function locTheoHoSo() {
   timCoLuot()
 }
 
+// Thông tin khách nhập được giữ lại trên trình duyệt này để lần sau không phải nhập lại.
+function docHoSoKhach() {
+  try {
+    const data = JSON.parse(localStorage.getItem(KHOA_HO_SO_KHACH) || 'null')
+    if (!data || typeof data !== 'object') return
+    const trong = hoSoKhachTrong()
+    hoSoKhach.value = {
+      ...trong,
+      ...data,
+      diemTrungBinh: { ...trong.diemTrungBinh, ...(data.diemTrungBinh || {}) },
+      diemThiThu: { ...(data.diemThiThu || {}) },
+    }
+  } catch {
+    // Dữ liệu hỏng hoặc trình duyệt chặn lưu trữ thì bắt đầu với form trống.
+  }
+}
+
+function luuHoSoKhach() {
+  try {
+    localStorage.setItem(KHOA_HO_SO_KHACH, JSON.stringify(hoSoKhach.value))
+  } catch {
+    // Không lưu được thì vẫn tìm kiếm bình thường.
+  }
+}
+
+function xoaHoSoKhach() {
+  hoSoKhach.value = hoSoKhachTrong()
+  try {
+    localStorage.removeItem(KHOA_HO_SO_KHACH)
+  } catch {
+    // Bỏ qua.
+  }
+}
+
+function kiemTraHoSoKhach() {
+  const { email, soDienThoai } = hoSoKhach.value
+  if (email.trim() && !EMAIL_HOP_LE.test(email.trim())) return 'Email chưa đúng định dạng.'
+  if (soDienThoai.trim() && !SDT_HOP_LE.test(soDienThoai.replace(/[\s.-]/g, ''))) {
+    return 'Số điện thoại chưa đúng định dạng.'
+  }
+  return ''
+}
+
 // Khách: dùng nơi ở vừa nhập làm bộ lọc và thứ tự "gần nơi ở", giống hồ sơ thành viên.
-// Tổ hợp và điểm dự kiến mới hiển thị, chưa gửi lên API.
+// Điểm và mức học phí mới lưu trên trình duyệt, chưa gửi lên API.
 function timTheoHoSoKhach() {
+  const loiNhap = kiemTraHoSoKhach()
+  if (loiNhap) {
+    ElMessage.warning(loiNhap)
+    return
+  }
+  luuHoSoKhach()
   const tinhChon = tinhOptions.value.find((item) => item.id === hoSoKhach.value.tinhId) || null
   if (tinhChon) {
     const khu = KHU_VUC.includes(tinhChon.khu_vuc) ? tinhChon.khu_vuc : ''
@@ -1007,19 +1172,87 @@ onMounted(async () => {
   color: #a5541a;
 }
 
-.luot-tim__het-note {
-  margin: 12px 0 0;
-  padding: 10px 14px;
-  border: 1px solid #f0c9a8;
-  border-radius: 10px;
-  background: #fff6ee;
-  color: #7a3f13;
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  text-align: left;
+.ho-so-tom-tat__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
 }
 
-.luot-tim__link {
+.ho-so-khach__toggle {
+  margin-left: 4px;
+  transition: transform 0.25s ease;
+}
+
+.ho-so-khach__toggle.is-open {
+  transform: rotate(180deg);
+}
+
+.ho-so-khach {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 14px;
+}
+
+.ho-so-khach__group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.ho-so-khach__group legend {
+  margin: 0 0 8px;
+  padding: 0;
+  color: #1c2836;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.ho-so-khach__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ho-so-khach__grid--diem {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.ho-so-khach__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ho-so-khach__field :deep(.el-select),
+.ho-so-khach__field :deep(.el-input-number) {
+  width: 100%;
+}
+
+.ho-so-khach__luu-y {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid #c5d5cc;
+  border-radius: 10px;
+  background: #f6faf7;
+  color: #3a4742;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.ho-so-khach__luu-y :deep(.el-icon) {
+  flex: 0 0 auto;
+  margin-top: 3px;
+  color: #3f9466;
+}
+
+.ho-so-khach__link {
   padding: 0;
   border: 0;
   background: none;
@@ -1030,29 +1263,45 @@ onMounted(async () => {
   cursor: pointer;
 }
 
-.ho-so-khach {
+.ho-so-khach__submit {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 12px;
-  margin-top: 14px;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
-.ho-so-khach__field {
-  display: flex;
-  flex: 1 1 200px;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
+.ho-so-khach__submit :deep(.el-button + .el-button) {
+  margin-left: 0;
 }
 
-.ho-so-khach__field--diem {
-  flex: 0 1 160px;
+@media (max-width: 991.98px) {
+  .ho-so-khach__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ho-so-khach__grid--diem {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
-.ho-so-khach__field :deep(.el-select),
-.ho-so-khach__field :deep(.el-input-number) {
-  width: 100%;
+@media (max-width: 575.98px) {
+  .ho-so-khach__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ho-so-khach__grid--diem {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ho-so-khach__submit :deep(.el-button) {
+    flex: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ho-so-khach__toggle {
+    transition: none;
+  }
 }
 
 .ho-so-khach__cta {

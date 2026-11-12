@@ -82,7 +82,7 @@ api.interceptors.response.use(
 
     if (status === 401) {
       localStorage.removeItem('token')
-      ElMessage.error('Phiên đăng nhập hết hạn.')
+      // ElMessage.error('Phiên đăng nhập hết hạn.')
     } else if (status === 403) {
       ElMessage.error('Bạn không có quyền thực hiện thao tác này.')
     } else if (status === 422) {

@@ -126,6 +126,12 @@ const router = createRouter({
           component: () => import('@/views/member/HoSo.vue'),
           meta: { title: 'Cập nhật thông tin cá nhân', requiresAuth: true },
         },
+        {
+          path: 'tai-khoan/nap-tien',
+          name: 'nap-tien',
+          component: () => import('@/views/member/NapTien.vue'),
+          meta: { title: 'Nạp tiền', requiresAuth: true },
+        },
       ],
     },
     {

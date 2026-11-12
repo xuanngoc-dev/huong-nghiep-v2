@@ -87,6 +87,19 @@ class HtNganHangThanhToanPublic(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class HtNganHangNhanTien(BaseModel):
+    """Thông tin chuyển khoản hiển thị cho thành viên, không kèm ghi chú nội bộ."""
+
+    id: int
+    ten_ngan_hang: str
+    ten_ngan_hang_viet_tat: str
+    so_tai_khoan: str
+    chu_tai_khoan: str
+    logo_ngan_hang: str | None = None
+
+    model_config = {"from_attributes": True}
+
+
 class HtNganHangThanhToanPage(BaseModel):
     items: list[HtNganHangThanhToanPublic]
     total: int

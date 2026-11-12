@@ -14,6 +14,7 @@ from app.models.ht_cau_hinh_tra_cuu import HtCauHinhTraCuu
 from app.models.nguoi_dung import NguoiDung
 from app.models.tn_lich_su_tim_truong_phu_hop import TnLichSuTimTruongPhuHop
 from app.schemas.tn_lich_su_tim_truong_phu_hop import (
+    MA_THIET_BI_PATTERN,
     LichSuTimTruongQuanTri,
     LichSuTimTruongQuanTriChiTiet,
     LichSuTimTruongQuanTriPage,
@@ -32,32 +33,50 @@ _PHIEN_BAN_THUAT_TOAN = "loc-co-ban-v1"
 _SO_TRUONG_LUU = 50
 
 
-def _da_dung_hom_nay(db: Session, tai_khoan_id: int) -> int:
-    """Số lượt đã tính của tài khoản từ đầu ngày (theo giờ của database)."""
+def _cua_nguoi_tim(user: NguoiDung | None, ma_thiet_bi: str | None):
+    """Điều kiện chọn lượt của người đang tìm: thành viên theo tài khoản, khách theo mã thiết bị."""
+    if user is not None:
+        return TnLichSuTimTruongPhuHop.tai_khoan_id == user.id
+    return (TnLichSuTimTruongPhuHop.tai_khoan_id.is_(None)) & (TnLichSuTimTruongPhuHop.ma_thiet_bi == ma_thiet_bi)
+
+
+def _da_dung_hom_nay(db: Session, user: NguoiDung | None, ma_thiet_bi: str | None) -> int:
+    """Số lượt đã tính từ đầu ngày (theo giờ của database)."""
     return db.scalar(
         select(func.count())
         .select_from(TnLichSuTimTruongPhuHop)
         .where(
-            TnLichSuTimTruongPhuHop.tai_khoan_id == tai_khoan_id,
+            _cua_nguoi_tim(user, ma_thiet_bi),
             TnLichSuTimTruongPhuHop.da_tinh_luot == 1,
             TnLichSuTimTruongPhuHop.ngay_tao >= func.curdate(),
         )
     ) or 0
 
 
-def _luot(db: Session, cau_hinh: HtCauHinhTraCuu, user: NguoiDung | None) -> LuotTimTruong:
+def _la_cua_nguoi_tim(item: TnLichSuTimTruongPhuHop, user: NguoiDung | None, ma_thiet_bi: str | None) -> bool:
+    if user is not None:
+        return item.tai_khoan_id == user.id
+    return item.tai_khoan_id is None and item.ma_thiet_bi == ma_thiet_bi
+
+
+def _luot(
+    db: Session, cau_hinh: HtCauHinhTraCuu, user: NguoiDung | None, ma_thiet_bi: str | None = None
+) -> LuotTimTruong:
     khach = cau_hinh.so_luot_tra_cuu_khach_ngay
     thanh_vien = cau_hinh.so_luot_tra_cuu_thanh_vien_ngay
     ket_hop = settings.tim_truong_ket_hop_phuong_thuc
     if user is None:
+        da_dung_khach = _da_dung_hom_nay(db, None, ma_thiet_bi) if ma_thiet_bi else None
         return LuotTimTruong(
             la_thanh_vien=False,
             so_luot_ngay=khach,
             so_luot_khach_ngay=khach,
             so_luot_thanh_vien_ngay=thanh_vien,
+            da_dung=da_dung_khach,
+            con_lai=max(khach - da_dung_khach, 0) if da_dung_khach is not None else None,
             ket_hop_phuong_thuc=ket_hop,
         )
-    da_dung = _da_dung_hom_nay(db, user.id)
+    da_dung = _da_dung_hom_nay(db, user, None)
     return LuotTimTruong(
         la_thanh_vien=True,
         so_luot_ngay=thanh_vien,
@@ -69,14 +88,16 @@ def _luot(db: Session, cau_hinh: HtCauHinhTraCuu, user: NguoiDung | None) -> Luo
     )
 
 
-def _ket_qua(db: Session, item: TnLichSuTimTruongPhuHop, user: NguoiDung) -> TimTruongPhuHopResult:
+def _ket_qua(
+    db: Session, item: TnLichSuTimTruongPhuHop, user: NguoiDung | None, ma_thiet_bi: str | None
+) -> TimTruongPhuHopResult:
     return TimTruongPhuHopResult(
         lich_su_id=item.id,
         ma_yeu_cau=item.ma_yeu_cau,
         trang_thai_xu_ly=item.trang_thai_xu_ly,
         so_truong_tim_thay=item.so_truong_tim_thay,
         so_truong_phu_hop_so_bo=item.so_truong_phu_hop_so_bo,
-        luot=_luot(db, cau_hinh_dang_ap_dung(db), user),
+        luot=_luot(db, cau_hinh_dang_ap_dung(db), user, ma_thiet_bi),
     )
 
 
@@ -101,11 +122,15 @@ def _dem_truong(db: Session, payload: TimTruongPhuHopRequest, loc: bool, page_si
 
 @router.get("/luot", response_model=LuotTimTruong)
 def lay_luot_tim_truong(
+    ma_thiet_bi: str | None = Query(default=None, pattern=MA_THIET_BI_PATTERN),
     db: Session = Depends(get_db),
     user: NguoiDung | None = Depends(get_optional_user),
 ) -> LuotTimTruong:
-    """Hạn mức tìm trường phù hợp trong ngày theo cấu hình đang áp dụng, kèm số lượt đã dùng nếu đã đăng nhập."""
-    return _luot(db, cau_hinh_dang_ap_dung(db), user)
+    """Hạn mức tìm trường phù hợp trong ngày theo cấu hình đang áp dụng, kèm số lượt đã dùng.
+
+    Khách vãng lai gửi ma_thiet_bi để biết số lượt đã dùng trên thiết bị đó.
+    """
+    return _luot(db, cau_hinh_dang_ap_dung(db), user, ma_thiet_bi)
 
 
 @router.get("/truong", response_model=TruongDaoTaoPage)
@@ -150,28 +175,39 @@ def danh_sach_truong_phu_hop(
 def tim_truong_phu_hop(
     payload: TimTruongPhuHopRequest,
     db: Session = Depends(get_db),
-    user: NguoiDung = Depends(get_current_user),
+    user: NguoiDung | None = Depends(get_optional_user),
 ) -> TimTruongPhuHopResult:
-    """Ghi một lượt tìm trường phù hợp của thành viên vào tn_lich_su_tim_truong_phu_hop.
+    """Ghi một lượt tìm trường phù hợp vào tn_lich_su_tim_truong_phu_hop.
 
-    Trừ một lượt khi tìm thành công; hết lượt trong ngày thì trả 429. Gửi lại cùng ma_yeu_cau
-    thì trả về kết quả cũ, không trừ thêm lượt.
+    Thành viên đếm lượt theo tài khoản. Khách vãng lai bắt buộc gửi ma_thiet_bi để đếm lượt theo thiết bị,
+    kèm thông tin liên hệ nếu có. Trừ một lượt khi tìm thành công; hết lượt trong ngày thì trả 429.
+    Gửi lại cùng ma_yeu_cau thì trả về kết quả cũ, không trừ thêm lượt.
     """
+    ma_thiet_bi = payload.ma_thiet_bi
+    if user is None and not ma_thiet_bi:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Thiếu mã thiết bị của khách")
+
     cu = db.scalar(select(TnLichSuTimTruongPhuHop).where(TnLichSuTimTruongPhuHop.ma_yeu_cau == payload.ma_yeu_cau))
     if cu is not None:
-        if cu.tai_khoan_id != user.id:
+        if not _la_cua_nguoi_tim(cu, user, ma_thiet_bi):
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Mã yêu cầu đã được sử dụng")
-        return _ket_qua(db, cu, user)
+        return _ket_qua(db, cu, user, ma_thiet_bi)
 
     cau_hinh = cau_hinh_dang_ap_dung(db)
-    if _da_dung_hom_nay(db, user.id) >= cau_hinh.so_luot_tra_cuu_thanh_vien_ngay:
+    toi_da = cau_hinh.so_luot_tra_cuu_thanh_vien_ngay if user else cau_hinh.so_luot_tra_cuu_khach_ngay
+    if _da_dung_hom_nay(db, user, ma_thiet_bi) >= toi_da:
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail=f"Bạn đã dùng hết {cau_hinh.so_luot_tra_cuu_thanh_vien_ngay} lượt tìm trường phù hợp hôm nay",
+            detail=f"Bạn đã dùng hết {toi_da} lượt tìm trường phù hợp hôm nay",
         )
 
+    thong_tin_khach = None
+    if user is None and payload.thong_tin_khach is not None:
+        thong_tin_khach = payload.thong_tin_khach.model_dump(exclude_none=True) or None
     item = TnLichSuTimTruongPhuHop(
-        tai_khoan_id=user.id,
+        tai_khoan_id=user.id if user else None,
+        ma_thiet_bi=ma_thiet_bi,
+        thong_tin_khach=thong_tin_khach,
         ma_yeu_cau=payload.ma_yeu_cau,
         ma_nganh=payload.ma_nganh,
         nam_tuyen_sinh=payload.nam_tuyen_sinh,
@@ -191,9 +227,9 @@ def tim_truong_phu_hop(
         cu = db.scalar(
             select(TnLichSuTimTruongPhuHop).where(TnLichSuTimTruongPhuHop.ma_yeu_cau == payload.ma_yeu_cau)
         )
-        if cu is None or cu.tai_khoan_id != user.id:
+        if cu is None or not _la_cua_nguoi_tim(cu, user, ma_thiet_bi):
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Mã yêu cầu đã được sử dụng") from None
-        return _ket_qua(db, cu, user)
+        return _ket_qua(db, cu, user, ma_thiet_bi)
     db.refresh(item)
 
     try:
@@ -219,7 +255,7 @@ def tim_truong_phu_hop(
     db.refresh(item)
     if item.trang_thai_xu_ly == "that_bai":
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Không tìm được trường phù hợp")
-    return _ket_qua(db, item, user)
+    return _ket_qua(db, item, user, ma_thiet_bi)
 
 
 def _like_pattern(value: str) -> str:
@@ -296,7 +332,23 @@ def _quan_tri_public(row, chi_tiet: bool = False):
     item, ho_ten, email, so_dien_thoai, ten_nganh = row
     model = LichSuTimTruongQuanTriChiTiet if chi_tiet else LichSuTimTruongQuanTri
     data = {c.name: getattr(item, c.name) for c in TnLichSuTimTruongPhuHop.__table__.columns}
-    return model(**data, ho_ten=ho_ten, email=email, so_dien_thoai=so_dien_thoai, ten_nganh=ten_nganh)
+    la_khach = item.tai_khoan_id is None
+    if la_khach:
+        # Khách không có tài khoản: hiển thị thông tin liên hệ khách tự nhập.
+        khach = item.thong_tin_khach or {}
+        ho_ten, email, so_dien_thoai = khach.get("ho_ten"), khach.get("email"), khach.get("so_dien_thoai")
+    return model(
+        **data,
+        la_khach=la_khach,
+        ho_ten=ho_ten,
+        email=email,
+        so_dien_thoai=so_dien_thoai,
+        ten_nganh=ten_nganh,
+    )
+
+
+def _truong_khach(key: str):
+    return func.json_unquote(func.json_extract(TnLichSuTimTruongPhuHop.thong_tin_khach, f"$.{key}"))
 
 
 @router.get(
@@ -311,6 +363,7 @@ def danh_sach_lich_su_tim_truong(
     loai_luot: Literal["mien_phi", "tra_phi", "khuyen_mai"] | None = Query(default=None),
     trang_thai_xu_ly: Literal["cho_xu_ly", "dang_xu_ly", "thanh_cong", "that_bai"] | None = Query(default=None),
     da_mo_khoa: bool | None = Query(default=None),
+    doi_tuong: Literal["thanh-vien", "khach"] | None = Query(default=None),
     tu_ngay: date | None = Query(default=None),
     den_ngay: date | None = Query(default=None),
     page: int = Query(default=1, ge=1),
@@ -319,8 +372,9 @@ def danh_sach_lich_su_tim_truong(
 ) -> LichSuTimTruongQuanTriPage:
     """Lịch sử tìm trường phù hợp của mọi tài khoản, mới nhất trước.
 
-    Lọc theo người dùng (tên, email, SĐT), từ khóa (mã yêu cầu, mã/tên ngành), năm tuyển sinh,
-    loại lượt, trạng thái xử lý, đã mở khóa báo cáo và khoảng ngày tạo.
+    Lọc theo người dùng (tên, email, SĐT của tài khoản hoặc khách tự nhập), từ khóa (mã yêu cầu,
+    mã/tên ngành), năm tuyển sinh, loại lượt, trạng thái xử lý, đã mở khóa báo cáo, thành viên/khách
+    và khoảng ngày tạo.
     """
     filters = _dieu_kien_loc(q, nam_tuyen_sinh, loai_luot, trang_thai_xu_ly, da_mo_khoa, tu_ngay, den_ngay)
     if nguoi_dung and nguoi_dung.strip():
@@ -330,8 +384,15 @@ def danh_sach_lich_su_tim_truong(
                 NguoiDung.ho_ten.like(pattern, escape="\\"),
                 NguoiDung.email.like(pattern, escape="\\"),
                 NguoiDung.so_dien_thoai.like(pattern, escape="\\"),
+                _truong_khach("ho_ten").like(pattern, escape="\\"),
+                _truong_khach("email").like(pattern, escape="\\"),
+                _truong_khach("so_dien_thoai").like(pattern, escape="\\"),
             )
         )
+    if doi_tuong == "khach":
+        filters.append(TnLichSuTimTruongPhuHop.tai_khoan_id.is_(None))
+    elif doi_tuong == "thanh-vien":
+        filters.append(TnLichSuTimTruongPhuHop.tai_khoan_id.is_not(None))
 
     return _trang_lich_su(db, filters, page, page_size)
 

@@ -1,7 +1,7 @@
 import api from '@/api/axios'
 
-export function fetchLuotTimTruong() {
-  return api.get('/tim-truong-phu-hop/luot', { skipLoading: true }).then((res) => res.data)
+export function fetchLuotTimTruong(params = {}) {
+  return api.get('/tim-truong-phu-hop/luot', { params, skipLoading: true }).then((res) => res.data)
 }
 
 export function timTruongPhuHop(payload) {

@@ -3,11 +3,12 @@ from sqlalchemy import and_, func, not_, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_admin_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.ht_ngan_hang_thanh_toan import HtNganHangThanhToan
 from app.schemas.ht_ngan_hang_thanh_toan import (
     HtNganHangLuaChon,
+    HtNganHangNhanTien,
     HtNganHangThanhToanDeleteMany,
     HtNganHangThanhToanDeleteManyResult,
     HtNganHangThanhToanPage,
@@ -20,6 +21,13 @@ router = APIRouter(
     prefix="/he-thong/ngan-hang-thanh-toan",
     tags=["he-thong"],
     dependencies=[Depends(get_admin_user)],
+)
+
+# Thành viên xem tài khoản nhận tiền khi nạp. Phải include trước `router` để không bị `/{item_id}` bắt mất.
+public_router = APIRouter(
+    prefix="/he-thong/ngan-hang-thanh-toan",
+    tags=["he-thong"],
+    dependencies=[Depends(get_current_user)],
 )
 
 _TRUNG_TAI_KHOAN = "Tài khoản này đã tồn tại ở cùng ngân hàng"
@@ -180,3 +188,15 @@ def delete_ngan_hang_thanh_toan(item_id: int, db: Session = Depends(get_db)) -> 
     item = _get_or_404(db, item_id)
     db.delete(item)
     db.commit()
+
+
+@public_router.get("/dang-hoat-dong", response_model=list[HtNganHangNhanTien])
+def list_ngan_hang_nhan_tien(db: Session = Depends(get_db)) -> list[HtNganHangThanhToan]:
+    """Các tài khoản ngân hàng đang hoạt động để thành viên chuyển khoản nạp tiền."""
+    return list(
+        db.scalars(
+            select(HtNganHangThanhToan)
+            .where(HtNganHangThanhToan.trang_thai == 1)
+            .order_by(HtNganHangThanhToan.ten_ngan_hang_viet_tat.asc(), HtNganHangThanhToan.id.asc())
+        ).all()
+    )

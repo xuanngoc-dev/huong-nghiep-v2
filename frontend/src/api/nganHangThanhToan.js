@@ -29,3 +29,7 @@ export function deleteNganHangThanhToan(id) {
 export function deleteNganHangThanhToanMany(ids) {
   return api.delete('/he-thong/ngan-hang-thanh-toan', { data: { ids } }).then((res) => res.data)
 }
+
+export function fetchNganHangNhanTien() {
+  return api.get('/he-thong/ngan-hang-thanh-toan/dang-hoat-dong', { skipLoading: true }).then((res) => res.data)
+}
