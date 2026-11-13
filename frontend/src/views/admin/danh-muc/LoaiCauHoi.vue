@@ -64,13 +64,21 @@
         <CustomTableColumn label="STT" width="72" align="center">
           <template #default="{ $index }">{{ rowIndex($index) }}</template>
         </CustomTableColumn>
-        <CustomTableColumn prop="thu_tu_uu_tien" label="Thứ tự" width="100" align="center" />
+        <CustomTableColumn prop="id" label="ID" width="100" align="center" />
+        <CustomTableColumn prop="thu_tu_uu_tien" label="Thứ tự hiển thị" width="180" align="center" />
         <CustomTableColumn prop="ten_loai_cau_hoi" label="Tên loại câu hỏi" min-width="220" />
         <CustomTableColumn label="Trạng thái" width="150" align="center">
           <template #default="{ row }">
-            <CustomTag :type="row.trang_thai === 1 ? 'success' : 'info'" effect="light">
-              {{ row.trang_thai === 1 ? 'Hoạt động' : 'Ngừng sử dụng' }}
-            </CustomTag>
+            <CustomSwitch
+              :model-value="row.trang_thai"
+              :active-value="1"
+              :inactive-value="0"
+              active-text="Hoạt động"
+              inactive-text="Ngừng"
+              :loading="!!dangDoiTrangThai[row.id]"
+              :before-change="() => doiTrangThai(row)"
+              :aria-label="`Trạng thái ${row.ten_loai_cau_hoi}`"
+            />
           </template>
         </CustomTableColumn>
         <CustomTableColumn prop="ghi_chu" label="Ghi chú" min-width="220" >
@@ -238,6 +246,7 @@ const createMode = ref('form')
 const jsonText = ref('')
 const jsonImport = useJsonBatchImport({ label: 'loại câu hỏi' })
 const formRef = ref()
+const dangDoiTrangThai = ref({})
 
 const filters = reactive({
   q: '',
@@ -388,6 +397,27 @@ function payloadFromForm() {
     trang_thai: form.trang_thai,
     ghi_chu: form.ghi_chu?.trim() || null,
   }
+}
+
+async function doiTrangThai(row) {
+  const moi = row.trang_thai === 1 ? 0 : 1
+  dangDoiTrangThai.value = { ...dangDoiTrangThai.value, [row.id]: true }
+  try {
+    const data = await updateLoaiCauHoi(row.id, {
+      ten_loai_cau_hoi: row.ten_loai_cau_hoi,
+      thu_tu_uu_tien: row.thu_tu_uu_tien,
+      trang_thai: moi,
+      ghi_chu: row.ghi_chu ?? null,
+    })
+    row.trang_thai = data.trang_thai
+    ElMessage.success(moi === 1 ? `Đã bật "${row.ten_loai_cau_hoi}"` : `Đã tắt "${row.ten_loai_cau_hoi}"`)
+  } catch (error) {
+    ElMessage.error(errorMessage(error, 'Không đổi được trạng thái'))
+  } finally {
+    const { [row.id]: _bo, ...conLai } = dangDoiTrangThai.value
+    dangDoiTrangThai.value = conLai
+  }
+  return false
 }
 
 function fillJsonSample() {

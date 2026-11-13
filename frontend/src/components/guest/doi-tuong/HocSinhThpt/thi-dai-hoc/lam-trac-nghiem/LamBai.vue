@@ -19,7 +19,7 @@
               class="holland-panel quiz-question"
               :class="{ 'is-active': cauIndex === chiSo }"
               tabindex="-1"
-              @click="chonCau(cauIndex, false)"
+              @click="bamCau(cauIndex)"
             >
               <h3 class="holland-panel__title">Câu {{ cauIndex + 1 }}. {{ cau.noi_dung_cau_hoi }}</h3>
               <div
@@ -33,6 +33,7 @@
                   :key="answer.id"
                   class="quiz-choice"
                   :class="{ 'is-selected': daChon[cau.id] === answer.id, 'is-locked': khoaTraLoi }"
+                  @pointerup="chamDapAn($event, cauIndex, cau, answer.id)"
                 >
                   <input
                     class="quiz-choice__radio"
@@ -50,7 +51,8 @@
             </article>
           </div>
 
-          <div class="quiz-nav">
+          <p class="quiz-tip">Mẹo: chạm 2 lần vào đáp án để chọn và chuyển ngay sang câu tiếp theo.</p>
+          <div ref="thanhDieuHuong" class="quiz-nav">
             <CustomButton
               class="quiz-nav__btn"
               plain
@@ -122,6 +124,7 @@ const phien = ref(null)
 const daChon = ref({})
 const chiSo = ref(0)
 const theCau = ref([])
+const thanhDieuHuong = ref(null)
 
 const cauHoi = computed(() => phien.value?.cau_hoi || [])
 const cauHoiLoai = ref([])
@@ -196,6 +199,37 @@ function chonCau(index, cuon = true, focus = false) {
     if (cuon) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     if (focus) el.focus({ preventScroll: true })
   })
+}
+
+// Chạm 2 lần (thiết bị cảm ứng) vào một đáp án: chọn đáp án đó rồi cuộn sang câu tiếp theo.
+// Tự nhận diện qua pointerup vì dblclick trên di động không ổn định (trình duyệt dùng để phóng to).
+const CHAM_DUP_MS = 350
+let chamTruoc = { id: null, luc: 0 }
+let boQuaBamCauDen = 0
+
+function chamDapAn(event, cauIndex, cau, answerId) {
+  if (event.pointerType !== 'touch' || khoaTraLoi.value || dangDoiPhan.value) return
+  const dup = chamTruoc.id === answerId && event.timeStamp - chamTruoc.luc < CHAM_DUP_MS
+  chamTruoc = dup ? { id: null, luc: 0 } : { id: answerId, luc: event.timeStamp }
+  if (!dup) return
+  if (daChon.value[cau.id] !== answerId) chonDapAn(cau, answerId)
+  sangCauTiep(cauIndex)
+}
+
+function sangCauTiep(cauIndex) {
+  // Sự kiện click của thẻ câu hỏi đến ngay sau pointerup và sẽ chọn lại câu vừa chạm, nên bỏ qua nó.
+  boQuaBamCauDen = Date.now() + 500
+  if (cauIndex < cauHoiLoai.value.length - 1) {
+    chonCau(cauIndex + 1)
+    return
+  }
+  // Câu cuối của phần: cuộn tới nút chuyển phần.
+  nextTick(() => thanhDieuHuong.value?.scrollIntoView({ behavior: 'smooth', block: 'center' }))
+}
+
+function bamCau(cauIndex) {
+  if (Date.now() < boQuaBamCauDen) return
+  chonCau(cauIndex, false)
 }
 
 function phimDangNhap(event) {
@@ -515,6 +549,25 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
   border-radius: 12px;
   background: #fff;
   cursor: pointer;
+  /* Tắt phóng to khi chạm 2 lần để dùng cử chỉ này chọn đáp án và sang câu tiếp. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.quiz-tip {
+  display: none;
+  margin: 12px 0 0;
+  color: #5a6e63;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* Chỉ thiết bị cảm ứng mới có cử chỉ chạm 2 lần. */
+@media (hover: none) and (pointer: coarse) {
+  .quiz-tip {
+    display: block;
+  }
 }
 
 .quiz-choice.is-selected {

@@ -43,7 +43,7 @@
               <ol class="holland-path">
                 <li
                   v-for="(step, index) in pathSteps"
-                  :key="step.label"
+                  :key="step.key"
                   class="holland-path__item"
                   :class="{ 'is-current': step.current }"
                 >
@@ -130,11 +130,12 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { batDauPhienHolland } from '@/api/phienKhaoSat'
+import { fetchLoaiCauHoi } from '@/api/loaiCauHoi'
 import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
 
@@ -147,15 +148,14 @@ const router = useRouter()
 const currentStage = computed(() => route.meta.giaiDoan || '')
 const dangTaoPhien = ref(false)
 
-const pathSteps = [
-  { label: 'Bắt đầu', current: true },
-  { label: 'Sở thích & đam mê' },
-  { label: 'Kỹ năng & khả năng' },
-  { label: 'Môi trường làm việc' },
-  { label: 'Phong cách làm việc' },
-  { label: 'Ngành phù hợp' },
-  { label: 'Kết quả' },
-]
+const loaiCauHoiSteps = ref([])
+
+const pathSteps = computed(() => [
+  { key: 'bat-dau', label: 'Bắt đầu', current: true },
+  ...loaiCauHoiSteps.value,
+  { key: 'nganh-phu-hop', label: 'Ngành phù hợp' },
+  { key: 'ket-qua', label: 'Kết quả' },
+])
 
 const beforeTips = [
   'Dành khoảng 5 phút để thư giãn và tập trung.',
@@ -172,6 +172,20 @@ const duringTips = [
   'Trả lời hết các câu trong mỗi phần để chuyển sang phần tiếp theo.',
   'Khi đã trả lời đủ toàn bộ câu hỏi, bài làm sẽ được khoá để phân tích kết quả.',
 ]
+
+async function loadLoaiCauHoiSteps() {
+  try {
+    const data = await fetchLoaiCauHoi({ trang_thai: 1, page: 1, page_size: 1000 })
+    loaiCauHoiSteps.value = (data.items || []).map((item) => ({
+      key: `loai-${item.id}`,
+      label: item.ten_loai_cau_hoi,
+    }))
+  } catch {
+    loaiCauHoiSteps.value = []
+  }
+}
+
+onMounted(loadLoaiCauHoiSteps)
 
 function chonGiaiDoan(stage) {
   sessionStorage.setItem(GIAI_DOAN_THI_DAI_HOC_KEY, stage.code)

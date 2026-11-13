@@ -173,8 +173,9 @@ def list_cau_hoi(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> TnCauHoiTracNghiemPage:
-    """Lấy danh sách câu hỏi trắc nghiệm có phân trang, kèm đáp án. Lọc theo từ khóa, mã Holland, loại và trạng thái."""
-    filters = []
+    """Lấy danh sách câu hỏi trắc nghiệm có phân trang, kèm đáp án. Lọc theo từ khóa, mã Holland, loại và trạng thái.
+    Chỉ lấy câu hỏi thuộc loại câu hỏi đang hoạt động."""
+    filters = [DmLoaiCauHoi.trang_thai == 1]
     if q and q.strip():
         pattern = _like_pattern(q.strip())
         filters.append(

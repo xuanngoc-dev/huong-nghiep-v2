@@ -558,12 +558,12 @@ function errorMessage(error, fallback) {
   return fallback
 }
 
-async function loadAll(fetchFn) {
+async function loadAll(fetchFn, params = {}) {
   const size = 100
   let current = 1
   const items = []
   while (current <= 20) {
-    const data = await fetchFn({ page: current, page_size: size })
+    const data = await fetchFn({ ...params, page: current, page_size: size })
     items.push(...(data.items || []))
     if (items.length >= data.total || !data.items?.length) break
     current += 1
@@ -572,7 +572,7 @@ async function loadAll(fetchFn) {
 }
 
 async function loadOptions() {
-  const [holland, loai] = await Promise.all([loadAll(fetchNhomHolland), loadAll(fetchLoaiCauHoi)])
+  const [holland, loai] = await Promise.all([loadAll(fetchNhomHolland), loadAll(fetchLoaiCauHoi, { trang_thai: 1 })])
   holland.sort((a, b) => a.ma_nhom.localeCompare(b.ma_nhom, 'vi'))
   loai.sort((a, b) => a.thu_tu_uu_tien - b.thu_tu_uu_tien)
   hollandOptions.value = holland
