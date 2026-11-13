@@ -188,6 +188,12 @@ const router = createRouter({
           meta: { title: 'Cấu hình tra cứu', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'he-thong/cau-hinh-enduser',
+          name: 'cau-hinh-enduser',
+          component: () => import('@/views/admin/he-thong/CauHinhEnduser.vue'),
+          meta: { title: 'Cấu hình EndUser', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'danh-muc/tinh-thanh',
           name: 'tinh-thanh',
           component: () => import('@/views/admin/danh-muc/TinhThanh.vue'),

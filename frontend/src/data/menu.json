@@ -196,6 +196,12 @@
           "title": "Cấu hình tra cứu",
           "tooltip": "Hạn mức tra cứu, tư vấn AI và thanh toán",
           "icon": "Operation"
+        },
+        {
+          "index": "/admin/he-thong/cau-hinh-enduser",
+          "title": "Cấu hình EndUser",
+          "tooltip": "Các cấu hình JSON dùng cho giao diện người dùng cuối",
+          "icon": "Tools"
         }
       ]
     },

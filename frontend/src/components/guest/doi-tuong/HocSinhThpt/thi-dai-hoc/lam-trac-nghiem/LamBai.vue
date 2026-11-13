@@ -11,7 +11,61 @@
 
         <template v-else-if="cauHoiLoai.length">
           <BuocLamBai :ssid="ssid" :buoc="buoc" :hien-tai="loaiCauHoiId" />
-          <div class="quiz-list" :class="{ 'is-switching': dangDoiPhan }">
+          <div v-if="laDiemSo" class="quiz-scale" :class="{ 'is-switching': dangDoiPhan }">
+            <table class="quiz-scale__table">
+              <thead>
+                <tr>
+                  <th rowspan="2" class="quiz-scale__stt">STT</th>
+                  <th rowspan="2" class="quiz-scale__question">Câu hỏi</th>
+                  <th :colspan="MUC_DIEM.length">Câu trả lời</th>
+                </tr>
+                <tr>
+                  <th v-for="muc in MUC_DIEM" :key="muc.diem" class="quiz-scale__level">{{ muc.ten }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(cau, cauIndex) in cauHoiLoai"
+                  :key="cau.id"
+                  :ref="(el) => ganTheCau(cauIndex, el)"
+                  class="quiz-scale__row"
+                  :class="{ 'is-active': cauIndex === chiSo, 'is-done': daChon[cau.id] }"
+                  tabindex="-1"
+                  role="radiogroup"
+                  :aria-label="`Câu ${cauIndex + 1}. ${cau.noi_dung_cau_hoi}`"
+                  :aria-disabled="khoaTraLoi"
+                  @click="bamCau(cauIndex)"
+                >
+                  <td class="quiz-scale__stt">{{ cauIndex + 1 }}</td>
+                  <td class="quiz-scale__question" :data-stt="cauIndex + 1">{{ cau.noi_dung_cau_hoi }}</td>
+                  <td v-for="muc in MUC_DIEM" :key="muc.diem" class="quiz-scale__cell">
+                    <label
+                      v-if="dapAnTheoDiem(cau, muc.diem)"
+                      class="quiz-scale__choice"
+                      :class="{
+                        'is-selected': daChon[cau.id] === dapAnTheoDiem(cau, muc.diem).id,
+                        'is-locked': khoaTraLoi,
+                      }"
+                      @pointerup="chamDapAn($event, cauIndex, cau, dapAnTheoDiem(cau, muc.diem).id)"
+                    >
+                      <input
+                        class="quiz-choice__radio"
+                        type="radio"
+                        :name="`cau-${cau.id}`"
+                        :value="dapAnTheoDiem(cau, muc.diem).id"
+                        :checked="daChon[cau.id] === dapAnTheoDiem(cau, muc.diem).id"
+                        :disabled="khoaTraLoi"
+                        :aria-label="muc.ten"
+                        @change="chonDapAn(cau, dapAnTheoDiem(cau, muc.diem).id)"
+                      />
+                      <span class="quiz-scale__choice-text">{{ muc.ten }}</span>
+                    </label>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div v-else class="quiz-list" :class="{ 'is-switching': dangDoiPhan }">
             <article
               v-for="(cau, cauIndex) in cauHoiLoai"
               :key="cau.id"
@@ -99,6 +153,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { fetchNganhPhuHop, fetchPhienLamBai, luuTraLoi } from '@/api/phienKhaoSat'
+import { fetchCauHinhEnduserDangApDung } from '@/api/cauHinhEnduser'
 import LoadingSuyNghi from '@/components/guest/LoadingSuyNghi.vue'
 import BuocLamBai from './BuocLamBai.vue'
 
@@ -126,8 +181,33 @@ const chiSo = ref(0)
 const theCau = ref([])
 const thanhDieuHuong = ref(null)
 
+// Các mức của kiểu trả lời điểm số, điểm 1–5 ứng với đáp án có cùng `diem` của từng câu.
+const MUC_DIEM = [
+  { diem: 1, ten: 'Rất không thích' },
+  { diem: 2, ten: 'Không thích' },
+  { diem: 3, ten: 'Bình thường' },
+  { diem: 4, ten: 'Thích' },
+  { diem: 5, ten: 'Rất thích' },
+]
+// Kiểu trả lời lấy từ cấu hình EndUser đang áp dụng; lỗi thì giữ cách hiển thị tình huống.
+const kieuTraLoi = ref('tinh_huong')
+const laDiemSo = computed(() => kieuTraLoi.value === 'diem_so')
+
 const cauHoi = computed(() => phien.value?.cau_hoi || [])
 const cauHoiLoai = ref([])
+
+function dapAnTheoDiem(cau, diem) {
+  return cau.cau_tra_loi.find((answer) => answer.diem === diem) || null
+}
+
+async function taiCauHinh() {
+  try {
+    const data = await fetchCauHinhEnduserDangApDung()
+    kieuTraLoi.value = data.kieu_tra_loi === 'diem_so' ? 'diem_so' : 'tinh_huong'
+  } catch {
+    kieuTraLoi.value = 'tinh_huong'
+  }
+}
 
 function xaoTron(list) {
   const next = [...list]
@@ -261,7 +341,10 @@ function xuLyPhim(event) {
     return
   }
   if (khoaTraLoi.value || !/^[1-5]$/.test(event.key) || !cauDangChon.value) return
-  const answer = cauDangChon.value.cau_tra_loi[Number(event.key) - 1]
+  // Điểm số: phím 1–5 là đúng mức điểm; tình huống: thứ tự đáp án đang hiển thị.
+  const answer = laDiemSo.value
+    ? dapAnTheoDiem(cauDangChon.value, Number(event.key))
+    : cauDangChon.value.cau_tra_loi[Number(event.key) - 1]
   if (!answer) return
   event.preventDefault()
   chonDapAn(cauDangChon.value, answer.id)
@@ -406,7 +489,7 @@ async function taiDeBai(value) {
   }
   dangTai.value = true
   try {
-    const data = await fetchPhienLamBai(value)
+    const [data] = await Promise.all([fetchPhienLamBai(value), taiCauHinh()])
     phien.value = data
     const selected = {}
     for (const item of data.cau_hoi || []) {
@@ -444,9 +527,207 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
   transition: opacity 0.2s ease;
 }
 
-.quiz-list.is-switching {
+.quiz-list.is-switching,
+.quiz-scale.is-switching {
   opacity: 0.4;
   pointer-events: none;
+}
+
+.quiz-scale {
+  margin-top: 28px;
+  overflow: hidden;
+  border: 1px solid #d7ebe0;
+  border-radius: 12px;
+  background: #fff;
+  transition: opacity 0.2s ease;
+}
+
+.quiz-scale__table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.quiz-scale__table th {
+  padding: 10px 8px;
+  border: 1px solid #d7ebe0;
+  background: #edf7f0;
+  color: #1d6b28;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.quiz-scale__table tr > :first-child {
+  border-left: 0;
+}
+
+.quiz-scale__table tr > :last-child {
+  border-right: 0;
+}
+
+.quiz-scale__table thead tr:first-child th {
+  border-top: 0;
+}
+
+.quiz-scale__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.quiz-scale__table td {
+  padding: 10px 8px;
+  border: 1px solid #e6ece8;
+  color: #162033;
+  line-height: 1.45;
+  vertical-align: middle;
+}
+
+th.quiz-scale__stt {
+  width: 64px;
+}
+
+th.quiz-scale__question {
+  width: 40%;
+}
+
+td.quiz-scale__stt {
+  color: #1d6b28;
+  font-weight: 500;
+  text-align: center;
+}
+
+.quiz-scale__row {
+  cursor: pointer;
+  scroll-margin: 24px;
+  transition: background-color 0.2s ease;
+}
+
+.quiz-scale__row:focus {
+  outline: none;
+}
+
+.quiz-scale__row:hover,
+.quiz-scale__row.is-done {
+  background: #f6fbf7;
+}
+
+.quiz-scale__row.is-active {
+  background: #edfff0;
+  box-shadow: inset 3px 0 0 var(--guest-primary);
+}
+
+.quiz-scale__cell {
+  text-align: center;
+}
+
+.quiz-scale__choice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 36px;
+  margin: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.quiz-scale__choice .quiz-choice__radio {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.quiz-scale__choice.is-selected {
+  background: #d9f3dc;
+}
+
+.quiz-scale__choice.is-locked,
+.quiz-scale__choice.is-locked .quiz-choice__radio {
+  cursor: default;
+}
+
+/* Tên mức đã có ở tiêu đề cột trên màn rộng, chỉ hiện trong ô khi chuyển sang dạng thẻ. */
+.quiz-scale__choice-text {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .quiz-scale {
+    border: 0;
+    background: transparent;
+  }
+
+  .quiz-scale__table {
+    display: block;
+  }
+
+  .quiz-scale__table thead {
+    display: none;
+  }
+
+  .quiz-scale__table tbody {
+    display: grid;
+    gap: 12px;
+  }
+
+  .quiz-scale__row {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+    padding: 12px;
+    border: 1px solid #d7ebe0;
+    border-radius: 12px;
+    background: #f3faf5;
+  }
+
+  .quiz-scale__row.is-active {
+    border-color: var(--guest-primary);
+    box-shadow: 0 10px 28px rgba(var(--guest-primary-rgb), 0.16);
+  }
+
+  .quiz-scale__table td {
+    padding: 0;
+    border: 0;
+  }
+
+  td.quiz-scale__stt {
+    display: none;
+  }
+
+  td.quiz-scale__question {
+    grid-column: 1 / -1;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  td.quiz-scale__question::before {
+    content: 'Câu ' attr(data-stt) '. ';
+    color: #1d6b28;
+  }
+
+  .quiz-scale__choice {
+    flex-direction: column;
+    gap: 4px;
+    min-height: 0;
+    padding: 6px 2px;
+    border: 1px solid #e6ece8;
+    background: #fff;
+  }
+
+  .quiz-scale__choice.is-selected {
+    border-color: #8ecf93;
+  }
+
+  .quiz-scale__choice-text {
+    display: block;
+    color: #2c3a4d;
+    font-size: 0.75rem;
+    line-height: 1.25;
+  }
 }
 
 .quiz-switch {
@@ -642,6 +923,8 @@ watch([phien, loaiCauHoiId], sapXepNgauNhien)
 
 @media (prefers-reduced-motion: reduce) {
   .quiz-list,
+  .quiz-scale,
+  .quiz-scale__row,
   .quiz-switch__spin,
   .quiz-switch-enter-active,
   .quiz-switch-leave-active {
