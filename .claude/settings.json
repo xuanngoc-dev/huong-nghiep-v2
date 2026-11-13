@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(./build_and_push.sh*)",
+      "Bash(*build_and_push.sh*)",
+      "Bash(docker push*)"
+    ],
+    "ask": [
+      "Bash(make migrate)",
+      "Bash(make migrate-down*)",
+      "Bash(make migrate-new*)",
+      "Bash(make stamp*)",
+      "Bash(*alembic upgrade*)",
+      "Bash(*alembic downgrade*)",
+      "Bash(*alembic stamp*)",
+      "Bash(*alembic revision*)"
+    ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true
+  }
+}
