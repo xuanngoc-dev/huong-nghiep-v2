@@ -3,7 +3,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_nhom_tinh_cach_holland import DmNhomTinhCachHolland
 from app.models.nguoi_dung import NguoiDung
@@ -87,7 +87,7 @@ def get_nhom_tinh_cach_holland(
 def create_nhom_tinh_cach_holland_bulk(
     payload: list[DmNhomTinhCachHollandWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmNhomTinhCachHollandBulkResult:
     """Thêm nhiều nhóm Holland cùng lúc. Từ chối nếu mã nhóm trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống."""
     if not payload:
@@ -139,7 +139,7 @@ def create_nhom_tinh_cach_holland_bulk(
 def create_nhom_tinh_cach_holland(
     payload: DmNhomTinhCachHollandWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmNhomTinhCachHolland:
     """Thêm một nhóm tính cách Holland. Từ chối nếu mã nhóm đã tồn tại."""
     item = DmNhomTinhCachHolland(**payload.model_dump())
@@ -161,7 +161,7 @@ def update_nhom_tinh_cach_holland(
     item_id: int,
     payload: DmNhomTinhCachHollandWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmNhomTinhCachHolland:
     """Cập nhật toàn bộ thông tin một nhóm tính cách Holland theo id."""
     item = _get_or_404(db, item_id)
@@ -183,7 +183,7 @@ def update_nhom_tinh_cach_holland(
 def delete_nhom_tinh_cach_holland_many(
     payload: DmNhomTinhCachHollandDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmNhomTinhCachHollandDeleteManyResult:
     """Xóa nhiều nhóm tính cách Holland theo danh sách id."""
     items = db.scalars(
@@ -211,7 +211,7 @@ def delete_nhom_tinh_cach_holland_many(
 def delete_nhom_tinh_cach_holland(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một nhóm tính cách Holland theo id."""
     item = _get_or_404(db, item_id)

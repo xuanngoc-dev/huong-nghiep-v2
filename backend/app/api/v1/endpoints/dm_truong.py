@@ -5,7 +5,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_truong import DmTruong
 from app.models.nguoi_dung import NguoiDung
@@ -127,7 +127,7 @@ def get_truong(
 def create_truong_bulk(
     payload: list[DmTruongWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmTruongBulkResult:
     """Thêm nhiều trường học cùng lúc. Từ chối nếu mã trường trùng trong dữ liệu hoặc đã có trong hệ thống."""
     if not payload:
@@ -182,7 +182,7 @@ def create_truong_bulk(
 def create_truong(
     payload: DmTruongWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmTruong:
     """Thêm một trường học. Từ chối nếu mã trường đã tồn tại."""
     _ensure_parent(db, payload.truong_cha_id)
@@ -203,7 +203,7 @@ def update_truong(
     item_id: int,
     payload: DmTruongWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmTruong:
     """Cập nhật toàn bộ thông tin một trường học theo id."""
     item = _get_or_404(db, item_id)
@@ -224,7 +224,7 @@ def update_truong(
 def delete_truong_many(
     payload: DmTruongDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmTruongDeleteManyResult:
     """Xóa nhiều trường học theo danh sách id."""
     items = db.scalars(select(DmTruong).where(DmTruong.id.in_(payload.ids))).all()
@@ -250,7 +250,7 @@ def delete_truong_many(
 def delete_truong(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một trường học theo id."""
     item = _get_or_404(db, item_id)

@@ -3,7 +3,7 @@ from sqlalchemy import String, cast, func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_chuyen_nganh import DmChuyenNganh
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
@@ -154,7 +154,7 @@ def get_chuyen_nganh(
 def create_chuyen_nganh_bulk(
     payload: list[DmChuyenNganhWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmChuyenNganhBulkResult:
     """Thêm nhiều chuyên ngành cùng lúc. Từ chối nếu mã trùng, ngành cha hoặc mã Holland không tồn tại."""
     if not payload:
@@ -203,7 +203,7 @@ def create_chuyen_nganh_bulk(
 def create_chuyen_nganh(
     payload: DmChuyenNganhWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmChuyenNganhPublic:
     """Thêm một chuyên ngành. Từ chối nếu mã đã tồn tại, ngành cha hoặc mã Holland không tồn tại."""
     _ensure_nganh(db, [payload.ma_nganh])
@@ -225,7 +225,7 @@ def update_chuyen_nganh(
     item_id: int,
     payload: DmChuyenNganhWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmChuyenNganhPublic:
     """Cập nhật toàn bộ thông tin một chuyên ngành theo id."""
     item, _parent = _load_pair(db, item_id)
@@ -247,7 +247,7 @@ def update_chuyen_nganh(
 def delete_chuyen_nganh_many(
     payload: DmChuyenNganhDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmChuyenNganhDeleteManyResult:
     """Xóa nhiều chuyên ngành theo danh sách id."""
     items = db.scalars(select(DmChuyenNganh).where(DmChuyenNganh.id.in_(payload.ids))).all()
@@ -263,7 +263,7 @@ def delete_chuyen_nganh_many(
 def delete_chuyen_nganh(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một chuyên ngành theo id."""
     item, _parent = _load_pair(db, item_id)

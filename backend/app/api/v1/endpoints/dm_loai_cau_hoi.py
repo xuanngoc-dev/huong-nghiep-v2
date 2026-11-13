@@ -3,7 +3,7 @@ from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_loai_cau_hoi import DmLoaiCauHoi
 from app.models.nguoi_dung import NguoiDung
@@ -78,7 +78,7 @@ def get_loai_cau_hoi(
 def create_loai_cau_hoi_bulk(
     payload: list[DmLoaiCauHoiWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmLoaiCauHoiBulkResult:
     """Thêm nhiều loại câu hỏi cùng lúc. Từ chối nếu thứ tự ưu tiên trùng trong dữ liệu hoặc đã có trong hệ thống."""
     if not payload:
@@ -129,7 +129,7 @@ def create_loai_cau_hoi_bulk(
 def create_loai_cau_hoi(
     payload: DmLoaiCauHoiWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmLoaiCauHoi:
     """Thêm một loại câu hỏi. Từ chối nếu thứ tự ưu tiên đã tồn tại."""
     item = DmLoaiCauHoi(**payload.model_dump())
@@ -151,7 +151,7 @@ def update_loai_cau_hoi(
     item_id: int,
     payload: DmLoaiCauHoiWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmLoaiCauHoi:
     """Cập nhật toàn bộ thông tin một loại câu hỏi theo id."""
     item = _get_or_404(db, item_id)
@@ -173,7 +173,7 @@ def update_loai_cau_hoi(
 def delete_loai_cau_hoi_many(
     payload: DmLoaiCauHoiDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmLoaiCauHoiDeleteManyResult:
     """Xóa nhiều loại câu hỏi theo danh sách id."""
     items = db.scalars(select(DmLoaiCauHoi).where(DmLoaiCauHoi.id.in_(payload.ids))).all()
@@ -199,7 +199,7 @@ def delete_loai_cau_hoi_many(
 def delete_loai_cau_hoi(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một loại câu hỏi theo id."""
     item = _get_or_404(db, item_id)

@@ -3,7 +3,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_dan_toc import DmDanToc
 from app.models.nguoi_dung import NguoiDung
@@ -84,7 +84,7 @@ def get_dan_toc(
 def create_dan_toc_bulk(
     payload: list[DmDanTocWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmDanTocBulkResult:
     """Thêm nhiều dân tộc cùng lúc. Từ chối nếu mã dân tộc trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống."""
     if not payload:
@@ -134,7 +134,7 @@ def create_dan_toc_bulk(
 def create_dan_toc(
     payload: DmDanTocWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmDanToc:
     """Thêm một dân tộc. Từ chối nếu mã dân tộc đã tồn tại."""
     item = DmDanToc(**payload.model_dump())
@@ -156,7 +156,7 @@ def update_dan_toc(
     item_id: int,
     payload: DmDanTocWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmDanToc:
     """Cập nhật toàn bộ thông tin một dân tộc theo id."""
     item = _get_or_404(db, item_id)
@@ -178,7 +178,7 @@ def update_dan_toc(
 def delete_dan_toc_many(
     payload: DmDanTocDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmDanTocDeleteManyResult:
     """Xóa nhiều dân tộc theo danh sách id."""
     items = db.scalars(select(DmDanToc).where(DmDanToc.id.in_(payload.ids))).all()
@@ -197,7 +197,7 @@ def delete_dan_toc_many(
 def delete_dan_toc(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một dân tộc theo id."""
     item = _get_or_404(db, item_id)

@@ -3,7 +3,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_doi_tuong_uu_tien import DmDoiTuongUuTien
 from app.models.nguoi_dung import NguoiDung
@@ -83,7 +83,7 @@ def get_doi_tuong_uu_tien(
 def create_doi_tuong_uu_tien_bulk(
     payload: list[DmDoiTuongUuTienWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmDoiTuongUuTienBulkResult:
     """Thêm nhiều đối tượng ưu tiên cùng lúc. Từ chối nếu mã đối tượng trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống."""
     if not payload:
@@ -135,7 +135,7 @@ def create_doi_tuong_uu_tien_bulk(
 def create_doi_tuong_uu_tien(
     payload: DmDoiTuongUuTienWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmDoiTuongUuTien:
     """Thêm một đối tượng ưu tiên. Từ chối nếu mã đối tượng đã tồn tại."""
     item = DmDoiTuongUuTien(**payload.model_dump())
@@ -157,7 +157,7 @@ def update_doi_tuong_uu_tien(
     item_id: int,
     payload: DmDoiTuongUuTienWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmDoiTuongUuTien:
     """Cập nhật toàn bộ thông tin một đối tượng ưu tiên theo id."""
     item = _get_or_404(db, item_id)
@@ -179,7 +179,7 @@ def update_doi_tuong_uu_tien(
 def delete_doi_tuong_uu_tien_many(
     payload: DmDoiTuongUuTienDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmDoiTuongUuTienDeleteManyResult:
     """Xóa nhiều đối tượng ưu tiên theo danh sách id."""
     items = db.scalars(select(DmDoiTuongUuTien).where(DmDoiTuongUuTien.id.in_(payload.ids))).all()
@@ -198,7 +198,7 @@ def delete_doi_tuong_uu_tien_many(
 def delete_doi_tuong_uu_tien(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một đối tượng ưu tiên theo id."""
     item = _get_or_404(db, item_id)

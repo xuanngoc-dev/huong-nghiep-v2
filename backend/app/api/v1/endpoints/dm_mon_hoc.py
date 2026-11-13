@@ -3,7 +3,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_mon_hoc import DmMonHoc
 from app.models.nguoi_dung import NguoiDung
@@ -85,7 +85,7 @@ def get_mon_hoc(
 def create_mon_hoc_bulk(
     payload: list[DmMonHocWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmMonHocBulkResult:
     """Thêm nhiều môn học cùng lúc. Từ chối nếu mã môn trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống."""
     if not payload:
@@ -135,7 +135,7 @@ def create_mon_hoc_bulk(
 def create_mon_hoc(
     payload: DmMonHocWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmMonHoc:
     """Thêm một môn học. Từ chối nếu mã môn đã tồn tại."""
     item = DmMonHoc(**payload.model_dump())
@@ -157,7 +157,7 @@ def update_mon_hoc(
     item_id: int,
     payload: DmMonHocWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmMonHoc:
     """Cập nhật toàn bộ thông tin một môn học theo id."""
     item = _get_or_404(db, item_id)
@@ -179,7 +179,7 @@ def update_mon_hoc(
 def delete_mon_hoc_many(
     payload: DmMonHocDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmMonHocDeleteManyResult:
     """Xóa nhiều môn học theo danh sách id."""
     items = db.scalars(select(DmMonHoc).where(DmMonHoc.id.in_(payload.ids))).all()
@@ -198,7 +198,7 @@ def delete_mon_hoc_many(
 def delete_mon_hoc(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một môn học theo id."""
     item = _get_or_404(db, item_id)

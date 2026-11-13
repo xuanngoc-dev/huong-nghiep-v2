@@ -3,7 +3,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_khu_vuc_uu_tien import DmKhuVucUuTien
 from app.models.nguoi_dung import NguoiDung
@@ -83,7 +83,7 @@ def get_khu_vuc_uu_tien(
 def create_khu_vuc_uu_tien_bulk(
     payload: list[DmKhuVucUuTienWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmKhuVucUuTienBulkResult:
     """Thêm nhiều khu vực ưu tiên cùng lúc. Từ chối nếu mã khu vực trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống."""
     if not payload:
@@ -133,7 +133,7 @@ def create_khu_vuc_uu_tien_bulk(
 def create_khu_vuc_uu_tien(
     payload: DmKhuVucUuTienWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmKhuVucUuTien:
     """Thêm một khu vực ưu tiên. Từ chối nếu mã khu vực đã tồn tại."""
     item = DmKhuVucUuTien(**payload.model_dump())
@@ -155,7 +155,7 @@ def update_khu_vuc_uu_tien(
     item_id: int,
     payload: DmKhuVucUuTienWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmKhuVucUuTien:
     """Cập nhật toàn bộ thông tin một khu vực ưu tiên theo id."""
     item = _get_or_404(db, item_id)
@@ -177,7 +177,7 @@ def update_khu_vuc_uu_tien(
 def delete_khu_vuc_uu_tien_many(
     payload: DmKhuVucUuTienDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmKhuVucUuTienDeleteManyResult:
     """Xóa nhiều khu vực ưu tiên theo danh sách id."""
     items = db.scalars(select(DmKhuVucUuTien).where(DmKhuVucUuTien.id.in_(payload.ids))).all()
@@ -196,7 +196,7 @@ def delete_khu_vuc_uu_tien_many(
 def delete_khu_vuc_uu_tien(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một khu vực ưu tiên theo id."""
     item = _get_or_404(db, item_id)

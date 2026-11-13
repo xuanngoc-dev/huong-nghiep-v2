@@ -3,7 +3,7 @@ from sqlalchemy import String, cast, func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_mon_hoc import DmMonHoc
 from app.models.dm_to_hop_mon_hoc import DmToHopMonHoc
@@ -101,7 +101,7 @@ def get_to_hop_mon_hoc(
 def create_to_hop_mon_hoc_bulk(
     payload: list[DmToHopMonHocWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmToHopMonHocBulkResult:
     """Thêm nhiều tổ hợp cùng lúc. Từ chối nếu mã tổ hợp trùng hoặc mã môn học không có trong danh mục."""
     if not payload:
@@ -160,7 +160,7 @@ def create_to_hop_mon_hoc_bulk(
 def create_to_hop_mon_hoc(
     payload: DmToHopMonHocWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmToHopMonHoc:
     """Thêm một tổ hợp môn học. Từ chối nếu mã tổ hợp đã tồn tại hoặc mã môn không có trong danh mục."""
     _ensure_mon_hoc_exists(db, payload.ds_mon_hoc)
@@ -183,7 +183,7 @@ def update_to_hop_mon_hoc(
     item_id: int,
     payload: DmToHopMonHocWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmToHopMonHoc:
     """Cập nhật toàn bộ thông tin một tổ hợp môn học theo id."""
     item = _get_or_404(db, item_id)
@@ -206,7 +206,7 @@ def update_to_hop_mon_hoc(
 def delete_to_hop_mon_hoc_many(
     payload: DmToHopMonHocDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmToHopMonHocDeleteManyResult:
     """Xóa nhiều tổ hợp môn học theo danh sách id."""
     items = db.scalars(select(DmToHopMonHoc).where(DmToHopMonHoc.id.in_(payload.ids))).all()
@@ -225,7 +225,7 @@ def delete_to_hop_mon_hoc_many(
 def delete_to_hop_mon_hoc(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một tổ hợp môn học theo id."""
     item = _get_or_404(db, item_id)

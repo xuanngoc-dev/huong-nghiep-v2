@@ -3,7 +3,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_tinh_thanh import DmTinhThanh
 from app.models.nguoi_dung import NguoiDung
@@ -86,7 +86,7 @@ def get_tinh_thanh(
 def create_tinh_thanh_bulk(
     payload: list[DmTinhThanhWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmTinhThanhBulkResult:
     """Thêm nhiều tỉnh thành cùng lúc. Từ chối nếu mã tỉnh trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống."""
     if not payload:
@@ -136,7 +136,7 @@ def create_tinh_thanh_bulk(
 def create_tinh_thanh(
     payload: DmTinhThanhWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmTinhThanh:
     """Thêm một tỉnh thành. Từ chối nếu mã tỉnh đã tồn tại."""
     item = DmTinhThanh(**payload.model_dump())
@@ -158,7 +158,7 @@ def update_tinh_thanh(
     item_id: int,
     payload: DmTinhThanhWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmTinhThanh:
     """Cập nhật toàn bộ thông tin một tỉnh thành theo id."""
     item = _get_or_404(db, item_id)
@@ -180,7 +180,7 @@ def update_tinh_thanh(
 def delete_tinh_thanh_many(
     payload: DmTinhThanhDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmTinhThanhDeleteManyResult:
     """Xóa nhiều tỉnh thành theo danh sách id."""
     items = db.scalars(select(DmTinhThanh).where(DmTinhThanh.id.in_(payload.ids))).all()
@@ -199,7 +199,7 @@ def delete_tinh_thanh_many(
 def delete_tinh_thanh(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một tỉnh thành theo id."""
     item = _get_or_404(db, item_id)

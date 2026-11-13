@@ -5,7 +5,7 @@ from sqlalchemy import String, cast, func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.dm_nhom_nganh_dao_tao import DmNhomNganhDaoTao
@@ -189,7 +189,7 @@ def get_nganh_dao_tao(
 def create_nganh_dao_tao_bulk(
     payload: list[DmNganhDaoTaoWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmNganhDaoTaoBulkResult:
     """Thêm nhiều ngành cùng lúc. Từ chối nếu mã trùng, nhóm ngành cha hoặc mã Holland không tồn tại."""
     if not payload:
@@ -233,7 +233,7 @@ def create_nganh_dao_tao_bulk(
 def create_nganh_dao_tao(
     payload: DmNganhDaoTaoWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmNganhDaoTaoPublic:
     """Thêm một ngành đào tạo. Từ chối nếu mã đã tồn tại, nhóm ngành cha hoặc mã Holland không tồn tại."""
     _ensure_nhom_nganh(db, [payload.ma_nhom_nganh])
@@ -255,7 +255,7 @@ def update_nganh_dao_tao(
     item_id: int,
     payload: DmNganhDaoTaoWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmNganhDaoTaoPublic:
     """Cập nhật toàn bộ thông tin một ngành đào tạo theo id."""
     item, _parent = _load_pair(db, item_id)
@@ -277,7 +277,7 @@ def update_nganh_dao_tao(
 def delete_nganh_dao_tao_many(
     payload: DmNganhDaoTaoDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmNganhDaoTaoDeleteManyResult:
     """Xóa nhiều ngành theo danh sách id. Từ chối nếu còn chuyên ngành thuộc các ngành đó."""
     items = db.scalars(select(DmNganhDaoTao).where(DmNganhDaoTao.id.in_(payload.ids))).all()
@@ -300,7 +300,7 @@ def delete_nganh_dao_tao_many(
 def delete_nganh_dao_tao(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một ngành đào tạo theo id. Từ chối nếu còn chuyên ngành thuộc ngành đó."""
     item, _parent = _load_pair(db, item_id)

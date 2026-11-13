@@ -3,7 +3,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_thanh_tich_hoc_tap_nghien_cuu import DmThanhTichHocTapNghienCuu
 from app.models.nguoi_dung import NguoiDung
@@ -89,7 +89,7 @@ def get_thanh_tich_hoc_tap_nghien_cuu(
 def create_thanh_tich_hoc_tap_nghien_cuu_bulk(
     payload: list[DmThanhTichHocTapNghienCuuWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmThanhTichHocTapNghienCuuBulkResult:
     """Thêm nhiều thành tích học tập, nghiên cứu cùng lúc."""
     if not payload:
@@ -144,7 +144,7 @@ def create_thanh_tich_hoc_tap_nghien_cuu_bulk(
 def create_thanh_tich_hoc_tap_nghien_cuu(
     payload: DmThanhTichHocTapNghienCuuWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmThanhTichHocTapNghienCuu:
     """Thêm một thành tích học tập, nghiên cứu. Từ chối nếu mã đã tồn tại."""
     item = DmThanhTichHocTapNghienCuu(**payload.model_dump())
@@ -166,7 +166,7 @@ def update_thanh_tich_hoc_tap_nghien_cuu(
     item_id: int,
     payload: DmThanhTichHocTapNghienCuuWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmThanhTichHocTapNghienCuu:
     """Cập nhật toàn bộ thông tin một thành tích học tập, nghiên cứu theo id."""
     item = _get_or_404(db, item_id)
@@ -188,7 +188,7 @@ def update_thanh_tich_hoc_tap_nghien_cuu(
 def delete_thanh_tich_hoc_tap_nghien_cuu_many(
     payload: DmThanhTichHocTapNghienCuuDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmThanhTichHocTapNghienCuuDeleteManyResult:
     """Xóa nhiều thành tích học tập, nghiên cứu theo danh sách id."""
     items = db.scalars(select(DmThanhTichHocTapNghienCuu).where(DmThanhTichHocTapNghienCuu.id.in_(payload.ids))).all()
@@ -207,7 +207,7 @@ def delete_thanh_tich_hoc_tap_nghien_cuu_many(
 def delete_thanh_tich_hoc_tap_nghien_cuu(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một thành tích học tập, nghiên cứu theo id."""
     item = _get_or_404(db, item_id)

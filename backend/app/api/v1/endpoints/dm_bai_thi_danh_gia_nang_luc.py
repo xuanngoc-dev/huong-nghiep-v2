@@ -3,7 +3,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_bai_thi_danh_gia import DmBaiThiDanhGia
 from app.models.nguoi_dung import NguoiDung
@@ -96,7 +96,7 @@ def get_bai_thi_danh_gia_nang_luc(
 def create_bai_thi_danh_gia_nang_luc_bulk(
     payload: list[DmBaiThiDanhGiaNangLucWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmBaiThiDanhGiaNangLucBulkResult:
     """Thêm nhiều bài thi đánh giá năng lực cùng lúc."""
     if not payload:
@@ -151,7 +151,7 @@ def create_bai_thi_danh_gia_nang_luc_bulk(
 def create_bai_thi_danh_gia_nang_luc(
     payload: DmBaiThiDanhGiaNangLucWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmBaiThiDanhGia:
     """Thêm một bài thi đánh giá năng lực. Từ chối nếu mã đã tồn tại."""
     item = DmBaiThiDanhGia(**payload.model_dump())
@@ -173,7 +173,7 @@ def update_bai_thi_danh_gia_nang_luc(
     item_id: int,
     payload: DmBaiThiDanhGiaNangLucWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmBaiThiDanhGia:
     """Cập nhật toàn bộ thông tin một bài thi đánh giá năng lực theo id."""
     item = _get_or_404(db, item_id)
@@ -195,7 +195,7 @@ def update_bai_thi_danh_gia_nang_luc(
 def delete_bai_thi_danh_gia_nang_luc_many(
     payload: DmBaiThiDanhGiaNangLucDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmBaiThiDanhGiaNangLucDeleteManyResult:
     """Xóa nhiều bài thi đánh giá năng lực theo danh sách id."""
     items = db.scalars(select(DmBaiThiDanhGia).where(DmBaiThiDanhGia.id.in_(payload.ids))).all()
@@ -214,7 +214,7 @@ def delete_bai_thi_danh_gia_nang_luc_many(
 def delete_bai_thi_danh_gia_nang_luc(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một bài thi đánh giá năng lực theo id."""
     item = _get_or_404(db, item_id)

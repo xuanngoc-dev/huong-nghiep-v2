@@ -3,7 +3,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_bang_cap_chung_chi import DmBangCapChungChi
 from app.models.nguoi_dung import NguoiDung
@@ -95,7 +95,7 @@ def get_chung_chi_ngoai_ngu(
 def create_chung_chi_ngoai_ngu_bulk(
     payload: list[DmChungChiNgoaiNguWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmChungChiNgoaiNguBulkResult:
     """Thêm nhiều chứng chỉ ngoại ngữ cùng lúc."""
     if not payload:
@@ -150,7 +150,7 @@ def create_chung_chi_ngoai_ngu_bulk(
 def create_chung_chi_ngoai_ngu(
     payload: DmChungChiNgoaiNguWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmBangCapChungChi:
     """Thêm một chứng chỉ ngoại ngữ. Từ chối nếu mã đã tồn tại."""
     item = DmBangCapChungChi(**payload.model_dump())
@@ -172,7 +172,7 @@ def update_chung_chi_ngoai_ngu(
     item_id: int,
     payload: DmChungChiNgoaiNguWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmBangCapChungChi:
     """Cập nhật toàn bộ thông tin một chứng chỉ ngoại ngữ theo id."""
     item = _get_or_404(db, item_id)
@@ -194,7 +194,7 @@ def update_chung_chi_ngoai_ngu(
 def delete_chung_chi_ngoai_ngu_many(
     payload: DmChungChiNgoaiNguDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmChungChiNgoaiNguDeleteManyResult:
     """Xóa nhiều chứng chỉ ngoại ngữ theo danh sách id."""
     items = db.scalars(select(DmBangCapChungChi).where(DmBangCapChungChi.id.in_(payload.ids))).all()
@@ -213,7 +213,7 @@ def delete_chung_chi_ngoai_ngu_many(
 def delete_chung_chi_ngoai_ngu(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một chứng chỉ ngoại ngữ theo id."""
     item = _get_or_404(db, item_id)

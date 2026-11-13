@@ -3,7 +3,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_ton_giao import DmTonGiao
 from app.models.nguoi_dung import NguoiDung
@@ -83,7 +83,7 @@ def get_ton_giao(
 def create_ton_giao_bulk(
     payload: list[DmTonGiaoWrite],
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmTonGiaoBulkResult:
     """Thêm nhiều tôn giáo cùng lúc. Từ chối nếu mã tôn giáo trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống."""
     if not payload:
@@ -133,7 +133,7 @@ def create_ton_giao_bulk(
 def create_ton_giao(
     payload: DmTonGiaoWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmTonGiao:
     """Thêm một tôn giáo. Từ chối nếu mã tôn giáo đã tồn tại."""
     item = DmTonGiao(**payload.model_dump())
@@ -155,7 +155,7 @@ def update_ton_giao(
     item_id: int,
     payload: DmTonGiaoWrite,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmTonGiao:
     """Cập nhật toàn bộ thông tin một tôn giáo theo id."""
     item = _get_or_404(db, item_id)
@@ -177,7 +177,7 @@ def update_ton_giao(
 def delete_ton_giao_many(
     payload: DmTonGiaoDeleteMany,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmTonGiaoDeleteManyResult:
     """Xóa nhiều tôn giáo theo danh sách id."""
     items = db.scalars(select(DmTonGiao).where(DmTonGiao.id.in_(payload.ids))).all()
@@ -196,7 +196,7 @@ def delete_ton_giao_many(
 def delete_ton_giao(
     item_id: int,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một tôn giáo theo id."""
     item = _get_or_404(db, item_id)
