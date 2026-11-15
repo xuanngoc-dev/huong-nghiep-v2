@@ -330,7 +330,7 @@
       destroy-on-close
       class="ho-so-drawer"
     >
-      <HoSo embedded @saved="daLuuHoSo" />
+      <HoSo embedded co-thong-tin-ca-nhan @saved="daLuuHoSo" />
     </el-drawer>
   </section>
 </template>

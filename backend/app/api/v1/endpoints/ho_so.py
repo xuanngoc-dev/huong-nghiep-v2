@@ -11,7 +11,14 @@ from app.models.dm_khu_vuc_uu_tien import DmKhuVucUuTien
 from app.models.dm_tinh_thanh import DmTinhThanh
 from app.models.nguoi_dung import NguoiDung
 from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
-from app.schemas.ho_so import HoSoPublic, HoSoWrite, KhaNangTaiChinh, SucKhoeTheChat, TrinhDoHocVan
+from app.schemas.ho_so import (
+    HoSoPublic,
+    HoSoWrite,
+    KhaNangTaiChinh,
+    SucKhoeTheChat,
+    ThongTinCaNhanWrite,
+    TrinhDoHocVan,
+)
 
 router = APIRouter(prefix="/tai-khoan", tags=["tai-khoan"])
 
@@ -84,13 +91,8 @@ def get_ho_so(
     return _to_public(current_user, profile)
 
 
-@router.put("/ho-so", response_model=HoSoPublic)
-def update_ho_so(
-    payload: HoSoWrite,
-    db: Session = Depends(get_db),
-    current_user: NguoiDung = Depends(get_current_user),
-) -> HoSoPublic:
-    """Cập nhật họ tên, số điện thoại và thông tin cá nhân dùng cho phân tích hướng nghiệp."""
+def _gan_thong_tin_ca_nhan(db: Session, current_user: NguoiDung, payload: ThongTinCaNhanWrite) -> NguoiDungThongTin:
+    """Kiểm tra và gán thông tin cá nhân vào tài khoản/hồ sơ (chưa commit). Trả về bản ghi hồ sơ."""
     if payload.so_dien_thoai:
         taken = db.scalar(
             select(NguoiDung.id).where(
@@ -104,22 +106,20 @@ def update_ho_so(
                 detail="Số điện thoại đã được sử dụng",
             )
 
-    if payload.tinh_thanh_id is not None:
-        tinh = db.get(DmTinhThanh, payload.tinh_thanh_id)
-        if tinh is None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Tỉnh thành không tồn tại",
-            )
+    if payload.tinh_thanh_id is not None and db.get(DmTinhThanh, payload.tinh_thanh_id) is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy tỉnh thành có id = {payload.tinh_thanh_id}",
+        )
     if payload.khu_vuc_uu_tien_id is not None and db.get(DmKhuVucUuTien, payload.khu_vuc_uu_tien_id) is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Khu vực ưu tiên không tồn tại",
+            detail=f"Không tìm thấy khu vực ưu tiên có id = {payload.khu_vuc_uu_tien_id}",
         )
     if payload.doi_tuong_uu_tien_id is not None and db.get(DmDoiTuongUuTien, payload.doi_tuong_uu_tien_id) is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Đối tượng ưu tiên không tồn tại",
+            detail=f"Không tìm thấy đối tượng ưu tiên có id = {payload.doi_tuong_uu_tien_id}",
         )
 
     profile = _get_profile(db, current_user.id)
@@ -136,12 +136,10 @@ def update_ho_so(
     profile.tinh_thanh_id = payload.tinh_thanh_id
     profile.khu_vuc_uu_tien_id = payload.khu_vuc_uu_tien_id
     profile.doi_tuong_uu_tien_id = payload.doi_tuong_uu_tien_id
-    profile.trinh_do_hoc_van = _dump_block(payload.trinh_do_hoc_van)
-    if "suc_khoe_the_chat" in payload.model_fields_set:
-        profile.suc_khoe_the_chat = _dump_block(payload.suc_khoe_the_chat)
-    if "kha_nang_tai_chinh" in payload.model_fields_set:
-        profile.kha_nang_tai_chinh = _dump_block(payload.kha_nang_tai_chinh)
+    return profile
 
+
+def _luu(db: Session, current_user: NguoiDung, profile: NguoiDungThongTin) -> HoSoPublic:
     try:
         db.commit()
     except IntegrityError:
@@ -154,3 +152,30 @@ def update_ho_so(
     db.refresh(current_user)
     db.refresh(profile)
     return _to_public(current_user, profile)
+
+
+@router.put("/ho-so", response_model=HoSoPublic)
+def update_ho_so(
+    payload: HoSoWrite,
+    db: Session = Depends(get_db),
+    current_user: NguoiDung = Depends(get_current_user),
+) -> HoSoPublic:
+    """Cập nhật toàn bộ hồ sơ: thông tin cá nhân và hồ sơ năng lực dùng cho phân tích hướng nghiệp."""
+    profile = _gan_thong_tin_ca_nhan(db, current_user, payload)
+    profile.trinh_do_hoc_van = _dump_block(payload.trinh_do_hoc_van)
+    if "suc_khoe_the_chat" in payload.model_fields_set:
+        profile.suc_khoe_the_chat = _dump_block(payload.suc_khoe_the_chat)
+    if "kha_nang_tai_chinh" in payload.model_fields_set:
+        profile.kha_nang_tai_chinh = _dump_block(payload.kha_nang_tai_chinh)
+    return _luu(db, current_user, profile)
+
+
+@router.put("/thong-tin-ca-nhan", response_model=HoSoPublic)
+def update_thong_tin_ca_nhan(
+    payload: ThongTinCaNhanWrite,
+    db: Session = Depends(get_db),
+    current_user: NguoiDung = Depends(get_current_user),
+) -> HoSoPublic:
+    """Chỉ cập nhật thông tin cá nhân (họ tên, liên hệ, nhân thân, diện ưu tiên); giữ nguyên hồ sơ năng lực."""
+    profile = _gan_thong_tin_ca_nhan(db, current_user, payload)
+    return _luu(db, current_user, profile)

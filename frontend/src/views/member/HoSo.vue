@@ -7,16 +7,17 @@
   >
     <template v-if="!embedded" #header>
       <div>
-        <h1 class="profile-card__title">Cập nhật thông tin cá nhân</h1>
+        <h1 class="profile-card__title">Hồ sơ năng lực</h1>
         <p class="profile-card__lead">
-          Thông tin này giúp hệ thống phân tích kết quả trắc nghiệm chính xác hơn.
+          Học bạ, điểm thi, sức khỏe và thành tích giúp hệ thống phân tích kết quả trắc nghiệm chính xác hơn.
+          Họ tên, liên hệ và diện ưu tiên cập nhật ở mục Thông tin cá nhân.
         </p>
       </div>
     </template>
 
     <CustomForm ref="formRef" class="form-grid" :model="form" :rules="rules" @submit.prevent="onSubmit">
       <el-collapse v-model="openSections" class="profile-collapse">
-      <el-collapse-item name="ca-nhan" title="Thông tin cá nhân">
+      <el-collapse-item v-if="coThongTinCaNhan" name="ca-nhan" title="Thông tin cá nhân">
         <div class="form-grid__body">
           <CustomFormItem label="Họ tên" prop="ho_ten">
             <CustomInput v-model="form.ho_ten" maxlength="150" placeholder="Nguyễn Văn A" clearable />
@@ -373,9 +374,12 @@ const RECORD_SECTIONS = [
   },
 ]
 
-defineProps({
+const props = defineProps({
   // Nhúng trong drawer/dialog: ẩn tiêu đề card và bỏ khung viền.
   embedded: { type: Boolean, default: false },
+  // Hiện cả nhóm Thông tin cá nhân (dùng ở drawer Trường phù hợp, cần tỉnh và diện ưu tiên).
+  // Trang Hồ sơ năng lực không hiện: thông tin cá nhân sửa ở trang Thông tin cá nhân.
+  coThongTinCaNhan: { type: Boolean, default: false },
 })
 const emit = defineEmits(['saved'])
 
@@ -816,6 +820,11 @@ async function load() {
 }
 
 function fillSample() {
+  if (props.coThongTinCaNhan) fillSamplePersonal()
+  fillSampleNangLuc()
+}
+
+function fillSamplePersonal() {
   form.ho_ten = 'Nguyễn Văn An'
   form.so_dien_thoai = '0912345678'
   form.gioi_tinh = 2
@@ -826,7 +835,9 @@ function fillSample() {
   form.ton_giao = religionOptions.value.find((item) => item.includes('Không')) || religionOptions.value[0] || null
   form.khu_vuc_uu_tien_id = khuVucSelectOptions.value[0]?.id ?? null
   form.doi_tuong_uu_tien_id = doiTuongSelectOptions.value[0]?.id ?? null
+}
 
+function fillSampleNangLuc() {
   GRADES.forEach((grade, gradeIndex) => {
     hocLucTb[grade] = Math.round((7.2 + gradeIndex * 0.3) * 10) / 10
     hanhKiem[grade] = HANH_KIEM[gradeIndex]
@@ -895,10 +906,10 @@ async function onSubmit() {
     applyProfile(data)
     syncAuthUser(data)
     if (auth.user?.id) storeHoSo(auth.user.id, data)
-    ElMessage.success('Đã cập nhật thông tin cá nhân')
+    ElMessage.success(props.coThongTinCaNhan ? 'Đã cập nhật hồ sơ' : 'Đã cập nhật hồ sơ năng lực')
     emit('saved', data)
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không lưu được thông tin cá nhân'))
+    ElMessage.error(errorMessage(error, 'Không lưu được hồ sơ'))
   } finally {
     saving.value = false
   }

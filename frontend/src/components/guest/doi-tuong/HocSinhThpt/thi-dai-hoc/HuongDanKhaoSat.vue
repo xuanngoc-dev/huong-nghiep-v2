@@ -81,7 +81,7 @@
                 class="btn btn-outline-success"
                 :to="{ name: 'ho-so' }"
               >
-                Cập nhật thông tin cá nhân
+                Cập nhật hồ sơ năng lực
               </RouterLink>
               <button type="button" class="btn btn-success" :disabled="dangTaoPhien" @click="batDauHolland">
                 Bắt đầu trắc nghiệm Holland

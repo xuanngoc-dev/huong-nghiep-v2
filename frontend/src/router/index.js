@@ -121,10 +121,16 @@ const router = createRouter({
           meta: { title: 'Lịch sử trắc nghiệm', requiresAuth: true },
         },
         {
+          path: 'tai-khoan/thong-tin-ca-nhan',
+          name: 'thong-tin-ca-nhan',
+          component: () => import('@/views/member/ThongTinCaNhan.vue'),
+          meta: { title: 'Thông tin cá nhân', requiresAuth: true },
+        },
+        {
           path: 'tai-khoan/ho-so',
           name: 'ho-so',
           component: () => import('@/views/member/HoSo.vue'),
-          meta: { title: 'Cập nhật thông tin cá nhân', requiresAuth: true },
+          meta: { title: 'Hồ sơ năng lực', requiresAuth: true },
         },
         {
           path: 'tai-khoan/nap-tien',

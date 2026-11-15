@@ -1,15 +1,15 @@
 # Danh sách API
 
-Tự sinh từ code lúc 15/11/2026 15:22 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 15/11/2026 16:00 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **257** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **258** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
 | [Quản trị (admin)](#quan_tri) | 149 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 66 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Thành viên (user)](#thanh_vien) | 67 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 42 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
@@ -464,7 +464,8 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/tai-khoan/ho-so` | Bắt buộc | Lấy hồ sơ cá nhân của tài khoản đang đăng nhập. |
-| `PUT` | `/api/v1/tai-khoan/ho-so` | Bắt buộc | Cập nhật họ tên, số điện thoại và thông tin cá nhân dùng cho phân tích hướng nghiệp. |
+| `PUT` | `/api/v1/tai-khoan/ho-so` | Bắt buộc | Cập nhật toàn bộ hồ sơ: thông tin cá nhân và hồ sơ năng lực dùng cho phân tích hướng nghiệp. |
+| `PUT` | `/api/v1/tai-khoan/thong-tin-ca-nhan` | Bắt buộc | Chỉ cập nhật thông tin cá nhân (họ tên, liên hệ, nhân thân, diện ưu tiên); giữ nguyên hồ sơ năng lực. |
 
 ### `tim-truong-phu-hop`
 

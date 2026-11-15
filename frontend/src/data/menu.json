@@ -431,10 +431,16 @@
       "abbr": "TK",
       "items": [
         {
-          "index": "/member/tai-khoan/ho-so",
-          "title": "Hồ sơ của tôi",
-          "tooltip": "Xem và cập nhật hồ sơ cá nhân",
+          "index": "/member/tai-khoan/thong-tin-ca-nhan",
+          "title": "Thông tin cá nhân",
+          "tooltip": "Họ tên, liên hệ và diện ưu tiên tuyển sinh",
           "icon": "User"
+        },
+        {
+          "index": "/member/tai-khoan/ho-so",
+          "title": "Hồ sơ năng lực",
+          "tooltip": "Học bạ, điểm thi, sức khỏe và thành tích",
+          "icon": "Postcard"
         },
         {
           "index": "/member/tai-khoan/nap-tien",

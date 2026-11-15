@@ -222,7 +222,9 @@ class KhaNangTaiChinh(BaseModel):
         return _blank(value)
 
 
-class HoSoWrite(BaseModel):
+class ThongTinCaNhanWrite(BaseModel):
+    """Thông tin cá nhân của tài khoản: họ tên, liên hệ, nhân thân và diện ưu tiên tuyển sinh."""
+
     ho_ten: str = Field(..., min_length=2, max_length=150)
     so_dien_thoai: str | None = Field(default=None, max_length=20)
     gioi_tinh: int | None = Field(default=None, ge=1, le=3)
@@ -232,9 +234,6 @@ class HoSoWrite(BaseModel):
     tinh_thanh_id: int | None = Field(default=None, ge=1)
     khu_vuc_uu_tien_id: int | None = Field(default=None, ge=1)
     doi_tuong_uu_tien_id: int | None = Field(default=None, ge=1)
-    trinh_do_hoc_van: TrinhDoHocVan | None = None
-    suc_khoe_the_chat: SucKhoeTheChat | None = None
-    kha_nang_tai_chinh: KhaNangTaiChinh | None = None
 
     @field_validator("ho_ten")
     @classmethod
@@ -270,6 +269,14 @@ class HoSoWrite(BaseModel):
         if value.year < 1900:
             raise ValueError("Ngày sinh không hợp lệ")
         return value
+
+
+class HoSoWrite(ThongTinCaNhanWrite):
+    """Toàn bộ hồ sơ: thông tin cá nhân kèm hồ sơ năng lực (học vấn, sức khỏe, tài chính)."""
+
+    trinh_do_hoc_van: TrinhDoHocVan | None = None
+    suc_khoe_the_chat: SucKhoeTheChat | None = None
+    kha_nang_tai_chinh: KhaNangTaiChinh | None = None
 
 
 class HoSoPublic(HoSoWrite):
