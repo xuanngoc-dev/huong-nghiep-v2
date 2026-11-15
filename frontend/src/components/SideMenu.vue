@@ -216,7 +216,7 @@ function resolveIcon(name) {
   :deep(.el-menu-item.is-active) {
     background-color: color-mix(in srgb, var(--el-color-primary) 22%, var(--el-bg-color));
     color: var(--el-color-primary);
-    font-weight: 400;
+    font-weight: 600;
   }
 
   :deep(.el-menu-item.is-active:hover) {

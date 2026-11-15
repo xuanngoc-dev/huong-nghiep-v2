@@ -495,7 +495,7 @@ onUnmounted(() => {
   }
 
   :deep(.el-menu-item.is-active) {
-    font-weight: 400;
+    font-weight: 600;
   }
 }
 
