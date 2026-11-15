@@ -11,6 +11,7 @@ import router from './router'
 import { useLayoutStore } from './stores/layout'
 import './styles/index.scss'
 import './styles/guest.scss'
+import './styles/form-grid.css'
 
 const app = createApp(App)
 const pinia = createPinia()

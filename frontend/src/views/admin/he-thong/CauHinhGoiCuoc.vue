@@ -153,102 +153,80 @@
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật gói cước' : 'Thêm gói cước'"
-    width="820px"
+    width="800px"
     destroy-on-close
     @closed="resetForm"
   >
-    <CustomForm ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomRow :gutter="16">
-        <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Mã gói cước" prop="ma_goi_cuoc">
-            <CustomInput v-model="form.ma_goi_cuoc" maxlength="50" placeholder="Ví dụ: TRA_CUU_10" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="16" :xs="24">
-          <CustomFormItem label="Tên gói cước" prop="ten_goi_cuoc">
-            <CustomInput v-model="form.ten_goi_cuoc" maxlength="255" placeholder="Ví dụ: Gói tra cứu 10 lượt" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="12">
-          <CustomFormItem label="Loại áp dụng" prop="loai_ap_dung">
-            <CustomSelect v-model="form.loai_ap_dung" :clearable="false" style="width: 100%">
-              <CustomOption v-for="item in LOAI_AP_DUNG" :key="item.value" :label="item.label" :value="item.value" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="12">
-          <CustomFormItem label="Trạng thái" prop="trang_thai">
-            <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
-              <CustomOption label="Hoạt động" :value="1" />
-              <CustomOption label="Ngừng sử dụng" :value="0" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Giá gốc (VNĐ)" prop="gia_goc">
-            <CustomInputNumber
-              v-model="form.gia_goc"
-              :min="0"
-              :max="GIA_TOI_DA"
-              :precision="0"
-              :step="1000"
-              controls-position="right"
-              class="w-full"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Giá khuyến mãi (VNĐ)" prop="gia_khuyen_mai">
-            <CustomInputNumber
-              v-model="form.gia_khuyen_mai"
-              :min="0"
-              :max="GIA_TOI_DA"
-              :precision="0"
-              :step="1000"
-              controls-position="right"
-              placeholder="Để trống nếu không khuyến mãi"
-              class="w-full"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Số lượt nhận được (gốc)" prop="so_luot_nhan_duoc_goc">
-            <CustomInputNumber
-              v-model="form.so_luot_nhan_duoc_goc"
-              :min="0"
-              :max="LUOT_TOI_DA"
-              :precision="0"
-              controls-position="right"
-              class="w-full"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Số lượt nhận được (khuyến mãi)" prop="so_luot_nhan_duoc_khuyen_mai">
-            <CustomInputNumber
-              v-model="form.so_luot_nhan_duoc_khuyen_mai"
-              :min="0"
-              :max="LUOT_TOI_DA"
-              :precision="0"
-              controls-position="right"
-              placeholder="Để trống nếu không khuyến mãi"
-              class="w-full"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Ghi chú" prop="ghi_chu">
-            <CustomInput
-              v-model="form.ghi_chu"
-              type="textarea"
-              :rows="3"
-              maxlength="2000"
-              show-word-limit
-              placeholder="Điều kiện áp dụng, thời hạn khuyến mãi…"
-            />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
+    <CustomForm ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top">
+      <div class="form-grid__body">
+        <CustomFormItem label="Mã gói cước" prop="ma_goi_cuoc">
+          <CustomInput v-model="form.ma_goi_cuoc" maxlength="50" placeholder="Ví dụ: TRA_CUU_10" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Tên gói cước" prop="ten_goi_cuoc">
+          <CustomInput v-model="form.ten_goi_cuoc" maxlength="255" placeholder="Ví dụ: Gói tra cứu 10 lượt" />
+        </CustomFormItem>
+        <CustomFormItem label="Loại áp dụng" prop="loai_ap_dung">
+          <CustomSelect v-model="form.loai_ap_dung" :clearable="false">
+            <CustomOption v-for="item in LOAI_AP_DUNG" :key="item.value" :label="item.label" :value="item.value" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem label="Trạng thái" prop="trang_thai">
+          <CustomSelect v-model="form.trang_thai" :clearable="false">
+            <CustomOption label="Hoạt động" :value="1" />
+            <CustomOption label="Ngừng sử dụng" :value="0" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem label="Giá gốc (VNĐ)" prop="gia_goc">
+          <CustomInputNumber
+            v-model="form.gia_goc"
+            :min="0"
+            :max="GIA_TOI_DA"
+            :precision="0"
+            :step="1000"
+            controls-position="right"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Giá khuyến mãi (VNĐ)" prop="gia_khuyen_mai">
+          <CustomInputNumber
+            v-model="form.gia_khuyen_mai"
+            :min="0"
+            :max="GIA_TOI_DA"
+            :precision="0"
+            :step="1000"
+            placeholder="Để trống nếu không khuyến mãi"
+            controls-position="right"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Số lượt nhận được (gốc)" prop="so_luot_nhan_duoc_goc">
+          <CustomInputNumber
+            v-model="form.so_luot_nhan_duoc_goc"
+            :min="0"
+            :max="LUOT_TOI_DA"
+            :precision="0"
+            controls-position="right"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Số lượt nhận được (khuyến mãi)" prop="so_luot_nhan_duoc_khuyen_mai">
+          <CustomInputNumber
+            v-model="form.so_luot_nhan_duoc_khuyen_mai"
+            :min="0"
+            :max="LUOT_TOI_DA"
+            :precision="0"
+            placeholder="Để trống nếu không khuyến mãi"
+            controls-position="right"
+          />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Ghi chú" prop="ghi_chu">
+          <CustomInput
+            v-model="form.ghi_chu"
+            type="textarea"
+            :rows="3"
+            maxlength="2000"
+            show-word-limit
+            placeholder="Điều kiện áp dụng, thời hạn khuyến mãi…"
+          />
+        </CustomFormItem>
+      </div>
     </CustomForm>
     <template #footer>
       <CustomButton @click="dialogVisible = false">Hủy</CustomButton>

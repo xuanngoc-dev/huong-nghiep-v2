@@ -156,58 +156,57 @@
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật trụ sở' : 'Thêm trụ sở'"
-    width="90%"
+    width="800px"
     destroy-on-close
     @closed="resetForm"
   >
-    <CustomRow :gutter="16" align="bottom" class="json-meta">
-      <CustomCol :span="8">
-        <span class="json-field__label">Trường</span>
-        <CustomSelect
-          v-model="context.ma_truong"
-          filterable
-          placeholder="Chọn trường"
-          style="width: 100%"
-          @change="onContextFilterChange"
-        >
-          <CustomOption
-            v-for="item in truongOptions"
-            :key="item.id"
-            :label="schoolLabel(item)"
-            :value="item.ma_truong"
-          />
-        </CustomSelect>
-      </CustomCol>
-      <CustomCol :span="4">
-        <span class="json-field__label">Năm học</span>
-        <CustomSelect
-          v-model="context.nam_tuyen_sinh"
-          placeholder="Năm học"
-          style="width: 100%"
-          @change="onContextFilterChange"
-        >
-          <CustomOption v-for="nam in NAM_HOC" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
-        </CustomSelect>
-      </CustomCol>
-      <CustomCol :span="8">
-        <span class="json-field__label">Đề án tuyển sinh</span>
-        <CustomSelect
-          v-model="context.de_an_id"
-          filterable
-          :disabled="!contextReady"
-          :loading="deAnLoading"
-          placeholder="Chọn đề án"
-          style="width: 100%"
-        >
-          <CustomOption
-            v-for="item in deAnOptions"
-            :key="item.id"
-            :label="item.ten_de_an || `Đề án #${item.id}`"
-            :value="item.id"
-          />
-        </CustomSelect>
-      </CustomCol>
-    </CustomRow>
+    <div class="form-grid json-meta">
+      <div class="form-grid__body">
+        <div>
+          <span class="json-field__label">Trường</span>
+          <CustomSelect
+            v-model="context.ma_truong"
+            filterable
+            placeholder="Chọn trường"
+            @change="onContextFilterChange"
+          >
+            <CustomOption
+              v-for="item in truongOptions"
+              :key="item.id"
+              :label="schoolLabel(item)"
+              :value="item.ma_truong"
+            />
+          </CustomSelect>
+        </div>
+        <div>
+          <span class="json-field__label">Năm học</span>
+          <CustomSelect
+            v-model="context.nam_tuyen_sinh"
+            placeholder="Năm học"
+            @change="onContextFilterChange"
+          >
+            <CustomOption v-for="nam in NAM_HOC" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
+          </CustomSelect>
+        </div>
+        <div>
+          <span class="json-field__label">Đề án tuyển sinh</span>
+          <CustomSelect
+            v-model="context.de_an_id"
+            filterable
+            :disabled="!contextReady"
+            :loading="deAnLoading"
+            placeholder="Chọn đề án"
+          >
+            <CustomOption
+              v-for="item in deAnOptions"
+              :key="item.id"
+              :label="item.ten_de_an || `Đề án #${item.id}`"
+              :value="item.id"
+            />
+          </CustomSelect>
+        </div>
+      </div>
+    </div>
     <p v-if="contextReady && !deAnLoading && !deAnOptions.length" class="context-hint">
       Chưa có đề án tuyển sinh cho trường và năm này.
     </p>
@@ -240,74 +239,60 @@
       />
     </div>
 
-    <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomRow :gutter="16">
-        <CustomCol v-bind="formCol">
-          <CustomFormItem label="Tên cơ sở" prop="ten_co_so">
-            <CustomInput v-model="form.ten_co_so" maxlength="255" placeholder="Tên trụ sở, cơ sở hoặc phân hiệu" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol v-bind="formCol">
-          <CustomFormItem label="Vai trò" prop="vai_tro">
-            <CustomSelect
-              v-model="form.vai_tro"
-              filterable
-              allow-create
-              default-first-option
-              clearable
-              placeholder="Chính hoặc phụ"
-              style="width: 100%"
-            >
-              <CustomOption
-                v-for="item in VAI_TRO_OPTIONS"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol v-bind="formCol">
-          <CustomFormItem label="Loại cơ sở" prop="loai_co_so">
-            <CustomSelect
-              v-model="form.loai_co_so"
-              filterable
-              allow-create
-              default-first-option
-              clearable
-              placeholder="Trụ sở, cơ sở hoặc phân hiệu"
-              style="width: 100%"
-            >
-              <CustomOption
-                v-for="item in LOAI_CO_SO_OPTIONS"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol v-bind="formCol">
-          <CustomFormItem label="Điện thoại" prop="so_dien_thoai">
-            <CustomInput v-model="form.so_dien_thoai" maxlength="30" placeholder="Số liên hệ tại địa điểm" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol v-bind="formCol">
-          <CustomFormItem label="Địa chỉ" prop="dia_chi">
-            <CustomInput v-model="form.dia_chi" maxlength="500" placeholder="Địa chỉ đầy đủ" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol v-bind="formCol">
-          <CustomFormItem label="Ghi chú" prop="ghi_chu">
-            <CustomInput
-              v-model="form.ghi_chu"
-              type="text"
-              :maxlength="20000"
-              placeholder="Thông tin bổ sung"
+    <CustomForm v-else ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top">
+      <div class="form-grid__body">
+        <CustomFormItem class="form-grid__span-2" label="Tên cơ sở" prop="ten_co_so">
+          <CustomInput v-model="form.ten_co_so" maxlength="255" placeholder="Tên trụ sở, cơ sở hoặc phân hiệu" />
+        </CustomFormItem>
+        <CustomFormItem label="Vai trò" prop="vai_tro">
+          <CustomSelect
+            v-model="form.vai_tro"
+            filterable
+            allow-create
+            default-first-option
+            clearable
+            placeholder="Chính hoặc phụ"
+          >
+            <CustomOption
+              v-for="item in VAI_TRO_OPTIONS"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem label="Loại cơ sở" prop="loai_co_so">
+          <CustomSelect
+            v-model="form.loai_co_so"
+            filterable
+            allow-create
+            default-first-option
+            clearable
+            placeholder="Trụ sở, cơ sở hoặc phân hiệu"
+          >
+            <CustomOption
+              v-for="item in LOAI_CO_SO_OPTIONS"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem label="Điện thoại" prop="so_dien_thoai">
+          <CustomInput v-model="form.so_dien_thoai" maxlength="30" placeholder="Số liên hệ tại địa điểm" />
+        </CustomFormItem>
+        <CustomFormItem label="Địa chỉ" prop="dia_chi">
+          <CustomInput v-model="form.dia_chi" maxlength="500" placeholder="Địa chỉ đầy đủ" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Ghi chú" prop="ghi_chu">
+          <CustomInput
+            v-model="form.ghi_chu"
+            type="text"
+            :maxlength="20000"
+            placeholder="Thông tin bổ sung"
+          />
+        </CustomFormItem>
+      </div>
     </CustomForm>
     <template #footer>
       <JsonImportDialogFooter
@@ -347,8 +332,6 @@ const LOAI_CO_SO_OPTIONS = [
   { value: 'co_so', label: 'Cơ sở' },
   { value: 'phan_hieu', label: 'Phân hiệu' },
 ]
-
-const formCol = { span: 4, lg: 4, md: 6, sm: 8, xs: 12 }
 
 const JSON_SAMPLE = `[
   {

@@ -145,7 +145,7 @@
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật ngành đào tạo' : 'Thêm ngành đào tạo'"
-    width="760px"
+    width="800px"
     destroy-on-close
     @closed="resetForm"
   >
@@ -184,95 +184,79 @@
       </p>
     </div>
 
-    <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomRow :gutter="16">
-        <CustomCol :span="16" :xs="24">
-          <CustomFormItem label="Trường" prop="ma_truong">
-            <CustomSelect
-              v-model="form.ma_truong"
-              placeholder="Gõ mã hoặc tên trường để tìm"
-              filterable
-              remote
-              :remote-method="timTruongForm"
-              :loading="dangTimTruong"
-              style="width: 100%"
-              @focus="!formTruongOptions.length && timTruongForm('')"
-            >
-              <CustomOption
-                v-for="item in formTruongOptions"
-                :key="item.ma_truong"
-                :label="`${item.ma_truong} – ${item.ten_truong}`"
-                :value="item.ma_truong"
-              />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="12">
-          <CustomFormItem label="Năm học" prop="nam_hoc">
-            <CustomInputNumber
-              v-model="form.nam_hoc"
-              :min="2000"
-              :max="2100"
-              :step="1"
-              step-strictly
-              controls-position="right"
-              style="width: 100%"
+    <CustomForm v-else ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top">
+      <div class="form-grid__body">
+        <CustomFormItem class="form-grid__span-2" label="Trường" prop="ma_truong">
+          <CustomSelect
+            v-model="form.ma_truong"
+            placeholder="Gõ mã hoặc tên trường để tìm"
+            filterable
+            remote
+            :remote-method="timTruongForm"
+            :loading="dangTimTruong"
+            @focus="!formTruongOptions.length && timTruongForm('')"
+          >
+            <CustomOption
+              v-for="item in formTruongOptions"
+              :key="item.ma_truong"
+              :label="`${item.ma_truong} – ${item.ten_truong}`"
+              :value="item.ma_truong"
             />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Mã ngành" prop="ma_nganh">
-            <el-autocomplete
-              v-model="form.ma_nganh"
-              :fetch-suggestions="goiYNganh"
-              value-key="ma_nganh"
-              maxlength="20"
-              placeholder="Ví dụ: 7480201"
-              clearable
-              :debounce="300"
-              style="width: 100%"
-              @select="chonNganh"
-            >
-              <template #default="{ item }">
-                <span class="nganh-option">
-                  <strong>{{ item.ma_nganh }}</strong>
-                  <small>{{ item.ten_nganh }}</small>
-                </span>
-              </template>
-            </el-autocomplete>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Mã xét tuyển" prop="ma_xet_tuyen">
-            <CustomInput v-model="form.ma_xet_tuyen" maxlength="50" placeholder="Ví dụ: 7480201_CLC" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Tên ngành" prop="ten_nganh">
-            <CustomInput v-model="form.ten_nganh" maxlength="255" placeholder="Ví dụ: Công nghệ thông tin" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Tên chương trình" prop="ten_chuong_trinh">
-            <CustomInput
-              v-model="form.ten_chuong_trinh"
-              maxlength="255"
-              placeholder="Ví dụ: Chương trình chất lượng cao"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Ghi chú" prop="ghi_chu">
-            <CustomInput
-              v-model="form.ghi_chu"
-              type="textarea"
-              :rows="3"
-              maxlength="2000"
-              show-word-limit
-            />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem label="Năm học" prop="nam_hoc">
+          <CustomInputNumber
+            v-model="form.nam_hoc"
+            :min="2000"
+            :max="2100"
+            :step="1"
+            step-strictly
+            controls-position="right"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Mã ngành" prop="ma_nganh">
+          <el-autocomplete
+            v-model="form.ma_nganh"
+            :fetch-suggestions="goiYNganh"
+            value-key="ma_nganh"
+            maxlength="20"
+            placeholder="Ví dụ: 7480201"
+            clearable
+            :debounce="300"
+            style="width: 100%"
+            @select="chonNganh"
+          >
+            <template #default="{ item }">
+              <span class="nganh-option">
+                <strong>{{ item.ma_nganh }}</strong>
+                <small>{{ item.ten_nganh }}</small>
+              </span>
+            </template>
+          </el-autocomplete>
+        </CustomFormItem>
+        <CustomFormItem label="Mã xét tuyển" prop="ma_xet_tuyen">
+          <CustomInput v-model="form.ma_xet_tuyen" maxlength="50" placeholder="Ví dụ: 7480201_CLC" />
+        </CustomFormItem>
+        <CustomFormItem label="Tên ngành" prop="ten_nganh">
+          <CustomInput v-model="form.ten_nganh" maxlength="255" placeholder="Ví dụ: Công nghệ thông tin" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Tên chương trình" prop="ten_chuong_trinh">
+          <CustomInput
+            v-model="form.ten_chuong_trinh"
+            maxlength="255"
+            placeholder="Ví dụ: Chương trình chất lượng cao"
+          />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Ghi chú" prop="ghi_chu">
+          <CustomInput
+            v-model="form.ghi_chu"
+            type="textarea"
+            :rows="3"
+            maxlength="2000"
+            show-word-limit
+          />
+        </CustomFormItem>
+      </div>
     </CustomForm>
     <template #footer>
       <JsonImportDialogFooter

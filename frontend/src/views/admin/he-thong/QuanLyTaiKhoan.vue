@@ -131,58 +131,46 @@
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật tài khoản' : 'Thêm tài khoản'"
-    width="640px"
+    width="800px"
     destroy-on-close
     @closed="resetForm"
   >
-    <CustomForm ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomRow :gutter="16">
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Họ tên" prop="ho_ten">
-            <CustomInput v-model="form.ho_ten" maxlength="150" placeholder="Họ và tên" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Email" prop="email">
-            <CustomInput v-model="form.email" maxlength="255" placeholder="email@example.com" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Số điện thoại" prop="so_dien_thoai">
-            <CustomInput v-model="form.so_dien_thoai" maxlength="20" placeholder="Số điện thoại" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem
-            :label="editingId ? 'Mật khẩu mới (để trống nếu giữ nguyên)' : 'Mật khẩu'"
-            prop="mat_khau"
-          >
-            <CustomInput
-              v-model="form.mat_khau"
-              type="password"
-              show-password
-              maxlength="128"
-              :placeholder="editingId ? 'Để trống nếu không đổi' : 'Tối thiểu 6 ký tự'"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Vai trò" prop="vai_tro">
-            <CustomSelect v-model="form.vai_tro" :clearable="false" style="width: 100%">
-              <CustomOption label="Người dùng" :value="0" />
-              <CustomOption label="Quản trị" :value="1" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Trạng thái" prop="trang_thai">
-            <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
-              <CustomOption label="Hoạt động" :value="1" />
-              <CustomOption label="Khóa" :value="0" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
+    <CustomForm ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top">
+      <div class="form-grid__body">
+        <CustomFormItem class="form-grid__span-2" label="Họ tên" prop="ho_ten">
+          <CustomInput v-model="form.ho_ten" maxlength="150" placeholder="Họ và tên" />
+        </CustomFormItem>
+        <CustomFormItem label="Email" prop="email">
+          <CustomInput v-model="form.email" maxlength="255" placeholder="email@example.com" />
+        </CustomFormItem>
+        <CustomFormItem label="Số điện thoại" prop="so_dien_thoai">
+          <CustomInput v-model="form.so_dien_thoai" maxlength="20" placeholder="Số điện thoại" />
+        </CustomFormItem>
+        <CustomFormItem
+          :label="editingId ? 'Mật khẩu mới (để trống nếu giữ nguyên)' : 'Mật khẩu'"
+          prop="mat_khau"
+        >
+          <CustomInput
+            v-model="form.mat_khau"
+            type="password"
+            show-password
+            maxlength="128"
+            :placeholder="editingId ? 'Để trống nếu không đổi' : 'Tối thiểu 6 ký tự'"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Vai trò" prop="vai_tro">
+          <CustomSelect v-model="form.vai_tro" :clearable="false">
+            <CustomOption label="Người dùng" :value="0" />
+            <CustomOption label="Quản trị" :value="1" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem label="Trạng thái" prop="trang_thai">
+          <CustomSelect v-model="form.trang_thai" :clearable="false">
+            <CustomOption label="Hoạt động" :value="1" />
+            <CustomOption label="Khóa" :value="0" />
+          </CustomSelect>
+        </CustomFormItem>
+      </div>
     </CustomForm>
     <template #footer>
       <CustomButton @click="dialogVisible = false">Hủy</CustomButton>

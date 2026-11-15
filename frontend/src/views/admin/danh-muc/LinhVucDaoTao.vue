@@ -115,7 +115,7 @@
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật lĩnh vực' : 'Thêm lĩnh vực'"
-    width="760px"
+    width="800px"
     destroy-on-close
     @closed="resetForm"
   >
@@ -140,52 +140,42 @@
       />
     </div>
 
-    <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomRow :gutter="16">
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Tên lĩnh vực" prop="ten_linh_vuc">
-            <CustomInput
-              v-model="form.ten_linh_vuc"
-              maxlength="255"
-              placeholder="Ví dụ: Máy tính và công nghệ thông tin"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Mã lĩnh vực" prop="ma_linh_vuc">
-            <CustomInput v-model="form.ma_linh_vuc" maxlength="20" placeholder="Ví dụ: 748" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Tên tiếng Anh" prop="ten_tieng_anh">
-            <CustomInput
-              v-model="form.ten_tieng_anh"
-              maxlength="255"
-              placeholder="Ví dụ: Computing and information technology"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Trạng thái" prop="trang_thai">
-            <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
-              <CustomOption label="Hoạt động" :value="1" />
-              <CustomOption label="Ngừng sử dụng" :value="0" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Mô tả" prop="mo_ta">
-            <CustomInput
-              v-model="form.mo_ta"
-              type="textarea"
-              :rows="3"
-              maxlength="5000"
-              show-word-limit
-              placeholder="Mô tả lĩnh vực (nếu có)"
-            />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
+    <CustomForm v-else ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top">
+      <div class="form-grid__body">
+        <CustomFormItem class="form-grid__span-2" label="Tên lĩnh vực" prop="ten_linh_vuc">
+          <CustomInput
+            v-model="form.ten_linh_vuc"
+            maxlength="255"
+            placeholder="Ví dụ: Máy tính và công nghệ thông tin"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Mã lĩnh vực" prop="ma_linh_vuc">
+          <CustomInput v-model="form.ma_linh_vuc" maxlength="20" placeholder="Ví dụ: 748" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Tên tiếng Anh" prop="ten_tieng_anh">
+          <CustomInput
+            v-model="form.ten_tieng_anh"
+            maxlength="255"
+            placeholder="Ví dụ: Computing and information technology"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Trạng thái" prop="trang_thai">
+          <CustomSelect v-model="form.trang_thai" :clearable="false">
+            <CustomOption label="Hoạt động" :value="1" />
+            <CustomOption label="Ngừng sử dụng" :value="0" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Mô tả" prop="mo_ta">
+          <CustomInput
+            v-model="form.mo_ta"
+            type="textarea"
+            :rows="3"
+            maxlength="5000"
+            show-word-limit
+            placeholder="Mô tả lĩnh vực (nếu có)"
+          />
+        </CustomFormItem>
+      </div>
     </CustomForm>
     <template #footer>
       <JsonImportDialogFooter

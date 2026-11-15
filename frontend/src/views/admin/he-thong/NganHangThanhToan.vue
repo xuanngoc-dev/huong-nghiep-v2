@@ -186,100 +186,86 @@
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật ngân hàng thanh toán' : 'Thêm ngân hàng thanh toán'"
-    width="760px"
+    width="800px"
     destroy-on-close
     @closed="resetForm"
   >
-    <CustomForm ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomFormItem label="Logo ngân hàng" prop="logo_ngan_hang" class="logo-field">
-        <div class="logo-box" v-loading="dangTaiLogo">
-          <div class="logo-preview" aria-label="Xem trước logo">
-            <img
-              v-if="form.logo_ngan_hang && !logoLoi"
-              :src="apiAssetUrl(form.logo_ngan_hang)"
-              alt="Xem trước logo"
-              @error="logoLoi = true"
-            />
-            <span v-else>{{ logoLoi ? 'Không tải được ảnh' : 'Chưa có logo' }}</span>
-          </div>
-          <div class="logo-box__input">
-            <CustomInput
-              v-model="form.logo_ngan_hang"
-              maxlength="500"
-              placeholder="Dán URL logo, ví dụ https://…/vcb.png"
-              clearable
-              @input="logoLoi = false"
-            />
-            <div class="logo-box__actions">
-              <CustomButton type="primary" plain :loading="dangTaiLogo" @click="chonFileLogo">
-                <CustomIcon><Upload /></CustomIcon>
-                <span>Chọn file</span>
-              </CustomButton>
-              <CustomButton v-if="form.logo_ngan_hang" link type="danger" @click="xoaLogo">Bỏ logo</CustomButton>
-              <span class="logo-box__hint">PNG, JPG, WEBP hoặc GIF, tối đa {{ LOGO_TOI_DA_MB }}MB.</span>
+    <CustomForm ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top">
+      <div class="form-grid__body">
+        <CustomFormItem label="Logo ngân hàng" prop="logo_ngan_hang" class="logo-field form-grid__full">
+          <div class="logo-box" v-loading="dangTaiLogo">
+            <div class="logo-preview" aria-label="Xem trước logo">
+              <img
+                v-if="form.logo_ngan_hang && !logoLoi"
+                :src="apiAssetUrl(form.logo_ngan_hang)"
+                alt="Xem trước logo"
+                @error="logoLoi = true"
+              />
+              <span v-else>{{ logoLoi ? 'Không tải được ảnh' : 'Chưa có logo' }}</span>
             </div>
-            <input
-              ref="logoInput"
-              type="file"
-              :accept="LOGO_LOAI.join(',')"
-              hidden
-              @change="onChonLogo"
-            />
+            <div class="logo-box__input">
+              <CustomInput
+                v-model="form.logo_ngan_hang"
+                maxlength="500"
+                placeholder="Dán URL logo, ví dụ https://…/vcb.png"
+                clearable
+                @input="logoLoi = false"
+              />
+              <div class="logo-box__actions">
+                <CustomButton type="primary" plain :loading="dangTaiLogo" @click="chonFileLogo">
+                  <CustomIcon><Upload /></CustomIcon>
+                  <span>Chọn file</span>
+                </CustomButton>
+                <CustomButton v-if="form.logo_ngan_hang" link type="danger" @click="xoaLogo">Bỏ logo</CustomButton>
+                <span class="logo-box__hint">PNG, JPG, WEBP hoặc GIF, tối đa {{ LOGO_TOI_DA_MB }}MB.</span>
+              </div>
+              <input
+                ref="logoInput"
+                type="file"
+                :accept="LOGO_LOAI.join(',')"
+                hidden
+                @change="onChonLogo"
+              />
+            </div>
           </div>
-        </div>
-      </CustomFormItem>
+        </CustomFormItem>
 
-      <CustomRow :gutter="16">
-        <CustomCol :span="8" :xs="12">
-          <CustomFormItem label="Tên viết tắt" prop="ten_ngan_hang_viet_tat">
-            <CustomInput v-model="form.ten_ngan_hang_viet_tat" maxlength="50" placeholder="Ví dụ: VCB" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="12">
-          <CustomFormItem label="Tên ngân hàng" prop="ten_ngan_hang">
-            <CustomInput
-              v-model="form.ten_ngan_hang"
-              maxlength="255"
-              placeholder="Ví dụ: Ngân hàng TMCP Ngoại thương Việt Nam"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="12">
-          <CustomFormItem label="Tên tiếng Anh" prop="ten_ngan_hang_tieng_anh">
-            <CustomInput v-model="form.ten_ngan_hang_tieng_anh" maxlength="255" placeholder="Ví dụ: Vietcombank" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="12">
-          <CustomFormItem label="Số tài khoản" prop="so_tai_khoan">
-            <CustomInput v-model="form.so_tai_khoan" maxlength="60" placeholder="Ví dụ: 0123456789" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="12">
-          <CustomFormItem label="Chủ tài khoản" prop="chu_tai_khoan">
-            <CustomInput v-model="form.chu_tai_khoan" maxlength="255" placeholder="Ví dụ: CONG TY CP DTS" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="12">
-          <CustomFormItem label="Trạng thái" prop="trang_thai">
-            <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
-              <CustomOption label="Hoạt động" :value="1" />
-              <CustomOption label="Ngừng sử dụng" :value="0" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Ghi chú" prop="ghi_chu">
-            <CustomInput
-              v-model="form.ghi_chu"
-              type="textarea"
-              :rows="3"
-              maxlength="2000"
-              show-word-limit
-              placeholder="Ví dụ: chi nhánh, nội dung chuyển khoản…"
-            />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
+        <CustomFormItem label="Tên viết tắt" prop="ten_ngan_hang_viet_tat">
+          <CustomInput v-model="form.ten_ngan_hang_viet_tat" maxlength="50" placeholder="Ví dụ: VCB" />
+        </CustomFormItem>
+        <CustomFormItem label="Tên ngân hàng" prop="ten_ngan_hang">
+          <CustomInput
+            v-model="form.ten_ngan_hang"
+            maxlength="255"
+            placeholder="Ví dụ: Ngân hàng TMCP Ngoại thương Việt Nam"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Tên tiếng Anh" prop="ten_ngan_hang_tieng_anh">
+          <CustomInput v-model="form.ten_ngan_hang_tieng_anh" maxlength="255" placeholder="Ví dụ: Vietcombank" />
+        </CustomFormItem>
+        <CustomFormItem label="Số tài khoản" prop="so_tai_khoan">
+          <CustomInput v-model="form.so_tai_khoan" maxlength="60" placeholder="Ví dụ: 0123456789" />
+        </CustomFormItem>
+        <CustomFormItem label="Chủ tài khoản" prop="chu_tai_khoan">
+          <CustomInput v-model="form.chu_tai_khoan" maxlength="255" placeholder="Ví dụ: CONG TY CP DTS" />
+        </CustomFormItem>
+        <CustomFormItem label="Trạng thái" prop="trang_thai">
+          <CustomSelect v-model="form.trang_thai" :clearable="false">
+            <CustomOption label="Hoạt động" :value="1" />
+            <CustomOption label="Ngừng sử dụng" :value="0" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Ghi chú" prop="ghi_chu">
+          <CustomInput
+            v-model="form.ghi_chu"
+            type="textarea"
+            :rows="3"
+            maxlength="2000"
+            show-word-limit
+            placeholder="Ví dụ: chi nhánh, nội dung chuyển khoản…"
+          />
+        </CustomFormItem>
+      </div>
     </CustomForm>
     <template #footer>
       <CustomButton @click="dialogVisible = false">Hủy</CustomButton>

@@ -122,7 +122,7 @@
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật loại câu hỏi' : 'Thêm loại câu hỏi'"
-    width="920px"
+    width="800px"
     destroy-on-close
     @closed="resetForm"
   >
@@ -147,51 +147,42 @@
       />
     </div>
 
-    <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomRow :gutter="16">
-        <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Tên loại câu hỏi" prop="ten_loai_cau_hoi">
-            <CustomInput
-              v-model="form.ten_loai_cau_hoi"
-              maxlength="150"
-              placeholder="Ví dụ: Trắc nghiệm một đáp án"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Thứ tự ưu tiên" prop="thu_tu_uu_tien">
-            <CustomInputNumber
-              v-model="form.thu_tu_uu_tien"
-              :min="1"
-              :max="9999"
-              :step="1"
-              :precision="0"
-              controls-position="right"
-              style="width: 100%"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Trạng thái" prop="trang_thai">
-            <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
-              <CustomOption label="Hoạt động" :value="1" />
-              <CustomOption label="Ngừng sử dụng" :value="0" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Ghi chú" prop="ghi_chu">
-            <CustomInput
-              v-model="form.ghi_chu"
-              type="textarea"
-              :rows="3"
-              maxlength="2000"
-              show-word-limit
-              placeholder="Ghi chú thêm (nếu có)"
-            />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
+    <CustomForm v-else ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top">
+      <div class="form-grid__body">
+        <CustomFormItem class="form-grid__span-2" label="Tên loại câu hỏi" prop="ten_loai_cau_hoi">
+          <CustomInput
+            v-model="form.ten_loai_cau_hoi"
+            maxlength="150"
+            placeholder="Ví dụ: Trắc nghiệm một đáp án"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Thứ tự ưu tiên" prop="thu_tu_uu_tien">
+          <CustomInputNumber
+            v-model="form.thu_tu_uu_tien"
+            :min="1"
+            :max="9999"
+            :step="1"
+            :precision="0"
+            controls-position="right"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Trạng thái" prop="trang_thai">
+          <CustomSelect v-model="form.trang_thai" :clearable="false">
+            <CustomOption label="Hoạt động" :value="1" />
+            <CustomOption label="Ngừng sử dụng" :value="0" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Ghi chú" prop="ghi_chu">
+          <CustomInput
+            v-model="form.ghi_chu"
+            type="textarea"
+            :rows="3"
+            maxlength="2000"
+            show-word-limit
+            placeholder="Ghi chú thêm (nếu có)"
+          />
+        </CustomFormItem>
+      </div>
     </CustomForm>
     <template #footer>
       <JsonImportDialogFooter

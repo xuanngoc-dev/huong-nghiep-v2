@@ -125,7 +125,7 @@
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật phương thức tuyển sinh' : 'Thêm phương thức tuyển sinh'"
-    width="1200px"
+    width="90%"
     class="phuong-thuc-dialog"
     destroy-on-close
     @closed="resetForm"
@@ -151,67 +151,55 @@
       />
     </div>
 
-    <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomRow :gutter="16">
-        <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Tên phương thức" prop="ten_phuong_thuc">
-            <CustomInput
-              v-model="form.ten_phuong_thuc"
-              maxlength="255"
-              placeholder="Ví dụ: Xét kết quả thi tốt nghiệp THPT"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Mã phương thức" prop="ma_phuong_thuc">
-            <CustomInput v-model="form.ma_phuong_thuc" maxlength="20" placeholder="Ví dụ: 100" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Trạng thái" prop="trang_thai">
-            <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
-              <CustomOption label="Hoạt động" :value="1" />
-              <CustomOption label="Ngừng sử dụng" :value="0" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Giải thích" prop="giai_thich">
-            <CustomInput
-              v-model="form.giai_thich"
-              type="textarea"
-              :rows="3"
-              maxlength="5000"
-              show-word-limit
-              placeholder="Giải thích phương thức"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Trường hợp cụ thể" prop="truong_hop_cu_the">
-            <CustomInput
-              v-model="form.truong_hop_cu_the"
-              type="textarea"
-              :rows="3"
-              maxlength="5000"
-              show-word-limit
-              placeholder="Ví dụ áp dụng"
-            />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="8" :xs="24">
-          <CustomFormItem label="Lưu ý" prop="luu_y">
-            <CustomInput
-              v-model="form.luu_y"
-              type="textarea"
-              :rows="3"
-              maxlength="5000"
-              show-word-limit
-              placeholder="Những điểm cần lưu ý"
-            />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
+    <CustomForm v-else ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top">
+      <div class="form-grid__body">
+        <CustomFormItem class="form-grid__span-2" label="Tên phương thức" prop="ten_phuong_thuc">
+          <CustomInput
+            v-model="form.ten_phuong_thuc"
+            maxlength="255"
+            placeholder="Ví dụ: Xét kết quả thi tốt nghiệp THPT"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Mã phương thức" prop="ma_phuong_thuc">
+          <CustomInput v-model="form.ma_phuong_thuc" maxlength="20" placeholder="Ví dụ: 100" />
+        </CustomFormItem>
+        <CustomFormItem label="Trạng thái" prop="trang_thai">
+          <CustomSelect v-model="form.trang_thai" :clearable="false">
+            <CustomOption label="Hoạt động" :value="1" />
+            <CustomOption label="Ngừng sử dụng" :value="0" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Giải thích" prop="giai_thich">
+          <CustomInput
+            v-model="form.giai_thich"
+            type="textarea"
+            :rows="3"
+            maxlength="5000"
+            show-word-limit
+            placeholder="Giải thích phương thức"
+          />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Trường hợp cụ thể" prop="truong_hop_cu_the">
+          <CustomInput
+            v-model="form.truong_hop_cu_the"
+            type="textarea"
+            :rows="3"
+            maxlength="5000"
+            show-word-limit
+            placeholder="Ví dụ áp dụng"
+          />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Lưu ý" prop="luu_y">
+          <CustomInput
+            v-model="form.luu_y"
+            type="textarea"
+            :rows="3"
+            maxlength="5000"
+            show-word-limit
+            placeholder="Những điểm cần lưu ý"
+          />
+        </CustomFormItem>
+      </div>
     </CustomForm>
     <template #footer>
       <JsonImportDialogFooter

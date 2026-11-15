@@ -133,7 +133,7 @@
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật nhóm ngành' : 'Thêm nhóm ngành'"
-    width="760px"
+    width="800px"
     destroy-on-close
     @closed="resetForm"
   >
@@ -158,69 +158,56 @@
       />
     </div>
 
-    <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomRow :gutter="16">
-        <CustomCol :span="24">
-          <CustomFormItem label="Lĩnh vực" prop="ma_linh_vuc">
-            <CustomSelect
-              v-model="form.ma_linh_vuc"
-              filterable
-              placeholder="Chọn lĩnh vực đào tạo"
-              style="width: 100%"
-              :disabled="!linhVucOptions.length"
-            >
-              <CustomOption
-                v-for="item in linhVucOptions"
-                :key="item.id"
-                :label="parentLabel(item)"
-                :value="item.ma_linh_vuc"
-              />
-            </CustomSelect>
-            <p v-if="!linhVucOptions.length" class="field-hint">
-              Chưa có lĩnh vực. Hãy thêm ở danh mục Lĩnh vực đào tạo trước.
-            </p>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Tên nhóm ngành" prop="ten_nhom_nganh">
-            <CustomInput v-model="form.ten_nhom_nganh" maxlength="255" placeholder="Ví dụ: Công nghệ thông tin" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Mã nhóm ngành" prop="ma_nhom_nganh">
-            <CustomInput v-model="form.ma_nhom_nganh" maxlength="20" placeholder="Ví dụ: 74802" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Tên tiếng Anh" prop="ten_tieng_anh">
-            <CustomInput
-              v-model="form.ten_tieng_anh"
-              maxlength="255"
-              placeholder="Ví dụ: Information technology"
+    <CustomForm v-else ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top">
+      <div class="form-grid__body">
+        <CustomFormItem class="form-grid__full" label="Lĩnh vực" prop="ma_linh_vuc">
+          <CustomSelect
+            v-model="form.ma_linh_vuc"
+            filterable
+            placeholder="Chọn lĩnh vực đào tạo"
+            :disabled="!linhVucOptions.length"
+          >
+            <CustomOption
+              v-for="item in linhVucOptions"
+              :key="item.id"
+              :label="parentLabel(item)"
+              :value="item.ma_linh_vuc"
             />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Trạng thái" prop="trang_thai">
-            <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
-              <CustomOption label="Hoạt động" :value="1" />
-              <CustomOption label="Ngừng sử dụng" :value="0" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Mô tả" prop="mo_ta">
-            <CustomInput
-              v-model="form.mo_ta"
-              type="textarea"
-              :rows="3"
-              maxlength="5000"
-              show-word-limit
-              placeholder="Mô tả nhóm ngành (nếu có)"
-            />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
+          </CustomSelect>
+          <p v-if="!linhVucOptions.length" class="field-hint">
+            Chưa có lĩnh vực. Hãy thêm ở danh mục Lĩnh vực đào tạo trước.
+          </p>
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Tên nhóm ngành" prop="ten_nhom_nganh">
+          <CustomInput v-model="form.ten_nhom_nganh" maxlength="255" placeholder="Ví dụ: Công nghệ thông tin" />
+        </CustomFormItem>
+        <CustomFormItem label="Mã nhóm ngành" prop="ma_nhom_nganh">
+          <CustomInput v-model="form.ma_nhom_nganh" maxlength="20" placeholder="Ví dụ: 74802" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Tên tiếng Anh" prop="ten_tieng_anh">
+          <CustomInput
+            v-model="form.ten_tieng_anh"
+            maxlength="255"
+            placeholder="Ví dụ: Information technology"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Trạng thái" prop="trang_thai">
+          <CustomSelect v-model="form.trang_thai" :clearable="false">
+            <CustomOption label="Hoạt động" :value="1" />
+            <CustomOption label="Ngừng sử dụng" :value="0" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Mô tả" prop="mo_ta">
+          <CustomInput
+            v-model="form.mo_ta"
+            type="textarea"
+            :rows="3"
+            maxlength="5000"
+            show-word-limit
+            placeholder="Mô tả nhóm ngành (nếu có)"
+          />
+        </CustomFormItem>
+      </div>
     </CustomForm>
     <template #footer>
       <JsonImportDialogFooter

@@ -181,217 +181,137 @@
       />
     </div>
 
-    <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomRow :gutter="16">
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Tên trường" prop="ten_truong">
-            <CustomInput v-model="form.ten_truong" maxlength="255" placeholder="Tên đầy đủ tiếng Việt" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Mã trường" prop="ma_truong">
-            <CustomInput v-model="form.ma_truong" maxlength="20" placeholder="Ví dụ: BKA" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Tên viết tắt">
-            <CustomInput v-model="form.ten_viet_tat" maxlength="50" placeholder="Ví dụ: HUST" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Tên tiếng Anh">
-            <CustomInput v-model="form.ten_tieng_anh" maxlength="255" placeholder="Tên tiếng Anh" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Tên gọi khác">
-            <CustomInput v-model="form.ten_goi_khac" maxlength="5000" placeholder="Phân tách bằng dấu phẩy" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Slug">
-            <CustomInput v-model="form.slug" maxlength="255" placeholder="dai-hoc-bach-khoa-ha-noi" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Loại cơ sở">
-            <CustomSelect v-model="form.loai_co_so" filterable allow-create default-first-option clearable placeholder="Chọn hoặc nhập" style="width: 100%">
-              <CustomOption v-for="item in LOAI_CO_SO" :key="item" :label="item" :value="item" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Loại hình">
-            <CustomSelect v-model="form.loai_hinh" filterable allow-create default-first-option clearable placeholder="Chọn hoặc nhập" style="width: 100%">
-              <CustomOption v-for="item in LOAI_HINH" :key="item" :label="item" :value="item" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Trạng thái hoạt động">
-            <CustomSelect v-model="form.trang_thai_hoat_dong" filterable allow-create default-first-option clearable placeholder="Chọn hoặc nhập" style="width: 100%">
-              <CustomOption v-for="item in TRANG_THAI" :key="item" :label="item" :value="item" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Cơ quan chủ quản">
-            <CustomInput v-model="form.co_quan_chu_quan" maxlength="255" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="ID trường trực thuộc" prop="truong_cha_id">
-            <CustomInputNumber v-model="form.truong_cha_id" :min="1" :step="1" :precision="0" :value-on-clear="null" controls-position="right" style="width: 100%" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Năm thành lập" prop="nam_thanh_lap">
-            <CustomInputNumber v-model="form.nam_thanh_lap" :min="1000" :max="2100" :step="1" :precision="0" :value-on-clear="null" controls-position="right" style="width: 100%" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Ngày thành lập">
-            <CustomDatePicker v-model="form.ngay_thanh_lap" type="date" value-format="YYYY-MM-DD" format="DD/MM/YYYY" placeholder="Chọn ngày" clearable style="width: 100%" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Mã tỉnh/thành">
-            <CustomInput v-model="form.ma_tinh_thanh" maxlength="10" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Tỉnh/thành">
-            <CustomInput v-model="form.ten_tinh_thanh" maxlength="100" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Mã phường/xã">
-            <CustomInput v-model="form.ma_phuong_xa" maxlength="10" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Phường/xã">
-            <CustomInput v-model="form.ten_phuong_xa" maxlength="100" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Địa chỉ trụ sở">
-            <CustomInput v-model="form.dia_chi_tru_so" maxlength="500" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Vùng miền">
-            <CustomSelect v-model="form.vung_mien" filterable allow-create default-first-option clearable placeholder="Chọn hoặc nhập" style="width: 100%">
-              <CustomOption v-for="item in VUNG_MIEN" :key="item" :label="item" :value="item" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Vĩ độ" prop="vi_do">
-            <CustomInputNumber v-model="form.vi_do" :min="-90" :max="90" :step="0.000001" :precision="7" :value-on-clear="null" controls-position="right" style="width: 100%" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Kinh độ" prop="kinh_do">
-            <CustomInputNumber v-model="form.kinh_do" :min="-180" :max="180" :step="0.000001" :precision="7" :value-on-clear="null" controls-position="right" style="width: 100%" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Diện tích (m²)" prop="dien_tich_m2">
-            <CustomInputNumber v-model="form.dien_tich_m2" :min="0" :step="1" :precision="2" :value-on-clear="null" controls-position="right" style="width: 100%" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Học phí trung bình">
-            <CustomInput v-model="form.hoc_phi_trung_binh" maxlength="100" placeholder="Ví dụ: 25-35 triệu/năm" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Số điện thoại">
-            <CustomInput v-model="form.so_dien_thoai" maxlength="30" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Email" prop="email">
-            <CustomInput v-model="form.email" maxlength="255" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Website">
-            <CustomInput v-model="form.website" maxlength="500" placeholder="https://..." />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Hotline tuyển sinh">
-            <CustomInput v-model="form.hotline_tuyen_sinh" maxlength="30" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Email tuyển sinh" prop="email_tuyen_sinh">
-            <CustomInput v-model="form.email_tuyen_sinh" maxlength="255" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Website tuyển sinh">
-            <CustomInput v-model="form.website_tuyen_sinh" maxlength="500" placeholder="https://..." />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="6" :xs="12">
-          <CustomFormItem label="Ngày xác minh">
-            <CustomDatePicker v-model="form.ngay_xac_minh" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" format="DD/MM/YYYY HH:mm" placeholder="Chọn thời điểm" clearable style="width: 100%" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Nguồn dữ liệu">
-            <CustomInput v-model="form.nguon_du_lieu_url" maxlength="1000" placeholder="URL nguồn xác minh" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Logo">
-            <CustomInput v-model="form.logo_url" maxlength="1000" placeholder="URL logo" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Ảnh đại diện">
-            <CustomInput v-model="form.anh_dai_dien_url" maxlength="1000" placeholder="URL ảnh khuôn viên" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Bậc đào tạo">
-            <CustomInput v-model="form.bac_dao_tao" type="textarea" :rows="2" maxlength="5000" placeholder="Phân tách bằng dấu phẩy. Ví dụ: Đại học, Thạc sĩ" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Lĩnh vực đào tạo chính">
-            <CustomInput v-model="form.linh_vuc_dao_tao_chinh" type="textarea" :rows="2" maxlength="5000" placeholder="Phân tách bằng dấu phẩy" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Lĩnh vực đào tạo khác">
-            <CustomInput v-model="form.linh_vuc_dao_tao_khac" type="textarea" :rows="2" maxlength="5000" placeholder="Phân tách bằng dấu phẩy" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Giới thiệu ngắn">
-            <CustomInput v-model="form.gioi_thieu_ngan" type="textarea" :rows="2" maxlength="1000" show-word-limit />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Thế mạnh">
-            <CustomInput v-model="form.the_manh" type="textarea" :rows="3" maxlength="20000" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Giới thiệu chi tiết">
-            <CustomInput v-model="form.gioi_thieu_chi_tiet" type="textarea" :rows="4" maxlength="20000" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Ghi chú">
-            <CustomInput v-model="form.ghi_chu" type="textarea" :rows="3" maxlength="20000" />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
+    <CustomForm v-else class="form-grid" ref="formRef" :model="form" :rules="rules" label-position="top">
+      <div class="form-grid__body">
+        <CustomFormItem class="form-grid__span-2" label="Tên trường" prop="ten_truong">
+          <CustomInput v-model="form.ten_truong" maxlength="255" placeholder="Tên đầy đủ tiếng Việt" />
+        </CustomFormItem>
+        <CustomFormItem label="Mã trường" prop="ma_truong">
+          <CustomInput v-model="form.ma_truong" maxlength="20" placeholder="Ví dụ: BKA" />
+        </CustomFormItem>
+        <CustomFormItem label="Tên viết tắt">
+          <CustomInput v-model="form.ten_viet_tat" maxlength="50" placeholder="Ví dụ: HUST" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Tên tiếng Anh">
+          <CustomInput v-model="form.ten_tieng_anh" maxlength="255" placeholder="Tên tiếng Anh" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Tên gọi khác">
+          <CustomInput v-model="form.ten_goi_khac" maxlength="5000" placeholder="Phân tách bằng dấu phẩy" />
+        </CustomFormItem>
+        <CustomFormItem label="Slug">
+          <CustomInput v-model="form.slug" maxlength="255" placeholder="dai-hoc-bach-khoa-ha-noi" />
+        </CustomFormItem>
+        <CustomFormItem label="Loại cơ sở">
+          <CustomSelect v-model="form.loai_co_so" filterable allow-create default-first-option clearable placeholder="Chọn hoặc nhập">
+            <CustomOption v-for="item in LOAI_CO_SO" :key="item" :label="item" :value="item" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem label="Loại hình">
+          <CustomSelect v-model="form.loai_hinh" filterable allow-create default-first-option clearable placeholder="Chọn hoặc nhập">
+            <CustomOption v-for="item in LOAI_HINH" :key="item" :label="item" :value="item" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem label="Trạng thái hoạt động">
+          <CustomSelect v-model="form.trang_thai_hoat_dong" filterable allow-create default-first-option clearable placeholder="Chọn hoặc nhập">
+            <CustomOption v-for="item in TRANG_THAI" :key="item" :label="item" :value="item" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem label="Cơ quan chủ quản">
+          <CustomInput v-model="form.co_quan_chu_quan" maxlength="255" />
+        </CustomFormItem>
+        <CustomFormItem label="ID trường trực thuộc" prop="truong_cha_id">
+          <CustomInputNumber v-model="form.truong_cha_id" :min="1" :step="1" :precision="0" :value-on-clear="null" controls-position="right" />
+        </CustomFormItem>
+        <CustomFormItem label="Năm thành lập" prop="nam_thanh_lap">
+          <CustomInputNumber v-model="form.nam_thanh_lap" :min="1000" :max="2100" :step="1" :precision="0" :value-on-clear="null" controls-position="right" />
+        </CustomFormItem>
+        <CustomFormItem label="Ngày thành lập">
+          <CustomDatePicker v-model="form.ngay_thanh_lap" type="date" value-format="YYYY-MM-DD" format="DD/MM/YYYY" placeholder="Chọn ngày" clearable />
+        </CustomFormItem>
+        <CustomFormItem label="Mã tỉnh/thành">
+          <CustomInput v-model="form.ma_tinh_thanh" maxlength="10" />
+        </CustomFormItem>
+        <CustomFormItem label="Tỉnh/thành">
+          <CustomInput v-model="form.ten_tinh_thanh" maxlength="100" />
+        </CustomFormItem>
+        <CustomFormItem label="Mã phường/xã">
+          <CustomInput v-model="form.ma_phuong_xa" maxlength="10" />
+        </CustomFormItem>
+        <CustomFormItem label="Phường/xã">
+          <CustomInput v-model="form.ten_phuong_xa" maxlength="100" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Địa chỉ trụ sở">
+          <CustomInput v-model="form.dia_chi_tru_so" maxlength="500" />
+        </CustomFormItem>
+        <CustomFormItem label="Vùng miền">
+          <CustomSelect v-model="form.vung_mien" filterable allow-create default-first-option clearable placeholder="Chọn hoặc nhập">
+            <CustomOption v-for="item in VUNG_MIEN" :key="item" :label="item" :value="item" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem label="Vĩ độ" prop="vi_do">
+          <CustomInputNumber v-model="form.vi_do" :min="-90" :max="90" :step="0.000001" :precision="7" :value-on-clear="null" controls-position="right" />
+        </CustomFormItem>
+        <CustomFormItem label="Kinh độ" prop="kinh_do">
+          <CustomInputNumber v-model="form.kinh_do" :min="-180" :max="180" :step="0.000001" :precision="7" :value-on-clear="null" controls-position="right" />
+        </CustomFormItem>
+        <CustomFormItem label="Diện tích (m²)" prop="dien_tich_m2">
+          <CustomInputNumber v-model="form.dien_tich_m2" :min="0" :step="1" :precision="2" :value-on-clear="null" controls-position="right" />
+        </CustomFormItem>
+        <CustomFormItem label="Học phí trung bình">
+          <CustomInput v-model="form.hoc_phi_trung_binh" maxlength="100" placeholder="Ví dụ: 25-35 triệu/năm" />
+        </CustomFormItem>
+        <CustomFormItem label="Số điện thoại">
+          <CustomInput v-model="form.so_dien_thoai" maxlength="30" />
+        </CustomFormItem>
+        <CustomFormItem label="Email" prop="email">
+          <CustomInput v-model="form.email" maxlength="255" />
+        </CustomFormItem>
+        <CustomFormItem label="Website">
+          <CustomInput v-model="form.website" maxlength="500" placeholder="https://..." />
+        </CustomFormItem>
+        <CustomFormItem label="Hotline tuyển sinh">
+          <CustomInput v-model="form.hotline_tuyen_sinh" maxlength="30" />
+        </CustomFormItem>
+        <CustomFormItem label="Email tuyển sinh" prop="email_tuyen_sinh">
+          <CustomInput v-model="form.email_tuyen_sinh" maxlength="255" />
+        </CustomFormItem>
+        <CustomFormItem label="Website tuyển sinh">
+          <CustomInput v-model="form.website_tuyen_sinh" maxlength="500" placeholder="https://..." />
+        </CustomFormItem>
+        <CustomFormItem label="Ngày xác minh">
+          <CustomDatePicker v-model="form.ngay_xac_minh" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" format="DD/MM/YYYY HH:mm" placeholder="Chọn thời điểm" clearable />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Nguồn dữ liệu">
+          <CustomInput v-model="form.nguon_du_lieu_url" maxlength="1000" placeholder="URL nguồn xác minh" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Logo">
+          <CustomInput v-model="form.logo_url" maxlength="1000" placeholder="URL logo" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Ảnh đại diện">
+          <CustomInput v-model="form.anh_dai_dien_url" maxlength="1000" placeholder="URL ảnh khuôn viên" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Bậc đào tạo">
+          <CustomInput v-model="form.bac_dao_tao" type="textarea" :rows="2" maxlength="5000" placeholder="Phân tách bằng dấu phẩy. Ví dụ: Đại học, Thạc sĩ" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Lĩnh vực đào tạo chính">
+          <CustomInput v-model="form.linh_vuc_dao_tao_chinh" type="textarea" :rows="2" maxlength="5000" placeholder="Phân tách bằng dấu phẩy" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Lĩnh vực đào tạo khác">
+          <CustomInput v-model="form.linh_vuc_dao_tao_khac" type="textarea" :rows="2" maxlength="5000" placeholder="Phân tách bằng dấu phẩy" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Giới thiệu ngắn">
+          <CustomInput v-model="form.gioi_thieu_ngan" type="textarea" :rows="2" maxlength="1000" show-word-limit />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Thế mạnh">
+          <CustomInput v-model="form.the_manh" type="textarea" :rows="3" maxlength="20000" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Giới thiệu chi tiết">
+          <CustomInput v-model="form.gioi_thieu_chi_tiet" type="textarea" :rows="4" maxlength="20000" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Ghi chú">
+          <CustomInput v-model="form.ghi_chu" type="textarea" :rows="3" maxlength="20000" />
+        </CustomFormItem>
+      </div>
     </CustomForm>
     <template #footer>
       <JsonImportDialogFooter

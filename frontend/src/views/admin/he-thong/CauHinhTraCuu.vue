@@ -165,69 +165,57 @@
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật cấu hình tra cứu' : 'Thêm cấu hình tra cứu'"
-    width="min(720px, 94vw)"
+    width="1040px"
     destroy-on-close
     @closed="resetForm"
   >
-    <CustomForm ref="formRef" :model="form" :rules="rules" label-position="top">
+    <CustomForm ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top">
       <h3 class="form-section">Hạn mức mỗi ngày</h3>
-      <CustomRow :gutter="16">
-        <CustomCol v-for="item in TRUONG_LUOT" :key="item.prop" :xs="24" :sm="12" :md="6">
-          <CustomFormItem :label="item.nhan" :prop="item.prop">
-            <CustomInputNumber
-              v-model="form[item.prop]"
-              :min="0"
-              :max="LUOT_TOI_DA"
-              :precision="0"
-              controls-position="right"
-              class="w-full"
-            />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
+      <div class="form-grid__body">
+        <CustomFormItem v-for="item in TRUONG_LUOT" :key="item.prop" :label="item.nhan" :prop="item.prop">
+          <CustomInputNumber
+            v-model="form[item.prop]"
+            :min="0"
+            :max="LUOT_TOI_DA"
+            :precision="0"
+            controls-position="right"
+          />
+        </CustomFormItem>
+      </div>
 
-      <CustomRow :gutter="16">
-        <CustomCol :xs="12" :sm="8">
-          <CustomFormItem label="Trắc nghiệm Holland" prop="bat_tinh_nang_holland">
-            <CustomSwitch v-model="form.bat_tinh_nang_holland" active-text="Bật" inactive-text="Tắt" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :xs="12" :sm="8">
-          <CustomFormItem label="Thanh toán" prop="bat_thanh_toan">
-            <CustomSwitch v-model="form.bat_thanh_toan" active-text="Bật" inactive-text="Tắt" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :xs="24" :sm="8">
-          <CustomFormItem label="Trạng thái" prop="trang_thai">
-            <CustomSwitch
-              v-model="form.trang_thai"
-              :active-value="1"
-              :inactive-value="0"
-              active-text="Áp dụng"
-              inactive-text="Ngừng"
-              :disabled="dangSuaBanApDung"
-            />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
+      <div class="form-grid__body">
+        <CustomFormItem label="Trắc nghiệm Holland" prop="bat_tinh_nang_holland">
+          <CustomSwitch v-model="form.bat_tinh_nang_holland" active-text="Bật" inactive-text="Tắt" />
+        </CustomFormItem>
+        <CustomFormItem label="Thanh toán" prop="bat_thanh_toan">
+          <CustomSwitch v-model="form.bat_thanh_toan" active-text="Bật" inactive-text="Tắt" />
+        </CustomFormItem>
+        <CustomFormItem label="Trạng thái" prop="trang_thai">
+          <CustomSwitch
+            v-model="form.trang_thai"
+            :active-value="1"
+            :inactive-value="0"
+            active-text="Áp dụng"
+            inactive-text="Ngừng"
+            :disabled="dangSuaBanApDung"
+          />
+        </CustomFormItem>
+      </div>
 
-      <CustomRow :gutter="16" v-if='false'>
-        <CustomCol :xs="24" :sm="8">
-          <CustomFormItem label="Giá báo cáo chuyên sâu (VNĐ)" prop="gia_bao_cao_chuyen_sau">
-            <CustomInputNumber
-              v-model="form.gia_bao_cao_chuyen_sau"
-              :min="0"
-              :max="GIA_TOI_DA"
-              :step="1000"
-              :precision="0"
-              :formatter="dinhDangTien"
-              :parser="docTien"
-              controls-position="right"
-              class="w-full"
-            />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
+      <div class="form-grid__body" v-if='false'>
+        <CustomFormItem label="Giá báo cáo chuyên sâu (VNĐ)" prop="gia_bao_cao_chuyen_sau">
+          <CustomInputNumber
+            v-model="form.gia_bao_cao_chuyen_sau"
+            :min="0"
+            :max="GIA_TOI_DA"
+            :step="1000"
+            :precision="0"
+            :formatter="dinhDangTien"
+            :parser="docTien"
+            controls-position="right"
+          />
+        </CustomFormItem>
+      </div>
       <p v-if="dangSuaBanApDung" class="field-hint">{{ KHOA_AP_DUNG }}</p>
       <p v-else-if="form.trang_thai === 1" class="field-hint">Lưu cấu hình đang áp dụng sẽ tắt các cấu hình khác.</p>
     </CustomForm>
@@ -681,9 +669,5 @@ span.o-gia-tri:focus-visible {
 
 .form-section:not(:first-child) {
   margin-top: 6px;
-}
-
-.w-full {
-  width: 100%;
 }
 </style>

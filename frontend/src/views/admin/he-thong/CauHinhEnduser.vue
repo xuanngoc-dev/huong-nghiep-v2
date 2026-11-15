@@ -141,45 +141,37 @@
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật cấu hình EndUser' : 'Thêm cấu hình EndUser'"
-    width="820px"
+    width="800px"
     destroy-on-close
     @closed="resetForm"
   >
-    <CustomForm ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomRow :gutter="16">
-        <CustomCol :span="10" :xs="24">
-          <CustomFormItem label="Tên cấu hình" prop="ten_cau_hinh">
-            <CustomInput v-model="form.ten_cau_hinh" maxlength="255" placeholder="Ví dụ: banner_trang_chu" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="7" :xs="12">
-          <CustomFormItem label="Kiểu trả lời" prop="kieu_tra_loi">
-            <CustomSelect v-model="form.kieu_tra_loi" :clearable="false" style="width: 100%">
-              <CustomOption v-for="item in KIEU_TRA_LOI" :key="item.value" :label="item.label" :value="item.value" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="7" :xs="12">
-          <CustomFormItem label="Trạng thái" prop="trang_thai">
-            <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
-              <CustomOption label="Hoạt động" :value="1" />
-              <CustomOption label="Ngừng sử dụng" :value="0" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Mô tả" prop="mo_ta">
-            <CustomInput
-              v-model="form.mo_ta"
-              type="textarea"
-              :rows="3"
-              maxlength="2000"
-              show-word-limit
-              placeholder="Cấu hình này dùng ở đâu, có ý nghĩa gì…"
-            />
-          </CustomFormItem>
-        </CustomCol>
-      </CustomRow>
+    <CustomForm ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top">
+      <div class="form-grid__body">
+        <CustomFormItem class="form-grid__span-2" label="Tên cấu hình" prop="ten_cau_hinh">
+          <CustomInput v-model="form.ten_cau_hinh" maxlength="255" placeholder="Ví dụ: banner_trang_chu" />
+        </CustomFormItem>
+        <CustomFormItem label="Kiểu trả lời" prop="kieu_tra_loi">
+          <CustomSelect v-model="form.kieu_tra_loi" :clearable="false">
+            <CustomOption v-for="item in KIEU_TRA_LOI" :key="item.value" :label="item.label" :value="item.value" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem label="Trạng thái" prop="trang_thai">
+          <CustomSelect v-model="form.trang_thai" :clearable="false">
+            <CustomOption label="Hoạt động" :value="1" />
+            <CustomOption label="Ngừng sử dụng" :value="0" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Mô tả" prop="mo_ta">
+          <CustomInput
+            v-model="form.mo_ta"
+            type="textarea"
+            :rows="3"
+            maxlength="2000"
+            show-word-limit
+            placeholder="Cấu hình này dùng ở đâu, có ý nghĩa gì…"
+          />
+        </CustomFormItem>
+      </div>
     </CustomForm>
     <template #footer>
       <CustomButton @click="dialogVisible = false">Hủy</CustomButton>

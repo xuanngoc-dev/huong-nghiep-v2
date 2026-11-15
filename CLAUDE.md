@@ -26,6 +26,7 @@ Monorepo: `backend/` (FastAPI + SQLAlchemy 2 + Alembic, MySQL) và `frontend/` (
 - Migration viết tay trong `backend/alembic/versions/`, tên `YYYYMMDD_NNNN_slug.py`, `revision = "YYYYMMDD_NNNN"`, `down_revision` = head hiện tại (số NNNN tăng liên tục toàn repo). Không dùng `make migrate-new` (autogenerate kết nối DB chung và sinh revision hex).
 - Sau khi thêm/sửa API: chạy `cd backend && .venv/bin/python -m app.scripts.xuat_danh_sach_api` để sinh lại `backend/API.md` (không sửa tay file này).
 - Thêm một resource đầy đủ: dùng skill `/them-api`.
+- Form frontend (trang và dialog) luôn làm responsive bằng lưới `form-grid` trong `frontend/src/styles/form-grid.css` (6 ô/hàng trên desktop → 2 ô/hàng trên mobile, theo bề rộng khung chứa); quy tắc chi tiết ở bước Responsive của skill `them-api`.
 
 ## Phân quyền
 

@@ -224,7 +224,7 @@
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật câu hỏi' : 'Thêm câu hỏi'"
-    width="920px"
+    width="800px"
     destroy-on-close
     :close-on-click-modal="!saving"
     :close-on-press-escape="!saving"
@@ -253,76 +253,64 @@
       />
     </div>
 
-    <CustomForm v-else ref="formRef" :model="form" :rules="rules" label-position="top">
-      <CustomRow :gutter="16">
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Mã Holland" prop="ma_holand">
-            <CustomSelect
-              v-model="form.ma_holand"
-              filterable
-              placeholder="Chọn mã Holland"
-              style="width: 100%"
-              :disabled="!hollandOptions.length"
-            >
-              <CustomOption
-                v-for="item in hollandOptions"
-                :key="item.id"
-                :label="hollandLabel(item)"
-                :value="item.ma_nhom"
-              />
-            </CustomSelect>
-            <p v-if="!hollandOptions.length" class="field-hint">
-              Chưa có nhóm Holland. Hãy thêm ở danh mục Nhóm Holland trước.
-            </p>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Loại câu hỏi" prop="loai_cau_hoi_id">
-            <CustomSelect
-              v-model="form.loai_cau_hoi_id"
-              filterable
-              placeholder="Chọn loại câu hỏi"
-              style="width: 100%"
-              :disabled="!loaiOptions.length"
-            >
-              <CustomOption
-                v-for="item in loaiOptions"
-                :key="item.id"
-                :label="loaiLabel(item)"
-                :value="item.id"
-              />
-            </CustomSelect>
-            <p v-if="!loaiOptions.length" class="field-hint">
-              Chưa có loại câu hỏi. Hãy thêm ở danh mục Loại câu hỏi trước.
-            </p>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="24">
-          <CustomFormItem label="Nội dung câu hỏi" prop="noi_dung_cau_hoi">
-            <CustomInput
-              v-model="form.noi_dung_cau_hoi"
-              type="textarea"
-              :rows="3"
-              maxlength="5000"
-              show-word-limit
-              placeholder="Nhập nội dung câu hỏi"
+    <CustomForm v-else ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top">
+      <div class="form-grid__body">
+        <CustomFormItem label="Mã Holland" prop="ma_holand">
+          <CustomSelect
+            v-model="form.ma_holand"
+            filterable
+            placeholder="Chọn mã Holland"
+            :disabled="!hollandOptions.length"
+          >
+            <CustomOption
+              v-for="item in hollandOptions"
+              :key="item.id"
+              :label="hollandLabel(item)"
+              :value="item.ma_nhom"
             />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Trạng thái" prop="trang_thai">
-            <CustomSelect v-model="form.trang_thai" :clearable="false" style="width: 100%">
-              <CustomOption label="Hoạt động" :value="1" />
-              <CustomOption label="Ngừng sử dụng" :value="0" />
-            </CustomSelect>
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol :span="12" :xs="24">
-          <CustomFormItem label="Ghi chú" prop="ghi_chu">
-            <CustomInput v-model="form.ghi_chu" maxlength="2000" placeholder="Ghi chú (nếu có)" />
-          </CustomFormItem>
-        </CustomCol>
-        <CustomCol v-if="!editingId" :span="24">
+          </CustomSelect>
+          <p v-if="!hollandOptions.length" class="field-hint">
+            Chưa có nhóm Holland. Hãy thêm ở danh mục Nhóm Holland trước.
+          </p>
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Loại câu hỏi" prop="loai_cau_hoi_id">
+          <CustomSelect
+            v-model="form.loai_cau_hoi_id"
+            filterable
+            placeholder="Chọn loại câu hỏi"
+            :disabled="!loaiOptions.length"
+          >
+            <CustomOption
+              v-for="item in loaiOptions"
+              :key="item.id"
+              :label="loaiLabel(item)"
+              :value="item.id"
+            />
+          </CustomSelect>
+          <p v-if="!loaiOptions.length" class="field-hint">
+            Chưa có loại câu hỏi. Hãy thêm ở danh mục Loại câu hỏi trước.
+          </p>
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Nội dung câu hỏi" prop="noi_dung_cau_hoi">
+          <CustomInput
+            v-model="form.noi_dung_cau_hoi"
+            type="textarea"
+            :rows="3"
+            maxlength="5000"
+            show-word-limit
+            placeholder="Nhập nội dung câu hỏi"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Trạng thái" prop="trang_thai">
+          <CustomSelect v-model="form.trang_thai" :clearable="false">
+            <CustomOption label="Hoạt động" :value="1" />
+            <CustomOption label="Ngừng sử dụng" :value="0" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Ghi chú" prop="ghi_chu">
+          <CustomInput v-model="form.ghi_chu" maxlength="2000" placeholder="Ghi chú (nếu có)" />
+        </CustomFormItem>
+        <div v-if="!editingId" class="form-grid__full">
           <div class="answers-head">
             <span>Đáp án</span>
             <CustomButton text type="primary" @click="addAnswer">
@@ -349,8 +337,8 @@
               <CustomIcon><Delete /></CustomIcon>
             </CustomButton>
           </div>
-        </CustomCol>
-      </CustomRow>
+        </div>
+      </div>
     </CustomForm>
     <template #footer>
       <JsonImportDialogFooter

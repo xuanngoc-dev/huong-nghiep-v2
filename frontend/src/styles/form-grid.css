@@ -1,0 +1,54 @@
+/*
+ * Lưới form responsive theo bề rộng khung chứa (container query), không theo viewport:
+ * cùng một form đặt trong trang hay trong dialog (kể cả khi kéo đổi cỡ) đều tự đổi số cột.
+ *   >= 1200px: 6 cột | >= 960px: 4 | >= 720px: 3 | nhỏ hơn: 2.
+ * Dùng: <CustomForm class="form-grid"><div class="form-grid__body">...các CustomFormItem...</div></CustomForm>
+ * Ô rộng hơn: .form-grid__span-2 (2 cột), .form-grid__full (cả hàng, dùng cho textarea/JSON).
+ * Import toàn cục ở main.js: dùng được ở cả khu quản trị, thành viên và trong dialog (gắn ra ngoài body).
+ */
+.form-grid {
+  container-type: inline-size;
+}
+
+.form-grid__body {
+  --form-grid-cols: 2;
+  display: grid;
+  grid-template-columns: repeat(var(--form-grid-cols), minmax(0, 1fr));
+  column-gap: 16px;
+}
+
+.form-grid__body > * {
+  min-width: 0;
+}
+
+.form-grid__span-2 {
+  grid-column: span 2;
+}
+
+.form-grid__full {
+  grid-column: 1 / -1;
+}
+
+.form-grid__body .el-input-number,
+.form-grid__body .el-select,
+.form-grid__body .el-date-editor {
+  width: 100%;
+}
+
+@container (min-width: 720px) {
+  .form-grid__body {
+    --form-grid-cols: 3;
+  }
+}
+
+@container (min-width: 960px) {
+  .form-grid__body {
+    --form-grid-cols: 4;
+  }
+}
+
+@container (min-width: 1200px) {
+  .form-grid__body {
+    --form-grid-cols: 6;
+  }
+}
