@@ -59,7 +59,7 @@
       </p>
       <p>
         Header xác thực: <code>Authorization: Apikey &lt;WEBHOOK_NGAN_HANG_API_KEY&gt;</code> (khóa đặt trong
-        <code>backend/.env</code>). Tiền vào có mã giao dịch nạp tiền (dạng DH4K9F7Q) trong nội dung sẽ được đối soát tự động.
+        <code>backend/.env</code>; để trống thì webhook không xác thực, chỉ dùng cho hệ thống test). Tiền vào có mã giao dịch nạp tiền (dạng DH4K9F7Q) trong nội dung sẽ được đối soát tự động.
       </p>
     </div>
 

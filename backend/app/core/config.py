@@ -51,7 +51,7 @@ class Settings(BaseSettings):
     # trường có ngành trong đề án/phương thức tuyển sinh cùng năm. Env: TIM_TRUONG_KET_HOP_PHUONG_THUC.
     tim_truong_ket_hop_phuong_thuc: bool = False
     # Khóa xác thực webhook giao dịch ngân hàng (SePay gửi header "Authorization: Apikey <khóa>").
-    # Để trống thì webhook từ chối mọi yêu cầu. Env: WEBHOOK_NGAN_HANG_API_KEY.
+    # Để trống thì KHÔNG xác thực (chỉ dùng cho hệ thống test). Env: WEBHOOK_NGAN_HANG_API_KEY.
     webhook_ngan_hang_api_key: str = ""
 
     model_config = SettingsConfigDict(

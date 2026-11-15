@@ -155,10 +155,11 @@ class TestWebhook(unittest.TestCase):
         logging.disable(logging.NOTSET)
         app.dependency_overrides.pop(get_db, None)
 
-    def test_chua_cau_hinh_khoa_tra_503(self):
+    def test_chua_cau_hinh_khoa_thi_bo_qua_xac_thuc(self):
         with patch.object(settings, "webhook_ngan_hang_api_key", ""):
-            response = self.client.post(WEBHOOK, json=PAYLOAD, headers={"Authorization": "Apikey abc"})
-        self.assertEqual(response.status_code, 503)
+            response = self.client.post(WEBHOOK, json=PAYLOAD)
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertTrue(response.json()["success"])
 
     def test_sai_khoa_tra_401(self):
         with patch.object(settings, "webhook_ngan_hang_api_key", "dung"):

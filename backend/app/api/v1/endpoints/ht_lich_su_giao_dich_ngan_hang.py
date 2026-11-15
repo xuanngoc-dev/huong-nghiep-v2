@@ -41,13 +41,15 @@ def _like_pattern(value: str) -> str:
 
 
 def _kiem_tra_api_key(authorization: str | None) -> None:
-    """Header phải là "Apikey <khóa>" (SePay) hoặc "Bearer <khóa>", khóa trùng WEBHOOK_NGAN_HANG_API_KEY."""
+    """Đặt WEBHOOK_NGAN_HANG_API_KEY thì header phải là "Apikey <khóa>" (SePay) hoặc "Bearer <khóa>".
+
+    Để trống khóa thì bỏ qua xác thực (dùng cho hệ thống test). Môi trường thật phải đặt khóa,
+    nếu không ai cũng gửi được giao dịch giả để được cộng số dư.
+    """
     khoa = settings.webhook_ngan_hang_api_key
     if not khoa:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Chưa cấu hình WEBHOOK_NGAN_HANG_API_KEY",
-        )
+        logger.warning("Webhook ngân hàng đang KHÔNG xác thực (chưa đặt WEBHOOK_NGAN_HANG_API_KEY)")
+        return
     kieu, _, gia_tri = (authorization or "").strip().partition(" ")
     if kieu.lower() not in ("apikey", "bearer") or not hmac.compare_digest(gia_tri.strip(), khoa):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="API key webhook không hợp lệ")
