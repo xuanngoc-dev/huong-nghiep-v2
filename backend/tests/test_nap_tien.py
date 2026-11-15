@@ -179,6 +179,40 @@ class TestWebhook(unittest.TestCase):
         self.assertEqual(str(gd.thoi_gian_giao_dich), "2024-07-02 11:08:33")
         self.assertEqual(gd.trang_thai_doi_soat, nap_tien.CHUA_KHOP)
 
+    def _gui(self, **kwargs):
+        with patch.object(settings, "webhook_ngan_hang_api_key", ""):
+            return self.client.post(WEBHOOK, **kwargs)
+
+    def _form_sepay(self):
+        # SePay gửi dạng form: mọi giá trị là chuỗi, null thành chuỗi rỗng.
+        return {key: "" if value is None else str(value) for key, value in {**PAYLOAD, "subAccount": None}.items()}
+
+    def test_nhan_multipart_form_data(self):
+        files = {key: (None, value) for key, value in self._form_sepay().items()}
+        response = self._gui(files=files)
+        self.assertEqual(response.status_code, 200, response.text)
+        gd = self.db.da_them[0]
+        self.assertEqual(gd.ma_giao_dich_cong, "92704")
+        self.assertEqual(gd.so_tien, Decimal(5000000))
+        self.assertEqual(gd.so_du_luy_ke, Decimal(105000000))
+        self.assertIsNone(gd.tai_khoan_phu)
+
+    def test_nhan_x_www_form_urlencoded(self):
+        response = self._gui(data=self._form_sepay())
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertEqual(self.db.da_them[0].ma_tham_chieu, "FT24012345678")
+
+    def test_header_form_nhung_than_la_json(self):
+        import json
+
+        response = self._gui(content=json.dumps(PAYLOAD), headers={"Content-Type": "multipart/form-data"})
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertEqual(self.db.da_them[0].ngan_hang, "Vietcombank")
+
+    def test_thieu_so_tien_tra_422(self):
+        response = self._gui(data={**self._form_sepay(), "transferAmount": ""})
+        self.assertEqual(response.status_code, 422)
+
     def test_gui_lai_cung_id_khong_luu_trung(self):
         self.db.ket_qua = [SimpleNamespace(id=5, trang_thai_doi_soat=1)]
         with patch.object(settings, "webhook_ngan_hang_api_key", "dung"):

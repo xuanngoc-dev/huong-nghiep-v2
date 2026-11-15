@@ -31,6 +31,14 @@ class WebhookGiaoDichNganHang(BaseModel):
             return None
         return value
 
+    @field_validator("transfer_amount", "accumulated", mode="before")
+    @classmethod
+    def so_rong_la_none(cls, value):
+        # Gửi dạng form thì trường trống là chuỗi rỗng.
+        if isinstance(value, str) and not value.strip():
+            return None
+        return value
+
     @field_validator("gateway", "account_number", "sub_account", "code", "content", "description", "reference_code")
     @classmethod
     def empty_to_none(cls, value: str | None) -> str | None:

@@ -1,8 +1,11 @@
 import hmac
+import json
 import logging
 from typing import Literal
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, status
+from fastapi.exceptions import RequestValidationError
+from pydantic import ValidationError
 from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -55,16 +58,46 @@ def _kiem_tra_api_key(authorization: str | None) -> None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="API key webhook không hợp lệ")
 
 
+async def _doc_webhook(request: Request) -> WebhookGiaoDichNganHang:
+    """Đọc payload webhook dạng JSON, multipart/form-data hoặc x-www-form-urlencoded (SePay cho chọn kiểu gửi).
+
+    Header ghi là form nhưng thân là JSON (như lệnh curl mẫu của SePay) thì vẫn đọc theo JSON.
+    """
+    raw = await request.body()
+    loai = request.headers.get("content-type", "").lower()
+    data = None
+    if "json" not in loai and ("multipart/form-data" in loai or "x-www-form-urlencoded" in loai):
+        try:
+            form = await request.form()
+            data = {key: value for key, value in form.items() if isinstance(value, str)}
+        except Exception:  # noqa: BLE001 - thân không phải form hợp lệ, thử JSON bên dưới
+            data = None
+    if not data:
+        try:
+            data = json.loads(raw or b"{}")
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Dữ liệu webhook không đúng định dạng JSON hoặc form",
+            ) from None
+    if not isinstance(data, dict):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Dữ liệu webhook phải là một đối tượng")
+    try:
+        return WebhookGiaoDichNganHang.model_validate(data)
+    except ValidationError as error:
+        raise RequestValidationError(error.errors()) from None
+
+
 @webhook_router.post("/giao-dich-ngan-hang", response_model=WebhookKetQua)
 def nhan_webhook_giao_dich_ngan_hang(
-    payload: WebhookGiaoDichNganHang,
+    payload: WebhookGiaoDichNganHang = Depends(_doc_webhook),
     authorization: str | None = Header(default=None),
     db: Session = Depends(get_db),
 ) -> WebhookKetQua:
     """Nhận webhook biến động số dư (SePay), lưu vào lịch sử giao dịch ngân hàng và tự đối soát nạp tiền.
 
     Tiền vào có mã giao dịch nạp tiền (DH + 6 ký tự) trong nội dung và đủ số tiền thì tự xác nhận và cộng số dư.
-    Webhook gửi lại cùng `id` không bị lưu trùng.
+    Webhook gửi lại cùng `id` không bị lưu trùng. Nhận body JSON, multipart/form-data hoặc x-www-form-urlencoded.
     """
     _kiem_tra_api_key(authorization)
     ma_cong = str(payload.id)
