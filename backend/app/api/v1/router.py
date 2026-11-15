@@ -29,6 +29,8 @@ from app.api.v1.endpoints import (
     health,
     ht_cau_hinh_enduser,
     ht_cau_hinh_goi_cuoc,
+    ht_lich_su_giao_dich_ngan_hang,
+    ht_lich_su_nap_tien,
     ht_cau_hinh_tra_cuu,
     ht_ngan_hang_thanh_toan,
     ho_so,
@@ -52,6 +54,10 @@ api_router.include_router(ht_cau_hinh_enduser.public_router)
 api_router.include_router(ht_cau_hinh_enduser.router)
 api_router.include_router(ht_cau_hinh_goi_cuoc.public_router)
 api_router.include_router(ht_cau_hinh_goi_cuoc.router)
+api_router.include_router(ht_lich_su_nap_tien.member_router)
+api_router.include_router(ht_lich_su_nap_tien.router)
+api_router.include_router(ht_lich_su_giao_dich_ngan_hang.router)
+api_router.include_router(ht_lich_su_giao_dich_ngan_hang.webhook_router)
 api_router.include_router(ho_so.router)
 api_router.include_router(dm_tinh_thanh.router)
 api_router.include_router(dm_dan_toc.router)

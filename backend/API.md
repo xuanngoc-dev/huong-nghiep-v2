@@ -1,16 +1,16 @@
 # Danh sách API
 
-Tự sinh từ code lúc 15/11/2026 16:18 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 15/11/2026 17:10 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **259** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **268** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 149 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 68 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
-| [Khách vãng lai](#khach) | 42 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
+| [Quản trị (admin)](#quan_tri) | 153 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Thành viên (user)](#thanh_vien) | 72 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Khách vãng lai](#khach) | 43 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
 
@@ -246,6 +246,20 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `DELETE` | `/api/v1/he-thong/cau-hinh-tra-cuu/{item_id}` | Bắt buộc (admin) | Xóa một cấu hình tra cứu theo id. Không cho xóa cấu hình đang áp dụng cuối cùng. |
 | `PATCH` | `/api/v1/he-thong/cau-hinh-tra-cuu/{item_id}/trang-thai` | Bắt buộc (admin) | Bật/tắt nhanh một cấu hình. Bật cấu hình này thì các cấu hình khác tự tắt. |
 
+### `he-thong/giao-dich-ngan-hang`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/he-thong/giao-dich-ngan-hang` | Bắt buộc (admin) | Lịch sử giao dịch ngân hàng (tiền vào/ra), mới nhất trước. |
+
+### `he-thong/lich-su-nap-tien`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/he-thong/lich-su-nap-tien` | Bắt buộc (admin) | Toàn bộ lịch sử nạp tiền, mới nhất trước. |
+| `POST` | `/api/v1/he-thong/lich-su-nap-tien/{item_id}/tu-choi` | Bắt buộc (admin) | Từ chối giao dịch đang chờ (không nhận được tiền): chuyển sang thất bại, không cộng số dư. |
+| `POST` | `/api/v1/he-thong/lich-su-nap-tien/{item_id}/xac-nhan` | Bắt buộc (admin) | Xác nhận đã nhận tiền: chuyển sang thành công và cộng Edu coin/lượt cho người nạp. |
+
 ### `he-thong/ngan-hang-thanh-toan`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
@@ -471,6 +485,10 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 |---|---|---|---|
 | `GET` | `/api/v1/tai-khoan/ho-so` | Bắt buộc | Lấy toàn bộ hồ sơ của tài khoản đang đăng nhập: thông tin cá nhân, hồ sơ năng lực, Edu coin và số lượt còn lại. |
 | `PUT` | `/api/v1/tai-khoan/ho-so` | Bắt buộc | Cập nhật toàn bộ hồ sơ: thông tin cá nhân và hồ sơ năng lực dùng cho phân tích hướng nghiệp. |
+| `GET` | `/api/v1/tai-khoan/nap-tien` | Bắt buộc | Lịch sử nạp tiền của tài khoản đang đăng nhập, mới nhất trước. Lọc theo mã giao dịch/tên gói, trạng thái, loại. |
+| `POST` | `/api/v1/tai-khoan/nap-tien` | Bắt buộc | Đăng ký gói cước: tạo giao dịch chờ thanh toán với mã giao dịch làm nội dung chuyển khoản. |
+| `PATCH` | `/api/v1/tai-khoan/nap-tien/{item_id}` | Bắt buộc | Đổi ngân hàng chuyển khoản hoặc báo đã chuyển khoản cho giao dịch đang chờ của mình. |
+| `POST` | `/api/v1/tai-khoan/nap-tien/{item_id}/huy` | Bắt buộc | Hủy giao dịch đang chờ thanh toán của mình. |
 | `PUT` | `/api/v1/tai-khoan/thong-tin-ca-nhan` | Bắt buộc | Chỉ cập nhật thông tin cá nhân (họ tên, liên hệ, nhân thân, diện ưu tiên); giữ nguyên hồ sơ năng lực. |
 
 ### `tim-truong-phu-hop`
@@ -708,3 +726,9 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | `PUT` | `/api/v1/trac-nghiem/phien/{ssid}/chi-tiet/{chi_tiet_id}` | Không | Lưu đáp án của một câu trong phiên và điểm tương ứng. |
 | `GET` | `/api/v1/trac-nghiem/phien/{ssid}/ket-qua` | Không | Cộng điểm Holland của phiên theo đáp án đã lưu. |
 | `GET` | `/api/v1/trac-nghiem/phien/{ssid}/nganh-phu-hop` | Không | Ngành đào tạo khớp các mã Holland nổi bật của phiên. |
+
+### `webhook`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/webhook/giao-dich-ngan-hang` | Không | Nhận webhook biến động số dư (SePay), lưu vào lịch sử giao dịch ngân hàng và tự đối soát nạp tiền. |

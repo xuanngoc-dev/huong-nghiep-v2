@@ -19,6 +19,8 @@ from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
 from app.models.ht_cau_hinh_enduser import HtCauHinhEnduser
 from app.models.ht_cau_hinh_goi_cuoc import HtCauHinhGoiCuoc
 from app.models.ht_cau_hinh_tra_cuu import HtCauHinhTraCuu
+from app.models.ht_lich_su_giao_dich_ngan_hang import HtLichSuGiaoDichNganHang
+from app.models.ht_lich_su_nap_tien import HtLichSuNapTien
 from app.models.ht_ngan_hang_thanh_toan import HtNganHangThanhToan
 from app.models.tn_cau_hoi_trac_nghiem import TnCauHoiTracNghiem
 from app.models.tn_cau_tra_loi import TnCauTraLoi
@@ -78,6 +80,8 @@ __all__ = [
     "HtCauHinhEnduser",
     "HtCauHinhGoiCuoc",
     "HtCauHinhTraCuu",
+    "HtLichSuGiaoDichNganHang",
+    "HtLichSuNapTien",
     "HtNganHangThanhToan",
     "TnCauHoiTracNghiem",
     "TnCauTraLoi",

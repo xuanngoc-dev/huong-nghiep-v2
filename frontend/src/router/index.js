@@ -138,6 +138,12 @@ const router = createRouter({
           component: () => import('@/views/member/NapTien.vue'),
           meta: { title: 'Nạp tiền', requiresAuth: true },
         },
+        {
+          path: 'tai-khoan/lich-su-nap-tien',
+          name: 'lich-su-nap-tien',
+          component: () => import('@/views/member/LichSuNapTien.vue'),
+          meta: { title: 'Lịch sử nạp tiền', requiresAuth: true },
+        },
       ],
     },
     {
@@ -204,6 +210,18 @@ const router = createRouter({
           name: 'cau-hinh-goi-cuoc',
           component: () => import('@/views/admin/he-thong/CauHinhGoiCuoc.vue'),
           meta: { title: 'Cấu hình gói cước', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'he-thong/lich-su-nap-tien',
+          name: 'admin-lich-su-nap-tien',
+          component: () => import('@/views/admin/he-thong/LichSuNapTien.vue'),
+          meta: { title: 'Lịch sử nạp tiền', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'he-thong/giao-dich-ngan-hang',
+          name: 'giao-dich-ngan-hang',
+          component: () => import('@/views/admin/he-thong/GiaoDichNganHang.vue'),
+          meta: { title: 'Giao dịch ngân hàng', requiresAuth: true, requiresAdmin: true },
         },
         {
           path: 'danh-muc/tinh-thanh',

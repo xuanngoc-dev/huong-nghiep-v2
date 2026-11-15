@@ -158,6 +158,7 @@ declare module 'vue' {
     SideMenu: typeof import('./components/SideMenu.vue')['default']
     SinhVien: typeof import('./components/guest/doi-tuong/SinhVien.vue')['default']
     ThanhNienNgoaiTruong: typeof import('./components/guest/doi-tuong/ThanhNienNgoaiTruong.vue')['default']
+    ThanhToanDialog: typeof import('./components/member/ThanhToanDialog.vue')['default']
     TheThongKe: typeof import('./components/admin/dashboard/TheThongKe.vue')['default']
     ThiDaiHoc: typeof import('./components/guest/doi-tuong/HocSinhThpt/ThiDaiHoc.vue')['default']
     TinTucMoi: typeof import('./components/guest/chung/TinTucMoi.vue')['default']

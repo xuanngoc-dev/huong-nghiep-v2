@@ -6,10 +6,16 @@
           <h1 class="nap-tien__title">Nạp tiền</h1>
           <p class="nap-tien__lead">Nạp Edu coin hoặc mua thêm lượt tra cứu, hỏi đáp, khảo sát.</p>
         </div>
-        <CustomButton v-if="duongQuayLai" @click="quayLai">
-          <CustomIcon><Back /></CustomIcon>
-          <span>Quay lại tìm trường</span>
-        </CustomButton>
+        <div class="nap-tien__actions">
+          <CustomButton v-if="duongQuayLai" @click="quayLai">
+            <CustomIcon><Back /></CustomIcon>
+            <span>Quay lại tìm trường</span>
+          </CustomButton>
+          <CustomButton @click="router.push({ name: 'lich-su-nap-tien' })">
+            <CustomIcon><Tickets /></CustomIcon>
+            <span>Lịch sử nạp tiền</span>
+          </CustomButton>
+        </div>
       </div>
     </template>
 
@@ -63,121 +69,21 @@
             <span v-if="item.key !== 'edu_coin' && luotNhan(goi) > 0" class="goi__don-gia">
               ≈ {{ hienTien(Math.round(giaBan(goi) / luotNhan(goi))) }} / lượt
             </span>
-            <CustomButton type="primary" class="goi__dang-ky" @click="moThanhToan(goi)">Đăng ký</CustomButton>
+            <CustomButton
+              type="primary"
+              class="goi__dang-ky"
+              :loading="dangDangKy === goi.id"
+              :disabled="dangDangKy !== null && dangDangKy !== goi.id"
+              @click="dangKy(goi)"
+            >
+              Đăng ký
+            </CustomButton>
           </article>
         </div>
       </el-tab-pane>
     </el-tabs>
 
-    <CustomDialog v-model="thanhToanMo" title="Thanh toán gói cước" width="860px" @closed="goiThanhToan = null">
-      <div v-if="goiThanhToan" class="thanh-toan">
-        <section class="thanh-toan__goi" aria-label="Thông tin gói">
-          <div>
-            <span class="thanh-toan__loai">{{ loaiCuaGoi(goiThanhToan).tenTab }}</span>
-            <h3 class="thanh-toan__ten">{{ goiThanhToan.ten_goi_cuoc }}</h3>
-            <span class="nap-tien__muted">Mã gói: {{ goiThanhToan.ma_goi_cuoc }}</span>
-          </div>
-          <dl class="thanh-toan__tom-tat">
-            <div>
-              <dt>Nhận được</dt>
-              <dd>
-                <s v-if="khac(goiThanhToan.so_luot_nhan_duoc_khuyen_mai, goiThanhToan.so_luot_nhan_duoc_goc)" class="goi__cu">
-                  {{ hienSo(goiThanhToan.so_luot_nhan_duoc_goc) }}
-                </s>
-                <strong>{{ hienSo(luotNhan(goiThanhToan)) }}</strong> {{ loaiCuaGoi(goiThanhToan).donVi }}
-              </dd>
-            </div>
-            <div>
-              <dt>Thanh toán</dt>
-              <dd>
-                <s v-if="khac(goiThanhToan.gia_khuyen_mai, goiThanhToan.gia_goc)" class="goi__cu">
-                  {{ hienTien(goiThanhToan.gia_goc) }}
-                </s>
-                <strong class="thanh-toan__gia">{{ hienTien(giaBan(goiThanhToan)) }}</strong>
-              </dd>
-            </div>
-          </dl>
-        </section>
-
-        <!-- Trái: danh sách ngân hàng; phải: mã QR và thông tin chuyển khoản. Khung hẹp thì xếp dọc. -->
-        <div class="thanh-toan__than">
-          <section class="thanh-toan__ngan-hang" aria-label="Chọn ngân hàng">
-            <h4 class="thanh-toan__heading">Chọn ngân hàng thanh toán</h4>
-            <p v-if="loiNganHang" class="nap-tien__muted">{{ loiNganHang }}</p>
-            <p v-else-if="dangTaiNganHang" class="nap-tien__muted">Đang tải tài khoản nhận tiền…</p>
-            <p v-else-if="!nganHang.length" class="nap-tien__muted">
-              Hệ thống chưa có tài khoản nhận tiền, vui lòng quay lại sau.
-            </p>
-            <div v-else class="bank-pick" role="radiogroup" aria-label="Ngân hàng nhận tiền">
-              <button
-                v-for="item in nganHang"
-                :key="item.id"
-                type="button"
-                role="radio"
-                class="bank-pick__item"
-                :class="{ 'is-active': nganHangChonId === item.id }"
-                :aria-checked="nganHangChonId === item.id"
-                @click="nganHangChonId = item.id"
-              >
-                <img
-                  v-if="item.logo_ngan_hang"
-                  class="bank__logo"
-                  :src="apiAssetUrl(item.logo_ngan_hang)"
-                  :alt="item.ten_ngan_hang_viet_tat"
-                />
-                <span class="bank-pick__text">
-                  <strong>{{ item.ten_ngan_hang_viet_tat }}</strong>
-                  <span class="nap-tien__muted">{{ item.so_tai_khoan }}</span>
-                </span>
-              </button>
-            </div>
-          </section>
-
-          <section v-if="nganHangChon" class="thanh-toan__chuyen-khoan" aria-label="Thông tin chuyển khoản">
-            <div class="thanh-toan__qr">
-              <img
-                v-if="!loiQr"
-                :key="qrUrl"
-                :src="qrUrl"
-                :alt="`Mã VietQR chuyển khoản ${hienTien(giaBan(goiThanhToan))} tới ${nganHangChon.ten_ngan_hang_viet_tat}`"
-                width="260"
-                height="260"
-                @error="loiQr = true"
-              />
-              <p v-else class="thanh-toan__qr-loi">
-                Không tạo được mã QR cho ngân hàng này. Vui lòng chuyển khoản theo thông tin bên cạnh.
-              </p>
-              <!-- <span class="nap-tien__muted">Quét bằng ứng dụng ngân hàng để điền sẵn số tiền và nội dung.</span> -->
-            </div>
-            <dl class="bank__info">
-              <div v-for="dong in thongTinChuyenKhoan" :key="dong.nhan" class="bank__row">
-                <dt>{{ dong.nhan }}</dt>
-                <dd>
-                  <span :class="{ 'bank__value--strong': dong.dam }">{{ dong.hien }}</span>
-                  <CustomButton
-                    v-if="dong.saoChep"
-                    link
-                    type="primary"
-                    :aria-label="`Sao chép ${dong.nhan.toLowerCase()}`"
-                    @click="saoChep(dong.saoChep, dong.nhan)"
-                  >
-                    <CustomIcon><CopyDocument /></CustomIcon>
-                  </CustomButton>
-                </dd>
-              </div>
-            </dl>
-          </section>
-        </div>
-
-        <p class="nap-tien__note">
-          Ghi đúng nội dung chuyển khoản để hệ thống nhận ra tài khoản và gói bạn mua. Edu coin hoặc lượt mua thêm sẽ
-          được cộng sau khi thanh toán được xác nhận.
-        </p>
-      </div>
-      <template #footer>
-        <CustomButton @click="thanhToanMo = false">Đóng</CustomButton>
-      </template>
-    </CustomDialog>
+    <ThanhToanDialog v-model="thanhToanMo" :giao-dich="giaoDich" :goi="goiThanhToan" @updated="giaoDich = $event" />
   </el-card>
 </template>
 
@@ -186,12 +92,11 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { ChatDotRound, Coin, EditPen, Search } from '@element-plus/icons-vue'
-import { apiAssetUrl } from '@/api/apiUrl'
+import ThanhToanDialog from '@/components/member/ThanhToanDialog.vue'
 import { fetchGoiCuocDangBan } from '@/api/cauHinhGoiCuoc'
 import { fetchHoSo } from '@/api/hoSo'
-import { fetchNganHangNhanTien } from '@/api/nganHangThanhToan'
+import { taoNapTien } from '@/api/napTien'
 import { fetchLuotTimTruong } from '@/api/timTruongPhuHop'
-import { useAuthStore } from '@/stores/auth'
 
 defineOptions({ name: 'MemberNapTien' })
 
@@ -206,20 +111,16 @@ const KEYS = LOAI.map((item) => item.key)
 
 const route = useRoute()
 const router = useRouter()
-const auth = useAuthStore()
 const soDu = ref(null)
 const loiSoDu = ref('')
 const luotMienPhi = ref(null)
 const dsGoi = ref([])
 const dangTaiGoi = ref(false)
 const loiGoi = ref('')
-const nganHang = ref([])
-const dangTaiNganHang = ref(false)
-const loiNganHang = ref('')
 const thanhToanMo = ref(false)
+const giaoDich = ref(null)
 const goiThanhToan = ref(null)
-const nganHangChonId = ref(null)
-const loiQr = ref(false)
+const dangDangKy = ref(null)
 
 // Chỉ quay về trang trong ứng dụng, tránh chuyển hướng ra ngoài.
 const duongQuayLai = computed(() => {
@@ -244,42 +145,6 @@ watch(tab, (value) => {
 const goiTheoLoai = computed(() =>
   Object.fromEntries(KEYS.map((key) => [key, dsGoi.value.filter((goi) => goi.loai_ap_dung === key)])),
 )
-const nganHangChon = computed(() => nganHang.value.find((item) => item.id === nganHangChonId.value) || null)
-// Nội dung chuyển khoản chỉ gồm chữ, số và khoảng trắng: nhiều ngân hàng tự bỏ ký tự đặc biệt như "_".
-const noiDungChuyenKhoan = computed(() => {
-  const ma = String(goiThanhToan.value?.ma_goi_cuoc || '').replace(/[^0-9A-Za-z]/g, '').toUpperCase()
-  return `DHN ${auth.user?.id || ''} ${ma}`.replace(/\s+/g, ' ').trim()
-})
-// Ảnh VietQR (img.vietqr.io): mã ngân hàng là tên viết tắt (VCB, MB, ICB, ...) hoặc mã BIN theo danh sách VietQR.
-const qrUrl = computed(() => {
-  const bank = nganHangChon.value
-  const goi = goiThanhToan.value
-  if (!bank || !goi) return ''
-  const params = new URLSearchParams({
-    amount: String(giaBan(goi)),
-    addInfo: noiDungChuyenKhoan.value,
-    accountName: bank.chu_tai_khoan,
-  })
-  const ma = encodeURIComponent(bank.ten_ngan_hang_viet_tat)
-  const stk = encodeURIComponent(bank.so_tai_khoan)
-  return `https://img.vietqr.io/image/${ma}-${stk}-compact2.png?${params}`
-})
-const thongTinChuyenKhoan = computed(() => {
-  const bank = nganHangChon.value
-  if (!bank || !goiThanhToan.value) return []
-  const gia = giaBan(goiThanhToan.value)
-  return [
-    { nhan: 'Ngân hàng', hien: `${bank.ten_ngan_hang_viet_tat} - ${bank.ten_ngan_hang}` },
-    { nhan: 'Số tài khoản', hien: bank.so_tai_khoan, saoChep: bank.so_tai_khoan, dam: true },
-    { nhan: 'Chủ tài khoản', hien: bank.chu_tai_khoan },
-    { nhan: 'Số tiền', hien: hienTien(gia), saoChep: String(gia), dam: true },
-    { nhan: 'Nội dung', hien: noiDungChuyenKhoan.value, saoChep: noiDungChuyenKhoan.value, dam: true },
-  ]
-})
-
-watch(qrUrl, () => {
-  loiQr.value = false
-})
 
 function khac(khuyenMai, goc) {
   return khuyenMai !== null && khuyenMai !== undefined && Number(khuyenMai) !== Number(goc)
@@ -305,24 +170,24 @@ function hienTien(value) {
   return `${hienSo(value)} đ`
 }
 
-function loaiCuaGoi(goi) {
-  return LOAI.find((item) => item.key === goi.loai_ap_dung) || LOAI[0]
+function errorMessage(error, fallback) {
+  const detail = error?.response?.data?.detail
+  if (typeof detail === 'string') return detail
+  if (Array.isArray(detail) && detail[0]?.msg) return detail[0].msg
+  return fallback
 }
 
-function moThanhToan(goi) {
-  goiThanhToan.value = goi
-  if (!nganHang.value.some((item) => item.id === nganHangChonId.value)) {
-    nganHangChonId.value = nganHang.value[0]?.id ?? null
-  }
-  thanhToanMo.value = true
-}
-
-async function saoChep(text, nhan) {
+// Đăng ký: tạo (hoặc dùng lại) giao dịch chờ thanh toán rồi mở modal thanh toán.
+async function dangKy(goi) {
+  dangDangKy.value = goi.id
   try {
-    await navigator.clipboard.writeText(text)
-    ElMessage.success(`Đã sao chép ${nhan.toLowerCase()}`)
-  } catch {
-    ElMessage.error('Không sao chép được')
+    giaoDich.value = await taoNapTien({ goi_cuoc_id: goi.id })
+    goiThanhToan.value = goi
+    thanhToanMo.value = true
+  } catch (error) {
+    ElMessage.error(errorMessage(error, 'Không đăng ký được gói'))
+  } finally {
+    dangDangKy.value = null
   }
 }
 
@@ -361,24 +226,15 @@ async function taiGoi() {
   }
 }
 
-async function taiNganHang() {
-  dangTaiNganHang.value = true
-  loiNganHang.value = ''
-  try {
-    nganHang.value = await fetchNganHangNhanTien()
-    nganHangChonId.value ??= nganHang.value[0]?.id ?? null
-  } catch {
-    loiNganHang.value = 'Không tải được tài khoản nhận tiền.'
-  } finally {
-    dangTaiNganHang.value = false
-  }
-}
+// Đóng modal thì tải lại số dư (giao dịch có thể đã được cộng qua webhook).
+watch(thanhToanMo, (open) => {
+  if (!open) taiSoDu()
+})
 
 onMounted(() => {
   taiSoDu()
   taiLuotMienPhi()
   taiGoi()
-  taiNganHang()
 })
 </script>
 
@@ -393,6 +249,12 @@ onMounted(() => {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+}
+
+.nap-tien__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .nap-tien__title {
@@ -559,204 +421,6 @@ onMounted(() => {
   color: #0c5c34;
   font-size: 20px;
   font-weight: 700;
-}
-
-/* Modal thanh toán: 2 cột khi khung dialog đủ rộng (container query), hẹp thì xếp dọc. */
-.thanh-toan {
-  container-type: inline-size;
-  display: grid;
-  gap: 16px;
-}
-
-.thanh-toan__goi {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: var(--el-fill-color-lighter);
-}
-
-.thanh-toan__loai {
-  display: inline-block;
-  margin-bottom: 4px;
-  padding: 1px 8px;
-  border-radius: 999px;
-  background: #eef6f1;
-  color: #0c5c34;
-  font-size: 12px;
-}
-
-.thanh-toan__ten {
-  margin: 0 0 2px;
-  font-size: 18px;
-}
-
-.thanh-toan__tom-tat {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  margin: 0;
-}
-
-.thanh-toan__tom-tat dt {
-  color: var(--el-text-color-secondary);
-  font-size: 13px;
-  font-weight: 400;
-}
-
-.thanh-toan__tom-tat dd {
-  margin: 0;
-}
-
-.thanh-toan__gia {
-  color: #0c5c34;
-  font-size: 20px;
-}
-
-.thanh-toan__heading {
-  margin: 0 0 8px;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.thanh-toan__than {
-  display: grid;
-  gap: 16px;
-  align-items: start;
-}
-
-.bank-pick {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 8px;
-}
-
-.bank-pick__item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border: 1px solid var(--el-border-color);
-  border-radius: 10px;
-  background: var(--el-bg-color);
-  color: var(--el-text-color-primary);
-  text-align: left;
-  cursor: pointer;
-}
-
-.bank-pick__item:hover {
-  border-color: #3f9466;
-}
-
-.bank-pick__item.is-active {
-  border-color: #0c5c34;
-  box-shadow: 0 0 0 2px #0c5c34;
-}
-
-.bank-pick__text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.thanh-toan__chuyen-khoan {
-  display: grid;
-  gap: 16px;
-  align-items: start;
-}
-
-.thanh-toan__qr {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  text-align: center;
-}
-
-.thanh-toan__qr img {
-  width: 260px;
-  max-width: 100%;
-  height: auto;
-  border: 1px solid var(--el-border-color-lighter);
-  border-radius: 12px;
-  background: #fff;
-}
-
-.thanh-toan__qr-loi {
-  margin: 0;
-  padding: 16px;
-  border: 1px dashed var(--el-border-color);
-  border-radius: 12px;
-  color: var(--el-text-color-secondary);
-  font-size: 13px;
-}
-
-@container (min-width: 640px) {
-  .thanh-toan__than {
-    grid-template-columns: 260px minmax(0, 1fr);
-  }
-
-  .thanh-toan__ngan-hang .bank-pick {
-    grid-template-columns: minmax(0, 1fr);
-    max-height: 480px;
-    overflow-y: auto;
-    padding: 2px;
-  }
-
-  .thanh-toan__chuyen-khoan {
-    padding-left: 16px;
-    border-left: 1px solid var(--el-border-color-lighter);
-  }
-}
-
-.bank__logo {
-  width: 56px;
-  height: 36px;
-  object-fit: contain;
-  border: 1px solid var(--el-border-color-lighter);
-  border-radius: 6px;
-  background: #fff;
-}
-
-.bank__info {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-}
-
-.bank__row {
-  display: grid;
-  grid-template-columns: 110px minmax(0, 1fr);
-  gap: 8px;
-  align-items: center;
-}
-
-.bank__row dt {
-  color: var(--el-text-color-secondary);
-  font-weight: 400;
-}
-
-.bank__row dd {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-
-.bank__value--strong {
-  font-weight: 600;
-}
-
-.nap-tien__note {
-  margin: 12px 0 0;
-  color: var(--el-text-color-secondary);
-  font-size: 13px;
-  line-height: 1.5;
 }
 
 @media (max-width: 991px) {

@@ -208,6 +208,18 @@
           "title": "Cấu hình gói cước",
           "tooltip": "Giá và số lượt của các gói cước tra cứu, khảo sát, hỏi đáp",
           "icon": "PriceTag"
+        },
+        {
+          "index": "/admin/he-thong/lich-su-nap-tien",
+          "title": "Lịch sử nạp tiền",
+          "tooltip": "Giao dịch nạp tiền của thành viên, xác nhận hoặc từ chối",
+          "icon": "Tickets"
+        },
+        {
+          "index": "/admin/he-thong/giao-dich-ngan-hang",
+          "title": "Giao dịch ngân hàng",
+          "tooltip": "Tiền vào/ra các tài khoản ngân hàng nhận qua webhook",
+          "icon": "Money"
         }
       ]
     },
@@ -445,8 +457,14 @@
         {
           "index": "/member/tai-khoan/nap-tien",
           "title": "Nạp tiền",
-          "tooltip": "Mua thêm lượt tìm trường phù hợp",
+          "tooltip": "Nạp Edu coin, mua thêm lượt tra cứu, hỏi đáp, khảo sát",
           "icon": "Wallet"
+        },
+        {
+          "index": "/member/tai-khoan/lich-su-nap-tien",
+          "title": "Lịch sử nạp tiền",
+          "tooltip": "Các giao dịch nạp tiền và trạng thái thanh toán",
+          "icon": "Tickets"
         }
       ]
     }
