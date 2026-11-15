@@ -121,11 +121,11 @@
           </CustomTag>
         </template>
       </CustomTableColumn>
-      <!-- Có khuyến mãi: giá trị gốc gạch ngang, chữ nhỏ; giá trị khuyến mãi in đậm. Không có thì chỉ hiện giá trị gốc. -->
+      <!-- Khuyến mãi khác giá trị gốc: gốc gạch ngang, chữ nhỏ; khuyến mãi in đậm. Không có hoặc bằng nhau thì chỉ hiện giá trị gốc. -->
       <CustomTableColumn label="Giá" width="150" align="right">
         <template #default="{ row }">
           <div class="gia-tri">
-            <template v-if="coGiaTri(row.gia_khuyen_mai)">
+            <template v-if="khacGoc(row.gia_khuyen_mai, row.gia_goc)">
               <span class="gia-tri__goc">{{ formatTien(row.gia_goc) }}</span>
               <span class="gia-tri__km">{{ formatTien(row.gia_khuyen_mai) }}</span>
             </template>
@@ -136,7 +136,7 @@
       <CustomTableColumn label="Số lượt" width="120" align="center">
         <template #default="{ row }">
           <div class="gia-tri">
-            <template v-if="coGiaTri(row.so_luot_nhan_duoc_khuyen_mai)">
+            <template v-if="khacGoc(row.so_luot_nhan_duoc_khuyen_mai, row.so_luot_nhan_duoc_goc)">
               <span class="gia-tri__goc">{{ formatSo(row.so_luot_nhan_duoc_goc) }}</span>
               <span class="gia-tri__km">{{ formatSo(row.so_luot_nhan_duoc_khuyen_mai) }}</span>
             </template>
@@ -373,8 +373,9 @@ function loaiApDung(value) {
   return LOAI_AP_DUNG.find((item) => item.value === value) || { label: value || '—', tag: 'info' }
 }
 
-function coGiaTri(value) {
-  return value !== null && value !== undefined
+// Có giá trị khuyến mãi và khác giá trị gốc thì mới hiện cả hai.
+function khacGoc(khuyenMai, goc) {
+  return khuyenMai !== null && khuyenMai !== undefined && Number(khuyenMai) !== Number(goc)
 }
 
 function formatSo(value) {
