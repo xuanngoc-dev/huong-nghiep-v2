@@ -241,7 +241,7 @@ const nhom = computed(() => {
   return groups
 })
 
-const tenLoai = computed(() => nhom.value.find((item) => item.id === loaiCauHoiId.value)?.ten || '')
+// const tenLoai = computed(() => nhom.value.find((item) => item.id === loaiCauHoiId.value)?.ten || '')
 const buoc = computed(() => {
   const steps = nhom.value.map((group) => {
     const items = cauHoi.value.filter((item) => item.loai_cau_hoi_id === group.id)
