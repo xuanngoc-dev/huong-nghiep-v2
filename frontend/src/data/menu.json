@@ -202,6 +202,12 @@
           "title": "Cấu hình EndUser",
           "tooltip": "Các cấu hình JSON dùng cho giao diện người dùng cuối",
           "icon": "Tools"
+        },
+        {
+          "index": "/admin/he-thong/cau-hinh-goi-cuoc",
+          "title": "Cấu hình gói cước",
+          "tooltip": "Giá và số lượt của các gói cước tra cứu, khảo sát, hỏi đáp",
+          "icon": "PriceTag"
         }
       ]
     },

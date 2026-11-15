@@ -1,22 +1,122 @@
 # Danh sách API
 
-Tự sinh từ code lúc 12/11/2026 16:21 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 15/11/2026 14:54 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **242** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **257** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 45 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 156 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
-| [Khách vãng lai](#khach) | 41 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
+| [Quản trị (admin)](#quan_tri) | 149 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Thành viên (user)](#thanh_vien) | 66 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Khách vãng lai](#khach) | 42 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
 
 ## Quản trị (admin)
 
 Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403.
+
+### `danh-muc/bai-thi-danh-gia-nang-luc`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/bai-thi-danh-gia-nang-luc` | Bắt buộc (admin) | Thêm một bài thi đánh giá năng lực. Từ chối nếu mã đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/bai-thi-danh-gia-nang-luc` | Bắt buộc (admin) | Xóa nhiều bài thi đánh giá năng lực theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/bai-thi-danh-gia-nang-luc/bulk` | Bắt buộc (admin) | Thêm nhiều bài thi đánh giá năng lực cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/bai-thi-danh-gia-nang-luc/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một bài thi đánh giá năng lực theo id. |
+| `DELETE` | `/api/v1/danh-muc/bai-thi-danh-gia-nang-luc/{item_id}` | Bắt buộc (admin) | Xóa một bài thi đánh giá năng lực theo id. |
+
+### `danh-muc/bang-cap-chung-chi`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/bang-cap-chung-chi` | Bắt buộc (admin) | Thêm một chứng chỉ ngoại ngữ. Từ chối nếu mã đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/bang-cap-chung-chi` | Bắt buộc (admin) | Xóa nhiều chứng chỉ ngoại ngữ theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/bang-cap-chung-chi/bulk` | Bắt buộc (admin) | Thêm nhiều chứng chỉ ngoại ngữ cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/bang-cap-chung-chi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một chứng chỉ ngoại ngữ theo id. |
+| `DELETE` | `/api/v1/danh-muc/bang-cap-chung-chi/{item_id}` | Bắt buộc (admin) | Xóa một chứng chỉ ngoại ngữ theo id. |
+
+### `danh-muc/chuyen-nganh`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/chuyen-nganh` | Bắt buộc (admin) | Thêm một chuyên ngành. Từ chối nếu mã đã tồn tại, ngành cha hoặc mã Holland không tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/chuyen-nganh` | Bắt buộc (admin) | Xóa nhiều chuyên ngành theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/chuyen-nganh/bulk` | Bắt buộc (admin) | Thêm nhiều chuyên ngành cùng lúc. Từ chối nếu mã trùng, ngành cha hoặc mã Holland không tồn tại. |
+| `PUT` | `/api/v1/danh-muc/chuyen-nganh/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một chuyên ngành theo id. |
+| `DELETE` | `/api/v1/danh-muc/chuyen-nganh/{item_id}` | Bắt buộc (admin) | Xóa một chuyên ngành theo id. |
+
+### `danh-muc/dan-toc`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/dan-toc` | Bắt buộc (admin) | Thêm một dân tộc. Từ chối nếu mã dân tộc đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/dan-toc` | Bắt buộc (admin) | Xóa nhiều dân tộc theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/dan-toc/bulk` | Bắt buộc (admin) | Thêm nhiều dân tộc cùng lúc. Từ chối nếu mã dân tộc trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/dan-toc/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một dân tộc theo id. |
+| `DELETE` | `/api/v1/danh-muc/dan-toc/{item_id}` | Bắt buộc (admin) | Xóa một dân tộc theo id. |
+
+### `danh-muc/doi-tuong-uu-tien`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/doi-tuong-uu-tien` | Bắt buộc (admin) | Thêm một đối tượng ưu tiên. Từ chối nếu mã đối tượng đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/doi-tuong-uu-tien` | Bắt buộc (admin) | Xóa nhiều đối tượng ưu tiên theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/doi-tuong-uu-tien/bulk` | Bắt buộc (admin) | Thêm nhiều đối tượng ưu tiên cùng lúc. Từ chối nếu mã đối tượng trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/doi-tuong-uu-tien/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một đối tượng ưu tiên theo id. |
+| `DELETE` | `/api/v1/danh-muc/doi-tuong-uu-tien/{item_id}` | Bắt buộc (admin) | Xóa một đối tượng ưu tiên theo id. |
+
+### `danh-muc/khu-vuc-uu-tien`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/khu-vuc-uu-tien` | Bắt buộc (admin) | Thêm một khu vực ưu tiên. Từ chối nếu mã khu vực đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/khu-vuc-uu-tien` | Bắt buộc (admin) | Xóa nhiều khu vực ưu tiên theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/khu-vuc-uu-tien/bulk` | Bắt buộc (admin) | Thêm nhiều khu vực ưu tiên cùng lúc. Từ chối nếu mã khu vực trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/khu-vuc-uu-tien/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một khu vực ưu tiên theo id. |
+| `DELETE` | `/api/v1/danh-muc/khu-vuc-uu-tien/{item_id}` | Bắt buộc (admin) | Xóa một khu vực ưu tiên theo id. |
+
+### `danh-muc/linh-vuc-dao-tao`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/linh-vuc-dao-tao` | Bắt buộc (admin) | Thêm một lĩnh vực đào tạo. Từ chối nếu mã lĩnh vực đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/linh-vuc-dao-tao` | Bắt buộc (admin) | Xóa nhiều lĩnh vực đào tạo theo danh sách id. Từ chối nếu còn nhóm ngành thuộc các lĩnh vực đó. |
+| `POST` | `/api/v1/danh-muc/linh-vuc-dao-tao/bulk` | Bắt buộc (admin) | Thêm nhiều lĩnh vực cùng lúc. Từ chối nếu mã lĩnh vực trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/linh-vuc-dao-tao/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một lĩnh vực đào tạo theo id. |
+| `DELETE` | `/api/v1/danh-muc/linh-vuc-dao-tao/{item_id}` | Bắt buộc (admin) | Xóa một lĩnh vực đào tạo theo id. Từ chối nếu còn nhóm ngành thuộc lĩnh vực đó. |
+
+### `danh-muc/loai-cau-hoi`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/loai-cau-hoi` | Bắt buộc (admin) | Thêm một loại câu hỏi. Từ chối nếu thứ tự ưu tiên đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/loai-cau-hoi` | Bắt buộc (admin) | Xóa nhiều loại câu hỏi theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/loai-cau-hoi/bulk` | Bắt buộc (admin) | Thêm nhiều loại câu hỏi cùng lúc. Từ chối nếu thứ tự ưu tiên trùng trong dữ liệu hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/loai-cau-hoi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một loại câu hỏi theo id. |
+| `DELETE` | `/api/v1/danh-muc/loai-cau-hoi/{item_id}` | Bắt buộc (admin) | Xóa một loại câu hỏi theo id. |
+
+### `danh-muc/mon-hoc`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/mon-hoc` | Bắt buộc (admin) | Thêm một môn học. Từ chối nếu mã môn đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/mon-hoc` | Bắt buộc (admin) | Xóa nhiều môn học theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/mon-hoc/bulk` | Bắt buộc (admin) | Thêm nhiều môn học cùng lúc. Từ chối nếu mã môn trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/mon-hoc/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một môn học theo id. |
+| `DELETE` | `/api/v1/danh-muc/mon-hoc/{item_id}` | Bắt buộc (admin) | Xóa một môn học theo id. |
+
+### `danh-muc/nganh-dao-tao`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/nganh-dao-tao` | Bắt buộc (admin) | Thêm một ngành đào tạo. Từ chối nếu mã đã tồn tại, nhóm ngành cha hoặc mã Holland không tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/nganh-dao-tao` | Bắt buộc (admin) | Xóa nhiều ngành theo danh sách id. Từ chối nếu còn chuyên ngành thuộc các ngành đó. |
+| `POST` | `/api/v1/danh-muc/nganh-dao-tao/bulk` | Bắt buộc (admin) | Thêm nhiều ngành cùng lúc. Từ chối nếu mã trùng, nhóm ngành cha hoặc mã Holland không tồn tại. |
+| `PUT` | `/api/v1/danh-muc/nganh-dao-tao/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một ngành đào tạo theo id. |
+| `DELETE` | `/api/v1/danh-muc/nganh-dao-tao/{item_id}` | Bắt buộc (admin) | Xóa một ngành đào tạo theo id. Từ chối nếu còn chuyên ngành thuộc ngành đó. |
 
 ### `danh-muc/nganh-hoc-theo-truong`
 
@@ -29,6 +129,110 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `GET` | `/api/v1/danh-muc/nganh-hoc-theo-truong/{item_id}` | Bắt buộc (admin) | Lấy chi tiết một ngành đào tạo theo id. |
 | `PUT` | `/api/v1/danh-muc/nganh-hoc-theo-truong/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một ngành đào tạo theo id. |
 | `DELETE` | `/api/v1/danh-muc/nganh-hoc-theo-truong/{item_id}` | Bắt buộc (admin) | Xóa một ngành đào tạo theo id. |
+
+### `danh-muc/nhom-nganh-dao-tao`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/nhom-nganh-dao-tao` | Bắt buộc (admin) | Thêm một nhóm ngành đào tạo. Từ chối nếu mã đã tồn tại hoặc lĩnh vực cha không tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/nhom-nganh-dao-tao` | Bắt buộc (admin) | Xóa nhiều nhóm ngành theo danh sách id. Từ chối nếu còn ngành thuộc các nhóm đó. |
+| `POST` | `/api/v1/danh-muc/nhom-nganh-dao-tao/bulk` | Bắt buộc (admin) | Thêm nhiều nhóm ngành cùng lúc. Từ chối nếu mã trùng hoặc lĩnh vực cha không tồn tại. |
+| `PUT` | `/api/v1/danh-muc/nhom-nganh-dao-tao/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một nhóm ngành đào tạo theo id. |
+| `DELETE` | `/api/v1/danh-muc/nhom-nganh-dao-tao/{item_id}` | Bắt buộc (admin) | Xóa một nhóm ngành đào tạo theo id. Từ chối nếu còn ngành thuộc nhóm đó. |
+
+### `danh-muc/nhom-tinh-cach-holland`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/nhom-tinh-cach-holland` | Bắt buộc (admin) | Thêm một nhóm tính cách Holland. Từ chối nếu mã nhóm đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/nhom-tinh-cach-holland` | Bắt buộc (admin) | Xóa nhiều nhóm tính cách Holland theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/nhom-tinh-cach-holland/bulk` | Bắt buộc (admin) | Thêm nhiều nhóm Holland cùng lúc. Từ chối nếu mã nhóm trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/nhom-tinh-cach-holland/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một nhóm tính cách Holland theo id. |
+| `DELETE` | `/api/v1/danh-muc/nhom-tinh-cach-holland/{item_id}` | Bắt buộc (admin) | Xóa một nhóm tính cách Holland theo id. |
+
+### `danh-muc/phuong-thuc-tuyen-sinh`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/phuong-thuc-tuyen-sinh` | Bắt buộc (admin) | Thêm một phương thức tuyển sinh. Từ chối nếu mã phương thức đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/phuong-thuc-tuyen-sinh` | Bắt buộc (admin) | Xóa nhiều phương thức tuyển sinh theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/phuong-thuc-tuyen-sinh/bulk` | Bắt buộc (admin) | Thêm nhiều phương thức tuyển sinh cùng lúc. Từ chối nếu mã phương thức trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/phuong-thuc-tuyen-sinh/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một phương thức tuyển sinh theo id. |
+| `DELETE` | `/api/v1/danh-muc/phuong-thuc-tuyen-sinh/{item_id}` | Bắt buộc (admin) | Xóa một phương thức tuyển sinh theo id. |
+
+### `danh-muc/thanh-tich-hoc-tap-nghien-cuu`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu` | Bắt buộc (admin) | Thêm một thành tích học tập, nghiên cứu. Từ chối nếu mã đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu` | Bắt buộc (admin) | Xóa nhiều thành tích học tập, nghiên cứu theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/bulk` | Bắt buộc (admin) | Thêm nhiều thành tích học tập, nghiên cứu cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một thành tích học tập, nghiên cứu theo id. |
+| `DELETE` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc (admin) | Xóa một thành tích học tập, nghiên cứu theo id. |
+
+### `danh-muc/tinh-thanh`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/tinh-thanh` | Bắt buộc (admin) | Thêm một tỉnh thành. Từ chối nếu mã tỉnh đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/tinh-thanh` | Bắt buộc (admin) | Xóa nhiều tỉnh thành theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/tinh-thanh/bulk` | Bắt buộc (admin) | Thêm nhiều tỉnh thành cùng lúc. Từ chối nếu mã tỉnh trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/tinh-thanh/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một tỉnh thành theo id. |
+| `DELETE` | `/api/v1/danh-muc/tinh-thanh/{item_id}` | Bắt buộc (admin) | Xóa một tỉnh thành theo id. |
+
+### `danh-muc/to-hop-mon-hoc`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/to-hop-mon-hoc` | Bắt buộc (admin) | Thêm một tổ hợp môn học. Từ chối nếu mã tổ hợp đã tồn tại hoặc mã môn không có trong danh mục. |
+| `DELETE` | `/api/v1/danh-muc/to-hop-mon-hoc` | Bắt buộc (admin) | Xóa nhiều tổ hợp môn học theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/to-hop-mon-hoc/bulk` | Bắt buộc (admin) | Thêm nhiều tổ hợp cùng lúc. Từ chối nếu mã tổ hợp trùng hoặc mã môn học không có trong danh mục. |
+| `PUT` | `/api/v1/danh-muc/to-hop-mon-hoc/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một tổ hợp môn học theo id. |
+| `DELETE` | `/api/v1/danh-muc/to-hop-mon-hoc/{item_id}` | Bắt buộc (admin) | Xóa một tổ hợp môn học theo id. |
+
+### `danh-muc/ton-giao`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/ton-giao` | Bắt buộc (admin) | Thêm một tôn giáo. Từ chối nếu mã tôn giáo đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/ton-giao` | Bắt buộc (admin) | Xóa nhiều tôn giáo theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/ton-giao/bulk` | Bắt buộc (admin) | Thêm nhiều tôn giáo cùng lúc. Từ chối nếu mã tôn giáo trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/ton-giao/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một tôn giáo theo id. |
+| `DELETE` | `/api/v1/danh-muc/ton-giao/{item_id}` | Bắt buộc (admin) | Xóa một tôn giáo theo id. |
+
+### `danh-muc/truong-hoc`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/truong-hoc` | Bắt buộc (admin) | Thêm một trường học. Từ chối nếu mã trường đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/truong-hoc` | Bắt buộc (admin) | Xóa nhiều trường học theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/truong-hoc/bulk` | Bắt buộc (admin) | Thêm nhiều trường học cùng lúc. Từ chối nếu mã trường trùng trong dữ liệu hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/truong-hoc/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một trường học theo id. |
+| `DELETE` | `/api/v1/danh-muc/truong-hoc/{item_id}` | Bắt buộc (admin) | Xóa một trường học theo id. |
+
+### `he-thong/cau-hinh-enduser`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/he-thong/cau-hinh-enduser` | Bắt buộc (admin) | Lấy danh sách cấu hình EndUser có phân trang. Lọc theo từ khóa (tên, mô tả), kiểu trả lời và trạng thái. |
+| `POST` | `/api/v1/he-thong/cau-hinh-enduser` | Bắt buộc (admin) | Thêm một cấu hình EndUser. |
+| `DELETE` | `/api/v1/he-thong/cau-hinh-enduser` | Bắt buộc (admin) | Xóa nhiều cấu hình EndUser theo danh sách id. |
+| `GET` | `/api/v1/he-thong/cau-hinh-enduser/{item_id}` | Bắt buộc (admin) | Lấy chi tiết một cấu hình EndUser theo id. |
+| `PUT` | `/api/v1/he-thong/cau-hinh-enduser/{item_id}` | Bắt buộc (admin) | Cập nhật thông tin một cấu hình EndUser theo id. Trường không gửi lên (vd. noi_dung_cau_hinh) được giữ nguyên. |
+| `DELETE` | `/api/v1/he-thong/cau-hinh-enduser/{item_id}` | Bắt buộc (admin) | Xóa một cấu hình EndUser theo id. |
+| `PATCH` | `/api/v1/he-thong/cau-hinh-enduser/{item_id}/trang-thai` | Bắt buộc (admin) | Bật/tắt nhanh trạng thái của một cấu hình EndUser. |
+
+### `he-thong/cau-hinh-goi-cuoc`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/he-thong/cau-hinh-goi-cuoc` | Bắt buộc (admin) | Lấy danh sách gói cước có phân trang. Lọc theo từ khóa (mã, tên, ghi chú), loại áp dụng và trạng thái. |
+| `POST` | `/api/v1/he-thong/cau-hinh-goi-cuoc` | Bắt buộc (admin) | Thêm một gói cước. Từ chối nếu trùng mã gói cước. |
+| `DELETE` | `/api/v1/he-thong/cau-hinh-goi-cuoc` | Bắt buộc (admin) | Xóa nhiều gói cước theo danh sách id. |
+| `GET` | `/api/v1/he-thong/cau-hinh-goi-cuoc/{item_id}` | Bắt buộc (admin) | Lấy chi tiết một gói cước theo id. |
+| `PUT` | `/api/v1/he-thong/cau-hinh-goi-cuoc/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một gói cước theo id. |
+| `DELETE` | `/api/v1/he-thong/cau-hinh-goi-cuoc/{item_id}` | Bắt buộc (admin) | Xóa một gói cước theo id. |
+| `PATCH` | `/api/v1/he-thong/cau-hinh-goi-cuoc/{item_id}/trang-thai` | Bắt buộc (admin) | Bật/tắt nhanh trạng thái hoạt động của một gói cước. |
 
 ### `he-thong/cau-hinh-tra-cuu`
 
@@ -131,199 +335,109 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/bai-thi-danh-gia-nang-luc` | Bắt buộc | Thêm một bài thi đánh giá năng lực. Từ chối nếu mã đã tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/bai-thi-danh-gia-nang-luc` | Bắt buộc | Xóa nhiều bài thi đánh giá năng lực theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/bai-thi-danh-gia-nang-luc/bulk` | Bắt buộc | Thêm nhiều bài thi đánh giá năng lực cùng lúc. |
 | `GET` | `/api/v1/danh-muc/bai-thi-danh-gia-nang-luc/{item_id}` | Bắt buộc | Lấy chi tiết một bài thi đánh giá năng lực theo id. |
-| `PUT` | `/api/v1/danh-muc/bai-thi-danh-gia-nang-luc/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một bài thi đánh giá năng lực theo id. |
-| `DELETE` | `/api/v1/danh-muc/bai-thi-danh-gia-nang-luc/{item_id}` | Bắt buộc | Xóa một bài thi đánh giá năng lực theo id. |
 
 ### `danh-muc/bang-cap-chung-chi`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/bang-cap-chung-chi` | Bắt buộc | Thêm một chứng chỉ ngoại ngữ. Từ chối nếu mã đã tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/bang-cap-chung-chi` | Bắt buộc | Xóa nhiều chứng chỉ ngoại ngữ theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/bang-cap-chung-chi/bulk` | Bắt buộc | Thêm nhiều chứng chỉ ngoại ngữ cùng lúc. |
 | `GET` | `/api/v1/danh-muc/bang-cap-chung-chi/{item_id}` | Bắt buộc | Lấy chi tiết một chứng chỉ ngoại ngữ theo id. |
-| `PUT` | `/api/v1/danh-muc/bang-cap-chung-chi/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một chứng chỉ ngoại ngữ theo id. |
-| `DELETE` | `/api/v1/danh-muc/bang-cap-chung-chi/{item_id}` | Bắt buộc | Xóa một chứng chỉ ngoại ngữ theo id. |
 
 ### `danh-muc/chuyen-nganh`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/chuyen-nganh` | Bắt buộc | Thêm một chuyên ngành. Từ chối nếu mã đã tồn tại, ngành cha hoặc mã Holland không tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/chuyen-nganh` | Bắt buộc | Xóa nhiều chuyên ngành theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/chuyen-nganh/bulk` | Bắt buộc | Thêm nhiều chuyên ngành cùng lúc. Từ chối nếu mã trùng, ngành cha hoặc mã Holland không tồn tại. |
 | `GET` | `/api/v1/danh-muc/chuyen-nganh/{item_id}` | Bắt buộc | Lấy chi tiết một chuyên ngành theo id, kèm tên ngành cha. |
-| `PUT` | `/api/v1/danh-muc/chuyen-nganh/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một chuyên ngành theo id. |
-| `DELETE` | `/api/v1/danh-muc/chuyen-nganh/{item_id}` | Bắt buộc | Xóa một chuyên ngành theo id. |
 
 ### `danh-muc/dan-toc`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/dan-toc` | Bắt buộc | Thêm một dân tộc. Từ chối nếu mã dân tộc đã tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/dan-toc` | Bắt buộc | Xóa nhiều dân tộc theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/dan-toc/bulk` | Bắt buộc | Thêm nhiều dân tộc cùng lúc. Từ chối nếu mã dân tộc trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
 | `GET` | `/api/v1/danh-muc/dan-toc/{item_id}` | Bắt buộc | Lấy chi tiết một dân tộc theo id. |
-| `PUT` | `/api/v1/danh-muc/dan-toc/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một dân tộc theo id. |
-| `DELETE` | `/api/v1/danh-muc/dan-toc/{item_id}` | Bắt buộc | Xóa một dân tộc theo id. |
 
 ### `danh-muc/doi-tuong-uu-tien`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/doi-tuong-uu-tien` | Bắt buộc | Thêm một đối tượng ưu tiên. Từ chối nếu mã đối tượng đã tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/doi-tuong-uu-tien` | Bắt buộc | Xóa nhiều đối tượng ưu tiên theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/doi-tuong-uu-tien/bulk` | Bắt buộc | Thêm nhiều đối tượng ưu tiên cùng lúc. Từ chối nếu mã đối tượng trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
 | `GET` | `/api/v1/danh-muc/doi-tuong-uu-tien/{item_id}` | Bắt buộc | Lấy chi tiết một đối tượng ưu tiên theo id. |
-| `PUT` | `/api/v1/danh-muc/doi-tuong-uu-tien/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một đối tượng ưu tiên theo id. |
-| `DELETE` | `/api/v1/danh-muc/doi-tuong-uu-tien/{item_id}` | Bắt buộc | Xóa một đối tượng ưu tiên theo id. |
 
 ### `danh-muc/khu-vuc-uu-tien`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/khu-vuc-uu-tien` | Bắt buộc | Thêm một khu vực ưu tiên. Từ chối nếu mã khu vực đã tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/khu-vuc-uu-tien` | Bắt buộc | Xóa nhiều khu vực ưu tiên theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/khu-vuc-uu-tien/bulk` | Bắt buộc | Thêm nhiều khu vực ưu tiên cùng lúc. Từ chối nếu mã khu vực trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
 | `GET` | `/api/v1/danh-muc/khu-vuc-uu-tien/{item_id}` | Bắt buộc | Lấy chi tiết một khu vực ưu tiên theo id. |
-| `PUT` | `/api/v1/danh-muc/khu-vuc-uu-tien/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một khu vực ưu tiên theo id. |
-| `DELETE` | `/api/v1/danh-muc/khu-vuc-uu-tien/{item_id}` | Bắt buộc | Xóa một khu vực ưu tiên theo id. |
 
 ### `danh-muc/linh-vuc-dao-tao`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/linh-vuc-dao-tao` | Bắt buộc | Thêm một lĩnh vực đào tạo. Từ chối nếu mã lĩnh vực đã tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/linh-vuc-dao-tao` | Bắt buộc | Xóa nhiều lĩnh vực đào tạo theo danh sách id. Từ chối nếu còn nhóm ngành thuộc các lĩnh vực đó. |
-| `POST` | `/api/v1/danh-muc/linh-vuc-dao-tao/bulk` | Bắt buộc | Thêm nhiều lĩnh vực cùng lúc. Từ chối nếu mã lĩnh vực trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
 | `GET` | `/api/v1/danh-muc/linh-vuc-dao-tao/{item_id}` | Bắt buộc | Lấy chi tiết một lĩnh vực đào tạo theo id. |
-| `PUT` | `/api/v1/danh-muc/linh-vuc-dao-tao/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một lĩnh vực đào tạo theo id. |
-| `DELETE` | `/api/v1/danh-muc/linh-vuc-dao-tao/{item_id}` | Bắt buộc | Xóa một lĩnh vực đào tạo theo id. Từ chối nếu còn nhóm ngành thuộc lĩnh vực đó. |
 
 ### `danh-muc/loai-cau-hoi`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/loai-cau-hoi` | Bắt buộc | Thêm một loại câu hỏi. Từ chối nếu thứ tự ưu tiên đã tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/loai-cau-hoi` | Bắt buộc | Xóa nhiều loại câu hỏi theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/loai-cau-hoi/bulk` | Bắt buộc | Thêm nhiều loại câu hỏi cùng lúc. Từ chối nếu thứ tự ưu tiên trùng trong dữ liệu hoặc đã có trong hệ thống. |
 | `GET` | `/api/v1/danh-muc/loai-cau-hoi/{item_id}` | Bắt buộc | Lấy chi tiết một loại câu hỏi theo id. |
-| `PUT` | `/api/v1/danh-muc/loai-cau-hoi/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một loại câu hỏi theo id. |
-| `DELETE` | `/api/v1/danh-muc/loai-cau-hoi/{item_id}` | Bắt buộc | Xóa một loại câu hỏi theo id. |
 
 ### `danh-muc/mon-hoc`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/mon-hoc` | Bắt buộc | Thêm một môn học. Từ chối nếu mã môn đã tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/mon-hoc` | Bắt buộc | Xóa nhiều môn học theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/mon-hoc/bulk` | Bắt buộc | Thêm nhiều môn học cùng lúc. Từ chối nếu mã môn trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
 | `GET` | `/api/v1/danh-muc/mon-hoc/{item_id}` | Bắt buộc | Lấy chi tiết một môn học theo id. |
-| `PUT` | `/api/v1/danh-muc/mon-hoc/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một môn học theo id. |
-| `DELETE` | `/api/v1/danh-muc/mon-hoc/{item_id}` | Bắt buộc | Xóa một môn học theo id. |
 
 ### `danh-muc/nganh-dao-tao`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/nganh-dao-tao` | Bắt buộc | Thêm một ngành đào tạo. Từ chối nếu mã đã tồn tại, nhóm ngành cha hoặc mã Holland không tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/nganh-dao-tao` | Bắt buộc | Xóa nhiều ngành theo danh sách id. Từ chối nếu còn chuyên ngành thuộc các ngành đó. |
-| `POST` | `/api/v1/danh-muc/nganh-dao-tao/bulk` | Bắt buộc | Thêm nhiều ngành cùng lúc. Từ chối nếu mã trùng, nhóm ngành cha hoặc mã Holland không tồn tại. |
 | `GET` | `/api/v1/danh-muc/nganh-dao-tao/{item_id}` | Bắt buộc | Lấy chi tiết một ngành đào tạo theo id, kèm tên nhóm ngành cha. |
-| `PUT` | `/api/v1/danh-muc/nganh-dao-tao/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một ngành đào tạo theo id. |
-| `DELETE` | `/api/v1/danh-muc/nganh-dao-tao/{item_id}` | Bắt buộc | Xóa một ngành đào tạo theo id. Từ chối nếu còn chuyên ngành thuộc ngành đó. |
 
 ### `danh-muc/nhom-nganh-dao-tao`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/nhom-nganh-dao-tao` | Bắt buộc | Thêm một nhóm ngành đào tạo. Từ chối nếu mã đã tồn tại hoặc lĩnh vực cha không tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/nhom-nganh-dao-tao` | Bắt buộc | Xóa nhiều nhóm ngành theo danh sách id. Từ chối nếu còn ngành thuộc các nhóm đó. |
-| `POST` | `/api/v1/danh-muc/nhom-nganh-dao-tao/bulk` | Bắt buộc | Thêm nhiều nhóm ngành cùng lúc. Từ chối nếu mã trùng hoặc lĩnh vực cha không tồn tại. |
 | `GET` | `/api/v1/danh-muc/nhom-nganh-dao-tao/{item_id}` | Bắt buộc | Lấy chi tiết một nhóm ngành đào tạo theo id, kèm tên lĩnh vực cha. |
-| `PUT` | `/api/v1/danh-muc/nhom-nganh-dao-tao/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một nhóm ngành đào tạo theo id. |
-| `DELETE` | `/api/v1/danh-muc/nhom-nganh-dao-tao/{item_id}` | Bắt buộc | Xóa một nhóm ngành đào tạo theo id. Từ chối nếu còn ngành thuộc nhóm đó. |
 
 ### `danh-muc/nhom-tinh-cach-holland`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/nhom-tinh-cach-holland` | Bắt buộc | Thêm một nhóm tính cách Holland. Từ chối nếu mã nhóm đã tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/nhom-tinh-cach-holland` | Bắt buộc | Xóa nhiều nhóm tính cách Holland theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/nhom-tinh-cach-holland/bulk` | Bắt buộc | Thêm nhiều nhóm Holland cùng lúc. Từ chối nếu mã nhóm trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
 | `GET` | `/api/v1/danh-muc/nhom-tinh-cach-holland/{item_id}` | Bắt buộc | Lấy chi tiết một nhóm tính cách Holland theo id. |
-| `PUT` | `/api/v1/danh-muc/nhom-tinh-cach-holland/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một nhóm tính cách Holland theo id. |
-| `DELETE` | `/api/v1/danh-muc/nhom-tinh-cach-holland/{item_id}` | Bắt buộc | Xóa một nhóm tính cách Holland theo id. |
 
 ### `danh-muc/phuong-thuc-tuyen-sinh`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/phuong-thuc-tuyen-sinh` | Bắt buộc | Thêm một phương thức tuyển sinh. Từ chối nếu mã phương thức đã tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/phuong-thuc-tuyen-sinh` | Bắt buộc | Xóa nhiều phương thức tuyển sinh theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/phuong-thuc-tuyen-sinh/bulk` | Bắt buộc | Thêm nhiều phương thức tuyển sinh cùng lúc. Từ chối nếu mã phương thức trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
 | `GET` | `/api/v1/danh-muc/phuong-thuc-tuyen-sinh/{item_id}` | Bắt buộc | Lấy chi tiết một phương thức tuyển sinh theo id. |
-| `PUT` | `/api/v1/danh-muc/phuong-thuc-tuyen-sinh/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một phương thức tuyển sinh theo id. |
-| `DELETE` | `/api/v1/danh-muc/phuong-thuc-tuyen-sinh/{item_id}` | Bắt buộc | Xóa một phương thức tuyển sinh theo id. |
 
 ### `danh-muc/thanh-tich-hoc-tap-nghien-cuu`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu` | Bắt buộc | Thêm một thành tích học tập, nghiên cứu. Từ chối nếu mã đã tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu` | Bắt buộc | Xóa nhiều thành tích học tập, nghiên cứu theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/bulk` | Bắt buộc | Thêm nhiều thành tích học tập, nghiên cứu cùng lúc. |
 | `GET` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc | Lấy chi tiết một thành tích học tập, nghiên cứu theo id. |
-| `PUT` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một thành tích học tập, nghiên cứu theo id. |
-| `DELETE` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc | Xóa một thành tích học tập, nghiên cứu theo id. |
 
 ### `danh-muc/tinh-thanh`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/tinh-thanh` | Bắt buộc | Thêm một tỉnh thành. Từ chối nếu mã tỉnh đã tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/tinh-thanh` | Bắt buộc | Xóa nhiều tỉnh thành theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/tinh-thanh/bulk` | Bắt buộc | Thêm nhiều tỉnh thành cùng lúc. Từ chối nếu mã tỉnh trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
 | `GET` | `/api/v1/danh-muc/tinh-thanh/{item_id}` | Bắt buộc | Lấy chi tiết một tỉnh thành theo id. |
-| `PUT` | `/api/v1/danh-muc/tinh-thanh/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một tỉnh thành theo id. |
-| `DELETE` | `/api/v1/danh-muc/tinh-thanh/{item_id}` | Bắt buộc | Xóa một tỉnh thành theo id. |
 
 ### `danh-muc/to-hop-mon-hoc`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/to-hop-mon-hoc` | Bắt buộc | Thêm một tổ hợp môn học. Từ chối nếu mã tổ hợp đã tồn tại hoặc mã môn không có trong danh mục. |
-| `DELETE` | `/api/v1/danh-muc/to-hop-mon-hoc` | Bắt buộc | Xóa nhiều tổ hợp môn học theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/to-hop-mon-hoc/bulk` | Bắt buộc | Thêm nhiều tổ hợp cùng lúc. Từ chối nếu mã tổ hợp trùng hoặc mã môn học không có trong danh mục. |
 | `GET` | `/api/v1/danh-muc/to-hop-mon-hoc/{item_id}` | Bắt buộc | Lấy chi tiết một tổ hợp môn học theo id. |
-| `PUT` | `/api/v1/danh-muc/to-hop-mon-hoc/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một tổ hợp môn học theo id. |
-| `DELETE` | `/api/v1/danh-muc/to-hop-mon-hoc/{item_id}` | Bắt buộc | Xóa một tổ hợp môn học theo id. |
 
 ### `danh-muc/ton-giao`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/ton-giao` | Bắt buộc | Thêm một tôn giáo. Từ chối nếu mã tôn giáo đã tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/ton-giao` | Bắt buộc | Xóa nhiều tôn giáo theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/ton-giao/bulk` | Bắt buộc | Thêm nhiều tôn giáo cùng lúc. Từ chối nếu mã tôn giáo trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
 | `GET` | `/api/v1/danh-muc/ton-giao/{item_id}` | Bắt buộc | Lấy chi tiết một tôn giáo theo id. |
-| `PUT` | `/api/v1/danh-muc/ton-giao/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một tôn giáo theo id. |
-| `DELETE` | `/api/v1/danh-muc/ton-giao/{item_id}` | Bắt buộc | Xóa một tôn giáo theo id. |
 
 ### `danh-muc/truong-hoc`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/truong-hoc` | Bắt buộc | Thêm một trường học. Từ chối nếu mã trường đã tồn tại. |
-| `DELETE` | `/api/v1/danh-muc/truong-hoc` | Bắt buộc | Xóa nhiều trường học theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/truong-hoc/bulk` | Bắt buộc | Thêm nhiều trường học cùng lúc. Từ chối nếu mã trường trùng trong dữ liệu hoặc đã có trong hệ thống. |
 | `GET` | `/api/v1/danh-muc/truong-hoc/{item_id}` | Bắt buộc | Lấy chi tiết một trường học theo id. |
-| `PUT` | `/api/v1/danh-muc/truong-hoc/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một trường học theo id. |
-| `DELETE` | `/api/v1/danh-muc/truong-hoc/{item_id}` | Bắt buộc | Xóa một trường học theo id. |
 
 ### `de-an-tuyen-sinh`
 
@@ -543,6 +657,12 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/de-an-tuyen-sinh/truong-dao-tao` | Không | Liệt kê trường có chương trình của ngành trong một năm tuyển sinh. Không cần đăng nhập. |
+
+### `he-thong/cau-hinh-enduser`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/he-thong/cau-hinh-enduser/dang-ap-dung` | Không | Cấu hình EndUser đang áp dụng: bản ghi hoạt động được cập nhật gần nhất. Không cần đăng nhập. |
 
 ### `health`
 

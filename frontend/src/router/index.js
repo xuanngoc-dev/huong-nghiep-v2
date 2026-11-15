@@ -194,6 +194,12 @@ const router = createRouter({
           meta: { title: 'Cấu hình EndUser', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'he-thong/cau-hinh-goi-cuoc',
+          name: 'cau-hinh-goi-cuoc',
+          component: () => import('@/views/admin/he-thong/CauHinhGoiCuoc.vue'),
+          meta: { title: 'Cấu hình gói cước', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'danh-muc/tinh-thanh',
           name: 'tinh-thanh',
           component: () => import('@/views/admin/danh-muc/TinhThanh.vue'),
