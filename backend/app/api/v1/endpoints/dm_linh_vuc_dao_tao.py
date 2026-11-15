@@ -33,11 +33,14 @@ def _integrity_detail(exc: IntegrityError, duplicate: str, related: str) -> str:
     return duplicate
 
 
-def _get_or_404(db: Session, item_id: int) -> DmLinhVucDaoTao:
-    """Lấy một lĩnh vực đào tạo theo id. Trả lỗi 404 nếu không tồn tại."""
+def _get_or_400(db: Session, item_id: int) -> DmLinhVucDaoTao:
+    """Lấy một lĩnh vực đào tạo theo id. Trả lỗi 400 kèm thông báo nếu không tồn tại."""
     item = db.get(DmLinhVucDaoTao, item_id)
     if item is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy lĩnh vực đào tạo")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy lĩnh vực đào tạo có id = {item_id}",
+        )
     return item
 
 
@@ -85,7 +88,7 @@ def get_linh_vuc_dao_tao(
     _: NguoiDung = Depends(get_current_user),
 ) -> DmLinhVucDaoTao:
     """Lấy chi tiết một lĩnh vực đào tạo theo id."""
-    return _get_or_404(db, item_id)
+    return _get_or_400(db, item_id)
 
 
 @router.post("/bulk", response_model=DmLinhVucDaoTaoBulkResult, status_code=status.HTTP_201_CREATED)
@@ -164,7 +167,7 @@ def update_linh_vuc_dao_tao(
     _: NguoiDung = Depends(get_admin_user),
 ) -> DmLinhVucDaoTao:
     """Cập nhật toàn bộ thông tin một lĩnh vực đào tạo theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
     try:
@@ -188,7 +191,7 @@ def delete_linh_vuc_dao_tao_many(
     """Xóa nhiều lĩnh vực đào tạo theo danh sách id. Từ chối nếu còn nhóm ngành thuộc các lĩnh vực đó."""
     items = db.scalars(select(DmLinhVucDaoTao).where(DmLinhVucDaoTao.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy lĩnh vực đào tạo để xóa")
+        return DmLinhVucDaoTaoDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     try:
@@ -209,7 +212,7 @@ def delete_linh_vuc_dao_tao(
     _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một lĩnh vực đào tạo theo id. Từ chối nếu còn nhóm ngành thuộc lĩnh vực đó."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     db.delete(item)
     try:
         db.commit()

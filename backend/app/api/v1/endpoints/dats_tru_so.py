@@ -57,10 +57,10 @@ def _joined():
 
 
 def _load_row(db: Session, item_id: int):
-    """Lấy một trụ sở kèm đề án và trường. Trả lỗi 404 nếu không có."""
+    """Lấy một trụ sở kèm đề án và trường. Trả lỗi 400 kèm thông báo nếu không có."""
     row = db.execute(_joined().where(DatsTruSo.id == item_id)).first()
     if row is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy trụ sở")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Không tìm thấy trụ sở có id = {item_id}")
     return row[0], row[1], row[2]
 
 
@@ -222,7 +222,7 @@ def delete_tru_so_many(
     """Xóa nhiều trụ sở theo danh sách id."""
     items = db.scalars(select(DatsTruSo).where(DatsTruSo.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy trụ sở để xóa")
+        return DatsTruSoDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     try:

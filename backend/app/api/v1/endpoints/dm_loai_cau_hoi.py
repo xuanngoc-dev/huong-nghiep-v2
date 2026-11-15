@@ -25,11 +25,14 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _get_or_404(db: Session, item_id: int) -> DmLoaiCauHoi:
-    """Lấy một loại câu hỏi theo id. Trả lỗi 404 nếu không tồn tại."""
+def _get_or_400(db: Session, item_id: int) -> DmLoaiCauHoi:
+    """Lấy một loại câu hỏi theo id. Trả lỗi 400 kèm thông báo nếu không tồn tại."""
     item = db.get(DmLoaiCauHoi, item_id)
     if item is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy loại câu hỏi")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy loại câu hỏi có id = {item_id}",
+        )
     return item
 
 
@@ -71,7 +74,7 @@ def get_loai_cau_hoi(
     _: NguoiDung = Depends(get_current_user),
 ) -> DmLoaiCauHoi:
     """Lấy chi tiết một loại câu hỏi theo id."""
-    return _get_or_404(db, item_id)
+    return _get_or_400(db, item_id)
 
 
 @router.post("/bulk", response_model=DmLoaiCauHoiBulkResult, status_code=status.HTTP_201_CREATED)
@@ -154,7 +157,7 @@ def update_loai_cau_hoi(
     _: NguoiDung = Depends(get_admin_user),
 ) -> DmLoaiCauHoi:
     """Cập nhật toàn bộ thông tin một loại câu hỏi theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
     try:
@@ -178,10 +181,7 @@ def delete_loai_cau_hoi_many(
     """Xóa nhiều loại câu hỏi theo danh sách id."""
     items = db.scalars(select(DmLoaiCauHoi).where(DmLoaiCauHoi.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Không tìm thấy loại câu hỏi để xóa",
-        )
+        return DmLoaiCauHoiDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     try:
@@ -202,7 +202,7 @@ def delete_loai_cau_hoi(
     _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một loại câu hỏi theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     db.delete(item)
     try:
         db.commit()

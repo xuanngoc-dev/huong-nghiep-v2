@@ -44,7 +44,7 @@ def get_nguon(ten: str):
     """Nguồn dữ liệu công khai dùng để đối chiếu câu trả lời tuyển sinh."""
     path = resolve_inside(ten)
     if not path.is_file():
-        raise HTTPException(404, "Không tìm thấy nguồn dữ liệu.")
+        raise HTTPException(400, f"Không tìm thấy nguồn dữ liệu có tên = {ten}")
     if path.suffix.lower() == ".json":
         media_type = "application/json; charset=utf-8"
     else:

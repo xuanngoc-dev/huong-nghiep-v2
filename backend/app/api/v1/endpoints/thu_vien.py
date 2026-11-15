@@ -107,7 +107,10 @@ def get_tep_thu_vien(duong_dan: str) -> FileResponse:
     """Đường dẫn công khai để dùng file đã tải lên."""
     path = resolve_thu_vien(duong_dan)
     if not path.is_file():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy file.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy file có đường dẫn = {duong_dan}",
+        )
     return FileResponse(
         path,
         media_type=media_type_for(path.name),

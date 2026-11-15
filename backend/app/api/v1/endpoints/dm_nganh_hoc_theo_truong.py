@@ -52,11 +52,14 @@ def _ten_truong(db: Session, ma_truong: str) -> str | None:
     return db.scalar(select(DmTruong.ten_truong).where(DmTruong.ma_truong == ma_truong))
 
 
-def _get_or_404(db: Session, item_id: int) -> DmNganhHocTheoTruong:
-    """Lấy một bản ghi theo id. Trả lỗi 404 nếu không tồn tại."""
+def _get_or_400(db: Session, item_id: int) -> DmNganhHocTheoTruong:
+    """Lấy một bản ghi theo id. Trả lỗi 400 kèm thông báo nếu không tồn tại."""
     item = db.get(DmNganhHocTheoTruong, item_id)
     if item is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy ngành đào tạo")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy ngành đào tạo có id = {item_id}",
+        )
     return item
 
 
@@ -250,7 +253,7 @@ def import_nganh_hoc_theo_truong(
 @router.get("/{item_id}", response_model=DmNganhHocTheoTruongPublic)
 def get_nganh_hoc_theo_truong(item_id: int, db: Session = Depends(get_db)) -> DmNganhHocTheoTruongPublic:
     """Lấy chi tiết một ngành đào tạo theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     return _to_public(item, _ten_truong(db, item.ma_truong))
 
 
@@ -279,7 +282,7 @@ def update_nganh_hoc_theo_truong(
     db: Session = Depends(get_db),
 ) -> DmNganhHocTheoTruongPublic:
     """Cập nhật toàn bộ thông tin một ngành đào tạo theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     ten_truong = _ensure_truong(db, payload.ma_truong)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
@@ -300,7 +303,7 @@ def delete_nganh_hoc_theo_truong_many(
     """Xóa nhiều ngành đào tạo theo danh sách id."""
     items = db.scalars(select(DmNganhHocTheoTruong).where(DmNganhHocTheoTruong.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy ngành đào tạo để xóa")
+        return DmNganhHocTheoTruongDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     db.commit()
@@ -310,7 +313,7 @@ def delete_nganh_hoc_theo_truong_many(
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_nganh_hoc_theo_truong(item_id: int, db: Session = Depends(get_db)) -> None:
     """Xóa một ngành đào tạo theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     db.delete(item)
     db.commit()
 

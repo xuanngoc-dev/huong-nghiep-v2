@@ -18,7 +18,10 @@ def noi_dung_truong(ten_tep: str) -> dict:
     corpus = _corpus(str(tai_lieu_root()), _signature(tai_lieu_root()))
     item = next((row for row in corpus.items if row.ten_tep == name), None)
     if item is None or name not in corpus.files:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy dữ liệu trường.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy dữ liệu trường có tên tệp = {ten_tep}",
+        )
     data = corpus.files[name]
     if data is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File JSON không hợp lệ.")

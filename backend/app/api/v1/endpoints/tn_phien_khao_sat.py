@@ -365,7 +365,10 @@ def lay_de_bai(ssid: str, db: Session = Depends(get_db)) -> TnPhienLamBaiPublic:
     """Lấy danh sách câu hỏi đã gán cho một phiên, sắp theo thứ tự loại câu hỏi."""
     phien = db.scalar(select(TnPhienKhaoSat).where(TnPhienKhaoSat.ssid == ssid))
     if phien is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy phiên khảo sát")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy phiên khảo sát có mã = {ssid}",
+        )
 
     rows = db.execute(
         select(TnChiTietTraLoi, TnCauHoiTracNghiem, DmLoaiCauHoi)
@@ -408,10 +411,13 @@ def lay_de_bai(ssid: str, db: Session = Depends(get_db)) -> TnPhienLamBaiPublic:
     )
 
 
-def _phien_or_404(db: Session, ssid: str) -> TnPhienKhaoSat:
+def _phien_or_400(db: Session, ssid: str) -> TnPhienKhaoSat:
     phien = db.scalar(select(TnPhienKhaoSat).where(TnPhienKhaoSat.ssid == ssid))
     if phien is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy phiên khảo sát")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy phiên khảo sát có mã = {ssid}",
+        )
     return phien
 
 
@@ -423,17 +429,23 @@ def luu_tra_loi(
     db: Session = Depends(get_db),
 ) -> TnPhienCauHoiPublic:
     """Lưu đáp án của một câu trong phiên và điểm tương ứng."""
-    _phien_or_404(db, ssid)
+    _phien_or_400(db, ssid)
     chi_tiet = db.get(TnChiTietTraLoi, chi_tiet_id)
     if chi_tiet is None or chi_tiet.ssid != ssid:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy câu hỏi trong phiên")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy câu hỏi có id = {chi_tiet_id} trong phiên {ssid}",
+        )
     answer = db.get(TnCauTraLoi, payload.cau_tra_loi_id)
     if answer is None or answer.cau_hoi_id != chi_tiet.cau_hoi_id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Đáp án không thuộc câu hỏi này")
     loai = db.get(DmLoaiCauHoi, chi_tiet.loai_cau_hoi_id)
     cau_hoi = db.get(TnCauHoiTracNghiem, chi_tiet.cau_hoi_id)
     if loai is None or cau_hoi is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy câu hỏi trong phiên")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy câu hỏi có id = {chi_tiet_id} trong phiên {ssid}",
+        )
     chi_tiet.cau_tra_loi_id = answer.id
     chi_tiet.diem_dat_duoc = answer.diem
     db.commit()
@@ -497,7 +509,7 @@ def _ma_noi_bat(nhom: list[TnPhienDiemHolland]) -> str:
 @router.get("/{ssid}/ket-qua", response_model=TnPhienKetQuaPublic)
 def lay_ket_qua(ssid: str, db: Session = Depends(get_db)) -> TnPhienKetQuaPublic:
     """Cộng điểm Holland của phiên theo đáp án đã lưu."""
-    phien = _phien_or_404(db, ssid)
+    phien = _phien_or_400(db, ssid)
     tong, da_tra_loi, nhom, buoc = _thong_ke_phien(db, ssid)
     return TnPhienKetQuaPublic(
         ssid=phien.ssid,
@@ -513,7 +525,7 @@ def lay_ket_qua(ssid: str, db: Session = Depends(get_db)) -> TnPhienKetQuaPublic
 @router.get("/{ssid}/nganh-phu-hop", response_model=TnPhienNganhPhuHopPublic)
 def lay_nganh_phu_hop(ssid: str, db: Session = Depends(get_db)) -> TnPhienNganhPhuHopPublic:
     """Ngành đào tạo khớp các mã Holland nổi bật của phiên."""
-    phien = _phien_or_404(db, ssid)
+    phien = _phien_or_400(db, ssid)
     tong, da_tra_loi, nhom, buoc = _thong_ke_phien(db, ssid)
     ma_co_diem = [item.ma_nhom for item in nhom if item.diem > 0]
     trong_so = {ma: len(ma_co_diem) - index for index, ma in enumerate(ma_co_diem)}

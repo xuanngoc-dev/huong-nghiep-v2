@@ -20,7 +20,8 @@ Monorepo: `backend/` (FastAPI + SQLAlchemy 2 + Alembic, MySQL) và `frontend/` (
 
 - Mọi thứ bằng tiếng Việt: định danh không dấu (`list_dan_toc`, `ten_cau_hinh`), docstring/comment, `detail` lỗi, text UI, commit message.
 - Tiền tố bảng/file: `dm_` danh mục, `dats_` đề án tuyển sinh, `ht_` hệ thống/cấu hình, `tn_` trắc nghiệm/khảo sát.
-- Endpoint viết query SQLAlchemy trực tiếp (`_get_or_404`, `_like_pattern`); không có tầng repository, `app/services/` chỉ cho logic phức tạp.
+- Endpoint viết query SQLAlchemy trực tiếp (`_get_or_400`, `_like_pattern`); không có tầng repository, `app/services/` chỉ cho logic phức tạp.
+- API không trả 404 về dữ liệu (404 chỉ khi sai đường dẫn API): rỗng → 200 đúng cấu trúc với giá trị rỗng (`items: []`, `total: 0`, `null`); không tìm thấy id/mã → 400 với `detail` cụ thể. Chi tiết ở bước 3 skill `them-api`. Kiểm bởi `backend/tests/test_khong_tra_404.py`.
 - API danh sách nhận `q`, `page`, `page_size` và trả `{items, total, page, page_size}`. Path tiếng Việt kebab-case (`/danh-muc/...`, `/he-thong/...`).
 - Model mới phải import trong `app/models/__init__.py`.
 - Migration viết tay trong `backend/alembic/versions/`, tên `YYYYMMDD_NNNN_slug.py`, `revision = "YYYYMMDD_NNNN"`, `down_revision` = head hiện tại (số NNNN tăng liên tục toàn repo). Không dùng `make migrate-new` (autogenerate kết nối DB chung và sinh revision hex).

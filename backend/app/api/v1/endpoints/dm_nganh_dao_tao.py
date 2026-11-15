@@ -91,14 +91,17 @@ def _to_public(item: DmNganhDaoTao, parent: DmNhomNganhDaoTao) -> DmNganhDaoTaoP
 
 
 def _load_pair(db: Session, item_id: int) -> tuple[DmNganhDaoTao, DmNhomNganhDaoTao]:
-    """Lấy một ngành kèm nhóm ngành cha. Trả lỗi 404 nếu ngành không tồn tại."""
+    """Lấy một ngành kèm nhóm ngành cha. Trả lỗi 400 kèm thông báo nếu ngành không tồn tại."""
     row = db.execute(
         select(DmNganhDaoTao, DmNhomNganhDaoTao)
         .join(DmNhomNganhDaoTao, DmNganhDaoTao.ma_nhom_nganh == DmNhomNganhDaoTao.ma_nhom_nganh)
         .where(DmNganhDaoTao.id == item_id)
     ).first()
     if row is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy ngành đào tạo")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy ngành đào tạo có id = {item_id}",
+        )
     return row[0], row[1]
 
 
@@ -282,7 +285,7 @@ def delete_nganh_dao_tao_many(
     """Xóa nhiều ngành theo danh sách id. Từ chối nếu còn chuyên ngành thuộc các ngành đó."""
     items = db.scalars(select(DmNganhDaoTao).where(DmNganhDaoTao.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy ngành đào tạo để xóa")
+        return DmNganhDaoTaoDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     try:

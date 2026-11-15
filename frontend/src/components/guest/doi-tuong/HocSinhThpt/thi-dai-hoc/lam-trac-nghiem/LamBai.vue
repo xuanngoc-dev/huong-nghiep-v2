@@ -203,7 +203,8 @@ function dapAnTheoDiem(cau, diem) {
 async function taiCauHinh() {
   try {
     const data = await fetchCauHinhEnduserDangApDung()
-    kieuTraLoi.value = data.kieu_tra_loi === 'diem_so' ? 'diem_so' : 'tinh_huong'
+    // Chưa có cấu hình đang áp dụng thì API trả null.
+    kieuTraLoi.value = data?.kieu_tra_loi === 'diem_so' ? 'diem_so' : 'tinh_huong'
   } catch {
     kieuTraLoi.value = 'tinh_huong'
   }
@@ -501,7 +502,7 @@ async function taiDeBai(value) {
   } catch (error) {
     const status = error.response?.status
     const detail = error.response?.data?.detail
-    loi.value = status === 404 && typeof detail === 'string' ? detail : 'Không tải được bài trắc nghiệm.'
+    loi.value = status === 400 && typeof detail === 'string' ? detail : 'Không tải được bài trắc nghiệm.'
   } finally {
     dangTai.value = false
   }

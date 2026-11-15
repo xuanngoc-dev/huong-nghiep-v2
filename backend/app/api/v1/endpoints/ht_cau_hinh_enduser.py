@@ -33,11 +33,14 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _get_or_404(db: Session, item_id: int) -> HtCauHinhEnduser:
-    """Lấy một bản ghi theo id. Trả lỗi 404 nếu không tồn tại."""
+def _get_or_400(db: Session, item_id: int) -> HtCauHinhEnduser:
+    """Lấy một bản ghi theo id. Trả lỗi 400 kèm thông báo nếu không tồn tại."""
     item = db.get(HtCauHinhEnduser, item_id)
     if item is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy cấu hình EndUser")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy cấu hình EndUser có id = {item_id}",
+        )
     return item
 
 
@@ -109,7 +112,7 @@ def list_cau_hinh_enduser(
 @router.get("/{item_id}", response_model=HtCauHinhEnduserPublic)
 def get_cau_hinh_enduser(item_id: int, db: Session = Depends(get_db)) -> HtCauHinhEnduser:
     """Lấy chi tiết một cấu hình EndUser theo id."""
-    return _get_or_404(db, item_id)
+    return _get_or_400(db, item_id)
 
 
 @router.post("", response_model=HtCauHinhEnduserPublic, status_code=status.HTTP_201_CREATED)
@@ -132,7 +135,7 @@ def update_cau_hinh_enduser(
     db: Session = Depends(get_db),
 ) -> HtCauHinhEnduser:
     """Cập nhật thông tin một cấu hình EndUser theo id. Trường không gửi lên (vd. noi_dung_cau_hinh) được giữ nguyên."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     _dam_bao_con_hoat_dong(db, item, payload.trang_thai)
     for key, value in payload.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
@@ -148,7 +151,7 @@ def update_trang_thai_cau_hinh_enduser(
     db: Session = Depends(get_db),
 ) -> HtCauHinhEnduser:
     """Bật/tắt nhanh trạng thái của một cấu hình EndUser."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     _dam_bao_con_hoat_dong(db, item, payload.trang_thai)
     item.trang_thai = payload.trang_thai
     db.commit()
@@ -164,7 +167,7 @@ def delete_cau_hinh_enduser_many(
     """Xóa nhiều cấu hình EndUser theo danh sách id."""
     items = db.scalars(select(HtCauHinhEnduser).where(HtCauHinhEnduser.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy cấu hình EndUser để xóa")
+        return HtCauHinhEnduserDeleteManyResult(deleted=0)
     _dam_bao_con_lai(db, [item.id for item in items])
     for item in items:
         db.delete(item)
@@ -175,21 +178,19 @@ def delete_cau_hinh_enduser_many(
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_cau_hinh_enduser(item_id: int, db: Session = Depends(get_db)) -> None:
     """Xóa một cấu hình EndUser theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     _dam_bao_con_lai(db, [item.id])
     db.delete(item)
     db.commit()
 
 
-@public_router.get("/dang-ap-dung", response_model=HtCauHinhEnduserApDung)
-def get_cau_hinh_enduser_dang_ap_dung(db: Session = Depends(get_db)) -> HtCauHinhEnduser:
-    """Cấu hình EndUser đang áp dụng: bản ghi hoạt động được cập nhật gần nhất. Không cần đăng nhập."""
+@public_router.get("/dang-ap-dung", response_model=HtCauHinhEnduserApDung | None)
+def get_cau_hinh_enduser_dang_ap_dung(db: Session = Depends(get_db)) -> HtCauHinhEnduser | None:
+    """Cấu hình EndUser đang áp dụng: bản ghi hoạt động được cập nhật gần nhất, chưa có thì trả null. Không cần đăng nhập."""
     item = db.scalars(
         select(HtCauHinhEnduser)
         .where(HtCauHinhEnduser.trang_thai == 1)
         .order_by(HtCauHinhEnduser.updated_at.desc(), HtCauHinhEnduser.id.desc())
         .limit(1)
     ).first()
-    if item is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Chưa có cấu hình EndUser đang hoạt động")
     return item

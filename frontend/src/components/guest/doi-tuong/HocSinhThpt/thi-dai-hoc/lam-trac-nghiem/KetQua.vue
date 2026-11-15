@@ -74,7 +74,7 @@ async function taiKetQua(value) {
   } catch (error) {
     const status = error.response?.status
     const detail = error.response?.data?.detail
-    loi.value = status === 404 && typeof detail === 'string' ? detail : 'Không tải được kết quả.'
+    loi.value = status === 400 && typeof detail === 'string' ? detail : 'Không tải được kết quả.'
   } finally {
     dangTai.value = false
   }

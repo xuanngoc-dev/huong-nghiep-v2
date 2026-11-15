@@ -25,11 +25,14 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _get_or_404(db: Session, item_id: int) -> DmTonGiao:
-    """Lấy một bản ghi theo id. Trả lỗi 404 nếu không tồn tại."""
+def _get_or_400(db: Session, item_id: int) -> DmTonGiao:
+    """Lấy một bản ghi theo id. Trả lỗi 400 kèm thông báo nếu không tồn tại."""
     item = db.get(DmTonGiao, item_id)
     if item is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy tôn giáo")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy tôn giáo có id = {item_id}",
+        )
     return item
 
 
@@ -76,7 +79,7 @@ def get_ton_giao(
     _: NguoiDung = Depends(get_current_user),
 ) -> DmTonGiao:
     """Lấy chi tiết một tôn giáo theo id."""
-    return _get_or_404(db, item_id)
+    return _get_or_400(db, item_id)
 
 
 @router.post("/bulk", response_model=DmTonGiaoBulkResult, status_code=status.HTTP_201_CREATED)
@@ -158,7 +161,7 @@ def update_ton_giao(
     _: NguoiDung = Depends(get_admin_user),
 ) -> DmTonGiao:
     """Cập nhật toàn bộ thông tin một tôn giáo theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
     try:
@@ -182,10 +185,7 @@ def delete_ton_giao_many(
     """Xóa nhiều tôn giáo theo danh sách id."""
     items = db.scalars(select(DmTonGiao).where(DmTonGiao.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Không tìm thấy tôn giáo để xóa",
-        )
+        return DmTonGiaoDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     db.commit()
@@ -199,6 +199,6 @@ def delete_ton_giao(
     _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một tôn giáo theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     db.delete(item)
     db.commit()

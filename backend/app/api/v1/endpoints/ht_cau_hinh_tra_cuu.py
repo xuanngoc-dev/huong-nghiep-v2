@@ -21,11 +21,14 @@ router = APIRouter(
 )
 
 
-def _get_or_404(db: Session, item_id: int) -> HtCauHinhTraCuu:
-    """Lấy một cấu hình theo id. Trả lỗi 404 nếu không tồn tại."""
+def _get_or_400(db: Session, item_id: int) -> HtCauHinhTraCuu:
+    """Lấy một cấu hình theo id. Trả lỗi 400 kèm thông báo nếu không tồn tại."""
     item = db.get(HtCauHinhTraCuu, item_id)
     if item is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy cấu hình tra cứu")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy cấu hình tra cứu có id = {item_id}",
+        )
     return item
 
 
@@ -87,7 +90,7 @@ def list_cau_hinh_tra_cuu(
 @router.get("/{item_id}", response_model=HtCauHinhTraCuuPublic)
 def get_cau_hinh_tra_cuu(item_id: int, db: Session = Depends(get_db)) -> HtCauHinhTraCuu:
     """Lấy chi tiết một cấu hình tra cứu theo id."""
-    return _get_or_404(db, item_id)
+    return _get_or_400(db, item_id)
 
 
 @router.post("", response_model=HtCauHinhTraCuuPublic, status_code=status.HTTP_201_CREATED)
@@ -117,7 +120,7 @@ def update_cau_hinh_tra_cuu(
     db: Session = Depends(get_db),
 ) -> HtCauHinhTraCuu:
     """Cập nhật toàn bộ một cấu hình tra cứu theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     _khong_duoc_ngung(db, item, payload.trang_thai)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
@@ -134,7 +137,7 @@ def update_trang_thai_cau_hinh_tra_cuu(
     db: Session = Depends(get_db),
 ) -> HtCauHinhTraCuu:
     """Bật/tắt nhanh một cấu hình. Bật cấu hình này thì các cấu hình khác tự tắt."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     _khong_duoc_ngung(db, item, payload.trang_thai)
     item.trang_thai = payload.trang_thai
     _chi_ap_dung(db, item)
@@ -151,7 +154,7 @@ def delete_cau_hinh_tra_cuu_many(
     """Xóa nhiều cấu hình tra cứu theo danh sách id."""
     items = db.scalars(select(HtCauHinhTraCuu).where(HtCauHinhTraCuu.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy cấu hình tra cứu để xóa")
+        return HtCauHinhTraCuuDeleteManyResult(deleted=0)
     ids = {item.id for item in items}
     if any(item.trang_thai == 1 for item in items) and not _con_ap_dung_ngoai(db, ids):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Không thể xóa cấu hình đang áp dụng")
@@ -164,7 +167,7 @@ def delete_cau_hinh_tra_cuu_many(
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_cau_hinh_tra_cuu(item_id: int, db: Session = Depends(get_db)) -> None:
     """Xóa một cấu hình tra cứu theo id. Không cho xóa cấu hình đang áp dụng cuối cùng."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     if item.trang_thai == 1 and not _con_ap_dung_ngoai(db, {item.id}):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Không thể xóa cấu hình đang áp dụng")
     db.delete(item)

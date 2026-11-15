@@ -25,13 +25,13 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _get_or_404(db: Session, item_id: int) -> DmThanhTichHocTapNghienCuu:
-    """Lấy một bản ghi theo id. Trả lỗi 404 nếu không tồn tại."""
+def _get_or_400(db: Session, item_id: int) -> DmThanhTichHocTapNghienCuu:
+    """Lấy một bản ghi theo id. Trả lỗi 400 kèm thông báo nếu không tồn tại."""
     item = db.get(DmThanhTichHocTapNghienCuu, item_id)
     if item is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Không tìm thấy thành tích học tập, nghiên cứu",
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy thành tích học tập, nghiên cứu có id = {item_id}",
         )
     return item
 
@@ -82,7 +82,7 @@ def get_thanh_tich_hoc_tap_nghien_cuu(
     _: NguoiDung = Depends(get_current_user),
 ) -> DmThanhTichHocTapNghienCuu:
     """Lấy chi tiết một thành tích học tập, nghiên cứu theo id."""
-    return _get_or_404(db, item_id)
+    return _get_or_400(db, item_id)
 
 
 @router.post("/bulk", response_model=DmThanhTichHocTapNghienCuuBulkResult, status_code=status.HTTP_201_CREATED)
@@ -169,7 +169,7 @@ def update_thanh_tich_hoc_tap_nghien_cuu(
     _: NguoiDung = Depends(get_admin_user),
 ) -> DmThanhTichHocTapNghienCuu:
     """Cập nhật toàn bộ thông tin một thành tích học tập, nghiên cứu theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
     try:
@@ -193,10 +193,7 @@ def delete_thanh_tich_hoc_tap_nghien_cuu_many(
     """Xóa nhiều thành tích học tập, nghiên cứu theo danh sách id."""
     items = db.scalars(select(DmThanhTichHocTapNghienCuu).where(DmThanhTichHocTapNghienCuu.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Không tìm thấy thành tích học tập, nghiên cứu để xóa",
-        )
+        return DmThanhTichHocTapNghienCuuDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     db.commit()
@@ -210,6 +207,6 @@ def delete_thanh_tich_hoc_tap_nghien_cuu(
     _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một thành tích học tập, nghiên cứu theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     db.delete(item)
     db.commit()

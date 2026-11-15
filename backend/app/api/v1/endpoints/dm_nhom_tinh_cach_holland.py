@@ -25,13 +25,13 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _get_or_404(db: Session, item_id: int) -> DmNhomTinhCachHolland:
-    """Lấy một nhóm tính cách Holland theo id. Trả lỗi 404 nếu không tồn tại."""
+def _get_or_400(db: Session, item_id: int) -> DmNhomTinhCachHolland:
+    """Lấy một nhóm tính cách Holland theo id. Trả lỗi 400 kèm thông báo nếu không tồn tại."""
     item = db.get(DmNhomTinhCachHolland, item_id)
     if item is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Không tìm thấy nhóm tính cách Holland",
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy nhóm tính cách Holland có id = {item_id}",
         )
     return item
 
@@ -80,7 +80,7 @@ def get_nhom_tinh_cach_holland(
     _: NguoiDung = Depends(get_current_user),
 ) -> DmNhomTinhCachHolland:
     """Lấy chi tiết một nhóm tính cách Holland theo id."""
-    return _get_or_404(db, item_id)
+    return _get_or_400(db, item_id)
 
 
 @router.post("/bulk", response_model=DmNhomTinhCachHollandBulkResult, status_code=status.HTTP_201_CREATED)
@@ -164,7 +164,7 @@ def update_nhom_tinh_cach_holland(
     _: NguoiDung = Depends(get_admin_user),
 ) -> DmNhomTinhCachHolland:
     """Cập nhật toàn bộ thông tin một nhóm tính cách Holland theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
     try:
@@ -190,10 +190,7 @@ def delete_nhom_tinh_cach_holland_many(
         select(DmNhomTinhCachHolland).where(DmNhomTinhCachHolland.id.in_(payload.ids))
     ).all()
     if not items:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Không tìm thấy nhóm tính cách Holland để xóa",
-        )
+        return DmNhomTinhCachHollandDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     try:
@@ -214,7 +211,7 @@ def delete_nhom_tinh_cach_holland(
     _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một nhóm tính cách Holland theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     db.delete(item)
     try:
         db.commit()

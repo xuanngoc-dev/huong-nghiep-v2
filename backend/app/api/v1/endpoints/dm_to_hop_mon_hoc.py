@@ -26,13 +26,13 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _get_or_404(db: Session, item_id: int) -> DmToHopMonHoc:
-    """Lấy một tổ hợp môn học theo id. Trả lỗi 404 nếu không tồn tại."""
+def _get_or_400(db: Session, item_id: int) -> DmToHopMonHoc:
+    """Lấy một tổ hợp môn học theo id. Trả lỗi 400 kèm thông báo nếu không tồn tại."""
     item = db.get(DmToHopMonHoc, item_id)
     if item is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Không tìm thấy tổ hợp môn học",
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy tổ hợp môn học có id = {item_id}",
         )
     return item
 
@@ -94,7 +94,7 @@ def get_to_hop_mon_hoc(
     _: NguoiDung = Depends(get_current_user),
 ) -> DmToHopMonHoc:
     """Lấy chi tiết một tổ hợp môn học theo id."""
-    return _get_or_404(db, item_id)
+    return _get_or_400(db, item_id)
 
 
 @router.post("/bulk", response_model=DmToHopMonHocBulkResult, status_code=status.HTTP_201_CREATED)
@@ -186,7 +186,7 @@ def update_to_hop_mon_hoc(
     _: NguoiDung = Depends(get_admin_user),
 ) -> DmToHopMonHoc:
     """Cập nhật toàn bộ thông tin một tổ hợp môn học theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     _ensure_mon_hoc_exists(db, payload.ds_mon_hoc)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
@@ -211,10 +211,7 @@ def delete_to_hop_mon_hoc_many(
     """Xóa nhiều tổ hợp môn học theo danh sách id."""
     items = db.scalars(select(DmToHopMonHoc).where(DmToHopMonHoc.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Không tìm thấy tổ hợp môn học để xóa",
-        )
+        return DmToHopMonHocDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     db.commit()
@@ -228,6 +225,6 @@ def delete_to_hop_mon_hoc(
     _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một tổ hợp môn học theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     db.delete(item)
     db.commit()

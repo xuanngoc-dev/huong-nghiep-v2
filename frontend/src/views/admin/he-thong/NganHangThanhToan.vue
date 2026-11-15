@@ -538,8 +538,10 @@ async function taiLenThuMucLogo(file) {
   try {
     return await uploadThuVien(file, THU_MUC_LOGO)
   } catch (error) {
-    // Lần đầu dùng: thư mục chưa có thì tạo rồi tải lại.
-    if (error?.response?.status !== 404) throw error
+    // Lần đầu dùng: thư mục chưa có (API trả 400 "Không tìm thấy thư mục ...") thì tạo rồi tải lại.
+    const detail = error?.response?.data?.detail
+    const chuaCoThuMuc = error?.response?.status === 400 && String(detail || '').startsWith('Không tìm thấy thư mục')
+    if (!chuaCoThuMuc) throw error
     await createThuMuc('', THU_MUC_LOGO)
     return uploadThuVien(file, THU_MUC_LOGO)
   }

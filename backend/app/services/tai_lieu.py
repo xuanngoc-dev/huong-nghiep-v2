@@ -138,7 +138,10 @@ def save_tai_lieu(filename: str, data: bytes) -> TaiLieuItem:
 def delete_tai_lieu(filename: str) -> None:
     path = resolve_inside(filename)
     if not path.is_file():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy tài liệu.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy tài liệu có tên = {filename}",
+        )
     path.unlink()
 
 

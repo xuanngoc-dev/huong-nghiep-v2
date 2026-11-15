@@ -1,6 +1,6 @@
 # Danh sách API
 
-Tự sinh từ code lúc 15/11/2026 14:54 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 15/11/2026 15:16 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
 Tiền tố chung: `/api/v1`. Tổng cộng **257** API.
 
@@ -662,7 +662,7 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `GET` | `/api/v1/he-thong/cau-hinh-enduser/dang-ap-dung` | Không | Cấu hình EndUser đang áp dụng: bản ghi hoạt động được cập nhật gần nhất. Không cần đăng nhập. |
+| `GET` | `/api/v1/he-thong/cau-hinh-enduser/dang-ap-dung` | Không | Cấu hình EndUser đang áp dụng: bản ghi hoạt động được cập nhật gần nhất, chưa có thì trả null. Không cần đăng nhập. |
 
 ### `health`
 

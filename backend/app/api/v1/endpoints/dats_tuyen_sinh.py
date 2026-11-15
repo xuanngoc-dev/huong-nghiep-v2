@@ -93,14 +93,17 @@ def _apply(item: DatsTuyenSinh, payload: DatsTuyenSinhWrite, *, creating: bool) 
 
 
 def _load_pair(db: Session, item_id: int) -> tuple[DatsTuyenSinh, DmTruong]:
-    """Lấy một đề án kèm trường. Trả lỗi 404 nếu đề án không tồn tại."""
+    """Lấy một đề án kèm trường. Trả lỗi 400 kèm thông báo nếu đề án không tồn tại."""
     row = db.execute(
         select(DatsTuyenSinh, DmTruong)
         .join(DmTruong, DatsTuyenSinh.ma_truong == DmTruong.ma_truong)
         .where(DatsTuyenSinh.id == item_id)
     ).first()
     if row is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy đề án tuyển sinh")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy đề án tuyển sinh có id = {item_id}",
+        )
     return row[0], row[1]
 
 
@@ -429,10 +432,7 @@ def delete_de_an_many(
     """Xóa nhiều đề án tuyển sinh theo danh sách id."""
     items = db.scalars(select(DatsTuyenSinh).where(DatsTuyenSinh.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Không tìm thấy đề án tuyển sinh để xóa",
-        )
+        return DatsTuyenSinhDeleteManyResult(deleted=0)
     delete_de_an_children(db, [item.id for item in items])
     for item in items:
         db.delete(item)

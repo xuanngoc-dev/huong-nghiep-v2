@@ -62,6 +62,6 @@ class KiemTraDuLieuTests(unittest.TestCase):
 
     def test_tu_choi_ten_tep_va_file_hong(self):
         self.assertEqual(self.client.get("/api/v1/kiem-tra-du-lieu/noi-dung", params={"ten_tep": "../beta.json"}).status_code, 400)
-        self.assertEqual(self.client.get("/api/v1/kiem-tra-du-lieu/noi-dung", params={"ten_tep": "khong-co.json"}).status_code, 404)
+        self.assertEqual(self.client.get("/api/v1/kiem-tra-du-lieu/noi-dung", params={"ten_tep": "khong-co.json"}).status_code, 400)
         broken = self.client.get("/api/v1/kiem-tra-du-lieu/noi-dung", params={"ten_tep": "hong.json"})
         self.assertEqual(broken.status_code, 400)

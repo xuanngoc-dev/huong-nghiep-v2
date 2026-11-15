@@ -176,14 +176,20 @@ def tai_tu_url(url: str, thu_muc: str = "") -> ThuVienItem:
 def resolve_thu_vien(relative: str) -> Path:
     path = _resolve(relative, allow_root=False)
     if path.is_symlink() or not path.exists():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy file.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy file có đường dẫn = {relative}",
+        )
     return path
 
 
 def delete_thu_vien(relative: str) -> None:
     path = _resolve(relative, allow_root=False)
     if path.is_symlink() or not path.exists():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy mục cần xóa.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy mục cần xóa có đường dẫn = {relative}",
+        )
     if path.is_dir():
         shutil.rmtree(path)
         return
@@ -203,7 +209,10 @@ def tao_thu_muc(thu_muc: str, ten: str) -> ThuVienItem:
 def doi_ten(relative: str, ten_moi: str) -> ThuVienItem:
     path = _resolve(relative, allow_root=False)
     if path.is_symlink() or not path.exists():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy mục cần đổi tên.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy mục cần đổi tên có đường dẫn = {relative}",
+        )
     name = _clean_name(ten_moi)
     target = path.with_name(name)
     if target.exists():
@@ -256,8 +265,6 @@ def xoa_nhieu(danh_sach: list[str]) -> int:
             shutil.rmtree(path)
         else:
             path.unlink()
-    if not paths:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy mục cần xóa.")
     return len(paths)
 
 
@@ -267,7 +274,10 @@ def giai_nen(relative: str) -> ThuVienItem:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Chỉ giải nén được file nén.")
     suffix = _suffix(path.name)
     if suffix not in ARCHIVE_SUFFIXES:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File không phải định dạng nén được hỗ trợ.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File không phải định dạng nén được hỗ trợ.",
+        )
     destination = _unique_path(path.parent, path.name[: -len(suffix)] or "giai-nen")
     destination.mkdir()
     try:
@@ -371,7 +381,10 @@ def _safe_archive_name(name: str) -> Path | None:
         if part in {"", "."}:
             continue
         if part == ".." or part.startswith(".") or _FORBIDDEN.search(part):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File nén chứa đường dẫn không an toàn.")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="File nén chứa đường dẫn không an toàn.",
+            )
         parts.append(part)
     if not parts:
         return None
@@ -422,7 +435,10 @@ def _existing_sources(danh_sach: list[str]) -> list[Path]:
     for relative in danh_sach:
         path = _resolve(relative, allow_root=False)
         if path.is_symlink() or not path.exists():
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy mục đã chọn.")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Không tìm thấy mục đã chọn có đường dẫn = {relative}",
+            )
         paths.append(path)
     return paths
 
@@ -446,14 +462,20 @@ def _child_of(directory: Path, relative: str) -> Path:
             detail="Chỉ nén được các mục đang mở trong thư mục hiện tại.",
         )
     if not path.exists():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy mục cần nén.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy mục cần nén có đường dẫn = {relative}",
+        )
     return path
 
 
 def _require_dir(relative: str) -> Path:
     path = thu_vien_root() if not (relative or "").strip() else _resolve(relative, allow_root=False)
     if path.is_symlink() or not path.is_dir():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy thư mục.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy thư mục có đường dẫn = {relative or '(gốc)'}",
+        )
     return path
 
 

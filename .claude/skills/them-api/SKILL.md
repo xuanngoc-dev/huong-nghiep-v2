@@ -10,10 +10,30 @@ Thêm resource `$ARGUMENTS` theo đúng các bước dưới. Mẫu tham khảo:
 1. **Model** `models/<ten_bang>.py` (SQLAlchemy 2) và import trong `models/__init__.py`.
 2. **Schema** `schemas/<ten_bang>.py`: Create/Update/Public và Page `{items, total, page, page_size}`.
 3. **Endpoint** `api/v1/endpoints/<ten_bang>.py`:
-   - List nhận `q`, `page`, `page_size`; dùng `_like_pattern`, `_get_or_404` như các file cùng loại.
+   - List nhận `q`, `page`, `page_size`; dùng `_like_pattern` như các file cùng loại. Lấy bản ghi theo id dùng helper `_get_or_400` (xem quy tắc không tìm thấy id bên dưới), không viết thêm `_get_or_404`.
    - Phân quyền: danh mục `dm_*` → GET danh sách không cần login, GET chi tiết dùng `get_current_user`, ghi dùng `get_admin_user` (kiểm bởi `tests/test_phan_quyen.py`). Router chỉ cho admin → `APIRouter(dependencies=[Depends(get_admin_user)])`.
    - Có route public lẫn admin → tách `public_router`, include trước admin router.
    - Lỗi `detail` bằng tiếng Việt.
+   - **Không có dữ liệu KHÔNG phải lỗi**: luôn trả 200 đúng cấu trúc với giá trị rỗng, không trả 404. 404 chỉ dành cho trường hợp không tìm thấy API (sai đường dẫn).
+     - API danh sách có phân trang → `{"items": [], "total": 0, "page": <page>, "page_size": <page_size>}`.
+     - API trả mảng (lựa chọn, dropdown, thống kê) → `[]`; API trả một đối tượng tổng hợp → đủ các trường, số = 0, mảng = `[]`, đối tượng con = `null`.
+     - API lấy dữ liệu đang áp dụng (cấu hình hoạt động, ...) mà chưa có → 200 với `null` (khai báo `response_model=... | None`), frontend tự xử lý trường hợp rỗng.
+     - Xóa nhiều mà không id nào tồn tại → 200 `{"deleted": 0}`.
+   - **Không tìm thấy id/mã cụ thể** (GET/PUT/PATCH/DELETE `/{item_id}`, tra theo mã): KHÔNG trả 404. Trả `400` với `detail` nêu rõ đối tượng và id để frontend hiện thẳng thông báo (frontend đọc `error.response.data.detail`):
+     ```python
+     def _get_or_400(db: Session, item_id: int) -> HtCauHinhGoiCuoc:
+         """Lấy một bản ghi theo id. Không có thì trả 400 kèm thông báo cụ thể."""
+         item = db.get(HtCauHinhGoiCuoc, item_id)
+         if item is None:
+             raise HTTPException(
+                 status_code=status.HTTP_400_BAD_REQUEST,
+                 detail=f"Không tìm thấy gói cước có id = {item_id}",
+             )
+         return item
+     ```
+     Thông báo dạng `Không tìm thấy <tên đối tượng> có <id|mã> = <giá trị>`; với bản ghi liên kết (ngành cha, trường, đề án...) nêu rõ đối tượng liên kết nào không tồn tại.
+   - Khi viết test cho endpoint: kiểm tra danh sách rỗng trả 200 đúng cấu trúc và id không tồn tại trả 400 kèm `detail`. `tests/test_khong_tra_404.py` tự kiểm mọi endpoint không còn `_get_or_404` và `_get_or_400` trả 400 có id trong `detail`.
+   - Frontend: lỗi không tìm thấy là 400, đọc `error.response.data.detail` để hiện; KHÔNG kiểm `status === 404`. API trả `null` (dữ liệu đang áp dụng) thì dùng `data?.truong`.
 4. **Đăng ký** trong `api/v1/router.py`.
 5. **Migration** viết tay `backend/alembic/versions/YYYYMMDD_NNNN_slug.py`:
    - Lấy head hiện tại: `ls backend/alembic/versions | sort | tail -1` → `down_revision`; NNNN = số tiếp theo.

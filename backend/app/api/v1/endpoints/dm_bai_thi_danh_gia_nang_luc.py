@@ -26,13 +26,13 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _get_or_404(db: Session, item_id: int) -> DmBaiThiDanhGia:
-    """Lấy một bản ghi theo id. Trả lỗi 404 nếu không tồn tại."""
+def _get_or_400(db: Session, item_id: int) -> DmBaiThiDanhGia:
+    """Lấy một bản ghi theo id. Trả lỗi 400 kèm thông báo nếu không tồn tại."""
     item = db.get(DmBaiThiDanhGia, item_id)
     if item is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Không tìm thấy bài thi đánh giá năng lực",
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy bài thi đánh giá năng lực có id = {item_id}",
         )
     return item
 
@@ -89,7 +89,7 @@ def get_bai_thi_danh_gia_nang_luc(
     _: NguoiDung = Depends(get_current_user),
 ) -> DmBaiThiDanhGia:
     """Lấy chi tiết một bài thi đánh giá năng lực theo id."""
-    return _get_or_404(db, item_id)
+    return _get_or_400(db, item_id)
 
 
 @router.post("/bulk", response_model=DmBaiThiDanhGiaNangLucBulkResult, status_code=status.HTTP_201_CREATED)
@@ -176,7 +176,7 @@ def update_bai_thi_danh_gia_nang_luc(
     _: NguoiDung = Depends(get_admin_user),
 ) -> DmBaiThiDanhGia:
     """Cập nhật toàn bộ thông tin một bài thi đánh giá năng lực theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     for key, value in payload.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
     try:
@@ -200,10 +200,7 @@ def delete_bai_thi_danh_gia_nang_luc_many(
     """Xóa nhiều bài thi đánh giá năng lực theo danh sách id."""
     items = db.scalars(select(DmBaiThiDanhGia).where(DmBaiThiDanhGia.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Không tìm thấy bài thi đánh giá năng lực để xóa",
-        )
+        return DmBaiThiDanhGiaNangLucDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     db.commit()
@@ -217,6 +214,6 @@ def delete_bai_thi_danh_gia_nang_luc(
     _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một bài thi đánh giá năng lực theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     db.delete(item)
     db.commit()

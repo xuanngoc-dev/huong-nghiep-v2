@@ -25,11 +25,14 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _get_or_404(db: Session, item_id: int) -> DmTinhThanh:
-    """Lấy một bản ghi theo id. Trả lỗi 404 nếu không tồn tại."""
+def _get_or_400(db: Session, item_id: int) -> DmTinhThanh:
+    """Lấy một bản ghi theo id. Trả lỗi 400 kèm thông báo nếu không tồn tại."""
     item = db.get(DmTinhThanh, item_id)
     if item is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy tỉnh thành")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy tỉnh thành có id = {item_id}",
+        )
     return item
 
 
@@ -79,7 +82,7 @@ def get_tinh_thanh(
     _: NguoiDung = Depends(get_current_user),
 ) -> DmTinhThanh:
     """Lấy chi tiết một tỉnh thành theo id."""
-    return _get_or_404(db, item_id)
+    return _get_or_400(db, item_id)
 
 
 @router.post("/bulk", response_model=DmTinhThanhBulkResult, status_code=status.HTTP_201_CREATED)
@@ -161,7 +164,7 @@ def update_tinh_thanh(
     _: NguoiDung = Depends(get_admin_user),
 ) -> DmTinhThanh:
     """Cập nhật toàn bộ thông tin một tỉnh thành theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
     try:
@@ -185,10 +188,7 @@ def delete_tinh_thanh_many(
     """Xóa nhiều tỉnh thành theo danh sách id."""
     items = db.scalars(select(DmTinhThanh).where(DmTinhThanh.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Không tìm thấy tỉnh thành để xóa",
-        )
+        return DmTinhThanhDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     db.commit()
@@ -202,6 +202,6 @@ def delete_tinh_thanh(
     _: NguoiDung = Depends(get_admin_user),
 ) -> None:
     """Xóa một tỉnh thành theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     db.delete(item)
     db.commit()

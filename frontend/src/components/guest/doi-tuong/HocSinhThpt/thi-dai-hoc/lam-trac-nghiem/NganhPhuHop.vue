@@ -570,7 +570,7 @@ async function taiNganh(value) {
   } catch (error) {
     const status = error.response?.status
     const detail = error.response?.data?.detail
-    loi.value = status === 404 && typeof detail === 'string' ? detail : 'Không tải được ngành phù hợp.'
+    loi.value = status === 400 && typeof detail === 'string' ? detail : 'Không tải được ngành phù hợp.'
   } finally {
     if (!roiTrang) dangTai.value = false
   }

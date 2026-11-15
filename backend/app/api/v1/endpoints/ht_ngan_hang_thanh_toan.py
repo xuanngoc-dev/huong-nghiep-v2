@@ -39,11 +39,14 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _get_or_404(db: Session, item_id: int) -> HtNganHangThanhToan:
-    """Lấy một bản ghi theo id. Trả lỗi 404 nếu không tồn tại."""
+def _get_or_400(db: Session, item_id: int) -> HtNganHangThanhToan:
+    """Lấy một bản ghi theo id. Trả lỗi 400 kèm thông báo nếu không tồn tại."""
     item = db.get(HtNganHangThanhToan, item_id)
     if item is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy ngân hàng thanh toán")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy ngân hàng thanh toán có id = {item_id}",
+        )
     return item
 
 
@@ -111,7 +114,7 @@ def list_lua_chon_ngan_hang(db: Session = Depends(get_db)) -> list[HtNganHangLua
 @router.get("/{item_id}", response_model=HtNganHangThanhToanPublic)
 def get_ngan_hang_thanh_toan(item_id: int, db: Session = Depends(get_db)) -> HtNganHangThanhToan:
     """Lấy chi tiết một ngân hàng thanh toán theo id."""
-    return _get_or_404(db, item_id)
+    return _get_or_400(db, item_id)
 
 
 @router.post("", response_model=HtNganHangThanhToanPublic, status_code=status.HTTP_201_CREATED)
@@ -138,7 +141,7 @@ def update_ngan_hang_thanh_toan(
     db: Session = Depends(get_db),
 ) -> HtNganHangThanhToan:
     """Cập nhật toàn bộ thông tin một ngân hàng thanh toán theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
     try:
@@ -157,7 +160,7 @@ def update_trang_thai_ngan_hang_thanh_toan(
     db: Session = Depends(get_db),
 ) -> HtNganHangThanhToan:
     """Bật/tắt nhanh trạng thái hoạt động của một ngân hàng thanh toán."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     item.trang_thai = payload.trang_thai
     db.commit()
     db.refresh(item)
@@ -172,10 +175,7 @@ def delete_ngan_hang_thanh_toan_many(
     """Xóa nhiều ngân hàng thanh toán theo danh sách id."""
     items = db.scalars(select(HtNganHangThanhToan).where(HtNganHangThanhToan.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Không tìm thấy ngân hàng thanh toán để xóa",
-        )
+        return HtNganHangThanhToanDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     db.commit()
@@ -185,7 +185,7 @@ def delete_ngan_hang_thanh_toan_many(
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_ngan_hang_thanh_toan(item_id: int, db: Session = Depends(get_db)) -> None:
     """Xóa một ngân hàng thanh toán theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     db.delete(item)
     db.commit()
 

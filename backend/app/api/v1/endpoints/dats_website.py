@@ -55,10 +55,10 @@ def _joined():
 
 
 def _load_row(db: Session, item_id: int):
-    """Lấy một website kèm đề án và trường. Trả lỗi 404 nếu không có."""
+    """Lấy một website kèm đề án và trường. Trả lỗi 400 kèm thông báo nếu không có."""
     row = db.execute(_joined().where(DatsWebsite.id == item_id)).first()
     if row is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy website")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Không tìm thấy website có id = {item_id}")
     return row[0], row[1], row[2]
 
 
@@ -218,7 +218,7 @@ def delete_website_many(
     """Xóa nhiều website theo danh sách id."""
     items = db.scalars(select(DatsWebsite).where(DatsWebsite.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy website để xóa")
+        return DatsWebsiteDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     try:

@@ -408,7 +408,10 @@ def chi_tiet_lich_su_tim_truong(item_id: int, db: Session = Depends(get_db)) -> 
         _ghep_quan_tri(select(*_cot_quan_tri())).where(TnLichSuTimTruongPhuHop.id == item_id)
     ).first()
     if row is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy lượt tìm trường")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy lượt tìm trường có id = {item_id}",
+        )
     return _quan_tri_public(row, chi_tiet=True)
 
 
@@ -444,5 +447,8 @@ def chi_tiet_lich_su_tim_truong_cua_toi(
         )
     ).first()
     if row is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy lượt tìm trường")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy lượt tìm trường có id = {item_id}",
+        )
     return _quan_tri_public(row, chi_tiet=True)

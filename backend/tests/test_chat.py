@@ -337,7 +337,7 @@ class EndpointTests(CorpusFixture, unittest.TestCase):
             self.app.dependency_overrides[get_current_user] = lambda: SimpleNamespace(vai_tro=1)
             self.assertEqual(client.get("/tai-lieu").status_code, 200)
             self.assertEqual(client.get("/chat/nguon/alpha.json").status_code, 200)
-            self.assertEqual(client.get("/chat/nguon/unknown.json").status_code, 404)
+            self.assertEqual(client.get("/chat/nguon/unknown.json").status_code, 400)
             self.assertEqual(client.get("/chat/nguon/.env").status_code, 400)
         self.assertTrue((self.root / "alpha.json").exists())
 

@@ -98,14 +98,17 @@ def _to_public(
 
 
 def _load_pair(db: Session, item_id: int) -> tuple[TnCauHoiTracNghiem, DmLoaiCauHoi]:
-    """Lấy một câu hỏi kèm loại câu hỏi. Trả lỗi 404 nếu câu hỏi không tồn tại."""
+    """Lấy một câu hỏi kèm loại câu hỏi. Trả lỗi 400 kèm thông báo nếu câu hỏi không tồn tại."""
     row = db.execute(
         select(TnCauHoiTracNghiem, DmLoaiCauHoi)
         .join(DmLoaiCauHoi, TnCauHoiTracNghiem.loai_cau_hoi_id == DmLoaiCauHoi.id)
         .where(TnCauHoiTracNghiem.id == item_id)
     ).first()
     if row is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy câu hỏi trắc nghiệm")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy câu hỏi trắc nghiệm có id = {item_id}",
+        )
     return row[0], row[1]
 
 
@@ -296,7 +299,7 @@ def delete_cau_hoi_many(
     """Xóa nhiều câu hỏi theo danh sách id. Đáp án của các câu hỏi đó bị xóa theo."""
     items = db.scalars(select(TnCauHoiTracNghiem).where(TnCauHoiTracNghiem.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy câu hỏi trắc nghiệm để xóa")
+        return TnCauHoiTracNghiemDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     db.commit()
@@ -365,7 +368,10 @@ def update_cau_tra_loi(
     _load_pair(db, item_id)
     item = db.get(TnCauTraLoi, answer_id)
     if item is None or item.cau_hoi_id != item_id:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy đáp án")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy đáp án có id = {answer_id} trong câu hỏi id = {item_id}",
+        )
     item.noi_dung_cau_tra_loi = payload.noi_dung_cau_tra_loi
     item.diem = payload.diem
     db.commit()
@@ -384,6 +390,9 @@ def delete_cau_tra_loi(
     _load_pair(db, item_id)
     item = db.get(TnCauTraLoi, answer_id)
     if item is None or item.cau_hoi_id != item_id:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy đáp án")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy đáp án có id = {answer_id} trong câu hỏi id = {item_id}",
+        )
     db.delete(item)
     db.commit()

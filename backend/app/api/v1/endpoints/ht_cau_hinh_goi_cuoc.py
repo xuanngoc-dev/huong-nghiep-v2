@@ -31,11 +31,14 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _get_or_404(db: Session, item_id: int) -> HtCauHinhGoiCuoc:
-    """Lấy một bản ghi theo id. Trả lỗi 404 nếu không tồn tại."""
+def _get_or_400(db: Session, item_id: int) -> HtCauHinhGoiCuoc:
+    """Lấy một bản ghi theo id. Trả lỗi 400 kèm thông báo nếu không tồn tại."""
     item = db.get(HtCauHinhGoiCuoc, item_id)
     if item is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy gói cước")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy gói cước có id = {item_id}",
+        )
     return item
 
 
@@ -86,7 +89,7 @@ def list_cau_hinh_goi_cuoc(
 @router.get("/{item_id}", response_model=HtCauHinhGoiCuocPublic)
 def get_cau_hinh_goi_cuoc(item_id: int, db: Session = Depends(get_db)) -> HtCauHinhGoiCuoc:
     """Lấy chi tiết một gói cước theo id."""
-    return _get_or_404(db, item_id)
+    return _get_or_400(db, item_id)
 
 
 @router.post("", response_model=HtCauHinhGoiCuocPublic, status_code=status.HTTP_201_CREATED)
@@ -113,7 +116,7 @@ def update_cau_hinh_goi_cuoc(
     db: Session = Depends(get_db),
 ) -> HtCauHinhGoiCuoc:
     """Cập nhật toàn bộ thông tin một gói cước theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
     try:
@@ -132,7 +135,7 @@ def update_trang_thai_cau_hinh_goi_cuoc(
     db: Session = Depends(get_db),
 ) -> HtCauHinhGoiCuoc:
     """Bật/tắt nhanh trạng thái hoạt động của một gói cước."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     item.trang_thai = payload.trang_thai
     db.commit()
     db.refresh(item)
@@ -147,7 +150,7 @@ def delete_cau_hinh_goi_cuoc_many(
     """Xóa nhiều gói cước theo danh sách id."""
     items = db.scalars(select(HtCauHinhGoiCuoc).where(HtCauHinhGoiCuoc.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy gói cước để xóa")
+        return HtCauHinhGoiCuocDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     db.commit()
@@ -157,6 +160,6 @@ def delete_cau_hinh_goi_cuoc_many(
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_cau_hinh_goi_cuoc(item_id: int, db: Session = Depends(get_db)) -> None:
     """Xóa một gói cước theo id."""
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     db.delete(item)
     db.commit()

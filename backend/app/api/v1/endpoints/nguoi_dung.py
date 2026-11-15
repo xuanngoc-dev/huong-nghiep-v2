@@ -28,10 +28,13 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _get_or_404(db: Session, item_id: int) -> NguoiDung:
+def _get_or_400(db: Session, item_id: int) -> NguoiDung:
     item = db.get(NguoiDung, item_id)
     if item is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Không tìm thấy tài khoản")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy tài khoản có id = {item_id}",
+        )
     return item
 
 
@@ -101,7 +104,7 @@ def list_nguoi_dung(
 
 @router.get("/{item_id}", response_model=NguoiDungAdminPublic)
 def get_nguoi_dung(item_id: int, db: Session = Depends(get_db)) -> NguoiDung:
-    return _get_or_404(db, item_id)
+    return _get_or_400(db, item_id)
 
 
 @router.post("", response_model=NguoiDungAdminPublic, status_code=status.HTTP_201_CREATED)
@@ -137,7 +140,7 @@ def update_nguoi_dung(
     db: Session = Depends(get_db),
     current_user: NguoiDung = Depends(get_admin_user),
 ) -> NguoiDung:
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     email = payload.email.lower().strip()
     _ensure_unique_contact(
         db,
@@ -192,10 +195,7 @@ def delete_nguoi_dung_many(
 
     items = db.scalars(select(NguoiDung).where(NguoiDung.id.in_(payload.ids))).all()
     if not items:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Không tìm thấy tài khoản để xóa",
-        )
+        return NguoiDungDeleteManyResult(deleted=0)
     for item in items:
         db.delete(item)
     db.commit()
@@ -213,6 +213,6 @@ def delete_nguoi_dung(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Không thể xóa tài khoản đang đăng nhập",
         )
-    item = _get_or_404(db, item_id)
+    item = _get_or_400(db, item_id)
     db.delete(item)
     db.commit()
