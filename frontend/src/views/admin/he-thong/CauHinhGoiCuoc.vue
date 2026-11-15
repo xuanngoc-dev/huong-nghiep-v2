@@ -33,6 +33,41 @@
         <CustomOption label="Hoạt động" :value="1" />
         <CustomOption label="Ngừng sử dụng" :value="0" />
       </CustomSelect>
+      <CustomSelect
+        v-model="filters.co_khuyen_mai"
+        class="filter-status"
+        placeholder="Khuyến mãi"
+        clearable
+        @change="onSearch"
+      >
+        <CustomOption label="Có khuyến mãi" :value="true" />
+        <CustomOption label="Không khuyến mãi" :value="false" />
+      </CustomSelect>
+      <div class="filter-gia">
+        <CustomInputNumber
+          v-model="filters.gia_tu"
+          :min="0"
+          :max="GIA_TOI_DA"
+          :precision="0"
+          :step="1000"
+          :controls="false"
+          placeholder="Giá gốc từ"
+          aria-label="Giá gốc từ"
+          @keyup.enter="onSearch"
+        />
+        <span class="filter-gia__sep">–</span>
+        <CustomInputNumber
+          v-model="filters.gia_den"
+          :min="0"
+          :max="GIA_TOI_DA"
+          :precision="0"
+          :step="1000"
+          :controls="false"
+          placeholder="Giá gốc đến"
+          aria-label="Giá gốc đến"
+          @keyup.enter="onSearch"
+        />
+      </div>
       <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
       <CustomButton @click="onResetFilters">
         <CustomIcon><RefreshLeft /></CustomIcon>
@@ -86,17 +121,28 @@
           </CustomTag>
         </template>
       </CustomTableColumn>
-      <CustomTableColumn label="Giá gốc" width="130" align="right">
-        <template #default="{ row }">{{ formatTien(row.gia_goc) }}</template>
+      <!-- Có khuyến mãi: giá trị gốc gạch ngang, chữ nhỏ; giá trị khuyến mãi in đậm. Không có thì chỉ hiện giá trị gốc. -->
+      <CustomTableColumn label="Giá" width="150" align="right">
+        <template #default="{ row }">
+          <div class="gia-tri">
+            <template v-if="coGiaTri(row.gia_khuyen_mai)">
+              <span class="gia-tri__goc">{{ formatTien(row.gia_goc) }}</span>
+              <span class="gia-tri__km">{{ formatTien(row.gia_khuyen_mai) }}</span>
+            </template>
+            <span v-else>{{ formatTien(row.gia_goc) }}</span>
+          </div>
+        </template>
       </CustomTableColumn>
-      <CustomTableColumn label="Giá khuyến mãi" width="140" align="right">
-        <template #default="{ row }">{{ formatTien(row.gia_khuyen_mai) }}</template>
-      </CustomTableColumn>
-      <CustomTableColumn label="Lượt gốc" width="100" align="center">
-        <template #default="{ row }">{{ formatSo(row.so_luot_nhan_duoc_goc) }}</template>
-      </CustomTableColumn>
-      <CustomTableColumn label="Lượt khuyến mãi" width="130" align="center">
-        <template #default="{ row }">{{ formatSo(row.so_luot_nhan_duoc_khuyen_mai) }}</template>
+      <CustomTableColumn label="Số lượt" width="120" align="center">
+        <template #default="{ row }">
+          <div class="gia-tri">
+            <template v-if="coGiaTri(row.so_luot_nhan_duoc_khuyen_mai)">
+              <span class="gia-tri__goc">{{ formatSo(row.so_luot_nhan_duoc_goc) }}</span>
+              <span class="gia-tri__km">{{ formatSo(row.so_luot_nhan_duoc_khuyen_mai) }}</span>
+            </template>
+            <span v-else>{{ formatSo(row.so_luot_nhan_duoc_goc) }}</span>
+          </div>
+        </template>
       </CustomTableColumn>
       <CustomTableColumn prop="ghi_chu" label="Ghi chú" min-width="180">
         <template #default="{ row }">{{ row.ghi_chu || '—' }}</template>
@@ -277,6 +323,9 @@ function emptyFilters() {
     q: '',
     loai_ap_dung: '',
     trang_thai: '',
+    co_khuyen_mai: '',
+    gia_tu: null,
+    gia_den: null,
   }
 }
 
@@ -324,6 +373,10 @@ function loaiApDung(value) {
   return LOAI_AP_DUNG.find((item) => item.value === value) || { label: value || '—', tag: 'info' }
 }
 
+function coGiaTri(value) {
+  return value !== null && value !== undefined
+}
+
 function formatSo(value) {
   if (value === null || value === undefined) return '—'
   return Number(value).toLocaleString('vi-VN')
@@ -353,6 +406,11 @@ async function load() {
     if (filters.trang_thai !== '' && filters.trang_thai !== null) {
       params.trang_thai = filters.trang_thai
     }
+    if (filters.co_khuyen_mai !== '' && filters.co_khuyen_mai !== null) {
+      params.co_khuyen_mai = filters.co_khuyen_mai
+    }
+    if (filters.gia_tu !== null && filters.gia_tu !== undefined) params.gia_tu = filters.gia_tu
+    if (filters.gia_den !== null && filters.gia_den !== undefined) params.gia_den = filters.gia_den
     const data = await fetchCauHinhGoiCuoc(params)
     rows.value = data.items
     total.value = data.total
@@ -545,9 +603,46 @@ onMounted(load)
   width: 170px;
 }
 
+.filter-gia {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter-gia :deep(.el-input-number) {
+  width: 130px;
+}
+
+.gia-tri {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.35;
+}
+
+.gia-tri__goc {
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+  text-decoration: line-through;
+}
+
+.gia-tri__km {
+  font-weight: 600;
+  color: var(--el-color-danger);
+}
+
+.filter-gia__sep {
+  color: var(--el-text-color-secondary);
+}
+
 @media (max-width: 640px) {
-  .filter-status {
+  .filter-status,
+  .filter-gia {
     width: 100%;
+  }
+
+  .filter-gia :deep(.el-input-number) {
+    flex: 1;
+    width: auto;
   }
 }
 </style>

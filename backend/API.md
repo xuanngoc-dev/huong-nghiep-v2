@@ -1,6 +1,6 @@
 # Danh sách API
 
-Tự sinh từ code lúc 15/11/2026 15:16 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 15/11/2026 15:22 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
 Tiền tố chung: `/api/v1`. Tổng cộng **257** API.
 
@@ -226,7 +226,7 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `GET` | `/api/v1/he-thong/cau-hinh-goi-cuoc` | Bắt buộc (admin) | Lấy danh sách gói cước có phân trang. Lọc theo từ khóa (mã, tên, ghi chú), loại áp dụng và trạng thái. |
+| `GET` | `/api/v1/he-thong/cau-hinh-goi-cuoc` | Bắt buộc (admin) | Lấy danh sách gói cước có phân trang. |
 | `POST` | `/api/v1/he-thong/cau-hinh-goi-cuoc` | Bắt buộc (admin) | Thêm một gói cước. Từ chối nếu trùng mã gói cước. |
 | `DELETE` | `/api/v1/he-thong/cau-hinh-goi-cuoc` | Bắt buộc (admin) | Xóa nhiều gói cước theo danh sách id. |
 | `GET` | `/api/v1/he-thong/cau-hinh-goi-cuoc/{item_id}` | Bắt buộc (admin) | Lấy chi tiết một gói cước theo id. |

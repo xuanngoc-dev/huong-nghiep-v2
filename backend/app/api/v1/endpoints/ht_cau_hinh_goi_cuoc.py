@@ -47,11 +47,17 @@ def list_cau_hinh_goi_cuoc(
     q: str | None = Query(default=None, max_length=255),
     loai_ap_dung: LoaiApDung | None = Query(default=None),
     trang_thai: int | None = Query(default=None, ge=0, le=1),
+    co_khuyen_mai: bool | None = Query(default=None),
+    gia_tu: int | None = Query(default=None, ge=0),
+    gia_den: int | None = Query(default=None, ge=0),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
 ) -> HtCauHinhGoiCuocPage:
-    """Lấy danh sách gói cước có phân trang. Lọc theo từ khóa (mã, tên, ghi chú), loại áp dụng và trạng thái."""
+    """Lấy danh sách gói cước có phân trang.
+
+    Lọc theo từ khóa (mã, tên, ghi chú), loại áp dụng, trạng thái, có/không khuyến mãi và khoảng giá gốc.
+    """
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())
@@ -66,6 +72,13 @@ def list_cau_hinh_goi_cuoc(
         filters.append(HtCauHinhGoiCuoc.loai_ap_dung == loai_ap_dung)
     if trang_thai is not None:
         filters.append(HtCauHinhGoiCuoc.trang_thai == trang_thai)
+    if co_khuyen_mai is not None:
+        co = HtCauHinhGoiCuoc.gia_khuyen_mai.is_not(None)
+        filters.append(co if co_khuyen_mai else HtCauHinhGoiCuoc.gia_khuyen_mai.is_(None))
+    if gia_tu is not None:
+        filters.append(HtCauHinhGoiCuoc.gia_goc >= gia_tu)
+    if gia_den is not None:
+        filters.append(HtCauHinhGoiCuoc.gia_goc <= gia_den)
 
     count_stmt = select(func.count()).select_from(HtCauHinhGoiCuoc)
     stmt = select(HtCauHinhGoiCuoc)
