@@ -295,6 +295,7 @@ import {
 
 // Giữ khớp với LoaiApDung trong backend/app/schemas/ht_cau_hinh_goi_cuoc.py.
 const LOAI_AP_DUNG = [
+  { value: 'edu_coin', label: 'Edu coin', tag: 'danger' },
   { value: 'tra_cuu', label: 'Tra cứu', tag: 'primary' },
   { value: 'khao_sat', label: 'Khảo sát', tag: 'success' },
   { value: 'hoi_dap', label: 'Hỏi đáp', tag: 'warning' },

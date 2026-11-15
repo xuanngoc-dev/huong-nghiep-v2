@@ -1,4 +1,4 @@
-"""Tạo dữ liệu mẫu cho bảng ht_cau_hinh_goi_cuoc: 5 gói cho mỗi loại áp dụng.
+"""Tạo dữ liệu mẫu cho bảng ht_cau_hinh_goi_cuoc: 5 gói cho mỗi loại áp dụng (Edu coin, tra cứu, khảo sát, hỏi đáp).
 
 Chạy từ thư mục backend (cần đã chạy migration tạo bảng):
 
@@ -18,6 +18,11 @@ from app.models.ht_cau_hinh_goi_cuoc import HtCauHinhGoiCuoc
 
 # (mã, tên, loại áp dụng, giá gốc, giá khuyến mãi, lượt gốc, lượt khuyến mãi, trạng thái, ghi chú)
 GOI_CUOC_MAU = [
+    ("EDU_COIN_50", "Nạp 50 Edu coin", "edu_coin", 50000, None, 50, None, 1, "Gói nhỏ"),
+    ("EDU_COIN_100", "Nạp 100 Edu coin", "edu_coin", 100000, 100000, 100, 110, 1, "Tặng thêm 10 coin"),
+    ("EDU_COIN_200", "Nạp 200 Edu coin", "edu_coin", 200000, 180000, 200, None, 1, "Giảm giá 10%"),
+    ("EDU_COIN_500", "Nạp 500 Edu coin", "edu_coin", 500000, 450000, 500, 550, 1, "Giảm giá và tặng thêm 50 coin"),
+    ("EDU_COIN_1000", "Nạp 1000 Edu coin", "edu_coin", 1000000, None, 1000, None, 0, "Tạm ngừng bán"),
     ("TRA_CUU_5", "Gói tra cứu 5 lượt", "tra_cuu", 10000, None, 5, None, 1, "Gói dùng thử"),
     ("TRA_CUU_10", "Gói tra cứu 10 lượt", "tra_cuu", 20000, 15000, 10, None, 1, "Giảm giá 25%"),
     ("TRA_CUU_20", "Gói tra cứu 20 lượt", "tra_cuu", 35000, 35000, 20, 25, 1, "Tặng thêm 5 lượt"),

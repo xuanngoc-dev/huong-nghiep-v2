@@ -3,10 +3,11 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_admin_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.ht_cau_hinh_goi_cuoc import HtCauHinhGoiCuoc
 from app.schemas.ht_cau_hinh_goi_cuoc import (
+    HtCauHinhGoiCuocDangBan,
     HtCauHinhGoiCuocDeleteMany,
     HtCauHinhGoiCuocDeleteManyResult,
     HtCauHinhGoiCuocPage,
@@ -20,6 +21,13 @@ router = APIRouter(
     prefix="/he-thong/cau-hinh-goi-cuoc",
     tags=["he-thong"],
     dependencies=[Depends(get_admin_user)],
+)
+
+# Thành viên xem gói đang bán ở trang nạp tiền. Phải include trước `router` để không bị `/{item_id}` bắt mất.
+public_router = APIRouter(
+    prefix="/he-thong/cau-hinh-goi-cuoc",
+    tags=["he-thong"],
+    dependencies=[Depends(get_current_user)],
 )
 
 _TRUNG_MA = "Mã gói cước đã tồn tại"
@@ -176,3 +184,23 @@ def delete_cau_hinh_goi_cuoc(item_id: int, db: Session = Depends(get_db)) -> Non
     item = _get_or_400(db, item_id)
     db.delete(item)
     db.commit()
+
+
+@public_router.get("/dang-ban", response_model=list[HtCauHinhGoiCuocDangBan])
+def list_goi_cuoc_dang_ban(
+    loai_ap_dung: LoaiApDung | None = Query(default=None),
+    db: Session = Depends(get_db),
+) -> list[HtCauHinhGoiCuoc]:
+    """Các gói cước đang hoạt động để thành viên chọn nạp, sắp theo loại rồi giá gốc. Chưa có gói thì trả []."""
+    stmt = select(HtCauHinhGoiCuoc).where(HtCauHinhGoiCuoc.trang_thai == 1)
+    if loai_ap_dung:
+        stmt = stmt.where(HtCauHinhGoiCuoc.loai_ap_dung == loai_ap_dung)
+    return list(
+        db.scalars(
+            stmt.order_by(
+                HtCauHinhGoiCuoc.loai_ap_dung.asc(),
+                HtCauHinhGoiCuoc.gia_goc.asc(),
+                HtCauHinhGoiCuoc.id.asc(),
+            )
+        ).all()
+    )

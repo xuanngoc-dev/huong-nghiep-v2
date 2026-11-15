@@ -49,6 +49,7 @@ def _as_block(value: object, model: type[BaseModel]) -> BaseModel | None:
 
 def _to_public(user: NguoiDung, profile: NguoiDungThongTin | None) -> HoSoPublic:
     payload = {
+        "nguoi_dung_id": user.id,
         "ho_ten": user.ho_ten,
         "email": user.email,
         "so_dien_thoai": user.so_dien_thoai,
@@ -76,6 +77,14 @@ def _to_public(user: NguoiDung, profile: NguoiDungThongTin | None) -> HoSoPublic
                 "trinh_do_hoc_van": _as_block(profile.trinh_do_hoc_van, TrinhDoHocVan),
                 "suc_khoe_the_chat": _as_block(profile.suc_khoe_the_chat, SucKhoeTheChat),
                 "kha_nang_tai_chinh": _as_block(profile.kha_nang_tai_chinh, KhaNangTaiChinh),
+                "edu_coin": profile.edu_coin or 0,
+                "xu_he_thong": profile.xu_he_thong or 0,
+                "luot_tra_cuu": profile.luot_tra_cuu or 0,
+                "luot_hoi_dap": profile.luot_hoi_dap or 0,
+                "luot_khao_sat": profile.luot_khao_sat or 0,
+                "co_mat_khau_thanh_toan": bool(profile.mat_khau_thanh_toan),
+                "created_at": profile.created_at,
+                "updated_at": profile.updated_at,
             }
         )
     return HoSoPublic.model_validate(payload)
@@ -86,7 +95,7 @@ def get_ho_so(
     db: Session = Depends(get_db),
     current_user: NguoiDung = Depends(get_current_user),
 ) -> HoSoPublic:
-    """Lấy hồ sơ cá nhân của tài khoản đang đăng nhập."""
+    """Lấy toàn bộ hồ sơ của tài khoản đang đăng nhập: thông tin cá nhân, hồ sơ năng lực, Edu coin và số lượt còn lại."""
     profile = _get_profile(db, current_user.id)
     return _to_public(current_user, profile)
 
@@ -179,3 +188,4 @@ def update_thong_tin_ca_nhan(
     """Chỉ cập nhật thông tin cá nhân (họ tên, liên hệ, nhân thân, diện ưu tiên); giữ nguyên hồ sơ năng lực."""
     profile = _gan_thong_tin_ca_nhan(db, current_user, payload)
     return _luu(db, current_user, profile)
+

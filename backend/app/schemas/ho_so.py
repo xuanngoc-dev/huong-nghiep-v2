@@ -1,5 +1,5 @@
 import re
-from datetime import date
+from datetime import date, datetime
 
 from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
@@ -280,4 +280,20 @@ class HoSoWrite(ThongTinCaNhanWrite):
 
 
 class HoSoPublic(HoSoWrite):
+    """Toàn bộ hồ sơ của tài khoản: nguoi_dung ghép với nguoi_dung_thong_tin qua nguoi_dung_id.
+
+    Các trường số dư (Edu coin, xu, lượt) chỉ đọc, không nhận khi cập nhật hồ sơ.
+    Chưa có bản ghi nguoi_dung_thong_tin thì các trường hồ sơ là null và số dư là 0.
+    """
+
+    nguoi_dung_id: int
     email: EmailStr
+    edu_coin: int = 0
+    xu_he_thong: int = 0
+    luot_tra_cuu: int = 0
+    luot_hoi_dap: int = 0
+    luot_khao_sat: int = 0
+    # Chỉ cho biết đã đặt mật khẩu thanh toán hay chưa, không trả mật khẩu.
+    co_mat_khau_thanh_toan: bool = False
+    created_at: datetime | None = None
+    updated_at: datetime | None = None

@@ -45,6 +45,10 @@ class NguoiDungThongTin(Base):
     )
     edu_coin: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     xu_he_thong: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+    # Lượt mua thêm còn lại: cộng khi nạp gói cước, trừ khi sử dụng.
+    luot_tra_cuu: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+    luot_hoi_dap: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+    luot_khao_sat: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     mat_khau_thanh_toan: Mapped[str | None] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, server_default=func.now()

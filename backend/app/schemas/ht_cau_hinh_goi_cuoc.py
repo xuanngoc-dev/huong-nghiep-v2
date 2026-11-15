@@ -3,7 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-LoaiApDung = Literal["tra_cuu", "khao_sat", "hoi_dap"]
+LoaiApDung = Literal["edu_coin", "tra_cuu", "khao_sat", "hoi_dap"]
 
 _GIA_TOI_DA = 999_999_999_999_999
 
@@ -63,6 +63,21 @@ class HtCauHinhGoiCuocPublic(BaseModel):
     ghi_chu: str | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None
+
+    model_config = {"from_attributes": True}
+
+
+class HtCauHinhGoiCuocDangBan(BaseModel):
+    """Gói đang bán hiển thị cho thành viên ở trang nạp tiền, không kèm ghi chú nội bộ."""
+
+    id: int
+    ma_goi_cuoc: str
+    ten_goi_cuoc: str
+    loai_ap_dung: str
+    gia_goc: int
+    gia_khuyen_mai: int | None = None
+    so_luot_nhan_duoc_goc: int
+    so_luot_nhan_duoc_khuyen_mai: int | None = None
 
     model_config = {"from_attributes": True}
 

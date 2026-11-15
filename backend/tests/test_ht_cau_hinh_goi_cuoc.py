@@ -24,6 +24,10 @@ class TestHtCauHinhGoiCuocWrite(unittest.TestCase):
                 ma_goi_cuoc="G1", ten_goi_cuoc="G1", loai_ap_dung="hoi_dap", gia_goc=10000, gia_khuyen_mai=20000
             )
 
+    def test_nhan_loai_edu_coin(self):
+        item = HtCauHinhGoiCuocWrite(ma_goi_cuoc="COIN_100", ten_goi_cuoc="100 Edu coin", loai_ap_dung="edu_coin")
+        self.assertEqual(item.loai_ap_dung, "edu_coin")
+
     def test_tu_choi_loai_ap_dung_khong_hop_le(self):
         with self.assertRaises(ValidationError):
             HtCauHinhGoiCuocWrite(ma_goi_cuoc="G1", ten_goi_cuoc="G1", loai_ap_dung="khac")

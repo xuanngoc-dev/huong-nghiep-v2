@@ -20,7 +20,7 @@ class HtCauHinhGoiCuoc(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     ma_goi_cuoc: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     ten_goi_cuoc: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
-    # tra_cuu: tra cứu, khao_sat: khảo sát, hoi_dap: hỏi đáp
+    # edu_coin: nạp Edu coin, tra_cuu: tra cứu, khao_sat: khảo sát, hoi_dap: hỏi đáp
     loai_ap_dung: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     # Giá tính theo VNĐ.
     gia_goc: Mapped[Decimal] = mapped_column(Numeric(15, 0), nullable=False, default=0, server_default="0")

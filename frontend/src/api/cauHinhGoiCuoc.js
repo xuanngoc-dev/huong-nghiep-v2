@@ -25,3 +25,8 @@ export function deleteCauHinhGoiCuoc(id) {
 export function deleteCauHinhGoiCuocMany(ids) {
   return api.delete('/he-thong/cau-hinh-goi-cuoc', { data: { ids } }).then((res) => res.data)
 }
+
+// Gói đang bán cho thành viên ở trang nạp tiền.
+export function fetchGoiCuocDangBan(params) {
+  return api.get('/he-thong/cau-hinh-goi-cuoc/dang-ban', { params, skipLoading: true }).then((res) => res.data)
+}
