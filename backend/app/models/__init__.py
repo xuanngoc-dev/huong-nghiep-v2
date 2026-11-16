@@ -59,6 +59,14 @@ from app.models.dats_quy_doi_diem_trung_tuyen import DatsQuyDoiDiemTrungTuyen
 from app.models.dats_chinh_sach_xet_tuyen_thang import DatsChinhSachXetTuyenThang
 from app.models.dats_chinh_sach_uu_tien_xet_tuyen import DatsChinhSachUuTienXetTuyen
 from app.models.xt_diem_chuan import XtDiemChuan
+from app.models.dm_chi_so_xet_tuyen import DmChiSoXetTuyen
+from app.models.xt_bang_quy_doi import XtBangQuyDoi, XtBangQuyDoiChiTiet
+from app.models.xt_cong_thuc import XtCongThuc, XtCongThucHeSoMon, XtCongThucThanhPhan
+from app.models.xt_phuong_an import XtPhuongAn
+from app.models.xt_dieu_kien import XtDiemCong, XtDieuKien, XtNhomDieuKien
+from app.models.dats_hoc_phi import DatsHocPhi
+from app.models.xt_bo_tieu_chi import XtBoTieuChi, XtMucPhuHop, XtTieuChiPhuHop
+from app.models.xt_lich_su_import import XtLichSuImport
 
 __all__ = [
     "DmChuyenNganh",
@@ -120,4 +128,19 @@ __all__ = [
     "DatsChinhSachXetTuyenThang",
     "DatsChinhSachUuTienXetTuyen",
     "XtDiemChuan",
+    "DmChiSoXetTuyen",
+    "XtBangQuyDoi",
+    "XtBangQuyDoiChiTiet",
+    "XtCongThuc",
+    "XtCongThucHeSoMon",
+    "XtCongThucThanhPhan",
+    "XtPhuongAn",
+    "XtNhomDieuKien",
+    "XtDieuKien",
+    "XtDiemCong",
+    "DatsHocPhi",
+    "XtBoTieuChi",
+    "XtTieuChiPhuHop",
+    "XtMucPhuHop",
+    "XtLichSuImport",
 ]
