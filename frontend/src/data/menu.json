@@ -77,6 +77,12 @@
           "icon": "Connection"
         },
         {
+          "index": "/admin/de-an-tuyen-sinh/diem-chuan",
+          "title": "Điểm chuẩn",
+          "tooltip": "Điểm chuẩn các năm theo mã xét tuyển, phương thức, tổ hợp",
+          "icon": "TrendCharts"
+        },
+        {
           "index": "/admin/de-an-tuyen-sinh/ke-hoach",
           "title": "Kế hoạch",
           "tooltip": "Kế hoạch và phạm vi tuyển sinh của chương trình",

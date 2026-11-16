@@ -1,14 +1,14 @@
 # Danh sách API
 
-Tự sinh từ code lúc 16/11/2026 14:14 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 16/11/2026 14:18 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **274** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **281** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 153 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Quản trị (admin)](#quan_tri) | 160 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
 | [Thành viên (user)](#thanh_vien) | 78 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 43 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
@@ -209,6 +209,18 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `POST` | `/api/v1/danh-muc/truong-hoc/bulk` | Bắt buộc (admin) | Thêm nhiều trường học cùng lúc. Từ chối nếu mã trường trùng trong dữ liệu hoặc đã có trong hệ thống. |
 | `PUT` | `/api/v1/danh-muc/truong-hoc/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một trường học theo id. |
 | `DELETE` | `/api/v1/danh-muc/truong-hoc/{item_id}` | Bắt buộc (admin) | Xóa một trường học theo id. |
+
+### `diem-chuan`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/diem-chuan` | Bắt buộc (admin) | Danh sách điểm chuẩn có phân trang, lọc theo từ khóa, trường, năm và phương thức. |
+| `POST` | `/api/v1/diem-chuan` | Bắt buộc (admin) | Thêm một dòng điểm chuẩn. |
+| `DELETE` | `/api/v1/diem-chuan` | Bắt buộc (admin) | Xóa nhiều dòng điểm chuẩn theo id; id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/diem-chuan/bulk` | Bắt buộc (admin) | Nhập nhiều dòng điểm chuẩn trong một transaction; một dòng lỗi thì không lưu dòng nào. |
+| `GET` | `/api/v1/diem-chuan/{item_id}` | Bắt buộc (admin) | Chi tiết một dòng điểm chuẩn theo id. |
+| `PUT` | `/api/v1/diem-chuan/{item_id}` | Bắt buộc (admin) | Cập nhật một dòng điểm chuẩn. |
+| `DELETE` | `/api/v1/diem-chuan/{item_id}` | Bắt buộc (admin) | Xóa một dòng điểm chuẩn. |
 
 ### `he-thong/cau-hinh-enduser`
 

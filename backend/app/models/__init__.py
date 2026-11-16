@@ -58,6 +58,7 @@ from app.models.dats_quy_doi_nguong_dau_vao import DatsQuyDoiNguongDauVao
 from app.models.dats_quy_doi_diem_trung_tuyen import DatsQuyDoiDiemTrungTuyen
 from app.models.dats_chinh_sach_xet_tuyen_thang import DatsChinhSachXetTuyenThang
 from app.models.dats_chinh_sach_uu_tien_xet_tuyen import DatsChinhSachUuTienXetTuyen
+from app.models.xt_diem_chuan import XtDiemChuan
 
 __all__ = [
     "DmChuyenNganh",
@@ -118,4 +119,5 @@ __all__ = [
     "DatsQuyDoiDiemTrungTuyen",
     "DatsChinhSachXetTuyenThang",
     "DatsChinhSachUuTienXetTuyen",
+    "XtDiemChuan",
 ]

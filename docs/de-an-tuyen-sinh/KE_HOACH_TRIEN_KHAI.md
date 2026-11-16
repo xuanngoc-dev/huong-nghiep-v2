@@ -49,7 +49,7 @@ Nhánh làm việc: `tich_hop_de_an_tuyen_sinh`.
 | 1.3 | **Xong.** Chặn tạo đề án trùng năm ở API (thêm, thêm nhiều, sửa) và bộ import cũ (400 kèm thông báo) | Unit test `test_dats_tuyen_sinh_trung_nam.py` |
 | 1.4 | **Xong (chờ thử trên trang quản trị).** Trang Trụ sở chọn tỉnh (tự đoán từ địa chỉ); trang mới **Gắn ngành & cơ sở** (`/admin/de-an-tuyen-sinh/gan-nganh-co-so`): chọn ngành có gợi ý (`app/services/goi_y_nganh.py`), gán cơ sở hàng loạt, mã xét tuyển năm trước; API `GET/PATCH /chuong-trinh-dao-tao/gan-nganh-co-so` | Thử trên trang quản trị; test `test_gan_nganh_co_so.py` |
 | 1.5 | **Xong.** **Sao chép đề án năm trước**: `POST /de-an-tuyen-sinh/{id}/sao-chep` (`app/services/sao_chep_de_an.py`) + nút trên trang Danh sách. Sao chép toàn bộ dữ liệu con, tự điền mã xét tuyển năm trước, đề án mới trỏ `de_an_nam_truoc_id` về bản gốc | Test `test_sao_chep_de_an.py`: số dòng các bảng con khớp đề án gốc |
-| 1.6 | **Điểm chuẩn**: bảng `xt_diem_chuan` (migration `0057`) + màn hình CRUD theo skill `them-api` | Test: rỗng trả 200, id không tồn tại trả 400 |
+| 1.6 | **Đã viết, chờ chạy migration.** **Điểm chuẩn**: bảng `xt_diem_chuan` (migration `20261117_0057_xt_diem_chuan.py`), API `/diem-chuan` (chỉ admin; thêm, sửa, xóa, nhập nhiều dòng bằng JSON), trang `/admin/de-an-tuyen-sinh/diem-chuan` | Test `test_xt_diem_chuan.py`: rỗng trả 200, id không tồn tại trả 400, chặn trùng |
 
 **Xong giai đoạn 1:** mỗi trường mỗi năm một đề án, sao chép được sang năm sau, nhập được điểm chuẩn. Dùng được ngay,
 không phụ thuộc phần tính điểm.
