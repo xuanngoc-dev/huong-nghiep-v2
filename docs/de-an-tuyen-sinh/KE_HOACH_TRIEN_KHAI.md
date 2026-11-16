@@ -19,7 +19,7 @@ Nhánh làm việc: `tich_hop_de_an_tuyen_sinh`.
 
 | # | Việc | Bước liên quan |
 |---|---|---|
-| 5 | Giá trị điểm cộng đối tượng ưu tiên theo Thông tư 06/2026 | 5.2 |
+| 5 | ~~Giá trị điểm cộng đối tượng ưu tiên theo Thông tư 06/2026~~ Đã chốt: từ 2026 đối tượng 01–03 cộng 2,0; 04–06 cộng 1,0; 07 không cộng; các năm trước giữ như danh mục | 5.2 |
 
 ## Nguyên tắc chung
 
@@ -103,7 +103,7 @@ không phụ thuộc phần tính điểm.
 | Bước | Việc | Kiểm tra / nghiệm thu |
 |---|---|---|
 | 5.1 | **Xong — đã viết migration `20261120_0061`, chờ chạy.** `ma_khu_vuc` / `ma_doi_tuong` là UNIQUE và được `hs_ho_so`, `nguoi_dung_thong_tin` tham chiếu bằng id nên không thêm dòng theo năm được: thêm bảng `dm_muc_diem_uu_tien` (loại, mã, năm từ–đến, điểm cộng, căn cứ), API `/danh-muc/muc-diem-uu-tien`, trang quản trị "Điểm ưu tiên theo năm". Bộ tính lấy mức khớp năm, không có thì dùng `diem_cong` danh mục; tổ hợp ngoài `nam_ap_dung_tu/den` không tính được; dấu cache gồm cả các danh mục này. Kế hoạch ban đầu: Năm áp dụng cho `dm_to_hop_mon_hoc`, `dm_doi_tuong_uu_tien`, `dm_khu_vuc_uu_tien`: **các bảng đã có sẵn cột** (`nam_ap_dung_tu` / `nam_ap_dung_den`, `nam_ap_dung`), chỉ cần điền dữ liệu và cho bộ tính chọn dòng theo năm tuyển sinh; migration chỉ khi cần thêm `nam_ap_dung_den` cho hai bảng ưu tiên | Test tính năm 2025 và 2026 với hai mức điểm ưu tiên khác nhau |
-| 5.2 | Sửa điểm cộng đối tượng ưu tiên theo Thông tư 06/2026 (quyết định còn chờ số 5) | Chủ dự án duyệt bảng giá trị trước khi chạy |
+| 5.2 | **Xong — đã viết migration `20261120_0062`, chờ chạy** (thêm mức theo năm từ 2026: đối tượng 04 → 1,0; 07 → 0; danh mục giữ nguyên cho năm ≤ 2025). Sửa điểm cộng đối tượng ưu tiên theo Thông tư 06/2026 (quyết định số 5 đã chốt) | Chủ dự án duyệt bảng giá trị trước khi chạy |
 | 5.3 | **Xong** (`app/scripts/don_ket_qua_xet_tuyen.py`, `make don-ket-qua`; mặc định chạy thử, `--xoa` mới xóa; khách giữ 30 ngày, thành viên 180 ngày và luôn giữ lần mới nhất mỗi năm tuyển sinh; ứng dụng chạy nhiều worker nên lịch đặt bằng cron trên máy chủ, ví dụ `0 3 * * * cd /app/backend && python -m app.scripts.don_ket_qua_xet_tuyen --xoa`). Job định kỳ dọn kết quả đánh giá cũ | |
 | 5.4 | **Xong** (`QUY_TRINH_DUA_TRUONG_VAO.md`; API `POST /de-an-tuyen-sinh/{id}/quy-tac/chay-thu` và nút "Chạy thử" ở tab Quy tắc: tính với quy tắc của riêng đề án kể cả khi thử nghiệm, tải hồ sơ + kết quả cùng dạng bộ test hồi quy; `app.scripts.kiem_tra_bo_test_hoi_quy` báo đề án thử nghiệm / đang áp dụng THIẾU bộ test hoặc LỆCH mã băm với lần import gần nhất). **Quy trình đưa một trường mới vào:** soạn file JSON → `kiem_tra_de_an.py` → import (trạng thái **thử nghiệm**) → thêm hồ sơ mẫu và kết quả mong đợi vào bộ test → đối chiếu → chuyển sang **đang áp dụng** | Mỗi trường "đang áp dụng" đều có bộ test |
 | 5.5 | **Xong** (`GET /xet-tuyen/do-phu`, trang quản trị "Độ phủ dữ liệu" trong nhóm Đề án tuyển sinh; điểm chuẩn và vị trí đếm đúng cách bộ tính khớp: (mã trường, mã xét tuyển, năm ≤ năm tuyển sinh), tỉnh cơ sở hoặc tỉnh trường). **Trang "Độ phủ dữ liệu xét tuyển"** (quản trị): số trường theo trạng thái; tỷ lệ chương trình có điểm chuẩn, mã ngành, học phí; danh sách quy định chưa mô hình hóa theo trường | Theo dõi được tiến độ nhập liệu |
@@ -128,5 +128,5 @@ flowchart LR
 | 1.1 | Duyệt danh sách đề án cần gộp |
 | 3.8 | Nghiệm thu kết quả với điểm chuẩn thật |
 | 4.1 | Chốt quy tắc chuyển hồ sơ |
-| 5.2 | Duyệt giá trị điểm ưu tiên |
+| 5.2 | ~~Duyệt giá trị điểm ưu tiên~~ Đã duyệt |
 | 5.4 | Chuyển từng trường sang "đang áp dụng" |
