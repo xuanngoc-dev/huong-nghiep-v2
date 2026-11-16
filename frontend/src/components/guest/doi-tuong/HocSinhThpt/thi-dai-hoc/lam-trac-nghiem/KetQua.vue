@@ -5,7 +5,8 @@
         <header class="holland-overview__header">
           <h2 class="holland-overview__title">Kết quả trắc nghiệm Holland</h2>
           <p v-if="ketQua" class="holland-overview__lead">
-            Đã trả lời {{ ketQua.so_da_tra_loi }}/{{ ketQua.so_cau_hoi }} câu.
+            Đã trả lời {{ ketQua.so_da_tra_loi }}/{{ ketQua.so_cau_hoi }} câu. Kết quả cho biết xu hướng sở thích nghề
+            nghiệp của bạn, dùng để định hướng tìm hiểu.
           </p>
         </header>
 
@@ -15,25 +16,63 @@
         <template v-else-if="ketQua">
           <BuocLamBai :ssid="ssid" :buoc="buoc" hien-tai="ket-qua" />
 
-          <article class="holland-panel">
-            <p class="holland-kicker">Mã nổi bật</p>
-            <h3 class="holland-panel__title">{{ ketQua.ma_noi_bat || 'Chưa đủ đáp án' }}</h3>
-            <p v-if="!ketQua.ma_noi_bat" class="quiz-note">
-              Hãy hoàn thành các phần phía trước để hệ thống cộng điểm theo nhóm tính cách.
-            </p>
-            <ul class="quiz-scores">
-              <li v-for="item in ketQua.nhom" :key="item.ma_nhom" class="quiz-score">
-                <span class="quiz-score__code">{{ item.ma_nhom }}</span>
-                <span class="quiz-score__body">
-                  <span class="quiz-score__name">{{ item.ten_nhom }}</span>
-                  <span class="quiz-score__track">
-                    <span class="quiz-score__bar" :style="{ width: `${(item.diem / diemCaoNhat) * 100}%` }" />
-                  </span>
-                </span>
-                <strong class="quiz-score__point">{{ item.diem }}</strong>
-              </li>
-            </ul>
-          </article>
+          <div class="major-tabs">
+            <div class="major-tabs__bar" role="tablist" aria-label="Kết quả trắc nghiệm Holland">
+              <button
+                v-for="tab in TABS"
+                :id="idTab(tab.id)"
+                :key="tab.id"
+                type="button"
+                role="tab"
+                class="major-tabs__pill"
+                :class="{ 'is-active': tabDangChon === tab.id }"
+                :aria-selected="tabDangChon === tab.id"
+                :aria-controls="`ket-qua-panel-${tab.id}`"
+                :tabindex="tabDangChon === tab.id ? 0 : -1"
+                @click="chonTab(tab.id)"
+                @keydown="dieuHuongTab"
+              >
+                {{ tab.nhan }}
+              </button>
+            </div>
+            <div
+              :id="`ket-qua-panel-${tabDangChon}`"
+              class="major-tabs__panel"
+              role="tabpanel"
+              :aria-labelledby="idTab(tabDangChon)"
+            >
+              <TongQuanKetQua
+                v-if="tabDangChon === 'tong-quan'"
+                :nhom="ketQua.nhom"
+                :top="top"
+                :ma-noi-bat="ketQua.ma_noi_bat"
+              />
+              <NgheNghiepDaoTao
+                v-else-if="tabDangChon === 'nghe-nghiep'"
+                :ssid="ssid"
+                :top="top"
+                :ma-noi-bat="ketQua.ma_noi_bat"
+                :danh-muc-nhom="danhMucNhom"
+                :nganh="nganh"
+                :dang-tai-nganh="dangTaiNganh"
+                :loi-nganh="loiNganh"
+                :quan-tam="quanTam"
+                :route-query="queryGiuLai"
+                @doi-quan-tam="doiQuanTam"
+              />
+              <LoTrinhTiepTheo
+                v-else
+                :ssid="ssid"
+                :top="top"
+                :ma-noi-bat="ketQua.ma_noi_bat"
+                :nganh="nganh"
+                :quan-tam="quanTam"
+                :route-query="queryGiuLai"
+                @doi-quan-tam="doiQuanTam"
+                @chuyen-tab="chonTab"
+              />
+            </div>
+          </div>
         </template>
       </div>
     </div>
@@ -41,29 +80,95 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { fetchKetQua } from '@/api/phienKhaoSat'
+/**
+ * Kết quả trắc nghiệm Holland theo 3 tab: Tổng quan (mã Holland, biểu đồ, nhận xét, khám phá bản thân),
+ * Nghề nghiệp & đào tạo (nghề, ngành, trường), Lộ trình tiếp theo (các bước, trải nghiệm, hành động).
+ */
+import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { fetchNhomHolland } from '@/api/nhomTinhCachHolland'
+import { fetchKetQua, fetchNganhPhuHop } from '@/api/phienKhaoSat'
+import { docQuanTam, ghiQuanTam, xepHang } from '@/utils/ketQuaHolland'
 import BuocLamBai from './BuocLamBai.vue'
+import LoTrinhTiepTheo from './ket-qua/LoTrinhTiepTheo.vue'
+import NgheNghiepDaoTao from './ket-qua/NgheNghiepDaoTao.vue'
+import TongQuanKetQua from './ket-qua/TongQuanKetQua.vue'
 
 defineOptions({ name: 'ThptKetQuaTracNghiem' })
 
+const TABS = [
+  { id: 'tong-quan', nhan: 'Tổng quan' },
+  { id: 'nghe-nghiep', nhan: 'Nghề nghiệp & đào tạo' },
+  { id: 'lo-trinh', nhan: 'Lộ trình tiếp theo' },
+]
+
 const route = useRoute()
+const router = useRouter()
 const ssid = computed(() => String(route.params.ssid || ''))
 const dangTai = ref(false)
 const loi = ref('')
 const ketQua = ref(null)
+const danhMucNhom = ref([])
+const nganh = ref([])
+const dangTaiNganh = ref(false)
+const loiNganh = ref('')
+const quanTam = reactive({ nganh: [], truong: [] })
+
+const tabDangChon = computed(() => (TABS.some((tab) => tab.id === route.query.tab) ? route.query.tab : 'tong-quan'))
+// Giữ ma_nganh của luồng làm bài khi sang trang chi tiết ngành / trường.
+const queryGiuLai = computed(() => (route.query.ma_nganh ? { ma_nganh: route.query.ma_nganh } : {}))
+const top = computed(() => xepHang(ketQua.value?.nhom).slice(0, 3))
 
 const buoc = computed(() => [
   ...(ketQua.value?.buoc || []).map((item) => ({ ...item, xong: true })),
   { id: 'nganh-phu-hop', ten: 'Ngành phù hợp', xong: true },
   { id: 'ket-qua', ten: 'Kết quả', xong: false },
 ])
-const diemCaoNhat = computed(() => Math.max(1, ...(ketQua.value?.nhom || []).map((item) => item.diem)))
+
+function idTab(id) {
+  return `ket-qua-tab-${id}`
+}
+
+function chonTab(id) {
+  router.replace({ query: { ...route.query, tab: id === 'tong-quan' ? undefined : id } })
+}
+
+function dieuHuongTab(event) {
+  const huong = { ArrowRight: 1, ArrowLeft: -1, Home: 'dau', End: 'cuoi' }[event.key]
+  if (!huong) return
+  event.preventDefault()
+  const index = TABS.findIndex((tab) => tab.id === tabDangChon.value)
+  const ke = huong === 'dau' ? 0 : huong === 'cuoi' ? TABS.length - 1 : (index + huong + TABS.length) % TABS.length
+  chonTab(TABS[ke].id)
+  nextTick(() => document.getElementById(idTab(TABS[ke].id))?.focus())
+}
+
+function doiQuanTam(loai, item) {
+  const khoa = loai === 'nganh' ? 'ma_nganh' : 'ma_truong'
+  const ds = quanTam[loai]
+  const index = ds.findIndex((x) => x[khoa] === item[khoa])
+  if (index >= 0) ds.splice(index, 1)
+  else ds.push(item)
+  ghiQuanTam(globalThis.localStorage, ssid.value, { nganh: quanTam.nganh, truong: quanTam.truong })
+}
+
+async function taiNganh(value) {
+  nganh.value = []
+  loiNganh.value = ''
+  dangTaiNganh.value = true
+  try {
+    nganh.value = (await fetchNganhPhuHop(value)).nganh || []
+  } catch {
+    loiNganh.value = 'Không tải được ngành phù hợp.'
+  } finally {
+    dangTaiNganh.value = false
+  }
+}
 
 async function taiKetQua(value) {
   ketQua.value = null
   loi.value = ''
+  Object.assign(quanTam, docQuanTam(globalThis.localStorage, value))
   if (!value) {
     loi.value = 'Không có mã phiên khảo sát.'
     return
@@ -75,82 +180,24 @@ async function taiKetQua(value) {
     const status = error.response?.status
     const detail = error.response?.data?.detail
     loi.value = status === 400 && typeof detail === 'string' ? detail : 'Không tải được kết quả.'
+    return
   } finally {
     dangTai.value = false
+  }
+  taiNganh(value)
+}
+
+async function taiDanhMucNhom() {
+  try {
+    const data = await fetchNhomHolland({ trang_thai: 1, page: 1, page_size: 20 }, { skipLoading: true })
+    danhMucNhom.value = data.items || []
+  } catch {
+    danhMucNhom.value = []
   }
 }
 
 watch(ssid, taiKetQua, { immediate: true })
+taiDanhMucNhom()
 </script>
 
 <style src="./quiz-type.scss"></style>
-
-<style scoped>
-.quiz-note {
-  margin: 0 0 16px;
-  color: #2c3a4d;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-.quiz-scores {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.quiz-score {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.quiz-score__code {
-  display: grid;
-  flex: 0 0 40px;
-  width: 40px;
-  height: 40px;
-  place-items: center;
-  border-radius: 8px;
-  background: var(--guest-primary);
-  color: #fff;
-  font-weight: 500;
-}
-
-.quiz-score__body {
-  flex: 1;
-  min-width: 0;
-}
-
-.quiz-score__name {
-  display: block;
-  margin-bottom: 4px;
-  color: #162033;
-  font-weight: 400;
-}
-
-.quiz-score__track {
-  display: block;
-  height: 8px;
-  overflow: hidden;
-  border-radius: 0.375rem;
-  background: #e6ece8;
-}
-
-.quiz-score__bar {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--guest-primary);
-}
-
-.quiz-score__point {
-  flex: 0 0 2.5rem;
-  color: #121a28;
-  font-weight: 500;
-  text-align: right;
-}
-</style>
