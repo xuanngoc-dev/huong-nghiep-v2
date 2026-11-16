@@ -93,8 +93,8 @@ const router = createRouter({
         {
           path: '',
           name: 'member-home',
-          component: () => import('@/views/member/PagePlaceholder.vue'),
-          meta: { title: 'Thành viên', requiresAuth: true },
+          component: () => import('@/views/member/TongQuan.vue'),
+          meta: { title: 'Tổng quan', requiresAuth: true },
         },
         {
           path: 'huong-nghiep/danh-gia',

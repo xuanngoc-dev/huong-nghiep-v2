@@ -375,23 +375,6 @@
     {
       "items": [
         {
-          "index": "/admin",
-          "title": "Quản trị",
-          "tooltip": "Mở khu vực quản trị hệ thống",
-          "icon": "Setting",
-          "adminOnly": true
-        }
-      ]
-    },
-    {
-      "items": [
-        {
-          "index": "/",
-          "title": "Trang chủ",
-          "tooltip": "Trang chủ định hướng nghề nghiệp",
-          "icon": "HomeFilled"
-        },
-        {
           "index": "/member",
           "title": "Thành viên",
           "tooltip": "Khu vực dành cho thành viên đã đăng nhập",

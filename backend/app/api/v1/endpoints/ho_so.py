@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from datetime import date, timedelta
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, ValidationError
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -12,12 +14,16 @@ from app.models.dm_khu_vuc_uu_tien import DmKhuVucUuTien
 from app.models.dm_tinh_thanh import DmTinhThanh
 from app.models.nguoi_dung import NguoiDung
 from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
+from app.models.tn_lich_su_tim_truong_phu_hop import TnLichSuTimTruongPhuHop
+from app.models.tn_phien_khao_sat import TnPhienKhaoSat
 from app.schemas.auth import DoiMatKhauKetQua, DoiMatKhauRequest
 from app.schemas.ho_so import (
     HoSoPublic,
     HoSoWrite,
     KhaNangTaiChinh,
     SucKhoeTheChat,
+    SuDungTheoNgay,
+    ThongKeSuDung,
     ThongTinCaNhanWrite,
     TrinhDoHocVan,
 )
@@ -209,3 +215,60 @@ def doi_mat_khau(
     current_user.mat_khau = hash_password(payload.mat_khau_moi)
     db.commit()
     return DoiMatKhauKetQua()
+
+
+def _day_ngay(tu_ngay: date, so_ngay: int, dem: dict[str, dict[date, int]]) -> list[SuDungTheoNgay]:
+    """Đủ từng ngày từ `tu_ngay` (ngày không dùng = 0) để biểu đồ không bị hụt cột."""
+    return [
+        SuDungTheoNgay(
+            ngay=ngay,
+            tim_truong=dem["tim_truong"].get(ngay, 0),
+            khao_sat=dem["khao_sat"].get(ngay, 0),
+        )
+        for ngay in (tu_ngay + timedelta(days=i) for i in range(so_ngay))
+    ]
+
+
+@router.get("/thong-ke-su-dung", response_model=ThongKeSuDung)
+def thong_ke_su_dung(
+    so_ngay: int = Query(default=30, ge=7, le=90),
+    db: Session = Depends(get_db),
+    current_user: NguoiDung = Depends(get_current_user),
+) -> ThongKeSuDung:
+    """Số lượt tìm trường phù hợp (đã tính lượt) và phiên khảo sát theo ngày trong `so_ngay` ngày gần nhất."""
+    tu_ngay = date.today() - timedelta(days=so_ngay - 1)
+
+    ngay_tim = func.date(TnLichSuTimTruongPhuHop.ngay_tao)
+    tim = db.execute(
+        select(ngay_tim, TnLichSuTimTruongPhuHop.loai_luot, func.count())
+        .where(
+            TnLichSuTimTruongPhuHop.tai_khoan_id == current_user.id,
+            TnLichSuTimTruongPhuHop.da_tinh_luot == 1,
+            TnLichSuTimTruongPhuHop.ngay_tao >= tu_ngay,
+        )
+        .group_by(ngay_tim, TnLichSuTimTruongPhuHop.loai_luot)
+    ).all()
+
+    ngay_ks = func.date(TnPhienKhaoSat.created_at)
+    khao_sat = db.execute(
+        select(ngay_ks, func.count())
+        .where(TnPhienKhaoSat.nguoi_khao_sat_id == current_user.id, TnPhienKhaoSat.created_at >= tu_ngay)
+        .group_by(ngay_ks)
+    ).all()
+
+    dem: dict[str, dict[date, int]] = {"tim_truong": {}, "khao_sat": {}}
+    theo_loai: dict[str, int] = {}
+    for ngay, loai_luot, so in tim:
+        dem["tim_truong"][ngay] = dem["tim_truong"].get(ngay, 0) + so
+        theo_loai[loai_luot] = theo_loai.get(loai_luot, 0) + so
+    for ngay, so in khao_sat:
+        dem["khao_sat"][ngay] = so
+
+    return ThongKeSuDung(
+        so_ngay=so_ngay,
+        theo_ngay=_day_ngay(tu_ngay, so_ngay, dem),
+        tong_tim_truong=sum(dem["tim_truong"].values()),
+        tim_truong_mien_phi=theo_loai.get("mien_phi", 0),
+        tim_truong_tra_phi=theo_loai.get("tra_phi", 0),
+        tong_khao_sat=sum(dem["khao_sat"].values()),
+    )

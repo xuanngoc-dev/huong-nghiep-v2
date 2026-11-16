@@ -297,3 +297,20 @@ class HoSoPublic(HoSoWrite):
     co_mat_khau_thanh_toan: bool = False
     created_at: datetime | None = None
     updated_at: datetime | None = None
+
+
+class SuDungTheoNgay(BaseModel):
+    ngay: date
+    tim_truong: int = 0
+    khao_sat: int = 0
+
+
+class ThongKeSuDung(BaseModel):
+    """Lượt dùng chức năng của tài khoản đang đăng nhập trong `so_ngay` ngày gần nhất (tính cả hôm nay)."""
+
+    so_ngay: int
+    theo_ngay: list[SuDungTheoNgay]
+    tong_tim_truong: int = 0
+    tim_truong_mien_phi: int = 0
+    tim_truong_tra_phi: int = 0
+    tong_khao_sat: int = 0

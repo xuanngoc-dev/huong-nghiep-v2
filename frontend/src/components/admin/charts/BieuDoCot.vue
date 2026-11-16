@@ -7,6 +7,7 @@
  * BieuDoCot — biểu đồ cột dọc / thanh ngang.
  * series: [{ name: 'Lượt gợi ý', data: [120, 98, ...] }]
  * distributed: mỗi cột một màu (dùng khi chỉ có 1 series).
+ * soNguyen: trục giá trị chỉ hiện số nguyên (đếm lượt, số lần).
  */
 import { BANG_MAU, cauHinhNen, useApexChart } from './useApexChart'
 
@@ -19,6 +20,7 @@ const props = defineProps({
   distributed: { type: Boolean, default: false },
   colors: { type: Array, default: () => BANG_MAU },
   donVi: { type: String, default: '' },
+  soNguyen: { type: Boolean, default: false },
 })
 
 function dinhDang(value) {
@@ -50,7 +52,10 @@ function taoCauHinh() {
       axisTicks: { show: false },
       labels: props.horizontal ? soLieu : {},
     },
-    yaxis: { labels: props.horizontal ? { maxWidth: 200 } : soLieu },
+    yaxis: {
+      labels: props.horizontal ? { maxWidth: 200 } : soLieu,
+      ...(props.soNguyen ? { decimalsInFloat: 0, forceNiceScale: true, min: 0 } : {}),
+    },
     grid: {
       ...nen.grid,
       xaxis: { lines: { show: props.horizontal } },

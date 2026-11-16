@@ -150,3 +150,43 @@ class TestDoiMatKhau(unittest.TestCase):
         with self.assertRaises(HTTPException) as ctx:
             self._doi("matkhaucu", "matkhaucu")
         self.assertEqual(ctx.exception.status_code, 400)
+
+
+class _DbThongKe:
+    """Session giả: execute() trả lần lượt kết quả nhóm theo ngày của tìm trường rồi khảo sát."""
+
+    def __init__(self, *ket_qua):
+        self.ket_qua = list(ket_qua)
+
+    def execute(self, *_args, **_kwargs):
+        rows = self.ket_qua.pop(0)
+        return SimpleNamespace(all=lambda: rows)
+
+
+class TestThongKeSuDung(unittest.TestCase):
+    def test_du_tung_ngay_va_cong_theo_loai_luot(self):
+        from datetime import date, timedelta
+
+        from app.api.v1.endpoints.ho_so import thong_ke_su_dung
+
+        hom_nay = date.today()
+        hom_qua = hom_nay - timedelta(days=1)
+        db = _DbThongKe(
+            [(hom_nay, "mien_phi", 2), (hom_nay, "tra_phi", 1), (hom_qua, "mien_phi", 1)],
+            [(hom_qua, 3)],
+        )
+        kq = thong_ke_su_dung(so_ngay=7, db=db, current_user=SimpleNamespace(id=1))
+        self.assertEqual(len(kq.theo_ngay), 7)
+        self.assertEqual(kq.theo_ngay[-1].ngay, hom_nay)
+        self.assertEqual(kq.theo_ngay[-1].tim_truong, 3)
+        self.assertEqual(kq.theo_ngay[-2].khao_sat, 3)
+        self.assertEqual(kq.theo_ngay[0].tim_truong, 0)
+        self.assertEqual((kq.tong_tim_truong, kq.tim_truong_mien_phi, kq.tim_truong_tra_phi), (4, 3, 1))
+        self.assertEqual(kq.tong_khao_sat, 3)
+
+    def test_chua_dung_thi_tra_du_ngay_gia_tri_0(self):
+        from app.api.v1.endpoints.ho_so import thong_ke_su_dung
+
+        kq = thong_ke_su_dung(so_ngay=30, db=_DbThongKe([], []), current_user=SimpleNamespace(id=1))
+        self.assertEqual(len(kq.theo_ngay), 30)
+        self.assertEqual(kq.tong_tim_truong + kq.tong_khao_sat, 0)

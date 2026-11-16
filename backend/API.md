@@ -1,15 +1,15 @@
 # Danh sách API
 
-Tự sinh từ code lúc 16/11/2026 09:41 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 16/11/2026 10:27 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **270** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **271** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
 | [Quản trị (admin)](#quan_tri) | 153 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 74 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Thành viên (user)](#thanh_vien) | 75 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 43 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
@@ -491,6 +491,7 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 | `PATCH` | `/api/v1/tai-khoan/nap-tien/{item_id}` | Bắt buộc | Đổi ngân hàng chuyển khoản hoặc báo đã chuyển khoản cho giao dịch đang chờ của mình. |
 | `POST` | `/api/v1/tai-khoan/nap-tien/{item_id}/huy` | Bắt buộc | Hủy giao dịch đang chờ thanh toán của mình. |
 | `POST` | `/api/v1/tai-khoan/nap-tien/{item_id}/kiem-tra-thanh-toan` | Bắt buộc | Kiểm tra giao dịch đang chờ đã có tiền về chưa (modal thanh toán gọi định kỳ). |
+| `GET` | `/api/v1/tai-khoan/thong-ke-su-dung` | Bắt buộc | Số lượt tìm trường phù hợp (đã tính lượt) và phiên khảo sát theo ngày trong `so_ngay` ngày gần nhất. |
 | `PUT` | `/api/v1/tai-khoan/thong-tin-ca-nhan` | Bắt buộc | Chỉ cập nhật thông tin cá nhân (họ tên, liên hệ, nhân thân, diện ưu tiên); giữ nguyên hồ sơ năng lực. |
 
 ### `tim-truong-phu-hop`

@@ -124,6 +124,11 @@
                 <el-dropdown-item disabled>
                   {{ authStore.user?.email }}
                 </el-dropdown-item>
+                <!-- Trang chủ và trang quản trị chuyển từ menu bên vào đây. -->
+                <el-dropdown-item divided command="trang-chu" :icon="HomeFilled">Trang chủ</el-dropdown-item>
+                <el-dropdown-item v-if="authStore.isAdmin && area !== 'admin'" command="quan-tri" :icon="Setting">
+                  Trang quản trị
+                </el-dropdown-item>
                 <el-dropdown-item divided command="thong-tin-ca-nhan" :icon="User">
                   Thông tin cá nhân
                 </el-dropdown-item>
@@ -152,7 +157,7 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch, watchEffect } f
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { ArrowDown, Expand, Fold, Lock, Monitor, Setting, User } from '@element-plus/icons-vue'
+import { ArrowDown, Expand, Fold, HomeFilled, Lock, Monitor, Setting, User } from '@element-plus/icons-vue'
 import SettingsDrawer from '@/components/SettingsDrawer.vue'
 import DoiMatKhauDialog from '@/components/member/DoiMatKhauDialog.vue'
 import SoDuTaiKhoan from '@/components/member/SoDuTaiKhoan.vue'
@@ -325,6 +330,14 @@ function syncCollapseByViewport(e) {
 }
 
 async function onCommand(cmd) {
+  if (cmd === 'trang-chu') {
+    router.push({ name: 'home' })
+    return
+  }
+  if (cmd === 'quan-tri') {
+    router.push({ name: 'admin-home' })
+    return
+  }
   if (cmd === 'thong-tin-ca-nhan') {
     router.push({ name: 'thong-tin-ca-nhan' })
     return
