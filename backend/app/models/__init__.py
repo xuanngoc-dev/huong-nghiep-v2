@@ -67,6 +67,7 @@ from app.models.xt_dieu_kien import XtDiemCong, XtDieuKien, XtNhomDieuKien
 from app.models.dats_hoc_phi import DatsHocPhi
 from app.models.xt_bo_tieu_chi import XtBoTieuChi, XtMucPhuHop, XtTieuChiPhuHop
 from app.models.xt_lich_su_import import XtLichSuImport
+from app.models.xt_ket_qua import XtKetQuaChuongTrinh, XtKetQuaPhuongAn, XtLanDanhGia
 
 __all__ = [
     "DmChuyenNganh",
@@ -143,4 +144,7 @@ __all__ = [
     "XtTieuChiPhuHop",
     "XtMucPhuHop",
     "XtLichSuImport",
+    "XtLanDanhGia",
+    "XtKetQuaPhuongAn",
+    "XtKetQuaChuongTrinh",
 ]

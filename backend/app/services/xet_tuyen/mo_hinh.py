@@ -135,6 +135,7 @@ class DiemChuanTinh:
     thang: float | None
     ma_phuong_thuc: str | None = None
     ma_to_hop: str | None = None
+    id: int | None = None  # xt_diem_chuan.id, để lưu dòng nào được dùng làm mốc
 
 
 @dataclass
@@ -235,6 +236,7 @@ class KetQuaPhuongAn:
     so_nhom: int = 0
     so_nhom_dat: int = 0
     diem_chuan: float | None = None
+    diem_chuan_id: int | None = None
     nam_diem_chuan: int | None = None
     thang_diem_chuan: float | None = None
     chenh_lech_30: float | None = None

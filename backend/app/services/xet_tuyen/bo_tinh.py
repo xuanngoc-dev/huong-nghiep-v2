@@ -472,6 +472,7 @@ def _gan_diem_chuan(r, ct, ctr, ma_to_hop, nam, diem_chuan: list[DiemChuanTinh])
             tot, tot_khoa = d, khoa
     if tot is not None:
         r.diem_chuan = tot.diem
+        r.diem_chuan_id = tot.id
         r.nam_diem_chuan = tot.nam
         r.thang_diem_chuan = tot.thang
         r.chenh_lech_30 = lam_tron(r.diem_xet * 30 / r.thang - tot.diem * 30 / tot.thang, 2)
