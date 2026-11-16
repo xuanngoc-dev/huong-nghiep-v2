@@ -108,6 +108,8 @@
             :aria-label="isDark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'"
           />
 
+          <SoDuTaiKhoan v-if="!authStore.isAdmin" />
+
           <el-dropdown trigger="click" @command="onCommand">
             <span class="user-trigger">
               <el-avatar :size="32">{{ avatarLetter }}</el-avatar>
@@ -147,6 +149,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { ArrowDown, Expand, Fold, Monitor, Setting } from '@element-plus/icons-vue'
 import SettingsDrawer from '@/components/SettingsDrawer.vue'
+import SoDuTaiKhoan from '@/components/member/SoDuTaiKhoan.vue'
 import SideMenu from '@/components/SideMenu.vue'
 import menuData from '@/data/menu.json'
 import { useAuthStore } from '@/stores/auth'

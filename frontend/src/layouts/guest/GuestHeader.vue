@@ -36,12 +36,40 @@
         </ul>
 
         <div class="d-grid gap-2 d-lg-flex align-items-lg-center">
-          <template v-if="auth.isAuthenticated">
-            <RouterLink class="btn landing-nav__solid" to="/member">Khu vực thành viên</RouterLink>
-            <RouterLink v-if="auth.isAdmin" class="btn landing-nav__outline" to="/admin">
-              Quản trị
-            </RouterLink>
-          </template>
+          <!-- Đã đăng nhập: tên tài khoản, rê chuột (desktop) hoặc chạm (mobile) để mở menu tài khoản. -->
+          <div v-if="auth.isAuthenticated" class="tai-khoan-nhom">
+            <SoDuTaiKhoan v-if="!auth.isAdmin" />
+            <CustomDropdown
+              :trigger="moBangCham ? 'click' : 'hover'"
+              placement="bottom-end"
+              popper-class="tai-khoan-menu"
+              @command="onCommand"
+            >
+              <button type="button" class="tai-khoan" aria-label="Menu tài khoản">
+                <span class="tai-khoan__avatar" aria-hidden="true">{{ chuCaiDau }}</span>
+                <span class="tai-khoan__ten">{{ tenHienThi }}</span>
+                <CustomIcon class="tai-khoan__mui-ten"><ArrowDown /></CustomIcon>
+              </button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <li class="tai-khoan-menu__dau" aria-hidden="true">
+                    <strong>{{ tenHienThi }}</strong>
+                    <span v-if="auth.user?.email">{{ auth.user.email }}</span>
+                  </li>
+                  <el-dropdown-item
+                    v-for="item in menuTaiKhoan"
+                    :key="item.command"
+                    :command="item.command"
+                    :divided="item.divided"
+                    :icon="item.icon"
+                    :class="{ 'tai-khoan-menu__dang-xuat': item.command === 'logout' }"
+                  >
+                    {{ item.label }}
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </CustomDropdown>
+          </div>
           <template v-else>
             <RouterLink class="btn landing-nav__outline" to="/login">Đăng nhập</RouterLink>
             <RouterLink class="btn landing-nav__solid" to="/register">Đăng ký</RouterLink>
@@ -53,15 +81,60 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import {
+  ArrowDown,
+  Clock,
+  Postcard,
+  Setting,
+  SwitchButton,
+  Tickets,
+  User,
+  UserFilled,
+  Wallet,
+} from '@element-plus/icons-vue'
+import SoDuTaiKhoan from '@/components/member/SoDuTaiKhoan.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useIsMobile } from '@/composables/useResponsiveSize'
 import { navLinks } from '@/data/landing'
 import 'bootstrap/js/dist/collapse'
 
 const auth = useAuthStore()
 const route = useRoute()
+const router = useRouter()
 const scrolled = ref(false)
+// Navbar thu gọn (< lg) hoặc thiết bị không có hover: mở menu tài khoản bằng chạm/bấm.
+const moBangCham = useIsMobile('(max-width: 991.98px), (hover: none)')
+
+const tenHienThi = computed(() => auth.displayName || 'Tài khoản')
+const chuCaiDau = computed(() => {
+  const tu = tenHienThi.value.trim().split(/\s+/).pop() || ''
+  return (tu[0] || '?').toUpperCase()
+})
+
+// command là route đích; 'logout' là đăng xuất.
+const menuTaiKhoan = computed(() => [
+  { command: 'member-home', label: 'Khu vực thành viên', icon: UserFilled },
+  ...(auth.isAdmin ? [{ command: 'admin-home', label: 'Trang quản trị', icon: Setting }] : []),
+  { command: 'thong-tin-ca-nhan', label: 'Thông tin cá nhân', icon: User, divided: true },
+  { command: 'ho-so', label: 'Hồ sơ năng lực', icon: Postcard },
+  { command: 'nap-tien', label: 'Nạp tiền', icon: Wallet },
+  { command: 'lich-su-nap-tien', label: 'Lịch sử nạp tiền', icon: Tickets },
+  { command: 'lich-su-trac-nghiem', label: 'Lịch sử trắc nghiệm', icon: Clock },
+  { command: 'logout', label: 'Đăng xuất', icon: SwitchButton, divided: true },
+])
+
+function onCommand(command) {
+  if (command !== 'logout') {
+    router.push({ name: command })
+    return
+  }
+  auth.logout()
+  ElMessage.success('Đã đăng xuất')
+  if (route.matched.some((record) => record.meta.requiresAuth)) router.push({ name: 'home' })
+}
 
 function onScroll() {
   scrolled.value = window.scrollY > 8
@@ -211,7 +284,65 @@ function isActive(item) {
   box-shadow: 0 14px 28px rgba(63, 150, 67, 0.3);
 }
 
+/* Nút tài khoản (đã đăng nhập) */
+.tai-khoan-nhom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tai-khoan {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 260px;
+  min-height: 42px;
+  padding: 0.25rem 0.75rem 0.25rem 0.3rem;
+  border: 1px solid rgba(63, 150, 67, 0.28);
+  border-radius: 999px;
+  background: #fff;
+  color: #0f172a;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.tai-khoan:hover,
+.tai-khoan:focus-visible {
+  border-color: #3f9643;
+  background: rgba(63, 150, 67, 0.06);
+}
+
+.tai-khoan__avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3f9643, #2f7a33);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.tai-khoan__ten {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tai-khoan__mui-ten {
+  flex-shrink: 0;
+  color: #475569;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .tai-khoan,
   .landing-nav,
   .landing-nav__link,
   .landing-nav__link::after,
@@ -226,5 +357,39 @@ function isActive(item) {
     padding-bottom: 0.5rem;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
   }
+}
+</style>
+
+<!-- Menu tài khoản teleport ra body nên không dùng scoped. -->
+<style>
+.tai-khoan-menu .el-dropdown-menu {
+  min-width: 220px;
+}
+
+.tai-khoan-menu__dau {
+  display: flex;
+  flex-direction: column;
+  max-width: 260px;
+  padding: 6px 16px 10px;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+  margin-bottom: 4px;
+  list-style: none;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.tai-khoan-menu__dau strong,
+.tai-khoan-menu__dau span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tai-khoan-menu__dau span {
+  color: var(--el-text-color-secondary);
+}
+
+.tai-khoan-menu .tai-khoan-menu__dang-xuat {
+  color: var(--el-color-danger);
 }
 </style>
