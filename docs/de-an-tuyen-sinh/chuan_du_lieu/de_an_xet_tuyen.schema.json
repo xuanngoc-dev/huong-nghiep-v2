@@ -28,11 +28,11 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["ma_co_so", "ten_co_so", "ma_tinh"],
+        "required": ["ma_co_so", "ten_co_so"],
         "properties": {
           "ma_co_so": { "type": "string", "minLength": 1, "description": "Mã tự đặt, duy nhất trong file." },
           "ten_co_so": { "type": "string", "minLength": 1 },
-          "ma_tinh": { "type": "string", "description": "dm_tinh_thanh.ma_tinh." },
+          "ma_tinh": { "type": ["string", "null"], "description": "dm_tinh_thanh.ma_tinh. null = lấy tỉnh của trường." },
           "dia_chi": { "type": ["string", "null"] },
           "la_tru_so_chinh": { "type": "boolean", "default": false }
         }
@@ -168,19 +168,19 @@
           "description": "TO_HOP_MON: tổng có hệ số các môn của tổ hợp. THANH_PHAN: tổng các bài thi/chứng chỉ đã quy đổi. CHI_DIEU_KIEN: không tính điểm (xét thẳng). THU_CONG: có điểm nhưng hệ thống chưa tự tính."
         },
         "nguon_diem_mon": { "enum": ["THI_THPT", "HOC_BA", null], "description": "Bắt buộc với TO_HOP_MON. HOC_BA = trung bình cả năm lớp 10, 11, 12." },
-        "thay_ngoai_ngu": { "enum": ["KHONG", "DUOC_PHEP", "BAT_BUOC"], "default": "KHONG", "description": "Môn ngoại ngữ của tổ hợp có lấy điểm quy đổi chứng chỉ không. DUOC_PHEP: lấy mức cao hơn. BAT_BUOC: chỉ dùng chứng chỉ." },
+        "thay_ngoai_ngu": { "enum": ["KHONG", "DUOC_PHEP", "BAT_BUOC", null], "default": "KHONG", "description": "Môn ngoại ngữ của tổ hợp có lấy điểm quy đổi chứng chỉ không. DUOC_PHEP: lấy mức cao hơn. BAT_BUOC: chỉ dùng chứng chỉ." },
         "ma_bang_quy_doi_ngoai_ngu": { "type": ["string", "null"], "description": "Bắt buộc khi thay_ngoai_ngu khác KHONG." },
         "thang_diem": { "type": "number", "exclusiveMinimum": 0, "description": "Điểm tối đa của điểm xét." },
-        "he_so_nhan": { "type": "number", "exclusiveMinimum": 0, "default": 1, "description": "Nhân vào tổng các thành phần." },
+        "he_so_nhan": { "type": ["number", "null"], "exclusiveMinimum": 0, "default": 1, "description": "Nhân vào tổng các thành phần." },
         "nguong_tb_mon": { "type": ["number", "null"], "description": "Trung bình các môn học dùng xét phải >= giá trị này." },
         "nguong_thpt_to_hop": { "type": ["number", "null"], "description": "Tổng điểm thi THPT 3 môn của tổ hợp, gồm điểm ưu tiên, phải >= giá trị này." },
         "diem_san": { "type": ["number", "null"], "description": "Ngưỡng nhận hồ sơ trên điểm xét cuối cùng." },
-        "ap_dung_diem_cong": { "type": "boolean", "default": true },
-        "ap_dung_uu_tien": { "type": "boolean", "default": true },
-        "ty_le_diem_cong_toi_da": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.1 },
-        "so_le_lam_tron": { "type": "integer", "minimum": 0, "maximum": 4, "default": 2 },
+        "ap_dung_diem_cong": { "type": ["boolean", "null"], "default": true },
+        "ap_dung_uu_tien": { "type": ["boolean", "null"], "default": true },
+        "ty_le_diem_cong_toi_da": { "type": ["number", "null"], "minimum": 0, "maximum": 1, "default": 0.1 },
+        "so_le_lam_tron": { "type": ["integer", "null"], "minimum": 0, "maximum": 4, "default": 2 },
         "mo_ta_cong_thuc": { "type": ["string", "null"], "description": "Công thức nguyên văn để hiển thị." },
-        "dang_dung": { "type": "boolean", "default": true, "description": "false: đã khai nhưng chưa dùng để tính (chờ xác minh)." },
+        "dang_dung": { "type": ["boolean", "null"], "default": true, "description": "false: đã khai nhưng chưa dùng để tính (chờ xác minh)." },
         "ghi_chu": { "type": ["string", "null"] },
         "he_so_mon": {
           "description": "Chỉ với TO_HOP_MON. Môn không khai mặc định hệ số 1. Các môn thay thế nhau trong cùng một vị trí của tổ hợp phải có cùng hệ số.",

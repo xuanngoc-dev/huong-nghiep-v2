@@ -33,6 +33,23 @@ MaChiSo = Literal[
 class _Khoi(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
+    @model_validator(mode="before")
+    @classmethod
+    def _null_la_mac_dinh(cls, data):
+        """Ô ghi null mà trường có giá trị mặc định (he_so_nhan, so_le_lam_tron, he_so_mon...) thì dùng mặc định."""
+        if not isinstance(data, dict):
+            return data
+        return {
+            k: v
+            for k, v in data.items()
+            if not (
+                v is None
+                and k in cls.model_fields
+                and not cls.model_fields[k].is_required()
+                and cls.model_fields[k].get_default(call_default_factory=True) is not None
+            )
+        }
+
 
 class DeAnChuan(_Khoi):
     ten_de_an: str = Field(..., min_length=1)
@@ -45,7 +62,8 @@ class DeAnChuan(_Khoi):
 class CoSoChuan(_Khoi):
     ma_co_so: str = Field(..., min_length=1)
     ten_co_so: str = Field(..., min_length=1)
-    ma_tinh: str
+    # Trống: chương trình ở cơ sở này lấy tỉnh của trường khi chấm tiêu chí vị trí.
+    ma_tinh: str | None = None
     dia_chi: str | None = None
     la_tru_so_chinh: bool = False
 
@@ -161,6 +179,18 @@ class CongThucChuan(_Khoi):
     he_so_mon: list[HeSoMonChuan] = []
     thanh_phan: list[ThanhPhanChuan] = []
     dieu_kien: list[NhomDieuKienChuan] = []
+
+    @model_validator(mode="before")
+    @classmethod
+    def _bo_truong_khong_dung(cls, data):
+        """nguon_diem_mon chỉ có nghĩa với TO_HOP_MON; CHI_DIEU_KIEN không tính điểm nên thang_diem mặc định 30."""
+        if isinstance(data, dict):
+            data = dict(data)
+            if data.get("kieu_tinh") != "TO_HOP_MON":
+                data.pop("nguon_diem_mon", None)
+            if data.get("kieu_tinh") == "CHI_DIEU_KIEN" and data.get("thang_diem") is None:
+                data["thang_diem"] = 30
+        return data
 
     @model_validator(mode="after")
     def _theo_kieu_tinh(self):

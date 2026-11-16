@@ -158,6 +158,21 @@ class ImportDayDuTests(unittest.TestCase):
             import_day_du(self.db, "BKA", 2027, du_lieu)
         self.assertIn("co_so_id = 7", str(ctx.exception))
 
+    def test_null_la_gia_tri_mac_dinh(self):
+        """Ô null mà trường có mặc định thì dùng mặc định; cơ sở bỏ trống tỉnh giữ tỉnh của dats_tru_so."""
+        du_lieu = copy.deepcopy(self.mau)
+        quy_tac = du_lieu["quy_tac_xet_tuyen"]
+        quy_tac["co_so"][1]["ma_tinh"] = None
+        for ct in quy_tac["cong_thuc"]:
+            ct.update(he_so_nhan=None, so_le_lam_tron=None, ty_le_diem_cong_toi_da=None, thay_ngoai_ngu=ct.get("thay_ngoai_ngu"))
+        xet_thang = next(ct for ct in quy_tac["cong_thuc"] if ct["kieu_tinh"] == "CHI_DIEU_KIEN")
+        xet_thang.update(thang_diem=None, nguon_diem_mon="HO_SO", he_so_mon=None)
+        import_day_du(self.db, "BKA", 2027, du_lieu)
+        ct = self.db.scalars(select(M.XtCongThuc).where(M.XtCongThuc.ma_cong_thuc == "BKA_THPT")).one()
+        self.assertEqual((float(ct.he_so_nhan), ct.so_le_lam_tron, float(ct.ty_le_diem_cong_toi_da)), (1.0, 2, 0.1))
+        hp = self.db.scalars(select(M.DatsTruSo).where(M.DatsTruSo.ten_co_so == "Cơ sở Hải Phòng")).one()
+        self.assertEqual(self.db.get(M.DmTinhThanh, hp.tinh_thanh_id).ma_tinh, "31")
+
 
 if __name__ == "__main__":
     unittest.main()

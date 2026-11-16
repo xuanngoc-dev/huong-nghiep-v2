@@ -121,9 +121,9 @@ def kiem_tra(doc, dm):
             canh_bao.append(f'{vt}: he_so_mon chỉ có tác dụng với TO_HOP_MON')
         if c['kieu_tinh'] != 'THANH_PHAN' and c.get('thanh_phan'):
             canh_bao.append(f'{vt}: thanh_phan chỉ có tác dụng với THANH_PHAN')
-        for h in c.get('he_so_mon', []):
+        for h in c.get('he_so_mon') or []:
             co_ma('mon_hoc', h.get('ma_mon'), vt + ' / he_so_mon')
-        for t in c.get('thanh_phan', []):
+        for t in c.get('thanh_phan') or []:
             co_ma('bai_thi', t.get('ma_bai_thi'), vt + ' / thanh_phan')
             co_ma('mon_hoc', t.get('ma_mon'), vt + ' / thanh_phan')
             tb = t.get('ma_bang_quy_doi')
@@ -132,7 +132,7 @@ def kiem_tra(doc, dm):
         if c['kieu_tinh'] == 'THANH_PHAN':
             # điểm tối đa lý thuyết phải bằng thang điểm
             theo_vt = {}
-            for t in c.get('thanh_phan', []):
+            for t in c.get('thanh_phan') or []:
                 tb = t.get('ma_bang_quy_doi')
                 toi_da = bang[tb]['thang_diem_dich'] if tb in bang else None
                 if toi_da is None:
@@ -140,10 +140,10 @@ def kiem_tra(doc, dm):
                     break
                 theo_vt[t['vi_tri']] = max(theo_vt.get(t['vi_tri'], 0), toi_da * t.get('he_so', 1))
             if theo_vt:
-                tong = sum(theo_vt.values()) * c.get('he_so_nhan', 1)
+                tong = sum(theo_vt.values()) * (c.get('he_so_nhan') or 1)
                 if abs(tong - c['thang_diem']) > 0.01:
                     canh_bao.append(f'{vt}: điểm tối đa theo các thành phần là {tong:.2f}, khác thang_diem {c["thang_diem"]}')
-        for n in c.get('dieu_kien', []):
+        for n in c.get('dieu_kien') or []:
             kiem_nhom(n, vt)
 
     for n in doc.get('dieu_kien_chung', []):
@@ -183,8 +183,8 @@ def kiem_tra(doc, dm):
             if ct['kieu_tinh'] == 'TO_HOP_MON':
                 if not p.get('to_hop'):
                     loi.append(f'{vt}: công thức "{ma}" kiểu TO_HOP_MON phải có to_hop')
-                he_so = {h.get('ma_mon'): h['he_so'] for h in ct.get('he_so_mon', []) if h.get('ma_mon')}
-                he_so_nhom = {h['nhom_mon']: h['he_so'] for h in ct.get('he_so_mon', []) if h.get('nhom_mon')}
+                he_so = {h.get('ma_mon'): h['he_so'] for h in ct.get('he_so_mon') or [] if h.get('ma_mon')}
+                he_so_nhom = {h['nhom_mon']: h['he_so'] for h in ct.get('he_so_mon') or [] if h.get('nhom_mon')}
                 for th in p.get('to_hop', []):
                     vi_tri = vi_tri_to_hop(th)
                     if dm is not None and th not in to_hop_rieng and th not in dm['to_hop']:
@@ -201,13 +201,13 @@ def kiem_tra(doc, dm):
                     for pos in vi_tri:
                         if len({w(m) for m in pos}) > 1:
                             loi.append(f'{vt}: tổ hợp "{th}" có các môn thay thế nhau nhưng khác hệ số trong công thức "{ma}"')
-                    tong = sum(max(w(m) for m in pos) for pos in vi_tri) * 10 * ct.get('he_so_nhan', 1)
+                    tong = sum(max(w(m) for m in pos) for pos in vi_tri) * 10 * (ct.get('he_so_nhan') or 1)
                     if abs(tong - ct['thang_diem']) > 0.01 and (ma, th) not in da_bao_thang:
                         da_bao_thang.add((ma, th))
                         canh_bao.append(f'cong_thuc {ma} với tổ hợp {th}: điểm tối đa theo hệ số là {tong:.2f}, khác thang_diem {ct["thang_diem"]}')
             elif p.get('to_hop'):
                 canh_bao.append(f'{vt}: công thức "{ma}" không theo tổ hợp, to_hop sẽ bị bỏ qua')
-        for n in c.get('dieu_kien_rieng', []):
+        for n in c.get('dieu_kien_rieng') or []:
             kiem_nhom(n, vt, cho_phep_ct=True)
 
     for ma in cong_thuc:

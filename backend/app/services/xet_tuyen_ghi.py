@@ -156,7 +156,8 @@ class _Ghi:
                 cs = self._them(DatsTruSo(de_an_id=de_an.id, ten_co_so=dong["ten_co_so"]))
                 cs.loai_co_so = "tru_so" if dong["vai_tro"] == "chinh" else "co_so"
             cs.vai_tro = dong["vai_tro"]
-            cs.tinh_thanh_id = dong["tinh_thanh_id"]
+            if dong["tinh_thanh_id"] is not None:
+                cs.tinh_thanh_id = dong["tinh_thanh_id"]
             if dong["dia_chi"]:
                 cs.dia_chi = dong["dia_chi"]
             self.db.flush()
