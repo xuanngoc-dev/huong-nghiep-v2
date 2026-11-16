@@ -1,6 +1,6 @@
 # Sơ đồ luồng xử lý: đề án tuyển sinh theo năm và tìm trường phù hợp
 
-Tài liệu đi kèm `THIET_KE.md` và `IMPLEMENT.md`. Đây là **phương án đề xuất**: dùng mô hình dữ liệu và chuẩn JSON
+Tài liệu đi kèm `THIET_KE.md` và `IMPLEMENT.md`; kế hoạch từng bước ở `KE_HOACH_TRIEN_KHAI.md`. Đây là **phương án đề xuất**: dùng mô hình dữ liệu và chuẩn JSON
 trong hai tài liệu đó, nhưng **viết phần tính điểm bằng Python** thay cho thủ tục MySQL, và bổ sung các phần còn
 thiếu cho việc lưu theo năm (khóa duy nhất trường + năm, sao chép đề án năm trước, danh mục có hiệu lực theo năm).
 
