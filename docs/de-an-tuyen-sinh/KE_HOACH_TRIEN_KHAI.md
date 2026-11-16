@@ -13,12 +13,12 @@ Nhánh làm việc: `tich_hop_de_an_tuyen_sinh`.
 | 4 | **Tính điểm bằng Python**, không dùng thủ tục MySQL | Bản JavaScript trong `test_xet_tuyen.html` dùng để đối chiếu |
 | 5 | **File JSON chuẩn là nguồn sự thật** cho phần quy tắc xét tuyển | Sửa quy tắc = sửa file rồi import lại |
 | 6 | Chấm điểm phù hợp theo 4 tiêu chí: khả năng trúng tuyển 50, ngành 25, học phí 15, vị trí 10 | Lưu trong `xt_tieu_chi_phu_hop`, đổi được sau |
+| 7 | Chuyển hồ sơ cũ: NN1 = Tiếng Anh, NN2 = Tiếng Pháp; học lực suy từ điểm trung bình (≥ 8 Tốt, ≥ 6,5 Khá, ≥ 5 Đạt); coi như tốt nghiệp đúng năm tuyển sinh đang tìm | Bước 3.3, 4.1 |
 
 ## Quyết định còn chờ
 
 | # | Việc | Bước liên quan |
 |---|---|---|
-| 4 | Quy tắc chuyển hồ sơ cũ: ngoại ngữ NN1/NN2 thành môn nào; học lực suy ra từ điểm trung bình hay để trống | 4.1 |
 | 5 | Giá trị điểm cộng đối tượng ưu tiên theo Thông tư 06/2026 | 5.2 |
 
 ## Nguyên tắc chung
@@ -70,7 +70,7 @@ không phụ thuộc phần tính điểm.
 |---|---|---|
 | 3.1 | **Xong** (`app/services/xet_tuyen/bo_tinh.py`, `mo_hinh.py`). **Bộ tính** (`app/services/xet_tuyen/`), hàm thuần không cần DB: quy đổi chứng chỉ / bài thi, tính điểm theo công thức, kiểm tra điều kiện, điểm cộng và điểm ưu tiên (Điều 6, 7), so điểm chuẩn, chấm điểm phù hợp. **Không có điều kiện theo mã trường** (quy định khi review code) | Unit test với các số trong `IMPLEMENT.md` mục 7 (FTU thi THPT A00 26,50; FTU HSA 27,87; BKA TSA 74,17; hồ sơ B không đạt ngưỡng 24…) |
 | 3.2 | **Xong**: `tests/test_xet_tuyen_bo_tinh.py` so với kết quả chạy chính bản JS (script `tests/du_lieu/xet_tuyen/xuat_ket_qua_js.mjs`) cho hồ sơ A, B, C: 1.443 phương án, bảng xếp hạng và xếp hạng trường khớp tuyệt đối. Đối chiếu với bản JavaScript trong `test_xet_tuyen.html`: xuất kết quả thành file mẫu, so cả 986 phương án | Khớp 100%, kể cả làm tròn |
-| 3.3 | **Bộ chuyển hồ sơ**: dựng hồ sơ xét tuyển từ JSON `trinh_do_hoc_van` và form khách, để không phải chờ giai đoạn 4 | Test với hồ sơ mẫu |
+| 3.3 | **Xong** (`app/services/xet_tuyen/chuyen_ho_so.py`; NN1 = Anh, NN2 = Pháp, học lực suy từ điểm TB, coi như tốt nghiệp đúng năm tìm — chốt 16/11/2026; điểm môn của khách ước tính từ điểm theo khối). **Bộ chuyển hồ sơ**: dựng hồ sơ xét tuyển từ JSON `trinh_do_hoc_van` và form khách, để không phải chờ giai đoạn 4 | Test với hồ sơ mẫu |
 | 3.4 | **Migration `0059`:** `xt_lan_danh_gia`, `xt_ket_qua_chuong_trinh`, `xt_ket_qua_phuong_an` (chỉ lưu phương án của chương trình trong top kết quả) | |
 | 3.5 | **Nối vào luồng tìm trường:**<br/>• đề án "đang áp dụng" dùng bộ tính mới (`phien_ban_thuat_toan = 'xt-v1'`), còn lại dùng thuật toán cũ<br/>• giữ nguyên cách trừ / hoàn lượt<br/>• lọc trước theo ngành và năm, chỉ tính chương trình liên quan; cache quy tắc theo năm<br/>• **đo hiệu năng với dữ liệu giả lập khoảng 300 trường** | Test: trường chưa áp dụng cho kết quả y như trước; thời gian một lượt tìm trong ngưỡng chấp nhận |
 | 3.6 | API kết quả: danh sách chương trình, danh sách trường, chi tiết phương án; kiểm tra quyền xem lần đánh giá | Test truy cập lần đánh giá của người khác bị từ chối |
