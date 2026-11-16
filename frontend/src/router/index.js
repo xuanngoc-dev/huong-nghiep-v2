@@ -398,6 +398,12 @@ const router = createRouter({
           meta: { title: 'Điểm chuẩn', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'de-an-tuyen-sinh/do-phu-xet-tuyen',
+          name: 'de-an-tuyen-sinh-do-phu',
+          component: () => import('@/views/admin/de-an-tuyen-sinh/DoPhuXetTuyen.vue'),
+          meta: { title: 'Độ phủ dữ liệu xét tuyển', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'de-an-tuyen-sinh/ke-hoach',
           name: 'de-an-tuyen-sinh-ke-hoach',
           component: () => import('@/views/admin/de-an-tuyen-sinh/KeHoachTuyenSinh.vue'),

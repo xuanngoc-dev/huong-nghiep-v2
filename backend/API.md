@@ -1,14 +1,14 @@
 # Danh sách API
 
-Tự sinh từ code lúc 16/11/2026 21:12 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 16/11/2026 21:15 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **297** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **298** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 168 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Quản trị (admin)](#quan_tri) | 169 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
 | [Thành viên (user)](#thanh_vien) | 81 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 48 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
@@ -350,6 +350,12 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/trac-nghiem/phien/quan-tri` | Bắt buộc (admin) | Tất cả phiên khảo sát cho quản trị, mới nhất trước. |
+
+### `xet-tuyen`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/xet-tuyen/do-phu` | Bắt buộc (admin) | Độ phủ dữ liệu xét tuyển của các đề án trong năm. `tong` tính trên mọi đề án của năm (không theo bộ lọc). |
 
 <a id="thanh_vien"></a>
 

@@ -83,6 +83,12 @@
           "icon": "TrendCharts"
         },
         {
+          "index": "/admin/de-an-tuyen-sinh/do-phu-xet-tuyen",
+          "title": "Độ phủ dữ liệu",
+          "tooltip": "Tiến độ nhập liệu xét tuyển: trạng thái đề án, mã ngành, điểm chuẩn, học phí, vị trí",
+          "icon": "DataAnalysis"
+        },
+        {
           "index": "/admin/de-an-tuyen-sinh/ke-hoach",
           "title": "Kế hoạch",
           "tooltip": "Kế hoạch và phạm vi tuyển sinh của chương trình",

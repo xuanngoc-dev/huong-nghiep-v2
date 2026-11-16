@@ -25,3 +25,8 @@ export function fetchPhuongAnChuongTrinh(lanId, chuongTrinhId, maThietBi) {
     )
     .then((res) => res.data)
 }
+
+// Độ phủ dữ liệu xét tuyển theo năm (quản trị).
+export function fetchDoPhuXetTuyen(params) {
+  return api.get('/xet-tuyen/do-phu', { params }).then((res) => res.data)
+}

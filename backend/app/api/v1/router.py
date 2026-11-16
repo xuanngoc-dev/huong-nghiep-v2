@@ -44,6 +44,7 @@ from app.api.v1.endpoints import (
     tn_phien_khao_sat,
     tn_tim_truong_phu_hop,
     xt_danh_gia,
+    xt_do_phu,
     xt_diem_chuan,
     xt_quy_tac,
 )
@@ -93,6 +94,7 @@ api_router.include_router(dats_website.router)
 api_router.include_router(xt_diem_chuan.router)
 api_router.include_router(xt_quy_tac.router)
 api_router.include_router(xt_danh_gia.router)
+api_router.include_router(xt_do_phu.router)
 api_router.include_router(tn_cau_hoi.router)
 api_router.include_router(tn_phien_khao_sat.router)
 api_router.include_router(tn_tim_truong_phu_hop.router)
