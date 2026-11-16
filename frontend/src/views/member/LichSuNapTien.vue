@@ -74,11 +74,19 @@
           <div v-if="row.trang_thai === 3 && row.ghi_chu" class="history-card__sub">{{ row.ghi_chu }}</div>
         </template>
       </CustomTableColumn>
-      <CustomTableColumn label="Thao tác" width="190" fixed="right" align="center">
+      <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
         <template #default="{ row }">
           <div v-if="row.trang_thai === 0" class="row-actions">
-            <CustomButton size="small" type="primary" @click="moThanhToan(row)">Thanh toán</CustomButton>
-            <CustomButton size="small" @click="onHuy(row)">Hủy</CustomButton>
+            <CustomTooltip content="Thanh toán" placement="top">
+              <CustomButton link type="primary" aria-label="Thanh toán" @click="moThanhToan(row)">
+                <CustomIcon><Wallet /></CustomIcon>
+              </CustomButton>
+            </CustomTooltip>
+            <CustomTooltip content="Hủy giao dịch" placement="top">
+              <CustomButton link type="danger" aria-label="Hủy giao dịch" @click="onHuy(row)">
+                <CustomIcon><CircleClose /></CustomIcon>
+              </CustomButton>
+            </CustomTooltip>
           </div>
           <span v-else class="history-card__sub">—</span>
         </template>

@@ -19,7 +19,7 @@
         :tabindex="collapsed ? -1 : undefined"
         @click="!collapsed && toggleGroup(groupIndex)"
       >
-        <el-tooltip
+        <CustomTooltip
           :content="group.tooltip || group.header"
           placement="right"
           :disabled="!collapsed && !group.tooltip"
@@ -29,7 +29,7 @@
             <span class="menu-group__abbr">{{ group.abbr || groupAbbr(group.header) }}</span>
             <span class="menu-group__header">{{ group.header }}</span>
           </span>
-        </el-tooltip>
+        </CustomTooltip>
         <el-icon
           class="menu-group__arrow"
           :class="{ 'is-open': isGroupOpen(groupIndex) }"
@@ -43,7 +43,7 @@
         class="menu-group__header menu-group__header--static"
         :class="{ 'is-collapsed': collapsed }"
       >
-        <el-tooltip
+        <CustomTooltip
           :content="group.tooltip || group.header"
           placement="right"
           :disabled="!collapsed && !group.tooltip"
@@ -53,7 +53,7 @@
             <span class="menu-group__abbr">{{ group.abbr || groupAbbr(group.header) }}</span>
             <span class="menu-group__title">{{ group.header }}</span>
           </span>
-        </el-tooltip>
+        </CustomTooltip>
       </div>
 
       <div
@@ -61,7 +61,7 @@
         class="menu-group__items"
       >
         <template v-for="item in group.items" :key="item.index">
-          <el-tooltip
+          <CustomTooltip
             :content="item.tooltip || item.title"
             placement="right"
             :disabled="!collapsed && !item.tooltip"
@@ -73,7 +73,7 @@
               </el-icon>
               <span class="menu-label" :class="{ 'is-hidden': collapsed }">{{ item.title }}</span>
             </el-menu-item>
-          </el-tooltip>
+          </CustomTooltip>
         </template>
       </div>
     </div>

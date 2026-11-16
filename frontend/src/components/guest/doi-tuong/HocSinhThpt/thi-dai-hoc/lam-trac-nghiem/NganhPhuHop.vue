@@ -81,7 +81,7 @@
                       >
                         <span :style="{ width: `${tyLeDiem(item)}%` }" />
                       </div>
-                      <el-tooltip
+                      <CustomTooltip
                         :content="item.mo_ta || ''"
                         placement="top"
                         :disabled="!biCat[item.ma_nhom]"
@@ -91,7 +91,7 @@
                         <p :ref="(el) => ganMoTa(item.ma_nhom, el)" class="rank-item__desc">
                           {{ item.mo_ta || 'Chưa có mô tả cho nhóm này.' }}
                         </p>
-                      </el-tooltip>
+                      </CustomTooltip>
                     </div>
                     <button
                       type="button"
@@ -122,13 +122,13 @@
                 <div class="major-card__title">
                   <h3>
                     {{ nhom.ten }}
-                    <el-tooltip
+                    <CustomTooltip
                       :content="`Nhóm này có ${nhom.nganh.length} ngành`"
                       placement="top"
                       :show-after="200"
                     >
                       <span class="major-card__count">[{{ nhom.nganh.length }}]</span>
-                    </el-tooltip>
+                    </CustomTooltip>
                   </h3>
                   <div class="major-card__tools">
                     <button type="button" class="major-card__compare" @click="moSoSanh(nhom)">

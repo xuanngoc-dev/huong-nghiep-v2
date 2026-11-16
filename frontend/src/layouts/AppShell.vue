@@ -94,11 +94,11 @@
             <span class="header-datetime__date">{{ nowDate }}</span>
           </div>
 
-          <el-tooltip content="Cài đặt" placement="bottom" :disabled="settingsOpen">
+          <CustomTooltip content="Cài đặt" placement="bottom" :disabled="settingsOpen">
             <el-button text aria-label="Cài đặt" @click="settingsOpen = true">
               <el-icon :size="20"><Setting /></el-icon>
             </el-button>
-          </el-tooltip>
+          </CustomTooltip>
 
           <el-switch
             v-model="isDark"

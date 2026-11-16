@@ -63,8 +63,30 @@ Thêm resource `$ARGUMENTS` theo đúng các bước dưới. Mẫu tham khảo:
     - `CustomInputNumber`/`CustomSelect`/`CustomDatePicker` trong `form-grid` đã tự rộng 100%, không cần `style="width: 100%"`.
     - Thanh lọc (`.filters`) giữ kiểu flex + class `filter-search`/`filter-status` có sẵn (đã tự giãn 100% trên mobile).
     - Kiểm tra: `npx vite build` không lỗi; nếu chạy được app thì thử ở bề rộng 375px và 1440px.
-11. **Route** trong `router/index.js` với `meta` đúng (`requiresAuth`/`requiresAdmin`/`public`).
-12. **Menu** trong `data/menu.json` đúng key (`admin`, `user`, `doi-tuong`).
+11. **Cột thao tác và tooltip** (bắt buộc, làm luôn không cần hỏi):
+    - Cột "Thao tác" của bảng dùng **icon** của `@element-plus/icons-vue` (đã đăng ký global, không import), KHÔNG dùng button có chữ. Mỗi icon đặt trong `CustomButton link` (giữ được focus/bàn phím) kèm `aria-label`, bọc trong `.row-actions`:
+      ```vue
+      <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
+        <template #default="{ row }">
+          <div class="row-actions">
+            <CustomTooltip content="Sửa" placement="top">
+              <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
+                <CustomIcon><Edit /></CustomIcon>
+              </CustomButton>
+            </CustomTooltip>
+            <CustomTooltip content="Xóa" placement="top">
+              <CustomButton link type="danger" aria-label="Xóa" @click="onDelete(row)">
+                <CustomIcon><Delete /></CustomIcon>
+              </CustomButton>
+            </CustomTooltip>
+          </div>
+        </template>
+      </CustomTableColumn>
+      ```
+    - Icon gợi ý: xem `View`, sửa `Edit`, xóa `Delete`, thêm `Plus`, sao chép `CopyDocument`, tải xuống `Download`, tải lên `Upload`, xác nhận `CircleCheck`, từ chối/hủy `CircleClose`, khóa/mở khóa `Lock`/`Unlock`, thanh toán `Wallet`, liên kết ngoài `Link`. `type`: `primary` mặc định, `danger` cho xóa/hủy, `success` cho xác nhận. Độ rộng cột ≈ 50px mỗi icon (tối thiểu 80px).
+    - **Tooltip**: mọi nút chỉ có icon, nút thao tác, liên kết icon đều bọc `CustomTooltip` với `content` trùng `aria-label`. `CustomTooltip` tự tắt trên mobile (< 768px) và thiết bị cảm ứng không có hover, nên KHÔNG tự viết `v-if`/`:disabled` theo màn hình và KHÔNG dùng thẳng `el-tooltip`. Nút đã có chữ rõ ràng thì không cần tooltip.
+12. **Route** trong `router/index.js` với `meta` đúng (`requiresAuth`/`requiresAdmin`/`public`).
+13. **Menu** trong `data/menu.json` đúng key (`admin`, `user`, `doi-tuong`).
 
 ## Kết thúc
 
