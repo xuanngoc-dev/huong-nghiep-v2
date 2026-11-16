@@ -1,0 +1,4720 @@
+{
+ "phien_ban": "1.0",
+ "ma_truong": "NTH",
+ "nam_tuyen_sinh": 2026,
+ "de_an": {
+  "ten_de_an": "Thông tin tuyển sinh năm 2026 - Hình thức đào tạo chính quy - Trường Đại học Ngoại thương",
+  "so_quyet_dinh": "1566/QĐ-ĐHNT",
+  "ngay_cong_bo": "2026-04-08",
+  "nguon_du_lieu_url": "http://www.ftu.edu.vn",
+  "ghi_chu": "Chưa đưa vào file: cách tính điểm A-Level; các diện xét tuyển thẳng a, d, e, f, g; kiểm tra môn đạt giải thuộc tổ hợp khi cộng điểm thưởng; mức thưởng 0,5 cho thí sinh tham gia đội tuyển HSG quốc gia; yêu cầu HSKK đi kèm HSK; ngưỡng riêng của các chương trình lĩnh vực pháp luật; chứng chỉ tiếng Pháp/Nhật/Trung cho phương thức SAT/ACT. Chưa có điểm chuẩn các năm trước."
+ },
+ "co_so": [
+  {
+   "ma_co_so": "HN",
+   "ten_co_so": "Trụ sở chính",
+   "ma_tinh": "01",
+   "dia_chi": "Số 91, Phố Chùa Láng, Phường Láng, TP. Hà Nội",
+   "la_tru_so_chinh": true
+  },
+  {
+   "ma_co_so": "HCM",
+   "ten_co_so": "Cơ sở TP. Hồ Chí Minh",
+   "ma_tinh": "79",
+   "dia_chi": "Số 15, Đường D5, Phường Thạnh Mỹ Tây, TP. Hồ Chí Minh"
+  },
+  {
+   "ma_co_so": "QN",
+   "ten_co_so": "Cơ sở Quảng Ninh",
+   "ma_tinh": "22",
+   "dia_chi": "Số 260, Đường Bạch Đằng, Phường Vàng Danh, Tỉnh Quảng Ninh"
+  }
+ ],
+ "bang_quy_doi": [
+  {
+   "ma_bang": "QD_NGOAI_NGU",
+   "ten_bang": "Quy đổi chứng chỉ ngoại ngữ quốc tế sang điểm môn ngoại ngữ",
+   "thang_diem_dich": 10,
+   "muc": [
+    {
+     "ma_chung_chi": "IELTS",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 4,
+     "diem_den": 4.5,
+     "diem_quy_doi": 5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "IELTS",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 5,
+     "diem_den": 5.5,
+     "diem_quy_doi": 6.5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "IELTS",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 6,
+     "diem_den": 6,
+     "diem_quy_doi": 7.5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "IELTS",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 6.5,
+     "diem_den": 6.5,
+     "diem_quy_doi": 8.5
+    },
+    {
+     "ma_chung_chi": "IELTS",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 7,
+     "diem_den": 7,
+     "diem_quy_doi": 9
+    },
+    {
+     "ma_chung_chi": "IELTS",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 7.5,
+     "diem_den": 7.5,
+     "diem_quy_doi": 9.5
+    },
+    {
+     "ma_chung_chi": "IELTS",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 8,
+     "diem_den": 9,
+     "diem_quy_doi": 10
+    },
+    {
+     "ma_chung_chi": "TOEFL_IBT_120",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 45,
+     "diem_den": 50,
+     "diem_quy_doi": 5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "TOEFL_IBT_120",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 51,
+     "diem_den": 59,
+     "diem_quy_doi": 6.5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "TOEFL_IBT_120",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 60,
+     "diem_den": 78,
+     "diem_quy_doi": 7.5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "TOEFL_IBT_120",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 79,
+     "diem_den": 92,
+     "diem_quy_doi": 8.5
+    },
+    {
+     "ma_chung_chi": "TOEFL_IBT_120",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 93,
+     "diem_den": 101,
+     "diem_quy_doi": 9
+    },
+    {
+     "ma_chung_chi": "TOEFL_IBT_120",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 102,
+     "diem_den": 109,
+     "diem_quy_doi": 9.5
+    },
+    {
+     "ma_chung_chi": "TOEFL_IBT_120",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 110,
+     "diem_den": 120,
+     "diem_quy_doi": 10
+    },
+    {
+     "ma_chung_chi": "JLPT",
+     "ma_mon_thay_the": "NHAT",
+     "cap_do": "N3",
+     "diem_tu": 130,
+     "diem_den": 180,
+     "diem_quy_doi": 9
+    },
+    {
+     "ma_chung_chi": "JLPT",
+     "ma_mon_thay_the": "NHAT",
+     "cap_do": "N2",
+     "diem_quy_doi": 9.5
+    },
+    {
+     "ma_chung_chi": "JLPT",
+     "ma_mon_thay_the": "NHAT",
+     "cap_do": "N1",
+     "diem_quy_doi": 10
+    },
+    {
+     "ma_chung_chi": "EJU",
+     "ma_mon_thay_the": "NHAT",
+     "diem_tu": 220,
+     "diem_den": 269,
+     "diem_quy_doi": 9
+    },
+    {
+     "ma_chung_chi": "EJU",
+     "ma_mon_thay_the": "NHAT",
+     "diem_tu": 270,
+     "diem_den": 319,
+     "diem_quy_doi": 9.5
+    },
+    {
+     "ma_chung_chi": "EJU",
+     "ma_mon_thay_the": "NHAT",
+     "diem_tu": 320,
+     "diem_den": 340,
+     "diem_quy_doi": 10
+    },
+    {
+     "ma_chung_chi": "HSK_2_0",
+     "ma_mon_thay_the": "TRUNG",
+     "cap_do": "HSK4",
+     "diem_tu": 280,
+     "diem_den": 300,
+     "diem_quy_doi": 9
+    },
+    {
+     "ma_chung_chi": "HSK_2_0",
+     "ma_mon_thay_the": "TRUNG",
+     "cap_do": "HSK5",
+     "diem_quy_doi": 9.5
+    },
+    {
+     "ma_chung_chi": "HSK_2_0",
+     "ma_mon_thay_the": "TRUNG",
+     "cap_do": "HSK6",
+     "diem_quy_doi": 10
+    },
+    {
+     "ma_chung_chi": "DELF",
+     "ma_mon_thay_the": "PHAP",
+     "cap_do": "B2",
+     "diem_quy_doi": 9
+    },
+    {
+     "ma_chung_chi": "DALF",
+     "ma_mon_thay_the": "PHAP",
+     "cap_do": "C1",
+     "diem_quy_doi": 9.5
+    },
+    {
+     "ma_chung_chi": "DALF",
+     "ma_mon_thay_the": "PHAP",
+     "cap_do": "C2",
+     "diem_quy_doi": 10
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_B1_PRELIMINARY",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 140,
+     "diem_den": 153,
+     "diem_quy_doi": 5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_B2_FIRST",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 140,
+     "diem_den": 153,
+     "diem_quy_doi": 5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_C1_ADVANCED",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 140,
+     "diem_den": 153,
+     "diem_quy_doi": 5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_C2_PROFICIENCY",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 140,
+     "diem_den": 153,
+     "diem_quy_doi": 5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_B1_PRELIMINARY",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 154,
+     "diem_den": 168,
+     "diem_quy_doi": 6.5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_B2_FIRST",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 154,
+     "diem_den": 168,
+     "diem_quy_doi": 6.5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_C1_ADVANCED",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 154,
+     "diem_den": 168,
+     "diem_quy_doi": 6.5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_C2_PROFICIENCY",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 154,
+     "diem_den": 168,
+     "diem_quy_doi": 6.5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_B1_PRELIMINARY",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 169,
+     "diem_den": 179,
+     "diem_quy_doi": 7.5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_B2_FIRST",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 169,
+     "diem_den": 179,
+     "diem_quy_doi": 7.5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_C1_ADVANCED",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 169,
+     "diem_den": 179,
+     "diem_quy_doi": 7.5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_C2_PROFICIENCY",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 169,
+     "diem_den": 179,
+     "diem_quy_doi": 7.5,
+     "dat_nguong": false
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_B1_PRELIMINARY",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 180,
+     "diem_den": 183,
+     "diem_quy_doi": 8.5
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_B2_FIRST",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 180,
+     "diem_den": 183,
+     "diem_quy_doi": 8.5
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_C1_ADVANCED",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 180,
+     "diem_den": 183,
+     "diem_quy_doi": 8.5
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_C2_PROFICIENCY",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 180,
+     "diem_den": 183,
+     "diem_quy_doi": 8.5
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_B1_PRELIMINARY",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 184,
+     "diem_den": 191,
+     "diem_quy_doi": 9
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_B2_FIRST",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 184,
+     "diem_den": 191,
+     "diem_quy_doi": 9
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_C1_ADVANCED",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 184,
+     "diem_den": 191,
+     "diem_quy_doi": 9
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_C2_PROFICIENCY",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 184,
+     "diem_den": 191,
+     "diem_quy_doi": 9
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_B1_PRELIMINARY",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 192,
+     "diem_den": 199,
+     "diem_quy_doi": 9.5
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_B2_FIRST",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 192,
+     "diem_den": 199,
+     "diem_quy_doi": 9.5
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_C1_ADVANCED",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 192,
+     "diem_den": 199,
+     "diem_quy_doi": 9.5
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_C2_PROFICIENCY",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 192,
+     "diem_den": 199,
+     "diem_quy_doi": 9.5
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_B1_PRELIMINARY",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 200,
+     "diem_den": 230,
+     "diem_quy_doi": 10
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_B2_FIRST",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 200,
+     "diem_den": 230,
+     "diem_quy_doi": 10
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_C1_ADVANCED",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 200,
+     "diem_den": 230,
+     "diem_quy_doi": 10
+    },
+    {
+     "ma_chung_chi": "CAMBRIDGE_C2_PROFICIENCY",
+     "ma_mon_thay_the": "ANH",
+     "diem_tu": 200,
+     "diem_den": 230,
+     "diem_quy_doi": 10
+    }
+   ]
+  },
+  {
+   "ma_bang": "QD_SAT_ACT",
+   "ten_bang": "Quy đổi SAT/ACT sang thang 20",
+   "thang_diem_dich": 20,
+   "muc": [
+    {
+     "ma_bai_thi": "SAT",
+     "diem_tu": 1380,
+     "diem_den": 1390,
+     "diem_quy_doi": 17.5
+    },
+    {
+     "ma_bai_thi": "SAT",
+     "diem_tu": 1400,
+     "diem_den": 1420,
+     "diem_quy_doi": 18
+    },
+    {
+     "ma_bai_thi": "SAT",
+     "diem_tu": 1430,
+     "diem_den": 1470,
+     "diem_quy_doi": 18.5
+    },
+    {
+     "ma_bai_thi": "SAT",
+     "diem_tu": 1480,
+     "diem_den": 1490,
+     "diem_quy_doi": 19
+    },
+    {
+     "ma_bai_thi": "SAT",
+     "diem_tu": 1500,
+     "diem_den": 1520,
+     "diem_quy_doi": 19.5
+    },
+    {
+     "ma_bai_thi": "SAT",
+     "diem_tu": 1530,
+     "diem_den": 1540,
+     "diem_quy_doi": 19.75
+    },
+    {
+     "ma_bai_thi": "SAT",
+     "diem_tu": 1550,
+     "diem_den": 1600,
+     "diem_quy_doi": 20
+    },
+    {
+     "ma_bai_thi": "ACT",
+     "diem_tu": 30,
+     "diem_den": 30,
+     "diem_quy_doi": 17.5
+    },
+    {
+     "ma_bai_thi": "ACT",
+     "diem_tu": 31,
+     "diem_den": 31,
+     "diem_quy_doi": 18
+    },
+    {
+     "ma_bai_thi": "ACT",
+     "diem_tu": 32,
+     "diem_den": 32,
+     "diem_quy_doi": 18.5
+    },
+    {
+     "ma_bai_thi": "ACT",
+     "diem_tu": 33,
+     "diem_den": 33,
+     "diem_quy_doi": 19
+    },
+    {
+     "ma_bai_thi": "ACT",
+     "diem_tu": 34,
+     "diem_den": 34,
+     "diem_quy_doi": 19.5
+    },
+    {
+     "ma_bai_thi": "ACT",
+     "diem_tu": 35,
+     "diem_den": 35,
+     "diem_quy_doi": 19.75
+    },
+    {
+     "ma_bai_thi": "ACT",
+     "diem_tu": 36,
+     "diem_den": 36,
+     "diem_quy_doi": 20
+    }
+   ]
+  },
+  {
+   "ma_bang": "QD_DGNL_30",
+   "ten_bang": "Quy đổi HSA, V-ACT, TSA về thang 30",
+   "thang_diem_dich": 30,
+   "muc": [
+    {
+     "ma_bai_thi": "HSA",
+     "diem_tu": 100,
+     "diem_den": 150,
+     "diem_quy_doi": 27,
+     "he_so_noi_suy": 0.06
+    },
+    {
+     "ma_bai_thi": "V-ACT",
+     "diem_tu": 850,
+     "diem_den": 1200,
+     "diem_quy_doi": 27,
+     "he_so_noi_suy": 0.00857143
+    },
+    {
+     "ma_bai_thi": "TSA",
+     "diem_tu": 70,
+     "diem_den": 100,
+     "diem_quy_doi": 27,
+     "he_so_noi_suy": 0.1
+    }
+   ]
+  }
+ ],
+ "cong_thuc": [
+  {
+   "ma_cong_thuc": "FTU_THPT_30",
+   "ten_cong_thuc": "Điểm thi THPT - thang 30",
+   "ma_phuong_thuc_cua_bo": "100",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "THI_THPT",
+   "thang_diem": 30,
+   "nguong_thpt_to_hop": 24,
+   "mo_ta_cong_thuc": "M1 + M2 + M3 + điểm ưu tiên, điểm thưởng",
+   "dieu_kien": [
+    {
+     "ma_nhom": "HOC_LUC_KHA",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "CT 2018: kết quả học tập từng năm đạt mức Khá trở lên; CT trước 2018: điểm TBC từng năm từ 7,0.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Học tập từng năm từ Khá"
+      },
+      {
+       "ma_chi_so": "TBC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 7,
+       "mo_ta": "CT trước 2018: TBC từng năm từ 7,0"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_THPT_IT40",
+   "ten_cong_thuc": "Điểm thi THPT - Toán hệ số 2, thang 40",
+   "ma_phuong_thuc_cua_bo": "100",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "THI_THPT",
+   "thang_diem": 40,
+   "nguong_thpt_to_hop": 24,
+   "mo_ta_cong_thuc": "Toán*2 + M2 + M3 + điểm ưu tiên, điểm thưởng quy đổi",
+   "he_so_mon": [
+    {
+     "ma_mon": "TOAN",
+     "he_so": 2
+    }
+   ],
+   "dieu_kien": [
+    {
+     "ma_nhom": "HOC_LUC_KHA",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "CT 2018: kết quả học tập từng năm đạt mức Khá trở lên; CT trước 2018: điểm TBC từng năm từ 7,0.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Học tập từng năm từ Khá"
+      },
+      {
+       "ma_chi_so": "TBC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 7,
+       "mo_ta": "CT trước 2018: TBC từng năm từ 7,0"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_THPT_NN40",
+   "ten_cong_thuc": "Điểm thi THPT - Ngôn ngữ thương mại, thang 40",
+   "ma_phuong_thuc_cua_bo": "100",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "THI_THPT",
+   "thang_diem": 40,
+   "nguong_thpt_to_hop": 24,
+   "mo_ta_cong_thuc": "Toán + Ngữ văn*1,5 + Ngoại ngữ*1,5 + điểm ưu tiên, điểm thưởng quy đổi",
+   "he_so_mon": [
+    {
+     "ma_mon": "VAN",
+     "he_so": 1.5
+    },
+    {
+     "nhom_mon": "Ngoại ngữ",
+     "he_so": 1.5
+    }
+   ],
+   "dieu_kien": [
+    {
+     "ma_nhom": "HOC_LUC_KHA",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "CT 2018: kết quả học tập từng năm đạt mức Khá trở lên; CT trước 2018: điểm TBC từng năm từ 7,0.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Học tập từng năm từ Khá"
+      },
+      {
+       "ma_chi_so": "TBC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 7,
+       "mo_ta": "CT trước 2018: TBC từng năm từ 7,0"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_HB_30",
+   "ten_cong_thuc": "Học bạ THPT - thang 30",
+   "ma_phuong_thuc_cua_bo": "200",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "HOC_BA",
+   "thang_diem": 30,
+   "nguong_tb_mon": 9,
+   "nguong_thpt_to_hop": 24,
+   "mo_ta_cong_thuc": "M1 + M2 + M3 (TB cả năm lớp 10, 11, 12 từng môn) + điểm ưu tiên, điểm thưởng",
+   "dieu_kien": [
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "TN_2026",
+     "ten_nhom": "Không tốt nghiệp THPT năm 2026",
+     "mo_ta": "Tốt nghiệp THPT năm 2026.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "NAM_TOT_NGHIEP",
+       "toan_tu": "=",
+       "gia_tri": 2026,
+       "mo_ta": "Tốt nghiệp năm 2026"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "HOC_LUC_TOT",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Tốt",
+     "mo_ta": "Kết quả học tập bậc THPT từng năm lớp 10, 11, 12 đạt mức Tốt.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 4,
+       "mo_ta": "Học tập từng năm đạt Tốt"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "CHUYEN_HOAC_HSG_TINH",
+     "ten_nhom": "Không thuộc hệ chuyên và không có giải Nhất/Nhì/Ba HSG cấp tỉnh",
+     "mo_ta": "Học sinh hệ chuyên của trường THPT trọng điểm quốc gia/THPT chuyên, hoặc học sinh không chuyên đạt giải Nhất, Nhì, Ba kỳ thi HSG cấp tỉnh/thành phố lớp 11 hoặc 12.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HE_CHUYEN",
+       "toan_tu": "=",
+       "gia_tri": 1,
+       "mo_ta": "Học sinh hệ chuyên"
+      },
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "HSG-TINH",
+       "toan_tu": "<=",
+       "gia_tri": 3,
+       "mo_ta": "Giải Nhất/Nhì/Ba HSG cấp tỉnh"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_HB_IT40",
+   "ten_cong_thuc": "Học bạ THPT - Toán hệ số 2, thang 40",
+   "ma_phuong_thuc_cua_bo": "200",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "HOC_BA",
+   "thang_diem": 40,
+   "nguong_tb_mon": 9,
+   "nguong_thpt_to_hop": 24,
+   "mo_ta_cong_thuc": "Toán*2 + M2 + M3 + điểm ưu tiên, điểm thưởng quy đổi",
+   "he_so_mon": [
+    {
+     "ma_mon": "TOAN",
+     "he_so": 2
+    }
+   ],
+   "dieu_kien": [
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "TN_2026",
+     "ten_nhom": "Không tốt nghiệp THPT năm 2026",
+     "mo_ta": "Tốt nghiệp THPT năm 2026.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "NAM_TOT_NGHIEP",
+       "toan_tu": "=",
+       "gia_tri": 2026,
+       "mo_ta": "Tốt nghiệp năm 2026"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "HOC_LUC_TOT",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Tốt",
+     "mo_ta": "Kết quả học tập bậc THPT từng năm lớp 10, 11, 12 đạt mức Tốt.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 4,
+       "mo_ta": "Học tập từng năm đạt Tốt"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "CHUYEN_HOAC_HSG_TINH",
+     "ten_nhom": "Không thuộc hệ chuyên và không có giải Nhất/Nhì/Ba HSG cấp tỉnh",
+     "mo_ta": "Học sinh hệ chuyên của trường THPT trọng điểm quốc gia/THPT chuyên, hoặc học sinh không chuyên đạt giải Nhất, Nhì, Ba kỳ thi HSG cấp tỉnh/thành phố lớp 11 hoặc 12.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HE_CHUYEN",
+       "toan_tu": "=",
+       "gia_tri": 1,
+       "mo_ta": "Học sinh hệ chuyên"
+      },
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "HSG-TINH",
+       "toan_tu": "<=",
+       "gia_tri": 3,
+       "mo_ta": "Giải Nhất/Nhì/Ba HSG cấp tỉnh"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_HB_NN40",
+   "ten_cong_thuc": "Học bạ THPT - Ngôn ngữ thương mại, thang 40",
+   "ma_phuong_thuc_cua_bo": "200",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "HOC_BA",
+   "thang_diem": 40,
+   "nguong_tb_mon": 9,
+   "nguong_thpt_to_hop": 24,
+   "mo_ta_cong_thuc": "Toán + Ngữ văn*1,5 + Ngoại ngữ*1,5 + điểm ưu tiên, điểm thưởng quy đổi",
+   "he_so_mon": [
+    {
+     "ma_mon": "VAN",
+     "he_so": 1.5
+    },
+    {
+     "nhom_mon": "Ngoại ngữ",
+     "he_so": 1.5
+    }
+   ],
+   "dieu_kien": [
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "TN_2026",
+     "ten_nhom": "Không tốt nghiệp THPT năm 2026",
+     "mo_ta": "Tốt nghiệp THPT năm 2026.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "NAM_TOT_NGHIEP",
+       "toan_tu": "=",
+       "gia_tri": 2026,
+       "mo_ta": "Tốt nghiệp năm 2026"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "HOC_LUC_TOT",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Tốt",
+     "mo_ta": "Kết quả học tập bậc THPT từng năm lớp 10, 11, 12 đạt mức Tốt.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 4,
+       "mo_ta": "Học tập từng năm đạt Tốt"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "CHUYEN_HOAC_HSG_TINH",
+     "ten_nhom": "Không thuộc hệ chuyên và không có giải Nhất/Nhì/Ba HSG cấp tỉnh",
+     "mo_ta": "Học sinh hệ chuyên của trường THPT trọng điểm quốc gia/THPT chuyên, hoặc học sinh không chuyên đạt giải Nhất, Nhì, Ba kỳ thi HSG cấp tỉnh/thành phố lớp 11 hoặc 12.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HE_CHUYEN",
+       "toan_tu": "=",
+       "gia_tri": 1,
+       "mo_ta": "Học sinh hệ chuyên"
+      },
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "HSG-TINH",
+       "toan_tu": "<=",
+       "gia_tri": 3,
+       "mo_ta": "Giải Nhất/Nhì/Ba HSG cấp tỉnh"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_THPT_CCNN_30",
+   "ten_cong_thuc": "Điểm thi THPT kết hợp CCNN - thang 30",
+   "ma_phuong_thuc_cua_bo": "409",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "THI_THPT",
+   "thay_ngoai_ngu": "BAT_BUOC",
+   "ma_bang_quy_doi_ngoai_ngu": "QD_NGOAI_NGU",
+   "thang_diem": 30,
+   "nguong_thpt_to_hop": 24,
+   "mo_ta_cong_thuc": "Toán + (Lý/Hóa/Văn) + điểm quy đổi CCNN + điểm ưu tiên, điểm thưởng",
+   "dieu_kien": [
+    {
+     "ma_nhom": "HOC_LUC_KHA",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "CT 2018: kết quả học tập từng năm đạt mức Khá trở lên; CT trước 2018: điểm TBC từng năm từ 7,0.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Học tập từng năm từ Khá"
+      },
+      {
+       "ma_chi_so": "TBC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 7,
+       "mo_ta": "CT trước 2018: TBC từng năm từ 7,0"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_THPT_CCNN_IT40",
+   "ten_cong_thuc": "Điểm thi THPT kết hợp CCNN - Toán hệ số 2, thang 40",
+   "ma_phuong_thuc_cua_bo": "409",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "THI_THPT",
+   "thay_ngoai_ngu": "BAT_BUOC",
+   "ma_bang_quy_doi_ngoai_ngu": "QD_NGOAI_NGU",
+   "thang_diem": 40,
+   "nguong_thpt_to_hop": 24,
+   "mo_ta_cong_thuc": "Toán*2 + (Lý/Hóa/Văn) + điểm quy đổi CCNN + điểm ưu tiên, điểm thưởng quy đổi",
+   "he_so_mon": [
+    {
+     "ma_mon": "TOAN",
+     "he_so": 2
+    }
+   ],
+   "dieu_kien": [
+    {
+     "ma_nhom": "HOC_LUC_KHA",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "CT 2018: kết quả học tập từng năm đạt mức Khá trở lên; CT trước 2018: điểm TBC từng năm từ 7,0.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Học tập từng năm từ Khá"
+      },
+      {
+       "ma_chi_so": "TBC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 7,
+       "mo_ta": "CT trước 2018: TBC từng năm từ 7,0"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_THPT_CCNN_NN40",
+   "ten_cong_thuc": "Điểm thi THPT kết hợp CCNN - Ngôn ngữ thương mại, thang 40",
+   "ma_phuong_thuc_cua_bo": "409",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "THI_THPT",
+   "thay_ngoai_ngu": "BAT_BUOC",
+   "ma_bang_quy_doi_ngoai_ngu": "QD_NGOAI_NGU",
+   "thang_diem": 40,
+   "nguong_thpt_to_hop": 24,
+   "mo_ta_cong_thuc": "Toán + Ngữ văn*1,5 + điểm quy đổi CCNN*1,5 + điểm ưu tiên, điểm thưởng quy đổi",
+   "he_so_mon": [
+    {
+     "ma_mon": "VAN",
+     "he_so": 1.5
+    },
+    {
+     "nhom_mon": "Ngoại ngữ",
+     "he_so": 1.5
+    }
+   ],
+   "dieu_kien": [
+    {
+     "ma_nhom": "HOC_LUC_KHA",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "CT 2018: kết quả học tập từng năm đạt mức Khá trở lên; CT trước 2018: điểm TBC từng năm từ 7,0.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Học tập từng năm từ Khá"
+      },
+      {
+       "ma_chi_so": "TBC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 7,
+       "mo_ta": "CT trước 2018: TBC từng năm từ 7,0"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_HB_CCNN_30",
+   "ten_cong_thuc": "Học bạ kết hợp CCNN - thang 30",
+   "ma_phuong_thuc_cua_bo": "410",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "HOC_BA",
+   "thay_ngoai_ngu": "BAT_BUOC",
+   "ma_bang_quy_doi_ngoai_ngu": "QD_NGOAI_NGU",
+   "thang_diem": 30,
+   "nguong_tb_mon": 8.5,
+   "nguong_thpt_to_hop": 24,
+   "mo_ta_cong_thuc": "Toán + (Lý/Hóa/Văn) + điểm quy đổi CCNN + điểm ưu tiên, điểm thưởng",
+   "dieu_kien": [
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "TN_2026",
+     "ten_nhom": "Không tốt nghiệp THPT năm 2026",
+     "mo_ta": "Tốt nghiệp THPT năm 2026.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "NAM_TOT_NGHIEP",
+       "toan_tu": "=",
+       "gia_tri": 2026,
+       "mo_ta": "Tốt nghiệp năm 2026"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "HOC_LUC_TOT",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Tốt",
+     "mo_ta": "Kết quả học tập bậc THPT từng năm lớp 10, 11, 12 đạt mức Tốt.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 4,
+       "mo_ta": "Học tập từng năm đạt Tốt"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "CHUYEN_HOAC_HSG_TINH",
+     "ten_nhom": "Không thuộc hệ chuyên và không có giải Nhất/Nhì/Ba HSG cấp tỉnh",
+     "mo_ta": "Học sinh hệ chuyên của trường THPT trọng điểm quốc gia/THPT chuyên, hoặc học sinh không chuyên đạt giải Nhất, Nhì, Ba kỳ thi HSG cấp tỉnh/thành phố lớp 11 hoặc 12.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HE_CHUYEN",
+       "toan_tu": "=",
+       "gia_tri": 1,
+       "mo_ta": "Học sinh hệ chuyên"
+      },
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "HSG-TINH",
+       "toan_tu": "<=",
+       "gia_tri": 3,
+       "mo_ta": "Giải Nhất/Nhì/Ba HSG cấp tỉnh"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_HB_CCNN_IT40",
+   "ten_cong_thuc": "Học bạ kết hợp CCNN - Toán hệ số 2, thang 40",
+   "ma_phuong_thuc_cua_bo": "410",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "HOC_BA",
+   "thay_ngoai_ngu": "BAT_BUOC",
+   "ma_bang_quy_doi_ngoai_ngu": "QD_NGOAI_NGU",
+   "thang_diem": 40,
+   "nguong_tb_mon": 8.5,
+   "nguong_thpt_to_hop": 24,
+   "mo_ta_cong_thuc": "Toán*2 + (Lý/Hóa/Văn) + điểm quy đổi CCNN + điểm ưu tiên, điểm thưởng quy đổi",
+   "he_so_mon": [
+    {
+     "ma_mon": "TOAN",
+     "he_so": 2
+    }
+   ],
+   "dieu_kien": [
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "TN_2026",
+     "ten_nhom": "Không tốt nghiệp THPT năm 2026",
+     "mo_ta": "Tốt nghiệp THPT năm 2026.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "NAM_TOT_NGHIEP",
+       "toan_tu": "=",
+       "gia_tri": 2026,
+       "mo_ta": "Tốt nghiệp năm 2026"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "HOC_LUC_TOT",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Tốt",
+     "mo_ta": "Kết quả học tập bậc THPT từng năm lớp 10, 11, 12 đạt mức Tốt.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 4,
+       "mo_ta": "Học tập từng năm đạt Tốt"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "CHUYEN_HOAC_HSG_TINH",
+     "ten_nhom": "Không thuộc hệ chuyên và không có giải Nhất/Nhì/Ba HSG cấp tỉnh",
+     "mo_ta": "Học sinh hệ chuyên của trường THPT trọng điểm quốc gia/THPT chuyên, hoặc học sinh không chuyên đạt giải Nhất, Nhì, Ba kỳ thi HSG cấp tỉnh/thành phố lớp 11 hoặc 12.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HE_CHUYEN",
+       "toan_tu": "=",
+       "gia_tri": 1,
+       "mo_ta": "Học sinh hệ chuyên"
+      },
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "HSG-TINH",
+       "toan_tu": "<=",
+       "gia_tri": 3,
+       "mo_ta": "Giải Nhất/Nhì/Ba HSG cấp tỉnh"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_HB_CCNN_NN40",
+   "ten_cong_thuc": "Học bạ kết hợp CCNN - Ngôn ngữ thương mại, thang 40",
+   "ma_phuong_thuc_cua_bo": "410",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "HOC_BA",
+   "thay_ngoai_ngu": "BAT_BUOC",
+   "ma_bang_quy_doi_ngoai_ngu": "QD_NGOAI_NGU",
+   "thang_diem": 40,
+   "nguong_tb_mon": 8,
+   "nguong_thpt_to_hop": 24,
+   "mo_ta_cong_thuc": "Toán + Ngữ văn*1,5 + điểm quy đổi CCNN*1,5 + điểm ưu tiên, điểm thưởng quy đổi",
+   "he_so_mon": [
+    {
+     "ma_mon": "VAN",
+     "he_so": 1.5
+    },
+    {
+     "nhom_mon": "Ngoại ngữ",
+     "he_so": 1.5
+    }
+   ],
+   "dieu_kien": [
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "TN_2026",
+     "ten_nhom": "Không tốt nghiệp THPT năm 2026",
+     "mo_ta": "Tốt nghiệp THPT năm 2026.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "NAM_TOT_NGHIEP",
+       "toan_tu": "=",
+       "gia_tri": 2026,
+       "mo_ta": "Tốt nghiệp năm 2026"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "HOC_LUC_TOT",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Tốt",
+     "mo_ta": "Kết quả học tập bậc THPT từng năm lớp 10, 11, 12 đạt mức Tốt.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 4,
+       "mo_ta": "Học tập từng năm đạt Tốt"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "CHUYEN_HOAC_HSG_TINH",
+     "ten_nhom": "Không thuộc hệ chuyên và không có giải Nhất/Nhì/Ba HSG cấp tỉnh",
+     "mo_ta": "Học sinh hệ chuyên của trường THPT trọng điểm quốc gia/THPT chuyên, hoặc học sinh không chuyên đạt giải Nhất, Nhì, Ba kỳ thi HSG cấp tỉnh/thành phố lớp 11 hoặc 12.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HE_CHUYEN",
+       "toan_tu": "=",
+       "gia_tri": 1,
+       "mo_ta": "Học sinh hệ chuyên"
+      },
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "HSG-TINH",
+       "toan_tu": "<=",
+       "gia_tri": 3,
+       "mo_ta": "Giải Nhất/Nhì/Ba HSG cấp tỉnh"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_HSA_30",
+   "ten_cong_thuc": "ĐGNL HSA - thang 30",
+   "ma_phuong_thuc_cua_bo": "402",
+   "kieu_tinh": "THANH_PHAN",
+   "thang_diem": 30,
+   "mo_ta_cong_thuc": "27 + (HSA - 100)*3/50 + điểm ưu tiên, điểm thưởng",
+   "thanh_phan": [
+    {
+     "vi_tri": 1,
+     "ten_thanh_phan": "Điểm HSA quy đổi thang 30",
+     "loai_nguon": "BAI_THI",
+     "ma_bai_thi": "HSA",
+     "ma_bang_quy_doi": "QD_DGNL_30",
+     "nam_thi_tu": 2026,
+     "nam_thi_den": 2026
+    }
+   ],
+   "dieu_kien": [
+    {
+     "ma_nhom": "HOC_LUC_KHA",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "CT 2018: kết quả học tập từng năm đạt mức Khá trở lên; CT trước 2018: điểm TBC từng năm từ 7,0.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Học tập từng năm từ Khá"
+      },
+      {
+       "ma_chi_so": "TBC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 7,
+       "mo_ta": "CT trước 2018: TBC từng năm từ 7,0"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_HSA_40",
+   "ten_cong_thuc": "ĐGNL HSA - thang 40 (KHMT, TTNT, KHDL)",
+   "ma_phuong_thuc_cua_bo": "402",
+   "kieu_tinh": "THANH_PHAN",
+   "thang_diem": 40,
+   "he_so_nhan": 1.33333333,
+   "mo_ta_cong_thuc": "[27 + (HSA - 100)*3/50]*4/3 + điểm ưu tiên, điểm thưởng quy đổi",
+   "thanh_phan": [
+    {
+     "vi_tri": 1,
+     "ten_thanh_phan": "Điểm HSA quy đổi thang 30",
+     "loai_nguon": "BAI_THI",
+     "ma_bai_thi": "HSA",
+     "ma_bang_quy_doi": "QD_DGNL_30",
+     "nam_thi_tu": 2026,
+     "nam_thi_den": 2026
+    }
+   ],
+   "dieu_kien": [
+    {
+     "ma_nhom": "HOC_LUC_KHA",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "CT 2018: kết quả học tập từng năm đạt mức Khá trở lên; CT trước 2018: điểm TBC từng năm từ 7,0.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Học tập từng năm từ Khá"
+      },
+      {
+       "ma_chi_so": "TBC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 7,
+       "mo_ta": "CT trước 2018: TBC từng năm từ 7,0"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_HSA_NN40",
+   "ten_cong_thuc": "ĐGNL HSA phần 3 Tiếng Anh - thang 40 (Ngôn ngữ thương mại)",
+   "ma_phuong_thuc_cua_bo": "402",
+   "kieu_tinh": "THANH_PHAN",
+   "thang_diem": 40,
+   "he_so_nhan": 1.33333333,
+   "mo_ta_cong_thuc": "[27 + (HSA - 100)*3/50]*4/3 + điểm ưu tiên, điểm thưởng quy đổi; bắt buộc chọn phần 3 - Tiếng Anh",
+   "thanh_phan": [
+    {
+     "vi_tri": 1,
+     "ten_thanh_phan": "Điểm HSA quy đổi thang 30",
+     "loai_nguon": "BAI_THI",
+     "ma_bai_thi": "HSA",
+     "ma_bang_quy_doi": "QD_DGNL_30",
+     "nam_thi_tu": 2026,
+     "nam_thi_den": 2026,
+     "yeu_cau_phan_tu_chon": "TIENG_ANH"
+    }
+   ],
+   "dieu_kien": [
+    {
+     "ma_nhom": "HOC_LUC_KHA",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "CT 2018: kết quả học tập từng năm đạt mức Khá trở lên; CT trước 2018: điểm TBC từng năm từ 7,0.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Học tập từng năm từ Khá"
+      },
+      {
+       "ma_chi_so": "TBC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 7,
+       "mo_ta": "CT trước 2018: TBC từng năm từ 7,0"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_VACT_30",
+   "ten_cong_thuc": "ĐGNL V-ACT - thang 30",
+   "ma_phuong_thuc_cua_bo": "402",
+   "kieu_tinh": "THANH_PHAN",
+   "thang_diem": 30,
+   "mo_ta_cong_thuc": "27 + (V-ACT - 850)*3/350 + điểm ưu tiên, điểm thưởng",
+   "thanh_phan": [
+    {
+     "vi_tri": 1,
+     "ten_thanh_phan": "Điểm V-ACT quy đổi thang 30",
+     "loai_nguon": "BAI_THI",
+     "ma_bai_thi": "V-ACT",
+     "ma_bang_quy_doi": "QD_DGNL_30",
+     "nam_thi_tu": 2026,
+     "nam_thi_den": 2026
+    }
+   ],
+   "dieu_kien": [
+    {
+     "ma_nhom": "HOC_LUC_KHA",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "CT 2018: kết quả học tập từng năm đạt mức Khá trở lên; CT trước 2018: điểm TBC từng năm từ 7,0.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Học tập từng năm từ Khá"
+      },
+      {
+       "ma_chi_so": "TBC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 7,
+       "mo_ta": "CT trước 2018: TBC từng năm từ 7,0"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_VACT_40",
+   "ten_cong_thuc": "ĐGNL V-ACT - thang 40 (KHMT, TTNT, KHDL)",
+   "ma_phuong_thuc_cua_bo": "402",
+   "kieu_tinh": "THANH_PHAN",
+   "thang_diem": 40,
+   "he_so_nhan": 1.33333333,
+   "mo_ta_cong_thuc": "[27 + (V-ACT - 850)*3/350]*4/3 + điểm ưu tiên, điểm thưởng quy đổi",
+   "thanh_phan": [
+    {
+     "vi_tri": 1,
+     "ten_thanh_phan": "Điểm V-ACT quy đổi thang 30",
+     "loai_nguon": "BAI_THI",
+     "ma_bai_thi": "V-ACT",
+     "ma_bang_quy_doi": "QD_DGNL_30",
+     "nam_thi_tu": 2026,
+     "nam_thi_den": 2026
+    }
+   ],
+   "dieu_kien": [
+    {
+     "ma_nhom": "HOC_LUC_KHA",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "CT 2018: kết quả học tập từng năm đạt mức Khá trở lên; CT trước 2018: điểm TBC từng năm từ 7,0.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Học tập từng năm từ Khá"
+      },
+      {
+       "ma_chi_so": "TBC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 7,
+       "mo_ta": "CT trước 2018: TBC từng năm từ 7,0"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_TSA_40",
+   "ten_cong_thuc": "ĐGTD TSA - thang 40 (KHMT, TTNT, KHDL)",
+   "ma_phuong_thuc_cua_bo": "402",
+   "kieu_tinh": "THANH_PHAN",
+   "thang_diem": 40,
+   "he_so_nhan": 1.33333333,
+   "mo_ta_cong_thuc": "[27 + (TSA - 70)*3/30]*4/3 + điểm ưu tiên, điểm thưởng quy đổi",
+   "thanh_phan": [
+    {
+     "vi_tri": 1,
+     "ten_thanh_phan": "Điểm TSA quy đổi thang 30",
+     "loai_nguon": "BAI_THI",
+     "ma_bai_thi": "TSA",
+     "ma_bang_quy_doi": "QD_DGNL_30",
+     "nam_thi_tu": 2026,
+     "nam_thi_den": 2026
+    }
+   ],
+   "dieu_kien": [
+    {
+     "ma_nhom": "HOC_LUC_KHA",
+     "ten_nhom": "Kết quả học tập từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "CT 2018: kết quả học tập từng năm đạt mức Khá trở lên; CT trước 2018: điểm TBC từng năm từ 7,0.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Học tập từng năm từ Khá"
+      },
+      {
+       "ma_chi_so": "TBC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 7,
+       "mo_ta": "CT trước 2018: TBC từng năm từ 7,0"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "REN_LUYEN_KHA",
+     "ten_nhom": "Kết quả rèn luyện từng năm lớp 10, 11, 12 chưa đạt Khá",
+     "mo_ta": "Kết quả rèn luyện (hạnh kiểm) từng năm lớp 10, 11, 12 đạt mức Khá trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "REN_LUYEN_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "Rèn luyện từng năm từ Khá"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_SAT_30",
+   "ten_cong_thuc": "SAT kết hợp CCNN - thang 30",
+   "ma_phuong_thuc_cua_bo": "415",
+   "kieu_tinh": "THANH_PHAN",
+   "thang_diem": 30,
+   "mo_ta_cong_thuc": "M1 (SAT quy đổi thang 20) + M2 (CCNN quy đổi) + điểm ưu tiên, điểm thưởng",
+   "thanh_phan": [
+    {
+     "vi_tri": 1,
+     "ten_thanh_phan": "M1: SAT quy đổi thang 20",
+     "loai_nguon": "BAI_THI",
+     "ma_bai_thi": "SAT",
+     "ma_bang_quy_doi": "QD_SAT_ACT",
+     "nam_thi_tu": 2023
+    },
+    {
+     "vi_tri": 2,
+     "ten_thanh_phan": "M2: chứng chỉ ngoại ngữ quốc tế quy đổi",
+     "loai_nguon": "CHUNG_CHI",
+     "ma_bang_quy_doi": "QD_NGOAI_NGU",
+     "ma_mon": "ANH"
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_SAT_IT40",
+   "ten_cong_thuc": "SAT kết hợp CCNN - thang 40 (KHMT, TTNT, KHDL)",
+   "ma_phuong_thuc_cua_bo": "415",
+   "kieu_tinh": "THANH_PHAN",
+   "thang_diem": 40,
+   "he_so_nhan": 1.33333333,
+   "mo_ta_cong_thuc": "(M1 + M2)*4/3 + điểm ưu tiên, điểm thưởng quy đổi",
+   "thanh_phan": [
+    {
+     "vi_tri": 1,
+     "ten_thanh_phan": "M1: SAT quy đổi thang 20",
+     "loai_nguon": "BAI_THI",
+     "ma_bai_thi": "SAT",
+     "ma_bang_quy_doi": "QD_SAT_ACT",
+     "nam_thi_tu": 2023
+    },
+    {
+     "vi_tri": 2,
+     "ten_thanh_phan": "M2: chứng chỉ ngoại ngữ quốc tế quy đổi",
+     "loai_nguon": "CHUNG_CHI",
+     "ma_bang_quy_doi": "QD_NGOAI_NGU",
+     "ma_mon": "ANH"
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_SAT_NN40",
+   "ten_cong_thuc": "SAT kết hợp CCNN - thang 40 (Ngôn ngữ thương mại)",
+   "ma_phuong_thuc_cua_bo": "415",
+   "kieu_tinh": "THANH_PHAN",
+   "thang_diem": 40,
+   "mo_ta_cong_thuc": "M1 + M2*2 + điểm ưu tiên, điểm thưởng quy đổi",
+   "thanh_phan": [
+    {
+     "vi_tri": 1,
+     "ten_thanh_phan": "M1: SAT quy đổi thang 20",
+     "loai_nguon": "BAI_THI",
+     "ma_bai_thi": "SAT",
+     "ma_bang_quy_doi": "QD_SAT_ACT",
+     "nam_thi_tu": 2023
+    },
+    {
+     "vi_tri": 2,
+     "ten_thanh_phan": "M2: chứng chỉ ngoại ngữ quốc tế quy đổi",
+     "loai_nguon": "CHUNG_CHI",
+     "ma_bang_quy_doi": "QD_NGOAI_NGU",
+     "ma_mon": "ANH",
+     "he_so": 2
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_ACT_30",
+   "ten_cong_thuc": "ACT kết hợp CCNN - thang 30",
+   "ma_phuong_thuc_cua_bo": "415",
+   "kieu_tinh": "THANH_PHAN",
+   "thang_diem": 30,
+   "mo_ta_cong_thuc": "M1 (ACT quy đổi thang 20) + M2 (CCNN quy đổi) + điểm ưu tiên, điểm thưởng",
+   "thanh_phan": [
+    {
+     "vi_tri": 1,
+     "ten_thanh_phan": "M1: ACT quy đổi thang 20",
+     "loai_nguon": "BAI_THI",
+     "ma_bai_thi": "ACT",
+     "ma_bang_quy_doi": "QD_SAT_ACT",
+     "nam_thi_tu": 2023
+    },
+    {
+     "vi_tri": 2,
+     "ten_thanh_phan": "M2: chứng chỉ ngoại ngữ quốc tế quy đổi",
+     "loai_nguon": "CHUNG_CHI",
+     "ma_bang_quy_doi": "QD_NGOAI_NGU",
+     "ma_mon": "ANH"
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_ACT_IT40",
+   "ten_cong_thuc": "ACT kết hợp CCNN - thang 40 (KHMT, TTNT, KHDL)",
+   "ma_phuong_thuc_cua_bo": "415",
+   "kieu_tinh": "THANH_PHAN",
+   "thang_diem": 40,
+   "he_so_nhan": 1.33333333,
+   "mo_ta_cong_thuc": "(M1 + M2)*4/3 + điểm ưu tiên, điểm thưởng quy đổi",
+   "thanh_phan": [
+    {
+     "vi_tri": 1,
+     "ten_thanh_phan": "M1: ACT quy đổi thang 20",
+     "loai_nguon": "BAI_THI",
+     "ma_bai_thi": "ACT",
+     "ma_bang_quy_doi": "QD_SAT_ACT",
+     "nam_thi_tu": 2023
+    },
+    {
+     "vi_tri": 2,
+     "ten_thanh_phan": "M2: chứng chỉ ngoại ngữ quốc tế quy đổi",
+     "loai_nguon": "CHUNG_CHI",
+     "ma_bang_quy_doi": "QD_NGOAI_NGU",
+     "ma_mon": "ANH"
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_ACT_NN40",
+   "ten_cong_thuc": "ACT kết hợp CCNN - thang 40 (Ngôn ngữ thương mại)",
+   "ma_phuong_thuc_cua_bo": "415",
+   "kieu_tinh": "THANH_PHAN",
+   "thang_diem": 40,
+   "mo_ta_cong_thuc": "M1 + M2*2 + điểm ưu tiên, điểm thưởng quy đổi",
+   "thanh_phan": [
+    {
+     "vi_tri": 1,
+     "ten_thanh_phan": "M1: ACT quy đổi thang 20",
+     "loai_nguon": "BAI_THI",
+     "ma_bai_thi": "ACT",
+     "ma_bang_quy_doi": "QD_SAT_ACT",
+     "nam_thi_tu": 2023
+    },
+    {
+     "vi_tri": 2,
+     "ten_thanh_phan": "M2: chứng chỉ ngoại ngữ quốc tế quy đổi",
+     "loai_nguon": "CHUNG_CHI",
+     "ma_bang_quy_doi": "QD_NGOAI_NGU",
+     "ma_mon": "ANH",
+     "he_so": 2
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_ALEVEL",
+   "ten_cong_thuc": "A-Level kết hợp CCNN (chưa tự tính điểm)",
+   "ma_phuong_thuc_cua_bo": "415",
+   "kieu_tinh": "THU_CONG",
+   "thang_diem": 30,
+   "ap_dung_diem_cong": false,
+   "ap_dung_uu_tien": false,
+   "mo_ta_cong_thuc": "M1 (Toán A-Level quy đổi) + M2 (môn A-Level khác) + M3 (CCNN quy đổi); có biến thể thang 40",
+   "dieu_kien": [
+    {
+     "ma_nhom": "CO_A_LEVEL",
+     "ten_nhom": "Không có chứng chỉ A-Level",
+     "mo_ta": "Chứng chỉ A-Level với môn Toán đạt từ A trở lên (mức điểm môn chưa kiểm tra tự động).",
+     "mot_trong": [
+      {
+       "ma_chi_so": "CO_CHUNG_CHI",
+       "khoa": "GCE_A_LEVEL",
+       "toan_tu": "=",
+       "gia_tri": 1,
+       "mo_ta": "Có chứng chỉ A-Level còn hạn"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "FTU_XET_THANG",
+   "ten_cong_thuc": "Xét tuyển thẳng theo Quy chế",
+   "ma_phuong_thuc_cua_bo": "301",
+   "kieu_tinh": "CHI_DIEU_KIEN",
+   "thang_diem": 30,
+   "ap_dung_diem_cong": false,
+   "ap_dung_uu_tien": false,
+   "mo_ta_cong_thuc": "Không tính điểm; xét theo chỉ tiêu tuyển thẳng, thứ tự nguyện vọng, hạng giải",
+   "dieu_kien": [
+    {
+     "ma_nhom": "DIEN_XET_THANG",
+     "ten_nhom": "Không thuộc diện xét tuyển thẳng đã mô hình hóa",
+     "mo_ta": "Mục 6.1.1 điểm b, c: tham gia/đạt giải Olympic quốc tế; giải Nhất, Nhì, Ba HSG quốc gia.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "HSG-QG",
+       "toan_tu": "<=",
+       "gia_tri": 3,
+       "mo_ta": "Giải Nhất/Nhì/Ba HSG quốc gia"
+      },
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "HSG-QT",
+       "toan_tu": "<=",
+       "gia_tri": 9,
+       "mo_ta": "Tham gia hoặc đạt giải Olympic quốc tế"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "dieu_kien_chung": [
+  {
+   "ma_nhom": "TN_THPT",
+   "ten_nhom": "Chưa tốt nghiệp THPT hoặc tương đương",
+   "mo_ta": "Đã được công nhận tốt nghiệp THPT (hoặc tương đương) tính tới thời điểm xét tuyển.",
+   "mot_trong": [
+    {
+     "ma_chi_so": "DA_TOT_NGHIEP_THPT",
+     "toan_tu": "=",
+     "gia_tri": 1,
+     "mo_ta": "Đã tốt nghiệp THPT"
+    }
+   ]
+  }
+ ],
+ "diem_cong": [
+  {
+   "loai_diem_cong": "DIEM_THUONG",
+   "nhom_cong": "GIAI_THUONG",
+   "ma_chi_so": "THANH_TICH",
+   "khoa": "HSG-QT",
+   "toan_tu": "<=",
+   "gia_tri": 9,
+   "diem_cong": 3,
+   "mo_ta": "Tham gia/đạt giải Olympic quốc tế"
+  },
+  {
+   "loai_diem_cong": "DIEM_THUONG",
+   "nhom_cong": "GIAI_THUONG",
+   "ma_chi_so": "THANH_TICH",
+   "khoa": "HSG-QG",
+   "toan_tu": "<=",
+   "gia_tri": 1,
+   "diem_cong": 3,
+   "mo_ta": "Giải Nhất HSG quốc gia"
+  },
+  {
+   "loai_diem_cong": "DIEM_THUONG",
+   "nhom_cong": "GIAI_THUONG",
+   "ma_chi_so": "THANH_TICH",
+   "khoa": "HSG-QG",
+   "toan_tu": "<=",
+   "gia_tri": 2,
+   "diem_cong": 2,
+   "mo_ta": "Giải Nhì HSG quốc gia"
+  },
+  {
+   "loai_diem_cong": "DIEM_THUONG",
+   "nhom_cong": "GIAI_THUONG",
+   "ma_chi_so": "THANH_TICH",
+   "khoa": "HSG-QG",
+   "toan_tu": "<=",
+   "gia_tri": 3,
+   "diem_cong": 1.5,
+   "mo_ta": "Giải Ba HSG quốc gia"
+  },
+  {
+   "loai_diem_cong": "DIEM_THUONG",
+   "nhom_cong": "GIAI_THUONG",
+   "ma_chi_so": "THANH_TICH",
+   "khoa": "HSG-QG",
+   "toan_tu": "<=",
+   "gia_tri": 4,
+   "diem_cong": 1,
+   "mo_ta": "Giải Khuyến khích HSG quốc gia"
+  },
+  {
+   "loai_diem_cong": "DIEM_THUONG",
+   "nhom_cong": "GIAI_THUONG",
+   "ma_chi_so": "THANH_TICH",
+   "khoa": "NCKH-QT",
+   "toan_tu": "<=",
+   "gia_tri": 9,
+   "diem_cong": 3,
+   "mo_ta": "Tham gia/đạt giải KHKT quốc tế"
+  },
+  {
+   "loai_diem_cong": "DIEM_THUONG",
+   "nhom_cong": "GIAI_THUONG",
+   "ma_chi_so": "THANH_TICH",
+   "khoa": "NCKH-QG",
+   "toan_tu": "<=",
+   "gia_tri": 1,
+   "diem_cong": 2,
+   "mo_ta": "Giải Nhất KHKT quốc gia"
+  },
+  {
+   "loai_diem_cong": "DIEM_THUONG",
+   "nhom_cong": "GIAI_THUONG",
+   "ma_chi_so": "THANH_TICH",
+   "khoa": "NCKH-QG",
+   "toan_tu": "<=",
+   "gia_tri": 2,
+   "diem_cong": 1.5,
+   "mo_ta": "Giải Nhì KHKT quốc gia"
+  },
+  {
+   "loai_diem_cong": "DIEM_THUONG",
+   "nhom_cong": "GIAI_THUONG",
+   "ma_chi_so": "THANH_TICH",
+   "khoa": "NCKH-QG",
+   "toan_tu": "<=",
+   "gia_tri": 3,
+   "diem_cong": 1,
+   "mo_ta": "Giải Ba KHKT quốc gia"
+  },
+  {
+   "loai_diem_cong": "DIEM_THUONG",
+   "nhom_cong": "GIAI_THUONG",
+   "ma_chi_so": "THANH_TICH",
+   "khoa": "NCKH-QG",
+   "toan_tu": "<=",
+   "gia_tri": 4,
+   "diem_cong": 0.5,
+   "mo_ta": "Giải Tư KHKT quốc gia"
+  }
+ ],
+ "chuong_trinh": [
+  {
+   "ma_chuong_trinh": "NTHKT01",
+   "ma_xet_tuyen": "NTHKT01",
+   "ten_chuong_trinh": "CT TT Kinh tế đối ngoại",
+   "ma_co_so": "HN",
+   "chi_tieu": 80,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 77000000,
+    "hoc_phi_den": 80000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKT02-1",
+   "ma_xet_tuyen": "NTHKT02",
+   "ten_chuong_trinh": "CT CLC Kinh tế đối ngoại",
+   "ma_co_so": "HN",
+   "chi_tieu": 220,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKT02-2",
+   "ma_xet_tuyen": "NTHKT02",
+   "ten_chuong_trinh": "CT TC Kinh tế đối ngoại",
+   "ma_co_so": "HN",
+   "chi_tieu": 420,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 28000000,
+    "hoc_phi_den": 32000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D02",
+      "D03",
+      "D04",
+      "D06",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D02",
+      "D03",
+      "D04",
+      "D06",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKT03",
+   "ma_xet_tuyen": "NTHKT03",
+   "ten_chuong_trinh": "CT ĐHNNQT Logistics toàn cầu và đổi mới chuỗi cung ứng",
+   "ma_co_so": "HN",
+   "chi_tieu": 70,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKT04-1",
+   "ma_xet_tuyen": "NTHKT04",
+   "ten_chuong_trinh": "CT CLC Kinh tế quốc tế",
+   "ma_co_so": "HN",
+   "chi_tieu": 120,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKT04-2",
+   "ma_xet_tuyen": "NTHKT04",
+   "ten_chuong_trinh": "CT TC Kinh tế quốc tế",
+   "ma_co_so": "HN",
+   "chi_tieu": 170,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 28000000,
+    "hoc_phi_den": 32000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D03",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D03",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKT04-3",
+   "ma_xet_tuyen": "NTHKT04",
+   "ten_chuong_trinh": "CT ĐHNNQT Kinh tế số và Phân tích dữ liệu",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKD05",
+   "ma_xet_tuyen": "NTHKD05",
+   "ten_chuong_trinh": "CT TT i-Hons Kinh doanh quốc tế và Phân tích dữ liệu kinh doanh (hợp tác với University of Queensland, Australia)",
+   "ma_co_so": "HN",
+   "chi_tieu": 70,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 88000000,
+    "hoc_phi_den": 88000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKD06-1",
+   "ma_xet_tuyen": "NTHKD06",
+   "ten_chuong_trinh": "CT CLC Kinh doanh quốc tế",
+   "ma_co_so": "HN",
+   "chi_tieu": 80,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKD06-2",
+   "ma_xet_tuyen": "NTHKD06",
+   "ten_chuong_trinh": "CT TC Kinh doanh quốc tế",
+   "ma_co_so": "HN",
+   "chi_tieu": 110,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 28000000,
+    "hoc_phi_den": 32000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKD07-1",
+   "ma_xet_tuyen": "NTHKD07",
+   "ten_chuong_trinh": "CT ĐHNNQT Kinh doanh số toàn cầu",
+   "ma_co_so": "HN",
+   "chi_tieu": 60,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 65000000,
+    "hoc_phi_den": 70000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKD07-2",
+   "ma_xet_tuyen": "NTHKD07",
+   "ten_chuong_trinh": "CT ĐHNNQT Kinh doanh quốc tế theo mô hình tiên tiến Nhật Bản",
+   "ma_co_so": "HN",
+   "chi_tieu": 70,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D06",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D06",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D06",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D06",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKD08-1",
+   "ma_xet_tuyen": "NTHKD08",
+   "ten_chuong_trinh": "CT ĐHNNQT Kinh doanh sáng tạo và Công nghiệp văn hóa",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKD08-2",
+   "ma_xet_tuyen": "NTHKD08",
+   "ten_chuong_trinh": "CT ĐHNNQT Quản lý công nghiệp thông minh",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHQT09",
+   "ma_xet_tuyen": "NTHQT09",
+   "ten_chuong_trinh": "CT TT Quản trị kinh doanh",
+   "ma_co_so": "HN",
+   "chi_tieu": 80,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 77000000,
+    "hoc_phi_den": 80000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHQT10-1",
+   "ma_xet_tuyen": "NTHQT10",
+   "ten_chuong_trinh": "CT CLC Quản trị kinh doanh",
+   "ma_co_so": "HN",
+   "chi_tieu": 100,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHQT10-2",
+   "ma_xet_tuyen": "NTHQT10",
+   "ten_chuong_trinh": "CT TC Quản trị kinh doanh",
+   "ma_co_so": "HN",
+   "chi_tieu": 80,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 28000000,
+    "hoc_phi_den": 32000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHQT10-3",
+   "ma_xet_tuyen": "NTHQT10",
+   "ten_chuong_trinh": "CT ĐHNNQT Quản trị nguồn nhân lực số và phát triển tổ chức",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHTM11-1",
+   "ma_xet_tuyen": "NTHTM11",
+   "ten_chuong_trinh": "CT ĐHNNQT Thương mại số thông minh và đổi mới kinh doanh",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHTM11-2",
+   "ma_xet_tuyen": "NTHTM11",
+   "ten_chuong_trinh": "CT ĐHNNQT Marketing số",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 65000000,
+    "hoc_phi_den": 70000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHQK12-1",
+   "ma_xet_tuyen": "NTHQK12",
+   "ten_chuong_trinh": "CT ĐHNNQT Quản trị khách sạn",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 65000000,
+    "hoc_phi_den": 70000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHQK12-2",
+   "ma_xet_tuyen": "NTHQK12",
+   "ten_chuong_trinh": "CT ĐHPTQT Kinh tế chính trị quốc tế",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHTC14",
+   "ma_xet_tuyen": "NTHTC14",
+   "ten_chuong_trinh": "CT TT Tài chính - Ngân hàng",
+   "ma_co_so": "HN",
+   "chi_tieu": 40,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 77000000,
+    "hoc_phi_den": 80000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHTC15-1",
+   "ma_xet_tuyen": "NTHTC15",
+   "ten_chuong_trinh": "CT CLC Tài chính - Ngân hàng",
+   "ma_co_so": "HN",
+   "chi_tieu": 120,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHTC15-2",
+   "ma_xet_tuyen": "NTHTC15",
+   "ten_chuong_trinh": "CT TC Tài chính - Ngân hàng",
+   "ma_co_so": "HN",
+   "chi_tieu": 130,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 28000000,
+    "hoc_phi_den": 32000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHTC15-3",
+   "ma_xet_tuyen": "NTHTC15",
+   "ten_chuong_trinh": "CT ĐHNNQT Công nghệ tài chính và Tài chính bền vững",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKE16-1",
+   "ma_xet_tuyen": "NTHKE16",
+   "ten_chuong_trinh": "CT TC Kế toán - Kiểm toán",
+   "ma_co_so": "HN",
+   "chi_tieu": 70,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 28000000,
+    "hoc_phi_den": 32000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKE16-2",
+   "ma_xet_tuyen": "NTHKE16",
+   "ten_chuong_trinh": "CT ĐHNNQT Kế toán - Kiểm toán theo định hướng ACCA",
+   "ma_co_so": "HN",
+   "chi_tieu": 80,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKE16-3",
+   "ma_xet_tuyen": "NTHKE16",
+   "ten_chuong_trinh": "CT ĐHNNQT Kiểm toán tích hợp công nghệ",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHLS17-1",
+   "ma_xet_tuyen": "NTHLS17",
+   "ten_chuong_trinh": "CT TC Luật thương mại quốc tế",
+   "ma_co_so": "HN",
+   "chi_tieu": 60,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 28000000,
+    "hoc_phi_den": 32000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHLS17-2",
+   "ma_xet_tuyen": "NTHLS17",
+   "ten_chuong_trinh": "CT ĐHNNQT Luật Kinh doanh quốc tế theo mô hình thực hành nghề nghiệp",
+   "ma_co_so": "HN",
+   "chi_tieu": 60,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHLS17-3",
+   "ma_xet_tuyen": "NTHLS17",
+   "ten_chuong_trinh": "CT ĐHNNQT Luật Kinh tế và kinh doanh số",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHLS17-4",
+   "ma_xet_tuyen": "NTHLS17",
+   "ten_chuong_trinh": "CT TH Luật dân sự và tố tụng dân sự",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 34000000,
+    "hoc_phi_den": 39000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHCN18-1",
+   "ma_xet_tuyen": "NTHCN18",
+   "ten_chuong_trinh": "CT TH Khoa học máy tính và dữ liệu trong kinh tế và kinh doanh",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 34000000,
+    "hoc_phi_den": 39000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_IT40",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_IT40",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_IT40",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_IT40",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_40"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_40"
+    },
+    {
+     "ma_cong_thuc": "FTU_TSA_40"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_IT40"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_IT40"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHCN18-2",
+   "ma_xet_tuyen": "NTHCN18",
+   "ten_chuong_trinh": "CT TH Trí tuệ nhân tạo cho đổi mới sáng tạo trong kinh tế và kinh doanh",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 34000000,
+    "hoc_phi_den": 39000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_IT40",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_IT40",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_IT40",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_IT40",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_40"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_40"
+    },
+    {
+     "ma_cong_thuc": "FTU_TSA_40"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_IT40"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_IT40"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHCN18-3",
+   "ma_xet_tuyen": "NTHCN18",
+   "ten_chuong_trinh": "CT TH Khoa học dữ liệu cho đổi mới sáng tạo trong kinh tế và kinh doanh",
+   "ma_co_so": "HN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 34000000,
+    "hoc_phi_den": 39000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_IT40",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_IT40",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_IT40",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_IT40",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_40"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_40"
+    },
+    {
+     "ma_cong_thuc": "FTU_TSA_40"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_IT40"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_IT40"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHNN19",
+   "ma_xet_tuyen": "NTHNN19",
+   "ten_chuong_trinh": "CT TH Tiếng Anh thương mại",
+   "ma_co_so": "HN",
+   "chi_tieu": 170,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 34000000,
+    "hoc_phi_den": 39000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_NN40",
+     "to_hop": [
+      "D01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_NN40",
+     "to_hop": [
+      "D01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_NN40",
+     "to_hop": [
+      "D01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_NN40",
+     "to_hop": [
+      "D01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_NN40"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_NN40"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_NN40"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHNN20",
+   "ma_xet_tuyen": "NTHNN20",
+   "ten_chuong_trinh": "CT TH Tiếng Trung thương mại",
+   "ma_co_so": "HN",
+   "chi_tieu": 120,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 34000000,
+    "hoc_phi_den": 39000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_NN40",
+     "to_hop": [
+      "D01",
+      "D04"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_NN40",
+     "to_hop": [
+      "D01",
+      "D04"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_NN40",
+     "to_hop": [
+      "D01",
+      "D04"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_NN40",
+     "to_hop": [
+      "D01",
+      "D04"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_NN40"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_NN40"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_NN40"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHNN21",
+   "ma_xet_tuyen": "NTHNN21",
+   "ten_chuong_trinh": "CT TH Tiếng Nhật thương mại",
+   "ma_co_so": "HN",
+   "chi_tieu": 120,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 34000000,
+    "hoc_phi_den": 39000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_NN40",
+     "to_hop": [
+      "D01",
+      "D06"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_NN40",
+     "to_hop": [
+      "D01",
+      "D06"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_NN40",
+     "to_hop": [
+      "D01",
+      "D06"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_NN40",
+     "to_hop": [
+      "D01",
+      "D06"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_NN40"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_NN40"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_NN40"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHNN22",
+   "ma_xet_tuyen": "NTHNN22",
+   "ten_chuong_trinh": "CT TH Tiếng Pháp thương mại",
+   "ma_co_so": "HN",
+   "chi_tieu": 60,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 34000000,
+    "hoc_phi_den": 39000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_NN40",
+     "to_hop": [
+      "D01",
+      "D03"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_NN40",
+     "to_hop": [
+      "D01",
+      "D03"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_NN40",
+     "to_hop": [
+      "D01",
+      "D03"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_NN40",
+     "to_hop": [
+      "D01",
+      "D03"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_NN40"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_NN40"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_NN40"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTSKT01-1",
+   "ma_xet_tuyen": "NTSKT01",
+   "ten_chuong_trinh": "CT CLC Kinh tế đối ngoại",
+   "ma_co_so": "HCM",
+   "chi_tieu": 220,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTSKT01-2",
+   "ma_xet_tuyen": "NTSKT01",
+   "ten_chuong_trinh": "CT TC Kinh tế đối ngoại",
+   "ma_co_so": "HCM",
+   "chi_tieu": 280,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 28000000,
+    "hoc_phi_den": 32000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D06",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D06",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTSKT02",
+   "ma_xet_tuyen": "NTSKT02",
+   "ten_chuong_trinh": "CT ĐHNNQT Logistics toàn cầu và đổi mới chuỗi cung ứng",
+   "ma_co_so": "HCM",
+   "chi_tieu": 70,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTSQT03-1",
+   "ma_xet_tuyen": "NTSQT03",
+   "ten_chuong_trinh": "CT CLC Quản trị kinh doanh",
+   "ma_co_so": "HCM",
+   "chi_tieu": 80,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTSQT03-2",
+   "ma_xet_tuyen": "NTSQT03",
+   "ten_chuong_trinh": "CT TC Quản trị kinh doanh",
+   "ma_co_so": "HCM",
+   "chi_tieu": 60,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 28000000,
+    "hoc_phi_den": 32000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTSMT04",
+   "ma_xet_tuyen": "NTSMT04",
+   "ten_chuong_trinh": "CT ĐHNNQT Truyền thông Marketing tích hợp",
+   "ma_co_so": "HCM",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 65000000,
+    "hoc_phi_den": 70000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTSTC05-1",
+   "ma_xet_tuyen": "NTSTC05",
+   "ten_chuong_trinh": "CT CLC Tài chính - Ngân hàng",
+   "ma_co_so": "HCM",
+   "chi_tieu": 70,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 50000000,
+    "hoc_phi_den": 54000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_CCNN_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_SAT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ACT_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_ALEVEL"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTSTC05-2",
+   "ma_xet_tuyen": "NTSTC05",
+   "ten_chuong_trinh": "CT TC Tài chính - Ngân hàng",
+   "ma_co_so": "HCM",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 28000000,
+    "hoc_phi_den": 32000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTSKE06",
+   "ma_xet_tuyen": "NTSKE06",
+   "ten_chuong_trinh": "CT TC Kế toán - Kiểm toán",
+   "ma_co_so": "HCM",
+   "chi_tieu": 70,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 28000000,
+    "hoc_phi_den": 32000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKK23-1",
+   "ma_xet_tuyen": "NTHKK23",
+   "ten_chuong_trinh": "CT TC Kế toán - Kiểm toán",
+   "ma_co_so": "QN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 28000000,
+    "hoc_phi_den": 32000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "NTHKK23-2",
+   "ma_xet_tuyen": "NTHKK23",
+   "ten_chuong_trinh": "CT TC Kinh doanh quốc tế",
+   "ma_co_so": "QN",
+   "chi_tieu": 50,
+   "hoc_phi": {
+    "nam_hoc": "2026-2027",
+    "hoc_phi_tu": 28000000,
+    "hoc_phi_den": 32000000
+   },
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "FTU_HB_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "FTU_XET_THANG"
+    },
+    {
+     "ma_cong_thuc": "FTU_HSA_30"
+    },
+    {
+     "ma_cong_thuc": "FTU_VACT_30"
+    }
+   ]
+  }
+ ],
+ "diem_chuan": []
+}

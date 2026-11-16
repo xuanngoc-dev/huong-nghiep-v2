@@ -1,0 +1,324 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "huongnghiep/de_an_xet_tuyen/1.0",
+  "title": "Cấu trúc chuẩn quy tắc xét tuyển của một trường trong một năm",
+  "description": "Mỗi file mô tả MỘT trường, MỘT năm tuyển sinh. Mọi tham chiếu dùng MÃ (mã trường, mã môn, mã tổ hợp, mã bài thi, mã chứng chỉ, mã thành tích, mã phương thức của Bộ) theo các bảng dm_* của hệ thống, không dùng id. File này được nạp vào các bảng xt_*, dats_hoc_phi, xt_diem_chuan.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["phien_ban", "ma_truong", "nam_tuyen_sinh", "de_an", "cong_thuc", "chuong_trinh"],
+  "properties": {
+    "phien_ban": { "const": "1.0", "description": "Phiên bản cấu trúc." },
+    "ma_truong": { "type": "string", "minLength": 2, "maxLength": 20, "description": "dm_truong.ma_truong." },
+    "nam_tuyen_sinh": { "type": "integer", "minimum": 2020, "maximum": 2100 },
+    "de_an": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ten_de_an"],
+      "properties": {
+        "ten_de_an": { "type": "string", "minLength": 1 },
+        "so_quyet_dinh": { "type": ["string", "null"] },
+        "ngay_cong_bo": { "type": ["string", "null"], "format": "date" },
+        "nguon_du_lieu_url": { "type": ["string", "null"] },
+        "ghi_chu": { "type": ["string", "null"], "description": "Nêu rõ những quy định của đề án CHƯA đưa được vào file." }
+      }
+    },
+    "co_so": {
+      "description": "Các cơ sở đào tạo. Dùng để lọc và chấm điểm theo địa điểm.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ma_co_so", "ten_co_so", "ma_tinh"],
+        "properties": {
+          "ma_co_so": { "type": "string", "minLength": 1, "description": "Mã tự đặt, duy nhất trong file." },
+          "ten_co_so": { "type": "string", "minLength": 1 },
+          "ma_tinh": { "type": "string", "description": "dm_tinh_thanh.ma_tinh." },
+          "dia_chi": { "type": ["string", "null"] },
+          "la_tru_so_chinh": { "type": "boolean", "default": false }
+        }
+      }
+    },
+    "to_hop_rieng": {
+      "description": "Tổ hợp do trường tự định nghĩa hoặc cần định nghĩa lại (ví dụ tổ hợp cho chọn một trong nhiều môn). Tổ hợp chuẩn (A00, D01...) không cần khai ở đây.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ma_to_hop", "ten_to_hop", "vi_tri"],
+        "properties": {
+          "ma_to_hop": { "type": "string", "minLength": 1, "maxLength": 20 },
+          "ten_to_hop": { "type": "string" },
+          "vi_tri": {
+            "description": "Mỗi phần tử là một VỊ TRÍ tính điểm, chứa danh sách mã môn. Nhiều môn trong một vị trí nghĩa là chọn môn có điểm cao nhất.",
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "bang_quy_doi": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ma_bang", "ten_bang", "thang_diem_dich", "muc"],
+        "properties": {
+          "ma_bang": { "type": "string", "minLength": 1, "maxLength": 50, "description": "Duy nhất trong file." },
+          "ten_bang": { "type": "string" },
+          "thang_diem_dich": { "type": "number", "exclusiveMinimum": 0, "description": "Thang điểm sau quy đổi (10, 20, 30...)." },
+          "ghi_chu": { "type": ["string", "null"] },
+          "muc": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/muc_quy_doi" } }
+        }
+      }
+    },
+    "cong_thuc": {
+      "description": "Mỗi phần tử là một cách tính điểm xét. Cùng một phương thức nhưng khác thang điểm, khác hệ số môn hoặc khác ngưỡng thì tách thành công thức riêng.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/cong_thuc" }
+    },
+    "dieu_kien_chung": {
+      "description": "Nhóm điều kiện áp dụng cho MỌI công thức và MỌI chương trình của đề án.",
+      "type": "array",
+      "items": { "$ref": "#/definitions/nhom_dieu_kien" }
+    },
+    "diem_cong": {
+      "description": "Điểm thưởng, điểm xét thưởng, điểm khuyến khích (khoản 20 Điều 2 Quy chế).",
+      "type": "array",
+      "items": { "$ref": "#/definitions/diem_cong" }
+    },
+    "chuong_trinh": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/chuong_trinh" }
+    },
+    "diem_chuan": {
+      "description": "Điểm trúng tuyển các năm trước của chính trường này. Thiếu phần này thì hệ thống không chấm được điểm phù hợp.",
+      "type": "array",
+      "items": { "$ref": "#/definitions/diem_chuan" }
+    }
+  },
+  "definitions": {
+    "toan_tu": { "enum": [">=", ">", "=", "<=", "<", "!="] },
+    "ma_chi_so": {
+      "description": "Chỉ số của học sinh (dm_chi_so_xet_tuyen). Cột khoa: môn = ma_mon_hoc; bài thi = ma_bai_thi; chứng chỉ = ma_chung_chi; thành tích = ma_thanh_tich; lớp = 10/11/12.",
+      "enum": [
+        "DA_TOT_NGHIEP_THPT", "NAM_TOT_NGHIEP", "HE_CHUYEN", "MON_CHUYEN",
+        "TBC_LOP", "TBC_MIN_3_NAM", "HOC_LUC_LOP", "HOC_LUC_MIN_3_NAM", "REN_LUYEN_LOP", "REN_LUYEN_MIN_3_NAM",
+        "DIEM_THI_THPT", "DIEM_HOC_BA_TB", "DIEM_BAI_THI", "DIEM_CHUNG_CHI", "CO_CHUNG_CHI", "THANH_TICH"
+      ]
+    },
+    "dieu_kien": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ma_chi_so", "toan_tu", "gia_tri"],
+      "properties": {
+        "ma_chi_so": { "$ref": "#/definitions/ma_chi_so" },
+        "khoa": { "type": "string", "default": "", "description": "Bỏ trống với chỉ số không cần khóa." },
+        "toan_tu": { "$ref": "#/definitions/toan_tu" },
+        "gia_tri": { "type": "number", "description": "Học lực/rèn luyện: 4 Tốt, 3 Khá, 2 Đạt, 1 Chưa đạt. Thành tích: 1 Nhất, 2 Nhì, 3 Ba, 4 Khuyến khích/Tư, 9 tham gia (giải càng cao số càng nhỏ, nên viết dạng <=)." },
+        "mo_ta": { "type": ["string", "null"] }
+      }
+    },
+    "nhom_dieu_kien": {
+      "description": "Các nhóm áp dụng cho một phương án phải CÙNG đạt. Trong một nhóm chỉ cần MỘT điều kiện đạt.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ma_nhom", "ten_nhom", "mot_trong"],
+      "properties": {
+        "ma_nhom": { "type": "string", "minLength": 1, "maxLength": 50 },
+        "ten_nhom": { "type": "string", "minLength": 1, "description": "Viết dưới dạng lý do KHÔNG đạt, ví dụ: Kết quả học tập từng năm chưa đạt Khá." },
+        "mo_ta": { "type": ["string", "null"], "description": "Nguyên văn điều kiện trong đề án." },
+        "bat_buoc": { "type": "boolean", "default": true },
+        "ma_cong_thuc": { "type": ["string", "null"], "description": "Chỉ dùng trong dieu_kien_rieng của chương trình: giới hạn nhóm cho một công thức." },
+        "mot_trong": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/dieu_kien" } }
+      }
+    },
+    "muc_quy_doi": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["diem_quy_doi"],
+      "oneOf": [
+        { "required": ["ma_chung_chi"], "not": { "required": ["ma_bai_thi"] } },
+        { "required": ["ma_bai_thi"], "not": { "required": ["ma_chung_chi"] } }
+      ],
+      "properties": {
+        "ma_chung_chi": { "type": "string", "description": "dm_bang_cap_chung_chi.ma_chung_chi." },
+        "ma_bai_thi": { "type": "string", "description": "dm_bai_thi_danh_gia.ma_bai_thi." },
+        "ma_mon_thay_the": { "type": ["string", "null"], "description": "Môn ngoại ngữ mà chứng chỉ thay thế (IELTS -> ANH, HSK -> TRUNG). Bắt buộc nếu bảng dùng để thay điểm môn ngoại ngữ." },
+        "cap_do": { "type": ["string", "null"], "description": "Cấp độ phải khớp (N3, HSK4, B2...)." },
+        "diem_tu": { "type": ["number", "null"], "description": "Cận dưới, tính cả." },
+        "diem_den": { "type": ["number", "null"], "description": "Cận trên, tính cả." },
+        "diem_quy_doi": { "type": "number", "description": "Điểm quy đổi tại diem_tu." },
+        "he_so_noi_suy": { "type": "number", "default": 0, "description": "Điểm = diem_quy_doi + he_so_noi_suy x (điểm - diem_tu). 0 = bậc thang." },
+        "dat_nguong": { "type": "boolean", "default": true, "description": "false: mức có trong bảng nhưng dưới ngưỡng bảo đảm chất lượng, không dùng để xét." }
+      }
+    },
+    "cong_thuc": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ma_cong_thuc", "ten_cong_thuc", "ma_phuong_thuc_cua_bo", "kieu_tinh", "thang_diem"],
+      "properties": {
+        "ma_cong_thuc": { "type": "string", "minLength": 1, "maxLength": 50, "description": "Duy nhất trong file." },
+        "ten_cong_thuc": { "type": "string", "minLength": 1 },
+        "ma_phuong_thuc_cua_bo": { "type": "string", "description": "dm_phuong_thuc_tuyen_sinh.ma_phuong_thuc (100, 200, 301, 402, 409...)." },
+        "kieu_tinh": {
+          "enum": ["TO_HOP_MON", "THANH_PHAN", "CHI_DIEU_KIEN", "THU_CONG"],
+          "description": "TO_HOP_MON: tổng có hệ số các môn của tổ hợp. THANH_PHAN: tổng các bài thi/chứng chỉ đã quy đổi. CHI_DIEU_KIEN: không tính điểm (xét thẳng). THU_CONG: có điểm nhưng hệ thống chưa tự tính."
+        },
+        "nguon_diem_mon": { "enum": ["THI_THPT", "HOC_BA", null], "description": "Bắt buộc với TO_HOP_MON. HOC_BA = trung bình cả năm lớp 10, 11, 12." },
+        "thay_ngoai_ngu": { "enum": ["KHONG", "DUOC_PHEP", "BAT_BUOC"], "default": "KHONG", "description": "Môn ngoại ngữ của tổ hợp có lấy điểm quy đổi chứng chỉ không. DUOC_PHEP: lấy mức cao hơn. BAT_BUOC: chỉ dùng chứng chỉ." },
+        "ma_bang_quy_doi_ngoai_ngu": { "type": ["string", "null"], "description": "Bắt buộc khi thay_ngoai_ngu khác KHONG." },
+        "thang_diem": { "type": "number", "exclusiveMinimum": 0, "description": "Điểm tối đa của điểm xét." },
+        "he_so_nhan": { "type": "number", "exclusiveMinimum": 0, "default": 1, "description": "Nhân vào tổng các thành phần." },
+        "nguong_tb_mon": { "type": ["number", "null"], "description": "Trung bình các môn học dùng xét phải >= giá trị này." },
+        "nguong_thpt_to_hop": { "type": ["number", "null"], "description": "Tổng điểm thi THPT 3 môn của tổ hợp, gồm điểm ưu tiên, phải >= giá trị này." },
+        "diem_san": { "type": ["number", "null"], "description": "Ngưỡng nhận hồ sơ trên điểm xét cuối cùng." },
+        "ap_dung_diem_cong": { "type": "boolean", "default": true },
+        "ap_dung_uu_tien": { "type": "boolean", "default": true },
+        "ty_le_diem_cong_toi_da": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.1 },
+        "so_le_lam_tron": { "type": "integer", "minimum": 0, "maximum": 4, "default": 2 },
+        "mo_ta_cong_thuc": { "type": ["string", "null"], "description": "Công thức nguyên văn để hiển thị." },
+        "dang_dung": { "type": "boolean", "default": true, "description": "false: đã khai nhưng chưa dùng để tính (chờ xác minh)." },
+        "ghi_chu": { "type": ["string", "null"] },
+        "he_so_mon": {
+          "description": "Chỉ với TO_HOP_MON. Môn không khai mặc định hệ số 1. Các môn thay thế nhau trong cùng một vị trí của tổ hợp phải có cùng hệ số.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["he_so"],
+            "oneOf": [ { "required": ["ma_mon"] }, { "required": ["nhom_mon"] } ],
+            "properties": {
+              "ma_mon": { "type": "string", "description": "dm_mon_hoc.ma_mon_hoc." },
+              "nhom_mon": { "type": "string", "description": "dm_mon_hoc.nhom_mon, ví dụ: Ngoại ngữ." },
+              "he_so": { "type": "number", "exclusiveMinimum": 0 }
+            }
+          }
+        },
+        "thanh_phan": {
+          "description": "Chỉ với THANH_PHAN. Các phần tử cùng vi_tri là phương án thay thế nhau, lấy giá trị cao nhất.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["vi_tri", "loai_nguon"],
+            "properties": {
+              "vi_tri": { "type": "integer", "minimum": 1 },
+              "ten_thanh_phan": { "type": ["string", "null"] },
+              "loai_nguon": { "enum": ["BAI_THI", "CHUNG_CHI"] },
+              "ma_bai_thi": { "type": ["string", "null"], "description": "Bắt buộc với BAI_THI." },
+              "ma_bang_quy_doi": { "type": ["string", "null"], "description": "Bắt buộc với CHUNG_CHI. Với BAI_THI: null = dùng điểm gốc." },
+              "ma_mon": { "type": ["string", "null"], "description": "CHUNG_CHI: chỉ nhận chứng chỉ của ngoại ngữ này." },
+              "he_so": { "type": "number", "exclusiveMinimum": 0, "default": 1 },
+              "nam_thi_tu": { "type": ["integer", "null"] },
+              "nam_thi_den": { "type": ["integer", "null"] },
+              "yeu_cau_phan_tu_chon": { "type": ["string", "null"], "description": "Ví dụ HSA phần 3: KHOA_HOC hoặc TIENG_ANH." }
+            },
+            "allOf": [
+              { "if": { "properties": { "loai_nguon": { "const": "BAI_THI" } } }, "then": { "required": ["ma_bai_thi"], "properties": { "ma_bai_thi": { "type": "string" } } } },
+              { "if": { "properties": { "loai_nguon": { "const": "CHUNG_CHI" } } }, "then": { "required": ["ma_bang_quy_doi"], "properties": { "ma_bang_quy_doi": { "type": "string" } } } }
+            ]
+          }
+        },
+        "dieu_kien": {
+          "description": "Nhóm điều kiện riêng của công thức này, áp dụng cho mọi chương trình dùng nó. Công thức CHI_DIEU_KIEN và THU_CONG bắt buộc có ít nhất một nhóm.",
+          "type": "array",
+          "items": { "$ref": "#/definitions/nhom_dieu_kien" }
+        }
+      },
+      "allOf": [
+        { "if": { "properties": { "kieu_tinh": { "const": "TO_HOP_MON" } } },
+          "then": { "required": ["nguon_diem_mon"], "properties": { "nguon_diem_mon": { "enum": ["THI_THPT", "HOC_BA"] } } } },
+        { "if": { "properties": { "kieu_tinh": { "const": "THANH_PHAN" } } },
+          "then": { "required": ["thanh_phan"], "properties": { "thanh_phan": { "minItems": 1 } } } },
+        { "if": { "properties": { "kieu_tinh": { "enum": ["CHI_DIEU_KIEN", "THU_CONG"] } } },
+          "then": { "required": ["dieu_kien"], "properties": { "dieu_kien": { "minItems": 1 } } } },
+        { "if": { "required": ["thay_ngoai_ngu"], "properties": { "thay_ngoai_ngu": { "enum": ["DUOC_PHEP", "BAT_BUOC"] } } },
+          "then": { "required": ["ma_bang_quy_doi_ngoai_ngu"], "properties": { "ma_bang_quy_doi_ngoai_ngu": { "type": "string" } } } }
+      ]
+    },
+    "diem_cong": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["loai_diem_cong", "nhom_cong", "ma_chi_so", "toan_tu", "gia_tri", "diem_cong"],
+      "properties": {
+        "ma_cong_thuc": { "type": ["string", "null"], "description": "null = mọi công thức có ap_dung_diem_cong." },
+        "loai_diem_cong": { "enum": ["DIEM_THUONG", "DIEM_XET_THUONG", "DIEM_KHUYEN_KHICH"] },
+        "nhom_cong": { "type": "string", "minLength": 1, "description": "Trong cùng nhóm chỉ lấy mức cao nhất; các nhóm khác nhau cộng dồn." },
+        "ma_chi_so": { "$ref": "#/definitions/ma_chi_so" },
+        "khoa": { "type": "string", "default": "" },
+        "toan_tu": { "$ref": "#/definitions/toan_tu" },
+        "gia_tri": { "type": "number" },
+        "diem_cong": { "type": "number", "minimum": 0, "maximum": 3, "description": "Mức cộng tính trên THANG 30; hệ thống tự quy đổi sang thang của công thức." },
+        "mo_ta": { "type": ["string", "null"] }
+      }
+    },
+    "chuong_trinh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ma_chuong_trinh", "ma_xet_tuyen", "ten_chuong_trinh", "phuong_an"],
+      "properties": {
+        "ma_chuong_trinh": { "type": "string", "minLength": 1, "description": "Mã tự đặt, duy nhất trong file. Cần vì một mã xét tuyển có thể gồm nhiều chương trình." },
+        "ma_xet_tuyen": { "type": "string", "minLength": 1, "maxLength": 20 },
+        "ten_chuong_trinh": { "type": "string", "minLength": 1 },
+        "ma_nganh": { "type": ["string", "null"], "description": "dm_nganh_dao_tao.ma_nganh. Thiếu thì không chấm được tiêu chí ngành." },
+        "ma_co_so": { "type": ["string", "null"], "description": "Tham chiếu co_so.ma_co_so. null = trụ sở chính của trường." },
+        "loai_chuong_trinh": { "type": ["string", "null"], "description": "Chuẩn, chất lượng cao, tiên tiến, liên kết..." },
+        "chi_tieu": { "type": ["integer", "null"], "minimum": 0 },
+        "hoc_phi": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["hoc_phi_tu"],
+          "properties": {
+            "nam_hoc": { "type": ["string", "null"] },
+            "hoc_phi_tu": { "type": "number", "minimum": 0, "description": "VNĐ/năm." },
+            "hoc_phi_den": { "type": ["number", "null"], "minimum": 0 },
+            "ghi_chu": { "type": ["string", "null"] }
+          }
+        },
+        "phuong_an": {
+          "description": "Các cách học sinh có thể xét vào chương trình này.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ma_cong_thuc"],
+            "properties": {
+              "ma_cong_thuc": { "type": "string" },
+              "to_hop": {
+                "description": "Bắt buộc và khác rỗng với công thức TO_HOP_MON; bỏ qua với các kiểu khác. Nếu công thức có thay_ngoai_ngu = BAT_BUOC thì chỉ khai tổ hợp có môn ngoại ngữ.",
+                "type": "array",
+                "items": { "type": "string" },
+                "uniqueItems": true
+              }
+            }
+          }
+        },
+        "dieu_kien_rieng": {
+          "description": "Nhóm điều kiện chỉ áp dụng cho chương trình này (ví dụ yêu cầu ngoại ngữ đầu vào).",
+          "type": "array",
+          "items": { "$ref": "#/definitions/nhom_dieu_kien" }
+        }
+      }
+    },
+    "diem_chuan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nam_tuyen_sinh", "ma_xet_tuyen", "diem_chuan", "thang_diem"],
+      "properties": {
+        "nam_tuyen_sinh": { "type": "integer" },
+        "ma_xet_tuyen": { "type": "string", "description": "Mã xét tuyển của năm đó; phải trùng mã năm hiện tại thì mới nối được." },
+        "ten_chuong_trinh": { "type": ["string", "null"] },
+        "ma_phuong_thuc_cua_bo": { "type": ["string", "null"], "description": "null = điểm chuẩn chung mọi phương thức. Nếu mỗi phương thức một thang điểm thì bắt buộc khai." },
+        "ma_to_hop": { "type": ["string", "null"], "description": "null = chung mọi tổ hợp." },
+        "diem_chuan": { "type": "number" },
+        "thang_diem": { "type": "number", "exclusiveMinimum": 0 },
+        "tieu_chi_phu": { "type": ["string", "null"] },
+        "nguon_du_lieu_url": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
