@@ -29,18 +29,22 @@ from app.schemas.ho_so import (
     TrinhDoHocVan,
 )
 
-from app.services.ho_so_xet_tuyen import HoSoXetTuyenError, dong_bo_tu_json
+from app.services.ho_so_xet_tuyen import dong_bo_tu_json
 
 router = APIRouter(prefix="/tai-khoan", tags=["tai-khoan"])
 logger = logging.getLogger(__name__)
 
 
 def _dong_bo_ho_so_xet_tuyen(db: Session, profile: NguoiDungThongTin) -> None:
-    """Ghi song song: hồ sơ năng lực cũ vừa đổi thì cập nhật hồ sơ xét tuyển hs_* (nếu đã có) cho khớp."""
+    """Ghi song song: hồ sơ năng lực cũ vừa đổi thì cập nhật hồ sơ xét tuyển hs_* (nếu đã có) cho khớp.
+
+    Chạy trong savepoint: lỗi (kể cả CSDL chưa có bảng hs_*) chỉ ghi log, việc lưu hồ sơ năng lực cũ vẫn thành công.
+    """
     db.flush()
     try:
-        dong_bo_tu_json(db, profile, nam_tuyen_sinh=datetime.now().year)
-    except HoSoXetTuyenError:
+        with db.begin_nested():
+            dong_bo_tu_json(db, profile, nam_tuyen_sinh=datetime.now().year)
+    except Exception:  # noqa: BLE001 - đồng bộ phụ không được làm hỏng việc lưu hồ sơ chính
         logger.exception("Không đồng bộ được hồ sơ xét tuyển của người dùng %s", profile.nguoi_dung_id)
 
 
