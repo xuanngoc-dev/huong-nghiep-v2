@@ -14,6 +14,8 @@ class LuotTimTruong(BaseModel):
     # Thành viên đếm theo tài khoản; khách đếm theo ma_thiet_bi (không gửi mã thì không đếm được).
     da_dung: int | None = None
     con_lai: int | None = None
+    # Lượt tra cứu đã mua còn lại của thành viên (dùng khi hết lượt miễn phí); khách luôn None.
+    luot_tra_cuu: int | None = None
     # True: danh sách trường kết hợp thêm đề án/phương thức tuyển sinh (có chỉ tiêu).
     ket_hop_phuong_thuc: bool = False
 

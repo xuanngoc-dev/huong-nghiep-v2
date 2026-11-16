@@ -12,6 +12,7 @@ from app.db.session import get_db
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.ht_cau_hinh_tra_cuu import HtCauHinhTraCuu
 from app.models.nguoi_dung import NguoiDung
+from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
 from app.models.tn_lich_su_tim_truong_phu_hop import TnLichSuTimTruongPhuHop
 from app.schemas.tn_lich_su_tim_truong_phu_hop import (
     MA_THIET_BI_PATTERN,
@@ -41,16 +42,29 @@ def _cua_nguoi_tim(user: NguoiDung | None, ma_thiet_bi: str | None):
 
 
 def _da_dung_hom_nay(db: Session, user: NguoiDung | None, ma_thiet_bi: str | None) -> int:
-    """Số lượt đã tính từ đầu ngày (theo giờ của database)."""
+    """Số lượt miễn phí đã tính từ đầu ngày (theo giờ của database); lượt trừ vào lượt tra cứu đã mua không tính."""
     return db.scalar(
         select(func.count())
         .select_from(TnLichSuTimTruongPhuHop)
         .where(
             _cua_nguoi_tim(user, ma_thiet_bi),
             TnLichSuTimTruongPhuHop.da_tinh_luot == 1,
+            TnLichSuTimTruongPhuHop.loai_luot == "mien_phi",
             TnLichSuTimTruongPhuHop.ngay_tao >= func.curdate(),
         )
     ) or 0
+
+
+def _ho_so(db: Session, user: NguoiDung, khoa: bool = False) -> NguoiDungThongTin | None:
+    stmt = select(NguoiDungThongTin).where(NguoiDungThongTin.nguoi_dung_id == user.id)
+    return db.scalar(stmt.with_for_update() if khoa else stmt)
+
+
+def _cong_luot_tra_cuu(db: Session, user: NguoiDung, so: int) -> None:
+    """Cộng (hoặc trừ khi so < 0) lượt tra cứu đã mua của thành viên. Chưa commit."""
+    ho_so = _ho_so(db, user, khoa=True)
+    if ho_so is not None:
+        ho_so.luot_tra_cuu = max((ho_so.luot_tra_cuu or 0) + so, 0)
 
 
 def _la_cua_nguoi_tim(item: TnLichSuTimTruongPhuHop, user: NguoiDung | None, ma_thiet_bi: str | None) -> bool:
@@ -77,6 +91,7 @@ def _luot(
             ket_hop_phuong_thuc=ket_hop,
         )
     da_dung = _da_dung_hom_nay(db, user, None)
+    ho_so = _ho_so(db, user)
     return LuotTimTruong(
         la_thanh_vien=True,
         so_luot_ngay=thanh_vien,
@@ -84,6 +99,7 @@ def _luot(
         so_luot_thanh_vien_ngay=thanh_vien,
         da_dung=da_dung,
         con_lai=max(thanh_vien - da_dung, 0),
+        luot_tra_cuu=(ho_so.luot_tra_cuu or 0) if ho_so is not None else 0,
         ket_hop_phuong_thuc=ket_hop,
     )
 
@@ -180,7 +196,8 @@ def tim_truong_phu_hop(
     """Ghi một lượt tìm trường phù hợp vào tn_lich_su_tim_truong_phu_hop.
 
     Thành viên đếm lượt theo tài khoản. Khách vãng lai bắt buộc gửi ma_thiet_bi để đếm lượt theo thiết bị,
-    kèm thông tin liên hệ nếu có. Trừ một lượt khi tìm thành công; hết lượt trong ngày thì trả 429.
+    kèm thông tin liên hệ nếu có. Dùng lượt miễn phí trong ngày trước; thành viên hết lượt miễn phí thì trừ 1
+    lượt tra cứu đã mua (loai_luot = tra_phi), tìm lỗi thì hoàn lại. Hết cả hai thì trả 429.
     Gửi lại cùng ma_yeu_cau thì trả về kết quả cũ, không trừ thêm lượt.
     """
     ma_thiet_bi = payload.ma_thiet_bi
@@ -195,11 +212,24 @@ def tim_truong_phu_hop(
 
     cau_hinh = cau_hinh_dang_ap_dung(db)
     toi_da = cau_hinh.so_luot_tra_cuu_thanh_vien_ngay if user else cau_hinh.so_luot_tra_cuu_khach_ngay
+    loai_luot = "mien_phi"
     if _da_dung_hom_nay(db, user, ma_thiet_bi) >= toi_da:
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail=f"Bạn đã dùng hết {toi_da} lượt tìm trường phù hợp hôm nay",
-        )
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail=f"Bạn đã dùng hết {toi_da} lượt tìm trường phù hợp hôm nay",
+            )
+        # Hết lượt miễn phí: trừ lượt tra cứu đã mua (khóa dòng để hai request đồng thời không cùng trừ 1 lượt).
+        ho_so = _ho_so(db, user, khoa=True)
+        if ho_so is None or (ho_so.luot_tra_cuu or 0) <= 0:
+            db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail=f"Bạn đã dùng hết {toi_da} lượt miễn phí hôm nay và không còn lượt tra cứu. "
+                "Vui lòng nạp thêm lượt tra cứu.",
+            )
+        ho_so.luot_tra_cuu -= 1
+        loai_luot = "tra_phi"
 
     thong_tin_khach = None
     if user is None and payload.thong_tin_khach is not None:
@@ -214,7 +244,7 @@ def tim_truong_phu_hop(
         du_lieu_nang_luc=payload.du_lieu_nang_luc,
         du_lieu_tai_chinh=payload.du_lieu_tai_chinh,
         tieu_chi_tim_kiem=payload.tieu_chi_tim_kiem.model_dump(),
-        loai_luot="mien_phi",
+        loai_luot=loai_luot,
         phien_ban_thuat_toan=_PHIEN_BAN_THUAT_TOAN,
         trang_thai_xu_ly="dang_xu_ly",
     )
@@ -250,6 +280,8 @@ def tim_truong_phu_hop(
         item = db.get(TnLichSuTimTruongPhuHop, item.id)
         item.trang_thai_xu_ly = "that_bai"
         item.thong_bao_loi = str(exc)[:2000]
+        if item.loai_luot == "tra_phi" and user is not None:
+            _cong_luot_tra_cuu(db, user, 1)
     item.ngay_hoan_thanh = datetime.now()
     db.commit()
     db.refresh(item)

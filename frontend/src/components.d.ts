@@ -163,6 +163,7 @@ declare module 'vue' {
     ThanhToanDialog: typeof import('./components/member/ThanhToanDialog.vue')['default']
     TheThongKe: typeof import('./components/admin/dashboard/TheThongKe.vue')['default']
     ThiDaiHoc: typeof import('./components/guest/doi-tuong/HocSinhThpt/ThiDaiHoc.vue')['default']
+    TienTrinhXuLyDialog: typeof import('./components/guest/chung/TienTrinhXuLyDialog.vue')['default']
     TinTucMoi: typeof import('./components/guest/chung/TinTucMoi.vue')['default']
     TongQuan: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/TongQuan.vue')['default']
     TruongDaoTao: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/TruongDaoTao.vue')['default']

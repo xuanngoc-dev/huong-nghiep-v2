@@ -15,15 +15,25 @@
           <el-icon class="het-luot__note-icon" aria-hidden="true"><MagicStick /></el-icon>
           Hành trình của bạn vẫn tiếp tục!
         </p>
-        <p class="het-luot__note-text">
+        <p v-if="laThanhVien" class="het-luot__note-text">
+          Bạn đã dùng hết lượt tìm kiếm miễn phí hôm nay và lượt tra cứu đã mua. Nạp thêm lượt tra cứu để tìm tiếp
+          ngay, hoặc quay lại tìm miễn phí vào ngày mai.
+        </p>
+        <p v-else class="het-luot__note-text">
           Bạn đã sử dụng hết lượt tìm kiếm miễn phí hôm nay. Có thể mở rộng lượt tìm kiếm ngay hoặc tiếp tục miễn
           phí vào ngày mai.
         </p>
       </div>
       <div class="het-luot__actions">
         <button type="button" class="het-luot__cta" @click="$emit('kham-pha')">
-          Tiếp tục khám phá trường phù hợp
-          <el-icon aria-hidden="true"><Right /></el-icon>
+          <template v-if="laThanhVien">
+            <el-icon aria-hidden="true"><Wallet /></el-icon>
+            Nạp tiền mua thêm lượt tra cứu
+          </template>
+          <template v-else>
+            Tiếp tục khám phá trường phù hợp
+            <el-icon aria-hidden="true"><Right /></el-icon>
+          </template>
         </button>
         <p class="het-luot__sub">Xem các lựa chọn mua thêm lượt trước khi thanh toán</p>
       </div>
@@ -35,6 +45,11 @@
 import anhTruong from '@/assets/guest/sinh-vien.jpg'
 
 defineOptions({ name: 'HetLuotTimTruong' })
+
+defineProps({
+  // Thành viên: hết cả lượt miễn phí lẫn lượt tra cứu đã mua → nút nạp tiền.
+  laThanhVien: { type: Boolean, default: false },
+})
 
 defineEmits(['kham-pha'])
 </script>

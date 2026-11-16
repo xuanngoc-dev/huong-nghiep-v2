@@ -43,7 +43,12 @@
               </p>
             </div>
             <div class="ho-so-tom-tat__actions">
-              <span class="luot-tim" :class="{ 'luot-tim--het': !conLuot }">{{ nhanLuot }}</span>
+              <!-- Lượt miễn phí hôm nay (nhỏ) cùng hàng với số lượt tra cứu đã mua còn lại (lớn). -->
+              <span class="luot-tim" :class="{ 'luot-tim--het': !conLuot }">
+                <span class="luot-tim__mien-phi">{{ nhanLuot }}</span>
+                <span class="luot-tim__tach" aria-hidden="true">·</span>
+                <span>Lượt tra cứu: <strong class="luot-tim__so-du">{{ hienSo(luotTraCuu) }}</strong></span>
+              </span>
               <CustomButton type="primary" plain @click="hoSoMo = true">
                 <CustomIcon><User /></CustomIcon>
                 <span>Xem & cập nhật hồ sơ</span>
@@ -271,53 +276,57 @@
           </div>
         </form>
 
-        <HetLuotTimTruong v-if="!conLuot" @kham-pha="diNapTien" />
-        <p v-if="!daTim" class="truong-phu-hop__cho-tim">
-          <CustomIcon><Search /></CustomIcon>
-          <span>Chọn tiêu chí ở bộ lọc rồi bấm <strong>Tìm kiếm</strong> để xem các trường phù hợp với bạn.</span>
-        </p>
-        <p v-else-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
-        <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải trường phù hợp…</p>
-        <KhongCoDuLieu v-else-if="!danhSach.length" :text="thongBaoTrong" />
-        <div v-else class="row g-3">
-          <div v-for="item in danhSach" :key="item.ma_truong" class="col-12 col-md-6 col-lg-3">
-            <article class="nhom-card h-100">
-              <p class="nhom-card__code">{{ item.ma_truong }}</p>
-              <div class="nhom-card__main">
-                <p class="nhom-card__field">{{ item.loai_co_so || 'Cơ sở đào tạo' }}</p>
-                <h3 class="nhom-card__name">{{ item.ten_truong }}</h3>
-                <p v-if="item.ten_tieng_anh" class="nhom-card__en">{{ item.ten_tieng_anh }}</p>
-                <p v-if="diaDiem(item)" class="nhom-card__meta">{{ diaDiem(item) }}</p>
-                <p v-if="item.dia_chi_tru_so" class="nhom-card__meta">{{ item.dia_chi_tru_so }}</p>
-                <p v-if="item.so_chuong_trinh || chiTieu(item.chi_tieu)" class="nhom-card__meta">
-                  <span v-if="item.so_chuong_trinh">{{ item.so_chuong_trinh }} chương trình</span>
-                  <span v-if="item.so_chuong_trinh && chiTieu(item.chi_tieu)"> · </span>
-                  <span v-if="chiTieu(item.chi_tieu)">Chỉ tiêu {{ chiTieu(item.chi_tieu) }}</span>
-                </p>
-                <p v-if="hrefWebsite(item.website_tuyen_sinh || item.website)" class="nhom-card__addr">
-                  <a
-                    class="nhom-card__web"
-                    :href="hrefWebsite(item.website_tuyen_sinh || item.website)"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {{ item.website_tuyen_sinh || item.website }}
-                  </a>
-                </p>
-              </div>
-            </article>
+        <HetLuotTimTruong v-if="!conLuot" :la-thanh-vien="daDangNhap" @kham-pha="diNapTien" />
+        <TienTrinhXuLyDialog :model-value="tienTrinhMo" :buoc-hien-tai="buocTienTrinh" />
+        <!-- Chạy xong tiến trình xử lý mới hiện kết quả. -->
+        <template v-if="!tienTrinhMo">
+          <p v-if="!daTim" class="truong-phu-hop__cho-tim">
+            <CustomIcon><Search /></CustomIcon>
+            <span>Chọn tiêu chí ở bộ lọc rồi bấm <strong>Tìm kiếm</strong> để xem các trường phù hợp với bạn.</span>
+          </p>
+          <p v-else-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
+          <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải trường phù hợp…</p>
+          <KhongCoDuLieu v-else-if="!danhSach.length" :text="thongBaoTrong" />
+          <div v-else class="row g-3">
+            <div v-for="item in danhSach" :key="item.ma_truong" class="col-12 col-md-6 col-lg-3">
+              <article class="nhom-card h-100">
+                <p class="nhom-card__code">{{ item.ma_truong }}</p>
+                <div class="nhom-card__main">
+                  <p class="nhom-card__field">{{ item.loai_co_so || 'Cơ sở đào tạo' }}</p>
+                  <h3 class="nhom-card__name">{{ item.ten_truong }}</h3>
+                  <p v-if="item.ten_tieng_anh" class="nhom-card__en">{{ item.ten_tieng_anh }}</p>
+                  <p v-if="diaDiem(item)" class="nhom-card__meta">{{ diaDiem(item) }}</p>
+                  <p v-if="item.dia_chi_tru_so" class="nhom-card__meta">{{ item.dia_chi_tru_so }}</p>
+                  <p v-if="item.so_chuong_trinh || chiTieu(item.chi_tieu)" class="nhom-card__meta">
+                    <span v-if="item.so_chuong_trinh">{{ item.so_chuong_trinh }} chương trình</span>
+                    <span v-if="item.so_chuong_trinh && chiTieu(item.chi_tieu)"> · </span>
+                    <span v-if="chiTieu(item.chi_tieu)">Chỉ tiêu {{ chiTieu(item.chi_tieu) }}</span>
+                  </p>
+                  <p v-if="hrefWebsite(item.website_tuyen_sinh || item.website)" class="nhom-card__addr">
+                    <a
+                      class="nhom-card__web"
+                      :href="hrefWebsite(item.website_tuyen_sinh || item.website)"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {{ item.website_tuyen_sinh || item.website }}
+                    </a>
+                  </p>
+                </div>
+              </article>
+            </div>
           </div>
-        </div>
-        <div v-if="!dangTai && !loi && total > soMoiTrang" class="nhom-pager">
-          <CustomPagination
-            v-model:current-page="trang"
-            v-model:page-size="soMoiTrang"
-            :total="total"
-            :page-sizes="[12, 24, 48]"
-            layout="total, sizes, prev, pager, next"
-            background
-          />
-        </div>
+          <div v-if="!dangTai && !loi && total > soMoiTrang" class="nhom-pager">
+            <CustomPagination
+              v-model:current-page="trang"
+              v-model:page-size="soMoiTrang"
+              :total="total"
+              :page-sizes="[12, 24, 48]"
+              layout="total, sizes, prev, pager, next"
+              background
+            />
+          </div>
+        </template>
       </div>
     </div>
 
@@ -349,9 +358,12 @@ import { fetchToHopMonHoc } from '@/api/toHopMonHoc'
 import { danhSachNamHoc, nhanNamHoc } from '@/constants/namHoc'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
+import { hienSo } from '@/data/napTien'
 import anhMacDinh from '@/assets/guest/sinh-vien.jpg'
 import HoSo from '@/views/member/HoSo.vue'
 import HetLuotTimTruong from './HetLuotTimTruong.vue'
+import TienTrinhXuLyDialog from '@/components/guest/chung/TienTrinhXuLyDialog.vue'
+import { BUOC_TIEN_TRINH, THOI_GIAN_HOAN_TAT, THOI_GIAN_MOI_BUOC } from '@/data/tienTrinhXuLy'
 
 defineOptions({ name: 'ThptThiDaiHocTruongPhuHop' })
 
@@ -434,6 +446,8 @@ const hienFormKhach = ref(true)
 const luotDaDung = ref(0)
 const cauHinhLuot = ref(LUOT_MAC_DINH)
 const dangGhiLuot = ref(false)
+const tienTrinhMo = ref(false)
+const buocTienTrinh = ref(1)
 let lanTai = 0
 
 // Khách vãng lai được nhận diện bằng mã thiết bị lưu trên trình duyệt; server đếm lượt theo mã này.
@@ -474,9 +488,12 @@ const soLuotThanhVien = computed(() => cauHinhLuot.value.so_luot_thanh_vien_ngay
 const soLuotKhach = computed(() => cauHinhLuot.value.so_luot_khach_ngay)
 const tongLuot = computed(() => (daDangNhap.value ? soLuotThanhVien.value : soLuotKhach.value))
 const luotConLai = computed(() => Math.max(tongLuot.value - luotDaDung.value, 0))
-const conLuot = computed(() => luotConLai.value > 0)
+// Lượt tra cứu đã mua (thành viên): lấy theo kết quả lượt mới nhất, chưa có thì theo hồ sơ.
+const luotTraCuu = computed(() => cauHinhLuot.value.luot_tra_cuu ?? hoSo.value?.luot_tra_cuu ?? 0)
+// Còn tìm được khi còn lượt miễn phí, hoặc thành viên còn lượt tra cứu đã mua (server trừ lượt miễn phí trước).
+const conLuot = computed(() => luotConLai.value > 0 || (daDangNhap.value && luotTraCuu.value > 0))
 const nhanLuot = computed(() => {
-  if (daDangNhap.value) return `Còn lại ${luotConLai.value}/${tongLuot.value} lượt tìm`
+  if (daDangNhap.value) return `Miễn phí hôm nay: ${luotConLai.value}/${tongLuot.value}`
   return `Còn lại ${luotConLai.value}/${tongLuot.value} lượt tìm thử`
 })
 // Khách chỉ nhập điểm thi thử theo các khối phổ biến; thành viên nhập đủ từng môn trong hồ sơ.
@@ -636,7 +653,7 @@ function diDangNhap() {
 
 // Hết lượt: sang màn nạp tiền của thành viên; khách sẽ được chuyển qua đăng nhập trước.
 function diNapTien() {
-  router.push({ name: 'nap-tien', query: { redirect: route.fullPath } })
+  router.push({ name: 'nap-tien', query: { loai: 'tra_cuu', redirect: route.fullPath } })
 }
 
 function diDangKy() {
@@ -827,6 +844,37 @@ function payloadTimKiem() {
   }
 }
 
+function cho(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+// Chạy `congViec` trong khi dialog đi lần lượt các bước (mỗi bước THOI_GIAN_MOI_BUOC). Xong sớm thì vẫn chạy hết
+// các bước; chậm hơn thì dừng ở bước áp chót tới khi xong. Lỗi thì đóng dialog ngay và ném lỗi ra cho nơi gọi.
+async function chayTienTrinh(congViec) {
+  const buocCuoi = BUOC_TIEN_TRINH.length
+  let loiCongViec = null
+  const viec = Promise.resolve()
+    .then(congViec)
+    .catch((error) => {
+      loiCongViec = error
+    })
+  buocTienTrinh.value = 1
+  tienTrinhMo.value = true
+  try {
+    for (let buoc = 1; buoc < buocCuoi && !loiCongViec; buoc += 1) {
+      buocTienTrinh.value = buoc
+      await cho(THOI_GIAN_MOI_BUOC)
+    }
+    await viec
+    if (loiCongViec) throw loiCongViec
+    // Báo kết quả đã sẵn sàng, giữ THOI_GIAN_HOAN_TAT rồi mới đóng.
+    buocTienTrinh.value = buocCuoi
+    await cho(THOI_GIAN_HOAN_TAT)
+  } finally {
+    tienTrinhMo.value = false
+  }
+}
+
 // Mỗi lần người dùng chủ động tìm (bấm Tìm kiếm, đổi loại, sắp xếp, lọc hồ sơ) trừ 1 lượt.
 // Chuyển trang và lần tải đầu không tính.
 async function timCoLuot() {
@@ -834,23 +882,28 @@ async function timCoLuot() {
   if (!conLuot.value) {
     ElMessage.warning(
       daDangNhap.value
-        ? 'Bạn đã dùng hết lượt tìm trường phù hợp hôm nay.'
+        ? 'Bạn đã dùng hết lượt miễn phí hôm nay và lượt tra cứu. Vui lòng nạp thêm lượt tra cứu.'
         : 'Bạn đã dùng hết lượt tìm thử hôm nay. Đăng ký hoặc đăng nhập để tìm tiếp.',
     )
     return false
   }
-  // Server kiểm tra lượt, lưu lịch sử (thành viên hoặc khách) rồi mới tải danh sách.
+  // Server kiểm tra lượt, lưu lịch sử (thành viên hoặc khách) rồi mới tải danh sách; trong lúc đó hiện tiến trình.
   dangGhiLuot.value = true
   try {
-    const data = await timTruongPhuHop(payloadTimKiem())
-    cauHinhLuot.value = data.luot
-    luotDaDung.value = data.luot.da_dung || 0
-    timKiem()
+    await chayTienTrinh(async () => {
+      const data = await timTruongPhuHop(payloadTimKiem())
+      cauHinhLuot.value = data.luot
+      luotDaDung.value = data.luot.da_dung || 0
+      // Tải danh sách ngay dưới dialog để đóng dialog là có kết quả.
+      timKiem()
+    })
     return true
   } catch (error) {
     const detail = error?.response?.data?.detail
     if (error?.response?.status === 429) {
       luotDaDung.value = tongLuot.value
+      // Lấy lại số lượt thật (lượt tra cứu có thể vừa bị dùng ở thiết bị khác).
+      taiLuot()
       ElMessage.warning(typeof detail === 'string' ? detail : 'Bạn đã dùng hết lượt tìm trường phù hợp hôm nay.')
     } else {
       ElMessage.error(typeof detail === 'string' ? detail : 'Không ghi nhận được lượt tìm kiếm.')
@@ -1149,6 +1202,19 @@ onMounted(async () => {
   font-size: 0.875rem;
   line-height: 1.4;
   white-space: nowrap;
+}
+
+.luot-tim__mien-phi {
+  font-size: 0.8125rem;
+}
+
+.luot-tim__tach {
+  margin-inline: 6px;
+  opacity: 0.6;
+}
+
+.luot-tim__so-du {
+  font-size: 1rem;
 }
 
 .luot-tim--het {
