@@ -43,6 +43,7 @@ from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.dm_phuong_thuc_tuyen_sinh import DmPhuongThucTuyenSinh
 from app.models.dm_to_hop_mon_hoc import DmToHopMonHoc
 from app.models.dm_truong import DmTruong
+from app.services.xt_quy_tac import delete_quy_tac_xet_tuyen
 
 logger = logging.getLogger(__name__)
 
@@ -403,9 +404,13 @@ def _link_subjects(document: dict) -> None:
 
 
 def delete_de_an_children(db: Session, de_an_ids: list[int]) -> None:
-    """Xóa bản ghi các bảng dats_ thuộc các đề án, theo thứ tự phụ thuộc."""
+    """Xóa bản ghi các bảng dats_ thuộc các đề án, theo thứ tự phụ thuộc.
+
+    Quy tắc xét tuyển (xt_*) và học phí trỏ tới chương trình, phương thức của đề án nên được xóa trước.
+    """
     if not de_an_ids:
         return
+    delete_quy_tac_xet_tuyen(db, de_an_ids)
     program_ids = list(
         db.scalars(
             select(DatsChuongTrinhDaoTao.id).where(DatsChuongTrinhDaoTao.de_an_id.in_(de_an_ids))

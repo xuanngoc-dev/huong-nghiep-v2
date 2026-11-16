@@ -30,6 +30,7 @@ from app.schemas.dats_chuong_trinh_dao_tao import (
     GoiYNganhPublic,
 )
 from app.services.goi_y_nganh import NGUONG_AP_DUNG, Nganh, goi_y_nganh
+from app.services.xt_quy_tac import dem_quy_tac_theo_chuong_trinh
 
 router = APIRouter(prefix="/chuong-trinh-dao-tao", tags=["chuong-trinh-dao-tao"])
 
@@ -146,6 +147,22 @@ def _ensure_refs(db: Session, de_an_id: int, rows: list) -> None:
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Cơ sở không thuộc đề án đã chọn: {_format_ids(wrong)}",
         )
+
+
+def _chan_neu_co_quy_tac(db: Session, items: list[DatsChuongTrinhDaoTao], hanh_dong: str) -> None:
+    """Chương trình đang có quy tắc xét tuyển / học phí thì không được xóa hay chuyển đề án: báo 400 nêu rõ lý do."""
+    dang_dung = dem_quy_tac_theo_chuong_trinh(db, [item.id for item in items])
+    if not dang_dung:
+        return
+    ten = {item.id: item.ma_xet_tuyen or item.ten_chuong_trinh for item in items}
+    chi_tiet = "; ".join(f"{ten[ct_id]} (id = {ct_id}): {', '.join(mo_ta)}" for ct_id, mo_ta in dang_dung.items())
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail=(
+            f"Không thể {hanh_dong} chương trình đang có quy tắc xét tuyển hoặc học phí: {chi_tiet}. "
+            "Hãy import lại quy tắc xét tuyển của đề án không còn chương trình này rồi thử lại."
+        ),
+    )
 
 
 def _apply(item: DatsChuongTrinhDaoTao, de_an_id: int, payload: DatsChuongTrinhDaoTaoFields) -> None:
@@ -409,8 +426,10 @@ def update_chuong_trinh(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DatsChuongTrinhDaoTaoPublic:
-    """Cập nhật một chương trình đào tạo. Có thể chuyển sang đề án khác."""
+    """Cập nhật một chương trình đào tạo. Có thể chuyển sang đề án khác nếu chưa có quy tắc xét tuyển."""
     item, _de_an, _truong, _nganh, _co_so = _load_row(db, item_id)
+    if payload.de_an_id != item.de_an_id:
+        _chan_neu_co_quy_tac(db, [item], "chuyển sang đề án khác")
     _ensure_de_an(db, payload.de_an_id)
     _ensure_refs(db, payload.de_an_id, [payload])
     _apply(item, payload.de_an_id, payload)
@@ -435,6 +454,7 @@ def delete_chuong_trinh_many(
     items = db.scalars(select(DatsChuongTrinhDaoTao).where(DatsChuongTrinhDaoTao.id.in_(payload.ids))).all()
     if not items:
         return DatsChuongTrinhDaoTaoDeleteManyResult(deleted=0)
+    _chan_neu_co_quy_tac(db, items, "xóa")
     for item in items:
         db.delete(item)
     try:
@@ -456,6 +476,7 @@ def delete_chuong_trinh(
 ) -> None:
     """Xóa một chương trình đào tạo theo id."""
     item, _de_an, _truong, _nganh, _co_so = _load_row(db, item_id)
+    _chan_neu_co_quy_tac(db, [item], "xóa")
     db.delete(item)
     try:
         db.commit()

@@ -1,6 +1,6 @@
 # Danh sách API
 
-Tự sinh từ code lúc 16/11/2026 14:18 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 16/11/2026 14:39 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
 Tiền tố chung: `/api/v1`. Tổng cộng **281** API.
 
@@ -356,7 +356,7 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 | `PATCH` | `/api/v1/chuong-trinh-dao-tao/gan-nganh-co-so` | Bắt buộc | Lưu hàng loạt ngành, cơ sở và mã xét tuyển năm trước cho chương trình của một đề án; không đổi cột khác. |
 | `POST` | `/api/v1/chuong-trinh-dao-tao/import` | Bắt buộc | Nhập một mảng chương trình vào đúng đề án đã chọn. id trong JSON không được lưu. |
 | `GET` | `/api/v1/chuong-trinh-dao-tao/{item_id}` | Bắt buộc | Lấy chi tiết một chương trình đào tạo theo id. |
-| `PUT` | `/api/v1/chuong-trinh-dao-tao/{item_id}` | Bắt buộc | Cập nhật một chương trình đào tạo. Có thể chuyển sang đề án khác. |
+| `PUT` | `/api/v1/chuong-trinh-dao-tao/{item_id}` | Bắt buộc | Cập nhật một chương trình đào tạo. Có thể chuyển sang đề án khác nếu chưa có quy tắc xét tuyển. |
 | `DELETE` | `/api/v1/chuong-trinh-dao-tao/{item_id}` | Bắt buộc | Xóa một chương trình đào tạo theo id. |
 
 ### `danh-muc/bai-thi-danh-gia-nang-luc`
