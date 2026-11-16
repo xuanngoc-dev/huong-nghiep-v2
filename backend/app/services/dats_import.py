@@ -94,6 +94,10 @@ _TABLES: list[tuple[str, type, str]] = [
     ("dats_chinh_sach_uu_tien_xet_tuyen", DatsChinhSachUuTienXetTuyen, "list"),
 ]
 _MODELS = {name: model for name, model, _kind in _TABLES}
+# Tên viết tắt của bảng mà file JSON có thể dùng; khi import được hiểu là bảng đầy đủ.
+_TEN_BANG_VIET_TAT = {
+    "dats_chinh_sach_uu_tien_xt": "dats_chinh_sach_uu_tien_xet_tuyen",
+}
 _KINDS = {name: kind for name, _model, kind in _TABLES}
 # Bảng không gắn trực tiếp vào đề án; phải nằm trong bản ghi cha hoặc có sẵn khóa ngoại.
 _REQUIRED_PARENT = {
@@ -125,10 +129,27 @@ class PreparedRow:
     values: dict
 
 
+def doi_ten_bang_viet_tat(node):
+    """Đổi khóa tên bảng viết tắt (ở mọi cấp) sang tên bảng đầy đủ; trả bản sao, không sửa dữ liệu gốc."""
+    if isinstance(node, list):
+        return [doi_ten_bang_viet_tat(item) for item in node]
+    if not isinstance(node, dict):
+        return node
+    result: dict = {}
+    for key, value in node.items():
+        name = _TEN_BANG_VIET_TAT.get(key, key)
+        if name in result:
+            viet_tat = next(alias for alias, full in _TEN_BANG_VIET_TAT.items() if full == name)
+            raise DatsImportError(f"JSON có cả {viet_tat} và {name}; chỉ giữ một khóa cho bảng {name}")
+        result[name] = doi_ten_bang_viet_tat(value)
+    return result
+
+
 def conflict_policy(document: dict) -> str | None:
     """`tu_choi` khi không được tạo thêm đề án cùng trường và năm."""
     if not isinstance(document, dict):
         return None
+    document = doi_ten_bang_viet_tat(document)
     info = document.get("thong_tin_import")
     policy = info.get("xu_ly_khi_da_ton_tai") if isinstance(info, dict) else None
     if policy not in (None, "tu_choi"):
@@ -210,9 +231,13 @@ def _has_nested_tables(raw: dict) -> bool:
 
 
 def flatten_nested_document(document: dict) -> dict:
-    """Đưa bảng con ra cùng cấp và gán khóa ngoại từ bản ghi cha. JSON phẳng được giữ nguyên."""
+    """Đưa bảng con ra cùng cấp và gán khóa ngoại từ bản ghi cha. JSON phẳng được giữ nguyên.
+
+    Tên bảng viết tắt (`_TEN_BANG_VIET_TAT`) được đổi sang tên đầy đủ trước.
+    """
     if not isinstance(document, dict):
         return document
+    document = doi_ten_bang_viet_tat(document)
     proposal = document.get("dats_tuyen_sinh")
     if not isinstance(proposal, dict) or not _has_nested_tables(proposal):
         return document

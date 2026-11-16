@@ -32,6 +32,34 @@ def catalogs() -> CatalogIndex:
 
 
 class DatsImportTests(unittest.TestCase):
+    def test_ten_bang_viet_tat_uu_tien_xt_duoc_hieu_la_bang_day_du(self):
+        chinh_sach = [{"id": 5, "ten_chinh_sach": "Ưu tiên học sinh giỏi"}]
+        # JSON phẳng: bảng viết tắt cùng cấp với đề án, nối bằng de_an_id.
+        flat = {
+            "dats_tuyen_sinh": {"id": 1, "ten_de_an": "Đề án"},
+            "dats_chinh_sach_uu_tien_xt": [dict(chinh_sach[0], de_an_id=1)],
+        }
+        rows = prepare_import(flat, ma_truong="BKA", nam_tuyen_sinh=2026, catalogs=catalogs())
+        self.assertEqual([row.table for row in rows], ["dats_tuyen_sinh", "dats_chinh_sach_uu_tien_xet_tuyen"])
+        self.assertEqual(rows[1].values["ten_chinh_sach"], "Ưu tiên học sinh giỏi")
+        # JSON lồng nhau: bảng viết tắt nằm trong dats_tuyen_sinh.
+        nested = {"dats_tuyen_sinh": {"id": 1, "ten_de_an": "Đề án", "dats_chinh_sach_uu_tien_xt": chinh_sach}}
+        self.assertEqual(conflict_policy(nested), "tu_choi")
+        rows = prepare_import(nested, ma_truong="BKA", nam_tuyen_sinh=2026, catalogs=catalogs())
+        self.assertEqual(Counter(row.table for row in rows)["dats_chinh_sach_uu_tien_xet_tuyen"], 1)
+        # Dữ liệu gốc không bị sửa.
+        self.assertIn("dats_chinh_sach_uu_tien_xt", nested["dats_tuyen_sinh"])
+
+    def test_khong_cho_vua_viet_tat_vua_day_du(self):
+        document = {
+            "dats_tuyen_sinh": {"id": 1, "ten_de_an": "Đề án"},
+            "dats_chinh_sach_uu_tien_xt": [],
+            "dats_chinh_sach_uu_tien_xet_tuyen": [],
+        }
+        with self.assertRaises(DatsImportError) as caught:
+            prepare_import(document, ma_truong="BKA", nam_tuyen_sinh=2026, catalogs=catalogs())
+        self.assertIn("dats_chinh_sach_uu_tien_xt", str(caught.exception))
+
     def test_sample_file_contains_only_the_proposal(self):
         document = json.loads(SAMPLE.read_text())
         self.assertEqual(
