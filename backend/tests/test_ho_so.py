@@ -1,4 +1,5 @@
 import unittest
+from contextlib import nullcontext
 from unittest.mock import patch
 from types import SimpleNamespace
 
@@ -54,6 +55,9 @@ class _DbGia:
 
     def flush(self):
         pass
+
+    def begin_nested(self):
+        return nullcontext()
 
     def commit(self):
         self.committed = True

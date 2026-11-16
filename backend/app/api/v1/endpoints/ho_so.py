@@ -45,7 +45,7 @@ def _dong_bo_ho_so_xet_tuyen(db: Session, profile: NguoiDungThongTin) -> None:
         with db.begin_nested():
             dong_bo_tu_json(db, profile, nam_tuyen_sinh=datetime.now().year)
     except Exception:  # noqa: BLE001 - đồng bộ phụ không được làm hỏng việc lưu hồ sơ chính
-        logger.exception("Không đồng bộ được hồ sơ xét tuyển của người dùng %s", profile.nguoi_dung_id)
+        logger.exception("Không đồng bộ được hồ sơ xét tuyển của người dùng %s", getattr(profile, "nguoi_dung_id", None))
 
 
 def _get_profile(db: Session, user_id: int) -> NguoiDungThongTin | None:

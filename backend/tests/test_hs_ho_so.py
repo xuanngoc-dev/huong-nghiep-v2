@@ -10,6 +10,7 @@ from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import Session
 
 import app.models as M
+from app.api.v1.endpoints.ho_so import _dong_bo_ho_so_xet_tuyen
 from app.api.v1.endpoints.hs_ho_so import get_ho_so_xet_tuyen, put_ho_so_xet_tuyen
 from app.schemas.hs_ho_so import HoSoXetTuyenWrite
 from app.services.ho_so_xet_tuyen import dong_bo_tu_json
@@ -173,6 +174,22 @@ class HoSoXetTuyenTests(unittest.TestCase):
         ):
             with self.subTest(loi=loi), self.assertRaises(ValueError):
                 HoSoXetTuyenWrite(**loi)
+
+
+class ChuaChayMigrationTests(unittest.TestCase):
+    def test_csdl_chua_co_bang_hs_thi_luu_ho_so_cu_van_duoc(self):
+        engine = create_engine("sqlite://")
+        for model in (M.NguoiDung, M.NguoiDungThongTin):
+            model.__table__.create(engine)
+        with Session(engine) as db:
+            db.add(M.NguoiDung(id=7, ho_ten="A", email="a@vd.vn", mat_khau="x"))
+            profile = M.NguoiDungThongTin(nguoi_dung_id=7, trinh_do_hoc_van={"hoc_luc_trung_binh": {"12": 8}})
+            db.add(profile)
+            db.flush()
+            with self.assertLogs("app.api.v1.endpoints.ho_so", level="ERROR"):
+                _dong_bo_ho_so_xet_tuyen(db, profile)
+            db.commit()  # giao dịch chính vẫn dùng được sau khi savepoint lỗi
+            self.assertEqual(db.get(M.NguoiDungThongTin, profile.id).trinh_do_hoc_van, {"hoc_luc_trung_binh": {"12": 8}})
 
 
 if __name__ == "__main__":
