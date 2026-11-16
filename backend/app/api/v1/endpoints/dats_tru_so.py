@@ -7,6 +7,7 @@ from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models.dats_tru_so import DatsTruSo
 from app.models.dats_tuyen_sinh import DatsTuyenSinh
+from app.models.dm_tinh_thanh import DmTinhThanh
 from app.models.dm_truong import DmTruong
 from app.models.nguoi_dung import NguoiDung
 from app.schemas.dats_tru_so import (
@@ -29,7 +30,9 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _to_public(item: DatsTruSo, de_an: DatsTuyenSinh, truong: DmTruong) -> DatsTruSoPublic:
+def _to_public(
+    item: DatsTruSo, de_an: DatsTuyenSinh, truong: DmTruong, tinh: DmTinhThanh | None = None
+) -> DatsTruSoPublic:
     """Ghép trụ sở với đề án và trường để trả về cho client."""
     return DatsTruSoPublic(
         id=item.id,
@@ -43,6 +46,8 @@ def _to_public(item: DatsTruSo, de_an: DatsTuyenSinh, truong: DmTruong) -> DatsT
         ten_co_so=item.ten_co_so,
         loai_co_so=item.loai_co_so,
         dia_chi=item.dia_chi,
+        tinh_thanh_id=item.tinh_thanh_id,
+        ten_tinh=tinh.ten_tinh if tinh else None,
         so_dien_thoai=item.so_dien_thoai,
         ghi_chu=item.ghi_chu,
     )
@@ -50,9 +55,10 @@ def _to_public(item: DatsTruSo, de_an: DatsTuyenSinh, truong: DmTruong) -> DatsT
 
 def _joined():
     return (
-        select(DatsTruSo, DatsTuyenSinh, DmTruong)
+        select(DatsTruSo, DatsTuyenSinh, DmTruong, DmTinhThanh)
         .join(DatsTuyenSinh, DatsTruSo.de_an_id == DatsTuyenSinh.id)
         .join(DmTruong, DatsTuyenSinh.ma_truong == DmTruong.ma_truong)
+        .outerjoin(DmTinhThanh, DatsTruSo.tinh_thanh_id == DmTinhThanh.id)
     )
 
 
@@ -61,7 +67,21 @@ def _load_row(db: Session, item_id: int):
     row = db.execute(_joined().where(DatsTruSo.id == item_id)).first()
     if row is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Không tìm thấy trụ sở có id = {item_id}")
-    return row[0], row[1], row[2]
+    return row[0], row[1], row[2], row[3]
+
+
+def _ensure_tinh(db: Session, rows: list[DatsTruSoFields]) -> None:
+    """Kiểm tra tỉnh/thành của các cơ sở có trong danh mục."""
+    ids = {item.tinh_thanh_id for item in rows if item.tinh_thanh_id is not None}
+    if not ids:
+        return
+    found = set(db.scalars(select(DmTinhThanh.id).where(DmTinhThanh.id.in_(ids))).all())
+    missing = sorted(ids - found)
+    if missing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Tỉnh/thành không tồn tại: {', '.join(map(str, missing))}",
+        )
 
 
 def _ensure_de_an(db: Session, de_an_id: int) -> DatsTuyenSinh:
@@ -135,7 +155,7 @@ def list_tru_so(
         .limit(page_size)
     ).all()
     return DatsTruSoPage(
-        items=[_to_public(item, de_an, truong) for item, de_an, truong in rows],
+        items=[_to_public(*row) for row in rows],
         total=total,
         page=page,
         page_size=page_size,
@@ -160,6 +180,7 @@ def import_tru_so(
 ) -> DatsTruSoImportResult:
     """Nhập một mảng trụ sở vào đúng đề án đã chọn. id trong JSON không được lưu."""
     _ensure_de_an(db, payload.de_an_id)
+    _ensure_tinh(db, payload.du_lieu)
     items = []
     for data in payload.du_lieu:
         item = DatsTruSo()
@@ -182,6 +203,7 @@ def create_tru_so(
 ) -> DatsTruSoPublic:
     """Thêm một trụ sở vào đề án đã chọn."""
     _ensure_de_an(db, payload.de_an_id)
+    _ensure_tinh(db, [payload])
     item = DatsTruSo()
     _apply(item, payload.de_an_id, payload)
     db.add(item)
@@ -202,8 +224,9 @@ def update_tru_so(
     _: NguoiDung = Depends(get_current_user),
 ) -> DatsTruSoPublic:
     """Cập nhật một trụ sở. Có thể chuyển sang đề án khác."""
-    item, _de_an, _truong = _load_row(db, item_id)
+    item, _de_an, _truong, _tinh = _load_row(db, item_id)
     _ensure_de_an(db, payload.de_an_id)
+    _ensure_tinh(db, [payload])
     _apply(item, payload.de_an_id, payload)
     try:
         db.commit()
@@ -243,7 +266,7 @@ def delete_tru_so(
     _: NguoiDung = Depends(get_current_user),
 ) -> None:
     """Xóa một trụ sở theo id."""
-    item, _de_an, _truong = _load_row(db, item_id)
+    item, _de_an, _truong, _tinh = _load_row(db, item_id)
     db.delete(item)
     try:
         db.commit()

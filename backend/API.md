@@ -1,15 +1,15 @@
 # Danh sách API
 
-Tự sinh từ code lúc 16/11/2026 13:42 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 16/11/2026 13:47 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **271** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **273** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
 | [Quản trị (admin)](#quan_tri) | 153 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 75 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Thành viên (user)](#thanh_vien) | 77 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 43 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
@@ -340,6 +340,8 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 | `GET` | `/api/v1/chuong-trinh-dao-tao` | Bắt buộc | Lấy danh sách chương trình có phân trang. Lọc theo từ khóa, trường và năm của đề án. |
 | `POST` | `/api/v1/chuong-trinh-dao-tao` | Bắt buộc | Thêm một chương trình đào tạo vào đề án đã chọn. |
 | `DELETE` | `/api/v1/chuong-trinh-dao-tao` | Bắt buộc | Xóa nhiều chương trình đào tạo theo danh sách id. |
+| `GET` | `/api/v1/chuong-trinh-dao-tao/gan-nganh-co-so` | Bắt buộc | Chương trình của một đề án kèm ngành, cơ sở hiện tại và gợi ý ngành theo tên / mã xét tuyển. |
+| `PATCH` | `/api/v1/chuong-trinh-dao-tao/gan-nganh-co-so` | Bắt buộc | Lưu hàng loạt ngành, cơ sở và mã xét tuyển năm trước cho chương trình của một đề án; không đổi cột khác. |
 | `POST` | `/api/v1/chuong-trinh-dao-tao/import` | Bắt buộc | Nhập một mảng chương trình vào đúng đề án đã chọn. id trong JSON không được lưu. |
 | `GET` | `/api/v1/chuong-trinh-dao-tao/{item_id}` | Bắt buộc | Lấy chi tiết một chương trình đào tạo theo id. |
 | `PUT` | `/api/v1/chuong-trinh-dao-tao/{item_id}` | Bắt buộc | Cập nhật một chương trình đào tạo. Có thể chuyển sang đề án khác. |

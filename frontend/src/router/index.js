@@ -374,6 +374,12 @@ const router = createRouter({
           meta: { title: 'Chương trình & phương thức', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'de-an-tuyen-sinh/gan-nganh-co-so',
+          name: 'de-an-tuyen-sinh-gan-nganh-co-so',
+          component: () => import('@/views/admin/de-an-tuyen-sinh/GanNganhCoSo.vue'),
+          meta: { title: 'Gắn ngành & cơ sở', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'de-an-tuyen-sinh/ke-hoach',
           name: 'de-an-tuyen-sinh-ke-hoach',
           component: () => import('@/views/admin/de-an-tuyen-sinh/KeHoachTuyenSinh.vue'),

@@ -112,6 +112,12 @@
         <CustomTableColumn prop="dia_chi" label="Địa chỉ" min-width="240" show-overflow-tooltip>
           <template #default="{ row }">{{ row.dia_chi || '—' }}</template>
         </CustomTableColumn>
+        <CustomTableColumn label="Tỉnh/thành" width="140" show-overflow-tooltip>
+          <template #default="{ row }">
+            <span v-if="row.ten_tinh">{{ row.ten_tinh }}</span>
+            <CustomTag v-else type="warning" size="small">Chưa có</CustomTag>
+          </template>
+        </CustomTableColumn>
         <CustomTableColumn prop="so_dien_thoai" label="Điện thoại" width="140">
           <template #default="{ row }">{{ row.so_dien_thoai || '—' }}</template>
         </CustomTableColumn>
@@ -281,8 +287,18 @@
         <CustomFormItem label="Điện thoại" prop="so_dien_thoai">
           <CustomInput v-model="form.so_dien_thoai" maxlength="30" placeholder="Số liên hệ tại địa điểm" />
         </CustomFormItem>
-        <CustomFormItem label="Địa chỉ" prop="dia_chi">
-          <CustomInput v-model="form.dia_chi" maxlength="500" placeholder="Địa chỉ đầy đủ" />
+        <CustomFormItem class="form-grid__span-2" label="Địa chỉ" prop="dia_chi">
+          <CustomInput
+            v-model="form.dia_chi"
+            maxlength="500"
+            placeholder="Địa chỉ đầy đủ"
+            @blur="goiYTinh"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Tỉnh/thành" prop="tinh_thanh_id">
+          <CustomSelect v-model="form.tinh_thanh_id" filterable clearable placeholder="Chọn tỉnh/thành của cơ sở">
+            <CustomOption v-for="item in tinhOptions" :key="item.id" :label="item.ten_tinh" :value="item.id" />
+          </CustomSelect>
         </CustomFormItem>
         <CustomFormItem class="form-grid__full" label="Ghi chú" prop="ghi_chu">
           <CustomInput
@@ -311,6 +327,7 @@ import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { fetchDeAnTuyenSinh } from '@/api/deAnTuyenSinh'
+import { fetchTinhThanh } from '@/api/tinhThanh'
 import { fetchTruongHoc } from '@/api/truongHoc'
 import {
   createTruSo,
@@ -341,6 +358,7 @@ const JSON_SAMPLE = `[
     "ten_co_so": "Cơ sở 1",
     "loai_co_so": "tru_so",
     "dia_chi": "Số 1 Đại Cồ Việt, Hai Bà Trưng, Hà Nội",
+    "tinh_thanh_id": null,
     "so_dien_thoai": "02438692222",
     "ghi_chu": null
   }
@@ -364,6 +382,7 @@ const jsonText = ref('')
 const jsonImport = useJsonBatchImport({ label: 'trụ sở' })
 const formRef = ref()
 const truongOptions = ref([])
+const tinhOptions = ref([])
 const deAnOptions = ref([])
 const filterDeAnOptions = ref([])
 let deAnRequest = 0
@@ -401,6 +420,7 @@ function emptyForm() {
     ten_co_so: '',
     loai_co_so: '',
     dia_chi: '',
+    tinh_thanh_id: null,
     so_dien_thoai: '',
     ghi_chu: '',
   }
@@ -494,6 +514,21 @@ function ensureContext() {
     return false
   }
   return true
+}
+
+async function loadTinhOptions() {
+  const data = await fetchTinhThanh({ page: 1, page_size: 1000 }, { skipLoading: true })
+  tinhOptions.value = (data.items || []).sort((a, b) => String(a.ten_tinh).localeCompare(String(b.ten_tinh), 'vi'))
+}
+
+// Chưa chọn tỉnh thì đoán từ tên cơ sở và địa chỉ: lấy tên tỉnh dài nhất xuất hiện trong đó.
+function goiYTinh() {
+  if (form.tinh_thanh_id) return
+  const noiDung = `${form.ten_co_so} ${form.dia_chi}`.toLowerCase()
+  const khop = tinhOptions.value
+    .filter((item) => item.ten_tinh && noiDung.includes(item.ten_tinh.toLowerCase()))
+    .sort((a, b) => b.ten_tinh.length - a.ten_tinh.length)[0]
+  if (khop) form.tinh_thanh_id = khop.id
 }
 
 async function loadTruongOptions() {
@@ -650,6 +685,7 @@ async function openEdit(row) {
     ten_co_so: row.ten_co_so || '',
     loai_co_so: row.loai_co_so || '',
     dia_chi: row.dia_chi || '',
+    tinh_thanh_id: row.tinh_thanh_id ?? null,
     so_dien_thoai: row.so_dien_thoai || '',
     ghi_chu: row.ghi_chu || '',
   })
@@ -666,6 +702,7 @@ function payloadFromForm() {
     ten_co_so: form.ten_co_so.trim(),
     loai_co_so: optionalText(form.loai_co_so),
     dia_chi: optionalText(form.dia_chi),
+    tinh_thanh_id: form.tinh_thanh_id || null,
     so_dien_thoai: optionalText(form.so_dien_thoai),
     ghi_chu: optionalText(form.ghi_chu),
   }
@@ -794,6 +831,6 @@ async function onDeleteSelected() {
 }
 
 onMounted(async () => {
-  await Promise.all([load(), loadTruongOptions().catch(() => {})])
+  await Promise.all([load(), loadTruongOptions().catch(() => {}), loadTinhOptions().catch(() => {})])
 })
 </script>

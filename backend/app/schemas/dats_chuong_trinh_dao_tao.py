@@ -17,6 +17,7 @@ class DatsChuongTrinhDaoTaoFields(BaseModel):
 
     nganh_dao_tao_id: int | None = Field(default=None, ge=1)
     ma_xet_tuyen: str | None = Field(default=None, max_length=20)
+    ma_xet_tuyen_nam_truoc: str | None = Field(default=None, max_length=20)
     ten_chuong_trinh: str = Field(..., max_length=255)
     trinh_do_dao_tao: str | None = Field(default=None, max_length=30)
     hinh_thuc_dao_tao: str | None = Field(default=None, max_length=30)
@@ -42,6 +43,7 @@ class DatsChuongTrinhDaoTaoFields(BaseModel):
 
     @field_validator(
         "ma_xet_tuyen",
+        "ma_xet_tuyen_nam_truoc",
         "trinh_do_dao_tao",
         "hinh_thuc_dao_tao",
         "ngon_ngu_dao_tao",
@@ -92,6 +94,7 @@ class DatsChuongTrinhDaoTaoPublic(BaseModel):
     ma_nganh: str | None = None
     ten_nganh: str | None = None
     ma_xet_tuyen: str | None = None
+    ma_xet_tuyen_nam_truoc: str | None = None
     ten_chuong_trinh: str
     trinh_do_dao_tao: str | None = None
     hinh_thuc_dao_tao: str | None = None
@@ -140,3 +143,78 @@ class DatsChuongTrinhDaoTaoDeleteMany(BaseModel):
 
 class DatsChuongTrinhDaoTaoDeleteManyResult(BaseModel):
     deleted: int
+
+
+def _ids_khong_trung(value: list[int]) -> list[int]:
+    if any(item_id < 1 for item_id in value):
+        raise ValueError("ID không hợp lệ")
+    if len(set(value)) != len(value):
+        raise ValueError("Danh sách có chương trình bị lặp")
+    return value
+
+
+class GoiYNganhPublic(BaseModel):
+    nganh_dao_tao_id: int
+    ma_nganh: str
+    ten_nganh: str
+    diem: float
+    ly_do: str
+
+
+class ChuongTrinhGanNganhPublic(BaseModel):
+    """Một chương trình trên màn hình gắn ngành và cơ sở, kèm gợi ý ngành."""
+
+    id: int
+    ma_xet_tuyen: str | None = None
+    ma_xet_tuyen_nam_truoc: str | None = None
+    ten_chuong_trinh: str
+    nganh_dao_tao_id: int | None = None
+    ma_nganh: str | None = None
+    ten_nganh: str | None = None
+    co_so_id: int | None = None
+    ten_co_so: str | None = None
+    goi_y: list[GoiYNganhPublic] = []
+
+
+class ChuongTrinhGanNganhPage(BaseModel):
+    items: list[ChuongTrinhGanNganhPublic]
+    total: int
+    page: int
+    page_size: int
+    so_thieu_nganh: int
+    so_thieu_co_so: int
+    nguong_ap_dung: float
+
+
+class ChuongTrinhGanNganhItem(BaseModel):
+    id: int = Field(..., ge=1)
+    nganh_dao_tao_id: int | None = Field(default=None, ge=1)
+    co_so_id: int | None = Field(default=None, ge=1)
+    ma_xet_tuyen_nam_truoc: str | None = Field(default=None, max_length=20)
+
+    @field_validator("nganh_dao_tao_id", "co_so_id", mode="before")
+    @classmethod
+    def empty_number_to_none(cls, value):
+        if value is None or value == "":
+            return None
+        return value
+
+    @field_validator("ma_xet_tuyen_nam_truoc")
+    @classmethod
+    def empty_text_to_none(cls, value: str | None) -> str | None:
+        return _clean_text(value)
+
+
+class ChuongTrinhGanNganhWrite(BaseModel):
+    de_an_id: int = Field(..., ge=1)
+    items: list[ChuongTrinhGanNganhItem] = Field(..., min_length=1, max_length=2000)
+
+    @field_validator("items")
+    @classmethod
+    def unique_items(cls, value: list[ChuongTrinhGanNganhItem]) -> list[ChuongTrinhGanNganhItem]:
+        _ids_khong_trung([item.id for item in value])
+        return value
+
+
+class ChuongTrinhGanNganhResult(BaseModel):
+    updated: int

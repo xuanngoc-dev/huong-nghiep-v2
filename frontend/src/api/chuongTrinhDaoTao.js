@@ -23,3 +23,11 @@ export function deleteChuongTrinhDaoTao(id) {
 export function deleteChuongTrinhDaoTaoMany(ids) {
   return api.delete('/chuong-trinh-dao-tao', { data: { ids } }).then((res) => res.data)
 }
+
+export function fetchGanNganhCoSo(params, config = {}) {
+  return api.get('/chuong-trinh-dao-tao/gan-nganh-co-so', { ...config, params }).then((res) => res.data)
+}
+
+export function luuGanNganhCoSo(payload) {
+  return api.patch('/chuong-trinh-dao-tao/gan-nganh-co-so', payload).then((res) => res.data)
+}

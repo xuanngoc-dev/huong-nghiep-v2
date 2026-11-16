@@ -71,6 +71,12 @@
           "icon": "Reading"
         },
         {
+          "index": "/admin/de-an-tuyen-sinh/gan-nganh-co-so",
+          "title": "Gắn ngành & cơ sở",
+          "tooltip": "Gắn ngành chuẩn, cơ sở đào tạo và mã xét tuyển năm trước cho chương trình (có gợi ý ngành)",
+          "icon": "Connection"
+        },
+        {
           "index": "/admin/de-an-tuyen-sinh/ke-hoach",
           "title": "Kế hoạch",
           "tooltip": "Kế hoạch và phạm vi tuyển sinh của chương trình",

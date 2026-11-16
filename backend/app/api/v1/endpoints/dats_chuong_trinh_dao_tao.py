@@ -8,12 +8,17 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
+from app.models.dats_trinh_do_nganh import DatsTrinhDoNganh
 from app.models.dats_tru_so import DatsTruSo
 from app.models.dats_tuyen_sinh import DatsTuyenSinh
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.dm_truong import DmTruong
 from app.models.nguoi_dung import NguoiDung
 from app.schemas.dats_chuong_trinh_dao_tao import (
+    ChuongTrinhGanNganhPage,
+    ChuongTrinhGanNganhPublic,
+    ChuongTrinhGanNganhResult,
+    ChuongTrinhGanNganhWrite,
     DatsChuongTrinhDaoTaoDeleteMany,
     DatsChuongTrinhDaoTaoDeleteManyResult,
     DatsChuongTrinhDaoTaoFields,
@@ -22,7 +27,9 @@ from app.schemas.dats_chuong_trinh_dao_tao import (
     DatsChuongTrinhDaoTaoPage,
     DatsChuongTrinhDaoTaoPublic,
     DatsChuongTrinhDaoTaoWrite,
+    GoiYNganhPublic,
 )
+from app.services.goi_y_nganh import NGUONG_AP_DUNG, Nganh, goi_y_nganh
 
 router = APIRouter(prefix="/chuong-trinh-dao-tao", tags=["chuong-trinh-dao-tao"])
 
@@ -59,6 +66,7 @@ def _to_public(
         ma_nganh=nganh.ma_nganh if nganh else None,
         ten_nganh=nganh.ten_nganh if nganh else None,
         ma_xet_tuyen=item.ma_xet_tuyen,
+        ma_xet_tuyen_nam_truoc=item.ma_xet_tuyen_nam_truoc,
         ten_chuong_trinh=item.ten_chuong_trinh,
         trinh_do_dao_tao=item.trinh_do_dao_tao,
         hinh_thuc_dao_tao=item.hinh_thuc_dao_tao,
@@ -109,7 +117,7 @@ def _format_ids(ids: list[int]) -> str:
     return text
 
 
-def _ensure_refs(db: Session, de_an_id: int, rows: list[DatsChuongTrinhDaoTaoFields]) -> None:
+def _ensure_refs(db: Session, de_an_id: int, rows: list) -> None:
     """Kiểm tra ngành và cơ sở tồn tại. Cơ sở phải thuộc đúng đề án đã chọn."""
     nganh_ids = list(dict.fromkeys(item.nganh_dao_tao_id for item in rows if item.nganh_dao_tao_id is not None))
     if nganh_ids:
@@ -204,6 +212,134 @@ def list_chuong_trinh(
         page=page,
         page_size=page_size,
     )
+
+
+@router.get("/gan-nganh-co-so", response_model=ChuongTrinhGanNganhPage)
+def list_gan_nganh_co_so(
+    de_an_id: int = Query(..., ge=1),
+    q: str | None = Query(default=None, max_length=255),
+    chi_thieu: bool = Query(default=False),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=500, ge=1, le=2000),
+    db: Session = Depends(get_db),
+    _: NguoiDung = Depends(get_current_user),
+) -> ChuongTrinhGanNganhPage:
+    """Chương trình của một đề án kèm ngành, cơ sở hiện tại và gợi ý ngành theo tên / mã xét tuyển.
+
+    `chi_thieu` chỉ lấy chương trình còn thiếu ngành hoặc cơ sở. Gợi ý có `diem` >= `nguong_ap_dung` coi là đủ tin
+    cậy để áp dụng hàng loạt (người dùng vẫn duyệt trước khi lưu).
+    """
+    _ensure_de_an(db, de_an_id)
+    base = [DatsChuongTrinhDaoTao.de_an_id == de_an_id]
+    so_thieu_nganh = db.scalar(
+        select(func.count()).where(*base, DatsChuongTrinhDaoTao.nganh_dao_tao_id.is_(None))
+    ) or 0
+    so_thieu_co_so = db.scalar(select(func.count()).where(*base, DatsChuongTrinhDaoTao.co_so_id.is_(None))) or 0
+
+    filters = list(base)
+    if q and q.strip():
+        pattern = _like_pattern(q.strip())
+        filters.append(
+            or_(
+                DatsChuongTrinhDaoTao.ten_chuong_trinh.like(pattern, escape="\\"),
+                DatsChuongTrinhDaoTao.ma_xet_tuyen.like(pattern, escape="\\"),
+            )
+        )
+    if chi_thieu:
+        filters.append(
+            or_(DatsChuongTrinhDaoTao.nganh_dao_tao_id.is_(None), DatsChuongTrinhDaoTao.co_so_id.is_(None))
+        )
+    total = db.scalar(select(func.count()).select_from(DatsChuongTrinhDaoTao).where(*filters)) or 0
+    rows = db.execute(
+        select(DatsChuongTrinhDaoTao, DmNganhDaoTao, DatsTruSo)
+        .outerjoin(DmNganhDaoTao, DatsChuongTrinhDaoTao.nganh_dao_tao_id == DmNganhDaoTao.id)
+        .outerjoin(DatsTruSo, DatsChuongTrinhDaoTao.co_so_id == DatsTruSo.id)
+        .where(*filters)
+        .order_by(DatsChuongTrinhDaoTao.ma_xet_tuyen.asc(), DatsChuongTrinhDaoTao.id.asc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    ).all()
+
+    ds_nganh = [Nganh(*r) for r in db.execute(select(DmNganhDaoTao.id, DmNganhDaoTao.ma_nganh, DmNganhDaoTao.ten_nganh))]
+    ct_ids = [item.id for item, _nganh, _co_so in rows]
+    ma_chuan: dict[int, str] = {}
+    if ct_ids:
+        for ct_id, ma in db.execute(
+            select(DatsTrinhDoNganh.de_an_chuong_trinh_id, DatsTrinhDoNganh.ma_nganh_chuan).where(
+                DatsTrinhDoNganh.de_an_chuong_trinh_id.in_(ct_ids), DatsTrinhDoNganh.ma_nganh_chuan.is_not(None)
+            )
+        ):
+            ma_chuan.setdefault(ct_id, ma)
+
+    items = [
+        ChuongTrinhGanNganhPublic(
+            id=item.id,
+            ma_xet_tuyen=item.ma_xet_tuyen,
+            ma_xet_tuyen_nam_truoc=item.ma_xet_tuyen_nam_truoc,
+            ten_chuong_trinh=item.ten_chuong_trinh,
+            nganh_dao_tao_id=item.nganh_dao_tao_id,
+            ma_nganh=nganh.ma_nganh if nganh else None,
+            ten_nganh=nganh.ten_nganh if nganh else None,
+            co_so_id=item.co_so_id,
+            ten_co_so=co_so.ten_co_so if co_so else None,
+            goi_y=[
+                GoiYNganhPublic(**vars(g))
+                for g in goi_y_nganh(item.ten_chuong_trinh, item.ma_xet_tuyen, ds_nganh, ma_chuan.get(item.id))
+            ],
+        )
+        for item, nganh, co_so in rows
+    ]
+    return ChuongTrinhGanNganhPage(
+        items=items,
+        total=total,
+        page=page,
+        page_size=page_size,
+        so_thieu_nganh=so_thieu_nganh,
+        so_thieu_co_so=so_thieu_co_so,
+        nguong_ap_dung=NGUONG_AP_DUNG,
+    )
+
+
+@router.patch("/gan-nganh-co-so", response_model=ChuongTrinhGanNganhResult)
+def gan_nganh_co_so(
+    payload: ChuongTrinhGanNganhWrite,
+    db: Session = Depends(get_db),
+    _: NguoiDung = Depends(get_current_user),
+) -> ChuongTrinhGanNganhResult:
+    """Lưu hàng loạt ngành, cơ sở và mã xét tuyển năm trước cho chương trình của một đề án; không đổi cột khác."""
+    _ensure_de_an(db, payload.de_an_id)
+    _ensure_refs(db, payload.de_an_id, payload.items)
+    ids = [row.id for row in payload.items]
+    items = {
+        item.id: item
+        for item in db.scalars(select(DatsChuongTrinhDaoTao).where(DatsChuongTrinhDaoTao.id.in_(ids)))
+    }
+    missing = [item_id for item_id in ids if item_id not in items]
+    if missing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy chương trình đào tạo: {_format_ids(missing)}",
+        )
+    wrong = [item_id for item_id in ids if items[item_id].de_an_id != payload.de_an_id]
+    if wrong:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Chương trình không thuộc đề án đã chọn: {_format_ids(wrong)}",
+        )
+    for row in payload.items:
+        item = items[row.id]
+        item.nganh_dao_tao_id = row.nganh_dao_tao_id
+        item.co_so_id = row.co_so_id
+        item.ma_xet_tuyen_nam_truoc = row.ma_xet_tuyen_nam_truoc
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Không lưu được ngành và cơ sở của chương trình",
+        ) from None
+    return ChuongTrinhGanNganhResult(updated=len(ids))
 
 
 @router.get("/{item_id}", response_model=DatsChuongTrinhDaoTaoPublic)

@@ -17,8 +17,16 @@ class DatsTruSoFields(BaseModel):
     ten_co_so: str = Field(..., max_length=255)
     loai_co_so: str | None = Field(default=None, max_length=30)
     dia_chi: str | None = Field(default=None, max_length=500)
+    tinh_thanh_id: int | None = Field(default=None, ge=1)
     so_dien_thoai: str | None = Field(default=None, max_length=30)
     ghi_chu: str | None = Field(default=None, max_length=20000)
+
+    @field_validator("tinh_thanh_id", mode="before")
+    @classmethod
+    def empty_number_to_none(cls, value):
+        if value is None or value == "":
+            return None
+        return value
 
     @field_validator("vai_tro", "loai_co_so", "dia_chi", "so_dien_thoai", "ghi_chu")
     @classmethod
@@ -50,6 +58,8 @@ class DatsTruSoPublic(BaseModel):
     ten_co_so: str | None = None
     loai_co_so: str | None = None
     dia_chi: str | None = None
+    tinh_thanh_id: int | None = None
+    ten_tinh: str | None = None
     so_dien_thoai: str | None = None
     ghi_chu: str | None = None
 
