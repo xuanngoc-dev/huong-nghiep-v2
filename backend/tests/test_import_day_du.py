@@ -116,6 +116,48 @@ class ImportDayDuTests(unittest.TestCase):
             import_day_du(self.db, "BKA", 2027, du_lieu)
         self.assertIn("ma_tinh = 99", str(ctx.exception))
 
+    def test_id_trong_file_khong_bi_kiem_tra(self):
+        """Id bản ghi do CSDL tự sinh; id trong file trùng, sai kiểu hay thiếu đều không lỗi."""
+        du_lieu = copy.deepcopy(self.mau)
+        de_an = du_lieu["dats_tuyen_sinh"]
+        de_an["id"] = 999
+        for ct in de_an["dats_chuong_trinh_dao_tao"]:
+            for pt in ct["dats_phuong_thuc"]:
+                pt["id"] = 1  # mỗi chương trình đều đánh số phương thức từ 1
+        de_an["dats_chuong_trinh_dao_tao"][1]["id"] = "abc"
+        de_an["dats_chuong_trinh_dao_tao"][2]["id"] = None
+        de_an["dats_website"][0]["id"] = 1
+        de_an["dats_lien_he_tuyen_sinh"][0]["id"] = 1
+        de_an_id, counts, _quy_tac = import_day_du(self.db, "BKA", 2027, du_lieu)
+        self.assertEqual((counts["dats_phuong_thuc"], counts["dats_phuong_thuc_to_hop"]), (7, 2))
+        self.assertNotEqual(de_an_id, 999)
+        # Phương thức gắn đúng chương trình chứa nó.
+        theo_ct = {
+            ct.ma_xet_tuyen: sorted(
+                pt.ma_phuong_thuc_cua_bo
+                for pt in self.db.scalars(select(M.DatsPhuongThuc).where(M.DatsPhuongThuc.de_an_chuong_trinh_id == ct.id))
+            )
+            for ct in self.db.scalars(select(M.DatsChuongTrinhDaoTao))
+        }
+        self.assertEqual(theo_ct, {"IT1": ["100", "301", "401"], "ME1": ["100", "200"], "IT-HP": ["100", "200"]})
+        # Bảng con lồng trong phương thức id 1 đầu tiên vẫn gắn đúng phương thức đó.
+        dk = self.db.scalars(select(M.DatsDieuKienDuTuyen)).one()
+        self.assertEqual(self.db.get(M.DatsPhuongThuc, dk.de_an_phuong_thuc_id).ma_phuong_thuc_cua_bo, "100")
+        self.assertEqual(self.db.get(M.DatsChuongTrinhDaoTao, dk.de_an_chuong_trinh_id).ma_xet_tuyen, "IT1")
+
+    def test_tham_chieu_toi_id_trung_thi_bao_loi(self):
+        du_lieu = copy.deepcopy(self.mau)
+        for co_so in du_lieu["dats_tuyen_sinh"]["dats_tru_so"]:
+            co_so["id"] = 1
+        with self.assertRaises(DatsImportError) as ctx:
+            import_day_du(self.db, "BKA", 2027, du_lieu)
+        self.assertIn("nhiều dòng dats_tru_so cùng id 1", str(ctx.exception))
+        du_lieu["dats_tuyen_sinh"]["dats_tru_so"][1]["id"] = 2
+        du_lieu["dats_tuyen_sinh"]["dats_co_so_vat_chat"][0]["co_so_id"] = 7
+        with self.assertRaises(DatsImportError) as ctx:
+            import_day_du(self.db, "BKA", 2027, du_lieu)
+        self.assertIn("co_so_id = 7", str(ctx.exception))
+
 
 if __name__ == "__main__":
     unittest.main()

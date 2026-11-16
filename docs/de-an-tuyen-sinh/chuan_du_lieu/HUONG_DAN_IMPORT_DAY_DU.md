@@ -59,8 +59,12 @@ Một file gồm **mọi bảng của đề án, trừ danh mục `dm_*`**:
   Đặt bảng ở cấp nào thì phạm vi áp dụng là cấp đó.
 - Bảng nhiều dòng ghi một object thì được hiểu là mảng một phần tử. `dats_chinh_sach_uu_tien_xt` = tên viết tắt của
   `dats_chinh_sach_uu_tien_xet_tuyen`.
-- Không cần ghi `id` (trừ khi bản ghi khác cần tham chiếu), `tao_luc`, `cap_nhat_luc`; `nam_tuyen_sinh` ở các bảng con
-  luôn lấy theo năm import. Cột bỏ trống nhận `null` (hoặc giá trị mặc định của CSDL).
+- **Id của mọi bản ghi do CSDL tự sinh**, không lấy theo file. `id` trong file không bị kiểm tra (trùng, thiếu, sai
+  kiểu đều được), chỉ dùng khi một dòng khác tham chiếu tới nó bằng khóa ngoại ghi tay (`co_so_id`, hoặc
+  `de_an_chuong_trinh_id` / `de_an_phuong_thuc_id` của bảng không lồng trong cha). Chỉ khi đó id được tham chiếu phải
+  có và không trùng trong bảng của nó. Bảng lồng trong bản ghi cha không cần id. `de_an_id` luôn là đề án đang import.
+- Không ghi `tao_luc`, `cap_nhat_luc`; `nam_tuyen_sinh` ở các bảng con luôn lấy theo năm import. Cột bỏ trống nhận
+  `null` (hoặc giá trị mặc định của CSDL).
 - `dats_tuyen_sinh.trang_thai_xet_tuyen`: 0 chưa chuẩn hóa, 1 thử nghiệm, 2 đang áp dụng. Nên import ở **1** rồi chạy
   thử trước khi chuyển 2 (xem `QUY_TRINH_DUA_TRUONG_VAO.md`).
 

@@ -297,7 +297,7 @@ def prepare_import(
     nam_tuyen_sinh: int,
     catalogs: CatalogIndex,
 ) -> list[PreparedRow]:
-    """Chuẩn hóa JSON thành các dòng chờ ghi. Khóa ngoại dats_ vẫn là id gốc trong file."""
+    """Chuẩn hóa JSON thành các dòng chờ ghi. Khóa ngoại dats_ là id nội bộ do `flatten_nested_document` cấp."""
     if not isinstance(document, dict):
         raise DatsImportError("JSON phải là một object một trường, một năm")
     document = flatten_nested_document(document)
@@ -307,7 +307,6 @@ def prepare_import(
         raise DatsImportError(f"Chưa hỗ trợ bảng: {', '.join(unknown)}")
 
     prepared: list[PreparedRow] = []
-    seen_ids: dict[str, set[int]] = defaultdict(set)
     for table, _model, kind in _TABLES:
         raw_rows = _section(document, table, kind)
         if len(raw_rows) > _MAX_ROWS:
@@ -317,10 +316,6 @@ def prepare_import(
             if not isinstance(raw, dict):
                 raise DatsImportError(f"{label} không phải object")
             source_id = _source_id(raw, table, label)
-            if source_id is not None:
-                if source_id in seen_ids[table]:
-                    raise DatsImportError(f"{label} trùng id {source_id}")
-                seen_ids[table].add(source_id)
             values = _values(raw, table, label, ma_truong, nam_tuyen_sinh, catalogs)
             prepared.append(PreparedRow(table=table, source_id=source_id, values=values))
     if not any(row.table == "dats_tuyen_sinh" for row in prepared):
@@ -332,49 +327,78 @@ def _has_nested_tables(raw: dict) -> bool:
     return any(key.startswith("dats_") and key in _MODELS for key in raw)
 
 
-def flatten_nested_document(document: dict) -> dict:
-    """Đưa bảng con ra cùng cấp và gán khóa ngoại từ bản ghi cha. JSON phẳng được giữ nguyên.
+def _id_trong_file(value) -> int | None:
+    """Id ghi trong file (để dòng khác tham chiếu); giá trị không phải số nguyên thì coi như không có."""
+    if value in (None, "") or isinstance(value, (bool, float)):
+        return None
+    try:
+        return int(str(value).strip())
+    except (TypeError, ValueError):
+        return None
 
-    Tên bảng viết tắt (`_TEN_BANG_VIET_TAT`) được đổi sang tên đầy đủ trước.
+
+class _SoThuTu:
+    """Cấp id nội bộ cho từng dòng, không phụ thuộc id trong file (id thật do CSDL tự sinh khi ghi).
+
+    Id trong file không bị kiểm tra (trùng, thiếu, sai kiểu đều được); nó chỉ dùng để tra khi một dòng khác tham
+    chiếu tới (co_so_id, de_an_phuong_thuc_id...). Chỉ khi tham chiếu không tìm thấy hoặc trỏ vào id trùng mới báo lỗi.
+    """
+
+    def __init__(self) -> None:
+        self.tiep: dict[str, int] = defaultdict(int)
+        self.theo_file: dict[str, dict[int, int]] = defaultdict(dict)
+        self.trung: dict[str, set[int]] = defaultdict(set)
+
+    def cap(self, table: str, id_file) -> int:
+        self.tiep[table] += 1
+        so = self.tiep[table]
+        ma = _id_trong_file(id_file)
+        if ma is not None:
+            if ma in self.theo_file[table]:
+                self.trung[table].add(ma)
+            else:
+                self.theo_file[table][ma] = so
+        return so
+
+    def doi(self, target: str, value, label: str, fk_name: str) -> int:
+        ma = _id_trong_file(value)
+        if ma is None or ma not in self.theo_file[target]:
+            raise DatsImportError(f"{label} có {fk_name} = {value}: không có dòng {target} nào mang id này trong file")
+        if ma in self.trung[target]:
+            raise DatsImportError(
+                f"{label} có {fk_name} = {value}: nhiều dòng {target} cùng id {value}; "
+                "đặt id khác nhau cho các dòng được tham chiếu"
+            )
+        return self.theo_file[target][ma]
+
+
+def flatten_nested_document(document: dict) -> dict:
+    """Đưa bảng con ra cùng cấp và gán khóa ngoại từ bản ghi cha; đánh lại id nội bộ cho mọi dòng.
+
+    Tên bảng viết tắt (`_TEN_BANG_VIET_TAT`) được đổi sang tên đầy đủ trước. Khóa ngoại tới đề án luôn là đề án
+    đang import; khóa ngoại khác ghi tay trong file được tra theo id trong file (xem `_SoThuTu`).
     """
     if not isinstance(document, dict):
         return document
     document = doi_ten_bang_viet_tat(document)
     proposal = document.get("dats_tuyen_sinh")
     if not isinstance(proposal, dict) or not _has_nested_tables(proposal):
-        return document
+        return _danh_so_lai_phang(document)
     siblings = [key for key in document if key.startswith("dats_") and key != "dats_tuyen_sinh"]
     if siblings:
         raise DatsImportError("JSON lồng nhau không được kèm bảng dats_ cùng cấp với dats_tuyen_sinh")
 
     buckets: dict[str, list] = {name: [] for name, _model, kind in _TABLES if kind == "list"}
-    used: dict[str, set[int]] = defaultdict(set)
-    next_id: dict[str, int] = defaultdict(lambda: 1)
+    so = _SoThuTu()
     holder: dict[str, dict] = {}
-
-    def take_id(table: str, raw: dict, label: str) -> int | None:
-        if "id" not in _MODELS[table].__table__.columns:
-            return None
-        value = raw.get("id")
-        if value not in (None, ""):
-            number = _as_int(value, f"{label} có id không hợp lệ")
-            if number < 1:
-                raise DatsImportError(f"{label} có id không hợp lệ")
-            if number in used[table]:
-                raise DatsImportError(f"{label} trùng id {number}")
-            used[table].add(number)
-            return number
-        while next_id[table] in used[table]:
-            next_id[table] += 1
-        number = next_id[table]
-        next_id[table] += 1
-        used[table].add(number)
-        return number
+    # Khóa ngoại ghi tay trong file: đổi sang id nội bộ sau khi đã đánh số mọi dòng.
+    cho_doi: list[tuple[dict, str, str, str]] = []
 
     def visit(table: str, raw, ancestors: dict[str, int], label: str) -> None:
         if not isinstance(raw, dict):
             raise DatsImportError(f"{label} không phải object")
-        source_id = take_id(table, raw, label)
+        columns = _MODELS[table].__table__.columns
+        source_id = so.cap(table, raw.get("id")) if "id" in columns else None
         row: dict = {}
         children: list[tuple[str, list]] = []
         for key, value in raw.items():
@@ -390,9 +414,11 @@ def flatten_nested_document(document: dict) -> dict:
             row["id"] = source_id
         if table == "dats_phuong_thuc":
             _fill_method_combo_ids(row, children)
-        columns = _MODELS[table].__table__.columns
         for fk_name, parent_table in _DATS_FK.items():
-            if fk_name not in columns or row.get(fk_name) not in (None, ""):
+            if fk_name not in columns:
+                continue
+            if row.get(fk_name) not in (None, ""):
+                cho_doi.append((row, fk_name, parent_table, label))
                 continue
             parent_id = ancestors.get(parent_table)
             if parent_id is not None:
@@ -414,11 +440,57 @@ def flatten_nested_document(document: dict) -> dict:
                 visit(child_table, item, child_ancestors, f"{child_table} dòng {index}")
 
     visit("dats_tuyen_sinh", proposal, {}, "dats_tuyen_sinh")
+    de_an_id = holder["proposal"]["id"]
+    for row, fk_name, target, label in cho_doi:
+        row[fk_name] = de_an_id if target == "dats_tuyen_sinh" else so.doi(target, row[fk_name], label, fk_name)
     flat = {key: value for key, value in document.items() if not key.startswith("dats_")}
     flat["dats_tuyen_sinh"] = holder["proposal"]
     for name, rows in buckets.items():
         if rows:
             flat[name] = rows
+    return flat
+
+
+def _danh_so_lai_phang(document: dict) -> dict:
+    """JSON phẳng: đánh lại id nội bộ cho mọi dòng và đổi khóa ngoại trong file sang id đó.
+
+    Dữ liệu sai kiểu (bảng không phải mảng...) giữ nguyên để bước kiểm tra sau báo lỗi.
+    """
+    so = _SoThuTu()
+    flat = dict(document)
+    theo_bang: dict[str, list] = {}
+    for table, model, kind in _TABLES:
+        value = document.get(table)
+        if kind == "object":
+            if not isinstance(value, dict):
+                continue
+            rows = [dict(value)]
+        else:
+            if isinstance(value, dict):
+                value = [value]
+            if not isinstance(value, list):
+                continue
+            rows = [dict(r) if isinstance(r, dict) else r for r in value]
+        if "id" in model.__table__.columns:
+            for r in rows:
+                if isinstance(r, dict):
+                    r["id"] = so.cap(table, r.get("id"))
+        theo_bang[table] = rows
+        flat[table] = rows[0] if kind == "object" else rows
+    de_an_id = theo_bang["dats_tuyen_sinh"][0]["id"] if "dats_tuyen_sinh" in theo_bang else None
+    for table, rows in theo_bang.items():
+        columns = _MODELS[table].__table__.columns
+        for index, r in enumerate(rows, start=1):
+            if not isinstance(r, dict):
+                continue
+            for fk_name, target in _DATS_FK.items():
+                if fk_name not in columns or r.get(fk_name) in (None, ""):
+                    continue
+                if target == "dats_tuyen_sinh":
+                    if de_an_id is not None:
+                        r[fk_name] = de_an_id
+                    continue
+                r[fk_name] = so.doi(target, r[fk_name], f"{table} dòng {index}", fk_name)
     return flat
 
 
@@ -473,7 +545,8 @@ def _link_subjects(document: dict) -> None:
     subjects = document.get("dats_doi_tuong_du_tuyen") or []
     if not isinstance(subjects, list):
         subjects = []
-    for index, raw in enumerate(subjects, start=1):
+    # Chạy sau flatten_nested_document nên mỗi dòng đã có id nội bộ.
+    for raw in subjects:
         if not isinstance(raw, dict):
             continue
         code = raw.get("ma_doi_tuong")
@@ -482,10 +555,7 @@ def _link_subjects(document: dict) -> None:
         key = str(code).strip()
         if key in by_code:
             raise DatsImportError(f"Trùng mã đối tượng dự tuyển {key}")
-        source_id = raw.get("id")
-        if source_id in (None, ""):
-            raise DatsImportError(f"dats_doi_tuong_du_tuyen dòng {index} thiếu id để gắn điều kiện")
-        by_code[key] = _as_int(source_id, f"dats_doi_tuong_du_tuyen dòng {index} có id không hợp lệ")
+        by_code[key] = raw["id"]
     for raw in pending:
         key = str(raw.get("ma_doi_tuong_du_tuyen")).strip()
         mapped = by_code.get(key)

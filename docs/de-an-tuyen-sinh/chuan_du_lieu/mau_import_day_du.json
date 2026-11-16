@@ -61,7 +61,6 @@
   ],
   "dats_chuong_trinh_dao_tao": [
    {
-    "id": 1,
     "ma_nganh": "7480101",
     "ma_xet_tuyen": "IT1",
     "ma_xet_tuyen_nam_truoc": "IT1",
@@ -140,7 +139,6 @@
     ],
     "dats_phuong_thuc": [
      {
-      "id": 1,
       "ma_phuong_thuc_cua_bo": "100",
       "ma_phuong_thuc_cua_truong": "THPT",
       "ten_phuong_thuc_cua_truong": "Xét tuyển dựa trên kết quả thi tốt nghiệp THPT",
@@ -260,7 +258,6 @@
       ]
      },
      {
-      "id": 2,
       "ma_phuong_thuc_cua_bo": "401",
       "ma_phuong_thuc_cua_truong": "TSA",
       "ten_phuong_thuc_cua_truong": "Xét tuyển dựa trên kết quả Kỳ thi Đánh giá tư duy",
@@ -277,7 +274,6 @@
       "ghi_chu": null
      },
      {
-      "id": 3,
       "ma_phuong_thuc_cua_bo": "301",
       "ma_phuong_thuc_cua_truong": "XTT",
       "ten_phuong_thuc_cua_truong": "Xét tuyển thẳng",
@@ -288,7 +284,6 @@
     ]
    },
    {
-    "id": 2,
     "ma_nganh": "7520103",
     "ma_xet_tuyen": "ME1",
     "ma_xet_tuyen_nam_truoc": "ME1",
@@ -325,7 +320,6 @@
     ]
    },
    {
-    "id": 3,
     "ma_nganh": "7480201",
     "ma_xet_tuyen": "IT-HP",
     "ma_xet_tuyen_nam_truoc": null,
@@ -412,7 +406,6 @@
   ],
   "dats_doi_tuong_du_tuyen": [
    {
-    "id": 1,
     "ma_doi_tuong": "TN_THPT",
     "ten_doi_tuong": "Thí sinh đã tốt nghiệp THPT",
     "mo_ta": "Tốt nghiệp THPT hoặc tương đương",
