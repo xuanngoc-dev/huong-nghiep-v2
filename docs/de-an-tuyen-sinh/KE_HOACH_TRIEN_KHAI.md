@@ -91,8 +91,8 @@ không phụ thuộc phần tính điểm.
 
 | Bước | Việc | Kiểm tra / nghiệm thu |
 |---|---|---|
-| 4.1 | Chốt quy tắc chuyển dữ liệu (quyết định còn chờ số 4) | Chủ dự án quyết định |
-| 4.2 | **Migration `0060`:** các bảng `hs_*` (không tạo `hs_chi_so`) | |
+| 4.1 | **Xong**: quyết định đã chốt số 7 (NN1 = Anh, NN2 = Pháp; học lực suy từ điểm TB; tốt nghiệp đúng năm tìm) | Chủ dự án quyết định |
+| 4.2 | **Đã viết, chờ chạy** (`20261119_0060_hs_ho_so_xet_tuyen.py`; thêm `la_ho_so_chinh`, khóa ngoại `xt_lan_danh_gia.ho_so_id`). **Migration `0060`:** các bảng `hs_*` (không tạo `hs_chi_so`) | |
 | 4.3 | API `GET` / `PUT` hồ sơ xét tuyển; **ghi song song** với JSON cũ khi lưu hồ sơ | Test: lưu một lần, hai nơi khớp nhau |
 | 4.4 | Script chuyển dữ liệu cũ, xuất báo cáo dòng không chuyển được | Chạy trên bản sao DB trước |
 | 4.5 | Màn hình Hồ sơ năng lực thêm các khối bài thi, chứng chỉ, thành tích, nguyện vọng | |

@@ -26,8 +26,10 @@ class XtLanDanhGia(Base):
         Integer, ForeignKey("nguoi_dung.id", name="fk_xt_ldg_nguoi_dung_id", ondelete="CASCADE")
     )
     ma_thiet_bi: Mapped[str | None] = mapped_column(String(64))
-    # Hồ sơ hs_ho_so (giai đoạn 4); trống khi dựng từ dữ liệu cũ.
-    ho_so_id: Mapped[int | None] = mapped_column(BIGINT(unsigned=True))
+    # Hồ sơ hs_ho_so; trống khi dựng từ dữ liệu cũ (JSON trinh_do_hoc_van, form khách).
+    ho_so_id: Mapped[int | None] = mapped_column(
+        BIGINT(unsigned=True), ForeignKey("hs_ho_so.id", name="fk_xt_ldg_ho_so_id", ondelete="SET NULL")
+    )
     nam_tuyen_sinh: Mapped[int] = mapped_column(SMALLINT(unsigned=True), nullable=False)
     bo_tieu_chi_id: Mapped[int] = mapped_column(
         BIGINT(unsigned=True), ForeignKey("xt_bo_tieu_chi.id", name="fk_xt_ldg_bo_tieu_chi_id"), nullable=False
