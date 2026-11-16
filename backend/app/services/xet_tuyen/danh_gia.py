@@ -28,6 +28,7 @@ from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.dm_tinh_thanh import DmTinhThanh
 from app.models.dm_to_hop_mon_hoc import DmToHopMonHoc
 from app.models.dm_to_hop_mon_hoc_chi_tiet import DmToHopMonHocChiTiet
+from app.models.dm_truong import DmTruong
 from app.models.xt_bang_quy_doi import XtBangQuyDoi, XtBangQuyDoiChiTiet
 from app.models.xt_bo_tieu_chi import XtBoTieuChi, XtMucPhuHop, XtTieuChiPhuHop
 from app.models.xt_cong_thuc import XtCongThuc, XtCongThucHeSoMon, XtCongThucThanhPhan
@@ -203,6 +204,16 @@ def _nap_quy_tac(db: Session, nam: int) -> QuyTacNam:
             .group_by(DatsHocPhi.de_an_chuong_trinh_id)
         ).all()
     )
+    # Chương trình không có cơ sở (hoặc cơ sở chưa có tỉnh) lấy tỉnh của trường: theo mã tỉnh, không có thì theo tên.
+    tinh_theo_ma = {ma: (ma, vung) for ma, vung in db.execute(select(DmTinhThanh.ma_tinh, DmTinhThanh.khu_vuc))}
+    tinh_theo_ten = {ten: (ma, vung) for ma, ten, vung in db.execute(select(DmTinhThanh.ma_tinh, DmTinhThanh.ten_tinh, DmTinhThanh.khu_vuc))}
+    tinh_truong = {}
+    for ma_truong, ma_tinh_truong, ten_tinh_truong in db.execute(
+        select(DmTruong.ma_truong, DmTruong.ma_tinh_thanh, DmTruong.ten_tinh_thanh).where(
+            DmTruong.ma_truong.in_({d.ma_truong for d in de_an.values()})
+        )
+    ):
+        tinh_truong[ma_truong] = tinh_theo_ma.get(ma_tinh_truong) or tinh_theo_ten.get(ten_tinh_truong)
     for ctr, ma_tinh, vung in db.execute(
         select(DatsChuongTrinhDaoTao, DmTinhThanh.ma_tinh, DmTinhThanh.khu_vuc)
         .outerjoin(DatsTruSo, DatsChuongTrinhDaoTao.co_so_id == DatsTruSo.id)
@@ -211,6 +222,8 @@ def _nap_quy_tac(db: Session, nam: int) -> QuyTacNam:
         .order_by(DatsChuongTrinhDaoTao.id)
     ):
         da = de_an[ctr.de_an_id]
+        if ma_tinh is None and tinh_truong.get(da.ma_truong):
+            ma_tinh, vung = tinh_truong[da.ma_truong]
         qt.chuong_trinh.append(
             ChuongTrinhTinh(
                 id=ctr.id,

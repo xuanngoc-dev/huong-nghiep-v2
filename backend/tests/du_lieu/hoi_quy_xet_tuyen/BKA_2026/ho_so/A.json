@@ -1,0 +1,92 @@
+{
+ "nam_tot_nghiep": 2026,
+ "da_tot_nghiep": true,
+ "he_chuyen": true,
+ "mon_chuyen": "TOAN",
+ "khu_vuc": "KV2-NT",
+ "doi_tuong": null,
+ "ngan_sach": 60000000,
+ "mong_muon_tinh": [
+  "01"
+ ],
+ "mong_muon_vung": [],
+ "nam_hoc": {
+  "10": {
+   "tbc": 8.9,
+   "hoc_luc": 4,
+   "ren_luyen": 4
+  },
+  "11": {
+   "tbc": 9,
+   "hoc_luc": 4,
+   "ren_luyen": 4
+  },
+  "12": {
+   "tbc": 9.2,
+   "hoc_luc": 4,
+   "ren_luyen": 4
+  }
+ },
+ "diem_thpt": {
+  "TOAN": 9,
+  "LY": 8.5,
+  "HOA": 8.75,
+  "ANH": 8,
+  "VAN": 8
+ },
+ "hoc_ba": {
+  "TOAN": {
+   "10": 9.2,
+   "11": 9.4,
+   "12": 9.6
+  },
+  "LY": {
+   "10": 9,
+   "11": 9.1,
+   "12": 9.2
+  },
+  "HOA": {
+   "10": 8.8,
+   "11": 9,
+   "12": 9.2
+  },
+  "VAN": {
+   "10": 8,
+   "11": 8.2,
+   "12": 8.4
+  },
+  "ANH": {
+   "10": 9,
+   "11": 9.2,
+   "12": 9.4
+  }
+ },
+ "bai_thi": [
+  {
+   "ma": "HSA",
+   "diem": 112,
+   "nam": 2026,
+   "phan_tu_chon": "KHOA_HOC"
+  },
+  {
+   "ma": "TSA",
+   "diem": 72.5,
+   "nam": 2026,
+   "phan_tu_chon": null
+  }
+ ],
+ "chung_chi": [
+  {
+   "ma": "IELTS",
+   "diem": 7,
+   "cap_do": null,
+   "het_han": "2027-12-01"
+  }
+ ],
+ "thanh_tich": [
+  {
+   "ma": "HSG-TINH",
+   "muc_giai": 2
+  }
+ ]
+}

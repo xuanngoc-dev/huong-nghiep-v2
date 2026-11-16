@@ -1,0 +1,37 @@
+{
+ "nam_tot_nghiep": 2026,
+ "da_tot_nghiep": true,
+ "he_chuyen": false,
+ "mon_chuyen": null,
+ "khu_vuc": "KV1",
+ "doi_tuong": null,
+ "ngan_sach": null,
+ "mong_muon_tinh": [],
+ "mong_muon_vung": [],
+ "nam_hoc": {
+  "10": {
+   "tbc": 7.2,
+   "hoc_luc": 3,
+   "ren_luyen": 4
+  },
+  "11": {
+   "tbc": 7.4,
+   "hoc_luc": 3,
+   "ren_luyen": 4
+  },
+  "12": {
+   "tbc": 7.6,
+   "hoc_luc": 3,
+   "ren_luyen": 4
+  }
+ },
+ "diem_thpt": {
+  "TOAN": 7,
+  "LY": 7.5,
+  "HOA": 7
+ },
+ "hoc_ba": {},
+ "bai_thi": [],
+ "chung_chi": [],
+ "thanh_tich": []
+}

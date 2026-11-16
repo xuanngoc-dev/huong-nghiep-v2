@@ -1,0 +1,56 @@
+{
+ "nam_tot_nghiep": 2026,
+ "da_tot_nghiep": true,
+ "he_chuyen": false,
+ "mon_chuyen": null,
+ "khu_vuc": "KV3",
+ "doi_tuong": null,
+ "ngan_sach": null,
+ "mong_muon_tinh": [],
+ "mong_muon_vung": [],
+ "nam_hoc": {
+  "10": {
+   "tbc": 9,
+   "hoc_luc": 4,
+   "ren_luyen": 4
+  },
+  "11": {
+   "tbc": 9,
+   "hoc_luc": 4,
+   "ren_luyen": 4
+  },
+  "12": {
+   "tbc": 9,
+   "hoc_luc": 4,
+   "ren_luyen": 4
+  }
+ },
+ "diem_thpt": {
+  "TOAN": 9.5,
+  "LY": 9,
+  "HOA": 9.25
+ },
+ "hoc_ba": {},
+ "bai_thi": [
+  {
+   "ma": "SAT",
+   "diem": 1450,
+   "nam": 2025,
+   "phan_tu_chon": null
+  }
+ ],
+ "chung_chi": [
+  {
+   "ma": "IELTS",
+   "diem": 7,
+   "cap_do": null,
+   "het_han": "2027-12-01"
+  }
+ ],
+ "thanh_tich": [
+  {
+   "ma": "HSG-QG",
+   "muc_giai": 2
+  }
+ ]
+}
