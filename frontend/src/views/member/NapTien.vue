@@ -69,13 +69,7 @@
             <span v-if="item.key !== 'edu_coin' && luotNhan(goi) > 0" class="goi__don-gia">
               ≈ {{ hienTien(Math.round(giaBan(goi) / luotNhan(goi))) }} / lượt
             </span>
-            <CustomButton
-              type="primary"
-              class="goi__dang-ky"
-              :loading="dangDangKy === goi.id"
-              :disabled="dangDangKy !== null && dangDangKy !== goi.id"
-              @click="dangKy(goi)"
-            >
+            <CustomButton type="primary" class="goi__dang-ky" @click="moXacNhan(goi)">
               Đăng ký
             </CustomButton>
           </article>
@@ -83,6 +77,13 @@
       </el-tab-pane>
     </el-tabs>
 
+    <XacNhanGoiDialog
+      v-model="xacNhanMo"
+      :goi="goiChon"
+      :so-du-hien-tai="soDuGoiChon"
+      :loading="dangDangKy"
+      @thanh-toan="dangKy"
+    />
     <ThanhToanDialog v-model="thanhToanMo" :giao-dich="giaoDich" :goi="goiThanhToan" @updated="giaoDich = $event" />
   </el-card>
 </template>
@@ -93,6 +94,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { ChatDotRound, Coin, EditPen, Search } from '@element-plus/icons-vue'
 import ThanhToanDialog from '@/components/member/ThanhToanDialog.vue'
+import XacNhanGoiDialog from '@/components/member/XacNhanGoiDialog.vue'
 import { fetchGoiCuocDangBan } from '@/api/cauHinhGoiCuoc'
 import { fetchHoSo } from '@/api/hoSo'
 import { taoNapTien } from '@/api/napTien'
@@ -120,7 +122,9 @@ const loiGoi = ref('')
 const thanhToanMo = ref(false)
 const giaoDich = ref(null)
 const goiThanhToan = ref(null)
-const dangDangKy = ref(null)
+const xacNhanMo = ref(false)
+const goiChon = ref(null)
+const dangDangKy = ref(false)
 
 // Chỉ quay về trang trong ứng dụng, tránh chuyển hướng ra ngoài.
 const duongQuayLai = computed(() => {
@@ -177,17 +181,32 @@ function errorMessage(error, fallback) {
   return fallback
 }
 
-// Đăng ký: tạo (hoặc dùng lại) giao dịch chờ thanh toán rồi mở modal thanh toán.
+// Số dư hiện tại của loại gói đang chọn (null khi chưa tải được hồ sơ).
+const soDuGoiChon = computed(() => {
+  const item = LOAI.find((loai) => loai.key === goiChon.value?.loai_ap_dung)
+  if (!item || !soDu.value) return null
+  return Number(soDu.value[item.truongSoDu] || 0)
+})
+
+// Đăng ký: mở modal xác nhận gói trước khi tạo giao dịch (tải lại số dư để số dự kiến đúng nhất).
+function moXacNhan(goi) {
+  goiChon.value = goi
+  xacNhanMo.value = true
+  taiSoDu()
+}
+
+// Thanh toán: tạo (hoặc dùng lại) giao dịch chờ thanh toán rồi chuyển sang modal thanh toán.
 async function dangKy(goi) {
-  dangDangKy.value = goi.id
+  dangDangKy.value = true
   try {
     giaoDich.value = await taoNapTien({ goi_cuoc_id: goi.id })
     goiThanhToan.value = goi
+    xacNhanMo.value = false
     thanhToanMo.value = true
   } catch (error) {
     ElMessage.error(errorMessage(error, 'Không đăng ký được gói'))
   } finally {
-    dangDangKy.value = null
+    dangDangKy.value = false
   }
 }
 

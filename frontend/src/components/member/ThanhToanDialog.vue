@@ -94,13 +94,13 @@
         </section>
       </div>
 
-      <p class="thanh-toan__note">
+      <!-- <p class="thanh-toan__note">
         Ghi đúng nội dung chuyển khoản <strong>{{ giaoDich.noi_dung_chuyen_khoan }}</strong> để hệ thống tự nhận ra giao
         dịch. Edu coin hoặc lượt sẽ được cộng ngay khi ngân hàng báo nhận đủ tiền.
         <template v-if="giaoDich.thoi_gian_thanh_toan">
           Bạn đã báo chuyển khoản lúc {{ hienThoiGian(giaoDich.thoi_gian_thanh_toan) }}.
         </template>
-      </p>
+      </p> -->
     </div>
     <template #footer>
       <CustomButton @click="visible = false">Đóng</CustomButton>
@@ -172,7 +172,7 @@ const qrUrl = computed(() => {
   })
   const ma = encodeURIComponent(bank.ten_ngan_hang_viet_tat)
   const stk = encodeURIComponent(bank.so_tai_khoan)
-  return `https://img.vietqr.io/image/${ma}-${stk}-compact2.png?${params}`
+  return `https://img.vietqr.io/image/${ma}-${stk}-qr_only.png?${params}`
 })
 
 const thongTinChuyenKhoan = computed(() => {
@@ -466,6 +466,18 @@ watch(
   .thanh-toan__chuyen-khoan {
     padding-left: 16px;
     border-left: 1px solid var(--el-border-color-lighter);
+  }
+}
+
+/* Desktop: mã QR và thông tin chuyển khoản nằm cùng một hàng. */
+@container (min-width: 760px) {
+  .thanh-toan__chuyen-khoan {
+    grid-template-columns: 200px minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .bank__row {
+    grid-template-columns: 96px minmax(0, 1fr);
   }
 }
 </style>
