@@ -17,6 +17,8 @@ from app.models.nguoi_dung import NguoiDung
 from app.schemas.dats_tuyen_sinh import (
     DatsImportRequest,
     DatsImportResult,
+    DatsSaoChepRequest,
+    DatsSaoChepResult,
     DatsTuyenSinhBulkResult,
     DatsTuyenSinhChiTiet,
     DatsTuyenSinhDeleteMany,
@@ -29,6 +31,7 @@ from app.schemas.dats_tuyen_sinh import (
 )
 from app.services.dats_detail import load_de_an_bang
 from app.services.dats_import import DatsImportError, delete_de_an_children, import_document
+from app.services.sao_chep_de_an import SaoChepDeAnError, sao_chep_de_an
 from app.services.truong_hien_thi import join_tinh_thanh
 from app.services.truong_hien_thi import khu_vuc_hien_thi as khu_vuc_hien_thi_expr
 from app.services.truong_hien_thi import loai_hien_thi as loai_hien_thi_expr
@@ -58,6 +61,8 @@ def _to_public(item: DatsTuyenSinh, truong: DmTruong) -> DatsTuyenSinhPublic:
         nguon_du_lieu_url=item.nguon_du_lieu_url,
         trang_thai=item.trang_thai,
         ghi_chu=item.ghi_chu,
+        de_an_nam_truoc_id=item.de_an_nam_truoc_id,
+        trang_thai_xet_tuyen=item.trang_thai_xet_tuyen or 0,
         tao_luc=item.tao_luc,
         cap_nhat_luc=item.cap_nhat_luc,
     )
@@ -398,6 +403,34 @@ def import_de_an(
             detail="Không lưu được dữ liệu đề án",
         ) from None
     return DatsImportResult(de_an_id=de_an_id, counts=counts)
+
+
+@router.post("/{item_id}/sao-chep", response_model=DatsSaoChepResult, status_code=status.HTTP_201_CREATED)
+def sao_chep_de_an_sang_nam(
+    item_id: int,
+    payload: DatsSaoChepRequest,
+    db: Session = Depends(get_db),
+    _: NguoiDung = Depends(get_current_user),
+) -> DatsSaoChepResult:
+    """Sao chép đề án và mọi bảng dats_ con sang năm khác, trong một transaction.
+
+    Đề án mới trỏ về đề án gốc qua `de_an_nam_truoc_id`; chương trình mới có `ma_xet_tuyen_nam_truoc` là mã xét
+    tuyển của bản gốc. `ten_de_an` để trống thì đổi năm trong tên đề án gốc. Trường đã có đề án năm đó thì trả 400.
+    """
+    try:
+        moi, counts = sao_chep_de_an(db, item_id, payload.nam_tuyen_sinh, payload.ten_de_an)
+        db.commit()
+    except SaoChepDeAnError as exc:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from None
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Không sao chép được đề án tuyển sinh",
+        ) from None
+    db.refresh(moi)
+    return DatsSaoChepResult(de_an=_to_public(moi, _truong_by_code(db, moi.ma_truong)), counts=counts)
 
 
 @router.post("", response_model=DatsTuyenSinhPublic, status_code=status.HTTP_201_CREATED)

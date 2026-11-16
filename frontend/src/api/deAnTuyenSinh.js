@@ -35,3 +35,7 @@ export function deleteDeAnTuyenSinh(id) {
 export function deleteDeAnTuyenSinhMany(ids) {
   return api.delete('/de-an-tuyen-sinh', { data: { ids } }).then((res) => res.data)
 }
+
+export function saoChepDeAnTuyenSinh(id, payload, config) {
+  return api.post(`/de-an-tuyen-sinh/${id}/sao-chep`, payload, config).then((res) => res.data)
+}

@@ -120,7 +120,7 @@
             <span v-else>—</span>
           </template>
         </CustomTableColumn>
-        <CustomTableColumn label="Thao tác" width="140" fixed="right" align="center">
+        <CustomTableColumn label="Thao tác" width="170" fixed="right" align="center">
           <template #default="{ row }">
             <div class="row-actions">
               <CustomTooltip content="Xem chi tiết" placement="top">
@@ -131,6 +131,11 @@
               <CustomTooltip content="Sửa" placement="top">
                 <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
                   <CustomIcon><Edit /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+              <CustomTooltip content="Sao chép sang năm khác" placement="top">
+                <CustomButton link type="primary" aria-label="Sao chép sang năm khác" @click="openSaoChep(row)">
+                  <CustomIcon><CopyDocument /></CustomIcon>
                 </CustomButton>
               </CustomTooltip>
               <CustomTooltip content="Xóa" placement="top">
@@ -161,6 +166,36 @@
   </div>
 
   <ChiTietDeAnDialog v-model="detailVisible" :de-an-id="detailId" />
+
+  <CustomDialog v-model="saoChep.visible" title="Sao chép đề án sang năm khác" width="640px">
+    <p class="sao-chep__mo-ta">
+      Tạo đề án mới của <strong>{{ saoChep.nguon ? schoolLabel(saoChep.nguon) : '' }}</strong> từ đề án năm
+      {{ saoChep.nguon?.nam_tuyen_sinh }}: chép toàn bộ cơ sở, chương trình, phương thức, tổ hợp, điều kiện…
+      Mã xét tuyển cũ được lưu vào "mã xét tuyển năm trước" của từng chương trình.
+    </p>
+    <CustomForm class="form-grid" label-position="top" @submit.prevent>
+      <div class="form-grid__body">
+        <CustomFormItem label="Năm tuyển sinh mới" required>
+          <CustomSelect v-model="saoChep.nam" placeholder="Chọn năm tuyển sinh mới">
+            <CustomOption v-for="nam in namHocSaoChep" :key="nam" :label="nhanNamHoc(nam)" :value="nam" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Tên đề án mới">
+          <CustomInput
+            v-model="saoChep.ten"
+            maxlength="255"
+            placeholder="Để trống thì đổi năm trong tên đề án gốc"
+          />
+        </CustomFormItem>
+      </div>
+    </CustomForm>
+    <template #footer>
+      <CustomButton @click="saoChep.visible = false">Hủy</CustomButton>
+      <CustomButton type="primary" :loading="saoChep.dangLuu" :disabled="!saoChep.nam" @click="onSaoChep">
+        Sao chép
+      </CustomButton>
+    </template>
+  </CustomDialog>
 
   <CustomDialog
     v-model="dialogVisible"
@@ -346,6 +381,7 @@ import {
   deleteDeAnTuyenSinhMany,
   fetchDeAnTuyenSinh,
   importDeAnTuyenSinh,
+  saoChepDeAnTuyenSinh,
   updateDeAnTuyenSinh,
 } from '@/api/deAnTuyenSinh'
 import { fetchTruongHoc } from '@/api/truongHoc'
@@ -474,6 +510,7 @@ const jsonNamTuyenSinh = ref(new Date().getFullYear())
 const jsonImport = useJsonBatchImport({ label: 'đề án tuyển sinh' })
 const formRef = ref()
 const truongOptions = ref([])
+const saoChep = reactive({ visible: false, dangLuu: false, nguon: null, nam: null, ten: '' })
 
 const filters = reactive({
   q: '',
@@ -622,6 +659,12 @@ function yearFilter() {
 }
 
 const namHocForm = computed(() => danhSachNamHoc(new Date().getFullYear(), form.nam_tuyen_sinh))
+// Năm đích: đến năm sau năm hiện tại (và sau năm của đề án gốc), bỏ năm của chính đề án gốc.
+const namHocSaoChep = computed(() => {
+  const namGoc = Number(saoChep.nguon?.nam_tuyen_sinh)
+  const namCuoi = Math.max(new Date().getFullYear() + 1, namGoc + 1 || 0)
+  return danhSachNamHoc(namCuoi).filter((nam) => nam !== namGoc)
+})
 const namHocJson = computed(() => danhSachNamHoc(new Date().getFullYear(), jsonNamTuyenSinh.value))
 
 async function loadTruongOptions() {
@@ -838,6 +881,30 @@ async function onSubmit() {
   }
 }
 
+function openSaoChep(row) {
+  Object.assign(saoChep, { visible: true, dangLuu: false, nguon: row, nam: Number(row.nam_tuyen_sinh) + 1, ten: '' })
+}
+
+async function onSaoChep() {
+  const nguon = saoChep.nguon
+  saoChep.dangLuu = true
+  try {
+    const result = await saoChepDeAnTuyenSinh(
+      nguon.id,
+      { nam_tuyen_sinh: saoChep.nam, ten_de_an: optionalText(saoChep.ten) },
+      { timeout: 120000 },
+    )
+    const chuongTrinh = result.counts?.dats_chuong_trinh_dao_tao || 0
+    ElMessage.success(`Đã tạo đề án năm ${result.de_an.nam_tuyen_sinh} (${chuongTrinh} chương trình)`)
+    saoChep.visible = false
+    await load()
+  } catch (error) {
+    ElMessage.error(errorMessage(error, 'Không sao chép được đề án tuyển sinh'))
+  } finally {
+    saoChep.dangLuu = false
+  }
+}
+
 async function onDelete(row) {
   const name = row.ten_de_an || `năm ${row.nam_tuyen_sinh}`
   try {
@@ -960,5 +1027,11 @@ onMounted(async () => {
     width: 100%;
     max-width: none;
   }
+}
+
+.sao-chep__mo-ta {
+  margin: 0 0 16px;
+  color: var(--el-text-color-regular);
+  line-height: 1.6;
 }
 </style>

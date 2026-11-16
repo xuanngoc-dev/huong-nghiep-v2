@@ -91,6 +91,8 @@ class DatsTuyenSinhPublic(BaseModel):
     nguon_du_lieu_url: str | None = None
     trang_thai: str | None = None
     ghi_chu: str | None = None
+    de_an_nam_truoc_id: int | None = None
+    trang_thai_xet_tuyen: int = 0
     tao_luc: datetime | None = None
     cap_nhat_luc: datetime | None = None
 
@@ -127,6 +129,21 @@ class DatsImportRequest(BaseModel):
 
 class DatsImportResult(BaseModel):
     de_an_id: int
+    counts: dict[str, int]
+
+
+class DatsSaoChepRequest(BaseModel):
+    nam_tuyen_sinh: int = Field(..., ge=1990, le=2100)
+    ten_de_an: str | None = Field(default=None, max_length=255)
+
+    @field_validator("ten_de_an")
+    @classmethod
+    def empty_text_to_none(cls, value: str | None) -> str | None:
+        return _clean_text(value)
+
+
+class DatsSaoChepResult(BaseModel):
+    de_an: DatsTuyenSinhPublic
     counts: dict[str, int]
 
 

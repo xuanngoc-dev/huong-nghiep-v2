@@ -1,15 +1,15 @@
 # Danh sách API
 
-Tự sinh từ code lúc 16/11/2026 13:47 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 16/11/2026 14:14 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **273** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **274** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
 | [Quản trị (admin)](#quan_tri) | 153 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 77 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Thành viên (user)](#thanh_vien) | 78 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 43 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
@@ -468,6 +468,7 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 | `PUT` | `/api/v1/de-an-tuyen-sinh/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một đề án tuyển sinh theo id. |
 | `DELETE` | `/api/v1/de-an-tuyen-sinh/{item_id}` | Bắt buộc | Xóa một đề án tuyển sinh theo id. |
 | `GET` | `/api/v1/de-an-tuyen-sinh/{item_id}/chi-tiet` | Bắt buộc | Lấy đề án và mọi bảng dats_ liên quan để xem chi tiết. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/{item_id}/sao-chep` | Bắt buộc | Sao chép đề án và mọi bảng dats_ con sang năm khác, trong một transaction. |
 
 ### `he-thong/cau-hinh-goi-cuoc`
 
