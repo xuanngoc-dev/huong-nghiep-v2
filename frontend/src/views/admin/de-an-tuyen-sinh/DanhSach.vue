@@ -211,14 +211,14 @@
 
     <div v-if="!editingId && createMode === 'json'" class="json-panel">
       <div class="json-panel__head">
-        <p>
+        <!-- <p>
           Dán hoặc chọn file JSON một trường, một năm. Các bảng con nằm trong
           <code>dats_tuyen_sinh</code> (chương trình, phương thức, tổ hợp, điều kiện, ...)
           được nhập cùng đề án. Nếu file có <code>thong_tin_import.ma_truong</code> và
           <code>nam_tuyen_sinh</code>, trường và năm lấy từ file. Mã phương thức của Bộ và mã tổ hợp
           phải có trong danh mục. <code>to_hop_mon_hoc</code> để trống nghĩa là phương thức áp dụng mọi tổ hợp;
           nếu có thì là mảng mã tổ hợp, ví dụ ["A01"].
-        </p>
+        </p> -->
         <div class="json-panel__actions">
           <CustomButton text type="primary" @click="openJsonFile">Chọn file</CustomButton>
           <CustomButton text type="primary" @click="fillJsonSample">Điền mẫu</CustomButton>
