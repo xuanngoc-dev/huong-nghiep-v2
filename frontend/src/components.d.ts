@@ -121,6 +121,7 @@ declare module 'vue' {
     JsonFileButton: typeof import('./components/admin/JsonFileButton.vue')['default']
     JsonImportDialogFooter: typeof import('./components/admin/JsonImportDialogFooter.vue')['default']
     KetQua: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/KetQua.vue')['default']
+    KetQuaXetTuyen: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/KetQuaXetTuyen.vue')['default']
     KhoiDuLieu: typeof import('./components/guest/kiem-tra-du-lieu/KhoiDuLieu.vue')['default']
     KhoiNghiep: typeof import('./components/guest/doi-tuong/HocSinhThpt/KhoiNghiep.vue')['default']
     KhongCoDuLieu: typeof import('./components/guest/chung/KhongCoDuLieu.vue')['default']
