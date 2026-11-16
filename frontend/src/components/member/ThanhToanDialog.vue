@@ -127,7 +127,7 @@ import { ElMessage } from 'element-plus'
 import { apiAssetUrl } from '@/api/apiUrl'
 import { capNhatNapTien } from '@/api/napTien'
 import { fetchNganHangNhanTien } from '@/api/nganHangThanhToan'
-import { LOAI_AP_DUNG, hienSo, hienThoiGian, hienTien, timTheoGiaTri } from '@/data/napTien'
+import { LOAI_AP_DUNG, hienSo, hienTien, timTheoGiaTri } from '@/data/napTien'
 
 const visible = defineModel({ type: Boolean, default: false })
 
