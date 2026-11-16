@@ -1,0 +1,3312 @@
+{
+ "phien_ban": "1.0",
+ "ma_truong": "BKA",
+ "nam_tuyen_sinh": 2026,
+ "de_an": {
+  "ten_de_an": "Thông tin tuyển sinh đại học chính quy năm 2026 - Đại học Bách khoa Hà Nội",
+  "so_quyet_dinh": "2466/QĐ-ĐHBK",
+  "ngay_cong_bo": "2026-03-03",
+  "ghi_chu": "Chưa đưa vào file: tổ hợp in đậm tính Toán hệ số 2 (công thức BKA_THPT_TOAN_X2 khai sẵn, dang_dung = false, hệ số quy về thang 30 chưa được xác minh); bảng quy đổi chứng chỉ ngoại ngữ thành điểm môn tiếng Anh; cách tính điểm xét tuyển tài năng diện 1.2 và 1.3; ngưỡng điểm sàn THPT và ngưỡng TSA (đề án ghi thông báo sau); học phí. Chưa có điểm chuẩn các năm trước."
+ },
+ "to_hop_rieng": [
+  {
+   "ma_to_hop": "K01",
+   "ten_to_hop": "Toán, Ngữ văn, và 1 trong 4 môn: Vật lý/Hóa học/Sinh học/Tin học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "LY",
+     "HOA",
+     "SINH",
+     "TIN"
+    ]
+   ]
+  }
+ ],
+ "cong_thuc": [
+  {
+   "ma_cong_thuc": "BKA_THPT_30",
+   "ten_cong_thuc": "Điểm thi THPT theo tổ hợp - thang 30",
+   "ma_phuong_thuc_cua_bo": "100",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "THI_THPT",
+   "thang_diem": 30,
+   "mo_ta_cong_thuc": "M1 + M2 + M3 + điểm ưu tiên"
+  },
+  {
+   "ma_cong_thuc": "BKA_THPT_K01",
+   "ten_cong_thuc": "Điểm thi THPT tổ hợp K01",
+   "ma_phuong_thuc_cua_bo": "100",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "THI_THPT",
+   "thang_diem": 30,
+   "he_so_nhan": 0.5,
+   "mo_ta_cong_thuc": "[Toán x 3 + Ngữ văn x 1 + (Lý/Hóa/Sinh/Tin) x 2] x 1/2",
+   "he_so_mon": [
+    {
+     "ma_mon": "HOA",
+     "he_so": 2
+    },
+    {
+     "ma_mon": "LY",
+     "he_so": 2
+    },
+    {
+     "ma_mon": "SINH",
+     "he_so": 2
+    },
+    {
+     "ma_mon": "TIN",
+     "he_so": 2
+    },
+    {
+     "ma_mon": "TOAN",
+     "he_so": 3
+    },
+    {
+     "ma_mon": "VAN",
+     "he_so": 1
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "BKA_THPT_TOAN_X2",
+   "ten_cong_thuc": "Điểm thi THPT - tổ hợp in đậm, Toán hệ số 2",
+   "ma_phuong_thuc_cua_bo": "100",
+   "kieu_tinh": "TO_HOP_MON",
+   "nguon_diem_mon": "THI_THPT",
+   "thang_diem": 30,
+   "he_so_nhan": 0.75,
+   "mo_ta_cong_thuc": "(Toán x 2 + M2 + M3) x 3/4",
+   "dang_dung": false,
+   "he_so_mon": [
+    {
+     "ma_mon": "TOAN",
+     "he_so": 2
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "BKA_TSA",
+   "ten_cong_thuc": "Điểm thi Đánh giá tư duy (TSA)",
+   "ma_phuong_thuc_cua_bo": "401",
+   "kieu_tinh": "THANH_PHAN",
+   "thang_diem": 100,
+   "mo_ta_cong_thuc": "Điểm TSA năm 2025 hoặc 2026",
+   "thanh_phan": [
+    {
+     "vi_tri": 1,
+     "ten_thanh_phan": "Điểm TSA",
+     "loai_nguon": "BAI_THI",
+     "ma_bai_thi": "TSA",
+     "nam_thi_tu": 2025,
+     "nam_thi_den": 2026
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "BKA_XTTN_11",
+   "ten_cong_thuc": "Xét tuyển tài năng 1.1 - xét tuyển thẳng",
+   "ma_phuong_thuc_cua_bo": "301",
+   "kieu_tinh": "CHI_DIEU_KIEN",
+   "thang_diem": 30,
+   "ap_dung_diem_cong": false,
+   "ap_dung_uu_tien": false,
+   "mo_ta_cong_thuc": "Không tính điểm",
+   "dieu_kien": [
+    {
+     "ma_nhom": "GIAI_QUOC_GIA",
+     "ten_nhom": "Không có giải Nhất/Nhì/Ba HSG, KHKT quốc gia hoặc dự thi quốc tế",
+     "mo_ta": "Được triệu tập thi chọn đội tuyển Olympic hoặc giải Nhất, Nhì, Ba HSG quốc gia (Toán, Lý, Hóa, Sinh, Tin, Ngoại ngữ); đội tuyển KHKT quốc tế hoặc giải Nhất, Nhì, Ba KHKT quốc gia; không quá 3 năm.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "NCKH-QT",
+       "toan_tu": "<=",
+       "gia_tri": 9,
+       "mo_ta": "Đội tuyển KHKT quốc tế"
+      },
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "HSG-QG",
+       "toan_tu": "<=",
+       "gia_tri": 3,
+       "mo_ta": "Giải Nhất/Nhì/Ba HSG quốc gia"
+      },
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "NCKH-QG",
+       "toan_tu": "<=",
+       "gia_tri": 3,
+       "mo_ta": "Giải Nhất/Nhì/Ba KHKT quốc gia"
+      },
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "HSG-QT",
+       "toan_tu": "<=",
+       "gia_tri": 9,
+       "mo_ta": "Dự thi Olympic quốc tế"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "TN_2026",
+     "ten_nhom": "Không tốt nghiệp THPT năm 2026",
+     "mo_ta": "Thí sinh tốt nghiệp THPT năm 2026.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "NAM_TOT_NGHIEP",
+       "toan_tu": "=",
+       "gia_tri": 2026,
+       "mo_ta": "Tốt nghiệp năm 2026"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "BKA_XTTN_12",
+   "ten_cong_thuc": "Xét tuyển tài năng 1.2 - chứng chỉ quốc tế (chưa tự tính điểm)",
+   "ma_phuong_thuc_cua_bo": "415",
+   "kieu_tinh": "THU_CONG",
+   "thang_diem": 100,
+   "ap_dung_diem_cong": false,
+   "ap_dung_uu_tien": false,
+   "mo_ta_cong_thuc": "Theo quy định xét tuyển tài năng của ĐHBK Hà Nội",
+   "dieu_kien": [
+    {
+     "ma_nhom": "CO_CHUNG_CHI_QT",
+     "ten_nhom": "Không có SAT, ACT, A-Level, AP hoặc IB còn hiệu lực",
+     "mo_ta": "Có ít nhất một chứng chỉ quốc tế còn hiệu lực: SAT, ACT, A-Level, AP, IB.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "CO_CHUNG_CHI",
+       "khoa": "GCE_A_LEVEL",
+       "toan_tu": "=",
+       "gia_tri": 1,
+       "mo_ta": "Có A-Level"
+      },
+      {
+       "ma_chi_so": "CO_CHUNG_CHI",
+       "khoa": "AP",
+       "toan_tu": "=",
+       "gia_tri": 1,
+       "mo_ta": "Có AP"
+      },
+      {
+       "ma_chi_so": "DIEM_BAI_THI",
+       "khoa": "SAT",
+       "toan_tu": ">",
+       "gia_tri": 0,
+       "mo_ta": "Có điểm SAT"
+      },
+      {
+       "ma_chi_so": "CO_CHUNG_CHI",
+       "khoa": "IB_DP",
+       "toan_tu": "=",
+       "gia_tri": 1,
+       "mo_ta": "Có IB"
+      },
+      {
+       "ma_chi_so": "DIEM_BAI_THI",
+       "khoa": "ACT",
+       "toan_tu": ">",
+       "gia_tri": 0,
+       "mo_ta": "Có điểm ACT"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "TBC_8",
+     "ten_nhom": "Điểm TBC từng năm lớp 10, 11, 12 dưới 8,00",
+     "mo_ta": "Điểm TBC các môn văn hóa từng năm lớp 10, 11, 12 đạt từ 8,00 trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "TBC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 8,
+       "mo_ta": "TBC từng năm từ 8,00"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_cong_thuc": "BKA_XTTN_13",
+   "ten_cong_thuc": "Xét tuyển tài năng 1.3 - hồ sơ năng lực và phỏng vấn (chưa tự tính điểm)",
+   "ma_phuong_thuc_cua_bo": "500",
+   "kieu_tinh": "THU_CONG",
+   "thang_diem": 100,
+   "ap_dung_diem_cong": false,
+   "ap_dung_uu_tien": false,
+   "mo_ta_cong_thuc": "Điểm HSNL = điểm tư duy (TSA x 40/60, tối đa 40) + điểm thành tích (tối đa 50) + điểm thưởng (tối đa 10)",
+   "dieu_kien": [
+    {
+     "ma_nhom": "TBC_8",
+     "ten_nhom": "Điểm TBC từng năm lớp 10, 11, 12 dưới 8,00",
+     "mo_ta": "Điểm TBC các môn văn hóa từng năm lớp 10, 11, 12 đạt từ 8,00 trở lên.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "TBC_MIN_3_NAM",
+       "toan_tu": ">=",
+       "gia_tri": 8,
+       "mo_ta": "TBC từng năm từ 8,00"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "TN_2026",
+     "ten_nhom": "Không tốt nghiệp THPT năm 2026",
+     "mo_ta": "Thí sinh tốt nghiệp THPT năm 2026.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "NAM_TOT_NGHIEP",
+       "toan_tu": "=",
+       "gia_tri": 2026,
+       "mo_ta": "Tốt nghiệp năm 2026"
+      }
+     ]
+    },
+    {
+     "ma_nhom": "THANH_TICH_HSNL",
+     "ten_nhom": "Không có thành tích thuộc diện hồ sơ năng lực",
+     "mo_ta": "Một trong: giải HSG quốc gia hoặc cấp tỉnh; giải Ba trở lên cuộc thi KHKT; dự Đường lên đỉnh Olympia từ vòng tháng (chưa có mã thành tích); học hệ chuyên cả 3 năm.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "HSG-QG",
+       "toan_tu": "<=",
+       "gia_tri": 4,
+       "mo_ta": "Đạt giải HSG quốc gia"
+      },
+      {
+       "ma_chi_so": "HE_CHUYEN",
+       "toan_tu": "=",
+       "gia_tri": 1,
+       "mo_ta": "Học hệ chuyên cả 3 năm"
+      },
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "HSG-TINH",
+       "toan_tu": "<=",
+       "gia_tri": 4,
+       "mo_ta": "Đạt giải HSG cấp tỉnh/thành phố"
+      },
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "NCKH-QG",
+       "toan_tu": "<=",
+       "gia_tri": 3,
+       "mo_ta": "Giải Ba trở lên KHKT (Bộ GDĐT)"
+      },
+      {
+       "ma_chi_so": "THANH_TICH",
+       "khoa": "NCKH-TINH",
+       "toan_tu": "<=",
+       "gia_tri": 3,
+       "mo_ta": "Giải Ba trở lên KHKT (Sở GDĐT)"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "dieu_kien_chung": [
+  {
+   "ma_nhom": "TN_THPT",
+   "ten_nhom": "Chưa tốt nghiệp THPT",
+   "mo_ta": "Thí sinh đã tốt nghiệp THPT.",
+   "mot_trong": [
+    {
+     "ma_chi_so": "DA_TOT_NGHIEP_THPT",
+     "toan_tu": "=",
+     "gia_tri": 1,
+     "mo_ta": "Đã tốt nghiệp THPT"
+    }
+   ]
+  }
+ ],
+ "chuong_trinh": [
+  {
+   "ma_chuong_trinh": "BF1",
+   "ma_xet_tuyen": "BF1",
+   "ten_chuong_trinh": "Kỹ thuật Sinh học",
+   "chi_tieu": 160,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "B00",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "BF2",
+   "ma_xet_tuyen": "BF2",
+   "ten_chuong_trinh": "Kỹ thuật Thực phẩm",
+   "chi_tieu": 360,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "B00",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "CH1",
+   "ma_xet_tuyen": "CH1",
+   "ten_chuong_trinh": "Kỹ thuật Hóa học",
+   "chi_tieu": 680,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "B00",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "CH2",
+   "ma_xet_tuyen": "CH2",
+   "ten_chuong_trinh": "Hóa học",
+   "chi_tieu": 160,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "B00",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ED2",
+   "ma_xet_tuyen": "ED2",
+   "ten_chuong_trinh": "Công nghệ Giáo dục",
+   "chi_tieu": 120,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ED3",
+   "ma_xet_tuyen": "ED3",
+   "ten_chuong_trinh": "Quản lý Giáo dục",
+   "chi_tieu": 60,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ED5",
+   "ma_xet_tuyen": "ED5",
+   "ten_chuong_trinh": "Tâm lý học công nghiệp và tổ chức (mới)",
+   "chi_tieu": 40,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "EE1",
+   "ma_xet_tuyen": "EE1",
+   "ten_chuong_trinh": "Kỹ thuật điện",
+   "chi_tieu": 240,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "EE2",
+   "ma_xet_tuyen": "EE2",
+   "ten_chuong_trinh": "Kỹ thuật điều khiển & Tự động hóa",
+   "chi_tieu": 500,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "EM1",
+   "ma_xet_tuyen": "EM1",
+   "ten_chuong_trinh": "Quản lý Năng lượng",
+   "chi_tieu": 80,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "EM2",
+   "ma_xet_tuyen": "EM2",
+   "ten_chuong_trinh": "Quản lý Công nghiệp",
+   "chi_tieu": 100,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "EM3",
+   "ma_xet_tuyen": "EM3",
+   "ten_chuong_trinh": "Quản trị Kinh doanh",
+   "chi_tieu": 120,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "EM5",
+   "ma_xet_tuyen": "EM5",
+   "ten_chuong_trinh": "Tài chính - Ngân hàng",
+   "chi_tieu": 100,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ET1",
+   "ma_xet_tuyen": "ET1",
+   "ten_chuong_trinh": "Kỹ thuật Điện tử - Viễn thông",
+   "chi_tieu": 480,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ET2",
+   "ma_xet_tuyen": "ET2",
+   "ten_chuong_trinh": "Kỹ thuật Y sinh",
+   "chi_tieu": 100,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "B00"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "EV1",
+   "ma_xet_tuyen": "EV1",
+   "ten_chuong_trinh": "Kỹ thuật Môi trường",
+   "chi_tieu": 160,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "B00",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "EV2",
+   "ma_xet_tuyen": "EV2",
+   "ten_chuong_trinh": "Quản lý Tài nguyên và Môi trường",
+   "chi_tieu": 120,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "B00",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "FL1",
+   "ma_xet_tuyen": "FL1",
+   "ten_chuong_trinh": "Tiếng Anh KHKT và Công nghệ",
+   "chi_tieu": 210,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "D01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "FL3",
+   "ma_xet_tuyen": "FL3",
+   "ten_chuong_trinh": "Tiếng Trung KH&CN",
+   "chi_tieu": 80,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "D01",
+      "D04"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "TRUNG",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Trung từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "FL4",
+   "ma_xet_tuyen": "FL4",
+   "ten_chuong_trinh": "Tiếng Hàn KH&CN (mới)",
+   "chi_tieu": 40,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "D01",
+      "DD2"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "HAN",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Hàn từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "HE1",
+   "ma_xet_tuyen": "HE1",
+   "ten_chuong_trinh": "Kỹ thuật Nhiệt",
+   "chi_tieu": 250,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "IT1",
+   "ma_xet_tuyen": "IT1",
+   "ten_chuong_trinh": "CNTT: Khoa học Máy tính",
+   "chi_tieu": 300,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "IT2",
+   "ma_xet_tuyen": "IT2",
+   "ten_chuong_trinh": "CNTT: Kỹ thuật Máy tính",
+   "chi_tieu": 200,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ME1",
+   "ma_xet_tuyen": "ME1",
+   "ten_chuong_trinh": "Kỹ thuật Cơ điện tử",
+   "chi_tieu": 300,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ME2",
+   "ma_xet_tuyen": "ME2",
+   "ten_chuong_trinh": "Kỹ thuật Cơ khí",
+   "chi_tieu": 560,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "MI1",
+   "ma_xet_tuyen": "MI1",
+   "ten_chuong_trinh": "Toán-Tin",
+   "chi_tieu": 160,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "MI2",
+   "ma_xet_tuyen": "MI2",
+   "ten_chuong_trinh": "Hệ thống Thông tin quản lý",
+   "chi_tieu": 80,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "MS1",
+   "ma_xet_tuyen": "MS1",
+   "ten_chuong_trinh": "Kỹ thuật Vật liệu",
+   "chi_tieu": 280,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "MS2",
+   "ma_xet_tuyen": "MS2",
+   "ten_chuong_trinh": "Kỹ thuật Vi điện tử và Công nghệ nano",
+   "chi_tieu": 180,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "MS3",
+   "ma_xet_tuyen": "MS3",
+   "ten_chuong_trinh": "Công nghệ vật liệu Polyme và Compozit",
+   "chi_tieu": 80,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "MS5",
+   "ma_xet_tuyen": "MS5",
+   "ten_chuong_trinh": "Kỹ thuật In",
+   "chi_tieu": 60,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "PH1",
+   "ma_xet_tuyen": "PH1",
+   "ten_chuong_trinh": "Vật lý Kỹ thuật",
+   "chi_tieu": 200,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "PH2",
+   "ma_xet_tuyen": "PH2",
+   "ten_chuong_trinh": "Kỹ thuật Hạt nhân",
+   "chi_tieu": 40,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "PH3",
+   "ma_xet_tuyen": "PH3",
+   "ten_chuong_trinh": "Vật lý Y khoa",
+   "chi_tieu": 60,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "TE1",
+   "ma_xet_tuyen": "TE1",
+   "ten_chuong_trinh": "Kỹ thuật Ô tô",
+   "chi_tieu": 200,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "TE2",
+   "ma_xet_tuyen": "TE2",
+   "ten_chuong_trinh": "Kỹ thuật Cơ khí động lực",
+   "chi_tieu": 120,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "TE3",
+   "ma_xet_tuyen": "TE3",
+   "ten_chuong_trinh": "Kỹ thuật Hàng không",
+   "chi_tieu": 80,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "TX1",
+   "ma_xet_tuyen": "TX1",
+   "ten_chuong_trinh": "Công nghệ Dệt May",
+   "chi_tieu": 240,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "BF-E12",
+   "ma_xet_tuyen": "BF-E12",
+   "ten_chuong_trinh": "Kỹ thuật Thực phẩm",
+   "chi_tieu": 60,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "B00",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "BF-E19",
+   "ma_xet_tuyen": "BF-E19",
+   "ten_chuong_trinh": "Kỹ thuật sinh học",
+   "chi_tieu": 60,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "B00",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "CH-E11",
+   "ma_xet_tuyen": "CH-E11",
+   "ten_chuong_trinh": "Kỹ thuật Hóa dược",
+   "chi_tieu": 100,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "B00",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "CH-E20",
+   "ma_xet_tuyen": "CH-E20",
+   "ten_chuong_trinh": "Hóa học Mỹ phẩm (mới)",
+   "chi_tieu": 40,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "B00",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "EE-E8",
+   "ma_xet_tuyen": "EE-E8",
+   "ten_chuong_trinh": "Kỹ thuật điều khiển-Tự động hóa",
+   "chi_tieu": 140,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "EE-E18",
+   "ma_xet_tuyen": "EE-E18",
+   "ten_chuong_trinh": "Hệ thống điện và năng lượng tái tạo",
+   "chi_tieu": 60,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "EM-E13",
+   "ma_xet_tuyen": "EM-E13",
+   "ten_chuong_trinh": "Phân tích Kinh doanh",
+   "chi_tieu": 140,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "EM-E14",
+   "ma_xet_tuyen": "EM-E14",
+   "ten_chuong_trinh": "Logistics và Quản lý chuỗi cung ứng",
+   "chi_tieu": 140,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "EM-E17",
+   "ma_xet_tuyen": "EM-E17",
+   "ten_chuong_trinh": "Kế toán (mới)",
+   "chi_tieu": 80,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A01",
+      "D01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ET-E4",
+   "ma_xet_tuyen": "ET-E4",
+   "ten_chuong_trinh": "Kỹ thuật Điện tử - Viễn thông",
+   "chi_tieu": 120,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ET-E5",
+   "ma_xet_tuyen": "ET-E5",
+   "ten_chuong_trinh": "Kỹ thuật Y sinh",
+   "chi_tieu": 40,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ET-E16",
+   "ma_xet_tuyen": "ET-E16",
+   "ten_chuong_trinh": "Truyền thông số và Kỹ thuật đa phương tiện",
+   "chi_tieu": 60,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "IT-E7",
+   "ma_xet_tuyen": "IT-E7",
+   "ten_chuong_trinh": "Công nghệ Thông tin Global ICT",
+   "chi_tieu": 160,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "IT-E10",
+   "ma_xet_tuyen": "IT-E10",
+   "ten_chuong_trinh": "Khoa học Dữ liệu và Trí tuệ nhân tạo",
+   "chi_tieu": 160,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "IT-E15",
+   "ma_xet_tuyen": "IT-E15",
+   "ten_chuong_trinh": "An toàn không gian số - Cyber Security",
+   "chi_tieu": 40,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ME-E1",
+   "ma_xet_tuyen": "ME-E1",
+   "ten_chuong_trinh": "Kỹ thuật Cơ điện tử",
+   "chi_tieu": 180,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "MI-E22",
+   "ma_xet_tuyen": "MI-E22",
+   "ten_chuong_trinh": "Khoa học tính toán cho các hệ thống thông minh (mới)",
+   "chi_tieu": 40,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "MS-E3",
+   "ma_xet_tuyen": "MS-E3",
+   "ten_chuong_trinh": "Khoa học và Kỹ thuật Vật liệu",
+   "chi_tieu": 60,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01",
+      "D07"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "TE-E2",
+   "ma_xet_tuyen": "TE-E2",
+   "ten_chuong_trinh": "Kỹ thuật Ô tô",
+   "chi_tieu": 100,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_B1",
+     "ten_nhom": "Chưa đạt VSTEP B1 / IELTS 5.0 / điểm thi THPT môn ngoại ngữ từ 6,5",
+     "mo_ta": "Chương trình tiên tiến dạy bằng tiếng Anh, FL1, FL3, FL4: VSTEP B1 trở lên, hoặc IELTS Academic từ 5.0 hoặc tương đương, hoặc điểm thi THPT 2026 môn tiếng Anh (tiếng Trung với FL3, tiếng Hàn với FL4) từ 6,5.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5,
+       "mo_ta": "IELTS Academic"
+      },
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "VSTEP",
+       "toan_tu": ">=",
+       "gia_tri": 3,
+       "mo_ta": "VSTEP bậc 3 (B1) trở lên; hs_chung_chi.diem ghi số bậc"
+      },
+      {
+       "ma_chi_so": "DIEM_THI_THPT",
+       "khoa": "ANH",
+       "toan_tu": ">=",
+       "gia_tri": 6.5,
+       "mo_ta": "Điểm thi THPT môn tiếng Anh từ 6,5"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ET-E9",
+   "ma_xet_tuyen": "ET-E9",
+   "ten_chuong_trinh": "Hệ thống nhúng thông minh và IoT (tăng cường tiếng Nhật)",
+   "chi_tieu": 80,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "IT-E6",
+   "ma_xet_tuyen": "IT-E6",
+   "ten_chuong_trinh": "Công nghệ Thông tin Việt - Nhật (tăng cường tiếng Nhật)",
+   "chi_tieu": 160,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "IT-EP",
+   "ma_xet_tuyen": "IT-EP",
+   "ten_chuong_trinh": "Công nghệ Thông tin Việt - Pháp (tăng cường tiếng Pháp)",
+   "chi_tieu": 40,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ET-LUH",
+   "ma_xet_tuyen": "ET-LUH",
+   "ten_chuong_trinh": "Điện tử - Viễn thông - ĐH Leibniz Hannover (CHLB Đức)",
+   "chi_tieu": 40,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ME-LUH",
+   "ma_xet_tuyen": "ME-LUH",
+   "ten_chuong_trinh": "Cơ điện tử - hợp tác với ĐH Leibniz Hannover (CHLB Đức)",
+   "chi_tieu": 50,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ME-NUT",
+   "ma_xet_tuyen": "ME-NUT",
+   "ten_chuong_trinh": "Cơ điện tử - hợp tác với ĐHCN Nagaoka (Nhật Bản)",
+   "chi_tieu": 100,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "ME-GU",
+   "ma_xet_tuyen": "ME-GU",
+   "ten_chuong_trinh": "Cơ khí Chế tạo máy - hợp tác với trường ĐH Griffith (Úc)",
+   "chi_tieu": 40,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "EE-EP",
+   "ma_xet_tuyen": "EE-EP",
+   "ten_chuong_trinh": "Tin học công nghiệp và Tự động hóa",
+   "chi_tieu": 40,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "TE-EP",
+   "ma_xet_tuyen": "TE-EP",
+   "ten_chuong_trinh": "Cơ khí Hàng không",
+   "chi_tieu": 40,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "FL2",
+   "ma_xet_tuyen": "FL2",
+   "ten_chuong_trinh": "Tiếng Anh chuyên nghiệp quốc tế (do ĐHBK Hà Nội và ĐH Plymouth Marjon - Vương quốc Anh cấp bằng)",
+   "chi_tieu": 90,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "D01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_IELTS_55",
+     "ten_nhom": "Chưa đạt IELTS 5.5 hoặc tương đương",
+     "mo_ta": "Chương trình liên kết đào tạo quốc tế: IELTS Academic từ 5.5 hoặc tương đương.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5.5,
+       "mo_ta": "IELTS Academic"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ma_chuong_trinh": "TROY-IT",
+   "ma_xet_tuyen": "TROY-IT",
+   "ten_chuong_trinh": "Khoa học Máy tính - ĐH Troy (Hoa Kỳ, do ĐH Troy cấp bằng)",
+   "chi_tieu": 120,
+   "phuong_an": [
+    {
+     "ma_cong_thuc": "BKA_THPT_30",
+     "to_hop": [
+      "A00",
+      "A01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_THPT_K01",
+     "to_hop": [
+      "K01"
+     ]
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_11"
+    },
+    {
+     "ma_cong_thuc": "BKA_TSA"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_12"
+    },
+    {
+     "ma_cong_thuc": "BKA_XTTN_13"
+    }
+   ],
+   "dieu_kien_rieng": [
+    {
+     "ma_nhom": "NGOAI_NGU_IELTS_55",
+     "ten_nhom": "Chưa đạt IELTS 5.5 hoặc tương đương",
+     "mo_ta": "Chương trình liên kết đào tạo quốc tế: IELTS Academic từ 5.5 hoặc tương đương.",
+     "mot_trong": [
+      {
+       "ma_chi_so": "DIEM_CHUNG_CHI",
+       "khoa": "IELTS",
+       "toan_tu": ">=",
+       "gia_tri": 5.5,
+       "mo_ta": "IELTS Academic"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "diem_chuan": []
+}

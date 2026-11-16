@@ -1,0 +1,8524 @@
+{
+ "mo_ta": "Danh sách mã hợp lệ dùng trong file đề án chuẩn, trích từ các bảng dm_* của hệ thống. Tổ hợp có vi_tri = null chưa dùng được để tính điểm.",
+ "mon_hoc": [
+  {
+   "ma": "TOAN",
+   "ten": "Toán",
+   "nhom": "Tự nhiên"
+  },
+  {
+   "ma": "LY",
+   "ten": "Vật lý",
+   "nhom": "Tự nhiên"
+  },
+  {
+   "ma": "HOA",
+   "ten": "Hóa học",
+   "nhom": "Tự nhiên"
+  },
+  {
+   "ma": "SINH",
+   "ten": "Sinh học",
+   "nhom": "Tự nhiên"
+  },
+  {
+   "ma": "TIN",
+   "ten": "Tin học",
+   "nhom": "Tự nhiên"
+  },
+  {
+   "ma": "VAN",
+   "ten": "Ngữ văn",
+   "nhom": "Xã hội"
+  },
+  {
+   "ma": "SU",
+   "ten": "Lịch sử",
+   "nhom": "Xã hội"
+  },
+  {
+   "ma": "DIA",
+   "ten": "Địa lý",
+   "nhom": "Xã hội"
+  },
+  {
+   "ma": "GDKTPL",
+   "ten": "Giáo dục kinh tế và pháp luật",
+   "nhom": "Xã hội"
+  },
+  {
+   "ma": "ANH",
+   "ten": "Tiếng Anh",
+   "nhom": "Ngoại ngữ"
+  },
+  {
+   "ma": "NGA",
+   "ten": "Tiếng Nga",
+   "nhom": "Ngoại ngữ"
+  },
+  {
+   "ma": "PHAP",
+   "ten": "Tiếng Pháp",
+   "nhom": "Ngoại ngữ"
+  },
+  {
+   "ma": "TRUNG",
+   "ten": "Tiếng Trung Quốc",
+   "nhom": "Ngoại ngữ"
+  },
+  {
+   "ma": "DUC",
+   "ten": "Tiếng Đức",
+   "nhom": "Ngoại ngữ"
+  },
+  {
+   "ma": "NHAT",
+   "ten": "Tiếng Nhật",
+   "nhom": "Ngoại ngữ"
+  },
+  {
+   "ma": "HAN",
+   "ten": "Tiếng Hàn",
+   "nhom": "Ngoại ngữ"
+  },
+  {
+   "ma": "NGOAI_NGU",
+   "ten": "Ngoại ngữ (theo quy định của trường)",
+   "nhom": "Ngoại ngữ"
+  },
+  {
+   "ma": "CN_CONG_NGHIEP",
+   "ten": "Công nghệ công nghiệp",
+   "nhom": "Công nghệ"
+  },
+  {
+   "ma": "CN_NONG_NGHIEP",
+   "ten": "Công nghệ nông nghiệp",
+   "nhom": "Công nghệ"
+  },
+  {
+   "ma": "KHTN",
+   "ten": "Khoa học tự nhiên (bài thi tổ hợp)",
+   "nhom": "Tự nhiên"
+  },
+  {
+   "ma": "KHXH",
+   "ten": "Khoa học xã hội (bài thi tổ hợp)",
+   "nhom": "Xã hội"
+  },
+  {
+   "ma": "NK",
+   "ten": "Năng khiếu (chung)",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK1",
+   "ten": "Năng khiếu 1",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK2",
+   "ten": "Năng khiếu 2",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_VE",
+   "ten": "Vẽ mỹ thuật",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_VE_1",
+   "ten": "Vẽ nghệ thuật 1",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_VE_2",
+   "ten": "Vẽ nghệ thuật 2",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_VE_HINH_HOA",
+   "ten": "Vẽ hình họa mỹ thuật",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_HINH_HOA",
+   "ten": "Vẽ hình họa",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_TRANG_TRI_MAU",
+   "ten": "Vẽ trang trí màu",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_TRANG_TRI",
+   "ten": "Vẽ trang trí",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_DOC_DIEN_CAM",
+   "ten": "Đọc diễn cảm",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_HAT",
+   "ten": "Hát",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_HAT_MUA",
+   "ten": "Hát - múa",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_DOC_HAT",
+   "ten": "Năng khiếu đọc diễn cảm và hát",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_GDMN",
+   "ten": "Năng khiếu giáo dục mầm non",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_GDMN_1",
+   "ten": "Năng khiếu mầm non 1 (kể chuyện, đọc diễn cảm)",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_GDMN_2",
+   "ten": "Năng khiếu mầm non 2 (hát)",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_AM_NHAC_1",
+   "ten": "Năng khiếu âm nhạc 1",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_AM_NHAC_2",
+   "ten": "Năng khiếu âm nhạc 2",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_XUONG_AM",
+   "ten": "Xướng âm",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_KY_XUONG_AM",
+   "ten": "Ký xướng âm",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_NHAC_CU_HAT",
+   "ten": "Hát hoặc biểu diễn nhạc cụ",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_BIEU_DIEN",
+   "ten": "Biểu diễn nghệ thuật",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_NGHE_THUAT",
+   "ten": "Năng khiếu nghệ thuật",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_VH_NGHE_THUAT",
+   "ten": "Năng khiếu văn hóa nghệ thuật",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_TDTT",
+   "ten": "Năng khiếu thể dục thể thao",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_BAO_CHI",
+   "ten": "Năng khiếu báo chí",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_TRUYEN_THONG",
+   "ten": "Năng khiếu kiến thức truyền thông",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_KICH_BAN",
+   "ten": "Xây dựng kịch bản sự kiện",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_SKDA_1",
+   "ten": "Năng khiếu sân khấu điện ảnh 1",
+   "nhom": "Năng khiếu"
+  },
+  {
+   "ma": "NK_SKDA_2",
+   "ten": "Năng khiếu sân khấu điện ảnh 2",
+   "nhom": "Năng khiếu"
+  }
+ ],
+ "to_hop": [
+  {
+   "ma": "2",
+   "ten": "1",
+   "vi_tri": null
+  },
+  {
+   "ma": "A00",
+   "ten": "Toán, Vật lý, Hóa học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "HOA"
+    ]
+   ]
+  },
+  {
+   "ma": "A01",
+   "ten": "Toán, Vật lý, Tiếng Anh",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "A02",
+   "ten": "Toán, Vật lý, Sinh học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "SINH"
+    ]
+   ]
+  },
+  {
+   "ma": "A03",
+   "ten": "Toán, Vật lý, Lịch sử",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "SU"
+    ]
+   ]
+  },
+  {
+   "ma": "A04",
+   "ten": "Toán, Vật lý, Địa lý",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "DIA"
+    ]
+   ]
+  },
+  {
+   "ma": "A05",
+   "ten": "Toán, Hóa học, Lịch sử",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "SU"
+    ]
+   ]
+  },
+  {
+   "ma": "A06",
+   "ten": "Toán, Hóa học, Địa lý",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "DIA"
+    ]
+   ]
+  },
+  {
+   "ma": "A07",
+   "ten": "Toán, Lịch sử, Địa lý",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "DIA"
+    ]
+   ]
+  },
+  {
+   "ma": "A08",
+   "ten": "Toán, Lịch sử, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "A09",
+   "ten": "Toán, Địa lý, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "A10",
+   "ten": "Toán, Vật lý, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "A11",
+   "ten": "Toán, Hóa học, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "A12",
+   "ten": "Toán, Khoa học tự nhiên (bài thi tổ hợp), Khoa học xã hội (bài thi tổ hợp)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "KHXH"
+    ]
+   ]
+  },
+  {
+   "ma": "A14",
+   "ten": "Toán, Khoa học tự nhiên (bài thi tổ hợp), Địa lý",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "DIA"
+    ]
+   ]
+  },
+  {
+   "ma": "A15",
+   "ten": "Toán, Khoa học tự nhiên (bài thi tổ hợp), Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "A16",
+   "ten": "Toán, Khoa học tự nhiên (bài thi tổ hợp), Ngữ văn",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "VAN"
+    ]
+   ]
+  },
+  {
+   "ma": "A17",
+   "ten": "Toán, Vật lý, Khoa học xã hội (bài thi tổ hợp)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "KHXH"
+    ]
+   ]
+  },
+  {
+   "ma": "A18",
+   "ten": "Toán, Hóa học, Khoa học xã hội (bài thi tổ hợp)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "KHXH"
+    ]
+   ]
+  },
+  {
+   "ma": "B00",
+   "ten": "Toán, Hóa học, Sinh học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "SINH"
+    ]
+   ]
+  },
+  {
+   "ma": "B01",
+   "ten": "Toán, Sinh học, Lịch sử",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "SU"
+    ]
+   ]
+  },
+  {
+   "ma": "B02",
+   "ten": "Toán, Sinh học, Địa lý",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "DIA"
+    ]
+   ]
+  },
+  {
+   "ma": "B03",
+   "ten": "Toán, Ngữ văn, Sinh học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "SINH"
+    ]
+   ]
+  },
+  {
+   "ma": "B04",
+   "ten": "Toán, Sinh học, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "B05",
+   "ten": "Toán, Sinh học, Khoa học xã hội (bài thi tổ hợp)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "KHXH"
+    ]
+   ]
+  },
+  {
+   "ma": "B08",
+   "ten": "Toán, Sinh học, Tiếng Anh",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "C00",
+   "ten": "Ngữ văn, Lịch sử, Địa lý",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "DIA"
+    ]
+   ]
+  },
+  {
+   "ma": "C01",
+   "ten": "Toán, Ngữ văn, Vật lý",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ]
+   ]
+  },
+  {
+   "ma": "C02",
+   "ten": "Toán, Ngữ văn, Hóa học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "HOA"
+    ]
+   ]
+  },
+  {
+   "ma": "C03",
+   "ten": "Toán, Ngữ văn, Lịch sử",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ]
+   ]
+  },
+  {
+   "ma": "C04",
+   "ten": "Ngữ văn, Toán, Địa lý",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TOAN"
+    ],
+    [
+     "DIA"
+    ]
+   ]
+  },
+  {
+   "ma": "C05",
+   "ten": "Ngữ văn, Vật lý, Hóa học",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "HOA"
+    ]
+   ]
+  },
+  {
+   "ma": "C06",
+   "ten": "Ngữ văn, Vật lý, Sinh học",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "SINH"
+    ]
+   ]
+  },
+  {
+   "ma": "C07",
+   "ten": "Ngữ văn, Vật lý, Lịch sử",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "SU"
+    ]
+   ]
+  },
+  {
+   "ma": "C08",
+   "ten": "Ngữ văn, Hóa học, Sinh học",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "SINH"
+    ]
+   ]
+  },
+  {
+   "ma": "C09",
+   "ten": "Ngữ văn, Vật lý, Địa lý",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "DIA"
+    ]
+   ]
+  },
+  {
+   "ma": "C10",
+   "ten": "Ngữ văn, Hóa học, Lịch sử",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "SU"
+    ]
+   ]
+  },
+  {
+   "ma": "C11",
+   "ten": "Ngữ văn, Địa lý, Hóa học",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "HOA"
+    ]
+   ]
+  },
+  {
+   "ma": "C12",
+   "ten": "Ngữ văn, Sinh học, Lịch sử",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "SU"
+    ]
+   ]
+  },
+  {
+   "ma": "C13",
+   "ten": "Ngữ văn, Sinh học, Địa lý",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "DIA"
+    ]
+   ]
+  },
+  {
+   "ma": "C14",
+   "ten": "Ngữ văn, Toán, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "C15",
+   "ten": "Ngữ văn, Toán, Khoa học xã hội (bài thi tổ hợp)",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TOAN"
+    ],
+    [
+     "KHXH"
+    ]
+   ]
+  },
+  {
+   "ma": "C16",
+   "ten": "Ngữ văn, Vật lý, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "C17",
+   "ten": "Ngữ văn, Hóa học, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "C18",
+   "ten": "Ngữ văn, Sinh học, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "C19",
+   "ten": "Ngữ văn, Lịch sử, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "C20",
+   "ten": "Ngữ văn, Địa lý, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "D01",
+   "ten": "Ngữ văn, Toán, Tiếng Anh",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TOAN"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "D02",
+   "ten": "Ngữ văn, Toán, Tiếng Nga",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TOAN"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "D03",
+   "ten": "Ngữ văn, Toán, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TOAN"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D04",
+   "ten": "Ngữ văn, Toán, Tiếng Trung",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TOAN"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "D05",
+   "ten": "Ngữ văn, Toán, Tiếng Đức",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TOAN"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "D06",
+   "ten": "Ngữ văn, Toán, Tiếng Nhật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TOAN"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "D07",
+   "ten": "Toán, Hóa học, Tiếng Anh",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "D08",
+   "ten": "Toán, Sinh học, Tiếng Anh",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "D09",
+   "ten": "Toán, Tiếng Anh, Lịch sử",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "ANH"
+    ],
+    [
+     "SU"
+    ]
+   ]
+  },
+  {
+   "ma": "D10",
+   "ten": "Toán, Tiếng Anh, Địa lý",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "ANH"
+    ],
+    [
+     "DIA"
+    ]
+   ]
+  },
+  {
+   "ma": "D11",
+   "ten": "Ngữ văn, Vật lý, Tiếng Anh",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "D12",
+   "ten": "Ngữ văn, Hóa học, Tiếng Anh",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "D13",
+   "ten": "Ngữ văn, Sinh học, Tiếng Anh",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "D14",
+   "ten": "Ngữ văn, Lịch sử, Tiếng Anh",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "D15",
+   "ten": "Ngữ văn, Địa lý, Tiếng Anh",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "D16",
+   "ten": "Toán, Địa lý, Tiếng Đức",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "D17",
+   "ten": "Toán, Địa lý, Tiếng Nga",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "D18",
+   "ten": "Toán, Địa lý, Tiếng Nhật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "D19",
+   "ten": "Toán, Địa lý, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D20",
+   "ten": "Toán, Địa lý, Tiếng Trung",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "D21",
+   "ten": "Toán, Hóa học, Tiếng Đức",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "D22",
+   "ten": "Toán, Hóa học, Tiếng Nga",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "D23",
+   "ten": "Toán, Hóa học, Tiếng Nhật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "D24",
+   "ten": "Toán, Hóa học, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D25",
+   "ten": "Toán, Hóa học, Tiếng Trung",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "D26",
+   "ten": "Toán, Vật lý, Tiếng Đức",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "D27",
+   "ten": "Toán, Vật lý, Tiếng Nga",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "D28",
+   "ten": "Toán, Vật lý, Tiếng Nhật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "D29",
+   "ten": "Toán, Vật lý, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D30",
+   "ten": "Toán, Vật lý, Tiếng Trung",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "D31",
+   "ten": "Toán, Sinh học, Tiếng Đức",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "D32",
+   "ten": "Toán, Sinh học, Tiếng Nga",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "D33",
+   "ten": "Toán, Sinh học, Tiếng Nhật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "D34",
+   "ten": "Toán, Sinh học, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D35",
+   "ten": "Toán, Sinh học, Tiếng Trung",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "D36",
+   "ten": "Toán, Lịch sử, Tiếng Đức",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "D37",
+   "ten": "Toán, Lịch sử, Tiếng Nga",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "D38",
+   "ten": "Toán, Lịch sử, Tiếng Nhật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "D39",
+   "ten": "Toán, Lịch sử, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D40",
+   "ten": "Toán, Lịch sử, Tiếng Trung",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "D41",
+   "ten": "Ngữ văn, Địa lý, Tiếng Đức",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "D42",
+   "ten": "Ngữ văn, Địa lý, Tiếng Nga",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "D43",
+   "ten": "Ngữ văn, Địa lý, Tiếng Nhật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "D44",
+   "ten": "Ngữ văn, Địa lý, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D45",
+   "ten": "Ngữ văn, Địa lý, Tiếng Trung",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "D50",
+   "ten": "Ngữ văn, Hóa học, Tiếng Trung",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "D52",
+   "ten": "Ngữ văn, Vật lý, Tiếng Nga",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "D54",
+   "ten": "Ngữ văn, Vật lý, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D55",
+   "ten": "Ngữ văn, Vật lý, Tiếng Trung",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "D61",
+   "ten": "Ngữ văn, Lịch sử, Tiếng Đức",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "D62",
+   "ten": "Ngữ văn, Lịch sử, Tiếng Nga",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "D63",
+   "ten": "Ngữ văn, Lịch sử, Tiếng Nhật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "D64",
+   "ten": "Ngữ văn, Lịch sử, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D65",
+   "ten": "Ngữ văn, Lịch sử, Tiếng Trung",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "D66",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Tiếng Anh",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "D68",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Tiếng Nga",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "D69",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Tiếng Nhật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "D70",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D71",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Tiếng Đức",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "D72",
+   "ten": "Ngữ văn, Khoa học tự nhiên (bài thi tổ hợp), Tiếng Anh",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "D73",
+   "ten": "Ngữ văn, Khoa học tự nhiên (bài thi tổ hợp), Tiếng Đức",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "D74",
+   "ten": "Ngữ văn, Khoa học tự nhiên (bài thi tổ hợp), Tiếng Nga",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "D75",
+   "ten": "Ngữ văn, Khoa học tự nhiên (bài thi tổ hợp), Tiếng Nhật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "D76",
+   "ten": "Ngữ văn, Khoa học tự nhiên (bài thi tổ hợp), Tiếng Pháp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D77",
+   "ten": "Ngữ văn, Khoa học tự nhiên (bài thi tổ hợp), Tiếng Trung",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "D78",
+   "ten": "Ngữ văn, Khoa học xã hội (bài thi tổ hợp), Tiếng Anh",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "KHXH"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "D79",
+   "ten": "Ngữ văn, Khoa học xã hội (bài thi tổ hợp), Tiếng Đức",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "KHXH"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "D80",
+   "ten": "Ngữ văn, Khoa học xã hội (bài thi tổ hợp), Tiếng Nga",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "KHXH"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "D81",
+   "ten": "Ngữ văn, Khoa học xã hội (bài thi tổ hợp), Tiếng Nhật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "KHXH"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "D82",
+   "ten": "Ngữ văn, Khoa học xã hội (bài thi tổ hợp), Tiếng Pháp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "KHXH"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D83",
+   "ten": "Ngữ văn, Khoa học xã hội (bài thi tổ hợp), Tiếng Trung",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "KHXH"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "D84",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Tiếng Anh",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "D85",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Tiếng Đức",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "D86",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Tiếng Nga",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "D87",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D88",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Tiếng Nhật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "D90",
+   "ten": "Toán, Khoa học tự nhiên (bài thi tổ hợp), Tiếng Anh",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "D91",
+   "ten": "Toán, Khoa học tự nhiên (bài thi tổ hợp), Tiếng Pháp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D92",
+   "ten": "Toán, Khoa học tự nhiên (bài thi tổ hợp), Tiếng Đức",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "D93",
+   "ten": "Toán, Khoa học tự nhiên (bài thi tổ hợp), Tiếng Nga",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "D94",
+   "ten": "Toán, Khoa học tự nhiên (bài thi tổ hợp), Tiếng Nhật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "D95",
+   "ten": "Toán, Khoa học tự nhiên (bài thi tổ hợp), Tiếng Trung",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "D96",
+   "ten": "Toán, Khoa học xã hội (bài thi tổ hợp), Tiếng Anh",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHXH"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "D97",
+   "ten": "Toán, Khoa học xã hội (bài thi tổ hợp), Tiếng Pháp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHXH"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "D98",
+   "ten": "Toán, Khoa học xã hội (bài thi tổ hợp), Tiếng Đức",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHXH"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "D99",
+   "ten": "Toán, Khoa học xã hội (bài thi tổ hợp), Tiếng Nga",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHXH"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "DD0",
+   "ten": "Toán, Khoa học xã hội (bài thi tổ hợp), Tiếng Nhật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHXH"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "DD2",
+   "ten": "Ngữ văn, Toán, Tiếng Hàn",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TOAN"
+    ],
+    [
+     "HAN"
+    ]
+   ]
+  },
+  {
+   "ma": "DH1",
+   "ten": "Ngữ văn, Địa lý, Tiếng Hàn",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "HAN"
+    ]
+   ]
+  },
+  {
+   "ma": "DH2",
+   "ten": "Ngữ văn, Hóa học, Tiếng Hàn",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "HAN"
+    ]
+   ]
+  },
+  {
+   "ma": "DH3",
+   "ten": "Ngữ văn, Vật lý, Tiếng Hàn",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "HAN"
+    ]
+   ]
+  },
+  {
+   "ma": "DH4",
+   "ten": "Ngữ văn, Sinh học, Tiếng Hàn",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "HAN"
+    ]
+   ]
+  },
+  {
+   "ma": "DH5",
+   "ten": "Ngữ văn, Lịch sử, Tiếng Hàn",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "HAN"
+    ]
+   ]
+  },
+  {
+   "ma": "H00",
+   "ten": "Ngữ văn, Vẽ nghệ thuật 1, Vẽ nghệ thuật 2",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "NK_VE_1"
+    ],
+    [
+     "NK_VE_2"
+    ]
+   ]
+  },
+  {
+   "ma": "H01",
+   "ten": "Toán, Ngữ văn, Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "H02",
+   "ten": "Toán, Vẽ hình họa, Vẽ trang trí màu",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "NK_HINH_HOA"
+    ],
+    [
+     "NK_TRANG_TRI_MAU"
+    ]
+   ]
+  },
+  {
+   "ma": "H03",
+   "ten": "Toán, Khoa học tự nhiên (bài thi tổ hợp), Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "KHTN"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "H04",
+   "ten": "Toán, Tiếng Anh, Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "ANH"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "H05",
+   "ten": "Ngữ văn, Khoa học xã hội (bài thi tổ hợp), Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "KHXH"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "H06",
+   "ten": "Ngữ văn, Ngoại ngữ (theo quy định của trường), Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "NGOAI_NGU"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "H07",
+   "ten": "Toán, Vẽ hình họa, Vẽ trang trí",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "NK_HINH_HOA"
+    ],
+    [
+     "NK_TRANG_TRI"
+    ]
+   ]
+  },
+  {
+   "ma": "H08",
+   "ten": "Ngữ văn, Lịch sử, Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "H09",
+   "ten": "Ngữ văn, Địa lý, Năng khiếu",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "NK"
+    ]
+   ]
+  },
+  {
+   "ma": "M00",
+   "ten": "Ngữ văn, Toán, Đọc diễn cảm, Hát",
+   "vi_tri": null
+  },
+  {
+   "ma": "M01",
+   "ten": "Ngữ văn, Lịch sử, Năng khiếu",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "NK"
+    ]
+   ]
+  },
+  {
+   "ma": "M02",
+   "ten": "Toán, Năng khiếu 1, Năng khiếu 2",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "NK1"
+    ],
+    [
+     "NK2"
+    ]
+   ]
+  },
+  {
+   "ma": "M03",
+   "ten": "Ngữ văn, Năng khiếu 1, Năng khiếu 2",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "NK1"
+    ],
+    [
+     "NK2"
+    ]
+   ]
+  },
+  {
+   "ma": "M04",
+   "ten": "Toán, Đọc diễn cảm, Hát - múa",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "NK_DOC_DIEN_CAM"
+    ],
+    [
+     "NK_HAT_MUA"
+    ]
+   ]
+  },
+  {
+   "ma": "M05",
+   "ten": "Ngữ văn, Khoa học xã hội (bài thi tổ hợp), Năng khiếu",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "KHXH"
+    ],
+    [
+     "NK"
+    ]
+   ]
+  },
+  {
+   "ma": "M06",
+   "ten": "Ngữ văn, Toán, Năng khiếu Giáo dục mầm non",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TOAN"
+    ],
+    [
+     "NK_GDMN"
+    ]
+   ]
+  },
+  {
+   "ma": "M07",
+   "ten": "Ngữ văn, Địa lý, Năng khiếu đọc diễn cảm và hát",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "NK_DOC_HAT"
+    ]
+   ]
+  },
+  {
+   "ma": "M08",
+   "ten": "Ngữ văn, Năng khiếu 1, Năng khiếu 2",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "NK1"
+    ],
+    [
+     "NK2"
+    ]
+   ]
+  },
+  {
+   "ma": "M09",
+   "ten": "Toán, Năng khiếu mầm non 1 (kể chuyện, đọc diễn cảm), Năng khiếu mầm non 2 (hát)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "NK_GDMN_1"
+    ],
+    [
+     "NK_GDMN_2"
+    ]
+   ]
+  },
+  {
+   "ma": "M10",
+   "ten": "Toán, Tiếng Anh, Năng khiếu 1",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "ANH"
+    ],
+    [
+     "NK1"
+    ]
+   ]
+  },
+  {
+   "ma": "M11",
+   "ten": "Ngữ văn, Năng khiếu báo chí, Tiếng Anh",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "NK_BAO_CHI"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "M13",
+   "ten": "Toán, Sinh học, Năng khiếu",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "NK"
+    ]
+   ]
+  },
+  {
+   "ma": "M14",
+   "ten": "Ngữ văn, Năng khiếu báo chí, Toán",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "NK_BAO_CHI"
+    ],
+    [
+     "TOAN"
+    ]
+   ]
+  },
+  {
+   "ma": "N00",
+   "ten": "Ngữ văn, Năng khiếu âm nhạc 1, Năng khiếu âm nhạc 2",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "NK_AM_NHAC_1"
+    ],
+    [
+     "NK_AM_NHAC_2"
+    ]
+   ]
+  },
+  {
+   "ma": "N01",
+   "ten": "Ngữ văn, Xướng âm, Biểu diễn nghệ thuật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "NK_XUONG_AM"
+    ],
+    [
+     "NK_BIEU_DIEN"
+    ]
+   ]
+  },
+  {
+   "ma": "N02",
+   "ten": "Ngữ văn, Ký xướng âm, Hát hoặc biểu diễn nhạc cụ",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "NK_KY_XUONG_AM"
+    ],
+    [
+     "NK_NHAC_CU_HAT"
+    ]
+   ]
+  },
+  {
+   "ma": "N05",
+   "ten": "Ngữ văn, Xây dựng kịch bản sự kiện, Năng khiếu",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "NK_KICH_BAN"
+    ],
+    [
+     "NK"
+    ]
+   ]
+  },
+  {
+   "ma": "R00",
+   "ten": "Ngữ văn, Lịch sử, Năng khiếu báo chí",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "NK_BAO_CHI"
+    ]
+   ]
+  },
+  {
+   "ma": "R01",
+   "ten": "Ngữ văn, Địa lý, Năng khiếu nghệ thuật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "NK_NGHE_THUAT"
+    ]
+   ]
+  },
+  {
+   "ma": "R02",
+   "ten": "Ngữ văn, Toán, Năng khiếu nghệ thuật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TOAN"
+    ],
+    [
+     "NK_NGHE_THUAT"
+    ]
+   ]
+  },
+  {
+   "ma": "R03",
+   "ten": "Ngữ văn, Tiếng Anh, Năng khiếu nghệ thuật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "ANH"
+    ],
+    [
+     "NK_NGHE_THUAT"
+    ]
+   ]
+  },
+  {
+   "ma": "R04",
+   "ten": "Ngữ văn, Biểu diễn nghệ thuật, Năng khiếu văn hóa nghệ thuật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "NK_BIEU_DIEN"
+    ],
+    [
+     "NK_VH_NGHE_THUAT"
+    ]
+   ]
+  },
+  {
+   "ma": "R05",
+   "ten": "Ngữ văn, Tiếng Anh, Năng khiếu kiến thức truyền thông",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "ANH"
+    ],
+    [
+     "NK_TRUYEN_THONG"
+    ]
+   ]
+  },
+  {
+   "ma": "S00",
+   "ten": "Ngữ văn, Năng khiếu sân khấu điện ảnh 1, Năng khiếu sân khấu điện ảnh 2",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "NK_SKDA_1"
+    ],
+    [
+     "NK_SKDA_2"
+    ]
+   ]
+  },
+  {
+   "ma": "S01",
+   "ten": "Toán, Năng khiếu 1, Năng khiếu 2",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "NK1"
+    ],
+    [
+     "NK2"
+    ]
+   ]
+  },
+  {
+   "ma": "T00",
+   "ten": "Toán, Sinh học, Năng khiếu thể dục thể thao",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "NK_TDTT"
+    ]
+   ]
+  },
+  {
+   "ma": "T01",
+   "ten": "Toán, Ngữ văn, Năng khiếu thể dục thể thao",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "NK_TDTT"
+    ]
+   ]
+  },
+  {
+   "ma": "T02",
+   "ten": "Ngữ văn, Sinh học, Năng khiếu thể dục thể thao",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "NK_TDTT"
+    ]
+   ]
+  },
+  {
+   "ma": "T03",
+   "ten": "Ngữ văn, Địa lý, Năng khiếu thể dục thể thao",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "NK_TDTT"
+    ]
+   ]
+  },
+  {
+   "ma": "T04",
+   "ten": "Toán, Vật lý, Năng khiếu thể dục thể thao",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "NK_TDTT"
+    ]
+   ]
+  },
+  {
+   "ma": "T05",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Năng khiếu thể dục thể thao",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "NK_TDTT"
+    ]
+   ]
+  },
+  {
+   "ma": "T06",
+   "ten": "Toán, Địa lý, Năng khiếu thể dục thể thao",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "NK_TDTT"
+    ]
+   ]
+  },
+  {
+   "ma": "T07",
+   "ten": "Ngữ văn, Địa lý, Năng khiếu thể dục thể thao",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "NK_TDTT"
+    ]
+   ]
+  },
+  {
+   "ma": "T08",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Năng khiếu thể dục thể thao",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "NK_TDTT"
+    ]
+   ]
+  },
+  {
+   "ma": "T09",
+   "ten": "Ngữ văn, Lịch sử, Năng khiếu thể dục thể thao",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "NK_TDTT"
+    ]
+   ]
+  },
+  {
+   "ma": "V00",
+   "ten": "Toán, Vật lý, Vẽ hình họa mỹ thuật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "NK_VE_HINH_HOA"
+    ]
+   ]
+  },
+  {
+   "ma": "V01",
+   "ten": "Toán, Ngữ văn, Vẽ hình họa mỹ thuật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "NK_VE_HINH_HOA"
+    ]
+   ]
+  },
+  {
+   "ma": "V02",
+   "ten": "Toán, Tiếng Anh, Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "ANH"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "V03",
+   "ten": "Toán, Hóa học, Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "V05",
+   "ten": "Ngữ văn, Vật lý, Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "V06",
+   "ten": "Toán, Địa lý, Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "V07",
+   "ten": "Toán, Tiếng Đức, Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "DUC"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "V08",
+   "ten": "Toán, Tiếng Nga, Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "NGA"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "V09",
+   "ten": "Toán, Tiếng Nhật, Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "NHAT"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "V10",
+   "ten": "Toán, Tiếng Pháp, Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "PHAP"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "V11",
+   "ten": "Toán, Tiếng Trung, Vẽ mỹ thuật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "TRUNG"
+    ],
+    [
+     "NK_VE"
+    ]
+   ]
+  },
+  {
+   "ma": "X01",
+   "ten": "Toán, Ngữ văn, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "X02",
+   "ten": "Toán, Ngữ văn, Tin học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X03",
+   "ten": "Toán, Ngữ văn, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X04",
+   "ten": "Toán, Ngữ văn, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X05",
+   "ten": "Toán, Vật lý, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "X06",
+   "ten": "Toán, Vật lý, Tin học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X07",
+   "ten": "Toán, Vật lý, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X08",
+   "ten": "Toán, Vật lý, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X09",
+   "ten": "Toán, Hóa học, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "X10",
+   "ten": "Toán, Hóa học, Tin học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X11",
+   "ten": "Toán, Hóa học, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X12",
+   "ten": "Toán, Hóa học, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X13",
+   "ten": "Toán, Sinh học, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "X14",
+   "ten": "Toán, Sinh học, Tin học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X15",
+   "ten": "Toán, Sinh học, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X16",
+   "ten": "Toán, Sinh học, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X17",
+   "ten": "Toán, Lịch sử, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "X18",
+   "ten": "Toán, Lịch sử, Tin học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X19",
+   "ten": "Toán, Lịch sử, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X20",
+   "ten": "Toán, Lịch sử, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X21",
+   "ten": "Toán, Địa lý, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "X22",
+   "ten": "Toán, Địa lý, Tin học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X23",
+   "ten": "Toán, Địa lý, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X24",
+   "ten": "Toán, Địa lý, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X25",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Tiếng Anh",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "X26",
+   "ten": "Toán, Tiếng Anh, Tin học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "ANH"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X27",
+   "ten": "Toán, Tiếng Anh, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "ANH"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X28",
+   "ten": "Toán, Tiếng Anh, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "ANH"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X29",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Tiếng Nga",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "X30",
+   "ten": "Toán, Tin học, Tiếng Nga",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "TIN"
+    ],
+    [
+     "NGA"
+    ]
+   ]
+  },
+  {
+   "ma": "X33",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "X34",
+   "ten": "Toán, Tin học, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "TIN"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "X37",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Tiếng Trung",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "X38",
+   "ten": "Toán, Tin học, Tiếng Trung",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "TIN"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "X39",
+   "ten": "Toán, Công nghệ công nghiệp, Tiếng Trung",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "X40",
+   "ten": "Toán, Công nghệ nông nghiệp, Tiếng Trung",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "X41",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Tiếng Đức",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "X42",
+   "ten": "Toán, Tin học, Tiếng Đức",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "TIN"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "X45",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Tiếng Nhật",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "X46",
+   "ten": "Toán, Tiếng Nhật, Tin học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "NHAT"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X49",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Tiếng Hàn",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "HAN"
+    ]
+   ]
+  },
+  {
+   "ma": "X50",
+   "ten": "Toán, Tin học, Tiếng Hàn",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "TIN"
+    ],
+    [
+     "HAN"
+    ]
+   ]
+  },
+  {
+   "ma": "X53",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Tin học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X54",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X55",
+   "ten": "Toán, Giáo dục Kinh tế và pháp luật, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X56",
+   "ten": "Toán, Tin học, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "TIN"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X57",
+   "ten": "Toán, Tin học, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "TIN"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X58",
+   "ten": "Ngữ văn, Vật lý, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "X59",
+   "ten": "Ngữ văn, Vật lý, Tin học",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X60",
+   "ten": "Ngữ văn, Vật lý, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X61",
+   "ten": "Ngữ văn, Vật lý, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X62",
+   "ten": "Ngữ văn, Hóa học, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "X63",
+   "ten": "Ngữ văn, Hóa học, Tin học",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X64",
+   "ten": "Ngữ văn, Hóa học, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X65",
+   "ten": "Ngữ văn, Hóa học, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X66",
+   "ten": "Ngữ văn, Sinh học, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "X67",
+   "ten": "Ngữ văn, Sinh học, Tin học",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X68",
+   "ten": "Ngữ văn, Sinh học, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X69",
+   "ten": "Ngữ văn, Sinh học, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SINH"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X70",
+   "ten": "Ngữ văn, Lịch sử, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "X71",
+   "ten": "Ngữ văn, Lịch sử, Tin học",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X72",
+   "ten": "Ngữ văn, Lịch sử, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X73",
+   "ten": "Ngữ văn, Lịch sử, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "SU"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X74",
+   "ten": "Ngữ văn, Địa lý, Giáo dục Kinh tế và pháp luật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "GDKTPL"
+    ]
+   ]
+  },
+  {
+   "ma": "X75",
+   "ten": "Ngữ văn, Địa lý, Tin học",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X76",
+   "ten": "Ngữ văn, Địa lý, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X77",
+   "ten": "Ngữ văn, Địa lý, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "DIA"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X78",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Tiếng Anh",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "X79",
+   "ten": "Ngữ văn, Tiếng Anh, Tin học",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "ANH"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "X80",
+   "ten": "Ngữ văn, Tiếng Anh, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "ANH"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X81",
+   "ten": "Ngữ văn, Tiếng Anh, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "ANH"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "X86",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "X87",
+   "ten": "Ngữ văn, Tin học, Tiếng Pháp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TIN"
+    ],
+    [
+     "PHAP"
+    ]
+   ]
+  },
+  {
+   "ma": "X90",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Tiếng Trung",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "TRUNG"
+    ]
+   ]
+  },
+  {
+   "ma": "X94",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Tiếng Đức",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "DUC"
+    ]
+   ]
+  },
+  {
+   "ma": "X98",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Tiếng Nhật",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "NHAT"
+    ]
+   ]
+  },
+  {
+   "ma": "Y03",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Tiếng Hàn",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "HAN"
+    ]
+   ]
+  },
+  {
+   "ma": "Y04",
+   "ten": "Ngữ văn, Tin học, Tiếng Hàn",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TIN"
+    ],
+    [
+     "HAN"
+    ]
+   ]
+  },
+  {
+   "ma": "Y07",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Tin học",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "Y08",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "Y09",
+   "ten": "Ngữ văn, Giáo dục Kinh tế và pháp luật, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "GDKTPL"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "Y10",
+   "ten": "Ngữ văn, Tin học, Công nghệ công nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TIN"
+    ],
+    [
+     "CN_CONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "Y11",
+   "ten": "Ngữ văn, Tin học, Công nghệ nông nghiệp",
+   "vi_tri": [
+    [
+     "VAN"
+    ],
+    [
+     "TIN"
+    ],
+    [
+     "CN_NONG_NGHIEP"
+    ]
+   ]
+  },
+  {
+   "ma": "K01",
+   "ten": "Toán, Ngữ văn, và 1 trong 4 môn: Vật lý/Hóa học/Sinh học/Tin học",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "LY",
+     "HOA",
+     "SINH",
+     "TIN"
+    ]
+   ]
+  },
+  {
+   "ma": "K00",
+   "ten": "Đánh giá tư duy - Đại học Bách khoa Hà Nội",
+   "vi_tri": null
+  },
+  {
+   "ma": "SP1",
+   "ten": "Toán, Vật lý, Hóa học (ĐGNL SPT)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "HOA"
+    ]
+   ]
+  },
+  {
+   "ma": "SP2",
+   "ten": "Toán, Vật lý, Tiếng Anh (ĐGNL SPT)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "SP3",
+   "ten": "Toán, Hóa học, Tiếng Anh (ĐGNL SPT)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "SP4",
+   "ten": "Toán, Ngữ văn, Tiếng Anh (ĐGNL SPT)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "VS1",
+   "ten": "Toán, Vật lý, Hóa học (V-SAT)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "HOA"
+    ]
+   ]
+  },
+  {
+   "ma": "VS2",
+   "ten": "Toán, Vật lý, Tiếng Anh (V-SAT)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "LY"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "VS3",
+   "ten": "Toán, Hóa học, Tiếng Anh (V-SAT)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "VS4",
+   "ten": "Toán, Ngữ văn, Tiếng Anh (V-SAT)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "VAN"
+    ],
+    [
+     "ANH"
+    ]
+   ]
+  },
+  {
+   "ma": "VS5",
+   "ten": "Toán, Hóa học, Sinh học (V-SAT)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "SINH"
+    ]
+   ]
+  },
+  {
+   "ma": "SP5",
+   "ten": "Toán, Hóa học, Sinh học (ĐGNL SPT)",
+   "vi_tri": [
+    [
+     "TOAN"
+    ],
+    [
+     "HOA"
+    ],
+    [
+     "SINH"
+    ]
+   ]
+  }
+ ],
+ "bai_thi": [
+  {
+   "ma": "HSA",
+   "ten": "Đánh giá năng lực HSA"
+  },
+  {
+   "ma": "V-ACT",
+   "ten": "Đánh giá năng lực V-ACT"
+  },
+  {
+   "ma": "TSA",
+   "ten": "Đánh giá tư duy TSA"
+  },
+  {
+   "ma": "QDA",
+   "ten": "Đánh giá năng lực QDA"
+  },
+  {
+   "ma": "CA1",
+   "ten": "Bài thi đánh giá Bộ Công an CA1"
+  },
+  {
+   "ma": "CA2",
+   "ten": "Bài thi đánh giá Bộ Công an CA2"
+  },
+  {
+   "ma": "CA3",
+   "ten": "Bài thi đánh giá Bộ Công an CA3"
+  },
+  {
+   "ma": "CA4",
+   "ten": "Bài thi đánh giá Bộ Công an CA4"
+  },
+  {
+   "ma": "VSAT_TOAN",
+   "ten": "V-SAT - Toán"
+  },
+  {
+   "ma": "VSAT_NGU_VAN",
+   "ten": "V-SAT - Ngữ văn"
+  },
+  {
+   "ma": "VSAT_TIENG_ANH",
+   "ten": "V-SAT - Tiếng Anh"
+  },
+  {
+   "ma": "VSAT_VAT_LI",
+   "ten": "V-SAT - Vật lí"
+  },
+  {
+   "ma": "VSAT_HOA_HOC",
+   "ten": "V-SAT - Hóa học"
+  },
+  {
+   "ma": "VSAT_SINH_HOC",
+   "ten": "V-SAT - Sinh học"
+  },
+  {
+   "ma": "VSAT_LICH_SU",
+   "ten": "V-SAT - Lịch sử"
+  },
+  {
+   "ma": "VSAT_DIA_LI",
+   "ten": "V-SAT - Địa lí"
+  },
+  {
+   "ma": "SPT_TOAN",
+   "ten": "SPT - Toán"
+  },
+  {
+   "ma": "SPT_NGU_VAN",
+   "ten": "SPT - Ngữ văn"
+  },
+  {
+   "ma": "SPT_TIENG_ANH",
+   "ten": "SPT - Tiếng Anh"
+  },
+  {
+   "ma": "SPT_VAT_LI",
+   "ten": "SPT - Vật lí"
+  },
+  {
+   "ma": "SPT_HOA_HOC",
+   "ten": "SPT - Hóa học"
+  },
+  {
+   "ma": "SPT_SINH_HOC",
+   "ten": "SPT - Sinh học"
+  },
+  {
+   "ma": "SPT_LICH_SU",
+   "ten": "SPT - Lịch sử"
+  },
+  {
+   "ma": "SPT_DIA_LI",
+   "ten": "SPT - Địa lí"
+  },
+  {
+   "ma": "SPT_CONG_NGHE_CN",
+   "ten": "SPT - Công nghệ (định hướng Công nghiệp)"
+  },
+  {
+   "ma": "SPT_CONG_NGHE_NN",
+   "ten": "SPT - Công nghệ (định hướng Nông nghiệp)"
+  },
+  {
+   "ma": "SPT_TIN_HOC",
+   "ten": "SPT - Tin học"
+  },
+  {
+   "ma": "SPT_GDKT_PL",
+   "ten": "SPT - Giáo dục kinh tế và pháp luật"
+  },
+  {
+   "ma": "SP2E_TOAN",
+   "ten": "SP2E - Toán"
+  },
+  {
+   "ma": "SP2E_NGU_VAN",
+   "ten": "SP2E - Ngữ văn"
+  },
+  {
+   "ma": "SP2E_TIENG_ANH",
+   "ten": "SP2E - Tiếng Anh"
+  },
+  {
+   "ma": "SP2E_VAT_LI",
+   "ten": "SP2E - Vật lí"
+  },
+  {
+   "ma": "SP2E_HOA_HOC",
+   "ten": "SP2E - Hóa học"
+  },
+  {
+   "ma": "SP2E_SINH_HOC",
+   "ten": "SP2E - Sinh học"
+  },
+  {
+   "ma": "SP2E_LICH_SU",
+   "ten": "SP2E - Lịch sử"
+  },
+  {
+   "ma": "SP2E_DIA_LI",
+   "ten": "SP2E - Địa lí"
+  },
+  {
+   "ma": "SP2E_GDKT_PL",
+   "ten": "SP2E - Giáo dục kinh tế và pháp luật"
+  },
+  {
+   "ma": "H-SCA_TOAN",
+   "ten": "H-SCA - Toán"
+  },
+  {
+   "ma": "H-SCA_NGU_VAN",
+   "ten": "H-SCA - Ngữ văn"
+  },
+  {
+   "ma": "H-SCA_TIENG_ANH",
+   "ten": "H-SCA - Tiếng Anh"
+  },
+  {
+   "ma": "H-SCA_VAT_LI",
+   "ten": "H-SCA - Vật lí"
+  },
+  {
+   "ma": "H-SCA_HOA_HOC",
+   "ten": "H-SCA - Hóa học"
+  },
+  {
+   "ma": "H-SCA_SINH_HOC",
+   "ten": "H-SCA - Sinh học"
+  },
+  {
+   "ma": "SAT",
+   "ten": "SAT (Digital SAT)"
+  },
+  {
+   "ma": "ACT",
+   "ten": "ACT (Enhanced ACT)"
+  }
+ ],
+ "chung_chi": [
+  {
+   "ma": "IELTS",
+   "ten": "IELTS Academic"
+  },
+  {
+   "ma": "IELTS_UKVI_ACADEMIC",
+   "ten": "IELTS for UKVI Academic"
+  },
+  {
+   "ma": "TOEFL_IBT_2026",
+   "ten": "TOEFL iBT (thang điểm 2026)"
+  },
+  {
+   "ma": "TOEFL_IBT_120",
+   "ten": "TOEFL iBT (thang điểm cũ)"
+  },
+  {
+   "ma": "TOEFL_ITP_L1",
+   "ten": "TOEFL ITP Level 1"
+  },
+  {
+   "ma": "TOEIC_LR",
+   "ten": "TOEIC Listening & Reading"
+  },
+  {
+   "ma": "TOEIC_SW",
+   "ten": "TOEIC Speaking & Writing"
+  },
+  {
+   "ma": "PTE_ACADEMIC",
+   "ten": "PTE Academic"
+  },
+  {
+   "ma": "DET",
+   "ten": "Duolingo English Test"
+  },
+  {
+   "ma": "CAMBRIDGE_A2_KEY",
+   "ten": "A2 Key (KET)"
+  },
+  {
+   "ma": "CAMBRIDGE_B1_PRELIMINARY",
+   "ten": "B1 Preliminary (PET)"
+  },
+  {
+   "ma": "CAMBRIDGE_B2_FIRST",
+   "ten": "B2 First (FCE)"
+  },
+  {
+   "ma": "CAMBRIDGE_C1_ADVANCED",
+   "ten": "C1 Advanced (CAE)"
+  },
+  {
+   "ma": "CAMBRIDGE_C2_PROFICIENCY",
+   "ten": "C2 Proficiency (CPE)"
+  },
+  {
+   "ma": "LINGUASKILL",
+   "ten": "Cambridge Linguaskill"
+  },
+  {
+   "ma": "VSTEP",
+   "ten": "VSTEP / Chứng chỉ ngoại ngữ theo Khung NLNN Việt Nam"
+  },
+  {
+   "ma": "APTIS_ESOL",
+   "ten": "Aptis ESOL"
+  },
+  {
+   "ma": "VEPT",
+   "ten": "Versant English Placement Test"
+  },
+  {
+   "ma": "OET",
+   "ten": "OET"
+  },
+  {
+   "ma": "HSK_2_0",
+   "ten": "HSK 2.0 (cấp 1–6)"
+  },
+  {
+   "ma": "HSK_3_0",
+   "ten": "HSK 3.0"
+  },
+  {
+   "ma": "HSKK",
+   "ten": "HSKK"
+  },
+  {
+   "ma": "JLPT",
+   "ten": "JLPT"
+  },
+  {
+   "ma": "NAT_TEST",
+   "ten": "Japanese NAT-TEST"
+  },
+  {
+   "ma": "J_TEST",
+   "ten": "J.TEST"
+  },
+  {
+   "ma": "TOPIK_I",
+   "ten": "TOPIK I"
+  },
+  {
+   "ma": "TOPIK_II",
+   "ten": "TOPIK II"
+  },
+  {
+   "ma": "DELF",
+   "ten": "DELF"
+  },
+  {
+   "ma": "DALF",
+   "ten": "DALF"
+  },
+  {
+   "ma": "TCF_TP",
+   "ten": "TCF Tout Public"
+  },
+  {
+   "ma": "TEF",
+   "ten": "TEF"
+  },
+  {
+   "ma": "GOETHE_A1",
+   "ten": "Goethe-Zertifikat A1"
+  },
+  {
+   "ma": "GOETHE_A2",
+   "ten": "Goethe-Zertifikat A2"
+  },
+  {
+   "ma": "GOETHE_B1",
+   "ten": "Goethe-Zertifikat B1"
+  },
+  {
+   "ma": "GOETHE_B2",
+   "ten": "Goethe-Zertifikat B2"
+  },
+  {
+   "ma": "GOETHE_C1",
+   "ten": "Goethe-Zertifikat C1"
+  },
+  {
+   "ma": "GOETHE_C2",
+   "ten": "Goethe-Zertifikat C2"
+  },
+  {
+   "ma": "TESTDAF",
+   "ten": "TestDaF"
+  },
+  {
+   "ma": "DSH",
+   "ten": "DSH"
+  },
+  {
+   "ma": "DSD_I",
+   "ten": "DSD I"
+  },
+  {
+   "ma": "DSD_II",
+   "ten": "DSD II"
+  },
+  {
+   "ma": "DELE",
+   "ten": "DELE"
+  },
+  {
+   "ma": "SIELE",
+   "ten": "SIELE Global"
+  },
+  {
+   "ma": "TORFL",
+   "ten": "TORFL / TRKI"
+  },
+  {
+   "ma": "CILS",
+   "ten": "CILS"
+  },
+  {
+   "ma": "CELI",
+   "ten": "CELI"
+  },
+  {
+   "ma": "SAT",
+   "ten": "SAT"
+  },
+  {
+   "ma": "ACT",
+   "ten": "ACT"
+  },
+  {
+   "ma": "AP",
+   "ten": "AP Exam"
+  },
+  {
+   "ma": "IB_DP",
+   "ten": "IB Diploma"
+  },
+  {
+   "ma": "IB_COURSE",
+   "ten": "IB Diploma Programme Course Results"
+  },
+  {
+   "ma": "GCE_A_LEVEL",
+   "ten": "A-Level"
+  },
+  {
+   "ma": "GCE_AS_LEVEL",
+   "ten": "AS-Level"
+  },
+  {
+   "ma": "IGCSE",
+   "ten": "IGCSE"
+  },
+  {
+   "ma": "GCE_O_LEVEL",
+   "ten": "GCE O-Level"
+  },
+  {
+   "ma": "GED",
+   "ten": "GED"
+  },
+  {
+   "ma": "EJU",
+   "ten": "EJU"
+  },
+  {
+   "ma": "AICE_DIPLOMA",
+   "ten": "Cambridge AICE Diploma"
+  },
+  {
+   "ma": "ATTESTAT",
+   "ten": "Bằng tốt nghiệp phổ thông nước ngoài"
+  },
+  {
+   "ma": "THPT_TN_SCORE",
+   "ten": "Kết quả thi tốt nghiệp THPT"
+  },
+  {
+   "ma": "HSA_VNU",
+   "ten": "HSA – ĐGNL ĐHQG Hà Nội"
+  },
+  {
+   "ma": "V_ACT_VNUHCM",
+   "ten": "V-ACT – ĐGNL ĐHQG TP.HCM"
+  },
+  {
+   "ma": "TSA_HUST",
+   "ten": "TSA – Đánh giá tư duy"
+  },
+  {
+   "ma": "VSAT",
+   "ten": "V-SAT"
+  },
+  {
+   "ma": "DGNL_SU_PHAM_HN",
+   "ten": "ĐGNL Trường ĐH Sư phạm Hà Nội"
+  },
+  {
+   "ma": "DGNL_SU_PHAM_HCM",
+   "ten": "ĐGNL chuyên biệt ĐH Sư phạm TP.HCM"
+  },
+  {
+   "ma": "DGNL_BCA",
+   "ten": "Bài thi đánh giá Bộ Công an"
+  },
+  {
+   "ma": "NANG_KHIEU",
+   "ten": "Kết quả thi năng khiếu"
+  },
+  {
+   "ma": "BANG_THPT",
+   "ten": "Bằng tốt nghiệp THPT"
+  },
+  {
+   "ma": "BANG_THPT_TAM_THOI",
+   "ten": "Giấy chứng nhận tốt nghiệp THPT tạm thời"
+  },
+  {
+   "ma": "HOC_BA_THPT",
+   "ten": "Học bạ THPT"
+  },
+  {
+   "ma": "GCN_HOAN_THANH_CTPT",
+   "ten": "Giấy chứng nhận hoàn thành chương trình giáo dục phổ thông"
+  },
+  {
+   "ma": "BANG_TRUNG_HOC_NGHE",
+   "ten": "Bằng trung học nghề"
+  },
+  {
+   "ma": "BANG_TRUNG_CAP",
+   "ten": "Bằng tốt nghiệp trung cấp"
+  },
+  {
+   "ma": "BANG_CAO_DANG",
+   "ten": "Bằng tốt nghiệp cao đẳng"
+  },
+  {
+   "ma": "BANG_DAI_HOC",
+   "ten": "Bằng tốt nghiệp đại học"
+  },
+  {
+   "ma": "GIAI_HSG_QG",
+   "ten": "Giấy chứng nhận giải HSG quốc gia"
+  },
+  {
+   "ma": "GIAI_HSG_TINH",
+   "ten": "Giấy chứng nhận giải HSG cấp tỉnh"
+  },
+  {
+   "ma": "GIAI_KHKT_QG",
+   "ten": "Giấy chứng nhận giải KHKT quốc gia"
+  },
+  {
+   "ma": "GIAI_OLYMPIC_QT",
+   "ten": "Giấy chứng nhận huy chương Olympic quốc tế"
+  },
+  {
+   "ma": "GIAI_THE_THAO",
+   "ten": "Giấy chứng nhận thành tích thể thao"
+  },
+  {
+   "ma": "GIAI_NGHE_THUAT",
+   "ten": "Giấy chứng nhận giải nghệ thuật"
+  },
+  {
+   "ma": "MOS",
+   "ten": "MOS"
+  },
+  {
+   "ma": "IC3_GS6",
+   "ten": "IC3 Digital Literacy"
+  },
+  {
+   "ma": "ICDL",
+   "ten": "ICDL"
+  }
+ ],
+ "thanh_tich": [
+  {
+   "ma": "HSG-QG",
+   "ten": "Học sinh giỏi quốc gia"
+  },
+  {
+   "ma": "HSG-QT",
+   "ten": "Học sinh giỏi quốc tế / Olympic quốc tế"
+  },
+  {
+   "ma": "HSG-KV",
+   "ten": "Học sinh giỏi khu vực / Olympic châu Á"
+  },
+  {
+   "ma": "NCKH-QG",
+   "ten": "Nghiên cứu khoa học kỹ thuật quốc gia"
+  },
+  {
+   "ma": "NCKH-QT",
+   "ten": "Nghiên cứu khoa học kỹ thuật quốc tế"
+  },
+  {
+   "ma": "HSG-TINH",
+   "ten": "Học sinh giỏi cấp tỉnh/thành phố"
+  },
+  {
+   "ma": "NCKH-TINH",
+   "ten": "Nghiên cứu khoa học kỹ thuật cấp tỉnh"
+  },
+  {
+   "ma": "NK-VE",
+   "ten": "Năng khiếu Mỹ thuật / Vẽ"
+  },
+  {
+   "ma": "NK-AMNHAC",
+   "ten": "Năng khiếu Âm nhạc"
+  },
+  {
+   "ma": "NK-THEDUC",
+   "ten": "Năng khiếu Thể dục thể thao"
+  },
+  {
+   "ma": "NK-MAMNON",
+   "ten": "Năng khiếu Giáo dục Mầm non"
+  },
+  {
+   "ma": "NK-SANKHAU",
+   "ten": "Năng khiếu Sân khấu – Điện ảnh"
+  },
+  {
+   "ma": "OLYMPIC-KHAC",
+   "ten": "Các kỳ thi Olympic / cuộc thi chuyên ngành khác"
+  }
+ ],
+ "phuong_thuc_cua_bo": [
+  {
+   "ma": "100",
+   "ten": "Xét kết quả thi tốt nghiệp THPT"
+  },
+  {
+   "ma": "200",
+   "ten": "Xét kết quả học tập cấp THPT (học bạ)"
+  },
+  {
+   "ma": "301",
+   "ten": "Xét tuyển thẳng theo quy định của Quy chế tuyển sinh (Điều 8)"
+  },
+  {
+   "ma": "401",
+   "ten": "Thi đánh giá năng lực, đánh giá tư duy do CSĐT tự tổ chức để xét tuyển"
+  },
+  {
+   "ma": "402",
+   "ten": "Sử dụng kết quả thi đánh giá năng lực, đánh giá tư duy do đơn vị khác tổ chức để xét tuyển"
+  },
+  {
+   "ma": "403",
+   "ten": "Thi văn hóa do CSĐT tổ chức để xét tuyển"
+  },
+  {
+   "ma": "404",
+   "ten": "Sử dụng kết quả thi văn hóa do CSĐT khác tổ chức để xét tuyển"
+  },
+  {
+   "ma": "405",
+   "ten": "Kết hợp kết quả thi tốt nghiệp THPT với điểm thi năng khiếu để xét tuyển"
+  },
+  {
+   "ma": "406",
+   "ten": "Kết hợp kết quả học tập cấp THPT với điểm thi năng khiếu để xét tuyển"
+  },
+  {
+   "ma": "407",
+   "ten": "Kết hợp kết quả thi tốt nghiệp THPT với kết quả học tập cấp THPT để xét tuyển"
+  },
+  {
+   "ma": "409",
+   "ten": "Kết hợp kết quả thi tốt nghiệp THPT với chứng chỉ quốc tế để xét tuyển"
+  },
+  {
+   "ma": "410",
+   "ten": "Kết hợp kết quả học tập cấp THPT với chứng chỉ quốc tế để xét tuyển"
+  },
+  {
+   "ma": "411",
+   "ten": "Xét tuyển thí sinh tốt nghiệp THPT nước ngoài"
+  },
+  {
+   "ma": "413",
+   "ten": "Kết hợp kết quả thi tốt nghiệp THPT với phỏng vấn để xét tuyển"
+  },
+  {
+   "ma": "414",
+   "ten": "Kết hợp kết quả học tập cấp THPT với phỏng vấn để xét tuyển"
+  },
+  {
+   "ma": "415",
+   "ten": "Sử dụng chứng chỉ quốc tế SAT hoặc chứng chỉ quốc tế khác đủ điều kiện để xét tuyển"
+  },
+  {
+   "ma": "416",
+   "ten": "Kỳ thi V-SAT"
+  },
+  {
+   "ma": "417",
+   "ten": "Sử dụng kết quả Kỳ thi V-SAT do đơn vị khác tổ chức để xét tuyển"
+  },
+  {
+   "ma": "500",
+   "ten": "Sử dụng phương thức khác"
+  }
+ ],
+ "tinh_thanh": [
+  {
+   "ma": "01",
+   "ten": "Hà Nội",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "08",
+   "ten": "Tuyên Quang",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "04",
+   "ten": "Cao Bằng",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "19",
+   "ten": "Thái Nguyên",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "10",
+   "ten": "Lào Cai",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "11",
+   "ten": "Điện Biên",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "12",
+   "ten": "Lai Châu",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "14",
+   "ten": "Sơn La",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "25",
+   "ten": "Phú Thọ",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "20",
+   "ten": "Lạng Sơn",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "22",
+   "ten": "Quảng Ninh",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "27",
+   "ten": "Bắc Ninh",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "31",
+   "ten": "Hải Phòng",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "33",
+   "ten": "Hưng Yên",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "37",
+   "ten": "Ninh Bình",
+   "vung": "Bắc"
+  },
+  {
+   "ma": "38",
+   "ten": "Thanh Hóa",
+   "vung": "Trung"
+  },
+  {
+   "ma": "40",
+   "ten": "Nghệ An",
+   "vung": "Trung"
+  },
+  {
+   "ma": "42",
+   "ten": "Hà Tĩnh",
+   "vung": "Trung"
+  },
+  {
+   "ma": "45",
+   "ten": "Quảng Trị",
+   "vung": "Trung"
+  },
+  {
+   "ma": "46",
+   "ten": "Huế",
+   "vung": "Trung"
+  },
+  {
+   "ma": "48",
+   "ten": "Đà Nẵng",
+   "vung": "Trung"
+  },
+  {
+   "ma": "51",
+   "ten": "Quảng Ngãi",
+   "vung": "Trung"
+  },
+  {
+   "ma": "64",
+   "ten": "Gia Lai",
+   "vung": "Trung"
+  },
+  {
+   "ma": "66",
+   "ten": "Đắc Lắk",
+   "vung": "Trung"
+  },
+  {
+   "ma": "56",
+   "ten": "Khánh Hòa",
+   "vung": "Trung"
+  },
+  {
+   "ma": "68",
+   "ten": "Lâm Đồng",
+   "vung": "Trung"
+  },
+  {
+   "ma": "75",
+   "ten": "Đồng Nai",
+   "vung": "Nam"
+  },
+  {
+   "ma": "72",
+   "ten": "Tây Ninh",
+   "vung": "Nam"
+  },
+  {
+   "ma": "79",
+   "ten": "Hồ Chí Minh",
+   "vung": "Nam"
+  },
+  {
+   "ma": "87",
+   "ten": "Đồng Tháp",
+   "vung": "Nam"
+  },
+  {
+   "ma": "86",
+   "ten": "Vĩnh Long",
+   "vung": "Nam"
+  },
+  {
+   "ma": "89",
+   "ten": "An Giang",
+   "vung": "Nam"
+  },
+  {
+   "ma": "92",
+   "ten": "Cần Thơ",
+   "vung": "Nam"
+  },
+  {
+   "ma": "96",
+   "ten": "Cà Mau",
+   "vung": "Nam"
+  }
+ ],
+ "truong": [
+  {
+   "ma": "CVC",
+   "ten": "Cao Đẳng Công Nghệ Viettronics"
+  },
+  {
+   "ma": "HCEEFT",
+   "ten": "Cao Đẳng Nghề cơ điện và Công nghệ thực phẩm Hà Nội"
+  },
+  {
+   "ma": "CDTM",
+   "ten": "Cao đẳng Thương mại"
+  },
+  {
+   "ma": "KTA",
+   "ten": "Đại học Kiến trúc Hà Nội"
+  },
+  {
+   "ma": "PCS",
+   "ten": "Đại học Phòng cháy Chữa cháy phía Nam"
+  },
+  {
+   "ma": "HIU",
+   "ten": "Đại học Quốc tế Hồng Bàng"
+  },
+  {
+   "ma": "TNU",
+   "ten": "Đại học Thái Nguyên"
+  },
+  {
+   "ma": "HVA",
+   "ten": "Học viện Âm nhạc Huế"
+  },
+  {
+   "ma": "NVH",
+   "ten": "Học viện Âm nhạc Quốc gia Việt Nam"
+  },
+  {
+   "ma": "ANH",
+   "ten": "Học viện An ninh Nhân dân"
+  },
+  {
+   "ma": "HBT",
+   "ten": "Học viện Báo chí và Tuyên truyền"
+  },
+  {
+   "ma": "BPH",
+   "ten": "Học viện Biên phòng"
+  },
+  {
+   "ma": "HVC",
+   "ten": "Học viện Cán bộ thành phố HCM"
+  },
+  {
+   "ma": "CSH",
+   "ten": "Học viện Cảnh sát Nhân dân"
+  },
+  {
+   "ma": "HCP",
+   "ten": "Học viện Chính sách và Phát triển"
+  },
+  {
+   "ma": "HCA",
+   "ten": "Học viện Chính trị Công an Nhân dân"
+  },
+  {
+   "ma": "HCC",
+   "ten": "Học viện Chính Trị Khu Vực I"
+  },
+  {
+   "ma": "HVH",
+   "ten": "Học viện Chính Trị Quốc Gia Hồ Chí Minh"
+  },
+  {
+   "ma": "BVH",
+   "ten": "Học viện Công nghệ Bưu chính Viễn thông"
+  },
+  {
+   "ma": "BVS",
+   "ten": "Học viện Công nghệ Bưu chính Viễn thông - Cơ sở 2"
+  },
+  {
+   "ma": "HVD",
+   "ten": "Học viện Dân Tộc"
+  },
+  {
+   "ma": "HQH",
+   "ten": "Học viện Hải quân"
+  },
+  {
+   "ma": "HHK",
+   "ten": "Học viện Hàng không Việt Nam"
+  },
+  {
+   "ma": "HCH",
+   "ten": "Học viện Hành chính Quốc gia"
+  },
+  {
+   "ma": "HCS",
+   "ten": "Học viện Hành chính Quốc gia - Cơ sở phía Nam"
+  },
+  {
+   "ma": "HFH",
+   "ten": "Học viện Hậu cần (hệ Dân sự)"
+  },
+  {
+   "ma": "HEH",
+   "ten": "Học viện Hậu cần (hệ Quân sự)"
+  },
+  {
+   "ma": "V24",
+   "ten": "Học viện Khoa Học, Công Nghệ và Đổi Mới Sáng Tạo"
+  },
+  {
+   "ma": "DNH",
+   "ten": "Học viện Khoa học Quân sự (dân sự)"
+  },
+  {
+   "ma": "NQH",
+   "ten": "Học viện Khoa học Quân sự (quân sự)"
+  },
+  {
+   "ma": "HKC",
+   "ten": "Học viện Khoa học và Công Nghệ"
+  },
+  {
+   "ma": "HXH",
+   "ten": "Học viện Khoa học Xã hội"
+  },
+  {
+   "ma": "KMA",
+   "ten": "Học viện Kỹ thuật Mật mã"
+  },
+  {
+   "ma": "MTA",
+   "ten": "Học viện Kỹ thuật Quân sự"
+  },
+  {
+   "ma": "DQH",
+   "ten": "Học viện Kỹ thuật Quân sự (hệ Dân sự)"
+  },
+  {
+   "ma": "KQH",
+   "ten": "Học viện Kỹ thuật Quân sự (hệ Quân sự)"
+  },
+  {
+   "ma": "CMH",
+   "ten": "Học viện Múa Việt Nam"
+  },
+  {
+   "ma": "NHB",
+   "ten": "Học viện Ngân hàng (Cơ sở Bắc Ninh)"
+  },
+  {
+   "ma": "NHH",
+   "ten": "Học viện Ngân hàng (Cơ sở Hà Nội)"
+  },
+  {
+   "ma": "NHP",
+   "ten": "Học viện Ngân hàng (Cơ sở Phú Yên)"
+  },
+  {
+   "ma": "HQT",
+   "ten": "Học viện Ngoại giao"
+  },
+  {
+   "ma": "HVN",
+   "ten": "Học viện Nông nghiệp Việt Nam"
+  },
+  {
+   "ma": "PKH",
+   "ten": "Học viện Phòng không - Không quân"
+  },
+  {
+   "ma": "HPN",
+   "ten": "Học viện Phụ nữ Việt Nam"
+  },
+  {
+   "ma": "HVQ",
+   "ten": "Học viện Quản lý Giáo dục"
+  },
+  {
+   "ma": "VMMU",
+   "ten": "Học viện Quân Y"
+  },
+  {
+   "ma": "DYH",
+   "ten": "Học viện Quân Y (Dân sự)"
+  },
+  {
+   "ma": "YQH",
+   "ten": "Học viện Quân y (Hệ quân sự)"
+  },
+  {
+   "ma": "HTC",
+   "ten": "Học viện Tài chính"
+  },
+  {
+   "ma": "HTN",
+   "ten": "Học viện Thanh thiếu niên Việt Nam"
+  },
+  {
+   "ma": "HTA",
+   "ten": "Học viện Toà án"
+  },
+  {
+   "ma": "HYD",
+   "ten": "Học viện Y dược học Cổ truyền Việt Nam"
+  },
+  {
+   "ma": "DDC",
+   "ten": "Khoa Công nghệ - Đại học Đà Nẵng"
+  },
+  {
+   "ma": "VKU",
+   "ten": "Khoa Công nghệ thông tin và truyền thông - Đại học Đà Nẵng"
+  },
+  {
+   "ma": "DHD",
+   "ten": "Khoa Du lịch - Đại học Huế"
+  },
+  {
+   "ma": "DHC",
+   "ten": "Khoa Giáo dục Thể chất - Đại học Huế"
+  },
+  {
+   "ma": "QHL",
+   "ten": "Khoa luật - Đại học Quốc gia Hà Nội"
+  },
+  {
+   "ma": "DTF",
+   "ten": "Khoa Ngoại ngữ - Đại học Thái Nguyên"
+  },
+  {
+   "ma": "QHQ",
+   "ten": "Khoa Quốc tế - Đại học Quốc gia Hà Nội"
+  },
+  {
+   "ma": "DTQ",
+   "ten": "Khoa quốc tế - Đại học Thái Nguyên"
+  },
+  {
+   "ma": "DDY",
+   "ten": "Khoa Y dược - Đại học Đà Nẵng"
+  },
+  {
+   "ma": "QHY",
+   "ten": "Khoa Y - Dược - Đại học Quốc gia Hà Nội"
+  },
+  {
+   "ma": "NVS",
+   "ten": "Nhạc viện Tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "DDP",
+   "ten": "Phân hiệu Đại học Đà Nẵng tại Kon Tum"
+  },
+  {
+   "ma": "DHQ",
+   "ten": "Phân hiệu Đại học Huế tại Quảng Trị"
+  },
+  {
+   "ma": "DTP",
+   "ten": "Phân hiệu Đại học Thái Nguyên tại Lào Cai"
+  },
+  {
+   "ma": "IUQ",
+   "ten": "Phân hiệu ĐH Công nghiệp Tp. HCM tại Quảng Ngãi"
+  },
+  {
+   "ma": "NLG",
+   "ten": "Phân hiệu Trường Đại học Nông lâm Tp. Hồ Chí Minh tại Gia Lai"
+  },
+  {
+   "ma": "NLN",
+   "ten": "Phân hiệu Trường Đại học nông lâm tp. Hồ Chí Minh tại Ninh Thuận"
+  },
+  {
+   "ma": "VCST",
+   "ten": "Trường Cao đẳng Bách khoa Việt Nam"
+  },
+  {
+   "ma": "C56",
+   "ten": "Trường Cao đẳng Bến Tre"
+  },
+  {
+   "ma": "C37",
+   "ten": "Trường Cao đẳng Bình Định"
+  },
+  {
+   "ma": "C55",
+   "ten": "Trường Cao đẳng Cần Thơ"
+  },
+  {
+   "ma": "PEC",
+   "ten": "Trường Cao đẳng Cơ điện Phú Thọ"
+  },
+  {
+   "ma": "CDB",
+   "ten": "Trường Cao đẳng Cơ Điện và Xây Dựng Bắc Ninh"
+  },
+  {
+   "ma": "C11",
+   "ten": "Trường Cao đẳng Cộng đồng Bắc Kạn"
+  },
+  {
+   "ma": "C47",
+   "ten": "Trường Cao đẳng Cộng đồng Bình Thuận"
+  },
+  {
+   "ma": "D64",
+   "ten": "Trường Cao đẳng Cộng đồng Hậu Giang"
+  },
+  {
+   "ma": "CLC",
+   "ten": "Trường Cao đẳng Cộng Đồng Lai Châu"
+  },
+  {
+   "ma": "BCT",
+   "ten": "Trường Cao đẳng Công nghệ Bắc Hà"
+  },
+  {
+   "ma": "CIT",
+   "ten": "Trường Cao đẳng Công nghệ Thông tin - Đại học Đà Nẵng"
+  },
+  {
+   "ma": "YDC",
+   "ten": "Trường Cao đẳng Công nghệ Y Dược Việt Nam"
+  },
+  {
+   "ma": "VCTM",
+   "ten": "Trường Cao đẳng Công nghiệp Dệt may Nam Định"
+  },
+  {
+   "ma": "CYT",
+   "ten": "Trường Cao đẳng công nghiệp thực phẩm"
+  },
+  {
+   "ma": "HCT",
+   "ten": "Trường Cao đẳng Du lịch Hải Phòng"
+  },
+  {
+   "ma": "DAC",
+   "ten": "Trường Cao đẳng Du lịch Huế"
+  },
+  {
+   "ma": "CTIT",
+   "ten": "Trường Cao đẳng Du lịch và Công Thương"
+  },
+  {
+   "ma": "HDCP",
+   "ten": "Trường Cao đẳng Dược Trung ương Hải Dương"
+  },
+  {
+   "ma": "C21",
+   "ten": "Trường Cao đẳng Hải Dương"
+  },
+  {
+   "ma": "CKG",
+   "ten": "Trường Cao đẳng Kiên Giang"
+  },
+  {
+   "ma": "HIEC",
+   "ten": "Trường Cao đẳng Kinh tế Công nghiệp Hà Nội"
+  },
+  {
+   "ma": "CCT",
+   "ten": "Trường Cao Đẳng Kinh Tế - Kỹ Thuật Công Thương"
+  },
+  {
+   "ma": "KGTEC",
+   "ten": "Trường Cao đẳng Kinh tế - Kỹ thuật Kiên Giang"
+  },
+  {
+   "ma": "CNA",
+   "ten": "Trường Cao đẳng Kinh Tế - Kỹ Thuật Nghệ An"
+  },
+  {
+   "ma": "CKN",
+   "ten": "Trường Cao Đẳng Kinh Tế Kỹ Thuật Số 1 Nghệ An"
+  },
+  {
+   "ma": "HCVT",
+   "ten": "Trường Cao đẳng Kỹ Thuật Khách Sạn và Du Lịch"
+  },
+  {
+   "ma": "DNCDA",
+   "ten": "Trương Cao đẳng Kỹ thuật Trang trí Đồng Nai"
+  },
+  {
+   "ma": "VKTECH",
+   "ten": "Trường Cao đẳng nghề Công nghệ Việt - Hàn Bắc Giang"
+  },
+  {
+   "ma": "TEVC",
+   "ten": "Trường Cao đẳng nghề Kinh tế - Kỹ thuật số 1 Nghệ An"
+  },
+  {
+   "ma": "CVD",
+   "ten": "Trường Cao đẳng nghề Kỹ thuật Việt - Đức Nghệ An"
+  },
+  {
+   "ma": "VMC",
+   "ten": "Trường Cao đẳng nghề Mỏ Hữu Nghị - VINACOMIN"
+  },
+  {
+   "ma": "C18",
+   "ten": "Trường Cao đẳng Ngô Gia Tự - Bắc Giang"
+  },
+  {
+   "ma": "CDPD",
+   "ten": "Trường Cao đẳng Phương Đông Đà Nẵng"
+  },
+  {
+   "ma": "SGC",
+   "ten": "Trường Cao đẳng Sài Gòn"
+  },
+  {
+   "ma": "C14",
+   "ten": "Trường Cao đẳng Sơn La"
+  },
+  {
+   "ma": "C52",
+   "ten": "Trường Cao đẳng Sư phạm Bà Rịa-Vũng Tàu"
+  },
+  {
+   "ma": "C19",
+   "ten": "Trường Cao đẳng Sư phạm Bắc Ninh"
+  },
+  {
+   "ma": "C43",
+   "ten": "Trường Cao đẳng Sư phạm Bình Phước"
+  },
+  {
+   "ma": "C06",
+   "ten": "Trường Cao đẳng Sư phạm Cao Bằng"
+  },
+  {
+   "ma": "C42",
+   "ten": "Trường Cao đẳng Sư phạm Đà Lạt"
+  },
+  {
+   "ma": "C40",
+   "ten": "Trường Cao đẳng Sư phạm Đắk Lắk"
+  },
+  {
+   "ma": "C62",
+   "ten": "Trường Cao đẳng Sư phạm Điện Biên"
+  },
+  {
+   "ma": "C38",
+   "ten": "Trường Cao đẳng Sư phạm Gia Lai"
+  },
+  {
+   "ma": "C05",
+   "ten": "Trường Cao đẳng Sư phạm Hà Giang"
+  },
+  {
+   "ma": "C24",
+   "ten": "Trường Cao đẳng Sư phạm Hà Nam"
+  },
+  {
+   "ma": "C20",
+   "ten": "Trường Cao đẳng Sư phạm Hà Tây"
+  },
+  {
+   "ma": "C23",
+   "ten": "Trường Cao đẳng Sư phạm Hòa Bình"
+  },
+  {
+   "ma": "C22",
+   "ten": "Trường Cao đẳng Sư phạm Hưng Yên"
+  },
+  {
+   "ma": "C54",
+   "ten": "Trường Cao đẳng Sư phạm Kiên Giang"
+  },
+  {
+   "ma": "C36",
+   "ten": "Trường Cao đẳng Sư phạm Kon Tum"
+  },
+  {
+   "ma": "C10",
+   "ten": "Trường Cao đẳng Sư phạm Lạng Sơn"
+  },
+  {
+   "ma": "C08",
+   "ten": "Trường Cao đẳng Sư phạm Lào Cai"
+  },
+  {
+   "ma": "C49",
+   "ten": "Trường Cao đẳng Sư phạm Long An"
+  },
+  {
+   "ma": "C25",
+   "ten": "Trường Cao đẳng Sư phạm Nam Định"
+  },
+  {
+   "ma": "C29",
+   "ten": "Trường Cao đẳng Sư phạm Nghệ An"
+  },
+  {
+   "ma": "C45",
+   "ten": "Trường Cao đẳng Sư phạm Ninh Thuận"
+  },
+  {
+   "ma": "C32",
+   "ten": "Trường Cao đẳng Sư phạm Quảng Trị"
+  },
+  {
+   "ma": "C59",
+   "ten": "Trường Cao đẳng Sư phạm Sóc Trăng"
+  },
+  {
+   "ma": "C46",
+   "ten": "Trường Cao đẳng Sư phạm Tây Ninh"
+  },
+  {
+   "ma": "C26",
+   "ten": "Trường Cao đẳng Sư phạm Thái Bình"
+  },
+  {
+   "ma": "C12",
+   "ten": "Trường Cao đẳng Sư phạm Thái Nguyên"
+  },
+  {
+   "ma": "C33",
+   "ten": "Trường Cao đẳng Sư phạm Thừa Thiên Huế"
+  },
+  {
+   "ma": "CM1",
+   "ten": "Trường Cao đẳng Sư phạm Trung ương"
+  },
+  {
+   "ma": "CM2",
+   "ten": "Trường Cao đẳng Sư phạm Trung ương Nha Trang"
+  },
+  {
+   "ma": "CM3",
+   "ten": "Trường Cao đẳng Sư phạm trung ương TP.Hồ Chí Minh"
+  },
+  {
+   "ma": "C57",
+   "ten": "Trường Cao đẳng Sư phạm Vĩnh Long"
+  },
+  {
+   "ma": "C13",
+   "ten": "Trường Cao đẳng Sư phạm Yên Bái"
+  },
+  {
+   "ma": "CTO",
+   "ten": "Trường Cao đẳng Thể dục Thể thao Thanh Hoá"
+  },
+  {
+   "ma": "CMS",
+   "ten": "Trường Cao đẳng Thương mại Đà Nẵng"
+  },
+  {
+   "ma": "CVV",
+   "ten": "Trường Cao đẳng Văn hoá Nghệ thuật Nghệ An"
+  },
+  {
+   "ma": "CVN",
+   "ten": "Trường Cao đẳng Văn hoá Nghệ thuật TP.HCM"
+  },
+  {
+   "ma": "CNV",
+   "ten": "Trường Cao đẳng Văn hóa Nghệ thuật Việt Bắc"
+  },
+  {
+   "ma": "VDC",
+   "ten": "Trường Cao đẳng Viễn Đông"
+  },
+  {
+   "ma": "CVA",
+   "ten": "Trường Cao đẳng Việt - Anh"
+  },
+  {
+   "ma": "APC",
+   "ten": "Trường Cao đẳng việt mỹ Hà Nội"
+  },
+  {
+   "ma": "C16",
+   "ten": "Trường Cao đẳng Vĩnh Phúc"
+  },
+  {
+   "ma": "CXD",
+   "ten": "Trường Cao đẳng Xây dựng công trình đô thị"
+  },
+  {
+   "ma": "CX1",
+   "ten": "Trường Cao đẳng Xây Dựng Số 1"
+  },
+  {
+   "ma": "CDY",
+   "ten": "Trường cao đẳng y dược Pasteur"
+  },
+  {
+   "ma": "HDMC",
+   "ten": "Trường Cao đẳng Y tế Hải Dương"
+  },
+  {
+   "ma": "CYTHP",
+   "ten": "Trường Cao đẳng Y tế Hải Phòng"
+  },
+  {
+   "ma": "QSA",
+   "ten": "Trường Đại học An Giang"
+  },
+  {
+   "ma": "ANS",
+   "ten": "Trường Đại học An ninh Nhân dân"
+  },
+  {
+   "ma": "BUV",
+   "ten": "Trường Đại học Anh Quốc - Việt Nam"
+  },
+  {
+   "ma": "BVU",
+   "ten": "Trường Đại học Bà Rịa - Vũng Tàu"
+  },
+  {
+   "ma": "DBL",
+   "ten": "Trường Đại học Bạc Liêu"
+  },
+  {
+   "ma": "DDK",
+   "ten": "Trường Đại họ̣c Bách khoa - Đại học Đà Nẵng"
+  },
+  {
+   "ma": "QSB",
+   "ten": "Trường Đại học Bách Khoa - Đại học Quốc gia TP.HCM"
+  },
+  {
+   "ma": "BKA",
+   "ten": "Trường Đại học Bách Khoa Hà Nội"
+  },
+  {
+   "ma": "DBD",
+   "ten": "Trường Đại học Bình Dương"
+  },
+  {
+   "ma": "TCT",
+   "ten": "Trường Đại học Cần Thơ"
+  },
+  {
+   "ma": "CSS",
+   "ten": "Trường Đại học Cảnh sát Nhân dân"
+  },
+  {
+   "ma": "DCA",
+   "ten": "Trường Đại học Chu Văn An"
+  },
+  {
+   "ma": "LDA",
+   "ten": "Trường Đại học Công Đoàn"
+  },
+  {
+   "ma": "QHI",
+   "ten": "Trường Đại học Công nghệ - Đại học Quốc gia Hà Nội"
+  },
+  {
+   "ma": "DDA",
+   "ten": "Trường Đại học Công nghệ Đông Á"
+  },
+  {
+   "ma": "DCD",
+   "ten": "Trường Đại học Công nghệ Đồng Nai"
+  },
+  {
+   "ma": "GTA",
+   "ten": "Trường Đại học Công nghệ Giao thông Vận tải"
+  },
+  {
+   "ma": "MIT",
+   "ten": "Trường Đại học Công nghệ miền Đông"
+  },
+  {
+   "ma": "DSG",
+   "ten": "Trường Đại học Công nghệ Sài Gòn"
+  },
+  {
+   "ma": "QSC",
+   "ten": "Trường Đại học Công nghệ Thông tin - Đại học Quốc gia TP.HCM"
+  },
+  {
+   "ma": "DTC",
+   "ten": "Trường Đại học Công nghệ Thông tin và Truyền thông - Đại học Thái Nguyên"
+  },
+  {
+   "ma": "DKC",
+   "ten": "Trường Đại học Công nghệ Tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "DCQ",
+   "ten": "Trường Đại học Công nghệ và Quản lý Hữu nghị"
+  },
+  {
+   "ma": "DVX",
+   "ten": "Trường Đại học Công nghệ Vạn Xuân"
+  },
+  {
+   "ma": "CCM",
+   "ten": "Trường Đại học Công nghiệp Dệt may Hà Nội"
+  },
+  {
+   "ma": "DCN",
+   "ten": "Trường Đại học Công nghiệp Hà Nội"
+  },
+  {
+   "ma": "DDM",
+   "ten": "Trường Đại học Công nghiệp Quảng Ninh"
+  },
+  {
+   "ma": "HUFI",
+   "ten": "Trường Đại học Công nghiệp Thực phẩm TP.HCM"
+  },
+  {
+   "ma": "IUH",
+   "ten": "Trường Đại học Công nghiệp tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "VHD",
+   "ten": "Trường Đại học Công nghiệp Việt - Hung"
+  },
+  {
+   "ma": "VUI",
+   "ten": "Trường Đại học Công nghiệp Việt Trì"
+  },
+  {
+   "ma": "DCV",
+   "ten": "Trường Đại học Công nghiệp Vinh"
+  },
+  {
+   "ma": "DCT",
+   "ten": "Trường Đại học Công Thương Tp.HCM"
+  },
+  {
+   "ma": "DCL",
+   "ten": "Trường Đại học Cửu Long"
+  },
+  {
+   "ma": "TDL",
+   "ten": "Trường Đại học Đà Lạt"
+  },
+  {
+   "ma": "DDN",
+   "ten": "Trường Đại học Đại Nam"
+  },
+  {
+   "ma": "DDU",
+   "ten": "Trường Đại học Dân lập Đông Đô"
+  },
+  {
+   "ma": "DPX",
+   "ten": "Trường Đại học Dân lập Phú Xuân"
+  },
+  {
+   "ma": "DPD",
+   "ten": "Trường Đại học Dân lập Phương Đông"
+  },
+  {
+   "ma": "PVU",
+   "ten": "Trường Đại học Dầu khí Việt Nam"
+  },
+  {
+   "ma": "DDL",
+   "ten": "Trường Đại học Điện lực"
+  },
+  {
+   "ma": "YDD",
+   "ten": "Trường Đại học Điều dưỡng Nam Định"
+  },
+  {
+   "ma": "DAD",
+   "ten": "Trường Đại học Đông Á"
+  },
+  {
+   "ma": "DNU",
+   "ten": "Trường Đại học Đồng Nai"
+  },
+  {
+   "ma": "SPD",
+   "ten": "Trường Đại học Đồng Tháp"
+  },
+  {
+   "ma": "DKH",
+   "ten": "Trường Đại học Dược Hà Nội"
+  },
+  {
+   "ma": "DDT",
+   "ten": "Trường Đại học Duy Tân"
+  },
+  {
+   "ma": "FPT",
+   "ten": "Trường Đại học Fpt"
+  },
+  {
+   "ma": "FUV",
+   "ten": "Trường Đại học Fulbright Việt Nam"
+  },
+  {
+   "ma": "GDU",
+   "ten": "Trường Đại học Gia Định"
+  },
+  {
+   "ma": "QHS",
+   "ten": "Trường Đại học Giáo dục - Đại học Quốc gia Hà Nội"
+  },
+  {
+   "ma": "GHA",
+   "ten": "Trường Đại học Giao thông Vận tải"
+  },
+  {
+   "ma": "GSA",
+   "ten": "Trường Đại học Giao thông Vận tải - Cơ sở 2 ở phía Nam"
+  },
+  {
+   "ma": "GTS",
+   "ten": "Trường Đại học Giao thông Vận tải tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "HLU",
+   "ten": "Trường Đại học Hạ Long"
+  },
+  {
+   "ma": "NHF",
+   "ten": "Trường Đại học Hà Nội"
+  },
+  {
+   "ma": "HHT",
+   "ten": "Trường Đại học Hà Tĩnh"
+  },
+  {
+   "ma": "DKT",
+   "ten": "Trường Đại học Hải Dương"
+  },
+  {
+   "ma": "THP",
+   "ten": "Trường Đại học Hải Phòng"
+  },
+  {
+   "ma": "HHA",
+   "ten": "Trường Đại học Hàng hải Việt Nam"
+  },
+  {
+   "ma": "ETU",
+   "ten": "Trường Đại học Hòa Bình"
+  },
+  {
+   "ma": "DNB",
+   "ten": "Trường Đại học Hoa Lư"
+  },
+  {
+   "ma": "HSU",
+   "ten": "Trường Đại học Hoa Sen"
+  },
+  {
+   "ma": "HDT",
+   "ten": "Trường Đại học Hồng Đức"
+  },
+  {
+   "ma": "THV",
+   "ten": "Trường Đại học Hùng Vương"
+  },
+  {
+   "ma": "DHV",
+   "ten": "Trường Đại học Hùng Vương - tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "UKH",
+   "ten": "Trường Đại học Khánh Hoà"
+  },
+  {
+   "ma": "DHT",
+   "ten": "Trường Đại học Khoa học - Đại học Huế"
+  },
+  {
+   "ma": "DTZ",
+   "ten": "Trường Đại học Khoa học - Đại học Thái Nguyên"
+  },
+  {
+   "ma": "QSY",
+   "ten": "Trường Đại học Khoa học Sức khỏe - ĐHQG Tp.HCM"
+  },
+  {
+   "ma": "QHT",
+   "ten": "Trường Đại học Khoa học Tự nhiên - Đại học Quốc gia Hà Nội"
+  },
+  {
+   "ma": "QST",
+   "ten": "Trường Đại học Khoa học Tự nhiên - Đại học Quốc gia TP.HCM"
+  },
+  {
+   "ma": "KCN",
+   "ten": "Trường Đại học Khoa học và Công nghệ Hà Nội"
+  },
+  {
+   "ma": "QHX",
+   "ten": "Trường Đại học Khoa học Xã hội và Nhân văn - Đại học Quốc gia Hà Nội"
+  },
+  {
+   "ma": "QSX",
+   "ten": "Trường Đại học Khoa học Xã hội và Nhân văn - Đại học Quốc gia TP.HCM"
+  },
+  {
+   "ma": "DKS",
+   "ten": "Trường Đại học Kiểm sát Hà Nội"
+  },
+  {
+   "ma": "TKG",
+   "ten": "Trường Đại học Kiên Giang"
+  },
+  {
+   "ma": "KTD",
+   "ten": "Trường Đại học Kiến trúc Đà Nẵng"
+  },
+  {
+   "ma": "KTS",
+   "ten": "Trường Đại học Kiến trúc Thành phố Hồ Chí Minh"
+  },
+  {
+   "ma": "UKB",
+   "ten": "Trường Đại học Kinh Bắc"
+  },
+  {
+   "ma": "DQK",
+   "ten": "Trường Đại học Kinh doanh và Công nghệ Hà Nội"
+  },
+  {
+   "ma": "DLA",
+   "ten": "Trường Đại học Kinh tế Công nghiệp Long An"
+  },
+  {
+   "ma": "DDQ",
+   "ten": "Trường Đại học Kinh tế - Đại học Đà Nẵng"
+  },
+  {
+   "ma": "DHK",
+   "ten": "Trường Đại học Kinh tế - Đại học Huế"
+  },
+  {
+   "ma": "QHE",
+   "ten": "Trường Đại học Kinh tế - Đại học Quốc gia Hà Nội"
+  },
+  {
+   "ma": "DKB",
+   "ten": "Trường Đại học Kinh tế - Kỹ thuật Bình Dương"
+  },
+  {
+   "ma": "DKK",
+   "ten": "Trường Đại học Kinh tế Kỹ thuật Công nghiệp"
+  },
+  {
+   "ma": "QSK",
+   "ten": "Trường Đại học Kinh tế - Luật - Đại học Quốc gia TP.HCM"
+  },
+  {
+   "ma": "CEA",
+   "ten": "Trường Đại học Kinh tế Nghệ An"
+  },
+  {
+   "ma": "DTE",
+   "ten": "Trường Đại học Kinh tế Quản trị Kinh doanh - Đại học Thái Nguyên"
+  },
+  {
+   "ma": "KHA",
+   "ten": "Trường Đại học Kinh tế Quốc dân"
+  },
+  {
+   "ma": "UEF",
+   "ten": "Trường Đại học Kinh tế - Tài chính tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "KSA",
+   "ten": "Trường Đại học Kinh tế tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "KCC",
+   "ten": "Trường Đại học Kỹ thuật - Công nghệ Cần Thơ"
+  },
+  {
+   "ma": "DTK",
+   "ten": "Trường Đại học Kỹ thuật Công nghiệp - Đại học Thái Nguyên"
+  },
+  {
+   "ma": "HCB",
+   "ten": "Trường Đại học Kỹ thuật - Hậu cần Công an Nhân dân (Phía Bắc)"
+  },
+  {
+   "ma": "HCN",
+   "ten": "Trường Đại học Kỹ thuật - Hậu cần Công an Nhân dân (Phía Nam)"
+  },
+  {
+   "ma": "YDN",
+   "ten": "Trường Đại học Kỹ thuật Y - Dược Đà Nẵng"
+  },
+  {
+   "ma": "DKY",
+   "ten": "Trường Đại học Kỹ thuật Y tế Hải Dương"
+  },
+  {
+   "ma": "DLH",
+   "ten": "Trường Đại học Lạc Hồng"
+  },
+  {
+   "ma": "LNS",
+   "ten": "Trường Đại học Lâm nghiệp - Cơ sở 2"
+  },
+  {
+   "ma": "LNH",
+   "ten": "Trường Đại học Lâm nghiệp (Phía Bắc)"
+  },
+  {
+   "ma": "ULSA",
+   "ten": "Trường Đại học Lao động Xã Hội"
+  },
+  {
+   "ma": "DLS",
+   "ten": "Trường Đại học Lao động - Xã hội (Cơ sở II TP. HCM)"
+  },
+  {
+   "ma": "DLT",
+   "ten": "Trường Đại học Lao động - Xã hội (Cơ sở Sơn Tây)"
+  },
+  {
+   "ma": "DLX",
+   "ten": "Trường Đại học Lao động - Xã hội (Trụ sở chính)"
+  },
+  {
+   "ma": "DHA",
+   "ten": "Trường Đại học Luật - Đại học Huế"
+  },
+  {
+   "ma": "LPH",
+   "ten": "Trường Đại học Luật Hà Nội"
+  },
+  {
+   "ma": "LPS",
+   "ten": "Trường Đại học Luật tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "DTV",
+   "ten": "Trường Đại học Lương Thế Vinh"
+  },
+  {
+   "ma": "MDA",
+   "ten": "Trường Đại học Mỏ - Địa chất"
+  },
+  {
+   "ma": "MHN",
+   "ten": "Trường Đại học Mở Hà Nội"
+  },
+  {
+   "ma": "MBS",
+   "ten": "Trường Đại học Mở tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "AUV",
+   "ten": "Trường Đại học Mỹ tại Việt Nam"
+  },
+  {
+   "ma": "MTC",
+   "ten": "Trường Đại học Mỹ thuật Công nghiệp"
+  },
+  {
+   "ma": "MCA",
+   "ten": "Trường Đại học Mỹ thuật Công nghiệp Á Châu"
+  },
+  {
+   "ma": "MTS",
+   "ten": "Trường Đại học Mỹ thuật tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "MTH",
+   "ten": "Trường Đại học Mỹ thuật Việt Nam"
+  },
+  {
+   "ma": "DNC",
+   "ten": "Trường Đại học nam Cần Thơ"
+  },
+  {
+   "ma": "NHS",
+   "ten": "Trường Đại học Ngân hàng tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "NAU",
+   "ten": "Trường Đại học Nghệ An"
+  },
+  {
+   "ma": "DHN",
+   "ten": "Trường Đại học Nghệ thuật - Đại học Huế"
+  },
+  {
+   "ma": "ZCH",
+   "ten": "Trường Đại học Ngô Quyền (hệ Dân sự)"
+  },
+  {
+   "ma": "DDF",
+   "ten": "Trường Đại họ̣c Ngoại ngữ - Đại học Đà Nẵng"
+  },
+  {
+   "ma": "DHF",
+   "ten": "Trường Đại học Ngoại ngữ - Đại học Huế"
+  },
+  {
+   "ma": "QHF",
+   "ten": "Trường Đại học Ngoại ngữ - Đại học Quốc gia Hà Nội"
+  },
+  {
+   "ma": "DNT",
+   "ten": "Trường Đại học Ngoại ngữ - Tin học TP.HCM"
+  },
+  {
+   "ma": "NTH",
+   "ten": "Trường Đại học Ngoại thương"
+  },
+  {
+   "ma": "NTS",
+   "ten": "Trường Đại học Ngoại thương - Cơ sở phía Nam"
+  },
+  {
+   "ma": "HNH",
+   "ten": "Trường Đại học Nguyễn Huệ"
+  },
+  {
+   "ma": "LBS",
+   "ten": "Trường Đại học Nguyễn Huệ (hệ dân sự)"
+  },
+  {
+   "ma": "LBH",
+   "ten": "Trường Đại học Nguyễn Huệ (hệ quân sự)"
+  },
+  {
+   "ma": "NTT",
+   "ten": "Trường Đại học Nguyễn Tất Thành"
+  },
+  {
+   "ma": "NTU",
+   "ten": "Trường Đại học Nguyễn Trãi"
+  },
+  {
+   "ma": "TSN",
+   "ten": "Trường Đại học Nha Trang"
+  },
+  {
+   "ma": "DNV",
+   "ten": "Trường Đại học Nội vụ Hà Nội"
+  },
+  {
+   "ma": "DBG",
+   "ten": "Trường Đại học Nông lâm Bắc Giang"
+  },
+  {
+   "ma": "DHL",
+   "ten": "Trường Đại học Nông lâm - Đại học Huế"
+  },
+  {
+   "ma": "DTN",
+   "ten": "Trường Đại học Nông lâm - Đại học Thái Nguyên"
+  },
+  {
+   "ma": "NLS",
+   "ten": "Trường Đại học Nông lâm Tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "DPQ",
+   "ten": "Trường Đại học Phạm Văn Đồng"
+  },
+  {
+   "ma": "DPC",
+   "ten": "Trường Đại học Phan Châu Trinh"
+  },
+  {
+   "ma": "DPT",
+   "ten": "Trường Đại học Phan Thiết"
+  },
+  {
+   "ma": "PKA",
+   "ten": "Trường Đại Học Phenikaa"
+  },
+  {
+   "ma": "PCH",
+   "ten": "Trường Đại học Phòng cháy Chữa cháy"
+  },
+  {
+   "ma": "DPY",
+   "ten": "Trường Đại học Phú Yên"
+  },
+  {
+   "ma": "DHP",
+   "ten": "Trường Đại học Quản lý và Công nghệ Hải Phòng"
+  },
+  {
+   "ma": "UMT",
+   "ten": "Trường Đại học Quản Lý và Công Nghệ Tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "DQB",
+   "ten": "Trường Đại học Quảng Bình"
+  },
+  {
+   "ma": "DQU",
+   "ten": "Trường Đại học Quảng Nam"
+  },
+  {
+   "ma": "DQT",
+   "ten": "Trường Đại học Quang Trung"
+  },
+  {
+   "ma": "DBH",
+   "ten": "Trường Đại học Quốc tế Bắc Hà"
+  },
+  {
+   "ma": "QSQ",
+   "ten": "Trường Đại học Quốc tế - Đại học Quốc gia TP.HCM"
+  },
+  {
+   "ma": "EIU",
+   "ten": "Trường Đại học Quốc tế miền Đông"
+  },
+  {
+   "ma": "RMU",
+   "ten": "Trường Đại học Quốc Tế Rmit Việt Nam"
+  },
+  {
+   "ma": "SIU",
+   "ten": "Trường Đại học Quốc tế Sài Gòn"
+  },
+  {
+   "ma": "DQN",
+   "ten": "Trường Đại học Quy Nhơn"
+  },
+  {
+   "ma": "SGD",
+   "ten": "Trường Đại học Sài Gòn"
+  },
+  {
+   "ma": "SKD",
+   "ten": "Trường Đại học Sân khấu Điện ảnh Hà Nội"
+  },
+  {
+   "ma": "DSD",
+   "ten": "Trường Đại học Sân khấu, Điện ảnh tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "SDU",
+   "ten": "Trường Đại học Sao Đỏ"
+  },
+  {
+   "ma": "DDS",
+   "ten": "Trường Đại họ̣c Sư phạm - Đại học Đà Nẵng"
+  },
+  {
+   "ma": "DHS",
+   "ten": "Trường Đại học Sư phạm - Đại học Huế"
+  },
+  {
+   "ma": "DTS",
+   "ten": "Trường Đại học Sư phạm - Đại học Thái Nguyên"
+  },
+  {
+   "ma": "SPH",
+   "ten": "Trường Đại học Sư phạm Hà Nội"
+  },
+  {
+   "ma": "SP2",
+   "ten": "Trường Đại học Sư phạm Hà Nội 2"
+  },
+  {
+   "ma": "UDUTE",
+   "ten": "Trường Đại học Sư phạm Kỹ thuật, Đại học Đà Nẵng"
+  },
+  {
+   "ma": "SKH",
+   "ten": "Trường Đại học Sư phạm Kỹ thuật Hưng Yên"
+  },
+  {
+   "ma": "SKN",
+   "ten": "Trường Đại học Sư phạm Kỹ thuật Nam Định"
+  },
+  {
+   "ma": "SPK",
+   "ten": "Trường Đại học Sư phạm Kỹ thuật tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "SKV",
+   "ten": "Trường Đại học Sư phạm Kỹ thuật Vinh"
+  },
+  {
+   "ma": "VLU",
+   "ten": "Trường Đại học Sư phạm Kỹ thuật Vĩnh Long"
+  },
+  {
+   "ma": "GNT",
+   "ten": "Trường Đại học Sư phạm Nghệ thuật Trung ương"
+  },
+  {
+   "ma": "TDH",
+   "ten": "Trường Đại học Sư phạm Thể dục Thể thao Hà Nội"
+  },
+  {
+   "ma": "STS",
+   "ten": "Trường Đại học Sư phạm Thể dục Thể thao TP.HCM"
+  },
+  {
+   "ma": "SPS",
+   "ten": "Trường Đại học Sư phạm tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "DKQ",
+   "ten": "Trường Đại học Tài chính - Kế toán"
+  },
+  {
+   "ma": "DMS",
+   "ten": "Trường Đại học Tài chính - Marketing"
+  },
+  {
+   "ma": "FBU",
+   "ten": "Trường Đại học Tài chính - Ngân hàng Hà Nội"
+  },
+  {
+   "ma": "DFA",
+   "ten": "Trường Đại học Tài chính - Quản trị Kinh doanh"
+  },
+  {
+   "ma": "DMT",
+   "ten": "Trường Đại học Tài nguyên và Môi Trường Hà Nội"
+  },
+  {
+   "ma": "DTM",
+   "ten": "Trường Đại học Tài nguyên và Môi Trường tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "TTU",
+   "ten": "Trường Đại học Tân Tạo"
+  },
+  {
+   "ma": "TQU",
+   "ten": "Trường Đại học Tân Trào"
+  },
+  {
+   "ma": "TTB",
+   "ten": "Trường Đại học Tây Bắc"
+  },
+  {
+   "ma": "DTD",
+   "ten": "Trường Đại học Tây Đô"
+  },
+  {
+   "ma": "TTN",
+   "ten": "Trường Đại học Tây Nguyên"
+  },
+  {
+   "ma": "DTB",
+   "ten": "Trường Đại học Thái Bình"
+  },
+  {
+   "ma": "TBD",
+   "ten": "Trường Đại học Thái Bình Dương"
+  },
+  {
+   "ma": "DTL",
+   "ten": "Trường Đại học Thăng Long"
+  },
+  {
+   "ma": "TDD",
+   "ten": "Trường Đại học Thành Đô"
+  },
+  {
+   "ma": "DDB",
+   "ten": "Trường Đại học Thành Đông"
+  },
+  {
+   "ma": "TDB",
+   "ten": "Trường Đại học Thể dục Thể thao Bắc Ninh"
+  },
+  {
+   "ma": "TTD",
+   "ten": "Trường Đại học Thể dục Thể thao Đà Nẵng"
+  },
+  {
+   "ma": "TDS",
+   "ten": "Trường Đại học Thể dục Thể thao Thành phố Hồ Chí Minh"
+  },
+  {
+   "ma": "TCU",
+   "ten": "Trường Đại học Thông tin liên lạc"
+  },
+  {
+   "ma": "TDM",
+   "ten": "Trường Đại học Thủ Dầu Một"
+  },
+  {
+   "ma": "HNM",
+   "ten": "Trường Đại học Thủ đô Hà Nội"
+  },
+  {
+   "ma": "TMU",
+   "ten": "Trường Đại học Thương mại"
+  },
+  {
+   "ma": "TLA",
+   "ten": "Trường Đại học Thuỷ lợi"
+  },
+  {
+   "ma": "TLS",
+   "ten": "Trường Đại học Thuỷ lợi - Cơ sở 2 ở phía Nam"
+  },
+  {
+   "ma": "TTG",
+   "ten": "Trường Đại học Tiền Giang"
+  },
+  {
+   "ma": "DTT",
+   "ten": "Trường Đại học Tôn Đức Thắng"
+  },
+  {
+   "ma": "DVT",
+   "ten": "Trường Đại học Trà Vinh"
+  },
+  {
+   "ma": "VPH",
+   "ten": "Trường Đại học Trần Đại Nghĩa"
+  },
+  {
+   "ma": "ZPH",
+   "ten": "Trường Đại học Trần Đại Nghĩa (hệ dân sự)"
+  },
+  {
+   "ma": "LAH",
+   "ten": "Trường Đại học Trần Quốc Tuấn"
+  },
+  {
+   "ma": "DVP",
+   "ten": "Trường Đại học Trưng vương"
+  },
+  {
+   "ma": "DVH",
+   "ten": "Trường Đại học Văn Hiến"
+  },
+  {
+   "ma": "VHH",
+   "ten": "Trường Đại học Văn hoá Hà Nội"
+  },
+  {
+   "ma": "ZNH",
+   "ten": "Trường Đại học Văn hoá - Nghệ thuật Quân đội"
+  },
+  {
+   "ma": "DVD",
+   "ten": "Trường Đại học Văn hoá, Thể thao và Du lịch Thanh Hoá"
+  },
+  {
+   "ma": "VHS",
+   "ten": "Trường Đại học Văn hoá Tp. Hồ Chí Minh"
+  },
+  {
+   "ma": "DVL",
+   "ten": "Trường Đại học Văn Lang"
+  },
+  {
+   "ma": "DVB",
+   "ten": "Trường Đại học Việt Bắc"
+  },
+  {
+   "ma": "VGU",
+   "ten": "Trường Đại học Việt Đức"
+  },
+  {
+   "ma": "VJU",
+   "ten": "Trường Đại học Việt Nhật - Đại học Quốc Gia Hà Nội"
+  },
+  {
+   "ma": "TDV",
+   "ten": "Trường Đại học Vinh"
+  },
+  {
+   "ma": "VIN",
+   "ten": "Trường Đại học Vinuni"
+  },
+  {
+   "ma": "VTT",
+   "ten": "Trường Đại học Võ Trường Toản"
+  },
+  {
+   "ma": "XDA",
+   "ten": "Trường Đại học Xây dựng"
+  },
+  {
+   "ma": "MTU",
+   "ten": "Trường Đại học Xây dựng miền Tây"
+  },
+  {
+   "ma": "XDT",
+   "ten": "Trường Đại học Xây dựng miền Trung"
+  },
+  {
+   "ma": "BMU",
+   "ten": "Trường Đại học Y dược Buôn Ma Thuột"
+  },
+  {
+   "ma": "YCT",
+   "ten": "Trường Đại học Y dược Cần Thơ"
+  },
+  {
+   "ma": "DHY",
+   "ten": "Trường Đại học Y dược - Đại học Huế"
+  },
+  {
+   "ma": "DTY",
+   "ten": "Trường Đại học Y dược - Đại học Thái Nguyên"
+  },
+  {
+   "ma": "YPB",
+   "ten": "Trường Đại học Y dược Hải Phòng"
+  },
+  {
+   "ma": "YTB",
+   "ten": "Trường Đại học Y dược Thái Bình"
+  },
+  {
+   "ma": "YDS",
+   "ten": "Trường Đại học Y dược TP.HCM"
+  },
+  {
+   "ma": "YHB",
+   "ten": "Trường Đại học Y Hà Nội"
+  },
+  {
+   "ma": "TYS",
+   "ten": "Trường Đại học Y khoa Phạm Ngọc Thạch"
+  },
+  {
+   "ma": "THU",
+   "ten": "Trường Đại học Y khoa Tokyo Việt Nam"
+  },
+  {
+   "ma": "YKV",
+   "ten": "Trường Đại học Y khoa Vinh"
+  },
+  {
+   "ma": "YTC",
+   "ten": "Trường Đại học Y tế Công cộng"
+  },
+  {
+   "ma": "DYD",
+   "ten": "Trường Đại học Yersin Đà Lạt"
+  },
+  {
+   "ma": "VNUK",
+   "ten": "Viện Nghiên cứu và Đào tạo Việt - Anh thuộc Đại học Đà Nẵng"
+  },
+  {
+   "ma": "QHK",
+   "ten": "Trường Khoa học liên ngành và Nghệ thuật - Đại học Quốc gia Hà Nội"
+  },
+  {
+   "ma": "TMA",
+   "ten": "Trường Đại học Thương mại"
+  },
+  {
+   "ma": "QHD",
+   "ten": "Trường Quản trị và Kinh doanh - Đại học Quốc gia Hà Nội"
+  }
+ ],
+ "nganh": [
+  {
+   "ma": "7140101",
+   "ten": "Giáo dục học"
+  },
+  {
+   "ma": "7140103",
+   "ten": "Công nghệ giáo dục"
+  },
+  {
+   "ma": "7140114",
+   "ten": "Quản lý giáo dục"
+  },
+  {
+   "ma": "7140201",
+   "ten": "Giáo dục Mầm non"
+  },
+  {
+   "ma": "7140202",
+   "ten": "Giáo dục Tiểu học"
+  },
+  {
+   "ma": "7140203",
+   "ten": "Giáo dục Đặc biệt"
+  },
+  {
+   "ma": "7140204",
+   "ten": "Giáo dục Công dân"
+  },
+  {
+   "ma": "7140205",
+   "ten": "Giáo dục Chính trị"
+  },
+  {
+   "ma": "7140206",
+   "ten": "Giáo dục Thể chất"
+  },
+  {
+   "ma": "7140207",
+   "ten": "Huấn luyện thể thao"
+  },
+  {
+   "ma": "7140208",
+   "ten": "Giáo dục Quốc phòng - An ninh"
+  },
+  {
+   "ma": "7140209",
+   "ten": "Sư phạm Toán học"
+  },
+  {
+   "ma": "7140210",
+   "ten": "Sư phạm Tin học"
+  },
+  {
+   "ma": "7140211",
+   "ten": "Sư phạm Vật lý"
+  },
+  {
+   "ma": "7140212",
+   "ten": "Sư phạm Hóa học"
+  },
+  {
+   "ma": "7140213",
+   "ten": "Sư phạm Sinh học"
+  },
+  {
+   "ma": "7140214",
+   "ten": "Sư phạm Kỹ thuật công nghiệp"
+  },
+  {
+   "ma": "7140215",
+   "ten": "Sư phạm Kỹ thuật nông nghiệp"
+  },
+  {
+   "ma": "7140217",
+   "ten": "Sư phạm Ngữ văn"
+  },
+  {
+   "ma": "7140218",
+   "ten": "Sư phạm Lịch sử"
+  },
+  {
+   "ma": "7140219",
+   "ten": "Sư phạm Địa lý"
+  },
+  {
+   "ma": "7140221",
+   "ten": "Sư phạm Âm nhạc"
+  },
+  {
+   "ma": "7140222",
+   "ten": "Sư phạm Mỹ thuật"
+  },
+  {
+   "ma": "7140223",
+   "ten": "Sư phạm Tiếng Bana"
+  },
+  {
+   "ma": "7140224",
+   "ten": "Sư phạm Tiếng Êđê"
+  },
+  {
+   "ma": "7140225",
+   "ten": "Sư phạm Tiếng Jrai"
+  },
+  {
+   "ma": "7140226",
+   "ten": "Sư phạm Tiếng Khmer"
+  },
+  {
+   "ma": "7140227",
+   "ten": "Sư phạm Tiếng H'mong"
+  },
+  {
+   "ma": "7140228",
+   "ten": "Sư phạm Tiếng Chăm"
+  },
+  {
+   "ma": "7140229",
+   "ten": "Sư phạm Tiếng M'nông"
+  },
+  {
+   "ma": "7140230",
+   "ten": "Sư phạm Tiếng Xêđăng"
+  },
+  {
+   "ma": "7140231",
+   "ten": "Sư phạm Tiếng Anh"
+  },
+  {
+   "ma": "7140232",
+   "ten": "Sư phạm Tiếng Nga"
+  },
+  {
+   "ma": "7140233",
+   "ten": "Sư phạm Tiếng Pháp"
+  },
+  {
+   "ma": "7140234",
+   "ten": "Sư phạm Tiếng Trung Quốc"
+  },
+  {
+   "ma": "7140235",
+   "ten": "Sư phạm Tiếng Đức"
+  },
+  {
+   "ma": "7140236",
+   "ten": "Sư phạm Tiếng Nhật"
+  },
+  {
+   "ma": "7140237",
+   "ten": "Sư phạm Tiếng Hàn Quốc"
+  },
+  {
+   "ma": "7140245",
+   "ten": "Sư phạm nghệ thuật"
+  },
+  {
+   "ma": "7140246",
+   "ten": "Sư phạm công nghệ"
+  },
+  {
+   "ma": "7140247",
+   "ten": "Sư phạm Khoa học tự nhiên"
+  },
+  {
+   "ma": "7140248",
+   "ten": "Giáo dục pháp luật"
+  },
+  {
+   "ma": "7140249",
+   "ten": "Sư phạm Lịch sử - Địa lý"
+  },
+  {
+   "ma": "7210101",
+   "ten": "Lý luận, lịch sử và phê bình mỹ thuật"
+  },
+  {
+   "ma": "7210103",
+   "ten": "Hội họa"
+  },
+  {
+   "ma": "7210104",
+   "ten": "Đồ họa"
+  },
+  {
+   "ma": "7210105",
+   "ten": "Điêu khắc"
+  },
+  {
+   "ma": "7210107",
+   "ten": "Gốm"
+  },
+  {
+   "ma": "7210110",
+   "ten": "Mỹ thuật đô thị"
+  },
+  {
+   "ma": "7210201",
+   "ten": "Âm nhạc học"
+  },
+  {
+   "ma": "7210203",
+   "ten": "Sáng tác âm nhạc"
+  },
+  {
+   "ma": "7210204",
+   "ten": "Chỉ huy âm nhạc"
+  },
+  {
+   "ma": "7210205",
+   "ten": "Thanh nhạc"
+  },
+  {
+   "ma": "7210207",
+   "ten": "Biểu diễn nhạc cụ phương tây"
+  },
+  {
+   "ma": "7210208",
+   "ten": "Piano"
+  },
+  {
+   "ma": "7210209",
+   "ten": "Nhạc Jazz"
+  },
+  {
+   "ma": "7210210",
+   "ten": "Biểu diễn nhạc cụ truyền thống"
+  },
+  {
+   "ma": "7210221",
+   "ten": "Lý luận, lịch sử và phê bình sân khấu"
+  },
+  {
+   "ma": "7210225",
+   "ten": "Biên kịch sân khấu"
+  },
+  {
+   "ma": "7210226",
+   "ten": "Diễn viên sân khấu kịch hát"
+  },
+  {
+   "ma": "7210227",
+   "ten": "Đạo diễn sân khấu"
+  },
+  {
+   "ma": "7210231",
+   "ten": "Lý luận, lịch sử và phê bình điện ảnh, truyền hình"
+  },
+  {
+   "ma": "7210233",
+   "ten": "Biên kịch điện ảnh, truyền hình"
+  },
+  {
+   "ma": "7210234",
+   "ten": "Diễn viên kịch, điện ảnh - truyền hình"
+  },
+  {
+   "ma": "7210235",
+   "ten": "Đạo diễn điện ảnh, truyền hình"
+  },
+  {
+   "ma": "7210236",
+   "ten": "Quay phim"
+  },
+  {
+   "ma": "7210241",
+   "ten": "Lý luận, lịch sử và phê bình múa"
+  },
+  {
+   "ma": "7210242",
+   "ten": "Diễn viên múa"
+  },
+  {
+   "ma": "7210243",
+   "ten": "Biên đạo múa"
+  },
+  {
+   "ma": "7210244",
+   "ten": "Huấn luyện múa"
+  },
+  {
+   "ma": "7210301",
+   "ten": "Nhiếp ảnh"
+  },
+  {
+   "ma": "7210302",
+   "ten": "Công nghệ điện ảnh, truyền hình"
+  },
+  {
+   "ma": "7210303",
+   "ten": "Thiết kế âm thanh, ánh sáng"
+  },
+  {
+   "ma": "7210402",
+   "ten": "Thiết kế công nghiệp"
+  },
+  {
+   "ma": "7210403",
+   "ten": "Thiết kế đồ họa"
+  },
+  {
+   "ma": "7210404",
+   "ten": "Thiết kế thời trang"
+  },
+  {
+   "ma": "7210406",
+   "ten": "Thiết kế mỹ thuật sân khấu, điện ảnh"
+  },
+  {
+   "ma": "7220101",
+   "ten": "Tiếng Việt và văn hóa Việt Nam"
+  },
+  {
+   "ma": "7220104",
+   "ten": "Hán Nôm"
+  },
+  {
+   "ma": "7220105",
+   "ten": "Ngôn ngữ Jrai"
+  },
+  {
+   "ma": "7220106",
+   "ten": "Ngôn ngữ Khmer"
+  },
+  {
+   "ma": "7220107",
+   "ten": "Ngôn ngữ H'mong"
+  },
+  {
+   "ma": "7220108",
+   "ten": "Ngôn ngữ Chăm"
+  },
+  {
+   "ma": "7220110",
+   "ten": "Sáng tác văn học"
+  },
+  {
+   "ma": "7220112",
+   "ten": "Văn hóa các dân tộc thiểu số Việt Nam"
+  },
+  {
+   "ma": "7220201",
+   "ten": "Ngôn ngữ Anh"
+  },
+  {
+   "ma": "7220202",
+   "ten": "Ngôn ngữ Nga"
+  },
+  {
+   "ma": "7220203",
+   "ten": "Ngôn ngữ Pháp"
+  },
+  {
+   "ma": "7220204",
+   "ten": "Ngôn ngữ Trung Quốc"
+  },
+  {
+   "ma": "7220205",
+   "ten": "Ngôn ngữ Đức"
+  },
+  {
+   "ma": "7220206",
+   "ten": "Ngôn ngữ Tây Ban Nha"
+  },
+  {
+   "ma": "7220207",
+   "ten": "Ngôn ngữ Bồ Đào Nha"
+  },
+  {
+   "ma": "7220208",
+   "ten": "Ngôn ngữ Italia"
+  },
+  {
+   "ma": "7220209",
+   "ten": "Ngôn ngữ Nhật"
+  },
+  {
+   "ma": "7220210",
+   "ten": "Ngôn ngữ Hàn Quốc"
+  },
+  {
+   "ma": "7220211",
+   "ten": "Ngôn ngữ Ảrập"
+  },
+  {
+   "ma": "7229001",
+   "ten": "Triết học"
+  },
+  {
+   "ma": "7229008",
+   "ten": "Chủ nghĩa xã hội khoa học"
+  },
+  {
+   "ma": "7229009",
+   "ten": "Tôn giáo học"
+  },
+  {
+   "ma": "7229010",
+   "ten": "Lịch sử"
+  },
+  {
+   "ma": "7229020",
+   "ten": "Ngôn ngữ học"
+  },
+  {
+   "ma": "7229030",
+   "ten": "Văn học"
+  },
+  {
+   "ma": "7229040",
+   "ten": "Văn hóa học"
+  },
+  {
+   "ma": "7229042",
+   "ten": "Quản lý văn hóa"
+  },
+  {
+   "ma": "7229045",
+   "ten": "Gia đình học"
+  },
+  {
+   "ma": "7310101",
+   "ten": "Kinh tế"
+  },
+  {
+   "ma": "7310102",
+   "ten": "Kinh tế chính trị"
+  },
+  {
+   "ma": "7310104",
+   "ten": "Kinh tế đầu tư"
+  },
+  {
+   "ma": "7310105",
+   "ten": "Kinh tế phát triển"
+  },
+  {
+   "ma": "7310106",
+   "ten": "Kinh tế quốc tế"
+  },
+  {
+   "ma": "7310107",
+   "ten": "Thống kê kinh tế"
+  },
+  {
+   "ma": "7310108",
+   "ten": "Toán kinh tế"
+  },
+  {
+   "ma": "7310109",
+   "ten": "Kinh tế số"
+  },
+  {
+   "ma": "7310201",
+   "ten": "Chính trị học"
+  },
+  {
+   "ma": "7310202",
+   "ten": "Xây dựng Đảng và chính quyền nhà nước"
+  },
+  {
+   "ma": "7310205",
+   "ten": "Quản lý nhà nước"
+  },
+  {
+   "ma": "7310206",
+   "ten": "Quan hệ quốc tế"
+  },
+  {
+   "ma": "7310301",
+   "ten": "Xã hội học"
+  },
+  {
+   "ma": "7310302",
+   "ten": "Nhân học"
+  },
+  {
+   "ma": "7310401",
+   "ten": "Tâm lý học"
+  },
+  {
+   "ma": "7310403",
+   "ten": "Tâm lý học giáo dục"
+  },
+  {
+   "ma": "7310501",
+   "ten": "Địa lý học"
+  },
+  {
+   "ma": "7310601",
+   "ten": "Quốc tế học"
+  },
+  {
+   "ma": "7310602",
+   "ten": "Châu Á học"
+  },
+  {
+   "ma": "7310607",
+   "ten": "Thái Bình Dương học"
+  },
+  {
+   "ma": "7310608",
+   "ten": "Đông phương học"
+  },
+  {
+   "ma": "7310612",
+   "ten": "Trung Quốc học"
+  },
+  {
+   "ma": "7310613",
+   "ten": "Nhật Bản học"
+  },
+  {
+   "ma": "7310614",
+   "ten": "Hàn Quốc học"
+  },
+  {
+   "ma": "7310620",
+   "ten": "Đông Nam Á học"
+  },
+  {
+   "ma": "7310630",
+   "ten": "Việt Nam học"
+  },
+  {
+   "ma": "7320101",
+   "ten": "Báo chí"
+  },
+  {
+   "ma": "7320104",
+   "ten": "Truyền thông đa phương tiện"
+  },
+  {
+   "ma": "7320105",
+   "ten": "Truyền thông đại chúng"
+  },
+  {
+   "ma": "7320106",
+   "ten": "Công nghệ truyền thông"
+  },
+  {
+   "ma": "7320107",
+   "ten": "Truyền thông quốc tế"
+  },
+  {
+   "ma": "7320108",
+   "ten": "Quan hệ công chúng"
+  },
+  {
+   "ma": "7320201",
+   "ten": "Thông tin - Thư viện"
+  },
+  {
+   "ma": "7320205",
+   "ten": "Quản lý thông tin"
+  },
+  {
+   "ma": "7320303",
+   "ten": "Lưu trữ học"
+  },
+  {
+   "ma": "7320305",
+   "ten": "Bảo tàng học"
+  },
+  {
+   "ma": "7320401",
+   "ten": "Xuất bản"
+  },
+  {
+   "ma": "7320402",
+   "ten": "Kinh doanh xuất bản phẩm"
+  },
+  {
+   "ma": "7340101",
+   "ten": "Quản trị kinh doanh"
+  },
+  {
+   "ma": "7340115",
+   "ten": "Marketing"
+  },
+  {
+   "ma": "7340116",
+   "ten": "Bất động sản"
+  },
+  {
+   "ma": "7340120",
+   "ten": "Kinh doanh quốc tế"
+  },
+  {
+   "ma": "7340121",
+   "ten": "Kinh doanh thương mại"
+  },
+  {
+   "ma": "7340122",
+   "ten": "Thương mại điện tử"
+  },
+  {
+   "ma": "7340123",
+   "ten": "Kinh doanh thời trang và dệt may"
+  },
+  {
+   "ma": "7340201",
+   "ten": "Tài chính - Ngân hàng"
+  },
+  {
+   "ma": "7340204",
+   "ten": "Bảo hiểm"
+  },
+  {
+   "ma": "7340205",
+   "ten": "Công nghệ tài chính"
+  },
+  {
+   "ma": "7340301",
+   "ten": "Kế toán"
+  },
+  {
+   "ma": "7340302",
+   "ten": "Kiểm toán"
+  },
+  {
+   "ma": "7340401",
+   "ten": "Khoa học quản lý"
+  },
+  {
+   "ma": "7340403",
+   "ten": "Quản lý công"
+  },
+  {
+   "ma": "7340404",
+   "ten": "Quản trị nhân lực"
+  },
+  {
+   "ma": "7340405",
+   "ten": "Hệ thống thông tin quản lý"
+  },
+  {
+   "ma": "7340406",
+   "ten": "Quản trị văn phòng"
+  },
+  {
+   "ma": "7340408",
+   "ten": "Quan hệ lao động"
+  },
+  {
+   "ma": "7340409",
+   "ten": "Quản lý dự án"
+  },
+  {
+   "ma": "7380101",
+   "ten": "Luật"
+  },
+  {
+   "ma": "7380102",
+   "ten": "Luật hiến pháp và luật hành chính"
+  },
+  {
+   "ma": "7380103",
+   "ten": "Luật dân sự và tố tụng dân sự"
+  },
+  {
+   "ma": "7380104",
+   "ten": "Luật hình sự và tố tụng hình sự"
+  },
+  {
+   "ma": "7380107",
+   "ten": "Luật kinh tế"
+  },
+  {
+   "ma": "7380108",
+   "ten": "Luật quốc tế"
+  },
+  {
+   "ma": "7420101",
+   "ten": "Sinh học"
+  },
+  {
+   "ma": "7420201",
+   "ten": "Công nghệ sinh học"
+  },
+  {
+   "ma": "7420202",
+   "ten": "Kỹ thuật sinh học"
+  },
+  {
+   "ma": "7420203",
+   "ten": "Sinh học ứng dụng"
+  },
+  {
+   "ma": "7440101",
+   "ten": "Thiên văn học"
+  },
+  {
+   "ma": "7440102",
+   "ten": "Vật lý học"
+  },
+  {
+   "ma": "7440106",
+   "ten": "Vật lý nguyên tử và hạt nhân"
+  },
+  {
+   "ma": "7440110",
+   "ten": "Cơ học"
+  },
+  {
+   "ma": "7440112",
+   "ten": "Hóa học"
+  },
+  {
+   "ma": "7440122",
+   "ten": "Khoa học vật liệu"
+  },
+  {
+   "ma": "7440201",
+   "ten": "Địa chất học"
+  },
+  {
+   "ma": "7440212",
+   "ten": "Bản đồ học"
+  },
+  {
+   "ma": "7440217",
+   "ten": "Địa lý tự nhiên"
+  },
+  {
+   "ma": "7440222",
+   "ten": "Khí tượng và khí hậu học"
+  },
+  {
+   "ma": "7440224",
+   "ten": "Thủy văn học"
+  },
+  {
+   "ma": "7440228",
+   "ten": "Hải dương học"
+  },
+  {
+   "ma": "7440301",
+   "ten": "Khoa học môi trường"
+  },
+  {
+   "ma": "7460101",
+   "ten": "Toán học"
+  },
+  {
+   "ma": "7460107",
+   "ten": "Khoa học tính toán"
+  },
+  {
+   "ma": "7460108",
+   "ten": "Khoa học dữ liệu"
+  },
+  {
+   "ma": "7460112",
+   "ten": "Toán ứng dụng"
+  },
+  {
+   "ma": "7460115",
+   "ten": "Toán cơ"
+  },
+  {
+   "ma": "7460117",
+   "ten": "Toán tin"
+  },
+  {
+   "ma": "7460201",
+   "ten": "Thống kê"
+  },
+  {
+   "ma": "7480101",
+   "ten": "Khoa học máy tính"
+  },
+  {
+   "ma": "7480102",
+   "ten": "Mạng máy tính và truyền thông dữ liệu"
+  },
+  {
+   "ma": "7480103",
+   "ten": "Kỹ thuật phần mềm"
+  },
+  {
+   "ma": "7480104",
+   "ten": "Hệ thống thông tin"
+  },
+  {
+   "ma": "7480106",
+   "ten": "Kỹ thuật máy tính"
+  },
+  {
+   "ma": "7480107",
+   "ten": "Trí tuệ nhân tạo"
+  },
+  {
+   "ma": "7480108",
+   "ten": "Công nghệ kỹ thuật máy tính"
+  },
+  {
+   "ma": "7480201",
+   "ten": "Công nghệ thông tin"
+  },
+  {
+   "ma": "7480202",
+   "ten": "An toàn thông tin"
+  },
+  {
+   "ma": "7510101",
+   "ten": "Công nghệ kỹ thuật kiến trúc"
+  },
+  {
+   "ma": "7510102",
+   "ten": "Công nghệ kỹ thuật công trình xây dựng"
+  },
+  {
+   "ma": "7510103",
+   "ten": "Công nghệ kỹ thuật xây dựng"
+  },
+  {
+   "ma": "7510104",
+   "ten": "Công nghệ kỹ thuật giao thông"
+  },
+  {
+   "ma": "7510105",
+   "ten": "Công nghệ kỹ thuật vật liệu xây dựng"
+  },
+  {
+   "ma": "7510201",
+   "ten": "Công nghệ kỹ thuật cơ khí"
+  },
+  {
+   "ma": "7510202",
+   "ten": "Công nghệ chế tạo máy"
+  },
+  {
+   "ma": "7510203",
+   "ten": "Công nghệ kỹ thuật cơ điện tử"
+  },
+  {
+   "ma": "7510205",
+   "ten": "Công nghệ kỹ thuật ô tô"
+  },
+  {
+   "ma": "7510206",
+   "ten": "Công nghệ kỹ thuật nhiệt"
+  },
+  {
+   "ma": "7510207",
+   "ten": "Công nghệ kỹ thuật tàu thủy"
+  },
+  {
+   "ma": "7510211",
+   "ten": "Bảo dưỡng công nghiệp"
+  },
+  {
+   "ma": "7510301",
+   "ten": "Công nghệ kỹ thuật điện, điện tử"
+  },
+  {
+   "ma": "7510302",
+   "ten": "Công nghệ kỹ thuật điện tử - viễn thông"
+  },
+  {
+   "ma": "7510303",
+   "ten": "Công nghệ kỹ thuật điều khiển và tự động hóa"
+  },
+  {
+   "ma": "7510401",
+   "ten": "Công nghệ kỹ thuật hóa học"
+  },
+  {
+   "ma": "7510402",
+   "ten": "Công nghệ vật liệu"
+  },
+  {
+   "ma": "7510406",
+   "ten": "Công nghệ kỹ thuật môi trường"
+  },
+  {
+   "ma": "7510407",
+   "ten": "Công nghệ kỹ thuật hạt nhân"
+  },
+  {
+   "ma": "7510601",
+   "ten": "Quản lý công nghiệp"
+  },
+  {
+   "ma": "7510604",
+   "ten": "Kinh tế công nghiệp"
+  },
+  {
+   "ma": "7510605",
+   "ten": "Logistics và Quản lý chuỗi cung ứng"
+  },
+  {
+   "ma": "7510701",
+   "ten": "Công nghệ dầu khí và khai thác dầu"
+  },
+  {
+   "ma": "7510801",
+   "ten": "Công nghệ kỹ thuật in"
+  },
+  {
+   "ma": "7520101",
+   "ten": "Cơ kỹ thuật"
+  },
+  {
+   "ma": "7520103",
+   "ten": "Kỹ thuật cơ khí"
+  },
+  {
+   "ma": "7520114",
+   "ten": "Kỹ thuật cơ điện tử"
+  },
+  {
+   "ma": "7520115",
+   "ten": "Kỹ thuật nhiệt"
+  },
+  {
+   "ma": "7520116",
+   "ten": "Kỹ thuật cơ khí động lực"
+  },
+  {
+   "ma": "7520117",
+   "ten": "Kỹ thuật công nghiệp"
+  },
+  {
+   "ma": "7520118",
+   "ten": "Kỹ thuật hệ thống công nghiệp"
+  },
+  {
+   "ma": "7520120",
+   "ten": "Kỹ thuật hàng không"
+  },
+  {
+   "ma": "7520121",
+   "ten": "Kỹ thuật không gian"
+  },
+  {
+   "ma": "7520122",
+   "ten": "Kỹ thuật tàu thủy"
+  },
+  {
+   "ma": "7520130",
+   "ten": "Kỹ thuật ô tô"
+  },
+  {
+   "ma": "7520137",
+   "ten": "Kỹ thuật in"
+  },
+  {
+   "ma": "7520138",
+   "ten": "Kỹ thuật hàng hải"
+  },
+  {
+   "ma": "7520201",
+   "ten": "Kỹ thuật điện"
+  },
+  {
+   "ma": "7520204",
+   "ten": "Kỹ thuật rađa - dẫn đường"
+  },
+  {
+   "ma": "7520205",
+   "ten": "Kỹ thuật thủy âm"
+  },
+  {
+   "ma": "7520206",
+   "ten": "Kỹ thuật biển"
+  },
+  {
+   "ma": "7520207",
+   "ten": "Kỹ thuật điện tử - viễn thông"
+  },
+  {
+   "ma": "7520212",
+   "ten": "Kỹ thuật y sinh"
+  },
+  {
+   "ma": "7520216",
+   "ten": "Kỹ thuật điều khiển và tự động hóa"
+  },
+  {
+   "ma": "7520301",
+   "ten": "Kỹ thuật hóa học"
+  },
+  {
+   "ma": "7520309",
+   "ten": "Kỹ thuật vật liệu"
+  },
+  {
+   "ma": "7520310",
+   "ten": "Kỹ thuật vật liệu kim loại"
+  },
+  {
+   "ma": "7520312",
+   "ten": "Kỹ thuật dệt"
+  },
+  {
+   "ma": "7520320",
+   "ten": "Kỹ thuật môi trường"
+  },
+  {
+   "ma": "7520401",
+   "ten": "Vật lý kỹ thuật"
+  },
+  {
+   "ma": "7520402",
+   "ten": "Kỹ thuật hạt nhân"
+  },
+  {
+   "ma": "7520501",
+   "ten": "Kỹ thuật địa chất"
+  },
+  {
+   "ma": "7520502",
+   "ten": "Kỹ thuật địa vật lý"
+  },
+  {
+   "ma": "7520503",
+   "ten": "Kỹ thuật trắc địa - bản đồ"
+  },
+  {
+   "ma": "7520601",
+   "ten": "Kỹ thuật mỏ"
+  },
+  {
+   "ma": "7520602",
+   "ten": "Kỹ thuật thăm dò và khảo sát"
+  },
+  {
+   "ma": "7520604",
+   "ten": "Kỹ thuật dầu khí"
+  },
+  {
+   "ma": "7520607",
+   "ten": "Kỹ thuật tuyển khoáng"
+  },
+  {
+   "ma": "7540101",
+   "ten": "Công nghệ thực phẩm"
+  },
+  {
+   "ma": "7540102",
+   "ten": "Kỹ thuật thực phẩm"
+  },
+  {
+   "ma": "7540104",
+   "ten": "Công nghệ sau thu hoạch"
+  },
+  {
+   "ma": "7540105",
+   "ten": "Công nghệ chế biến thủy sản"
+  },
+  {
+   "ma": "7540106",
+   "ten": "Đảm bảo chất lượng và an toàn thực phẩm"
+  },
+  {
+   "ma": "7540202",
+   "ten": "Công nghệ sợi, dệt"
+  },
+  {
+   "ma": "7540203",
+   "ten": "Công nghệ vật liệu dệt, may"
+  },
+  {
+   "ma": "7540204",
+   "ten": "Công nghệ dệt, may"
+  },
+  {
+   "ma": "7540206",
+   "ten": "Công nghệ da giày"
+  },
+  {
+   "ma": "7549001",
+   "ten": "Công nghệ chế biến lâm sản"
+  },
+  {
+   "ma": "7580101",
+   "ten": "Kiến trúc"
+  },
+  {
+   "ma": "7580102",
+   "ten": "Kiến trúc cảnh quan"
+  },
+  {
+   "ma": "7580103",
+   "ten": "Kiến trúc nội thất"
+  },
+  {
+   "ma": "7580104",
+   "ten": "Kiến trúc đô thị"
+  },
+  {
+   "ma": "7580105",
+   "ten": "Quy hoạch vùng và đô thị"
+  },
+  {
+   "ma": "7580106",
+   "ten": "Quản lý đô thị và công trình"
+  },
+  {
+   "ma": "7580108",
+   "ten": "Thiết kế nội thất"
+  },
+  {
+   "ma": "7580111",
+   "ten": "Bảo tồn di sản kiến trúc - Đô thị"
+  },
+  {
+   "ma": "7580112",
+   "ten": "Đô thị học"
+  },
+  {
+   "ma": "7580201",
+   "ten": "Kỹ thuật xây dựng"
+  },
+  {
+   "ma": "7580202",
+   "ten": "Kỹ thuật xây dựng công trình thủy"
+  },
+  {
+   "ma": "7580203",
+   "ten": "Kỹ thuật xây dựng công trình biển"
+  },
+  {
+   "ma": "7580205",
+   "ten": "Kỹ thuật xây dựng công trình giao thông"
+  },
+  {
+   "ma": "7580210",
+   "ten": "Kỹ thuật cơ sở hạ tầng"
+  },
+  {
+   "ma": "7580211",
+   "ten": "Địa kỹ thuật xây dựng"
+  },
+  {
+   "ma": "7580212",
+   "ten": "Kỹ thuật tài nguyên nước"
+  },
+  {
+   "ma": "7580213",
+   "ten": "Kỹ thuật cấp thoát nước"
+  },
+  {
+   "ma": "7580301",
+   "ten": "Kinh tế xây dựng"
+  },
+  {
+   "ma": "7580302",
+   "ten": "Quản lý xây dựng"
+  },
+  {
+   "ma": "7620101",
+   "ten": "Nông nghiệp"
+  },
+  {
+   "ma": "7620102",
+   "ten": "Khuyến nông"
+  },
+  {
+   "ma": "7620103",
+   "ten": "Khoa học đất"
+  },
+  {
+   "ma": "7620105",
+   "ten": "Chăn nuôi"
+  },
+  {
+   "ma": "7620109",
+   "ten": "Nông học"
+  },
+  {
+   "ma": "7620110",
+   "ten": "Khoa học cây trồng"
+  },
+  {
+   "ma": "7620112",
+   "ten": "Bảo vệ thực vật"
+  },
+  {
+   "ma": "7620113",
+   "ten": "Công nghệ rau hoa quả và cảnh quan"
+  },
+  {
+   "ma": "7620114",
+   "ten": "Kinh doanh nông nghiệp"
+  },
+  {
+   "ma": "7620115",
+   "ten": "Kinh tế nông nghiệp"
+  },
+  {
+   "ma": "7620116",
+   "ten": "Phát triển nông thôn"
+  },
+  {
+   "ma": "7620201",
+   "ten": "Lâm học"
+  },
+  {
+   "ma": "7620202",
+   "ten": "Lâm nghiệp đô thị"
+  },
+  {
+   "ma": "7620205",
+   "ten": "Lâm sinh"
+  },
+  {
+   "ma": "7620211",
+   "ten": "Quản lý tài nguyên rừng"
+  },
+  {
+   "ma": "7620301",
+   "ten": "Nuôi trồng thủy sản"
+  },
+  {
+   "ma": "7620302",
+   "ten": "Bệnh học thủy sản"
+  },
+  {
+   "ma": "7620303",
+   "ten": "Khoa học thủy sản"
+  },
+  {
+   "ma": "7620304",
+   "ten": "Khai thác thủy sản"
+  },
+  {
+   "ma": "7620305",
+   "ten": "Quản lý thủy sản"
+  },
+  {
+   "ma": "7640101",
+   "ten": "Thú y"
+  },
+  {
+   "ma": "7720101",
+   "ten": "Y khoa"
+  },
+  {
+   "ma": "7720110",
+   "ten": "Y học dự phòng"
+  },
+  {
+   "ma": "7720115",
+   "ten": "Y học cổ truyền"
+  },
+  {
+   "ma": "7720201",
+   "ten": "Dược học"
+  },
+  {
+   "ma": "7720203",
+   "ten": "Hóa dược"
+  },
+  {
+   "ma": "7720301",
+   "ten": "Điều dưỡng"
+  },
+  {
+   "ma": "7720302",
+   "ten": "Hộ sinh"
+  },
+  {
+   "ma": "7720401",
+   "ten": "Dinh dưỡng"
+  },
+  {
+   "ma": "7720501",
+   "ten": "Răng - Hàm - Mặt"
+  },
+  {
+   "ma": "7720502",
+   "ten": "Kỹ thuật phục hình răng"
+  },
+  {
+   "ma": "7720601",
+   "ten": "Kỹ thuật xét nghiệm y học"
+  },
+  {
+   "ma": "7720602",
+   "ten": "Kỹ thuật hình ảnh y học"
+  },
+  {
+   "ma": "7720603",
+   "ten": "Kỹ thuật Phục hồi chức năng"
+  },
+  {
+   "ma": "7720701",
+   "ten": "Y tế công cộng"
+  },
+  {
+   "ma": "7720801",
+   "ten": "Tổ chức và Quản lý y tế"
+  },
+  {
+   "ma": "7720802",
+   "ten": "Quản lý bệnh viện"
+  },
+  {
+   "ma": "7729001",
+   "ten": "Y sinh học thể dục thể thao"
+  },
+  {
+   "ma": "7760101",
+   "ten": "Công tác xã hội"
+  },
+  {
+   "ma": "7760102",
+   "ten": "Công tác thanh thiếu niên"
+  },
+  {
+   "ma": "7760103",
+   "ten": "Hỗ trợ giáo dục người khuyết tật"
+  },
+  {
+   "ma": "7810101",
+   "ten": "Du lịch"
+  },
+  {
+   "ma": "7810103",
+   "ten": "Quản trị dịch vụ du lịch và lữ hành"
+  },
+  {
+   "ma": "7810201",
+   "ten": "Quản trị khách sạn"
+  },
+  {
+   "ma": "7810202",
+   "ten": "Quản trị nhà hàng và dịch vụ ăn uống"
+  },
+  {
+   "ma": "7810301",
+   "ten": "Quản lý thể dục thể thao"
+  },
+  {
+   "ma": "7810302",
+   "ten": "Huấn luyện thể thao"
+  },
+  {
+   "ma": "7810501",
+   "ten": "Kinh tế gia đình"
+  },
+  {
+   "ma": "7840101",
+   "ten": "Khai thác vận tải"
+  },
+  {
+   "ma": "7840102",
+   "ten": "Quản lý hoạt động bay"
+  },
+  {
+   "ma": "7840104",
+   "ten": "Kinh tế vận tải"
+  },
+  {
+   "ma": "7840106",
+   "ten": "Khoa học hàng hải"
+  },
+  {
+   "ma": "7850101",
+   "ten": "Quản lý tài nguyên và môi trường"
+  },
+  {
+   "ma": "7850102",
+   "ten": "Kinh tế tài nguyên thiên nhiên"
+  },
+  {
+   "ma": "7850103",
+   "ten": "Quản lý đất đai"
+  },
+  {
+   "ma": "7850201",
+   "ten": "Bảo hộ lao động"
+  },
+  {
+   "ma": "7860101",
+   "ten": "Trinh sát an ninh"
+  },
+  {
+   "ma": "7860102",
+   "ten": "Trinh sát cảnh sát"
+  },
+  {
+   "ma": "7860103",
+   "ten": "Trinh sát kỹ thuật"
+  },
+  {
+   "ma": "7860104",
+   "ten": "Điều tra hình sự"
+  },
+  {
+   "ma": "7860107",
+   "ten": "Kỹ thuật Công an nhân dân"
+  },
+  {
+   "ma": "7860108",
+   "ten": "Kỹ thuật hình sự"
+  },
+  {
+   "ma": "7860109",
+   "ten": "Quản lý nhà nước về an ninh trật tự"
+  },
+  {
+   "ma": "7860110",
+   "ten": "Quản lý trật tự an toàn giao thông"
+  },
+  {
+   "ma": "7860111",
+   "ten": "Thi hành án hình sự và hỗ trợ tư pháp"
+  },
+  {
+   "ma": "7860112",
+   "ten": "Tham mưu, chỉ huy công an nhân dân"
+  },
+  {
+   "ma": "7860113",
+   "ten": "Phòng cháy chữa cháy và cứu nạn cứu hộ"
+  },
+  {
+   "ma": "7860116",
+   "ten": "Hậu cần công an nhân dân"
+  },
+  {
+   "ma": "7860117",
+   "ten": "Tình báo an ninh"
+  },
+  {
+   "ma": "7860201",
+   "ten": "Chỉ huy tham mưu Lục quân"
+  },
+  {
+   "ma": "7860202",
+   "ten": "Chỉ huy tham mưu Hải quân"
+  },
+  {
+   "ma": "7860203",
+   "ten": "Chỉ huy tham mưu Không quân"
+  },
+  {
+   "ma": "7860204",
+   "ten": "Chỉ huy tham mưu Phòng không"
+  },
+  {
+   "ma": "7860205",
+   "ten": "Chỉ huy tham mưu Pháo binh"
+  },
+  {
+   "ma": "7860206",
+   "ten": "Chỉ huy tham mưu Tăng - thiết giáp"
+  },
+  {
+   "ma": "7860207",
+   "ten": "Chỉ huy tham mưu Đặc công"
+  },
+  {
+   "ma": "7860214",
+   "ten": "Biên phòng"
+  },
+  {
+   "ma": "7860217",
+   "ten": "Tình báo quân sự"
+  },
+  {
+   "ma": "7860218",
+   "ten": "Hậu cần quân sự"
+  },
+  {
+   "ma": "7860219",
+   "ten": "Chỉ huy, tham mưu thông tin"
+  },
+  {
+   "ma": "7860220",
+   "ten": "Chỉ huy, quản lý kỹ thuật"
+  },
+  {
+   "ma": "7860222",
+   "ten": "Quân sự cơ sở"
+  },
+  {
+   "ma": "7860226",
+   "ten": "Chỉ huy kỹ thuật Phòng không"
+  },
+  {
+   "ma": "7860227",
+   "ten": "Chỉ huy kỹ thuật Tăng - thiết giáp"
+  },
+  {
+   "ma": "7860228",
+   "ten": "Chỉ huy kỹ thuật công binh"
+  },
+  {
+   "ma": "7860229",
+   "ten": "Chỉ huy kỹ thuật hóa học"
+  },
+  {
+   "ma": "7860231",
+   "ten": "Trinh sát kỹ thuật"
+  },
+  {
+   "ma": "7860232",
+   "ten": "Chỉ huy kỹ thuật hải quân"
+  },
+  {
+   "ma": "7860233",
+   "ten": "Chỉ huy kỹ thuật tác chiến điện tử"
+  }
+ ]
+}
