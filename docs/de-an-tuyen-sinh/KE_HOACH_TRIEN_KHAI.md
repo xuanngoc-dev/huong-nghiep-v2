@@ -94,7 +94,7 @@ không phụ thuộc phần tính điểm.
 | 4.1 | **Xong**: quyết định đã chốt số 7 (NN1 = Anh, NN2 = Pháp; học lực suy từ điểm TB; tốt nghiệp đúng năm tìm) | Chủ dự án quyết định |
 | 4.2 | **Đã viết, chờ chạy** (`20261119_0060_hs_ho_so_xet_tuyen.py`; thêm `la_ho_so_chinh`, khóa ngoại `xt_lan_danh_gia.ho_so_id`). **Migration `0060`:** các bảng `hs_*` (không tạo `hs_chi_so`) | |
 | 4.3 | **Xong** (`GET` / `PUT /ho-so-xet-tuyen/cua-toi`; `app/services/ho_so_xet_tuyen.py`: lưu hs_* thì ghi lại JSON cũ, lưu hồ sơ năng lực cũ thì cập nhật hs_* và giữ thông tin chỉ hs_* có). API `GET` / `PUT` hồ sơ xét tuyển; **ghi song song** với JSON cũ khi lưu hồ sơ | Test: lưu một lần, hai nơi khớp nhau |
-| 4.4 | Script chuyển dữ liệu cũ, xuất báo cáo dòng không chuyển được | Chạy trên bản sao DB trước |
+| 4.4 | **Đã viết, chờ chạy** (`python -m app.scripts.chuyen_ho_so_xet_tuyen [--ghi] [bao_cao.md]`; mặc định chạy thử). Script chuyển dữ liệu cũ, xuất báo cáo dòng không chuyển được | Chạy trên bản sao DB trước |
 | 4.5 | Màn hình Hồ sơ năng lực thêm các khối bài thi, chứng chỉ, thành tích, nguyện vọng | |
 | 4.6 | Bộ tính đọc hồ sơ từ `hs_*`; JSON cũ chỉ giữ cho chat đến khi chat cũng chuyển | |
 
