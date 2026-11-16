@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -7,6 +7,17 @@ from pydantic import BaseModel, Field
 class XtImportRequest(BaseModel):
     du_lieu: dict[str, Any]
     ten_file: str | None = Field(default=None, max_length=255)
+
+
+class XtTrangThaiWrite(BaseModel):
+    """0 chưa chuẩn hóa, 1 thử nghiệm, 2 đang áp dụng (kết quả tìm trường của người dùng dùng bộ tính mới)."""
+
+    trang_thai_xet_tuyen: Literal[0, 1, 2]
+
+
+class XtTrangThaiResult(BaseModel):
+    de_an_id: int
+    trang_thai_xet_tuyen: int
 
 
 class XtImportResult(BaseModel):

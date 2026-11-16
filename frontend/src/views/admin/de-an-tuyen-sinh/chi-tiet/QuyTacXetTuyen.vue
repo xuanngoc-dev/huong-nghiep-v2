@@ -2,7 +2,17 @@
   <div v-loading="loading" class="quy-tac">
     <div class="quy-tac__dau">
       <div class="quy-tac__tom-tat">
-        <CustomTag :type="trangThai.tag">{{ trangThai.label }}</CustomTag>
+        <CustomSelect
+          :model-value="data?.trang_thai_xet_tuyen ?? 0"
+          class="quy-tac__trang-thai"
+          placeholder="Chọn trạng thái"
+          :clearable="false"
+          :disabled="!data || dangDoiTrangThai"
+          @change="onDoiTrangThai"
+        >
+          <CustomOption v-for="(tt, ma) in TRANG_THAI" :key="ma" :label="tt.label" :value="Number(ma)" />
+        </CustomSelect>
+        <CustomTag :type="trangThai.tag" size="small">{{ trangThai.mo_ta }}</CustomTag>
         <span v-if="coQuyTac">
           {{ data.cong_thuc.length }} công thức · {{ soPhuongAn }} phương án · {{ data.nhom_dieu_kien.length }} nhóm
           điều kiện · {{ data.diem_cong.length }} điểm cộng
@@ -232,8 +242,8 @@
  * JSON chuẩn. Import thay toàn bộ quy tắc cũ; file lỗi thì hiện danh sách lỗi và không ghi gì.
  */
 import { computed, onMounted, ref } from 'vue'
-import { ElMessage } from 'element-plus'
-import { fetchQuyTacXetTuyen, importQuyTacXetTuyen } from '@/api/deAnTuyenSinh'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { doiTrangThaiQuyTacXetTuyen, fetchQuyTacXetTuyen, importQuyTacXetTuyen } from '@/api/deAnTuyenSinh'
 import { hienThoiGian } from '@/data/napTien'
 import { docFileJson } from '@/utils/jsonFile'
 
@@ -242,9 +252,9 @@ const props = defineProps({
 })
 
 const TRANG_THAI = {
-  0: { label: 'Chưa chuẩn hóa', tag: 'info' },
-  1: { label: 'Thử nghiệm', tag: 'warning' },
-  2: { label: 'Đang áp dụng', tag: 'success' },
+  0: { label: 'Chưa chuẩn hóa', tag: 'info', mo_ta: 'Tìm trường dùng thuật toán cũ' },
+  1: { label: 'Thử nghiệm', tag: 'warning', mo_ta: 'Tìm trường dùng thuật toán cũ' },
+  2: { label: 'Đang áp dụng', tag: 'success', mo_ta: 'Tìm trường dùng bộ tính xét tuyển' },
 }
 const KIEU_TINH = {
   TO_HOP_MON: { label: 'Theo tổ hợp môn', tag: 'primary' },
@@ -281,6 +291,7 @@ const tenFile = ref('')
 const fileRef = ref()
 const ketQua = ref(null)
 const loiImport = ref([])
+const dangDoiTrangThai = ref(false)
 
 const coQuyTac = computed(() => Boolean(data.value?.cong_thuc.length))
 const trangThai = computed(() => TRANG_THAI[data.value?.trang_thai_xet_tuyen ?? 0] || TRANG_THAI[0])
@@ -383,6 +394,31 @@ async function onImport() {
   }
 }
 
+async function onDoiTrangThai(moi) {
+  if (moi === 2) {
+    try {
+      await ElMessageBox.confirm(
+        'Từ giờ lượt tìm trường của người dùng trong năm của đề án này sẽ tính điểm xét tuyển theo quy tắc đã import. Tiếp tục?',
+        'Chuyển sang đang áp dụng',
+        { type: 'warning', confirmButtonText: 'Áp dụng', cancelButtonText: 'Hủy' },
+      )
+    } catch {
+      return
+    }
+  }
+  dangDoiTrangThai.value = true
+  try {
+    const kq = await doiTrangThaiQuyTacXetTuyen(props.deAnId, moi)
+    data.value.trang_thai_xet_tuyen = kq.trang_thai_xet_tuyen
+    ElMessage.success(`Đã chuyển sang ${TRANG_THAI[kq.trang_thai_xet_tuyen].label.toLowerCase()}`)
+  } catch (error) {
+    const detail = error?.response?.data?.detail
+    ElMessage.error(typeof detail === 'string' ? detail : 'Không đổi được trạng thái')
+  } finally {
+    dangDoiTrangThai.value = false
+  }
+}
+
 onMounted(load)
 </script>
 
@@ -400,6 +436,10 @@ onMounted(load)
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+}
+
+.quy-tac__trang-thai {
+  width: 170px;
 }
 
 .quy-tac__tom-tat {

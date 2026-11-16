@@ -4,14 +4,14 @@ from unittest.mock import patch
 from fastapi import HTTPException
 from sqlalchemy import func, select
 
-from app.api.v1.endpoints.xt_quy_tac import get_quy_tac, import_quy_tac
+from app.api.v1.endpoints.xt_quy_tac import doi_trang_thai_quy_tac, get_quy_tac, import_quy_tac
 from app.models.dats_tuyen_sinh import DatsTuyenSinh
 from app.models.dm_bai_thi_danh_gia import DmBaiThiDanhGia
 from app.models.dm_mon_hoc import DmMonHoc
 from app.models.dm_to_hop_mon_hoc import DmToHopMonHoc
 from app.models.nguoi_dung import NguoiDung
 from app.models.xt_cong_thuc import XtCongThuc
-from app.schemas.xt_quy_tac import XtImportRequest
+from app.schemas.xt_quy_tac import XtImportRequest, XtTrangThaiWrite
 from tests import test_xet_tuyen_ghi as ghi
 from tests.test_xet_tuyen_import import DANH_MUC, _mau
 
@@ -91,6 +91,18 @@ class XtQuyTacApiTests(unittest.TestCase):
         self.assertTrue(all(n.dieu_kien for n in quy_tac.nhom_dieu_kien))
         self.assertEqual(quy_tac.lich_su[0].nguoi_import, "Quản trị")
         self.assertEqual(quy_tac.lich_su[0].so_dong["xt_cong_thuc"], 7)
+
+    def test_doi_trang_thai(self):
+        self._chuan_bi()
+        detail = self._loi_400(doi_trang_thai_quy_tac, self.de_an.id, XtTrangThaiWrite(trang_thai_xet_tuyen=2), self.db)
+        self.assertIn("chưa có quy tắc", detail)
+        self._import(_mau("mau_BKA_2026.json"))
+        kq = doi_trang_thai_quy_tac(self.de_an.id, XtTrangThaiWrite(trang_thai_xet_tuyen=2), self.db)
+        self.assertEqual(kq.trang_thai_xet_tuyen, 2)
+        self.assertEqual(get_quy_tac(self.de_an.id, self.db).trang_thai_xet_tuyen, 2)
+        self.assertEqual(doi_trang_thai_quy_tac(self.de_an.id, XtTrangThaiWrite(trang_thai_xet_tuyen=0), self.db).trang_thai_xet_tuyen, 0)
+        self.assertIn("id = 999", self._loi_400(doi_trang_thai_quy_tac, 999, XtTrangThaiWrite(trang_thai_xet_tuyen=1), self.db))
+
 
 
 if __name__ == "__main__":

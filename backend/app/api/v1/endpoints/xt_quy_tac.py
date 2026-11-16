@@ -1,6 +1,7 @@
 import hashlib
 import json
 from collections import defaultdict
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func, select
@@ -34,6 +35,8 @@ from app.schemas.xt_quy_tac import (
     XtPhuongAnNhomPublic,
     XtQuyTacDeAn,
     XtThanhPhanPublic,
+    XtTrangThaiResult,
+    XtTrangThaiWrite,
 )
 from app.services.xet_tuyen_ghi import nhap_quy_tac
 from app.services.xet_tuyen_import import XetTuyenImportError
@@ -241,6 +244,27 @@ def get_quy_tac(item_id: int, db: Session = Depends(get_db)) -> XtQuyTacDeAn:
             for ls, ho_ten in lich_su
         ],
     )
+
+
+@router.patch("/{item_id}/quy-tac/trang-thai", response_model=XtTrangThaiResult)
+def doi_trang_thai_quy_tac(item_id: int, payload: XtTrangThaiWrite, db: Session = Depends(get_db)) -> XtTrangThaiResult:
+    """Đổi trạng thái quy tắc xét tuyển của đề án: 0 chưa chuẩn hóa, 1 thử nghiệm, 2 đang áp dụng.
+
+    "Đang áp dụng" thì lượt tìm trường của người dùng trong năm đó chạy bộ tính mới; chỉ được chọn khi đề án đã có
+    công thức (đã import quy tắc).
+    """
+    de_an = _get_or_400(db, item_id)
+    if payload.trang_thai_xet_tuyen == 2 and not db.scalar(
+        select(func.count()).select_from(XtCongThuc).where(XtCongThuc.de_an_id == item_id)
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Đề án chưa có quy tắc xét tuyển, hãy import quy tắc trước khi chuyển sang đang áp dụng",
+        )
+    de_an.trang_thai_xet_tuyen = payload.trang_thai_xet_tuyen
+    de_an.cap_nhat_luc = datetime.now()
+    db.commit()
+    return XtTrangThaiResult(de_an_id=de_an.id, trang_thai_xet_tuyen=de_an.trang_thai_xet_tuyen)
 
 
 @router.post("/{item_id}/quy-tac/import", response_model=XtImportResult)

@@ -287,6 +287,12 @@
         <TienTrinhXuLyDialog :model-value="tienTrinhMo" :buoc-hien-tai="buocTienTrinh" />
         <!-- Chạy xong tiến trình xử lý mới hiện kết quả. -->
         <template v-if="!tienTrinhMo">
+          <!-- Năm tìm có đề án "đang áp dụng": kết quả tính điểm xét tuyển của lượt tìm vừa rồi. -->
+          <KetQuaXetTuyen
+            v-if="lanDanhGiaId"
+            :lan-danh-gia-id="lanDanhGiaId"
+            :ma-thiet-bi="daDangNhap ? null : maThietBi()"
+          />
           <p v-if="!daTim" class="truong-phu-hop__cho-tim">
             <CustomIcon><Search /></CustomIcon>
             <span>Chọn tiêu chí ở bộ lọc rồi bấm <strong>Tìm kiếm</strong> để xem các trường phù hợp với bạn.</span>
@@ -416,6 +422,7 @@ import { hienSo } from '@/data/napTien'
 import anhMacDinh from '@/assets/guest/sinh-vien.jpg'
 import HoSo from '@/views/member/HoSo.vue'
 import HetLuotTimTruong from './HetLuotTimTruong.vue'
+import KetQuaXetTuyen from './KetQuaXetTuyen.vue'
 import TienTrinhXuLyDialog from '@/components/guest/chung/TienTrinhXuLyDialog.vue'
 import { BUOC_TIEN_TRINH, THOI_GIAN_HOAN_TAT, THOI_GIAN_MOI_BUOC } from '@/data/tienTrinhXuLy'
 
@@ -495,6 +502,8 @@ const dangTai = ref(false)
 const loi = ref('')
 const sanSang = ref(false)
 const daTim = ref(false)
+// Lần đánh giá xét tuyển của lượt tìm gần nhất (chỉ có khi năm tìm có đề án "đang áp dụng").
+const lanDanhGiaId = ref(null)
 const hoSoKhach = ref(hoSoKhachTrong())
 const hienFormKhach = ref(true)
 const luotDaDung = ref(0)
@@ -971,6 +980,7 @@ async function timCoLuot() {
       const data = await timTruongPhuHop(payloadTimKiem())
       cauHinhLuot.value = data.luot
       luotDaDung.value = data.luot.da_dung || 0
+      lanDanhGiaId.value = data.lan_danh_gia_id || null
       // Tải danh sách ngay dưới dialog để đóng dialog là có kết quả.
       timKiem()
     })

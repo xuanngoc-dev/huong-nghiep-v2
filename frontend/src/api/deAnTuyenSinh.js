@@ -47,3 +47,9 @@ export function fetchQuyTacXetTuyen(id, config) {
 export function importQuyTacXetTuyen(id, payload, config) {
   return api.post(`/de-an-tuyen-sinh/${id}/quy-tac/import`, payload, config).then((res) => res.data)
 }
+
+export function doiTrangThaiQuyTacXetTuyen(id, trangThai) {
+  return api
+    .patch(`/de-an-tuyen-sinh/${id}/quy-tac/trang-thai`, { trang_thai_xet_tuyen: trangThai })
+    .then((res) => res.data)
+}
