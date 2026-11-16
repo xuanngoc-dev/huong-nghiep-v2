@@ -34,7 +34,7 @@
           filterable
           :disabled="!filterDeAnReady"
           :loading="deAnLoading"
-          @change="loadDetail"
+
         >
           <CustomOption
             v-for="item in deAnOptions"
@@ -46,16 +46,9 @@
       </div>
     </CustomCard>
 
-    <CustomCard v-loading="loading" shadow="never" class="catalog-card">
-      <p v-if="selectedDeAn" class="scope-caption">{{ deAnOptionLabel(selectedDeAn) }}</p>
-      <ChuongTrinh
-        v-if="filters.de_an_id"
-        :key="filters.de_an_id"
-        :programs="programs"
-        :methods="methods"
-        :criteria="criteria"
-      />
-      <CustomEmpty v-else description="Chọn trường hoặc năm, rồi chọn đề án để xem chương trình và phương thức." />
+    <CustomCard shadow="never" class="catalog-card">
+      <ChiTietDeAn v-if="filters.de_an_id" :de-an-id="filters.de_an_id" tab-mac-dinh="dats_chuong_trinh_dao_tao" />
+      <CustomEmpty v-else description="Chọn trường hoặc năm, rồi chọn đề án để xem chi tiết đề án." />
     </CustomCard>
   </div>
 </template>
@@ -63,30 +56,21 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { fetchDeAnTuyenSinh, fetchDeAnTuyenSinhChiTiet } from '@/api/deAnTuyenSinh'
+import { fetchDeAnTuyenSinh } from '@/api/deAnTuyenSinh'
 import { fetchTruongHoc } from '@/api/truongHoc'
 import { NAM_HOC, laNamHoc, nhanNamHoc } from '@/constants/namHoc'
-import ChuongTrinh from './chi-tiet/ChuongTrinh.vue'
+import ChiTietDeAn from './ChiTietDeAn.vue'
 
-const loading = ref(false)
 const deAnLoading = ref(false)
 const truongOptions = ref([])
 const deAnOptions = ref([])
-const detail = ref(null)
 let deAnRequest = 0
-let detailRequest = 0
 
 const filters = reactive({
   nam_tuyen_sinh: '',
   ma_truong: '',
   de_an_id: '',
 })
-
-const programs = computed(() => detail.value?.bang?.dats_chuong_trinh_dao_tao || [])
-const methods = computed(() => detail.value?.bang?.dats_phuong_thuc || [])
-const criteria = computed(() => detail.value?.bang?.dats_tieu_chi_xet_tuyen || [])
-
-const selectedDeAn = computed(() => deAnOptions.value.find((item) => item.id === filters.de_an_id) || null)
 
 function schoolLabel(school) {
   if (!school) return ''
@@ -150,25 +134,6 @@ async function loadDeAnOptions() {
   }
 }
 
-async function loadDetail() {
-  const id = filters.de_an_id
-  detail.value = null
-  if (!id) return
-  const requestId = ++detailRequest
-  loading.value = true
-  try {
-    const data = await fetchDeAnTuyenSinhChiTiet(id, { skipLoading: true, timeout: 120000 })
-    if (requestId !== detailRequest) return
-    detail.value = data
-  } catch (error) {
-    if (requestId !== detailRequest) return
-    detail.value = null
-    ElMessage.error(errorMessage(error, 'Không tải được chương trình và phương thức'))
-  } finally {
-    if (requestId === detailRequest) loading.value = false
-  }
-}
-
 async function onScopeChange() {
   filters.de_an_id = ''
   detail.value = null
@@ -191,12 +156,6 @@ onMounted(() => {
 .filter-school,
 .filter-proposal {
   width: 320px;
-}
-
-.scope-caption {
-  margin: 0 0 12px;
-  color: var(--el-text-color-secondary);
-  line-height: 1.5;
 }
 
 @media (max-width: 640px) {
