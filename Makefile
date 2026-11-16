@@ -65,3 +65,6 @@ stamp: ## Đánh dấu head (bảng đã có sẵn)
 
 db-check: ## Kiểm tra kết nối MySQL
 	cd $(BE) && $(PY) -m app.scripts.check_db
+
+don-ket-qua: ## Dọn kết quả xét tuyển cũ (chạy thử; xóa thật: make don-ket-qua a=--xoa)
+	cd $(BE) && $(PY) -m app.scripts.don_ket_qua_xet_tuyen $(a)
