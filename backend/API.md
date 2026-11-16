@@ -1,8 +1,8 @@
 # Danh sách API
 
-Tự sinh từ code lúc 16/11/2026 15:15 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 16/11/2026 15:24 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **283** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **287** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
@@ -10,7 +10,7 @@ Tiền tố chung: `/api/v1`. Tổng cộng **283** API.
 |---|---:|---|
 | [Quản trị (admin)](#quan_tri) | 162 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
 | [Thành viên (user)](#thanh_vien) | 78 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
-| [Khách vãng lai](#khach) | 43 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
+| [Khách vãng lai](#khach) | 47 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
 
@@ -757,3 +757,12 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `POST` | `/api/v1/webhook/giao-dich-ngan-hang` | Không | Nhận webhook biến động số dư (SePay), lưu vào lịch sử giao dịch ngân hàng và tự đối soát nạp tiền. |
+
+### `xet-tuyen`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/xet-tuyen/danh-gia/{lan_id}` | Tùy chọn | Thông tin một lần đánh giá: số phương án, chương trình, trường và các giả định khi dựng hồ sơ. |
+| `GET` | `/api/v1/xet-tuyen/danh-gia/{lan_id}/chuong-trinh` | Tùy chọn | Chương trình đã xếp hạng (1 = phù hợp nhất) theo phương án tốt nhất, có lọc và phân trang. |
+| `GET` | `/api/v1/xet-tuyen/danh-gia/{lan_id}/chuong-trinh/{chuong_trinh_id}/phuong-an` | Tùy chọn | Mọi phương án học sinh tính được của một chương trình (gồm cả không đạt, kèm lý do); phương án tốt nhất trước. |
+| `GET` | `/api/v1/xet-tuyen/danh-gia/{lan_id}/truong` | Tùy chọn | Xếp hạng trường: điểm trường = trung bình điểm phù hợp của tối đa 3 chương trình tốt nhất. |

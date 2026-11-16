@@ -41,8 +41,13 @@ def get_current_user(
     return user
 
 
+def la_quan_tri(user: NguoiDung | None) -> bool:
+    """Người dùng có quyền quản trị (dùng khi một API cho cả người dùng thường lẫn quản trị viên)."""
+    return user is not None and user.vai_tro == 1
+
+
 def get_admin_user(user: NguoiDung = Depends(get_current_user)) -> NguoiDung:
-    if user.vai_tro != 1:
+    if not la_quan_tri(user):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Chỉ quản trị viên mới được thực hiện thao tác này.",
