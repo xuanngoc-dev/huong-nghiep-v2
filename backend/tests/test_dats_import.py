@@ -5,8 +5,11 @@ from pathlib import Path
 
 from app.services.dats_import import CatalogIndex, DatsImportError, conflict_policy, prepare_import
 
-SAMPLE = Path(__file__).resolve().parents[2] / "docs" / "BKA_2026_import_mot_truong_mot_nam.json"
-NESTED = Path(__file__).resolve().parents[2] / "docs" / "BKA_2026_import_long_nhau_ma_phuong_thuc_cua_bo_v3_2.json"
+# File mẫu đặt trong tests/du_lieu để test không phụ thuộc tài liệu trong docs/.
+# Bản lồng nhau rút gọn từ file BKA 2026 gốc: giữ 4 chương trình (BF1, BF2, FL1, BF-E12) và toàn bộ bảng cấp đề án.
+DU_LIEU = Path(__file__).resolve().parent / "du_lieu"
+SAMPLE = DU_LIEU / "BKA_2026_import_mot_truong_mot_nam.json"
+NESTED = DU_LIEU / "BKA_2026_import_long_nhau_rut_gon.json"
 CODES = {
     "phuong_thuc": {
         "XTTN": 11,
@@ -109,12 +112,12 @@ class DatsImportTests(unittest.TestCase):
         rows = prepare_import(document, ma_truong="BKA", nam_tuyen_sinh=2026, catalogs=catalogs())
         counts = Counter(row.table for row in rows)
         self.assertEqual(counts["dats_tuyen_sinh"], 1)
-        self.assertEqual(counts["dats_chuong_trinh_dao_tao"], 68)
-        self.assertEqual(counts["dats_phuong_thuc"], 340)
-        self.assertEqual(counts["dats_phuong_thuc_to_hop"], 229)
+        self.assertEqual(counts["dats_chuong_trinh_dao_tao"], 4)
+        self.assertEqual(counts["dats_phuong_thuc"], 20)
+        self.assertEqual(counts["dats_phuong_thuc_to_hop"], 14)
         self.assertEqual(counts["dats_doi_tuong_du_tuyen"], 5)
-        self.assertEqual(counts["dats_dieu_kien_du_tuyen"], 30)
-        self.assertEqual(counts["dats_trinh_do_nganh"], 68)
+        self.assertEqual(counts["dats_dieu_kien_du_tuyen"], 8)
+        self.assertEqual(counts["dats_trinh_do_nganh"], 4)
         self.assertEqual(counts["dats_lien_he_tuyen_sinh"], 1)
 
         proposal = rows[0]
@@ -161,7 +164,7 @@ class DatsImportTests(unittest.TestCase):
             for row in rows
             if row.table == "dats_dieu_kien_du_tuyen" and row.values["de_an_chuong_trinh_id"] is not None
         ]
-        self.assertEqual(len(scoped), 24)
+        self.assertEqual(len(scoped), 2)
         self.assertTrue(all(row.values["de_an_id"] == proposal.source_id for row in scoped))
 
     def test_method_combo_ids_accept_null_and_codes(self):
