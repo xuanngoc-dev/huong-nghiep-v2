@@ -450,6 +450,12 @@
           "icon": "Postcard"
         },
         {
+          "index": "/member/tai-khoan/ho-so-xet-tuyen",
+          "title": "Hồ sơ xét tuyển",
+          "tooltip": "Điểm, bài thi, chứng chỉ, nguyện vọng dùng để tính khả năng trúng tuyển",
+          "icon": "Tickets"
+        },
+        {
           "index": "/member/tai-khoan/nap-tien",
           "title": "Nạp tiền",
           "tooltip": "Nạp Edu coin, mua thêm lượt tra cứu, hỏi đáp, khảo sát",

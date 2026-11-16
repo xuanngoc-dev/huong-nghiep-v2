@@ -133,6 +133,12 @@ const router = createRouter({
           meta: { title: 'Hồ sơ năng lực', requiresAuth: true },
         },
         {
+          path: 'tai-khoan/ho-so-xet-tuyen',
+          name: 'ho-so-xet-tuyen',
+          component: () => import('@/views/member/HoSoXetTuyen.vue'),
+          meta: { title: 'Hồ sơ xét tuyển', requiresAuth: true },
+        },
+        {
           path: 'tai-khoan/nap-tien',
           name: 'nap-tien',
           component: () => import('@/views/member/NapTien.vue'),
