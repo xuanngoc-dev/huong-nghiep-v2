@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Index, String, Text
+from sqlalchemy import ForeignKey, Index, Integer, String, Text
 from sqlalchemy.dialects.mysql import BIGINT
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -11,6 +11,7 @@ class DatsTruSo(Base):
     __tablename__ = "dats_tru_so"
     __table_args__ = (
         Index("idx_dats_tru_so_de_an_id", "de_an_id"),
+        Index("idx_dats_tru_so_tinh_thanh_id", "tinh_thanh_id"),
         {
             "mysql_charset": "utf8mb4",
             "mysql_collate": "utf8mb4_unicode_ci",
@@ -51,6 +52,11 @@ class DatsTruSo(Base):
     dia_chi: Mapped[str | None] = mapped_column(
         String(500),
         comment="Địa chỉ đầy đủ.",
+    )
+    tinh_thanh_id: Mapped[int | None] = mapped_column(
+        Integer,
+        ForeignKey("dm_tinh_thanh.id", name="fk_dats_tru_so_tinh_thanh_id"),
+        comment="Tỉnh/thành của cơ sở; FK dm_tinh_thanh.id.",
     )
     so_dien_thoai: Mapped[str | None] = mapped_column(
         String(30),

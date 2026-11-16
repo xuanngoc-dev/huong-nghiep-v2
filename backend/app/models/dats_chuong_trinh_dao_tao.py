@@ -61,6 +61,10 @@ class DatsChuongTrinhDaoTao(Base):
         String(20),
         comment="Mã xét tuyển do trường công bố.",
     )
+    ma_xet_tuyen_nam_truoc: Mapped[str | None] = mapped_column(
+        String(20),
+        comment="Mã xét tuyển của chương trình tương ứng năm trước (khi trường đổi mã).",
+    )
     ten_chuong_trinh: Mapped[str] = mapped_column(
         String(255),
         nullable=False,

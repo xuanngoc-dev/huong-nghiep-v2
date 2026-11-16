@@ -6,8 +6,10 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Index,
+    SmallInteger,
     String,
     Text,
+    UniqueConstraint,
 )
 from sqlalchemy.dialects.mysql import BIGINT, INTEGER, SMALLINT
 from sqlalchemy.orm import Mapped, mapped_column
@@ -20,7 +22,8 @@ class DatsTuyenSinh(Base):
 
     __tablename__ = "dats_tuyen_sinh"
     __table_args__ = (
-        Index("idx_dats_tuyen_sinh_ma_truong_nam_tuyen_sinh", "ma_truong", "nam_tuyen_sinh"),
+        UniqueConstraint("ma_truong", "nam_tuyen_sinh", name="uq_dats_tuyen_sinh_ma_truong_nam_tuyen_sinh"),
+        Index("idx_dats_tuyen_sinh_de_an_nam_truoc_id", "de_an_nam_truoc_id"),
         {
             "mysql_charset": "utf8mb4",
             "mysql_collate": "utf8mb4_unicode_ci",
@@ -82,6 +85,23 @@ class DatsTuyenSinh(Base):
     ghi_chu: Mapped[str | None] = mapped_column(
         Text,
         comment="Ghi chú/cập nhật.",
+    )
+    de_an_nam_truoc_id: Mapped[int | None] = mapped_column(
+        BIGINT(unsigned=True),
+        ForeignKey(
+            "dats_tuyen_sinh.id",
+            name="fk_dats_tuyen_sinh_de_an_nam_truoc_id",
+            ondelete="SET NULL",
+        ),
+        comment="Đề án năm trước của cùng trường (nguồn sao chép, đối chiếu điểm chuẩn).",
+    )
+    # 0: chưa chuẩn hóa, 1: thử nghiệm, 2: đang áp dụng
+    trang_thai_xet_tuyen: Mapped[int] = mapped_column(
+        SmallInteger,
+        nullable=False,
+        default=0,
+        server_default="0",
+        comment="Quy tắc xét tuyển: 0 chưa chuẩn hóa, 1 thử nghiệm, 2 đang áp dụng.",
     )
     tao_luc: Mapped[datetime | None] = mapped_column(
         DateTime,
