@@ -56,6 +56,8 @@ logger = logging.getLogger(__name__)
 
 _MAX_ROWS = 5000
 KHOA_QUY_TAC = "quy_tac_xet_tuyen"
+# Phương thức không khai mã của Bộ (và mã của trường không có trong danh mục) được hiểu là "Sử dụng phương thức khác".
+MA_PHUONG_THUC_KHAC = "500"
 PHIEN_BAN_QUY_TAC = "1.0"
 _MA_TO_HOP = re.compile(r"ma_to_hop\s*=\s*([A-Za-z0-9._-]+)")
 _SKIP_COLUMNS = {"id", "tao_luc", "cap_nhat_luc"}
@@ -641,10 +643,18 @@ def _values(raw: dict, table: str, label: str, ma_truong: str, nam_tuyen_sinh: i
         if name == "ma_phuong_thuc_cua_bo" and table == "dats_phuong_thuc":
             supplied = raw.get(name)
             if supplied in (None, ""):
-                supplied = raw.get("ma_phuong_thuc_cua_truong")
-            code = _known_method_code(catalogs, supplied)
-            if code is None:
-                raise DatsImportError(f"{label} thiếu ma_phuong_thuc_cua_bo hoặc mã phương thức có trong danh mục")
+                # Không khai mã của Bộ: dùng mã của trường nếu có trong danh mục, không thì phương thức khác (500).
+                code = _known_method_code(catalogs, raw.get("ma_phuong_thuc_cua_truong")) or _known_method_code(
+                    catalogs, MA_PHUONG_THUC_KHAC
+                )
+                if code is None:
+                    raise DatsImportError(
+                        f"{label} thiếu ma_phuong_thuc_cua_bo và danh mục chưa có phương thức {MA_PHUONG_THUC_KHAC}"
+                    )
+            else:
+                code = _known_method_code(catalogs, supplied)
+                if code is None:
+                    raise DatsImportError(f"{label} có ma_phuong_thuc_cua_bo = {supplied} không có trong danh mục")
             values[name] = code
             continue
         if name == "to_hop_mon_hoc" and table == "dats_phuong_thuc":
@@ -931,6 +941,7 @@ def _load_catalogs(db: Session, document: dict) -> CatalogIndex:
                     code = raw.get("ma_phuong_thuc_cua_truong")
                 if code not in (None, ""):
                     method_codes.add(str(code).strip().upper())
+                method_codes.add(MA_PHUONG_THUC_KHAC)
             if table == "dats_phuong_thuc_to_hop" and raw.get("to_hop_id") in (None, ""):
                 code = _combo_code(raw)
                 if code:

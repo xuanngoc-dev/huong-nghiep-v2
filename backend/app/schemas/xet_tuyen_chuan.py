@@ -159,7 +159,8 @@ class ThanhPhanChuan(_Khoi):
 class CongThucChuan(_Khoi):
     ma_cong_thuc: str = Field(..., min_length=1, max_length=50)
     ten_cong_thuc: str = Field(..., min_length=1)
-    ma_phuong_thuc_cua_bo: str
+    # Không khai: "500" (Sử dụng phương thức khác).
+    ma_phuong_thuc_cua_bo: str = "500"
     kieu_tinh: Literal["TO_HOP_MON", "THANH_PHAN", "CHI_DIEU_KIEN", "THU_CONG"]
     nguon_diem_mon: Literal["THI_THPT", "HOC_BA"] | None = None
     thay_ngoai_ngu: Literal["KHONG", "DUOC_PHEP", "BAT_BUOC"] = "KHONG"
@@ -183,9 +184,12 @@ class CongThucChuan(_Khoi):
     @model_validator(mode="before")
     @classmethod
     def _bo_truong_khong_dung(cls, data):
-        """nguon_diem_mon chỉ có nghĩa với TO_HOP_MON; CHI_DIEU_KIEN không tính điểm nên thang_diem mặc định 30."""
+        """nguon_diem_mon chỉ có nghĩa với TO_HOP_MON; CHI_DIEU_KIEN không tính điểm nên thang_diem mặc định 30;
+        ma_phuong_thuc_cua_bo trống thì là phương thức khác (500)."""
         if isinstance(data, dict):
             data = dict(data)
+            if data.get("ma_phuong_thuc_cua_bo") == "":
+                data.pop("ma_phuong_thuc_cua_bo")
             if data.get("kieu_tinh") != "TO_HOP_MON":
                 data.pop("nguon_diem_mon", None)
             if data.get("kieu_tinh") == "CHI_DIEU_KIEN" and data.get("thang_diem") is None:

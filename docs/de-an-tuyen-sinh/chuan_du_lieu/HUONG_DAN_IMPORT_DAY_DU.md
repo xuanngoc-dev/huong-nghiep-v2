@@ -84,6 +84,10 @@ Id danh mục khác nhau giữa các môi trường; dùng mã:
 
 Ghi cả id và mã thì id được dùng. Mã không có trong danh mục → 400.
 
+**Phương thức không có mã của Bộ** (`dats_phuong_thuc.ma_phuong_thuc_cua_bo`, `quy_tac_xet_tuyen.cong_thuc[].ma_phuong_thuc_cua_bo`
+bỏ trống): dùng `ma_phuong_thuc_cua_truong` nếu mã đó có trong danh mục phương thức của Bộ, không thì là **`500`**
+(Sử dụng phương thức khác). Ghi mã của Bộ nhưng mã không có trong danh mục vẫn báo lỗi.
+
 ## Khối `quy_tac_xet_tuyen`
 
 Đúng cấu trúc file chuẩn (`de_an_xet_tuyen.schema.json`, mẫu `mau_BKA_2026.json`, `mau_NTH_2026.json`); kiểm tra

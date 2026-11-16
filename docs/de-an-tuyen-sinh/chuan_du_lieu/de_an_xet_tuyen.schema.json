@@ -158,11 +158,11 @@
     "cong_thuc": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["ma_cong_thuc", "ten_cong_thuc", "ma_phuong_thuc_cua_bo", "kieu_tinh", "thang_diem"],
+      "required": ["ma_cong_thuc", "ten_cong_thuc", "kieu_tinh", "thang_diem"],
       "properties": {
         "ma_cong_thuc": { "type": "string", "minLength": 1, "maxLength": 50, "description": "Duy nhất trong file." },
         "ten_cong_thuc": { "type": "string", "minLength": 1 },
-        "ma_phuong_thuc_cua_bo": { "type": "string", "description": "dm_phuong_thuc_tuyen_sinh.ma_phuong_thuc (100, 200, 301, 402, 409...)." },
+        "ma_phuong_thuc_cua_bo": { "type": ["string", "null"], "default": "500", "description": "dm_phuong_thuc_tuyen_sinh.ma_phuong_thuc (100, 200, 301, 402, 409...). Không khai = 500 (phương thức khác)." },
         "kieu_tinh": {
           "enum": ["TO_HOP_MON", "THANH_PHAN", "CHI_DIEU_KIEN", "THU_CONG"],
           "description": "TO_HOP_MON: tổng có hệ số các môn của tổ hợp. THANH_PHAN: tổng các bài thi/chứng chỉ đã quy đổi. CHI_DIEU_KIEN: không tính điểm (xét thẳng). THU_CONG: có điểm nhưng hệ thống chưa tự tính."

@@ -173,6 +173,36 @@ class ImportDayDuTests(unittest.TestCase):
         hp = self.db.scalars(select(M.DatsTruSo).where(M.DatsTruSo.ten_co_so == "Cơ sở Hải Phòng")).one()
         self.assertEqual(self.db.get(M.DmTinhThanh, hp.tinh_thanh_id).ma_tinh, "31")
 
+    def test_thieu_ma_phuong_thuc_cua_bo_la_phuong_thuc_khac(self):
+        du_lieu = copy.deepcopy(self.mau)
+        ct = du_lieu["dats_tuyen_sinh"]["dats_chuong_trinh_dao_tao"]
+        pt_me1 = ct[1]["dats_phuong_thuc"]
+        pt_me1[0].pop("ma_phuong_thuc_cua_bo")  # không có mã của trường -> 500
+        pt_me1[1]["ma_phuong_thuc_cua_bo"] = ""
+        pt_me1[1]["ma_phuong_thuc_cua_truong"] = "HB_RIENG"  # mã của trường ngoài danh mục -> 500
+        pt_it_hp = ct[2]["dats_phuong_thuc"][0]
+        pt_it_hp["ma_phuong_thuc_cua_bo"] = None
+        pt_it_hp["ma_phuong_thuc_cua_truong"] = "100"  # mã của trường có trong danh mục -> dùng mã đó
+        cong_thuc = du_lieu["quy_tac_xet_tuyen"]["cong_thuc"]
+        phong_van = next(c for c in cong_thuc if c["ma_cong_thuc"] == "BKA_PHONG_VAN")
+        del phong_van["ma_phuong_thuc_cua_bo"]
+        import_day_du(self.db, "BKA", 2027, du_lieu)
+        theo_ct = {}
+        for pt in self.db.scalars(select(M.DatsPhuongThuc)):
+            ma_xt = self.db.get(M.DatsChuongTrinhDaoTao, pt.de_an_chuong_trinh_id).ma_xet_tuyen
+            theo_ct.setdefault(ma_xt, []).append(pt.ma_phuong_thuc_cua_bo)
+        self.assertEqual(sorted(theo_ct["ME1"]), ["500", "500"])
+        self.assertEqual(sorted(theo_ct["IT-HP"]), ["100", "200"])
+        ct_pv = self.db.scalars(select(M.XtCongThuc).where(M.XtCongThuc.ma_cong_thuc == "BKA_PHONG_VAN")).one()
+        self.assertEqual(ct_pv.ma_phuong_thuc_cua_bo, "500")
+
+    def test_ma_phuong_thuc_cua_bo_sai_van_bao_loi(self):
+        du_lieu = copy.deepcopy(self.mau)
+        du_lieu["dats_tuyen_sinh"]["dats_chuong_trinh_dao_tao"][1]["dats_phuong_thuc"][0]["ma_phuong_thuc_cua_bo"] = "999"
+        with self.assertRaises(DatsImportError) as ctx:
+            import_day_du(self.db, "BKA", 2027, du_lieu)
+        self.assertIn("ma_phuong_thuc_cua_bo = 999", str(ctx.exception))
+
 
 if __name__ == "__main__":
     unittest.main()

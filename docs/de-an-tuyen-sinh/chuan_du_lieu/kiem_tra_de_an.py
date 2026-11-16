@@ -111,7 +111,7 @@ def kiem_tra(doc, dm):
     # công thức
     for ma, c in cong_thuc.items():
         vt = f'cong_thuc {ma}'
-        co_ma('phuong_thuc_cua_bo', c['ma_phuong_thuc_cua_bo'], vt)
+        co_ma('phuong_thuc_cua_bo', c.get('ma_phuong_thuc_cua_bo') or '500', vt)
         b = c.get('ma_bang_quy_doi_ngoai_ngu')
         if b is not None and b not in bang:
             loi.append(f'{vt}: bảng quy đổi ngoại ngữ "{b}" không tồn tại')
