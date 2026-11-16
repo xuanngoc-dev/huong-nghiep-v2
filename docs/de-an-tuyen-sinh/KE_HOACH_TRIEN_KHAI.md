@@ -44,9 +44,9 @@ Nhánh làm việc: `tich_hop_de_an_tuyen_sinh`.
 
 | Bước | Việc | Kiểm tra / nghiệm thu |
 |---|---|---|
-| 1.1 | Gộp đề án trùng theo báo cáo 0.2 (script, chủ dự án duyệt danh sách trước khi chạy) | Không còn cặp trường + năm trùng |
-| 1.2 | **Migration `0056`:**<br/>• `dats_tuyen_sinh`: mã trường + năm thành duy nhất; thêm `de_an_nam_truoc_id`; thêm **trạng thái xét tuyển 3 mức**: chưa chuẩn hóa / thử nghiệm / đang áp dụng<br/>• `dats_tru_so`: thêm `tinh_thanh_id`<br/>• `dats_chuong_trinh_dao_tao`: thêm **mã xét tuyển năm trước**<br/>Cập nhật model | Chạy được trên bản sao DB, có `downgrade` |
-| 1.3 | Chặn tạo đề án trùng năm ở API và bộ import cũ (400 kèm thông báo) | Unit test |
+| 1.1 | ~~Gộp đề án trùng theo báo cáo 0.2~~ **Không cần**: báo cáo 0.2 (16/11/2026) không có đề án trùng; migration `0056` tự dừng nếu phát hiện trùng | Không còn cặp trường + năm trùng |
+| 1.2 | **Xong** (`20261116_0056_dats_luu_theo_nam.py`, đã chạy 16/11/2026). **Migration `0056`:**<br/>• `dats_tuyen_sinh`: mã trường + năm thành duy nhất; thêm `de_an_nam_truoc_id`; thêm **trạng thái xét tuyển 3 mức**: chưa chuẩn hóa / thử nghiệm / đang áp dụng<br/>• `dats_tru_so`: thêm `tinh_thanh_id`<br/>• `dats_chuong_trinh_dao_tao`: thêm **mã xét tuyển năm trước**<br/>Cập nhật model | Chạy được trên bản sao DB, có `downgrade` |
+| 1.3 | **Xong.** Chặn tạo đề án trùng năm ở API (thêm, thêm nhiều, sửa) và bộ import cũ (400 kèm thông báo) | Unit test `test_dats_tuyen_sinh_trung_nam.py` |
 | 1.4 | Màn hình quản trị: cơ sở chọn tỉnh; chương trình chọn ngành (có gợi ý theo tên) và mã xét tuyển năm trước | Thử trên trang quản trị |
 | 1.5 | **Sao chép đề án năm trước**: `POST /de-an-tuyen-sinh/{id}/sao-chep` + nút trên trang Danh sách. Sao chép toàn bộ dữ liệu con, tự điền mã xét tuyển năm trước | Test: số dòng các bảng con khớp đề án gốc |
 | 1.6 | **Điểm chuẩn**: bảng `xt_diem_chuan` (migration `0057`) + màn hình CRUD theo skill `them-api` | Test: rỗng trả 200, id không tồn tại trả 400 |

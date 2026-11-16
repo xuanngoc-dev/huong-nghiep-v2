@@ -147,19 +147,20 @@ def import_document(db: Session, ma_truong: str, nam_tuyen_sinh: int, document: 
     code = ma_truong.strip()
     if db.scalar(select(DmTruong.id).where(DmTruong.ma_truong == code)) is None:
         raise DatsImportError("Trường học không tồn tại")
-    if conflict_policy(document) == "tu_choi":
-        found = db.scalar(
-            select(DatsTuyenSinh.id)
-            .where(
-                DatsTuyenSinh.ma_truong == code,
-                DatsTuyenSinh.nam_tuyen_sinh == nam_tuyen_sinh,
-            )
-            .limit(1)
+    # Kiểm tra giá trị xu_ly_khi_da_ton_tai; dù file không ghi gì vẫn luôn từ chối vì mỗi trường một đề án mỗi năm.
+    conflict_policy(document)
+    found = db.scalar(
+        select(DatsTuyenSinh.id)
+        .where(
+            DatsTuyenSinh.ma_truong == code,
+            DatsTuyenSinh.nam_tuyen_sinh == nam_tuyen_sinh,
         )
-        if found is not None:
-            raise DatsImportError(
-                f"Trường đã có đề án tuyển sinh năm {nam_tuyen_sinh}. Hãy xóa đề án cũ trước khi nhập lại."
-            )
+        .limit(1)
+    )
+    if found is not None:
+        raise DatsImportError(
+            f"Trường đã có đề án tuyển sinh năm {nam_tuyen_sinh} (id = {found}). Hãy xóa đề án cũ trước khi nhập lại."
+        )
     flat = flatten_nested_document(document)
     catalogs = _load_catalogs(db, flat)
     rows = prepare_import(flat, ma_truong=code, nam_tuyen_sinh=nam_tuyen_sinh, catalogs=catalogs)
@@ -458,6 +459,9 @@ def _values(raw: dict, table: str, label: str, ma_truong: str, nam_tuyen_sinh: i
                     _lookup_code(catalogs.to_hop_by_code, _combo_code(raw)),
                     f"{label} thiếu to_hop_id hoặc mã tổ hợp có trong danh mục",
                 )
+                continue
+            if column.server_default is not None:
+                # Để CSDL tự điền giá trị mặc định (ví dụ trang_thai_xet_tuyen).
                 continue
             if not column.nullable and not column.primary_key:
                 raise DatsImportError(f"{label} thiếu {name}")

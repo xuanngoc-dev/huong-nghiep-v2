@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import String, case, cast, func, or_, select
+from sqlalchemy import String, and_, case, cast, func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -72,6 +72,30 @@ def _ensure_truong(db: Session, codes: list[str]) -> None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Trường học không tồn tại: {', '.join(missing)}",
+        )
+
+
+def _chan_de_an_trung(db: Session, payload: list[DatsTuyenSinhWrite], bo_qua_id: int | None = None) -> None:
+    """Mỗi trường chỉ có một đề án mỗi năm: báo 400 nếu danh sách tự trùng hoặc đã có trong CSDL."""
+    cap = [(item.ma_truong, item.nam_tuyen_sinh) for item in payload]
+    trung_trong_ds = sorted({c for c in cap if cap.count(c) > 1})
+    if trung_trong_ds:
+        ds = ", ".join(f"{ma}/{nam}" for ma, nam in trung_trong_ds)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Danh sách có đề án trùng trường + năm: {ds}",
+        )
+    stmt = select(DatsTuyenSinh.id, DatsTuyenSinh.ma_truong, DatsTuyenSinh.nam_tuyen_sinh).where(
+        or_(*(and_(DatsTuyenSinh.ma_truong == ma, DatsTuyenSinh.nam_tuyen_sinh == nam) for ma, nam in cap))
+    )
+    if bo_qua_id is not None:
+        stmt = stmt.where(DatsTuyenSinh.id != bo_qua_id)
+    da_co = db.execute(stmt.order_by(DatsTuyenSinh.ma_truong, DatsTuyenSinh.nam_tuyen_sinh)).all()
+    if da_co:
+        ds = ", ".join(f"trường {r.ma_truong} năm {r.nam_tuyen_sinh} (id = {r.id})" for r in da_co)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Đã có đề án tuyển sinh: {ds}. Mỗi trường chỉ có một đề án mỗi năm, hãy sửa đề án đã có.",
         )
 
 
@@ -326,7 +350,7 @@ def create_de_an_bulk(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DatsTuyenSinhBulkResult:
-    """Thêm nhiều đề án cùng lúc. Từ chối nếu trường học không tồn tại."""
+    """Thêm nhiều đề án cùng lúc. Từ chối nếu trường học không tồn tại hoặc trùng trường + năm."""
     if not payload:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Danh sách đề án tuyển sinh trống")
     if len(payload) > 500:
@@ -336,6 +360,7 @@ def create_de_an_bulk(
         )
 
     _ensure_truong(db, [item.ma_truong for item in payload])
+    _chan_de_an_trung(db, payload)
     items = []
     for data in payload:
         item = DatsTuyenSinh()
@@ -381,8 +406,9 @@ def create_de_an(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DatsTuyenSinhPublic:
-    """Thêm một đề án tuyển sinh. Từ chối nếu trường học không tồn tại."""
+    """Thêm một đề án tuyển sinh. Từ chối nếu trường học không tồn tại hoặc trường đã có đề án năm đó."""
     _ensure_truong(db, [payload.ma_truong])
+    _chan_de_an_trung(db, [payload])
     item = DatsTuyenSinh()
     _apply(item, payload, creating=True)
     db.add(item)
@@ -409,6 +435,7 @@ def update_de_an(
     """Cập nhật toàn bộ thông tin một đề án tuyển sinh theo id."""
     item, _truong = _load_pair(db, item_id)
     _ensure_truong(db, [payload.ma_truong])
+    _chan_de_an_trung(db, [payload], bo_qua_id=item.id)
     _apply(item, payload, creating=False)
     try:
         db.commit()

@@ -1,6 +1,6 @@
 # Danh sách API
 
-Tự sinh từ code lúc 16/11/2026 10:27 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 16/11/2026 13:42 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
 Tiền tố chung: `/api/v1`. Tổng cộng **271** API.
 
@@ -458,9 +458,9 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/de-an-tuyen-sinh` | Bắt buộc | Lấy danh sách đề án tuyển sinh có phân trang. Lọc theo từ khóa, trường, năm và trạng thái. |
-| `POST` | `/api/v1/de-an-tuyen-sinh` | Bắt buộc | Thêm một đề án tuyển sinh. Từ chối nếu trường học không tồn tại. |
+| `POST` | `/api/v1/de-an-tuyen-sinh` | Bắt buộc | Thêm một đề án tuyển sinh. Từ chối nếu trường học không tồn tại hoặc trường đã có đề án năm đó. |
 | `DELETE` | `/api/v1/de-an-tuyen-sinh` | Bắt buộc | Xóa nhiều đề án tuyển sinh theo danh sách id. |
-| `POST` | `/api/v1/de-an-tuyen-sinh/bulk` | Bắt buộc | Thêm nhiều đề án cùng lúc. Từ chối nếu trường học không tồn tại. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/bulk` | Bắt buộc | Thêm nhiều đề án cùng lúc. Từ chối nếu trường học không tồn tại hoặc trùng trường + năm. |
 | `POST` | `/api/v1/de-an-tuyen-sinh/import` | Bắt buộc | Nhập một đề án và các bảng dats_ lồng trong JSON, trong một transaction. |
 | `GET` | `/api/v1/de-an-tuyen-sinh/{item_id}` | Bắt buộc | Lấy chi tiết một đề án tuyển sinh theo id, kèm tên trường. |
 | `PUT` | `/api/v1/de-an-tuyen-sinh/{item_id}` | Bắt buộc | Cập nhật toàn bộ thông tin một đề án tuyển sinh theo id. |
