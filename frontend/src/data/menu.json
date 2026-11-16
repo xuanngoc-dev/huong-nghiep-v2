@@ -271,6 +271,12 @@
           "icon": "Medal"
         },
         {
+          "index": "/admin/danh-muc/muc-diem-uu-tien",
+          "title": "Điểm ưu tiên theo năm",
+          "tooltip": "Mức điểm cộng khu vực / đối tượng ưu tiên theo năm tuyển sinh",
+          "icon": "Calendar"
+        },
+        {
           "index": "/admin/danh-muc/phuong-thuc-tuyen-sinh",
           "title": "PT tuyển sinh",
           "tooltip": "Quản lý các phương thức tuyển sinh",

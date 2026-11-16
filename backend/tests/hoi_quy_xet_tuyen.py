@@ -77,6 +77,7 @@ _BANG = [
     M.DmTinhThanh,
     M.DmKhuVucUuTien,
     M.DmDoiTuongUuTien,
+    M.DmMucDiemUuTien,
     M.DmNganhDaoTao,
     *(model for _ten, model, _kind in _TABLES),
     M.XtBangQuyDoi,

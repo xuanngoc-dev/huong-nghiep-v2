@@ -1,16 +1,16 @@
 # Danh sách API
 
-Tự sinh từ code lúc 16/11/2026 15:41 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 16/11/2026 21:06 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **290** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **296** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 163 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 80 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
-| [Khách vãng lai](#khach) | 47 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
+| [Quản trị (admin)](#quan_tri) | 167 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Thành viên (user)](#thanh_vien) | 81 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Khách vãng lai](#khach) | 48 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
 
@@ -107,6 +107,15 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `POST` | `/api/v1/danh-muc/mon-hoc/bulk` | Bắt buộc (admin) | Thêm nhiều môn học cùng lúc. Từ chối nếu mã môn trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
 | `PUT` | `/api/v1/danh-muc/mon-hoc/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một môn học theo id. |
 | `DELETE` | `/api/v1/danh-muc/mon-hoc/{item_id}` | Bắt buộc (admin) | Xóa một môn học theo id. |
+
+### `danh-muc/muc-diem-uu-tien`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/muc-diem-uu-tien` | Bắt buộc (admin) | Thêm mức điểm ưu tiên cho một khoảng năm. |
+| `DELETE` | `/api/v1/danh-muc/muc-diem-uu-tien` | Bắt buộc (admin) | Xóa nhiều mức điểm ưu tiên theo danh sách id. |
+| `PUT` | `/api/v1/danh-muc/muc-diem-uu-tien/{item_id}` | Bắt buộc (admin) | Cập nhật một mức điểm ưu tiên. |
+| `DELETE` | `/api/v1/danh-muc/muc-diem-uu-tien/{item_id}` | Bắt buộc (admin) | Xóa một mức điểm ưu tiên theo id. |
 
 ### `danh-muc/nganh-dao-tao`
 
@@ -421,6 +430,12 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/mon-hoc/{item_id}` | Bắt buộc | Lấy chi tiết một môn học theo id. |
 
+### `danh-muc/muc-diem-uu-tien`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/muc-diem-uu-tien/{item_id}` | Bắt buộc | Chi tiết một mức điểm ưu tiên theo id. |
+
 ### `danh-muc/nganh-dao-tao`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
@@ -647,6 +662,12 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/mon-hoc` | Không | Lấy danh sách môn học có phân trang. Lọc theo từ khóa (tên, mã, tên viết tắt, nhóm môn) và trạng thái. Không cần đăng nhập. |
+
+### `danh-muc/muc-diem-uu-tien`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/muc-diem-uu-tien` | Không | Danh sách mức điểm ưu tiên theo năm, lọc theo mã / căn cứ, loại và năm. Không cần đăng nhập. |
 
 ### `danh-muc/nganh-dao-tao`
 

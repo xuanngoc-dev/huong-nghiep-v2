@@ -254,6 +254,12 @@ const router = createRouter({
           meta: { title: 'Khu vực ưu tiên', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'danh-muc/muc-diem-uu-tien',
+          name: 'muc-diem-uu-tien',
+          component: () => import('@/views/admin/danh-muc/MucDiemUuTien.vue'),
+          meta: { title: 'Mức điểm ưu tiên theo năm', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'danh-muc/doi-tuong-uu-tien',
           name: 'doi-tuong-uu-tien',
           component: () => import('@/views/admin/danh-muc/DoiTuongUuTien.vue'),

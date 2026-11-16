@@ -24,6 +24,7 @@ from app.models.dm_bang_cap_chung_chi import DmBangCapChungChi
 from app.models.dm_doi_tuong_uu_tien import DmDoiTuongUuTien
 from app.models.dm_khu_vuc_uu_tien import DmKhuVucUuTien
 from app.models.dm_mon_hoc import DmMonHoc
+from app.models.dm_muc_diem_uu_tien import DmMucDiemUuTien
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.dm_tinh_thanh import DmTinhThanh
 from app.models.dm_to_hop_mon_hoc import DmToHopMonHoc
@@ -95,7 +96,7 @@ def _f(value) -> float | None:
 
 
 def dau_phien_ban(db: Session, nam: int) -> tuple:
-    """Thay đổi khi có import quy tắc mới, đề án đổi trạng thái / cập nhật, hoặc điểm chuẩn thay đổi."""
+    """Thay đổi khi có import quy tắc mới, đề án đổi trạng thái / cập nhật, điểm chuẩn hoặc danh mục ưu tiên, tổ hợp thay đổi."""
     de_an = db.execute(
         select(func.count(), func.max(DatsTuyenSinh.cap_nhat_luc), func.group_concat(DatsTuyenSinh.id)).where(
             DatsTuyenSinh.nam_tuyen_sinh == nam, DatsTuyenSinh.trang_thai_xet_tuyen == DANG_AP_DUNG
@@ -117,7 +118,49 @@ def dau_phien_ban(db: Session, nam: int) -> tuple:
     co_so = db.scalar(
         select(func.sum(func.coalesce(DatsTruSo.tinh_thanh_id, 0))).where(DatsTruSo.de_an_id.in_(dang_ap_dung))
     )
-    return (tuple(de_an), nhap, tuple(diem_chuan), tuple(chuong_trinh), co_so)
+    # Danh mục dùng chung: điểm ưu tiên (cả mức theo năm) và khoảng năm áp dụng của tổ hợp.
+    danh_muc = (
+        tuple(db.execute(select(func.max(DmKhuVucUuTien.updated_at), func.sum(DmKhuVucUuTien.diem_cong))).one()),
+        tuple(
+            db.execute(select(func.max(DmDoiTuongUuTien.updated_at), func.sum(DmDoiTuongUuTien.diem_cong))).one()
+        ),
+        tuple(
+            db.execute(
+                select(func.count(), func.max(DmMucDiemUuTien.cap_nhat_luc), func.sum(DmMucDiemUuTien.diem_cong))
+            ).one()
+        ),
+        tuple(
+            db.execute(
+                select(
+                    func.count(),
+                    func.sum(func.coalesce(DmToHopMonHoc.nam_ap_dung_tu, 0)),
+                    func.sum(func.coalesce(DmToHopMonHoc.nam_ap_dung_den, 0)),
+                )
+            ).one()
+        ),
+    )
+    return (tuple(de_an), nhap, tuple(diem_chuan), tuple(chuong_trinh), co_so, danh_muc)
+
+
+def muc_diem_uu_tien(db: Session, nam: int) -> tuple[dict[str, float], dict[str, float]]:
+    """Điểm cộng khu vực, đối tượng ưu tiên áp dụng cho năm tuyển sinh `nam`.
+
+    Lấy dòng dm_muc_diem_uu_tien khớp năm (nhiều dòng thì dòng có năm bắt đầu muộn nhất); mã không có dòng nào
+    khớp dùng diem_cong của danh mục.
+    """
+    khu_vuc = {ma: float(d) for ma, d in db.execute(select(DmKhuVucUuTien.ma_khu_vuc, DmKhuVucUuTien.diem_cong))}
+    doi_tuong = {ma: float(d) for ma, d in db.execute(select(DmDoiTuongUuTien.ma_doi_tuong, DmDoiTuongUuTien.diem_cong))}
+    theo_loai = {"KHU_VUC": khu_vuc, "DOI_TUONG": doi_tuong}
+    for loai, ma, diem in db.execute(
+        select(DmMucDiemUuTien.loai, DmMucDiemUuTien.ma, DmMucDiemUuTien.diem_cong)
+        .where(
+            DmMucDiemUuTien.nam_ap_dung_tu <= nam,
+            func.coalesce(DmMucDiemUuTien.nam_ap_dung_den, 9999) >= nam,
+        )
+        .order_by(DmMucDiemUuTien.nam_ap_dung_tu)
+    ):
+        theo_loai[loai][ma] = float(diem)
+    return khu_vuc, doi_tuong
 
 
 def co_de_an_dang_ap_dung(db: Session, nam: int) -> bool:
@@ -156,8 +199,7 @@ def _nap_quy_tac(db: Session, nam: int) -> QuyTacNam:
     mon = {m.id: m for m in db.scalars(select(DmMonHoc))}
     ma_mon = {mid: m.ma_mon_hoc for mid, m in mon.items()}
     qt.mon = {m.ma_mon_hoc: MonTinh(ten=m.ten_mon_hoc, nhom=m.nhom_mon or "") for m in mon.values()}
-    qt.khu_vuc = {k.ma_khu_vuc: float(k.diem_cong) for k in db.scalars(select(DmKhuVucUuTien))}
-    qt.doi_tuong = {k.ma_doi_tuong: float(k.diem_cong) for k in db.scalars(select(DmDoiTuongUuTien))}
+    qt.khu_vuc, qt.doi_tuong = muc_diem_uu_tien(db, nam)
 
     bo = db.scalar(select(XtBoTieuChi).where(XtBoTieuChi.mac_dinh.is_(True)).order_by(XtBoTieuChi.id))
     if bo is not None:
@@ -174,11 +216,20 @@ def _nap_quy_tac(db: Session, nam: int) -> QuyTacNam:
 
     to_hop_id = dict(db.execute(select(DmToHopMonHoc.ma_to_hop, DmToHopMonHoc.id)).all())
     ma_to_hop = {tid: ma for ma, tid in to_hop_id.items()}
+    # Tổ hợp ngoài khoảng năm áp dụng không có vị trí môn: phương án dùng tổ hợp đó không tính được điểm.
+    con_hieu_luc = set(
+        db.scalars(
+            select(DmToHopMonHoc.id).where(
+                func.coalesce(DmToHopMonHoc.nam_ap_dung_tu, 0) <= nam,
+                func.coalesce(DmToHopMonHoc.nam_ap_dung_den, 9999) >= nam,
+            )
+        )
+    )
     vi_tri: dict[str, dict[int, list[str]]] = {}
     for th_id, mon_id, thu_tu in db.execute(
         select(DmToHopMonHocChiTiet.to_hop_id, DmToHopMonHocChiTiet.mon_hoc_id, DmToHopMonHocChiTiet.thu_tu_mon)
     ):
-        if thu_tu is not None and th_id in ma_to_hop and mon_id in ma_mon:
+        if thu_tu is not None and th_id in con_hieu_luc and mon_id in ma_mon:
             vi_tri.setdefault(ma_to_hop[th_id], {}).setdefault(thu_tu, []).append(ma_mon[mon_id])
     qt.to_hop = {ma: [ds for _thu_tu, ds in sorted(theo.items())] for ma, theo in vi_tri.items()}
 

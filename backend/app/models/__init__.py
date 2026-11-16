@@ -5,6 +5,7 @@ from app.models.dm_khu_vuc_uu_tien import DmKhuVucUuTien
 from app.models.dm_linh_vuc_dao_tao import DmLinhVucDaoTao
 from app.models.dm_loai_cau_hoi import DmLoaiCauHoi
 from app.models.dm_mon_hoc import DmMonHoc
+from app.models.dm_muc_diem_uu_tien import DmMucDiemUuTien
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.dm_nganh_hoc_theo_truong import DmNganhHocTheoTruong
 from app.models.dm_nhom_nganh_dao_tao import DmNhomNganhDaoTao
@@ -86,6 +87,7 @@ __all__ = [
     "DmLinhVucDaoTao",
     "DmLoaiCauHoi",
     "DmMonHoc",
+    "DmMucDiemUuTien",
     "DmNganhDaoTao",
     "DmNhomNganhDaoTao",
     "DmNhomTinhCachHolland",
