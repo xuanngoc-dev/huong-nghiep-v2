@@ -23,7 +23,7 @@ from sqlalchemy.orm import Session
 
 import app.models as M
 from app.services.dats_import import _TABLES
-from app.services.xet_tuyen.bo_tinh import tinh_phuong_an, xep_hang
+from app.services.xet_tuyen.chay_thu import ket_qua_dang_bang, khoa_phuong_an
 from app.services.xet_tuyen.danh_gia import _CACHE, tai_quy_tac
 from app.services.xet_tuyen.mo_hinh import (
     BaiThiTinh,
@@ -42,17 +42,6 @@ HOM_NAY = date(2026, 7, 1)
 # Điểm ưu tiên khu vực, đối tượng theo Thông tư 06/2026 (Phụ lục II).
 KHU_VUC = {"KV1": 0.75, "KV2-NT": 0.5, "KV2": 0.25, "KV3": 0}
 DOI_TUONG = {"01": 2, "02": 2, "03": 2, "04": 1, "05": 1, "06": 1}
-
-_TRUONG_PHUONG_AN = (
-    "diem_goc",
-    "diem_cong",
-    "diem_uu_tien",
-    "diem_xet",
-    "du_dieu_kien",
-    "ly_do",
-    "chenh_lech_30",
-)
-
 
 @compiles(BIGINT, "sqlite")
 @compiles(INTEGER, "sqlite")
@@ -160,8 +149,7 @@ def ho_so_tu_dict(d: dict) -> HoSoXetTuyen:
     return HoSoXetTuyen(**lap)
 
 
-def _khoa(ma_xet_tuyen, ten, ma_cong_thuc, ma_to_hop) -> tuple:
-    return (ma_xet_tuyen or "", ten, ma_cong_thuc, ma_to_hop or "")
+_khoa = khoa_phuong_an
 
 
 def chay_truong(thu_muc: Path) -> dict[str, dict]:
@@ -183,49 +171,10 @@ def chay_truong(thu_muc: Path) -> dict[str, dict]:
         _CACHE.clear()
         qtn = tai_quy_tac(db, nam)
         _CACHE.clear()
-        ten_ct = dict(db.execute(select(M.DatsChuongTrinhDaoTao.id, M.DatsChuongTrinhDaoTao.ten_chuong_trinh)).all())
-        ctr = {c.id: c for c in qtn.quy_tac.chuong_trinh}
-        ma_cong_thuc = {c.id: c.ma for c in qtn.quy_tac.cong_thuc}
-        tien_to = f"{ma_truong}-"
-
-        def ma_to_hop(ma):
-            # Tổ hợp riêng lưu có tiền tố mã trường; kết quả mong đợi ghi mã như trong file đề án.
-            return ma.removeprefix(tien_to) if ma else None
-
         ket_qua = {}
         for file_ho_so in sorted((thu_muc / "ho_so").glob("*.json")):
             hs = ho_so_tu_dict(json.loads(file_ho_so.read_text(encoding="utf-8")))
-            kq = tinh_phuong_an(qtn.quy_tac, hs, nam, HOM_NAY.isoformat(), qtn.diem_chuan)
-            dong = xep_hang(qtn.quy_tac, hs, kq)
-            phuong_an = []
-            for p in kq.phuong_an:
-                c = ctr[p.chuong_trinh_id]
-                phuong_an.append(
-                    {
-                        "ma_xet_tuyen": c.ma_xet_tuyen,
-                        "ten_chuong_trinh": ten_ct[p.chuong_trinh_id],
-                        "ma_cong_thuc": ma_cong_thuc[p.cong_thuc_id],
-                        "ma_to_hop": ma_to_hop(p.ma_to_hop),
-                        **{k: getattr(p, k) for k in _TRUONG_PHUONG_AN},
-                    }
-                )
-            phuong_an.sort(key=lambda x: _khoa(x["ma_xet_tuyen"], x["ten_chuong_trinh"], x["ma_cong_thuc"], x["ma_to_hop"]))
-            ket_qua[file_ho_so.stem] = {
-                "so_phuong_an": len(phuong_an),
-                "so_chuong_trinh": len(dong),
-                "phuong_an": phuong_an,
-                "xep_hang": [
-                    {
-                        "ma_xet_tuyen": ctr[d.chuong_trinh_id].ma_xet_tuyen,
-                        "ten_chuong_trinh": ten_ct[d.chuong_trinh_id],
-                        "ma_cong_thuc": ma_cong_thuc[d.phuong_an.cong_thuc_id],
-                        "ma_to_hop": ma_to_hop(d.phuong_an.ma_to_hop),
-                        "diem_phu_hop": d.diem_phu_hop,
-                        "xep_loai": d.xep_loai,
-                    }
-                    for d in dong
-                ],
-            }
+            ket_qua[file_ho_so.stem] = ket_qua_dang_bang(db, qtn, hs, hom_nay=HOM_NAY)
         return ket_qua
     finally:
         db.close()

@@ -185,15 +185,14 @@ def tai_quy_tac(db: Session, nam: int) -> QuyTacNam:
     return moi
 
 
-def _nap_quy_tac(db: Session, nam: int) -> QuyTacNam:
-    de_an = {
-        d.id: d
-        for d in db.scalars(
-            select(DatsTuyenSinh).where(
-                DatsTuyenSinh.nam_tuyen_sinh == nam, DatsTuyenSinh.trang_thai_xet_tuyen == DANG_AP_DUNG
-            )
-        )
-    }
+def _nap_quy_tac(db: Session, nam: int, de_an_ids: list[int] | None = None) -> QuyTacNam:
+    """Quy tắc các đề án đang áp dụng trong năm; `de_an_ids` thì nạp đúng các đề án đó, bất kể trạng thái (chạy thử)."""
+    dieu_kien = (
+        [DatsTuyenSinh.id.in_(de_an_ids)]
+        if de_an_ids is not None
+        else [DatsTuyenSinh.nam_tuyen_sinh == nam, DatsTuyenSinh.trang_thai_xet_tuyen == DANG_AP_DUNG]
+    )
+    de_an = {d.id: d for d in db.scalars(select(DatsTuyenSinh).where(*dieu_kien))}
     ids = list(de_an)
     qt = QuyTacXetTuyen()
     mon = {m.id: m for m in db.scalars(select(DmMonHoc))}

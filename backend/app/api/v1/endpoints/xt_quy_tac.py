@@ -1,7 +1,8 @@
 import hashlib
 import json
 from collections import defaultdict
-from datetime import datetime
+from dataclasses import asdict
+from datetime import date, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func, select
@@ -23,6 +24,8 @@ from app.models.xt_lich_su_import import XtLichSuImport
 from app.models.xt_phuong_an import XtPhuongAn
 from app.schemas.xt_quy_tac import (
     XtBangQuyDoiPublic,
+    XtChayThuRequest,
+    XtChayThuResult,
     XtChuongTrinhPublic,
     XtCongThucPublic,
     XtDiemCongPublic,
@@ -38,6 +41,8 @@ from app.schemas.xt_quy_tac import (
     XtTrangThaiResult,
     XtTrangThaiWrite,
 )
+from app.services.xet_tuyen.chay_thu import chay_thu_de_an
+from app.services.xet_tuyen.chuyen_ho_so import tu_ho_so_hs
 from app.services.xet_tuyen_ghi import nhap_quy_tac
 from app.services.xet_tuyen_import import XetTuyenImportError
 
@@ -265,6 +270,34 @@ def doi_trang_thai_quy_tac(item_id: int, payload: XtTrangThaiWrite, db: Session 
     de_an.cap_nhat_luc = datetime.now()
     db.commit()
     return XtTrangThaiResult(de_an_id=de_an.id, trang_thai_xet_tuyen=de_an.trang_thai_xet_tuyen)
+
+
+@router.post("/{item_id}/quy-tac/chay-thu", response_model=XtChayThuResult)
+def chay_thu_quy_tac(item_id: int, payload: XtChayThuRequest, db: Session = Depends(get_db)) -> XtChayThuResult:
+    """Chạy bộ tính cho một hồ sơ với quy tắc của riêng đề án này, bất kể trạng thái (đối chiếu trước khi áp dụng).
+
+    Không ghi gì vào CSDL. `ket_qua` cùng dạng kết quả mong đợi của bộ test hồi quy, `ho_so_bo_tinh` cùng dạng hồ sơ
+    mẫu: tải về làm `ket_qua/<ten>.json` và `ho_so/<ten>.json` sau khi đã đối chiếu tay.
+    """
+    de_an = _get_or_400(db, item_id)
+    if not db.scalar(select(func.count()).select_from(XtCongThuc).where(XtCongThuc.de_an_id == item_id)):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Đề án chưa có quy tắc xét tuyển, hãy import quy tắc trước khi chạy thử",
+        )
+    hom_nay = payload.hom_nay or date.today()
+    chuyen = tu_ho_so_hs(payload.ho_so, nam_tuyen_sinh=de_an.nam_tuyen_sinh)
+    ket_qua = chay_thu_de_an(db, de_an.id, de_an.nam_tuyen_sinh, chuyen.ho_so, hom_nay=hom_nay)
+    return XtChayThuResult(
+        de_an_id=de_an.id,
+        ma_truong=de_an.ma_truong,
+        nam_tuyen_sinh=de_an.nam_tuyen_sinh,
+        trang_thai_xet_tuyen=de_an.trang_thai_xet_tuyen,
+        hom_nay=hom_nay,
+        gia_dinh=chuyen.gia_dinh,
+        ho_so_bo_tinh=asdict(chuyen.ho_so),
+        ket_qua=ket_qua,
+    )
 
 
 @router.post("/{item_id}/quy-tac/import", response_model=XtImportResult)

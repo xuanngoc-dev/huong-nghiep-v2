@@ -20,6 +20,10 @@ vực, đối tượng theo Thông tư 06/2026; bộ tiêu chí như migration `
 
 ## Thêm một trường
 
+Quy trình đầy đủ (từ soạn file đến chuyển "đang áp dụng"): `docs/de-an-tuyen-sinh/QUY_TRINH_DUA_TRUONG_VAO.md`.
+Cách nhanh nhất có hồ sơ và kết quả mong đợi: nút **Chạy thử** ở tab "Quy tắc xét tuyển" của đề án (dữ liệu thật,
+đề án đang thử nghiệm), tải về hai file. Cách thủ công:
+
 1. Tạo thư mục `<MA_TRUONG>_<NAM>`, chép file chuẩn của trường vào `de_an.json`, thêm điểm chuẩn năm trước vào `diem_chuan`.
 2. Viết ít nhất 2 hồ sơ mẫu trong `ho_so/`: một hồ sơ đạt nhiều phương án, một hồ sơ không đạt ngưỡng hoặc điều kiện.
    Nên có hồ sơ chạm đúng ngưỡng (điểm sàn, trung bình môn, ngưỡng THPT) nếu đề án có ngưỡng.

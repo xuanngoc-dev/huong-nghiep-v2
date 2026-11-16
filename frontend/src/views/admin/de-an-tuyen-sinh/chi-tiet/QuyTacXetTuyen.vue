@@ -19,10 +19,16 @@
         </span>
         <span v-else-if="data">Chưa có quy tắc xét tuyển.</span>
       </div>
-      <CustomButton type="primary" @click="moImport">
-        <CustomIcon><Upload /></CustomIcon>
-        <span>Import quy tắc (JSON)</span>
-      </CustomButton>
+      <div class="quy-tac__nut">
+        <CustomButton v-if="coQuyTac" @click="chayThuVisible = true">
+          <CustomIcon><VideoPlay /></CustomIcon>
+          <span>Chạy thử</span>
+        </CustomButton>
+        <CustomButton type="primary" @click="moImport">
+          <CustomIcon><Upload /></CustomIcon>
+          <span>Import quy tắc (JSON)</span>
+        </CustomButton>
+      </div>
     </div>
 
     <CustomEmpty
@@ -179,6 +185,8 @@
       </el-tab-pane>
     </el-tabs>
 
+    <ChayThuQuyTac v-model="chayThuVisible" :de-an-id="props.deAnId" />
+
     <CustomDialog v-model="importVisible" title="Import quy tắc xét tuyển" width="800px" append-to-body>
       <p class="import__mo-ta">
         Chọn hoặc dán file JSON theo cấu trúc chuẩn (một trường, một năm). File phải đúng trường và năm của đề án này.
@@ -246,6 +254,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { doiTrangThaiQuyTacXetTuyen, fetchQuyTacXetTuyen, importQuyTacXetTuyen } from '@/api/deAnTuyenSinh'
 import { hienThoiGian } from '@/data/napTien'
 import { docFileJson } from '@/utils/jsonFile'
+import ChayThuQuyTac from './ChayThuQuyTac.vue'
 
 const props = defineProps({
   deAnId: { type: Number, required: true },
@@ -292,6 +301,7 @@ const fileRef = ref()
 const ketQua = ref(null)
 const loiImport = ref([])
 const dangDoiTrangThai = ref(false)
+const chayThuVisible = ref(false)
 
 const coQuyTac = computed(() => Boolean(data.value?.cong_thuc.length))
 const trangThai = computed(() => TRANG_THAI[data.value?.trang_thai_xet_tuyen ?? 0] || TRANG_THAI[0])
@@ -435,6 +445,12 @@ onMounted(load)
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
+}
+
+.quy-tac__nut {
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 

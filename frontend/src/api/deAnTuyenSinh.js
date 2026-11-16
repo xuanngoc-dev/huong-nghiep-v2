@@ -53,3 +53,8 @@ export function doiTrangThaiQuyTacXetTuyen(id, trangThai) {
     .patch(`/de-an-tuyen-sinh/${id}/quy-tac/trang-thai`, { trang_thai_xet_tuyen: trangThai })
     .then((res) => res.data)
 }
+
+// Chạy bộ tính cho một hồ sơ với quy tắc của riêng đề án (kể cả đề án thử nghiệm); không ghi gì.
+export function chayThuQuyTacXetTuyen(id, payload) {
+  return api.post(`/de-an-tuyen-sinh/${id}/quy-tac/chay-thu`, payload).then((res) => res.data)
+}
