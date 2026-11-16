@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 from types import SimpleNamespace
 
 from app.api.v1.endpoints.ho_so import get_ho_so, update_thong_tin_ca_nhan
@@ -51,6 +52,9 @@ class _DbGia:
     def add(self, *_args):
         pass
 
+    def flush(self):
+        pass
+
     def commit(self):
         self.committed = True
 
@@ -58,8 +62,10 @@ class _DbGia:
         pass
 
 
+# Đồng bộ sang hồ sơ hs_* được kiểm ở tests/test_hs_ho_so.py; Session giả ở đây không chạy truy vấn thật.
+@patch("app.api.v1.endpoints.ho_so.dong_bo_tu_json", return_value=None)
 class TestThongTinCaNhan(unittest.TestCase):
-    def test_chi_cap_nhat_thong_tin_ca_nhan_giu_nguyen_ho_so_nang_luc(self):
+    def test_chi_cap_nhat_thong_tin_ca_nhan_giu_nguyen_ho_so_nang_luc(self, _dong_bo):
         nang_luc = {"hoc_luc_trung_binh": {"12": 8.5}}
         suc_khoe = {"chieu_cao": 165}
         profile = _ho_so(trinh_do_hoc_van=nang_luc, suc_khoe_the_chat=suc_khoe)
@@ -78,7 +84,7 @@ class TestThongTinCaNhan(unittest.TestCase):
         self.assertIs(profile.suc_khoe_the_chat, suc_khoe)
         self.assertEqual(result.ho_ten, "Nguyễn Văn An")
 
-    def test_schema_thong_tin_ca_nhan_khong_nhan_ho_so_nang_luc(self):
+    def test_schema_thong_tin_ca_nhan_khong_nhan_ho_so_nang_luc(self, _dong_bo):
         self.assertNotIn("trinh_do_hoc_van", ThongTinCaNhanWrite.model_fields)
 
 

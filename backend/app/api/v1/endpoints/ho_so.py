@@ -1,4 +1,5 @@
-from datetime import date, timedelta
+import logging
+from datetime import date, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, ValidationError
@@ -28,7 +29,19 @@ from app.schemas.ho_so import (
     TrinhDoHocVan,
 )
 
+from app.services.ho_so_xet_tuyen import HoSoXetTuyenError, dong_bo_tu_json
+
 router = APIRouter(prefix="/tai-khoan", tags=["tai-khoan"])
+logger = logging.getLogger(__name__)
+
+
+def _dong_bo_ho_so_xet_tuyen(db: Session, profile: NguoiDungThongTin) -> None:
+    """Ghi song song: hồ sơ năng lực cũ vừa đổi thì cập nhật hồ sơ xét tuyển hs_* (nếu đã có) cho khớp."""
+    db.flush()
+    try:
+        dong_bo_tu_json(db, profile, nam_tuyen_sinh=datetime.now().year)
+    except HoSoXetTuyenError:
+        logger.exception("Không đồng bộ được hồ sơ xét tuyển của người dùng %s", profile.nguoi_dung_id)
 
 
 def _get_profile(db: Session, user_id: int) -> NguoiDungThongTin | None:
@@ -184,6 +197,7 @@ def update_ho_so(
         profile.suc_khoe_the_chat = _dump_block(payload.suc_khoe_the_chat)
     if "kha_nang_tai_chinh" in payload.model_fields_set:
         profile.kha_nang_tai_chinh = _dump_block(payload.kha_nang_tai_chinh)
+    _dong_bo_ho_so_xet_tuyen(db, profile)
     return _luu(db, current_user, profile)
 
 
@@ -195,6 +209,7 @@ def update_thong_tin_ca_nhan(
 ) -> HoSoPublic:
     """Chỉ cập nhật thông tin cá nhân (họ tên, liên hệ, nhân thân, diện ưu tiên); giữ nguyên hồ sơ năng lực."""
     profile = _gan_thong_tin_ca_nhan(db, current_user, payload)
+    _dong_bo_ho_so_xet_tuyen(db, profile)
     return _luu(db, current_user, profile)
 
 

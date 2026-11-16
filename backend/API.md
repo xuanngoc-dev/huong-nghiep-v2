@@ -1,15 +1,15 @@
 # Danh sách API
 
-Tự sinh từ code lúc 16/11/2026 15:28 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 16/11/2026 15:41 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **288** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **290** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
 | [Quản trị (admin)](#quan_tri) | 163 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 78 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Thành viên (user)](#thanh_vien) | 80 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 47 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
@@ -501,6 +501,13 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/he-thong/ngan-hang-thanh-toan/dang-hoat-dong` | Bắt buộc | Các tài khoản ngân hàng đang hoạt động để thành viên chuyển khoản nạp tiền. |
+
+### `ho-so-xet-tuyen`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/ho-so-xet-tuyen/cua-toi` | Bắt buộc | Hồ sơ xét tuyển chính của tài khoản. Chưa có thì dựng từ hồ sơ năng lực cũ (`tu_du_lieu_cu = true`, chưa lưu). |
+| `PUT` | `/api/v1/ho-so-xet-tuyen/cua-toi` | Bắt buộc | Ghi đè hồ sơ xét tuyển chính; đồng thời cập nhật hồ sơ năng lực cũ (JSON, khu vực, đối tượng, tỉnh) cho khớp. |
 
 ### `tai-khoan`
 

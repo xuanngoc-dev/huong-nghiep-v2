@@ -34,6 +34,7 @@ from app.api.v1.endpoints import (
     ht_cau_hinh_tra_cuu,
     ht_ngan_hang_thanh_toan,
     ho_so,
+    hs_ho_so,
     kiem_tra_du_lieu,
     nguoi_dung,
     tai_lieu,
@@ -62,6 +63,7 @@ api_router.include_router(ht_lich_su_nap_tien.router)
 api_router.include_router(ht_lich_su_giao_dich_ngan_hang.router)
 api_router.include_router(ht_lich_su_giao_dich_ngan_hang.webhook_router)
 api_router.include_router(ho_so.router)
+api_router.include_router(hs_ho_so.router)
 api_router.include_router(dm_tinh_thanh.router)
 api_router.include_router(dm_dan_toc.router)
 api_router.include_router(dm_ton_giao.router)
