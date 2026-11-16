@@ -6,7 +6,7 @@ from sqlalchemy import String, and_, case, cast, func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_current_user, la_quan_tri
 from app.db.session import get_db
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
 from app.models.dats_trinh_do_nganh import DatsTrinhDoNganh
@@ -30,7 +30,7 @@ from app.schemas.dats_tuyen_sinh import (
     TruongDaoTaoPublic,
 )
 from app.services.dats_detail import load_de_an_bang
-from app.services.dats_import import DatsImportError, delete_de_an_children, import_document
+from app.services.dats_import import KHOA_QUY_TAC, DatsImportError, delete_de_an_children, import_day_du
 from app.services.sao_chep_de_an import SaoChepDeAnError, sao_chep_de_an
 from app.services.truong_hien_thi import join_tinh_thanh
 from app.services.truong_hien_thi import khu_vuc_hien_thi as khu_vuc_hien_thi_expr
@@ -387,11 +387,22 @@ def create_de_an_bulk(
 def import_de_an(
     payload: DatsImportRequest,
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    user: NguoiDung = Depends(get_current_user),
 ) -> DatsImportResult:
-    """Nhập một đề án và các bảng dats_ lồng trong JSON, trong một transaction."""
+    """Nhập một đề án và các bảng dats_ lồng trong JSON, trong một transaction.
+
+    Khối `quy_tac_xet_tuyen` (file chuẩn quy tắc: công thức, phương án, điều kiện, điểm cộng, học phí, điểm chuẩn)
+    được ghi cùng transaction và chỉ quản trị viên được gửi. Mẫu: docs/de-an-tuyen-sinh/chuan_du_lieu/mau_import_day_du.json.
+    """
+    if isinstance(payload.du_lieu, dict) and payload.du_lieu.get(KHOA_QUY_TAC) is not None and not la_quan_tri(user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Chỉ quản trị viên được import {KHOA_QUY_TAC}",
+        )
     try:
-        de_an_id, counts = import_document(db, payload.ma_truong, payload.nam_tuyen_sinh, payload.du_lieu)
+        de_an_id, counts, quy_tac = import_day_du(
+            db, payload.ma_truong, payload.nam_tuyen_sinh, payload.du_lieu, nguoi_import_id=user.id
+        )
         db.commit()
     except DatsImportError as exc:
         db.rollback()
@@ -402,7 +413,18 @@ def import_de_an(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Không lưu được dữ liệu đề án",
         ) from None
-    return DatsImportResult(de_an_id=de_an_id, counts=counts)
+    return DatsImportResult(
+        de_an_id=de_an_id,
+        counts=counts,
+        quy_tac=None
+        if quy_tac is None
+        else {
+            "lich_su_id": quy_tac.lich_su_id,
+            "so_dong": quy_tac.so_dong,
+            "canh_bao": quy_tac.canh_bao,
+            "quy_dinh_chua_mo_hinh_hoa": quy_tac.quy_dinh_chua_mo_hinh_hoa,
+        },
+    )
 
 
 @router.post("/{item_id}/sao-chep", response_model=DatsSaoChepResult, status_code=status.HTTP_201_CREATED)

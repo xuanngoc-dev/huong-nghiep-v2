@@ -127,9 +127,19 @@ class DatsImportRequest(BaseModel):
         return cleaned
 
 
+class DatsImportQuyTac(BaseModel):
+    """Kết quả ghi khối quy_tac_xet_tuyen: số dòng theo bảng (xt_*, dats_hoc_phi, xt_diem_chuan...)."""
+
+    lich_su_id: int | None = None
+    so_dong: dict[str, int]
+    canh_bao: list[str]
+    quy_dinh_chua_mo_hinh_hoa: list[dict[str, Any]]
+
+
 class DatsImportResult(BaseModel):
     de_an_id: int
     counts: dict[str, int]
+    quy_tac: DatsImportQuyTac | None = None
 
 
 class DatsSaoChepRequest(BaseModel):

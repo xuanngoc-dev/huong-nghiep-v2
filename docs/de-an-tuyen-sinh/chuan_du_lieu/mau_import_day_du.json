@@ -1,0 +1,928 @@
+{
+ "thong_tin_import": {
+  "ma_truong": "BKA",
+  "nam_tuyen_sinh": 2027,
+  "xu_ly_khi_da_ton_tai": "tu_choi"
+ },
+ "dats_tuyen_sinh": {
+  "ten_de_an": "Đề án tuyển sinh đại học chính quy năm 2027 (DỮ LIỆU MẪU)",
+  "chi_tieu": 760,
+  "hinh_thuc_dao_tao": [
+   "Chính quy"
+  ],
+  "gioi_thieu": "Đề án mẫu minh họa đủ mọi bảng import; số liệu không phải số thật.",
+  "ngay_cong_bo": "2027-03-01",
+  "nguon_du_lieu_url": "https://ts.hust.edu.vn/de-an-2027",
+  "trang_thai": "da_cong_bo",
+  "ghi_chu": "Quyết định 0000/QĐ-ĐHBK (mẫu).",
+  "de_an_nam_truoc_id": null,
+  "trang_thai_xet_tuyen": 1,
+  "dats_tru_so": [
+   {
+    "id": 1,
+    "vai_tro": "chinh",
+    "ten_co_so": "Trụ sở chính Hà Nội",
+    "loai_co_so": "tru_so",
+    "dia_chi": "Số 1 Đại Cồ Việt, Phường Bạch Mai, TP. Hà Nội",
+    "ma_tinh": "01",
+    "so_dien_thoai": "024 3869 4242",
+    "ghi_chu": "ma_tinh (mã dm_tinh_thanh) dùng thay tinh_thanh_id."
+   },
+   {
+    "id": 2,
+    "vai_tro": "phu",
+    "ten_co_so": "Cơ sở Hải Phòng",
+    "loai_co_so": "co_so",
+    "dia_chi": "Phường Ngô Quyền, TP. Hải Phòng",
+    "tinh_thanh_id": null,
+    "ma_tinh": "31",
+    "so_dien_thoai": "0225 000 0000",
+    "ghi_chu": null
+   }
+  ],
+  "dats_website": [
+   {
+    "loai_website": "tuyen_sinh",
+    "ten_trang": "Cổng thông tin tuyển sinh",
+    "url": "https://ts.hust.edu.vn",
+    "ghi_chu": "Trang chính thức"
+   }
+  ],
+  "dats_lien_he_tuyen_sinh": [
+   {
+    "ten_don_vi": "Ban Tuyển sinh - Hướng nghiệp",
+    "ten_nguoi_lien_he": null,
+    "chuc_vu": null,
+    "so_dien_thoai": "024 3869 2008",
+    "email": "tuyensinh@hust.edu.vn",
+    "thoi_gian_lien_he": "Thứ 2 - Thứ 6, 8h00 - 17h00",
+    "ghi_chu": null
+   }
+  ],
+  "dats_chuong_trinh_dao_tao": [
+   {
+    "id": 1,
+    "ma_nganh": "7480101",
+    "ma_xet_tuyen": "IT1",
+    "ma_xet_tuyen_nam_truoc": "IT1",
+    "ten_chuong_trinh": "Khoa học Máy tính",
+    "trinh_do_dao_tao": "dai_hoc",
+    "hinh_thuc_dao_tao": "chinh_quy",
+    "co_so_id": 1,
+    "thoi_gian_dao_tao_nam": 4,
+    "ngon_ngu_dao_tao": "Tiếng Việt",
+    "chi_tieu_tuyen_sinh": 300,
+    "kieu_phan_bo_chi_tieu": "theo_phuong_thuc",
+    "ghi_chu": "ma_nganh (mã dm_nganh_dao_tao) dùng thay nganh_dao_tao_id.",
+    "dats_ke_hoach_tuyen_sinh": [
+     {
+      "don_vi_chi_tieu": "sinh_vien",
+      "pham_vi_tuyen_sinh": "Cả nước",
+      "dot_tuyen_sinh": "Đợt 1",
+      "thoi_gian_nhan_ho_so": "Theo lịch chung của Bộ GD&ĐT",
+      "dieu_kien_chung": "Tốt nghiệp THPT",
+      "ghi_chu": null
+     }
+    ],
+    "dats_trinh_do_nganh": [
+     {
+      "trinh_do_dao_tao": "dai_hoc",
+      "hinh_thuc_dao_tao": "chinh_quy",
+      "thoi_gian_dao_tao_nam": 4,
+      "ma_nganh_chuan": "7480101",
+      "ghi_chu": null
+     }
+    ],
+    "dats_quy_mo_dao_tao": [
+     {
+      "trinh_do_dao_tao": "dai_hoc",
+      "hinh_thuc_dao_tao": "chinh_quy",
+      "nam_thong_ke": 2026,
+      "so_luong_nguoi_hoc": 1200,
+      "ghi_chu": "Quy mô của chương trình"
+     }
+    ],
+    "dats_quy_doi_nguong_dau_vao": [
+     {
+      "ma_phuong_thuc_nguon": "100",
+      "ma_to_hop_nguon": "A00",
+      "ma_phuong_thuc_dich": "200",
+      "ma_to_hop_dich": "A00",
+      "diem_moc_nguon": 20,
+      "diem_moc_dich": 24,
+      "do_lech_diem": 4,
+      "thang_diem_nguon": 30,
+      "thang_diem_dich": 30,
+      "cong_thuc_noi_suy": "Nội suy tuyến tính giữa hai mốc liền kề",
+      "dieu_kien_ap_dung": "Áp dụng cho ngưỡng nhận hồ sơ",
+      "nguon_du_lieu_url": "https://ts.hust.edu.vn/quy-doi",
+      "trang_thai": "ap_dung",
+      "ghi_chu": "ma_phuong_thuc_* / ma_to_hop_* dùng thay *_id."
+     }
+    ],
+    "dats_quy_doi_diem_trung_tuyen": [
+     {
+      "ma_phuong_thuc_nguon": "401",
+      "ma_to_hop_nguon": null,
+      "ma_phuong_thuc_dich": "100",
+      "ma_to_hop_dich": "A00",
+      "diem_moc_nguon": 70,
+      "diem_moc_dich": 27.5,
+      "do_lech_diem": null,
+      "thang_diem_nguon": 100,
+      "thang_diem_dich": 30,
+      "cong_thuc_noi_suy": "Theo bảng bách phân vị",
+      "dieu_kien_ap_dung": null,
+      "nguon_du_lieu_url": null,
+      "trang_thai": "ap_dung",
+      "ghi_chu": null
+     }
+    ],
+    "dats_phuong_thuc": [
+     {
+      "id": 1,
+      "ma_phuong_thuc_cua_bo": "100",
+      "ma_phuong_thuc_cua_truong": "THPT",
+      "ten_phuong_thuc_cua_truong": "Xét tuyển dựa trên kết quả thi tốt nghiệp THPT",
+      "chi_tieu_phuong_thuc": 150,
+      "dieu_kien_can": {
+       "tot_nghiep_thpt": true
+      },
+      "dieu_kien_du": {
+       "tong_diem_to_hop_toi_thieu": 20
+      },
+      "diem_san": 20,
+      "diem_chuan": null,
+      "thang_diem": 30,
+      "cong_thuc_tinh_diem": "M1 + M2 + M3 + điểm ưu tiên",
+      "to_hop_mon_hoc": [
+       "A00",
+       "A01"
+      ],
+      "thu_tu_uu_tien": 1,
+      "ghi_chu_chi_tieu": "Khoảng 50% chỉ tiêu",
+      "ghi_chu": null,
+      "dats_phuong_thuc_to_hop": [
+       {
+        "ma_to_hop": "A00",
+        "thu_tu_hien_thi": 1,
+        "ghi_chu": null
+       },
+       {
+        "ma_to_hop": "A01",
+        "thu_tu_hien_thi": 2,
+        "ghi_chu": "Môn tiếng Anh được thay bằng điểm quy đổi IELTS"
+       }
+      ],
+      "dats_dieu_kien_du_tuyen": [
+       {
+        "ma_doi_tuong_du_tuyen": "TN_THPT",
+        "ma_dieu_kien": "NGUONG_THPT",
+        "ten_dieu_kien": "Ngưỡng đầu vào thi THPT",
+        "loai_dieu_kien": "nguong_diem",
+        "noi_dung_dieu_kien": "Tổng điểm 3 môn theo tổ hợp (kể cả ưu tiên) từ 20 trở lên",
+        "toan_tu_so_sanh": ">=",
+        "gia_tri_dieu_kien": {
+         "diem": 20,
+         "thang": 30
+        },
+        "bat_buoc": true,
+        "minh_chung_can_nop": "Giấy chứng nhận kết quả thi",
+        "thu_tu_kiem_tra": 1,
+        "nguon_du_lieu_url": null,
+        "trang_thai": "ap_dung",
+        "ghi_chu": "ma_doi_tuong_du_tuyen nối tới dats_doi_tuong_du_tuyen.ma_doi_tuong."
+       }
+      ],
+      "dats_tieu_chi_xet_tuyen": [
+       {
+        "ma_tieu_chi": "TONG_DIEM",
+        "ten_tieu_chi": "Tổng điểm xét",
+        "loai_tieu_chi": "chinh",
+        "thu_tu_ap_dung": 1,
+        "toan_tu_so_sanh": null,
+        "gia_tri_tieu_chi": null,
+        "noi_dung_tieu_chi": "Xét từ cao xuống thấp đến hết chỉ tiêu",
+        "nguon_du_lieu_url": null,
+        "trang_thai": "ap_dung",
+        "ghi_chu": null
+       },
+       {
+        "ma_tieu_chi": "DIEM_TOAN",
+        "ten_tieu_chi": "Điểm môn Toán",
+        "loai_tieu_chi": "phu",
+        "thu_tu_ap_dung": 2,
+        "toan_tu_so_sanh": null,
+        "gia_tri_tieu_chi": null,
+        "noi_dung_tieu_chi": "Dùng khi bằng điểm ở cuối danh sách",
+        "nguon_du_lieu_url": null,
+        "trang_thai": "ap_dung",
+        "ghi_chu": null
+       }
+      ],
+      "dats_diem_cong": [
+       {
+        "loai_diem_cong": "diem_thuong",
+        "ma_doi_tuong_cong": "IELTS",
+        "doi_tuong_duoc_cong": "Thí sinh có IELTS từ 6.5",
+        "dieu_kien_ap_dung": "Chứng chỉ còn hạn đến ngày xét tuyển",
+        "diem_cong": 1,
+        "thang_diem": 30,
+        "muc_diem_cong_toi_da": 3,
+        "co_cong_don": false,
+        "quy_tac_ket_hop": "Lấy mức cao nhất trong nhóm ngoại ngữ",
+        "nguon_du_lieu_url": null,
+        "trang_thai": "ap_dung",
+        "ghi_chu": null
+       }
+      ],
+      "dats_quy_tac_phan_bo": [
+       {
+        "kieu_phan_bo": "theo_diem",
+        "thu_tu_uu_tien": 1,
+        "quy_tac_xu_ly_dong_diem": "Xét tiêu chí phụ điểm Toán",
+        "quy_tac_chuyen_chi_tieu": "Chỉ tiêu còn dư chuyển sang phương thức 401",
+        "noi_dung_quy_tac": "Xét theo thứ tự nguyện vọng trên hệ thống chung",
+        "nguon_du_lieu_url": null,
+        "trang_thai": "ap_dung",
+        "ghi_chu": null
+       }
+      ],
+      "dats_ho_so_du_tuyen": [
+       {
+        "ten_giay_to": "Chứng chỉ IELTS (bản sao)",
+        "doi_tuong_phai_nop": "Thí sinh dùng IELTS thay môn tiếng Anh",
+        "bat_buoc": false,
+        "hinh_thuc_nop": "truc_tuyen",
+        "thoi_han_nop": "Trước 17h00 ngày 20/7/2027",
+        "ghi_chu": null
+       }
+      ]
+     },
+     {
+      "id": 2,
+      "ma_phuong_thuc_cua_bo": "401",
+      "ma_phuong_thuc_cua_truong": "TSA",
+      "ten_phuong_thuc_cua_truong": "Xét tuyển dựa trên kết quả Kỳ thi Đánh giá tư duy",
+      "chi_tieu_phuong_thuc": 140,
+      "dieu_kien_can": null,
+      "dieu_kien_du": null,
+      "diem_san": 50,
+      "diem_chuan": null,
+      "thang_diem": 100,
+      "cong_thuc_tinh_diem": "Điểm TSA",
+      "to_hop_mon_hoc": null,
+      "thu_tu_uu_tien": 2,
+      "ghi_chu_chi_tieu": null,
+      "ghi_chu": null
+     },
+     {
+      "id": 3,
+      "ma_phuong_thuc_cua_bo": "301",
+      "ma_phuong_thuc_cua_truong": "XTT",
+      "ten_phuong_thuc_cua_truong": "Xét tuyển thẳng",
+      "chi_tieu_phuong_thuc": 10,
+      "thang_diem": 30,
+      "thu_tu_uu_tien": 3
+     }
+    ]
+   },
+   {
+    "id": 2,
+    "ma_nganh": "7520103",
+    "ma_xet_tuyen": "ME1",
+    "ma_xet_tuyen_nam_truoc": "ME1",
+    "ten_chuong_trinh": "Kỹ thuật Cơ khí",
+    "trinh_do_dao_tao": "dai_hoc",
+    "hinh_thuc_dao_tao": "chinh_quy",
+    "co_so_id": 1,
+    "thoi_gian_dao_tao_nam": 4,
+    "ngon_ngu_dao_tao": "Tiếng Việt",
+    "chi_tieu_tuyen_sinh": 300,
+    "kieu_phan_bo_chi_tieu": "dung_chung",
+    "ghi_chu": null,
+    "dats_phuong_thuc": [
+     {
+      "ma_phuong_thuc_cua_bo": "100",
+      "ten_phuong_thuc_cua_truong": "Xét tuyển dựa trên kết quả thi tốt nghiệp THPT",
+      "thang_diem": 30,
+      "to_hop_mon_hoc": [
+       "A00",
+       "A01"
+      ],
+      "thu_tu_uu_tien": 1
+     },
+     {
+      "ma_phuong_thuc_cua_bo": "200",
+      "ten_phuong_thuc_cua_truong": "Xét tuyển dựa trên kết quả học tập THPT",
+      "thang_diem": 30,
+      "to_hop_mon_hoc": [
+       "A00",
+       "D07"
+      ],
+      "thu_tu_uu_tien": 2
+     }
+    ]
+   },
+   {
+    "id": 3,
+    "ma_nganh": "7480201",
+    "ma_xet_tuyen": "IT-HP",
+    "ma_xet_tuyen_nam_truoc": null,
+    "ten_chuong_trinh": "Công nghệ thông tin (học tại Hải Phòng)",
+    "trinh_do_dao_tao": "dai_hoc",
+    "hinh_thuc_dao_tao": "chinh_quy",
+    "co_so_id": 2,
+    "thoi_gian_dao_tao_nam": 4,
+    "ngon_ngu_dao_tao": "Tiếng Việt",
+    "chi_tieu_tuyen_sinh": 160,
+    "kieu_phan_bo_chi_tieu": "dung_chung",
+    "ghi_chu": "Chương trình mới năm 2027",
+    "dats_phuong_thuc": [
+     {
+      "ma_phuong_thuc_cua_bo": "100",
+      "ten_phuong_thuc_cua_truong": "Xét tuyển dựa trên kết quả thi tốt nghiệp THPT",
+      "thang_diem": 30,
+      "to_hop_mon_hoc": [
+       "A00",
+       "A01",
+       "D01"
+      ],
+      "thu_tu_uu_tien": 1
+     },
+     {
+      "ma_phuong_thuc_cua_bo": "200",
+      "ten_phuong_thuc_cua_truong": "Xét tuyển dựa trên kết quả học tập THPT",
+      "thang_diem": 30,
+      "to_hop_mon_hoc": [
+       "A00",
+       "A01"
+      ],
+      "thu_tu_uu_tien": 2
+     }
+    ]
+   }
+  ],
+  "dats_nhan_su": [
+   {
+    "nhom_nhan_su": "giang_vien",
+    "ten_nhan_su": null,
+    "chuc_danh": "Giảng viên cơ hữu",
+    "hoc_vi": "Tiến sĩ",
+    "hoc_ham": null,
+    "linh_vuc_chuyen_mon": "Kỹ thuật và công nghệ",
+    "so_luong": 1100,
+    "nam_thong_ke": 2026,
+    "ghi_chu": "Số liệu tổng hợp"
+   }
+  ],
+  "dats_co_so_vat_chat": [
+   {
+    "co_so_id": 1,
+    "loai_co_so_vat_chat": "phong_thi_nghiem",
+    "ten_hang_muc": "Phòng thí nghiệm, xưởng thực hành",
+    "so_luong": 250,
+    "don_vi_tinh": "phòng",
+    "muc_dich_su_dung": "Thực hành, thí nghiệm",
+    "nam_thong_ke": 2026,
+    "ghi_chu": null
+   }
+  ],
+  "dats_quy_mo_dao_tao": [
+   {
+    "trinh_do_dao_tao": "dai_hoc",
+    "hinh_thuc_dao_tao": "chinh_quy",
+    "nam_thong_ke": 2026,
+    "so_luong_nguoi_hoc": 38000,
+    "ghi_chu": "Toàn trường"
+   }
+  ],
+  "dats_ty_le_viec_lam": [
+   {
+    "ma_nganh": "7480101",
+    "trinh_do_dao_tao": "dai_hoc",
+    "nam_tot_nghiep": 2025,
+    "thoi_diem_khao_sat_thang": 12,
+    "so_nguoi_tot_nghiep": 280,
+    "so_nguoi_co_viec_lam": 270,
+    "ty_le_co_viec_lam": 96.43,
+    "phuong_phap_khao_sat": "Khảo sát trực tuyến sau 12 tháng",
+    "nguon_du_lieu_url": null
+   }
+  ],
+  "dats_doi_tuong_du_tuyen": [
+   {
+    "id": 1,
+    "ma_doi_tuong": "TN_THPT",
+    "ten_doi_tuong": "Thí sinh đã tốt nghiệp THPT",
+    "mo_ta": "Tốt nghiệp THPT hoặc tương đương",
+    "nam_tot_nghiep_tu": null,
+    "nam_tot_nghiep_den": null,
+    "pham_vi_ap_dung": "toan_de_an",
+    "de_an_chuong_trinh_id": null,
+    "trang_thai": "ap_dung",
+    "ghi_chu": null
+   }
+  ],
+  "dats_chinh_sach_xet_tuyen_thang": [
+   {
+    "ma_chinh_sach": "XTT_HSG_QG",
+    "ten_chinh_sach": "Giải Nhất, Nhì, Ba HSG quốc gia",
+    "nhom_doi_tuong": "Học sinh đạt giải HSG quốc gia",
+    "can_cu_phap_ly": "Điều 8 Quy chế tuyển sinh",
+    "mo_ta_doi_tuong": "Đạt giải trong thời gian học THPT",
+    "mon_thi_linh_vuc": "Toán, Vật lý, Hóa học, Tin học",
+    "cap_thi": "quốc gia",
+    "muc_giai": "Nhất, Nhì, Ba",
+    "thoi_han_thanh_tich_nam": 3,
+    "pham_vi_chuong_trinh": "IT1",
+    "dieu_kien_phu": "Tốt nghiệp THPT năm 2027",
+    "chi_tieu_tuyen_thang": 10,
+    "ho_so_minh_chung": "Giấy chứng nhận đạt giải",
+    "thu_tu_tieu_chi_xet": "Mức giải, năm đạt giải",
+    "tieu_chi_phu_khi_dong_diem": null,
+    "nguyen_tac_khi_vuot_chi_tieu": "Ưu tiên giải cao hơn",
+    "thoi_gian_nhan_ho_so": "Trước 30/6/2027",
+    "trang_thai": "ap_dung",
+    "ghi_chu": null
+   }
+  ],
+  "dats_chinh_sach_uu_tien_xet_tuyen": [
+   {
+    "ma_chinh_sach": "UTXT_HSG_TINH",
+    "ten_chinh_sach": "Ưu tiên giải HSG cấp tỉnh",
+    "nhom_doi_tuong": "Học sinh đạt giải HSG cấp tỉnh",
+    "can_cu_phap_ly": "Đề án tuyển sinh của trường",
+    "mo_ta_doi_tuong": "Giải Nhất, Nhì cấp tỉnh lớp 12",
+    "mon_thi_linh_vuc": "Toán, Vật lý, Hóa học, Tin học",
+    "muc_giai": "Nhất, Nhì",
+    "thoi_han_thanh_tich_nam": 1,
+    "pham_vi_chuong_trinh": "Mọi chương trình",
+    "hinh_thuc_uu_tien": "cong_diem",
+    "loai_diem_cong": "diem_thuong",
+    "muc_diem_cong": 1.5,
+    "dieu_kien_nguong_dau_vao": "Đạt ngưỡng đầu vào của phương thức",
+    "chi_tieu_uu_tien": null,
+    "thu_tu_tieu_chi_xet": null,
+    "tieu_chi_phu_khi_dong_diem": null,
+    "ho_so_minh_chung": "Giấy chứng nhận đạt giải",
+    "thoi_gian_nhan_ho_so": "Cùng hồ sơ xét tuyển",
+    "trang_thai": "ap_dung",
+    "ghi_chu": null
+   }
+  ]
+ },
+ "quy_tac_xet_tuyen": {
+  "phien_ban": "1.0",
+  "de_an": {
+   "ten_de_an": "Đề án tuyển sinh đại học chính quy năm 2027 (DỮ LIỆU MẪU)",
+   "so_quyet_dinh": "0000/QĐ-ĐHBK",
+   "ngay_cong_bo": "2027-03-01",
+   "nguon_du_lieu_url": "https://ts.hust.edu.vn/de-an-2027",
+   "ghi_chu": "Chưa đưa vào file: (liệt kê quy định của đề án chưa mô hình hóa được)."
+  },
+  "co_so": [
+   {
+    "ma_co_so": "HN",
+    "ten_co_so": "Trụ sở chính Hà Nội",
+    "ma_tinh": "01",
+    "dia_chi": "Số 1 Đại Cồ Việt, Phường Bạch Mai, TP. Hà Nội",
+    "la_tru_so_chinh": true
+   },
+   {
+    "ma_co_so": "HP",
+    "ten_co_so": "Cơ sở Hải Phòng",
+    "ma_tinh": "31",
+    "dia_chi": "Phường Ngô Quyền, TP. Hải Phòng",
+    "la_tru_so_chinh": false
+   }
+  ],
+  "to_hop_rieng": [
+   {
+    "ma_to_hop": "K01",
+    "ten_to_hop": "Toán, Ngữ văn và 1 trong 4 môn: Vật lý/Hóa học/Sinh học/Tin học",
+    "vi_tri": [
+     [
+      "TOAN"
+     ],
+     [
+      "VAN"
+     ],
+     [
+      "LY",
+      "HOA",
+      "SINH",
+      "TIN"
+     ]
+    ]
+   }
+  ],
+  "bang_quy_doi": [
+   {
+    "ma_bang": "QD_IELTS",
+    "ten_bang": "Quy đổi IELTS sang điểm môn tiếng Anh",
+    "thang_diem_dich": 10,
+    "ghi_chu": null,
+    "muc": [
+     {
+      "ma_chung_chi": "IELTS",
+      "ma_mon_thay_the": "ANH",
+      "diem_tu": 5.0,
+      "diem_den": 5.5,
+      "diem_quy_doi": 8.0,
+      "he_so_noi_suy": 0,
+      "dat_nguong": false
+     },
+     {
+      "ma_chung_chi": "IELTS",
+      "ma_mon_thay_the": "ANH",
+      "diem_tu": 6.0,
+      "diem_den": 6.0,
+      "diem_quy_doi": 8.5
+     },
+     {
+      "ma_chung_chi": "IELTS",
+      "ma_mon_thay_the": "ANH",
+      "diem_tu": 6.5,
+      "diem_den": 6.5,
+      "diem_quy_doi": 9.0
+     },
+     {
+      "ma_chung_chi": "IELTS",
+      "ma_mon_thay_the": "ANH",
+      "diem_tu": 7.0,
+      "diem_den": 9.0,
+      "diem_quy_doi": 10.0
+     }
+    ]
+   },
+   {
+    "ma_bang": "QD_SAT",
+    "ten_bang": "Quy đổi SAT sang thang 30",
+    "thang_diem_dich": 30,
+    "muc": [
+     {
+      "ma_bai_thi": "SAT",
+      "cap_do": null,
+      "diem_tu": 1200,
+      "diem_den": 1600,
+      "diem_quy_doi": 22.5,
+      "he_so_noi_suy": 0.01875
+     }
+    ]
+   }
+  ],
+  "cong_thuc": [
+   {
+    "ma_cong_thuc": "BKA_THPT",
+    "ten_cong_thuc": "Điểm thi THPT theo tổ hợp - thang 30",
+    "ma_phuong_thuc_cua_bo": "100",
+    "kieu_tinh": "TO_HOP_MON",
+    "nguon_diem_mon": "THI_THPT",
+    "thay_ngoai_ngu": "DUOC_PHEP",
+    "ma_bang_quy_doi_ngoai_ngu": "QD_IELTS",
+    "thang_diem": 30,
+    "he_so_nhan": 1,
+    "nguong_tb_mon": null,
+    "nguong_thpt_to_hop": 20,
+    "diem_san": null,
+    "ap_dung_diem_cong": true,
+    "ap_dung_uu_tien": true,
+    "ty_le_diem_cong_toi_da": 0.1,
+    "so_le_lam_tron": 2,
+    "mo_ta_cong_thuc": "M1 + M2 + M3 + điểm cộng + điểm ưu tiên",
+    "dang_dung": true,
+    "ghi_chu": null,
+    "he_so_mon": [
+     {
+      "ma_mon": "TOAN",
+      "he_so": 1
+     },
+     {
+      "nhom_mon": "Ngoại ngữ",
+      "he_so": 1
+     }
+    ],
+    "dieu_kien": []
+   },
+   {
+    "ma_cong_thuc": "BKA_HOC_BA",
+    "ten_cong_thuc": "Điểm học bạ trung bình 3 năm theo tổ hợp - thang 30",
+    "ma_phuong_thuc_cua_bo": "200",
+    "kieu_tinh": "TO_HOP_MON",
+    "nguon_diem_mon": "HOC_BA",
+    "thay_ngoai_ngu": "KHONG",
+    "thang_diem": 30,
+    "nguong_tb_mon": 7,
+    "mo_ta_cong_thuc": "TB(10,11,12) môn 1 + môn 2 + môn 3 + điểm ưu tiên",
+    "dieu_kien": [
+     {
+      "ma_nhom": "HOC_LUC_KHA",
+      "ten_nhom": "Kết quả học tập từng năm chưa đạt Khá",
+      "mo_ta": "Học lực lớp 10, 11, 12 từ Khá trở lên.",
+      "bat_buoc": true,
+      "mot_trong": [
+       {
+        "ma_chi_so": "HOC_LUC_MIN_3_NAM",
+        "toan_tu": ">=",
+        "gia_tri": 3,
+        "mo_ta": "Học lực thấp nhất 3 năm từ Khá"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "ma_cong_thuc": "BKA_TSA",
+    "ten_cong_thuc": "Điểm thi Đánh giá tư duy (TSA)",
+    "ma_phuong_thuc_cua_bo": "401",
+    "kieu_tinh": "THANH_PHAN",
+    "thang_diem": 100,
+    "he_so_nhan": 1,
+    "diem_san": 50,
+    "ap_dung_diem_cong": false,
+    "ap_dung_uu_tien": true,
+    "mo_ta_cong_thuc": "Điểm TSA năm 2026 hoặc 2027",
+    "thanh_phan": [
+     {
+      "vi_tri": 1,
+      "ten_thanh_phan": "Điểm TSA",
+      "loai_nguon": "BAI_THI",
+      "ma_bai_thi": "TSA",
+      "ma_bang_quy_doi": null,
+      "he_so": 1,
+      "nam_thi_tu": 2026,
+      "nam_thi_den": 2027,
+      "yeu_cau_phan_tu_chon": null
+     }
+    ]
+   },
+   {
+    "ma_cong_thuc": "BKA_SAT",
+    "ten_cong_thuc": "Điểm SAT quy đổi thang 30",
+    "ma_phuong_thuc_cua_bo": "415",
+    "kieu_tinh": "THANH_PHAN",
+    "thang_diem": 30,
+    "ap_dung_diem_cong": false,
+    "ap_dung_uu_tien": false,
+    "mo_ta_cong_thuc": "SAT quy đổi theo bảng QD_SAT",
+    "thanh_phan": [
+     {
+      "vi_tri": 1,
+      "ten_thanh_phan": "SAT",
+      "loai_nguon": "BAI_THI",
+      "ma_bai_thi": "SAT",
+      "ma_bang_quy_doi": "QD_SAT",
+      "he_so": 1
+     }
+    ]
+   },
+   {
+    "ma_cong_thuc": "BKA_XET_THANG",
+    "ten_cong_thuc": "Xét tuyển thẳng (không tính điểm)",
+    "ma_phuong_thuc_cua_bo": "301",
+    "kieu_tinh": "CHI_DIEU_KIEN",
+    "thang_diem": 30,
+    "ap_dung_diem_cong": false,
+    "ap_dung_uu_tien": false,
+    "mo_ta_cong_thuc": "Không tính điểm",
+    "dieu_kien": [
+     {
+      "ma_nhom": "GIAI_QUOC_GIA",
+      "ten_nhom": "Không có giải Nhất/Nhì/Ba HSG quốc gia",
+      "mo_ta": "Đạt giải Nhất, Nhì, Ba HSG quốc gia.",
+      "mot_trong": [
+       {
+        "ma_chi_so": "THANH_TICH",
+        "khoa": "HSG-QG",
+        "toan_tu": "<=",
+        "gia_tri": 3,
+        "mo_ta": "Giải Nhất/Nhì/Ba HSG quốc gia"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "ma_cong_thuc": "BKA_PHONG_VAN",
+    "ten_cong_thuc": "Xét hồ sơ năng lực kết hợp phỏng vấn (chưa tự tính điểm)",
+    "ma_phuong_thuc_cua_bo": "414",
+    "kieu_tinh": "THU_CONG",
+    "thang_diem": 100,
+    "ap_dung_diem_cong": false,
+    "ap_dung_uu_tien": false,
+    "mo_ta_cong_thuc": "Hội đồng chấm hồ sơ và phỏng vấn",
+    "dang_dung": false,
+    "ghi_chu": "Khai để hiển thị; hệ thống chưa tính điểm.",
+    "dieu_kien": [
+     {
+      "ma_nhom": "TBC_8",
+      "ten_nhom": "Điểm TBC từng năm lớp 10, 11, 12 dưới 8,00",
+      "mo_ta": "Điểm TBC các môn từng năm lớp 10, 11, 12 từ 8,00 trở lên.",
+      "mot_trong": [
+       {
+        "ma_chi_so": "TBC_MIN_3_NAM",
+        "toan_tu": ">=",
+        "gia_tri": 8,
+        "mo_ta": "TBC từng năm từ 8,00"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "dieu_kien_chung": [
+   {
+    "ma_nhom": "TN_THPT",
+    "ten_nhom": "Chưa tốt nghiệp THPT",
+    "mo_ta": "Thí sinh đã tốt nghiệp THPT.",
+    "bat_buoc": true,
+    "mot_trong": [
+     {
+      "ma_chi_so": "DA_TOT_NGHIEP_THPT",
+      "toan_tu": "=",
+      "gia_tri": 1,
+      "mo_ta": "Đã tốt nghiệp THPT"
+     }
+    ]
+   }
+  ],
+  "diem_cong": [
+   {
+    "ma_cong_thuc": null,
+    "loai_diem_cong": "DIEM_THUONG",
+    "nhom_cong": "GIAI_THUONG",
+    "ma_chi_so": "THANH_TICH",
+    "khoa": "HSG-TINH",
+    "toan_tu": "<=",
+    "gia_tri": 2,
+    "diem_cong": 1.5,
+    "mo_ta": "Giải Nhất/Nhì HSG cấp tỉnh"
+   },
+   {
+    "ma_cong_thuc": "BKA_THPT",
+    "loai_diem_cong": "DIEM_XET_THUONG",
+    "nhom_cong": "NGOAI_NGU",
+    "ma_chi_so": "DIEM_CHUNG_CHI",
+    "khoa": "IELTS",
+    "toan_tu": ">=",
+    "gia_tri": 6.5,
+    "diem_cong": 1,
+    "mo_ta": "IELTS từ 6.5"
+   }
+  ],
+  "chuong_trinh": [
+   {
+    "ma_chuong_trinh": "IT1",
+    "ma_xet_tuyen": "IT1",
+    "ten_chuong_trinh": "Khoa học Máy tính",
+    "ma_nganh": "7480101",
+    "ma_co_so": "HN",
+    "loai_chuong_trinh": "Chuẩn",
+    "chi_tieu": 300,
+    "hoc_phi": {
+     "nam_hoc": "2027-2028",
+     "hoc_phi_tu": 32000000,
+     "hoc_phi_den": 40000000,
+     "ghi_chu": "Theo tín chỉ"
+    },
+    "phuong_an": [
+     {
+      "ma_cong_thuc": "BKA_THPT",
+      "to_hop": [
+       "A00",
+       "A01",
+       "K01"
+      ]
+     },
+     {
+      "ma_cong_thuc": "BKA_TSA"
+     },
+     {
+      "ma_cong_thuc": "BKA_SAT"
+     },
+     {
+      "ma_cong_thuc": "BKA_XET_THANG"
+     },
+     {
+      "ma_cong_thuc": "BKA_PHONG_VAN"
+     }
+    ],
+    "dieu_kien_rieng": [
+     {
+      "ma_nhom": "TOAN_THPT_7",
+      "ten_nhom": "Điểm thi THPT môn Toán dưới 7",
+      "mo_ta": "Phương thức THPT: môn Toán từ 7,0.",
+      "ma_cong_thuc": "BKA_THPT",
+      "mot_trong": [
+       {
+        "ma_chi_so": "DIEM_THI_THPT",
+        "khoa": "TOAN",
+        "toan_tu": ">=",
+        "gia_tri": 7,
+        "mo_ta": "Toán THPT từ 7,0"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "ma_chuong_trinh": "ME1",
+    "ma_xet_tuyen": "ME1",
+    "ten_chuong_trinh": "Kỹ thuật Cơ khí",
+    "ma_nganh": "7520103",
+    "ma_co_so": "HN",
+    "chi_tieu": 300,
+    "hoc_phi": {
+     "nam_hoc": "2027-2028",
+     "hoc_phi_tu": 28000000,
+     "hoc_phi_den": 35000000
+    },
+    "phuong_an": [
+     {
+      "ma_cong_thuc": "BKA_THPT",
+      "to_hop": [
+       "A00",
+       "A01"
+      ]
+     },
+     {
+      "ma_cong_thuc": "BKA_HOC_BA",
+      "to_hop": [
+       "A00",
+       "D07"
+      ]
+     }
+    ]
+   },
+   {
+    "ma_chuong_trinh": "IT-HP",
+    "ma_xet_tuyen": "IT-HP",
+    "ten_chuong_trinh": "Công nghệ thông tin (học tại Hải Phòng)",
+    "ma_nganh": "7480201",
+    "ma_co_so": "HP",
+    "chi_tieu": 160,
+    "hoc_phi": {
+     "hoc_phi_tu": 25000000
+    },
+    "phuong_an": [
+     {
+      "ma_cong_thuc": "BKA_THPT",
+      "to_hop": [
+       "A00",
+       "A01",
+       "D01"
+      ]
+     },
+     {
+      "ma_cong_thuc": "BKA_HOC_BA",
+      "to_hop": [
+       "A00",
+       "A01"
+      ]
+     }
+    ]
+   }
+  ],
+  "diem_chuan": [
+   {
+    "nam_tuyen_sinh": 2026,
+    "ma_xet_tuyen": "IT1",
+    "ten_chuong_trinh": "Khoa học Máy tính",
+    "ma_phuong_thuc_cua_bo": "100",
+    "ma_to_hop": null,
+    "diem_chuan": 28.5,
+    "thang_diem": 30,
+    "tieu_chi_phu": "Toán >= 9",
+    "nguon_du_lieu_url": "https://ts.hust.edu.vn/diem-chuan-2026"
+   },
+   {
+    "nam_tuyen_sinh": 2026,
+    "ma_xet_tuyen": "IT1",
+    "ten_chuong_trinh": "Khoa học Máy tính",
+    "ma_phuong_thuc_cua_bo": "401",
+    "ma_to_hop": null,
+    "diem_chuan": 80,
+    "thang_diem": 100
+   },
+   {
+    "nam_tuyen_sinh": 2025,
+    "ma_xet_tuyen": "IT1",
+    "ten_chuong_trinh": "Khoa học Máy tính",
+    "ma_phuong_thuc_cua_bo": "100",
+    "ma_to_hop": "A00",
+    "diem_chuan": 28.29,
+    "thang_diem": 30
+   },
+   {
+    "nam_tuyen_sinh": 2026,
+    "ma_xet_tuyen": "ME1",
+    "ten_chuong_trinh": "Kỹ thuật Cơ khí",
+    "ma_phuong_thuc_cua_bo": null,
+    "ma_to_hop": null,
+    "diem_chuan": 24.0,
+    "thang_diem": 30
+   }
+  ]
+ }
+}

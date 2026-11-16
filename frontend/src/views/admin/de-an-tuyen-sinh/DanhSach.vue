@@ -640,11 +640,17 @@ function applyDocumentSelection(data) {
   jsonTruongId.value = school.ma_truong
 }
 
-function importSummary(counts) {
+function importSummary(counts, quyTac) {
   const parts = Object.entries(counts || {})
     .filter(([, count]) => Number(count) > 0)
     .map(([table, count]) => `${count} ${IMPORT_LABELS[table] || table}`)
-  return parts.length ? `Đã nhập ${parts.join(', ')}` : 'Đã nhập đề án tuyển sinh'
+  const tomTat = parts.length ? `Đã nhập ${parts.join(', ')}` : 'Đã nhập đề án tuyển sinh'
+  if (!quyTac) return tomTat
+  const soDong = quyTac.so_dong || {}
+  return (
+    `${tomTat}; quy tắc xét tuyển: ${soDong.xt_cong_thuc || 0} công thức, ${soDong.xt_phuong_an || 0} phương án, ` +
+    `${soDong.dats_hoc_phi || 0} học phí, ${soDong.xt_diem_chuan || 0} điểm chuẩn`
+  )
 }
 
 function errorMessage(error, fallback) {
@@ -843,7 +849,12 @@ async function onSubmitJson() {
       },
       { skipLoading: true, timeout: 300000 },
     )
-    ElMessage.success(importSummary(result?.counts))
+    ElMessage.success(importSummary(result?.counts, result?.quy_tac))
+    // Khối quy_tac_xet_tuyen không khớp chương trình / cơ sở của file, quy định chưa mô hình hóa...
+    const canhBao = result?.quy_tac?.canh_bao || []
+    if (canhBao.length) {
+      ElMessage.warning({ message: `Quy tắc xét tuyển: ${canhBao.join('; ')}`, duration: 10000, showClose: true })
+    }
     dialogVisible.value = false
     await load()
   } catch (error) {

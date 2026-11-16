@@ -2,10 +2,14 @@
 
 JSON phẳng để các bảng cạnh nhau và nối bằng id trong file.
 JSON lồng nhau để bảng con nằm trong bản ghi cha; khóa ngoại được gán theo vị trí.
+Khối `quy_tac_xet_tuyen` (không bắt buộc) là file chuẩn quy tắc xét tuyển (học phí, điểm chuẩn, xt_*), ghi sau
+các bảng dats_ trong cùng transaction: xem `import_day_du`. Mẫu đầy đủ: docs/de-an-tuyen-sinh/chuan_du_lieu/mau_import_day_du.json.
 """
 
 from __future__ import annotations
 
+import hashlib
+import json
 import logging
 import re
 from collections import Counter, defaultdict
@@ -41,13 +45,18 @@ from app.models.dats_ty_le_viec_lam import DatsTyLeViecLam
 from app.models.dats_website import DatsWebsite
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.dm_phuong_thuc_tuyen_sinh import DmPhuongThucTuyenSinh
+from app.models.dm_tinh_thanh import DmTinhThanh
 from app.models.dm_to_hop_mon_hoc import DmToHopMonHoc
 from app.models.dm_truong import DmTruong
+from app.services.xet_tuyen_ghi import KetQuaNhap, nhap_quy_tac
+from app.services.xet_tuyen_import import XetTuyenImportError
 from app.services.xt_quy_tac import delete_quy_tac_xet_tuyen
 
 logger = logging.getLogger(__name__)
 
 _MAX_ROWS = 5000
+KHOA_QUY_TAC = "quy_tac_xet_tuyen"
+PHIEN_BAN_QUY_TAC = "1.0"
 _MA_TO_HOP = re.compile(r"ma_to_hop\s*=\s*([A-Za-z0-9._-]+)")
 _SKIP_COLUMNS = {"id", "tao_luc", "cap_nhat_luc"}
 
@@ -59,6 +68,16 @@ _DATS_FK = {
     "doi_tuong_du_tuyen_id": "dats_doi_tuong_du_tuyen",
     "co_so_id": "dats_tru_so",
 }
+# Cột id danh mục nhận được mã thay cho id (id khác nhau giữa các môi trường, mã thì không).
+_MA_THAY_ID = {
+    "nganh_dao_tao_id": ("ma_nganh", "nganh"),
+    "tinh_thanh_id": ("ma_tinh", "tinh"),
+    "phuong_thuc_nguon_id": ("ma_phuong_thuc_nguon", "phuong_thuc"),
+    "phuong_thuc_dich_id": ("ma_phuong_thuc_dich", "phuong_thuc"),
+    "to_hop_nguon_id": ("ma_to_hop_nguon", "to_hop"),
+    "to_hop_dich_id": ("ma_to_hop_dich", "to_hop"),
+}
+_TEN_DANH_MUC = {"nganh": "ngành", "tinh": "tỉnh/thành", "phuong_thuc": "phương thức", "to_hop": "tổ hợp"}
 _CATALOG_KIND = {
     "nganh_dao_tao_id": "nganh",
     "to_hop_id": "to_hop",
@@ -130,6 +149,16 @@ class CatalogIndex:
     to_hop_by_code: dict[str, int] = field(default_factory=dict)
     to_hop_ids: set[int] = field(default_factory=set)
     nganh_ids: set[int] = field(default_factory=set)
+    nganh_by_code: dict[str, int] = field(default_factory=dict)
+    tinh_by_code: dict[str, int] = field(default_factory=dict)
+
+    def theo_ma(self, loai: str) -> dict[str, int]:
+        return {
+            "nganh": self.nganh_by_code,
+            "tinh": self.tinh_by_code,
+            "phuong_thuc": self.phuong_thuc_by_code,
+            "to_hop": self.to_hop_by_code,
+        }[loai]
 
 
 @dataclass
@@ -196,6 +225,69 @@ def import_document(db: Session, ma_truong: str, nam_tuyen_sinh: int, document: 
     catalogs = _load_catalogs(db, flat)
     rows = prepare_import(flat, ma_truong=code, nam_tuyen_sinh=nam_tuyen_sinh, catalogs=catalogs)
     return _apply(db, rows)
+
+
+def import_day_du(
+    db: Session,
+    ma_truong: str,
+    nam_tuyen_sinh: int,
+    document: dict,
+    *,
+    nguoi_import_id: int | None = None,
+) -> tuple[int, dict[str, int], KetQuaNhap | None]:
+    """Nhập các bảng dats_ rồi khối quy_tac_xet_tuyen (nếu có) trong cùng transaction; commit do nơi gọi.
+
+    Khối quy tắc khớp với dats_ vừa nhập theo tên cơ sở (dats_tru_so.ten_co_so) và theo (mã xét tuyển, tên chương
+    trình); dòng không khớp được tạo mới và có cảnh báo. ma_truong, nam_tuyen_sinh, phien_ban, de_an của khối quy tắc
+    bỏ trống thì lấy từ file chính.
+    """
+    quy_tac = document.get(KHOA_QUY_TAC) if isinstance(document, dict) else None
+    de_an_id, counts = import_document(db, ma_truong, nam_tuyen_sinh, document)
+    if quy_tac is None:
+        return de_an_id, counts, None
+    if not isinstance(quy_tac, dict):
+        raise DatsImportError(f"{KHOA_QUY_TAC} phải là một object theo cấu trúc file chuẩn quy tắc xét tuyển")
+    code = ma_truong.strip()
+    if quy_tac.get("ma_truong", code) != code or quy_tac.get("nam_tuyen_sinh", nam_tuyen_sinh) != nam_tuyen_sinh:
+        raise DatsImportError(
+            f"{KHOA_QUY_TAC} là của trường {quy_tac.get('ma_truong')} năm {quy_tac.get('nam_tuyen_sinh')}, "
+            f"không khớp trường {code} năm {nam_tuyen_sinh}"
+        )
+    de_an = db.get(DatsTuyenSinh, de_an_id)
+    du_lieu = {
+        "phien_ban": PHIEN_BAN_QUY_TAC,
+        "ma_truong": code,
+        "nam_tuyen_sinh": nam_tuyen_sinh,
+        "de_an": {
+            "ten_de_an": de_an.ten_de_an or f"Đề án tuyển sinh {nam_tuyen_sinh} {code}",
+            "ngay_cong_bo": de_an.ngay_cong_bo.isoformat() if de_an.ngay_cong_bo else None,
+            "nguon_du_lieu_url": de_an.nguon_du_lieu_url,
+        },
+        **quy_tac,
+    }
+    so_truoc = {
+        bang: counts.get(bang, 0) for bang in ("dats_chuong_trinh_dao_tao", "dats_tru_so")
+    }
+    try:
+        ket_qua = nhap_quy_tac(
+            db,
+            du_lieu,
+            ten_file="de-an-tuyen-sinh/import",
+            ma_bam=hashlib.sha256(json.dumps(du_lieu, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest(),
+            nguoi_import_id=nguoi_import_id,
+        )
+    except XetTuyenImportError as exc:
+        loi = "; ".join(exc.loi[:20]) + (f" và {len(exc.loi) - 20} lỗi khác" if len(exc.loi) > 20 else "")
+        raise DatsImportError(f"{KHOA_QUY_TAC} có {len(exc.loi)} lỗi: {loi}") from None
+    ten = {"dats_chuong_trinh_dao_tao": "chương trình", "dats_tru_so": "cơ sở"}
+    for bang, so in so_truoc.items():
+        them = ket_qua.so_dong.get(bang, 0)
+        if so and them:
+            ket_qua.canh_bao.append(
+                f"{them} {ten[bang]} trong {KHOA_QUY_TAC} không khớp {bang} của file (khớp theo "
+                f"{'mã xét tuyển + tên chương trình' if bang == 'dats_chuong_trinh_dao_tao' else 'tên cơ sở'}), đã tạo mới"
+            )
+    return de_an_id, counts, ket_qua
 
 
 def prepare_import(
@@ -488,6 +580,15 @@ def _values(raw: dict, table: str, label: str, ma_truong: str, nam_tuyen_sinh: i
         if name == "to_hop_mon_hoc" and table == "dats_phuong_thuc":
             values[name] = _method_combo_codes(raw, label, catalogs)
             continue
+        if (name not in raw or raw[name] in (None, "")) and name in _MA_THAY_ID:
+            khoa_ma, loai = _MA_THAY_ID[name]
+            if raw.get(khoa_ma) not in (None, ""):
+                ma = str(raw[khoa_ma]).strip()
+                item_id = catalogs.theo_ma(loai).get(ma.upper()) or catalogs.theo_ma(loai).get(ma)
+                if item_id is None:
+                    raise DatsImportError(f"{label} có {khoa_ma} = {ma} không có trong danh mục {_TEN_DANH_MUC[loai]}")
+                values[name] = item_id
+                continue
         if name not in raw or raw[name] is None or raw[name] == "":
             if name == "to_hop_id" and table == "dats_phuong_thuc_to_hop":
                 values[name] = _require_catalog(
@@ -727,6 +828,8 @@ def _load_catalogs(db: Session, document: dict) -> CatalogIndex:
     combo_codes: set[str] = set()
     combo_ids: set[int] = set()
     nganh_ids: set[int] = set()
+    nganh_codes: set[str] = set()
+    tinh_codes: set[str] = set()
     for table, kind in _KINDS.items():
         for raw in _section_or_empty(document, table, kind):
             if not isinstance(raw, dict):
@@ -739,6 +842,19 @@ def _load_catalogs(db: Session, document: dict) -> CatalogIndex:
             _collect_ref(raw.get("to_hop_nguon_id"), combo_ids)
             _collect_ref(raw.get("to_hop_dich_id"), combo_ids)
             _collect_ref(raw.get("nganh_dao_tao_id"), nganh_ids)
+            for khoa_ma, loai in _MA_THAY_ID.values():
+                ma = raw.get(khoa_ma)
+                if ma in (None, ""):
+                    continue
+                ma = str(ma).strip()
+                if loai == "nganh":
+                    nganh_codes.add(ma)
+                elif loai == "tinh":
+                    tinh_codes.add(ma)
+                elif loai == "to_hop":
+                    combo_codes.add(ma.upper())
+                else:
+                    method_codes.add(ma.upper())
             if table == "dats_phuong_thuc":
                 code = raw.get("ma_phuong_thuc_cua_bo")
                 if code in (None, ""):
@@ -770,7 +886,20 @@ def _load_catalogs(db: Session, document: dict) -> CatalogIndex:
     found_nganh_ids: set[int] = set()
     if nganh_ids:
         found_nganh_ids = set(db.scalars(select(DmNganhDaoTao.id).where(DmNganhDaoTao.id.in_(nganh_ids))).all())
+    nganh_by_code: dict[str, int] = {}
+    if nganh_codes:
+        nganh_by_code = dict(
+            db.execute(select(DmNganhDaoTao.ma_nganh, DmNganhDaoTao.id).where(DmNganhDaoTao.ma_nganh.in_(nganh_codes))).all()
+        )
+        found_nganh_ids |= set(nganh_by_code.values())
+    tinh_by_code: dict[str, int] = {}
+    if tinh_codes:
+        tinh_by_code = dict(
+            db.execute(select(DmTinhThanh.ma_tinh, DmTinhThanh.id).where(DmTinhThanh.ma_tinh.in_(tinh_codes))).all()
+        )
     return CatalogIndex(
+        nganh_by_code=nganh_by_code,
+        tinh_by_code=tinh_by_code,
         phuong_thuc_by_code={code: phuong_thuc_by_code[code] for code in method_codes if code in phuong_thuc_by_code},
         phuong_thuc_ids=found_method_ids,
         to_hop_by_code={
