@@ -19,23 +19,43 @@
           Bạn đã dùng hết lượt tìm kiếm miễn phí hôm nay và lượt tra cứu đã mua. Nạp thêm lượt tra cứu để tìm tiếp
           ngay, hoặc quay lại tìm miễn phí vào ngày mai.
         </p>
-        <p v-else class="het-luot__note-text">
-          Bạn đã sử dụng hết lượt tìm kiếm miễn phí hôm nay. Có thể mở rộng lượt tìm kiếm ngay hoặc tiếp tục miễn
-          phí vào ngày mai.
-        </p>
+        <template v-else>
+          <p class="het-luot__note-text">
+            Bạn đã dùng hết lượt tìm thử dành cho khách hôm nay. Đăng ký hoặc đăng nhập để tiếp tục tìm trường ngay:
+          </p>
+          <ul class="het-luot__loi-ich">
+            <li>
+              <el-icon aria-hidden="true"><CircleCheck /></el-icon>
+              <span>Được tìm miễn phí <strong>{{ soLuotThanhVien }} lượt mỗi ngày</strong></span>
+            </li>
+            <li>
+              <el-icon aria-hidden="true"><CircleCheck /></el-icon>
+              <span>Lưu hồ sơ năng lực để gợi ý trường sát với bạn hơn</span>
+            </li>
+            <li>
+              <el-icon aria-hidden="true"><CircleCheck /></el-icon>
+              <span>Xem lại lịch sử tìm kiếm và mua thêm lượt tra cứu khi cần</span>
+            </li>
+          </ul>
+        </template>
       </div>
-      <div class="het-luot__actions">
+      <div v-if="!laThanhVien" class="het-luot__actions het-luot__actions--khach">
+        <div class="het-luot__nut">
+          <button type="button" class="het-luot__cta" @click="$emit('dang-ky')">
+            <el-icon aria-hidden="true"><UserFilled /></el-icon>
+            Đăng ký miễn phí
+          </button>
+          <button type="button" class="het-luot__cta het-luot__cta--phu" @click="$emit('dang-nhap')">
+            Đăng nhập
+          </button>
+        </div>
+      </div>
+      <div v-else class="het-luot__actions">
         <button type="button" class="het-luot__cta" @click="$emit('kham-pha')">
-          <template v-if="laThanhVien">
-            <el-icon aria-hidden="true"><Wallet /></el-icon>
-            Nâng cấp trải nghiệm tìm trường
-          </template>
-          <template v-else>
-            Tiếp tục khám phá trường phù hợp
-            <el-icon aria-hidden="true"><Right /></el-icon>
-          </template>
+          <el-icon aria-hidden="true"><Wallet /></el-icon>
+          Nhận thêm lượt
         </button>
-        <p class="het-luot__sub">Xem các lựa chọn nâng cấp trải nghiệm tìm trường trước khi thanh toán</p>
+        <p class="het-luot__sub">Rất nhiều gói dịch vụ phù hợp với nhu cầu của bạn</p>
       </div>
     </div>
   </article>
@@ -49,9 +69,12 @@ defineOptions({ name: 'HetLuotTimTruong' })
 defineProps({
   // Thành viên: hết cả lượt miễn phí lẫn lượt tra cứu đã mua → nút nạp tiền.
   laThanhVien: { type: Boolean, default: false },
+  // Số lượt tìm miễn phí mỗi ngày của thành viên (gợi ý khách đăng ký).
+  soLuotThanhVien: { type: Number, default: 5 },
 })
 
-defineEmits(['kham-pha'])
+// kham-pha: thành viên nạp thêm lượt; dang-ky / dang-nhap: khách hết lượt tìm thử.
+defineEmits(['kham-pha', 'dang-ky', 'dang-nhap'])
 </script>
 
 <style scoped>
@@ -145,15 +168,44 @@ defineEmits(['kham-pha'])
   gap: 8px;
   padding: 10px 22px;
   border: 0;
-  border-radius: 999px;
+  border-radius: 8px;
   background: #0c5c34;
   color: #fff;
-  font-size: 0.9375rem;
-  font-weight: 600;
+  /* font-size: 0.9375rem; */
+  font-weight: 500;
   cursor: pointer;
   transition:
     background-color 0.2s ease,
     transform 0.2s ease;
+}
+
+.het-luot__nut {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.het-luot__loi-ich {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.het-luot__loi-ich li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #3a4742;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.het-luot__loi-ich .el-icon {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: #3f9466;
 }
 
 .het-luot__cta:hover {
@@ -164,6 +216,17 @@ defineEmits(['kham-pha'])
 .het-luot__cta:focus-visible {
   outline: 3px solid color-mix(in srgb, #0c5c34 35%, transparent);
   outline-offset: 2px;
+}
+
+.het-luot__cta--phu {
+  border: 1px solid #0c5c34;
+  background: #fff;
+  color: #0c5c34;
+}
+
+.het-luot__cta--phu:hover {
+  background: #eef6f1;
+  color: #084422;
 }
 
 .het-luot__sub {

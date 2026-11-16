@@ -276,7 +276,14 @@
           </div>
         </form>
 
-        <HetLuotTimTruong v-if="!conLuot" :la-thanh-vien="daDangNhap" @kham-pha="diNapTien" />
+        <HetLuotTimTruong
+          v-if="!conLuot"
+          :la-thanh-vien="daDangNhap"
+          :so-luot-thanh-vien="soLuotThanhVien"
+          @kham-pha="diNapTien"
+          @dang-ky="diDangKy"
+          @dang-nhap="diDangNhap"
+        />
         <TienTrinhXuLyDialog :model-value="tienTrinhMo" :buoc-hien-tai="buocTienTrinh" />
         <!-- Chạy xong tiến trình xử lý mới hiện kết quả. -->
         <template v-if="!tienTrinhMo">
@@ -1188,7 +1195,7 @@ onMounted(async () => {
   font-size: 1rem;
   line-height: 1.55;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  /* -webkit-line-clamp: 3; */
 }
 
 .truong-phu-hop__facts {
@@ -1266,10 +1273,10 @@ onMounted(async () => {
   align-items: center;
   padding: 4px 12px;
   border: 1px solid #b7d0c2;
-  border-radius: 999px;
+  border-radius: 8px;
   background: #eef6f1;
   color: #0c5c34;
-  font-size: 0.875rem;
+  /* font-size: 0.875rem; */
   line-height: 1.4;
   white-space: nowrap;
 }

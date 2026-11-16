@@ -224,7 +224,7 @@ function isActive(item) {
   position: relative;
   color: #475569 !important;
   font-weight: 500;
-  font-size: 0.92rem;
+  /* font-size: 0.92rem; */
   border-radius: 8px;
   padding-inline: 0.9rem !important;
   transition:
