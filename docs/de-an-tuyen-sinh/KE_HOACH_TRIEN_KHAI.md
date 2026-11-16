@@ -10,14 +10,14 @@ Nhánh làm việc: `tich_hop_de_an_tuyen_sinh`.
 | 1 | Dùng mô hình dữ liệu `xt_*` / `hs_*` và chuẩn JSON của tài liệu | Theo `THIET_KE.md`, `chuan_du_lieu/` |
 | 2 | **Tổ hợp riêng của trường được gắn tiền tố mã trường khi lưu** (ví dụ `K01` của BKA lưu thành `BKA-K01`) | `dm_to_hop_mon_hoc.ma_to_hop` đang duy nhất toàn hệ thống; file JSON vẫn viết `K01` |
 | 3 | Thiết kế cho **nhiều trường**, FTU và BKA chỉ là mốc nghiệm thu đầu tiên | Không có code rẽ nhánh theo mã trường |
+| 4 | **Tính điểm bằng Python**, không dùng thủ tục MySQL | Bản JavaScript trong `test_xet_tuyen.html` dùng để đối chiếu |
+| 5 | **File JSON chuẩn là nguồn sự thật** cho phần quy tắc xét tuyển | Sửa quy tắc = sửa file rồi import lại |
+| 6 | Chấm điểm phù hợp theo 4 tiêu chí: khả năng trúng tuyển 50, ngành 25, học phí 15, vị trí 10 | Lưu trong `xt_tieu_chi_phu_hop`, đổi được sau |
 
 ## Quyết định còn chờ
 
 | # | Việc | Bước liên quan |
 |---|---|---|
-| 1 | Tính điểm bằng Python thay cho thủ tục MySQL (đề xuất: Python) | 0.1 |
-| 2 | File JSON chuẩn là nguồn sự thật cho phần quy tắc (đề xuất: có) | 0.1 |
-| 3 | Duyệt 4 tiêu chí chấm điểm và trọng số: khả năng trúng tuyển 50, ngành 25, học phí 15, vị trí 10 | 0.1 |
 | 4 | Quy tắc chuyển hồ sơ cũ: ngoại ngữ NN1/NN2 thành môn nào; học lực suy ra từ điểm trung bình hay để trống | 4.1 |
 | 5 | Giá trị điểm cộng đối tượng ưu tiên theo Thông tư 06/2026 | 5.2 |
 
@@ -36,8 +36,8 @@ Nhánh làm việc: `tich_hop_de_an_tuyen_sinh`.
 
 | Bước | Việc | Ai làm | Kết quả |
 |---|---|---|---|
-| 0.1 | Chốt các quyết định còn chờ 1–3 | Chủ dự án | Cập nhật bảng "Quyết định đã chốt" |
-| 0.2 | Script **chỉ đọc** kiểm tra dữ liệu hiện có: đề án trùng trường + năm, chương trình thiếu mã ngành / cơ sở, trường thiếu tỉnh, tổ hợp thiếu chi tiết, mã tổ hợp có thể đụng với tổ hợp riêng | Dev viết, chủ dự án chạy | Báo cáo những gì cần dọn trước giai đoạn 1 |
+| 0.1 | ~~Chốt quyết định tính bằng Python, JSON là nguồn sự thật, trọng số chấm điểm~~ **Đã chốt** | Chủ dự án | Bảng "Quyết định đã chốt" mục 4–6 |
+| 0.2 | Script **chỉ đọc** `python -m app.scripts.kiem_tra_truoc_tich_hop_de_an [bao_cao.md]` kiểm tra dữ liệu hiện có: đề án trùng trường + năm, chương trình thiếu mã ngành / cơ sở, trường thiếu tỉnh, tổ hợp thiếu chi tiết, mã tổ hợp có thể đụng với tổ hợp riêng | Dev viết, chủ dự án chạy | Báo cáo những gì cần dọn trước giai đoạn 1 |
 | 0.3 | Sao lưu DB hoặc tạo bản sao để chạy thử migration | Chủ dự án / DBA | Có môi trường thử |
 
 ## Giai đoạn 1. Củng cố việc lưu theo năm
@@ -102,7 +102,7 @@ không phụ thuộc phần tính điểm.
 
 | Bước | Việc | Kiểm tra / nghiệm thu |
 |---|---|---|
-| 5.1 | **Migration `0061`:** năm áp dụng (từ / đến) cho `dm_to_hop_mon_hoc`, `dm_doi_tuong_uu_tien`, `dm_khu_vuc_uu_tien`; bộ tính chọn dòng theo năm tuyển sinh | Test tính năm 2025 và 2026 với hai mức điểm ưu tiên khác nhau |
+| 5.1 | Năm áp dụng cho `dm_to_hop_mon_hoc`, `dm_doi_tuong_uu_tien`, `dm_khu_vuc_uu_tien`: **các bảng đã có sẵn cột** (`nam_ap_dung_tu` / `nam_ap_dung_den`, `nam_ap_dung`), chỉ cần điền dữ liệu và cho bộ tính chọn dòng theo năm tuyển sinh; migration chỉ khi cần thêm `nam_ap_dung_den` cho hai bảng ưu tiên | Test tính năm 2025 và 2026 với hai mức điểm ưu tiên khác nhau |
 | 5.2 | Sửa điểm cộng đối tượng ưu tiên theo Thông tư 06/2026 (quyết định còn chờ số 5) | Chủ dự án duyệt bảng giá trị trước khi chạy |
 | 5.3 | Job định kỳ dọn kết quả đánh giá cũ | |
 | 5.4 | **Quy trình đưa một trường mới vào:** soạn file JSON → `kiem_tra_de_an.py` → import (trạng thái **thử nghiệm**) → thêm hồ sơ mẫu và kết quả mong đợi vào bộ test → đối chiếu → chuyển sang **đang áp dụng** | Mỗi trường "đang áp dụng" đều có bộ test |
@@ -123,7 +123,7 @@ flowchart LR
 
 | Bước | Việc |
 |---|---|
-| 0.1 | Chốt quyết định 1–3 |
+| 0.1 | ~~Chốt quyết định 1–3~~ Đã chốt |
 | 0.3 và trước mỗi migration | Chạy `make migrate` (thử trên bản sao DB trước) |
 | 1.1 | Duyệt danh sách đề án cần gộp |
 | 3.8 | Nghiệm thu kết quả với điểm chuẩn thật |
