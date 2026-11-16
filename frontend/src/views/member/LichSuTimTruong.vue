@@ -79,7 +79,7 @@
           <span v-else class="history-card__sub">Không lọc</span>
         </template>
       </CustomTableColumn>
-      <CustomTableColumn label="Trường phù hợp" width="140" align="center">
+      <CustomTableColumn label="Trường phù hợp" width="160" align="center">
         <template #default="{ row }">
           <strong>{{ row.so_truong_phu_hop_so_bo }}</strong>
           <span class="history-card__sub"> / {{ row.so_truong_tim_thay }} trường</span>

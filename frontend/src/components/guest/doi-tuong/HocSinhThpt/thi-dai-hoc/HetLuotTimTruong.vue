@@ -28,14 +28,14 @@
         <button type="button" class="het-luot__cta" @click="$emit('kham-pha')">
           <template v-if="laThanhVien">
             <el-icon aria-hidden="true"><Wallet /></el-icon>
-            Nạp tiền mua thêm lượt tra cứu
+            Nâng cấp trải nghiệm tìm trường
           </template>
           <template v-else>
             Tiếp tục khám phá trường phù hợp
             <el-icon aria-hidden="true"><Right /></el-icon>
           </template>
         </button>
-        <p class="het-luot__sub">Xem các lựa chọn mua thêm lượt trước khi thanh toán</p>
+        <p class="het-luot__sub">Xem các lựa chọn nâng cấp trải nghiệm tìm trường trước khi thanh toán</p>
       </div>
     </div>
   </article>

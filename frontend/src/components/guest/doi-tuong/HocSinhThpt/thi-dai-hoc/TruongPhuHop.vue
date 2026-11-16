@@ -51,7 +51,7 @@
               </span>
               <CustomButton type="primary" plain @click="hoSoMo = true">
                 <CustomIcon><User /></CustomIcon>
-                <span>Xem & cập nhật hồ sơ</span>
+                <span>Hồ sơ cá nhân</span>
               </CustomButton>
             </div>
           </header>
@@ -286,6 +286,53 @@
           </p>
           <p v-else-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
           <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải trường phù hợp…</p>
+          <KhongCoDuLieu v-else-if="!danhSach.length && boLocDangDung.length" :text="thongBaoTrong">
+            <div class="goi-y-mo-rong">
+              <p class="goi-y-mo-rong__dan">
+                Bộ lọc hiện tại có thể đang hơi hẹp. Thử một trong các cách dưới đây để mở rộng phạm vi tìm kiếm:
+              </p>
+              <div class="goi-y-mo-rong__luoi">
+                <section class="goi-y-mo-rong__the">
+                  <h4 class="goi-y-mo-rong__tieu-de">
+                    <CustomIcon><Filter /></CustomIcon>
+                    Thay đổi nhu cầu tìm trường
+                  </h4>
+                  <p class="goi-y-mo-rong__mo-ta">Đang lọc theo:</p>
+                  <ul class="goi-y-mo-rong__chips">
+                    <li v-for="item in boLocDangDung" :key="item.nhan">
+                      <span>{{ item.nhan }}:</span> <strong>{{ item.giaTri }}</strong>
+                    </li>
+                  </ul>
+                  <p class="goi-y-mo-rong__mo-ta">
+                    Bỏ bớt từ khóa, loại cơ sở hoặc chọn rộng hơn (cả khu vực thay vì một tỉnh/thành), rồi bấm
+                    <strong>Tìm kiếm</strong>.
+                  </p>
+                  <CustomButton type="primary" plain @click="xoaBoLoc">
+                    <CustomIcon><RefreshLeft /></CustomIcon>
+                    <span>Bỏ bộ lọc</span>
+                  </CustomButton>
+                </section>
+                <section class="goi-y-mo-rong__the">
+                  <h4 class="goi-y-mo-rong__tieu-de">
+                    <CustomIcon><User /></CustomIcon>
+                    Điều chỉnh thông tin cá nhân
+                  </h4>
+                  <p class="goi-y-mo-rong__mo-ta">
+                    Tỉnh/thành, điểm số và khả năng tài chính trong hồ sơ ảnh hưởng tới các trường được gợi ý. Cập
+                    nhật lại cho đúng hoặc nới rộng (ví dụ mức học phí có thể chi trả) để có thêm lựa chọn.
+                  </p>
+                  <CustomButton v-if="daDangNhap" type="primary" plain @click="hoSoMo = true">
+                    <CustomIcon><EditPen /></CustomIcon>
+                    <span>Xem & cập nhật hồ sơ</span>
+                  </CustomButton>
+                  <CustomButton v-else type="primary" plain @click="moFormKhach">
+                    <CustomIcon><EditPen /></CustomIcon>
+                    <span>Sửa thông tin của bạn</span>
+                  </CustomButton>
+                </section>
+              </div>
+            </div>
+          </KhongCoDuLieu>
           <KhongCoDuLieu v-else-if="!danhSach.length" :text="thongBaoTrong" />
           <div v-else class="row g-3">
             <div v-for="item in danhSach" :key="item.ma_truong" class="col-12 col-md-6 col-lg-3">
@@ -345,7 +392,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchDoiTuongUuTien } from '@/api/doiTuongUuTien'
 import { fetchHoSo } from '@/api/hoSo'
@@ -493,7 +540,7 @@ const luotTraCuu = computed(() => cauHinhLuot.value.luot_tra_cuu ?? hoSo.value?.
 // Còn tìm được khi còn lượt miễn phí, hoặc thành viên còn lượt tra cứu đã mua (server trừ lượt miễn phí trước).
 const conLuot = computed(() => luotConLai.value > 0 || (daDangNhap.value && luotTraCuu.value > 0))
 const nhanLuot = computed(() => {
-  if (daDangNhap.value) return `Miễn phí hôm nay: ${luotConLai.value}/${tongLuot.value}`
+  if (daDangNhap.value) return `Miễn phí: ${luotConLai.value}/${tongLuot.value}`
   return `Còn lại ${luotConLai.value}/${tongLuot.value} lượt tìm thử`
 })
 // Khách chỉ nhập điểm thi thử theo các khối phổ biến; thành viên nhập đủ từng môn trong hồ sơ.
@@ -617,12 +664,35 @@ const dangLocTheoHoSo = computed(
   () => !!tinhHoSo.value && (boLoc.value.tinh === tinhHoSo.value.ten || boLoc.value.khuVuc === tinhHoSo.value.khu_vuc),
 )
 
+// Các tiêu chí đang lọc trong lần tìm gần nhất (hiện trong gợi ý khi không có kết quả).
+const boLocDangDung = computed(() =>
+  [
+    { nhan: 'Từ khóa', giaTri: boLoc.value.tuKhoa },
+    { nhan: 'Khu vực', giaTri: boLoc.value.khuVuc },
+    { nhan: 'Tỉnh/thành', giaTri: boLoc.value.tinh },
+    { nhan: 'Loại cơ sở', giaTri: boLoc.value.loai },
+  ].filter((item) => item.giaTri),
+)
+
 const thongBaoTrong = computed(() => {
-  if (boLoc.value.tinh || boLoc.value.khuVuc || boLoc.value.tuKhoa || boLoc.value.loai) {
-    return 'Không có trường đào tạo ngành này khớp bộ lọc.'
-  }
+  if (boLocDangDung.value.length) return 'Không có trường đào tạo ngành này khớp với nhu cầu và định hướng của bạn.'
   return 'Chưa có trường đào tạo cho ngành này.'
 })
+
+// Chỉ xóa các ô lọc (không tự tìm để không mất lượt); người dùng bấm Tìm kiếm khi sẵn sàng.
+function xoaBoLoc() {
+  tuKhoa.value = ''
+  khuVuc.value = ''
+  tinh.value = ''
+  loai.value = ''
+  ElMessage.info('Đã bỏ bộ lọc. Bấm Tìm kiếm để tìm lại.')
+  document.getElementById('phu-hop-tu-khoa')?.focus()
+}
+
+function moFormKhach() {
+  hienFormKhach.value = true
+  nextTick(() => document.getElementById('form-khach')?.scrollIntoView({ behavior: 'smooth', block: 'center' }))
+}
 
 function hrefWebsite(value) {
   const text = String(value || '').trim()
@@ -1465,6 +1535,75 @@ onMounted(async () => {
 .ho-so-chip--trong .ho-so-chip__value {
   color: #9aa8a0;
   font-weight: 400;
+}
+
+/* Gợi ý mở rộng phạm vi khi không có trường khớp bộ lọc. */
+.goi-y-mo-rong {
+  width: 100%;
+  max-width: 880px;
+  text-align: left;
+}
+
+.goi-y-mo-rong__dan {
+  margin: 0 0 12px;
+  color: #5c6b62;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.goi-y-mo-rong__luoi {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.goi-y-mo-rong__the {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid #d7e6dc;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.goi-y-mo-rong__the .el-button {
+  margin-top: auto;
+}
+
+.goi-y-mo-rong__tieu-de {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: #0c5c34;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.goi-y-mo-rong__mo-ta {
+  margin: 0;
+  color: #3a4742;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.goi-y-mo-rong__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.goi-y-mo-rong__chips li {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #eef6f1;
+  color: #3a4742;
+  font-size: 0.85rem;
 }
 
 .truong-phu-hop__cho-tim {

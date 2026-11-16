@@ -49,7 +49,7 @@
       <CustomTableColumn label="STT" width="64" align="center">
         <template #default="{ $index }">{{ rowIndex($index) }}</template>
       </CustomTableColumn>
-      <CustomTableColumn label="Mã giao dịch" width="140">
+      <CustomTableColumn label="Mã giao dịch" width="150">
         <template #default="{ row }"><strong>{{ row.ma_giao_dich }}</strong></template>
       </CustomTableColumn>
       <CustomTableColumn label="Người nạp" min-width="180">
@@ -85,7 +85,7 @@
           </div>
         </template>
       </CustomTableColumn>
-      <CustomTableColumn label="Ngân hàng" width="140">
+      <CustomTableColumn label="Ngân hàng" width="150">
         <template #default="{ row }">
           <div class="cell-stack">
             <span>{{ row.ten_ngan_hang_viet_tat || '—' }}</span>
@@ -108,7 +108,7 @@
           </div>
         </template>
       </CustomTableColumn>
-      <CustomTableColumn label="Thời gian" width="190">
+      <CustomTableColumn label="Thời gian" width="210">
         <template #default="{ row }">
           <div class="cell-stack">
             <span>{{ hienThoiGian(row.created_at) }}</span>

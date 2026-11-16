@@ -12,7 +12,7 @@ export const BUOC_TIEN_TRINH = [
 ]
 
 // Thời gian hiển thị mỗi bước (ms).
-export const THOI_GIAN_MOI_BUOC = 1000
+export const THOI_GIAN_MOI_BUOC = 3000
 
 // Giữ bước hoàn tất ("Kết quả của bạn đã sẵn sàng!") bao lâu rồi mới đóng dialog (ms).
 export const THOI_GIAN_HOAN_TAT = 3000
