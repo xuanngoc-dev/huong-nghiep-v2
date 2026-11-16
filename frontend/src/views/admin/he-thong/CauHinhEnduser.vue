@@ -151,12 +151,12 @@
           <CustomInput v-model="form.ten_cau_hinh" maxlength="255" placeholder="Ví dụ: banner_trang_chu" />
         </CustomFormItem>
         <CustomFormItem label="Kiểu trả lời" prop="kieu_tra_loi">
-          <CustomSelect v-model="form.kieu_tra_loi" :clearable="false">
+          <CustomSelect v-model="form.kieu_tra_loi" placeholder="Chọn kiểu trả lời" :clearable="false">
             <CustomOption v-for="item in KIEU_TRA_LOI" :key="item.value" :label="item.label" :value="item.value" />
           </CustomSelect>
         </CustomFormItem>
         <CustomFormItem label="Trạng thái" prop="trang_thai">
-          <CustomSelect v-model="form.trang_thai" :clearable="false">
+          <CustomSelect v-model="form.trang_thai" placeholder="Chọn trạng thái" :clearable="false">
             <CustomOption label="Hoạt động" :value="1" />
             <CustomOption label="Ngừng sử dụng" :value="0" />
           </CustomSelect>

@@ -32,7 +32,7 @@
 
         <div class="setting-field">
           <span class="setting-field__label">Phông chữ</span>
-          <el-select v-model="fontFamily" class="setting-control">
+          <el-select v-model="fontFamily" placeholder="Chọn phông chữ" class="setting-control">
             <el-option
               v-for="font in FONT_OPTIONS"
               :key="font.value"

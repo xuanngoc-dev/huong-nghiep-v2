@@ -1,79 +1,90 @@
 <template>
-  <el-card v-loading="loading" shadow="never" class="profile-card">
-    <template #header>
-      <div>
-        <h1 class="profile-card__title">Thông tin cá nhân</h1>
-        <p class="profile-card__lead">
-          Họ tên, liên hệ và diện ưu tiên tuyển sinh của bạn. Hồ sơ học tập cập nhật ở mục Hồ sơ năng lực.
-        </p>
-      </div>
-    </template>
+  <div class="profile-page">
+    <el-card v-loading="loading" shadow="never" class="profile-card">
+      <template #header>
+        <div class="profile-card__header">
+          <div>
+            <h1 class="profile-card__title">Thông tin cá nhân</h1>
+            <p class="profile-card__lead">
+              Họ tên, liên hệ và diện ưu tiên tuyển sinh của bạn. Hồ sơ học tập cập nhật ở mục Hồ sơ năng lực.
+            </p>
+          </div>
+          <CustomButton @click="doiMatKhauMo = true">
+            <CustomIcon><Lock /></CustomIcon>
+            <span>Đổi mật khẩu</span>
+          </CustomButton>
+        </div>
+      </template>
 
-    <CustomForm ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top" @submit.prevent="onSubmit">
-      <div class="form-grid__body">
-        <CustomFormItem class="form-grid__span-2" label="Họ tên" prop="ho_ten">
-          <CustomInput v-model="form.ho_ten" maxlength="150" placeholder="Nguyễn Văn A" clearable />
-        </CustomFormItem>
-        <CustomFormItem class="form-grid__span-2" label="Email">
-          <CustomInput :model-value="email" disabled />
-        </CustomFormItem>
-        <CustomFormItem label="Số điện thoại" prop="so_dien_thoai">
-          <CustomInput v-model="form.so_dien_thoai" maxlength="20" placeholder="Tùy chọn" clearable />
-        </CustomFormItem>
-        <CustomFormItem label="Giới tính">
-          <CustomSelect v-model="form.gioi_tinh" placeholder="Chọn" clearable>
-            <CustomOption v-for="item in GIOI_TINH" :key="item.value" :label="item.label" :value="item.value" />
-          </CustomSelect>
-        </CustomFormItem>
-        <CustomFormItem label="Ngày sinh">
-          <CustomDatePicker
-            v-model="form.ngay_sinh"
-            type="date"
-            value-format="YYYY-MM-DD"
-            format="DD/MM/YYYY"
-            placeholder="Chọn ngày"
-            clearable
-            :disabled-date="disableFutureDate"
-          />
-        </CustomFormItem>
-        <CustomFormItem label="Tỉnh thành">
-          <CustomSelect v-model="form.tinh_thanh_id" placeholder="Chọn" clearable filterable>
-            <CustomOption v-for="item in provinceOptions" :key="item.id" :label="item.ten_tinh" :value="item.id" />
-          </CustomSelect>
-        </CustomFormItem>
-        <CustomFormItem label="Dân tộc">
-          <CustomSelect v-model="form.dan_toc" placeholder="Chọn" clearable filterable allow-create default-first-option>
-            <CustomOption v-for="item in ethnicSelectOptions" :key="item" :label="item" :value="item" />
-          </CustomSelect>
-        </CustomFormItem>
-        <CustomFormItem label="Tôn giáo">
-          <CustomSelect v-model="form.ton_giao" placeholder="Chọn" clearable filterable allow-create default-first-option>
-            <CustomOption v-for="item in religionSelectOptions" :key="item" :label="item" :value="item" />
-          </CustomSelect>
-        </CustomFormItem>
-        <CustomFormItem class="form-grid__span-2" label="Khu vực ưu tiên">
-          <CustomSelect v-model="form.khu_vuc_uu_tien_id" placeholder="Chọn" clearable filterable>
-            <CustomOption v-for="item in khuVucSelectOptions" :key="item.id" :label="item.label" :value="item.id" />
-          </CustomSelect>
-        </CustomFormItem>
-        <CustomFormItem class="form-grid__span-2" label="Đối tượng ưu tiên">
-          <CustomSelect v-model="form.doi_tuong_uu_tien_id" placeholder="Chọn" clearable filterable>
-            <CustomOption v-for="item in doiTuongSelectOptions" :key="item.id" :label="item.label" :value="item.id" />
-          </CustomSelect>
-        </CustomFormItem>
-      </div>
+      <CustomForm ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top" @submit.prevent="onSubmit">
+        <div class="form-grid__body">
+          <CustomFormItem class="form-grid__span-2" label="Họ tên" prop="ho_ten">
+            <CustomInput v-model="form.ho_ten" maxlength="150" placeholder="Nguyễn Văn A" clearable />
+          </CustomFormItem>
+          <CustomFormItem class="form-grid__span-2" label="Email">
+            <CustomInput :model-value="email" disabled />
+          </CustomFormItem>
+          <CustomFormItem label="Số điện thoại" prop="so_dien_thoai">
+            <CustomInput v-model="form.so_dien_thoai" maxlength="20" placeholder="Tùy chọn" clearable />
+          </CustomFormItem>
+          <CustomFormItem label="Giới tính">
+            <CustomSelect v-model="form.gioi_tinh" placeholder="Chọn" clearable>
+              <CustomOption v-for="item in GIOI_TINH" :key="item.value" :label="item.label" :value="item.value" />
+            </CustomSelect>
+          </CustomFormItem>
+          <CustomFormItem label="Ngày sinh">
+            <CustomDatePicker
+              v-model="form.ngay_sinh"
+              type="date"
+              value-format="YYYY-MM-DD"
+              format="DD/MM/YYYY"
+              placeholder="Chọn ngày"
+              clearable
+              :disabled-date="disableFutureDate"
+            />
+          </CustomFormItem>
+          <CustomFormItem label="Tỉnh thành">
+            <CustomSelect v-model="form.tinh_thanh_id" placeholder="Chọn" clearable filterable>
+              <CustomOption v-for="item in provinceOptions" :key="item.id" :label="item.ten_tinh" :value="item.id" />
+            </CustomSelect>
+          </CustomFormItem>
+          <CustomFormItem label="Dân tộc">
+            <CustomSelect v-model="form.dan_toc" placeholder="Chọn" clearable filterable allow-create default-first-option>
+              <CustomOption v-for="item in ethnicSelectOptions" :key="item" :label="item" :value="item" />
+            </CustomSelect>
+          </CustomFormItem>
+          <CustomFormItem label="Tôn giáo">
+            <CustomSelect v-model="form.ton_giao" placeholder="Chọn" clearable filterable allow-create default-first-option>
+              <CustomOption v-for="item in religionSelectOptions" :key="item" :label="item" :value="item" />
+            </CustomSelect>
+          </CustomFormItem>
+          <CustomFormItem class="form-grid__span-2" label="Khu vực ưu tiên">
+            <CustomSelect v-model="form.khu_vuc_uu_tien_id" placeholder="Chọn" clearable filterable>
+              <CustomOption v-for="item in khuVucSelectOptions" :key="item.id" :label="item.label" :value="item.id" />
+            </CustomSelect>
+          </CustomFormItem>
+          <CustomFormItem class="form-grid__span-2" label="Đối tượng ưu tiên">
+            <CustomSelect v-model="form.doi_tuong_uu_tien_id" placeholder="Chọn" clearable filterable>
+              <CustomOption v-for="item in doiTuongSelectOptions" :key="item.id" :label="item.label" :value="item.id" />
+            </CustomSelect>
+          </CustomFormItem>
+        </div>
 
-      <div class="profile-actions">
-        <CustomButton native-type="button" :disabled="loading || saving" @click="load">Hoàn tác</CustomButton>
-        <CustomButton type="primary" :loading="saving" @click="onSubmit">Lưu thông tin</CustomButton>
-      </div>
-    </CustomForm>
-  </el-card>
+        <div class="profile-actions">
+          <CustomButton native-type="button" :disabled="loading || saving" @click="load">Hoàn tác</CustomButton>
+          <CustomButton type="primary" :loading="saving" @click="onSubmit">Lưu thông tin</CustomButton>
+        </div>
+      </CustomForm>
+    </el-card>
+
+    <DoiMatKhauDialog v-model="doiMatKhauMo" />
+  </div>
 </template>
 
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import DoiMatKhauDialog from '@/components/member/DoiMatKhauDialog.vue'
 import { fetchDanToc } from '@/api/danToc'
 import { fetchDoiTuongUuTien } from '@/api/doiTuongUuTien'
 import { fetchHoSo, updateThongTinCaNhan } from '@/api/hoSo'
@@ -93,6 +104,7 @@ const auth = useAuthStore()
 const formRef = ref()
 const loading = ref(false)
 const saving = ref(false)
+const doiMatKhauMo = ref(false)
 const email = ref('')
 const provinceOptions = ref([])
 const ethnicOptions = ref([])
@@ -264,8 +276,21 @@ onMounted(load)
 </script>
 
 <style scoped>
+.profile-page {
+  display: grid;
+  gap: 16px;
+}
+
 .profile-card {
   border-radius: 12px;
+}
+
+.profile-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .profile-card__title {

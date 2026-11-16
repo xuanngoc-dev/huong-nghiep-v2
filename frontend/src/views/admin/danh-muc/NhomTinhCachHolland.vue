@@ -171,7 +171,7 @@
           <CustomInput v-model="form.ten_tieng_anh" maxlength="150" placeholder="Ví dụ: Realistic" />
         </CustomFormItem>
         <CustomFormItem label="Trạng thái" prop="trang_thai">
-          <CustomSelect v-model="form.trang_thai" :clearable="false">
+          <CustomSelect v-model="form.trang_thai" placeholder="Chọn trạng thái" :clearable="false">
             <CustomOption label="Hoạt động" :value="1" />
             <CustomOption label="Ngừng sử dụng" :value="0" />
           </CustomSelect>

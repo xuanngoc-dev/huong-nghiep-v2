@@ -122,6 +122,7 @@
                     <CustomInputNumber
                       v-if="answer.draft || isEditingAnswer(row.id, answer.id)"
                       v-model="answerEditor.diem"
+                      placeholder="Nhập điểm"
                       :min="-9999"
                       :max="9999"
                       :step="1"
@@ -302,7 +303,7 @@
           />
         </CustomFormItem>
         <CustomFormItem label="Trạng thái" prop="trang_thai">
-          <CustomSelect v-model="form.trang_thai" :clearable="false">
+          <CustomSelect v-model="form.trang_thai" placeholder="Chọn trạng thái" :clearable="false">
             <CustomOption label="Hoạt động" :value="1" />
             <CustomOption label="Ngừng sử dụng" :value="0" />
           </CustomSelect>
@@ -327,6 +328,7 @@
             />
             <CustomInputNumber
               v-model="answer.diem"
+              placeholder="Nhập điểm"
               :min="-9999"
               :max="9999"
               :step="1"

@@ -106,3 +106,47 @@ class TestLayHoSo(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class _DbCommit:
+    def __init__(self):
+        self.da_commit = False
+
+    def commit(self):
+        self.da_commit = True
+
+
+class TestDoiMatKhau(unittest.TestCase):
+    def setUp(self):
+        from app.core.security import hash_password
+
+        self.user = SimpleNamespace(id=1, mat_khau=hash_password("matkhaucu"))
+
+    def _doi(self, cu, moi, db=None):
+        from app.api.v1.endpoints.ho_so import doi_mat_khau
+        from app.schemas.auth import DoiMatKhauRequest
+
+        return doi_mat_khau(DoiMatKhauRequest(mat_khau_cu=cu, mat_khau_moi=moi), db or _DbCommit(), self.user)
+
+    def test_dung_mat_khau_cu_thi_doi_duoc(self):
+        from app.core.security import verify_password
+
+        db = _DbCommit()
+        self.assertTrue(self._doi("matkhaucu", "matkhaumoi", db).thanh_cong)
+        self.assertTrue(db.da_commit)
+        self.assertTrue(verify_password("matkhaumoi", self.user.mat_khau))
+
+    def test_sai_mat_khau_cu_tra_400(self):
+        from fastapi import HTTPException
+
+        with self.assertRaises(HTTPException) as ctx:
+            self._doi("sai", "matkhaumoi")
+        self.assertEqual(ctx.exception.status_code, 400)
+        self.assertEqual(ctx.exception.detail, "Mật khẩu hiện tại không đúng")
+
+    def test_mat_khau_moi_trung_cu_tra_400(self):
+        from fastapi import HTTPException
+
+        with self.assertRaises(HTTPException) as ctx:
+            self._doi("matkhaucu", "matkhaucu")
+        self.assertEqual(ctx.exception.status_code, 400)

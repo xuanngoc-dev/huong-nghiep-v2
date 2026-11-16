@@ -183,6 +183,7 @@
           <CustomFormItem label="Số tiền thực nhận (VNĐ)" prop="so_tien_thuc_nhan">
             <CustomInputNumber
               v-model="form.so_tien_thuc_nhan"
+              placeholder="Nhập số tiền thực nhận"
               :min="0"
               :precision="0"
               :step="1000"
@@ -193,7 +194,7 @@
             <CustomInput v-model="form.ma_tham_chieu_ngan_hang" maxlength="100" placeholder="Ví dụ: FT24012345678" />
           </CustomFormItem>
           <CustomFormItem class="form-grid__full" label="Ghi chú" prop="ghi_chu">
-            <CustomInput v-model="form.ghi_chu" type="textarea" :rows="3" maxlength="2000" show-word-limit />
+            <CustomInput v-model="form.ghi_chu" placeholder="Nhập ghi chú" type="textarea" :rows="3" maxlength="2000" show-word-limit />
           </CustomFormItem>
         </div>
       </CustomForm>

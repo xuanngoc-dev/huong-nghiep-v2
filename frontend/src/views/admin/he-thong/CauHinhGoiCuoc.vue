@@ -212,12 +212,12 @@
           <CustomInput v-model="form.ten_goi_cuoc" maxlength="255" placeholder="Ví dụ: Gói tra cứu 10 lượt" />
         </CustomFormItem>
         <CustomFormItem label="Loại áp dụng" prop="loai_ap_dung">
-          <CustomSelect v-model="form.loai_ap_dung" :clearable="false">
+          <CustomSelect v-model="form.loai_ap_dung" placeholder="Chọn loại áp dụng" :clearable="false">
             <CustomOption v-for="item in LOAI_AP_DUNG" :key="item.value" :label="item.label" :value="item.value" />
           </CustomSelect>
         </CustomFormItem>
         <CustomFormItem label="Trạng thái" prop="trang_thai">
-          <CustomSelect v-model="form.trang_thai" :clearable="false">
+          <CustomSelect v-model="form.trang_thai" placeholder="Chọn trạng thái" :clearable="false">
             <CustomOption label="Hoạt động" :value="1" />
             <CustomOption label="Ngừng sử dụng" :value="0" />
           </CustomSelect>
@@ -225,6 +225,7 @@
         <CustomFormItem label="Giá gốc (VNĐ)" prop="gia_goc">
           <CustomInputNumber
             v-model="form.gia_goc"
+            placeholder="Nhập giá gốc"
             :min="0"
             :max="GIA_TOI_DA"
             :precision="0"
@@ -246,6 +247,7 @@
         <CustomFormItem label="Số lượt nhận được (gốc)" prop="so_luot_nhan_duoc_goc">
           <CustomInputNumber
             v-model="form.so_luot_nhan_duoc_goc"
+            placeholder="Nhập số lượt nhận được"
             :min="0"
             :max="LUOT_TOI_DA"
             :precision="0"

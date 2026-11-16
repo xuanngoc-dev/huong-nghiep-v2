@@ -207,6 +207,8 @@
         <CustomFormItem label="Năm học" prop="nam_hoc">
           <CustomInputNumber
             v-model="form.nam_hoc"
+            :phan-tach-hang-nghin="false"
+            placeholder="Nhập năm học"
             :min="2000"
             :max="2100"
             :step="1"
@@ -250,6 +252,7 @@
         <CustomFormItem class="form-grid__full" label="Ghi chú" prop="ghi_chu">
           <CustomInput
             v-model="form.ghi_chu"
+            placeholder="Nhập ghi chú"
             type="textarea"
             :rows="3"
             maxlength="2000"

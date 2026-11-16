@@ -160,6 +160,7 @@
         <CustomFormItem label="Dân số" prop="dan_so">
           <CustomInputNumber
             v-model="form.dan_so"
+            placeholder="Nhập dân số"
             :min="0"
             :max="200000000"
             :step="1"
@@ -168,7 +169,7 @@
           />
         </CustomFormItem>
         <CustomFormItem label="Trạng thái" prop="trang_thai">
-          <CustomSelect v-model="form.trang_thai" :clearable="false">
+          <CustomSelect v-model="form.trang_thai" placeholder="Chọn trạng thái" :clearable="false">
             <CustomOption label="Hoạt động" :value="1" />
             <CustomOption label="Ngừng sử dụng" :value="0" />
           </CustomSelect>

@@ -175,6 +175,7 @@
         <CustomFormItem v-for="item in TRUONG_LUOT" :key="item.prop" :label="item.nhan" :prop="item.prop">
           <CustomInputNumber
             v-model="form[item.prop]"
+            :placeholder="`Nhập ${item.nhan.toLowerCase()}`"
             :min="0"
             :max="LUOT_TOI_DA"
             :precision="0"
@@ -206,12 +207,11 @@
         <CustomFormItem label="Giá báo cáo chuyên sâu (VNĐ)" prop="gia_bao_cao_chuyen_sau">
           <CustomInputNumber
             v-model="form.gia_bao_cao_chuyen_sau"
+            placeholder="Nhập giá báo cáo chuyên sâu"
             :min="0"
             :max="GIA_TOI_DA"
             :step="1000"
             :precision="0"
-            :formatter="dinhDangTien"
-            :parser="docTien"
             controls-position="right"
           />
         </CustomFormItem>
@@ -330,15 +330,6 @@ function hienSo(value) {
 function hienGia(value) {
   const so = Number(value || 0)
   return so ? `${so.toLocaleString('vi-VN')} đ` : 'Miễn phí'
-}
-
-function dinhDangTien(value) {
-  if (value === '' || value == null) return ''
-  return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-}
-
-function docTien(value) {
-  return String(value || '').replace(/\D/g, '')
 }
 
 function formatThoiGian(value) {

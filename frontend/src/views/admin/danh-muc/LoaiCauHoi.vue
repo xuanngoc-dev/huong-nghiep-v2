@@ -159,6 +159,7 @@
         <CustomFormItem label="Thứ tự ưu tiên" prop="thu_tu_uu_tien">
           <CustomInputNumber
             v-model="form.thu_tu_uu_tien"
+            placeholder="Nhập thứ tự ưu tiên"
             :min="1"
             :max="9999"
             :step="1"
@@ -167,7 +168,7 @@
           />
         </CustomFormItem>
         <CustomFormItem label="Trạng thái" prop="trang_thai">
-          <CustomSelect v-model="form.trang_thai" :clearable="false">
+          <CustomSelect v-model="form.trang_thai" placeholder="Chọn trạng thái" :clearable="false">
             <CustomOption label="Hoạt động" :value="1" />
             <CustomOption label="Ngừng sử dụng" :value="0" />
           </CustomSelect>

@@ -47,3 +47,12 @@ class AuthResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: NguoiDungPublic
+
+
+class DoiMatKhauRequest(BaseModel):
+    mat_khau_cu: str = Field(..., min_length=1, max_length=128)
+    mat_khau_moi: str = Field(..., min_length=6, max_length=128)
+
+
+class DoiMatKhauKetQua(BaseModel):
+    thanh_cong: bool = True

@@ -1,15 +1,15 @@
 # Danh sách API
 
-Tự sinh từ code lúc 16/11/2026 08:27 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 16/11/2026 09:16 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **269** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **270** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
 | [Quản trị (admin)](#quan_tri) | 153 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 73 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Thành viên (user)](#thanh_vien) | 74 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 43 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
@@ -483,6 +483,7 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
+| `POST` | `/api/v1/tai-khoan/doi-mat-khau` | Bắt buộc | Đổi mật khẩu đăng nhập của tài khoản đang đăng nhập; phải nhập đúng mật khẩu hiện tại. |
 | `GET` | `/api/v1/tai-khoan/ho-so` | Bắt buộc | Lấy toàn bộ hồ sơ của tài khoản đang đăng nhập: thông tin cá nhân, hồ sơ năng lực, Edu coin và số lượt còn lại. |
 | `PUT` | `/api/v1/tai-khoan/ho-so` | Bắt buộc | Cập nhật toàn bộ hồ sơ: thông tin cá nhân và hồ sơ năng lực dùng cho phân tích hướng nghiệp. |
 | `GET` | `/api/v1/tai-khoan/nap-tien` | Bắt buộc | Lịch sử nạp tiền của tài khoản đang đăng nhập, mới nhất trước. Lọc theo mã giao dịch/tên gói, trạng thái, loại. |

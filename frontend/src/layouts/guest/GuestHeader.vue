@@ -69,6 +69,7 @@
                 </el-dropdown-menu>
               </template>
             </CustomDropdown>
+            <DoiMatKhauDialog v-model="doiMatKhauMo" />
           </div>
           <template v-else>
             <RouterLink class="btn landing-nav__outline" to="/login">Đăng nhập</RouterLink>
@@ -87,6 +88,7 @@ import { ElMessage } from 'element-plus'
 import {
   ArrowDown,
   Clock,
+  Lock,
   Postcard,
   Setting,
   SwitchButton,
@@ -95,6 +97,7 @@ import {
   UserFilled,
   Wallet,
 } from '@element-plus/icons-vue'
+import DoiMatKhauDialog from '@/components/member/DoiMatKhauDialog.vue'
 import SoDuTaiKhoan from '@/components/member/SoDuTaiKhoan.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useIsMobile } from '@/composables/useResponsiveSize'
@@ -105,6 +108,7 @@ const auth = useAuthStore()
 const route = useRoute()
 const router = useRouter()
 const scrolled = ref(false)
+const doiMatKhauMo = ref(false)
 // Navbar thu gọn (< lg) hoặc thiết bị không có hover: mở menu tài khoản bằng chạm/bấm.
 const moBangCham = useIsMobile('(max-width: 991.98px), (hover: none)')
 
@@ -119,6 +123,7 @@ const menuTaiKhoan = computed(() => [
   { command: 'member-home', label: 'Khu vực thành viên', icon: UserFilled },
   ...(auth.isAdmin ? [{ command: 'admin-home', label: 'Trang quản trị', icon: Setting }] : []),
   { command: 'thong-tin-ca-nhan', label: 'Thông tin cá nhân', icon: User, divided: true },
+  { command: 'doi-mat-khau', label: 'Đổi mật khẩu', icon: Lock },
   { command: 'ho-so', label: 'Hồ sơ năng lực', icon: Postcard },
   { command: 'nap-tien', label: 'Nạp tiền', icon: Wallet },
   { command: 'lich-su-nap-tien', label: 'Lịch sử nạp tiền', icon: Tickets },
@@ -127,6 +132,10 @@ const menuTaiKhoan = computed(() => [
 ])
 
 function onCommand(command) {
+  if (command === 'doi-mat-khau') {
+    doiMatKhauMo.value = true
+    return
+  }
   if (command !== 'logout') {
     router.push({ name: command })
     return

@@ -166,7 +166,7 @@
           <CustomInput v-model="form.ma_bai_thi" maxlength="50" placeholder="Ví dụ: HSA" />
         </CustomFormItem>
         <CustomFormItem label="Loại" prop="loai_chung_chi">
-          <CustomSelect v-model="form.loai_chung_chi" :clearable="false">
+          <CustomSelect v-model="form.loai_chung_chi" placeholder="Chọn loại" :clearable="false">
             <CustomOption v-for="item in LOAI" :key="item.value" :label="item.label" :value="item.value" />
           </CustomSelect>
         </CustomFormItem>
@@ -186,7 +186,7 @@
           <CustomInput v-model="form.loai_danh_gia" maxlength="50" placeholder="Ví dụ: Năng lực" />
         </CustomFormItem>
         <CustomFormItem label="Trạng thái" prop="trang_thai">
-          <CustomSelect v-model="form.trang_thai" :clearable="false">
+          <CustomSelect v-model="form.trang_thai" placeholder="Chọn trạng thái" :clearable="false">
             <CustomOption label="Hoạt động" value="Hoạt động" />
             <CustomOption label="Ngừng sử dụng" value="Ngừng sử dụng" />
           </CustomSelect>
@@ -197,6 +197,7 @@
         <CustomFormItem label="Điểm tối thiểu">
           <CustomInputNumber
             v-model="form.diem_toi_thieu"
+            placeholder="Nhập điểm tối thiểu"
             :min="0"
             :max="999999.99"
             :precision="2"
@@ -212,6 +213,7 @@
         <CustomFormItem label="Thời lượng (phút)">
           <CustomInputNumber
             v-model="form.thoi_luong_phut"
+            placeholder="Nhập thời lượng"
             :min="0"
             :max="65535"
             :precision="0"
@@ -224,6 +226,7 @@
         <CustomFormItem label="Áp dụng từ">
           <CustomInputNumber
             v-model="form.nam_ap_dung_tu"
+            :phan-tach-hang-nghin="false"
             :min="0"
             :max="65535"
             :precision="0"
@@ -237,6 +240,7 @@
         <CustomFormItem label="Áp dụng đến">
           <CustomInputNumber
             v-model="form.nam_ap_dung_den"
+            :phan-tach-hang-nghin="false"
             :min="0"
             :max="65535"
             :precision="0"

@@ -62,6 +62,11 @@ Thêm resource `$ARGUMENTS` theo đúng các bước dưới. Mẫu tham khảo:
     - Chọn `width` dialog theo số ô (đã trừ padding dialog ~32px): ≤ 6 ô → `800px` (3 ô/hàng); 7–12 ô → `1040px` (4 ô/hàng); nhiều hơn → mặc định `90%` (6 ô/hàng trên màn ≥ 1400px). Form 1–4 ô có thể dùng `560px` (2 ô/hàng). Màn nhỏ hoặc người dùng kéo hẹp dialog thì lưới tự giảm cột.
     - `CustomInputNumber`/`CustomSelect`/`CustomDatePicker` trong `form-grid` đã tự rộng 100%, không cần `style="width: 100%"`.
     - Thanh lọc (`.filters`) giữ kiểu flex + class `filter-search`/`filter-status` có sẵn (đã tự giãn 100% trên mobile).
+    - **Placeholder** (bắt buộc): MỌI ô nhập đều có `placeholder` — `CustomInput` (kể cả textarea, mật khẩu), `CustomInputNumber`, `MoneyInput`, `CustomSelect`, `CustomDatePicker`, ô lọc/tìm kiếm và ô nằm trong bảng; chỉ bỏ qua ô `disabled`/`readonly`. Viết theo nhãn của ô:
+      - Ô nhập chữ/số: `Nhập <nhãn viết thường>` (bỏ phần đơn vị trong ngoặc), ví dụ `placeholder="Nhập điểm cộng"`; có ràng buộc đáng nói thì thêm vào, ví dụ `Nhập mật khẩu mới (ít nhất 6 ký tự)`.
+      - Select: `Chọn <nhãn viết thường>`, ví dụ `placeholder="Chọn trạng thái"`; ngày: `Chọn ngày`; khoảng ngày dùng `start-placeholder="Từ ngày"` / `end-placeholder="Đến ngày"`.
+      - Ô tìm kiếm: `Tìm theo <các trường được tìm>`, ví dụ `placeholder="Tìm theo mã, tên"`.
+      - Nhãn động (`v-for`): ``:placeholder="`Nhập ${item.nhan.toLowerCase()}`"``.
     - Kiểm tra: `npx vite build` không lỗi; nếu chạy được app thì thử ở bề rộng 375px và 1440px.
 11. **Cột thao tác và tooltip** (bắt buộc, làm luôn không cần hỏi):
     - Cột "Thao tác" của bảng dùng **icon** của `@element-plus/icons-vue` (đã đăng ký global, không import), KHÔNG dùng button có chữ. Mỗi icon đặt trong `CustomButton link` (giữ được focus/bàn phím) kèm `aria-label`, bọc trong `.row-actions`:

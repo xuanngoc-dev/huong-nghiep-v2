@@ -171,7 +171,7 @@
           <CustomInput v-model="form.ma_chung_chi" maxlength="50" placeholder="Ví dụ: IELTS" />
         </CustomFormItem>
         <CustomFormItem label="Loại">
-          <CustomSelect v-model="form.loai_chung_chi" filterable allow-create default-first-option clearable>
+          <CustomSelect v-model="form.loai_chung_chi" placeholder="Chọn loại" filterable allow-create default-first-option clearable>
             <CustomOption v-for="item in LOAI" :key="item.value" :label="item.label" :value="item.value" />
           </CustomSelect>
         </CustomFormItem>
@@ -191,7 +191,7 @@
           <CustomInput v-model="form.don_vi_cap" maxlength="255" placeholder="Ví dụ: British Council" />
         </CustomFormItem>
         <CustomFormItem label="Trạng thái" prop="trang_thai">
-          <CustomSelect v-model="form.trang_thai" filterable allow-create default-first-option>
+          <CustomSelect v-model="form.trang_thai" placeholder="Chọn trạng thái" filterable allow-create default-first-option>
             <CustomOption v-for="item in TRANG_THAI" :key="item" :label="item" :value="item" />
           </CustomSelect>
         </CustomFormItem>
@@ -201,6 +201,7 @@
         <CustomFormItem label="Điểm thấp nhất">
           <CustomInputNumber
             v-model="form.thang_diem_min"
+            placeholder="Nhập điểm thấp nhất"
             :min="0"
             :max="9999.99"
             :precision="2"
@@ -213,6 +214,7 @@
         <CustomFormItem label="Điểm cao nhất">
           <CustomInputNumber
             v-model="form.thang_diem_max"
+            placeholder="Nhập điểm cao nhất"
             :min="0"
             :max="9999.99"
             :precision="2"
@@ -228,6 +230,7 @@
         <CustomFormItem label="Hiệu lực (tháng)">
           <CustomInputNumber
             v-model="form.thoi_han_hieu_luc_thang"
+            placeholder="Nhập hiệu lực"
             :min="0"
             :max="65535"
             :precision="0"

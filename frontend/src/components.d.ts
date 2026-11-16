@@ -56,6 +56,7 @@ declare module 'vue' {
     DiLam: typeof import('./components/guest/doi-tuong/HocSinhThpt/DiLam.vue')['default']
     DinhHuongPlaceholder: typeof import('./components/guest/doi-tuong/HocSinhThpt/DinhHuongPlaceholder.vue')['default']
     DinhHuongTuongLai: typeof import('./components/guest/chung/DinhHuongTuongLai.vue')['default']
+    DoiMatKhauDialog: typeof import('./components/member/DoiMatKhauDialog.vue')['default']
     DoiTuongCard: typeof import('./components/guest/chung/DoiTuongCard.vue')['default']
     DuHoc: typeof import('./components/guest/doi-tuong/HocSinhThpt/DuHoc.vue')['default']
     DuHocNghe: typeof import('./components/guest/doi-tuong/HocSinhThpt/DuHocNghe.vue')['default']

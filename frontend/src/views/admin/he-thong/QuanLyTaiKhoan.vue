@@ -159,13 +159,13 @@
           />
         </CustomFormItem>
         <CustomFormItem label="Vai trò" prop="vai_tro">
-          <CustomSelect v-model="form.vai_tro" :clearable="false">
+          <CustomSelect v-model="form.vai_tro" placeholder="Chọn vai trò" :clearable="false">
             <CustomOption label="Người dùng" :value="0" />
             <CustomOption label="Quản trị" :value="1" />
           </CustomSelect>
         </CustomFormItem>
         <CustomFormItem label="Trạng thái" prop="trang_thai">
-          <CustomSelect v-model="form.trang_thai" :clearable="false">
+          <CustomSelect v-model="form.trang_thai" placeholder="Chọn trạng thái" :clearable="false">
             <CustomOption label="Hoạt động" :value="1" />
             <CustomOption label="Khóa" :value="0" />
           </CustomSelect>

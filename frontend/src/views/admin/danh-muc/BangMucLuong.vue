@@ -37,6 +37,7 @@
       <template #default="{ row, $index }">
         <CustomSelect
           :model-value="row.period || KY_LUONG_MAC_DINH"
+          placeholder="Chọn thời gian"
           aria-label="Thời gian"
           @update:model-value="capNhat($index, 'period', $event)"
         >
@@ -53,6 +54,7 @@
       <template #default="{ row, $index }">
         <CustomSelect
           :model-value="row.unit || DON_VI_TIEN_MAC_DINH"
+          placeholder="Chọn đơn vị tính"
           aria-label="Đơn vị tính"
           @update:model-value="capNhat($index, 'unit', $event)"
         >

@@ -174,6 +174,7 @@
         <CustomFormItem label="Diện tích (km²)" prop="dien_tich">
           <CustomInputNumber
             v-model="form.dien_tich"
+            placeholder="Nhập diện tích"
             :min="0"
             :precision="2"
             :step="1"
@@ -183,6 +184,8 @@
         <CustomFormItem label="Năm thành lập" prop="nam_thanh_lap">
           <CustomInputNumber
             v-model="form.nam_thanh_lap"
+            :phan-tach-hang-nghin="false"
+            placeholder="Nhập năm thành lập"
             :min="1000"
             :max="2100"
             :step="1"
@@ -191,7 +194,7 @@
           />
         </CustomFormItem>
         <CustomFormItem label="Trạng thái" prop="trang_thai">
-          <CustomSelect v-model="form.trang_thai" :clearable="false">
+          <CustomSelect v-model="form.trang_thai" placeholder="Chọn trạng thái" :clearable="false">
             <CustomOption label="Hoạt động" :value="1" />
             <CustomOption label="Ngừng sử dụng" :value="0" />
           </CustomSelect>

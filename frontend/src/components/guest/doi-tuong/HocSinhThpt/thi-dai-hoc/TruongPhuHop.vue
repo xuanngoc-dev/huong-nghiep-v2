@@ -254,7 +254,7 @@
           </div>
           <div class="nhom-filter__field nhom-filter__field--sap-xep">
             <label class="nhom-filter__label" for="phu-hop-sap-xep">Sắp xếp</label>
-            <CustomSelect id="phu-hop-sap-xep" v-model="sapXep" class="nhom-filter__select">
+            <CustomSelect id="phu-hop-sap-xep" v-model="sapXep" placeholder="Sắp xếp theo" class="nhom-filter__select">
               <CustomOption v-for="item in sapXepOptions" :key="item.value" :label="item.label" :value="item.value" />
             </CustomSelect>
           </div>

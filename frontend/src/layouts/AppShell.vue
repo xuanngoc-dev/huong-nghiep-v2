@@ -124,6 +124,10 @@
                 <el-dropdown-item disabled>
                   {{ authStore.user?.email }}
                 </el-dropdown-item>
+                <el-dropdown-item divided command="thong-tin-ca-nhan" :icon="User">
+                  Thông tin cá nhân
+                </el-dropdown-item>
+                <el-dropdown-item command="doi-mat-khau" :icon="Lock">Đổi mật khẩu</el-dropdown-item>
                 <el-dropdown-item divided command="logout">
                   Đăng xuất
                 </el-dropdown-item>
@@ -139,6 +143,7 @@
     </el-container>
 
     <SettingsDrawer v-model="settingsOpen" />
+    <DoiMatKhauDialog v-model="doiMatKhauMo" />
   </el-container>
 </template>
 
@@ -147,8 +152,9 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch, watchEffect } f
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { ArrowDown, Expand, Fold, Monitor, Setting } from '@element-plus/icons-vue'
+import { ArrowDown, Expand, Fold, Lock, Monitor, Setting, User } from '@element-plus/icons-vue'
 import SettingsDrawer from '@/components/SettingsDrawer.vue'
+import DoiMatKhauDialog from '@/components/member/DoiMatKhauDialog.vue'
 import SoDuTaiKhoan from '@/components/member/SoDuTaiKhoan.vue'
 import SideMenu from '@/components/SideMenu.vue'
 import menuData from '@/data/menu.json'
@@ -194,6 +200,7 @@ const hoverExpanded = ref(false)
 const isMobile = ref(false)
 const mobileMenuOpen = ref(false)
 const settingsOpen = ref(false)
+const doiMatKhauMo = ref(false)
 const now = ref(new Date())
 const asideMountKey = ref(0)
 
@@ -318,6 +325,14 @@ function syncCollapseByViewport(e) {
 }
 
 async function onCommand(cmd) {
+  if (cmd === 'thong-tin-ca-nhan') {
+    router.push({ name: 'thong-tin-ca-nhan' })
+    return
+  }
+  if (cmd === 'doi-mat-khau') {
+    doiMatKhauMo.value = true
+    return
+  }
   if (cmd === 'logout') {
     authStore.logout()
     ElMessage.success('Đã đăng xuất')

@@ -5,12 +5,14 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
+from app.core.security import hash_password, verify_password
 from app.db.session import get_db
 from app.models.dm_doi_tuong_uu_tien import DmDoiTuongUuTien
 from app.models.dm_khu_vuc_uu_tien import DmKhuVucUuTien
 from app.models.dm_tinh_thanh import DmTinhThanh
 from app.models.nguoi_dung import NguoiDung
 from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
+from app.schemas.auth import DoiMatKhauKetQua, DoiMatKhauRequest
 from app.schemas.ho_so import (
     HoSoPublic,
     HoSoWrite,
@@ -189,3 +191,21 @@ def update_thong_tin_ca_nhan(
     profile = _gan_thong_tin_ca_nhan(db, current_user, payload)
     return _luu(db, current_user, profile)
 
+
+@router.post("/doi-mat-khau", response_model=DoiMatKhauKetQua)
+def doi_mat_khau(
+    payload: DoiMatKhauRequest,
+    db: Session = Depends(get_db),
+    current_user: NguoiDung = Depends(get_current_user),
+) -> DoiMatKhauKetQua:
+    """Đổi mật khẩu đăng nhập của tài khoản đang đăng nhập; phải nhập đúng mật khẩu hiện tại."""
+    if not verify_password(payload.mat_khau_cu, current_user.mat_khau):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Mật khẩu hiện tại không đúng")
+    if payload.mat_khau_moi == payload.mat_khau_cu:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Mật khẩu mới phải khác mật khẩu hiện tại",
+        )
+    current_user.mat_khau = hash_password(payload.mat_khau_moi)
+    db.commit()
+    return DoiMatKhauKetQua()
