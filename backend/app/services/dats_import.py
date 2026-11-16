@@ -113,6 +113,15 @@ class DatsImportError(ValueError):
     """Dữ liệu JSON không nhập được. Thông điệp dành cho người dùng."""
 
 
+def _thanh_mang(table: str, value):
+    """Trả mảng bản ghi của bảng nhiều dòng; file ghi một object (chỉ một bản ghi) được hiểu là mảng một phần tử."""
+    if isinstance(value, dict):
+        return [value]
+    if not isinstance(value, list):
+        raise DatsImportError(f"{table} phải là một mảng")
+    return value
+
+
 @dataclass(frozen=True)
 class CatalogIndex:
     phuong_thuc_by_code: dict[str, int] = field(default_factory=dict)
@@ -283,9 +292,7 @@ def flatten_nested_document(document: dict) -> dict:
                 raise DatsImportError(f"Chưa hỗ trợ bảng: {key}")
             if value is None:
                 continue
-            if not isinstance(value, list):
-                raise DatsImportError(f"{key} phải là một mảng")
-            children.append((key, value))
+            children.append((key, _thanh_mang(key, value)))
         if source_id is not None:
             row["id"] = source_id
         if table == "dats_phuong_thuc":
@@ -437,9 +444,7 @@ def _section(document: dict, table: str, kind: str) -> list:
         if not isinstance(value, dict):
             raise DatsImportError("dats_tuyen_sinh phải là một object")
         return [value]
-    if not isinstance(value, list):
-        raise DatsImportError(f"{table} phải là một mảng")
-    return value
+    return _thanh_mang(table, value)
 
 
 def _source_id(raw: dict, table: str, label: str) -> int | None:
@@ -781,6 +786,8 @@ def _section_or_empty(document: dict, table: str, kind: str) -> list:
         return [value]
     if kind == "list" and isinstance(value, list):
         return value
+    if kind == "list" and isinstance(value, dict):
+        return [value]
     return []
 
 

@@ -53,6 +53,38 @@ class DatsImportTests(unittest.TestCase):
         # Dữ liệu gốc không bị sửa.
         self.assertIn("dats_chinh_sach_uu_tien_xt", nested["dats_tuyen_sinh"])
 
+    def test_bang_nhieu_dong_gui_mot_object_duoc_hieu_la_mang_mot_phan_tu(self):
+        chinh_sach = {"ten_chinh_sach": "Ưu tiên học sinh giỏi"}
+        nguong = {"ghi_chu": "Ngưỡng IELTS 5.0"}
+        nested = {
+            "dats_tuyen_sinh": {
+                "id": 1,
+                "ten_de_an": "Đề án",
+                "dats_chinh_sach_uu_tien_xt": chinh_sach,
+                "dats_quy_doi_nguong_dau_vao": nguong,
+            }
+        }
+        flat = {
+            "dats_tuyen_sinh": {"id": 1},
+            "dats_chinh_sach_uu_tien_xet_tuyen": dict(chinh_sach, de_an_id=1),
+            "dats_quy_doi_nguong_dau_vao": dict(nguong, de_an_id=1),
+        }
+        for document in (nested, flat):
+            rows = prepare_import(document, ma_truong="BKA", nam_tuyen_sinh=2026, catalogs=catalogs())
+            counts = Counter(row.table for row in rows)
+            self.assertEqual(counts["dats_chinh_sach_uu_tien_xet_tuyen"], 1)
+            self.assertEqual(counts["dats_quy_doi_nguong_dau_vao"], 1)
+        # Nhiều bản ghi vẫn gửi dạng mảng như cũ.
+        nested["dats_tuyen_sinh"]["dats_chinh_sach_uu_tien_xt"] = [chinh_sach, {"ten_chinh_sach": "Ưu tiên khác"}]
+        rows = prepare_import(nested, ma_truong="BKA", nam_tuyen_sinh=2026, catalogs=catalogs())
+        self.assertEqual(Counter(row.table for row in rows)["dats_chinh_sach_uu_tien_xet_tuyen"], 2)
+
+    def test_bang_nhieu_dong_khong_phai_object_hay_mang_bi_tu_choi(self):
+        document = {"dats_tuyen_sinh": {"id": 1, "dats_website": "https://hust.edu.vn"}}
+        with self.assertRaises(DatsImportError) as caught:
+            prepare_import(document, ma_truong="BKA", nam_tuyen_sinh=2026, catalogs=catalogs())
+        self.assertIn("dats_website phải là một mảng", str(caught.exception))
+
     def test_khong_cho_vua_viet_tat_vua_day_du(self):
         document = {
             "dats_tuyen_sinh": {"id": 1, "ten_de_an": "Đề án"},
