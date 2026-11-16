@@ -70,7 +70,7 @@
         v-for="column in visibleColumns"
         :key="column.key"
         :label="column.label"
-        min-width="160"
+        :min-width="column.used ? 160 : 110"
         align="center"
         class-name="combo-cell"
       >
@@ -82,7 +82,7 @@
               </template>
               <span class="method-name">{{ column.label }}</span>
             </CustomTooltip>
-            <CustomTooltip content="Xem chi tiết" placement="top">
+            <CustomTooltip v-if="column.used" content="Xem chi tiết" placement="top">
               <button
                 type="button"
                 class="method-detail"
@@ -236,13 +236,6 @@ function methodKey(method) {
   return String(method?.ma_phuong_thuc_cua_bo || method?.ma_phuong_thuc_cua_truong || '').trim()
 }
 
-function methodLabel(method) {
-  const bo = String(method?.ma_phuong_thuc_cua_bo || '').trim()
-  const truong = String(method?.ma_phuong_thuc_cua_truong || '').trim()
-  if (bo && truong) return `${bo} (${truong})`
-  return bo || truong
-}
-
 function comboCodes(method) {
   const value = method?.to_hop_mon_hoc
   if (value == null || value === '') return []
@@ -257,23 +250,47 @@ function comboCodes(method) {
   return codes
 }
 
+// Cột theo danh mục phương thức của Bộ (kể cả phương thức đề án không dùng); phương thức của đề án có mã ngoài
+// danh mục được thêm vào cuối.
 const methodColumns = computed(() => {
-  const columns = new Map()
+  const used = new Map()
   for (const method of props.methods) {
     const key = methodKey(method)
     if (!key) continue
-    if (!columns.has(key)) {
-      columns.set(key, { key, label: methodLabel(method), names: [] })
-    }
+    if (!used.has(key)) used.set(key, { codes: [], names: [] })
+    const info = used.get(key)
+    const code = String(method.ma_phuong_thuc_cua_truong || '').trim()
     const title = String(method.ten_phuong_thuc_cua_truong || '').trim()
-    const column = columns.get(key)
-    if (title && !column.names.includes(title)) column.names.push(title)
+    if (code && code !== key && !info.codes.includes(code)) info.codes.push(code)
+    if (title && !info.names.includes(title)) info.names.push(title)
   }
-  return [...columns.values()].map((column) => ({
-    key: column.key,
-    label: column.label,
-    hint: column.names.join('\n'),
-  }))
+
+  function column(key, catalogName) {
+    const info = used.get(key)
+    const codes = info?.codes || []
+    return {
+      key,
+      label: codes.length ? `${key} (${codes.join(', ')})` : key,
+      hint: [catalogName, ...(info?.names || [])].filter(Boolean).join('\n'),
+      used: Boolean(info),
+    }
+  }
+
+  const columns = []
+  const seen = new Set()
+  const catalog = [...catalogMethods.value].sort((a, b) =>
+    String(a.ma_phuong_thuc || '').localeCompare(String(b.ma_phuong_thuc || ''), 'vi', { numeric: true }),
+  )
+  for (const item of catalog) {
+    const key = String(item.ma_phuong_thuc || '').trim()
+    if (!key || seen.has(key)) continue
+    seen.add(key)
+    columns.push(column(key, String(item.ten_phuong_thuc || '').trim()))
+  }
+  for (const key of used.keys()) {
+    if (!seen.has(key)) columns.push(column(key, ''))
+  }
+  return columns
 })
 
 const tableRows = computed(() => {
@@ -368,7 +385,7 @@ const emptyText = computed(() => {
 
 const detailByKey = computed(() => {
   const map = new Map()
-  for (const column of methodColumns.value) {
+  for (const column of methodColumns.value.filter((item) => item.used)) {
     map.set(column.key, buildMethodDetail({
       label: column.label,
       subtitle: column.hint,
