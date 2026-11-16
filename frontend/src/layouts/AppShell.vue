@@ -196,7 +196,8 @@ const menuGroups = computed(() => {
   return groups
     .map((group) => ({
       ...group,
-      items: (group.items || []).filter((item) => !item.adminOnly || authStore.isAdmin),
+      // `an: true` trong menu.json: ẩn tạm khỏi sidebar, route vẫn truy cập được.
+      items: (group.items || []).filter((item) => !item.an && (!item.adminOnly || authStore.isAdmin)),
     }))
     .filter((group) => group.items.length)
 })
