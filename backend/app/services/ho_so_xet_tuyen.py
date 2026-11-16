@@ -269,13 +269,29 @@ def ghi_ho_so(db: Session, hs: HsHoSo, payload: HoSoXetTuyenWrite, dm: DanhMucMa
     db.flush()
 
 
-def sang_trinh_do_hoc_van(payload: HoSoXetTuyenWrite, json_cu: dict | None) -> dict | None:
-    """Phần hồ sơ năng lực cũ (JSON) tương ứng với hồ sơ hs_*; giữ nguyên các khối JSON khác (sức khỏe...)."""
-    ket_qua = {k: v for k, v in (json_cu or {}).items() if k == "suc_khoe_the_chat"}
-    thpt = {d.ma_mon: d.diem for d in payload.diem_mon if d.nguon_diem == "THI_THPT"}
+def sang_trinh_do_hoc_van(
+    payload: HoSoXetTuyenWrite, json_cu: dict | None, ma_mon_hop_le: set[str] | None = None
+) -> dict | None:
+    """Phần hồ sơ năng lực cũ (JSON) tương ứng với hồ sơ hs_*; giữ nguyên các khối JSON khác (sức khỏe...).
+
+    Điểm của môn ngoài danh mục (CN, GDDP...) không lưu được ở hs_* nên giữ nguyên từ JSON cũ.
+    """
+    cu = json_cu or {}
+    ket_qua = {k: v for k, v in cu.items() if k == "suc_khoe_the_chat"}
+
+    def ngoai_danh_muc(diem: dict | None) -> dict:
+        if ma_mon_hop_le is None:
+            return {}
+        return {ma: v for ma, v in (diem or {}).items() if ma not in ma_mon_hop_le}
+
+    thpt = ngoai_danh_muc((cu.get("diem_thi_thpt_quoc_gia") or {}).get("du_kien"))
+    thpt.update({d.ma_mon: d.diem for d in payload.diem_mon if d.nguon_diem == "THI_THPT"})
     if thpt:
         ket_qua["diem_thi_thpt_quoc_gia"] = {"du_kien": thpt}
     hoc_ba: dict[str, dict[str, float]] = {}
+    for lop, theo_mon in (cu.get("diem_trung_binh_hoc_ba") or {}).items():
+        if isinstance(theo_mon, dict) and (giu := ngoai_danh_muc(theo_mon)):
+            hoc_ba[str(lop)] = giu
     for d in payload.diem_mon:
         if d.nguon_diem == "HOC_BA" and d.hoc_ky == 0:
             hoc_ba.setdefault(str(d.lop), {})[d.ma_mon] = d.diem
@@ -419,7 +435,7 @@ def luu_ho_so(
     if profile is None:
         profile = NguoiDungThongTin(nguoi_dung_id=nguoi_dung_id)
         db.add(profile)
-    profile.trinh_do_hoc_van = sang_trinh_do_hoc_van(payload, profile.trinh_do_hoc_van)
+    profile.trinh_do_hoc_van = sang_trinh_do_hoc_van(payload, profile.trinh_do_hoc_van, set(dm.mon))
     profile.tinh_thanh_id = hs.tinh_thanh_id
     profile.khu_vuc_uu_tien_id = hs.khu_vuc_uu_tien_id
     profile.doi_tuong_uu_tien_id = hs.doi_tuong_uu_tien_id

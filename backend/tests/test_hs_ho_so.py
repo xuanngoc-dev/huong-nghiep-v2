@@ -156,6 +156,22 @@ class HoSoXetTuyenTests(unittest.TestCase):
         self.assertEqual(len(hs.mong_muon), 2)
         self.assertEqual((hs.ngan_sach_hoc_phi_nam, hs.ma_mon_chuyen), (60000000, "TOAN"))
 
+    def test_giu_mon_ngoai_danh_muc_trong_json_cu(self):
+        self.db.add(
+            M.NguoiDungThongTin(
+                nguoi_dung_id=self.user.id,
+                trinh_do_hoc_van={
+                    "diem_thi_thpt_quoc_gia": {"du_kien": {"TOAN": 7, "CN": 8}},
+                    "diem_trung_binh_hoc_ba": {"10": {"GDDP": 9, "TOAN": 6}},
+                },
+            )
+        )
+        self.db.commit()
+        put_ho_so_xet_tuyen(HoSoXetTuyenWrite(**HO_SO), self.db, self.user)
+        hv = self._profile().trinh_do_hoc_van
+        self.assertEqual(hv["diem_thi_thpt_quoc_gia"]["du_kien"], {"CN": 8, "TOAN": 9.0, "ANH": 8.0})
+        self.assertEqual(hv["diem_trung_binh_hoc_ba"], {"10": {"GDDP": 9, "TOAN": 9.2}})
+
     def test_ma_khong_co_trong_danh_muc_tra_400(self):
         du_lieu = dict(HO_SO, diem_bai_thi=[{"ma_bai_thi": "XYZ", "nam_thi": 2026, "diem": 1}])
         with self.assertRaises(HTTPException) as caught:
