@@ -28,7 +28,8 @@ from app.schemas.tn_lich_su_tim_truong_phu_hop import (
 from app.schemas.dats_tuyen_sinh import TruongDaoTaoPage
 from app.services.cau_hinh_tra_cuu import cau_hinh_dang_ap_dung
 from app.services.tim_truong import truong_theo_nganh
-from app.services.xet_tuyen.chuyen_ho_so import DanhMucHoSo, tu_du_lieu_khach, tu_ho_so_thanh_vien
+from app.services.ho_so_xet_tuyen import DanhMucMa, doc_ho_so, ho_so_chinh
+from app.services.xet_tuyen.chuyen_ho_so import DanhMucHoSo, tu_du_lieu_khach, tu_ho_so_hs, tu_ho_so_thanh_vien
 from app.services.xet_tuyen.danh_gia import chay_danh_gia, co_de_an_dang_ap_dung
 
 logger = logging.getLogger(__name__)
@@ -126,6 +127,22 @@ def _ket_qua(
     )
 
 
+def _ho_so_xet_tuyen_hs(db: Session, user: NguoiDung, nam: int):
+    """Hồ sơ xét tuyển hs_* chính của thành viên (đủ thông tin hơn JSON cũ); (None, None) nếu chưa có.
+
+    Đọc trong savepoint riêng để CSDL chưa có bảng hs_* thì quay về dùng hồ sơ năng lực cũ.
+    """
+    try:
+        with db.begin_nested():
+            hs = ho_so_chinh(db, user.id)
+            if hs is None:
+                return None, None
+            return tu_ho_so_hs(doc_ho_so(db, hs, DanhMucMa.tu_csdl(db)), nam_tuyen_sinh=nam), hs.id
+    except Exception:  # noqa: BLE001 - thiếu bảng / dữ liệu lỗi: dùng hồ sơ năng lực cũ
+        logger.exception("Không đọc được hồ sơ xét tuyển hs_* của người dùng %s", user.id)
+        return None, None
+
+
 def _danh_gia_xet_tuyen(
     db: Session, item: TnLichSuTimTruongPhuHop, payload: TimTruongPhuHopRequest, user: NguoiDung | None
 ) -> None:
@@ -137,9 +154,14 @@ def _danh_gia_xet_tuyen(
     try:
         if not co_de_an_dang_ap_dung(db, nam):
             return
+        ho_so_id = None
+        ho_so_xt = None
+        if user is not None:
+            ho_so_xt, ho_so_id = _ho_so_xet_tuyen_hs(db, user, nam)
         with db.begin_nested():
             danh_muc = DanhMucHoSo.tu_csdl(db)
-            if user is not None:
+            # Thứ tự nguồn hồ sơ: hs_* của thành viên → hồ sơ năng lực cũ (JSON) → form của khách.
+            if ho_so_xt is None and user is not None:
                 ho_so = _ho_so(db, user)
                 ho_so_xt = tu_ho_so_thanh_vien(
                     ho_so.trinh_do_hoc_van if ho_so else None,
@@ -150,7 +172,7 @@ def _danh_gia_xet_tuyen(
                     tinh_thanh_id=ho_so.tinh_thanh_id if ho_so else None,
                     kha_nang_tai_chinh=ho_so.kha_nang_tai_chinh if ho_so else None,
                 )
-            else:
+            elif ho_so_xt is None:
                 ho_so_xt = tu_du_lieu_khach(
                     payload.du_lieu_nang_luc, payload.du_lieu_tai_chinh, nam_tuyen_sinh=nam, danh_muc=danh_muc
                 )
@@ -162,6 +184,7 @@ def _danh_gia_xet_tuyen(
                 nguoi_dung_id=user.id if user else None,
                 ma_thiet_bi=payload.ma_thiet_bi,
                 lich_su_tim_truong_id=item.id,
+                ho_so_id=ho_so_id,
             )
     except Exception:  # noqa: BLE001 - bộ tính mới lỗi không được làm hỏng lượt tìm
         logger.exception("Không chạy được bộ tính xét tuyển cho lượt tìm %s", item.id)

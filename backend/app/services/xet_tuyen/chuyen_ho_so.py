@@ -267,3 +267,73 @@ def tu_du_lieu_khach(
         diem_thpt=diem_thpt,
     )
     return KetQuaChuyenHoSo(ho_so=ho_so, gia_dinh=gia_dinh, uoc_tinh=bool(diem_thpt))
+
+
+def tu_ho_so_hs(ho_so, *, nam_tuyen_sinh: int) -> KetQuaChuyenHoSo:
+    """Hồ sơ xét tuyển hs_* (HoSoXetTuyenWrite / Public, tham chiếu bằng mã) → dữ liệu vào bộ tính.
+
+    Đủ thông tin hơn JSON cũ (hạn chứng chỉ, mức giải, môn chuyên, nguyện vọng); chỉ giả định khi thiếu dữ liệu.
+    """
+    gia_dinh: list[str] = []
+    nam_tot_nghiep = ho_so.nam_tot_nghiep
+    if nam_tot_nghiep is None:
+        nam_tot_nghiep = nam_tuyen_sinh
+        gia_dinh.append(f"Coi như tốt nghiệp THPT năm {nam_tuyen_sinh}")
+    nam_hoc: dict[int, KetQuaNamHocTinh] = {}
+    suy_hoc_luc = False
+    for k in ho_so.ket_qua_nam_hoc:
+        hoc_luc = k.hoc_luc
+        if hoc_luc is None and k.diem_tb_chung is not None:
+            hoc_luc = hoc_luc_tu_diem_tb(k.diem_tb_chung)
+            suy_hoc_luc = True
+        nam_hoc[k.lop] = KetQuaNamHocTinh(tbc=k.diem_tb_chung, hoc_luc=hoc_luc, ren_luyen=k.ren_luyen)
+    if suy_hoc_luc:
+        gia_dinh.append("Học lực suy ra từ điểm trung bình cả năm ở năm học chưa nhập học lực")
+    diem_thpt = {d.ma_mon: d.diem for d in ho_so.diem_mon if d.nguon_diem == "THI_THPT"}
+    if any(d.la_du_kien for d in ho_so.diem_mon if d.nguon_diem == "THI_THPT"):
+        gia_dinh.append("Có điểm thi THPT là điểm dự kiến / thi thử")
+    hoc_ba: dict[str, dict[int, float]] = {}
+    hoc_ky: dict[tuple[str, int], dict[int, float]] = {}
+    for d in ho_so.diem_mon:
+        if d.nguon_diem != "HOC_BA":
+            continue
+        if d.hoc_ky == 0:
+            hoc_ba.setdefault(d.ma_mon, {})[d.lop] = d.diem
+        else:
+            hoc_ky.setdefault((d.ma_mon, d.lop), {})[d.hoc_ky] = d.diem
+    # Lớp chỉ có điểm hai học kỳ: điểm cả năm = (HK1 + 2 x HK2) / 3 theo Thông tư 22/2021.
+    for (ma, lop), theo_ky in hoc_ky.items():
+        if lop not in hoc_ba.get(ma, {}) and {1, 2} <= set(theo_ky):
+            hoc_ba.setdefault(ma, {})[lop] = round((theo_ky[1] + 2 * theo_ky[2]) / 3, 2)
+    mong_tinh = [m.gia_tri for m in ho_so.mong_muon if m.loai == "TINH_THANH"]
+    if not mong_tinh and ho_so.ma_tinh:
+        mong_tinh = [ho_so.ma_tinh]
+        gia_dinh.append("Ưu tiên trường ở tỉnh/thành trong hồ sơ (chưa chọn tỉnh mong muốn)")
+    hs = HoSoXetTuyen(
+        nam_tot_nghiep=nam_tot_nghiep,
+        da_tot_nghiep=ho_so.da_tot_nghiep,
+        he_chuyen=ho_so.he_chuyen,
+        mon_chuyen=ho_so.ma_mon_chuyen,
+        khu_vuc=ho_so.ma_khu_vuc_uu_tien,
+        doi_tuong=ho_so.ma_doi_tuong_uu_tien,
+        ngan_sach=ho_so.ngan_sach_hoc_phi_nam,
+        mong_muon_tinh=mong_tinh,
+        mong_muon_vung=[m.gia_tri for m in ho_so.mong_muon if m.loai == "VUNG_MIEN"],
+        nam_hoc=nam_hoc,
+        diem_thpt=diem_thpt,
+        hoc_ba=hoc_ba,
+        bai_thi=[
+            BaiThiTinh(ma=b.ma_bai_thi, diem=b.diem, nam=b.nam_thi, phan_tu_chon=b.phan_tu_chon) for b in ho_so.diem_bai_thi
+        ],
+        chung_chi=[
+            ChungChiTinh(
+                ma=c.ma_chung_chi,
+                diem=c.diem,
+                cap_do=c.cap_do,
+                het_han=c.ngay_het_han.isoformat() if c.ngay_het_han else None,
+            )
+            for c in ho_so.chung_chi
+        ],
+        thanh_tich=[ThanhTichTinh(ma=t.ma_thanh_tich, muc_giai=t.muc_giai) for t in ho_so.thanh_tich],
+    )
+    return KetQuaChuyenHoSo(ho_so=hs, gia_dinh=gia_dinh)

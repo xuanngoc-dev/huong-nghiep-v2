@@ -103,7 +103,21 @@ def dau_phien_ban(db: Session, nam: int) -> tuple:
     ).one()
     nhap = db.scalar(select(func.max(XtLichSuImport.id)))
     diem_chuan = db.execute(select(func.count(), func.max(XtDiemChuan.cap_nhat_luc), func.max(XtDiemChuan.id))).one()
-    return (tuple(de_an), nhap, tuple(diem_chuan))
+    # Gắn ngành / cơ sở cho chương trình, đổi tỉnh của cơ sở (trang "Gắn ngành & cơ sở", "Trụ sở") không qua import.
+    dang_ap_dung = select(DatsTuyenSinh.id).where(
+        DatsTuyenSinh.nam_tuyen_sinh == nam, DatsTuyenSinh.trang_thai_xet_tuyen == DANG_AP_DUNG
+    )
+    chuong_trinh = db.execute(
+        select(
+            func.count(),
+            func.sum(func.coalesce(DatsChuongTrinhDaoTao.nganh_dao_tao_id, 0)),
+            func.sum(func.coalesce(DatsChuongTrinhDaoTao.co_so_id, 0)),
+        ).where(DatsChuongTrinhDaoTao.de_an_id.in_(dang_ap_dung))
+    ).one()
+    co_so = db.scalar(
+        select(func.sum(func.coalesce(DatsTruSo.tinh_thanh_id, 0))).where(DatsTruSo.de_an_id.in_(dang_ap_dung))
+    )
+    return (tuple(de_an), nhap, tuple(diem_chuan), tuple(chuong_trinh), co_so)
 
 
 def co_de_an_dang_ap_dung(db: Session, nam: int) -> bool:
@@ -379,6 +393,7 @@ def chay_danh_gia(
     nguoi_dung_id: int | None = None,
     ma_thiet_bi: str | None = None,
     lich_su_tim_truong_id: int | None = None,
+    ho_so_id: int | None = None,
     hom_nay: date | None = None,
     quy_tac: QuyTacNam | None = None,
 ) -> KetQuaDanhGia | None:
@@ -404,6 +419,7 @@ def chay_danh_gia(
     lan = XtLanDanhGia(
         nguoi_dung_id=nguoi_dung_id,
         ma_thiet_bi=None if nguoi_dung_id else ma_thiet_bi,
+        ho_so_id=ho_so_id,
         nam_tuyen_sinh=nam,
         bo_tieu_chi_id=qtn.bo_tieu_chi_id,
         lich_su_tim_truong_id=lich_su_tim_truong_id,

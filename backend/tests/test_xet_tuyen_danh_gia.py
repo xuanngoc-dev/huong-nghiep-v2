@@ -213,9 +213,10 @@ class DanhGiaTuCsdlTests(unittest.TestCase):
         nganh = M.DmNganhDaoTao(ma_nhom_nganh="74202", ma_nganh="7420202", ten_nganh="Kỹ thuật sinh học", ten_tieng_anh="", trinh_do="ĐH")
         self.db.add(nganh)
         self.db.flush()
+        tai_quy_tac(self.db, 2026)  # cache đã có trước khi gắn ngành
         bf1.nganh_dao_tao_id = nganh.id
         self.db.commit()
-        _CACHE.clear()
+        # Không xóa cache: gắn ngành phải tự làm mới cache quy tắc.
         kq = chay_danh_gia(
             self.db, KetQuaChuyenHoSo(ho_so=self.ho_so), nam=2026, ma_nganh="7420202", ma_thiet_bi="thiet-bi-thu-02", hom_nay=HOM_NAY
         )
