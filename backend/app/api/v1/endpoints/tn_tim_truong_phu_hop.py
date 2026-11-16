@@ -1,3 +1,5 @@
+import logging
+from dataclasses import asdict
 from datetime import date, datetime, timedelta
 from typing import Literal
 
@@ -26,10 +28,16 @@ from app.schemas.tn_lich_su_tim_truong_phu_hop import (
 from app.schemas.dats_tuyen_sinh import TruongDaoTaoPage
 from app.services.cau_hinh_tra_cuu import cau_hinh_dang_ap_dung
 from app.services.tim_truong import truong_theo_nganh
+from app.services.xet_tuyen.chuyen_ho_so import DanhMucHoSo, tu_du_lieu_khach, tu_ho_so_thanh_vien
+from app.services.xet_tuyen.danh_gia import chay_danh_gia, co_de_an_dang_ap_dung
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/tim-truong-phu-hop", tags=["tim-truong-phu-hop"])
 
 _PHIEN_BAN_THUAT_TOAN = "loc-co-ban-v1"
+# Lượt tìm có thêm kết quả của bộ tính xét tuyển (đề án "đang áp dụng").
+PHIEN_BAN_XET_TUYEN = "xt-v1"
 # Số trường đầu tiên lưu lại trong du_lieu_ket_qua.
 _SO_TRUONG_LUU = 50
 
@@ -114,7 +122,54 @@ def _ket_qua(
         so_truong_tim_thay=item.so_truong_tim_thay,
         so_truong_phu_hop_so_bo=item.so_truong_phu_hop_so_bo,
         luot=_luot(db, cau_hinh_dang_ap_dung(db), user, ma_thiet_bi),
+        lan_danh_gia_id=((item.du_lieu_ket_qua or {}).get("xet_tuyen") or {}).get("lan_danh_gia_id"),
     )
+
+
+def _danh_gia_xet_tuyen(
+    db: Session, item: TnLichSuTimTruongPhuHop, payload: TimTruongPhuHopRequest, user: NguoiDung | None
+) -> None:
+    """Năm có đề án "đang áp dụng" thì chạy thêm bộ tính xét tuyển (xt-v1) cho chương trình của ngành đang tìm.
+
+    Chạy trong savepoint riêng: lỗi ở đây chỉ ghi log, lượt tìm vẫn thành công với kết quả của thuật toán cũ.
+    """
+    nam = payload.nam_tuyen_sinh
+    try:
+        if not co_de_an_dang_ap_dung(db, nam):
+            return
+        with db.begin_nested():
+            danh_muc = DanhMucHoSo.tu_csdl(db)
+            if user is not None:
+                ho_so = _ho_so(db, user)
+                ho_so_xt = tu_ho_so_thanh_vien(
+                    ho_so.trinh_do_hoc_van if ho_so else None,
+                    nam_tuyen_sinh=nam,
+                    danh_muc=danh_muc,
+                    khu_vuc_uu_tien_id=ho_so.khu_vuc_uu_tien_id if ho_so else None,
+                    doi_tuong_uu_tien_id=ho_so.doi_tuong_uu_tien_id if ho_so else None,
+                    tinh_thanh_id=ho_so.tinh_thanh_id if ho_so else None,
+                    kha_nang_tai_chinh=ho_so.kha_nang_tai_chinh if ho_so else None,
+                )
+            else:
+                ho_so_xt = tu_du_lieu_khach(
+                    payload.du_lieu_nang_luc, payload.du_lieu_tai_chinh, nam_tuyen_sinh=nam, danh_muc=danh_muc
+                )
+            ket_qua = chay_danh_gia(
+                db,
+                ho_so_xt,
+                nam=nam,
+                ma_nganh=payload.ma_nganh,
+                nguoi_dung_id=user.id if user else None,
+                ma_thiet_bi=payload.ma_thiet_bi,
+                lich_su_tim_truong_id=item.id,
+            )
+    except Exception:  # noqa: BLE001 - bộ tính mới lỗi không được làm hỏng lượt tìm
+        logger.exception("Không chạy được bộ tính xét tuyển cho lượt tìm %s", item.id)
+        return
+    if ket_qua is None:
+        return
+    item.phien_ban_thuat_toan = PHIEN_BAN_XET_TUYEN
+    item.du_lieu_ket_qua = {**(item.du_lieu_ket_qua or {}), "xet_tuyen": asdict(ket_qua)}
 
 
 def _dem_truong(db: Session, payload: TimTruongPhuHopRequest, loc: bool, page_size: int = 1):
@@ -282,6 +337,8 @@ def tim_truong_phu_hop(
         item.thong_bao_loi = str(exc)[:2000]
         if item.loai_luot == "tra_phi" and user is not None:
             _cong_luot_tra_cuu(db, user, 1)
+    if item.trang_thai_xu_ly == "thanh_cong":
+        _danh_gia_xet_tuyen(db, item, payload, user)
     item.ngay_hoan_thanh = datetime.now()
     db.commit()
     db.refresh(item)

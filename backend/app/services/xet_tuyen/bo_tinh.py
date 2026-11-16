@@ -107,6 +107,13 @@ class _ChiMuc:
         self.dieu_kien: dict[int, list] = {}
         for d in qt.dieu_kien:
             self.dieu_kien.setdefault(d.nhom_id, []).append(d)
+        # Theo đề án, giữ nguyên thứ tự gốc: tránh quét quy tắc của mọi trường cho mỗi phương án.
+        self.nhom_theo_de_an: dict[int, list[NhomDieuKienTinh]] = {}
+        for n in qt.nhom_dieu_kien:
+            self.nhom_theo_de_an.setdefault(n.de_an_id, []).append(n)
+        self.diem_cong_theo_de_an: dict[int, list] = {}
+        for d in qt.diem_cong:
+            self.diem_cong_theo_de_an.setdefault(d.de_an_id, []).append(d)
 
 
 _CHI_MUC_CACHE: dict[int, _ChiMuc] = {}
@@ -182,10 +189,12 @@ def tinh_phuong_an(
     nam: int,
     hom_nay: str,
     diem_chuan: list[DiemChuanTinh] | None = None,
+    chuong_trinh_ids: set[int] | None = None,
 ) -> KetQuaTinh:
     """Tính điểm xét và xét điều kiện mọi phương án của năm `nam` (tương đương sp_xt_tinh_diem).
 
     Chỉ trả phương án học sinh đủ dữ liệu để tính điểm, hoặc phương án không tính điểm mà học sinh đạt hết điều kiện.
+    `chuong_trinh_ids` giới hạn chương trình cần tính (ví dụ chương trình thuộc ngành đang tìm).
     """
     cm = _chi_muc(qt)
     cs = tinh_chi_so(hs, hom_nay)
@@ -205,22 +214,30 @@ def tinh_phuong_an(
         if all(theo_lop.get(lop) is not None for lop in (10, 11, 12)):
             hoc_ba[mon] = lam_tron((theo_lop[10] + theo_lop[11] + theo_lop[12]) / 3, 4)
 
-    # 2. Ngoại ngữ quy đổi từ chứng chỉ theo từng bảng: {bảng: {mã môn: điểm}}.
-    ngoai_ngu: dict[int, dict[str, float]] = {}
-    for bang_id, cac_muc in cm.quy_doi.items():
+    # Các bước 2-4 tính khi cần và ghi nhớ: với nhiều trường, một lượt tìm chỉ dùng quy tắc của vài chương trình.
+    # 2. Ngoại ngữ quy đổi từ chứng chỉ theo từng bảng: {mã môn: điểm}.
+    nho_ngoai_ngu: dict[int, dict[str, float]] = {}
+
+    def ngoai_ngu(bang_id: int) -> dict[str, float]:
+        if bang_id in nho_ngoai_ngu:
+            return nho_ngoai_ngu[bang_id]
         theo_mon: dict[str, float] = {}
-        for q in cac_muc:
+        for q in cm.quy_doi.get(bang_id, []):
             if not q.ma_chung_chi or not q.ma_mon or not q.dat_nguong:
                 continue
             for c in hs.chung_chi:
                 if c.ma != q.ma_chung_chi or not con_han(c) or not _khop_muc(q, c.diem, c.cap_do):
                     continue
                 theo_mon[q.ma_mon] = _lon_hon(theo_mon.get(q.ma_mon), lam_tron(_quy_doi(q, c.diem), 3))
-        ngoai_ngu[bang_id] = theo_mon
+        nho_ngoai_ngu[bang_id] = theo_mon
+        return theo_mon
 
-    # 3. Giá trị từng thành phần (bài thi / chứng chỉ đã quy đổi).
-    gia_tri_tp: dict[int, float] = {}
-    for tp in qt.thanh_phan:
+    # 3. Giá trị từng thành phần (bài thi / chứng chỉ đã quy đổi); None = học sinh không có.
+    nho_tp: dict[int, float | None] = {}
+
+    def gia_tri_tp(tp) -> float | None:
+        if tp.id in nho_tp:
+            return nho_tp[tp.id]
         v = None
         if tp.loai == "BAI_THI":
             for b in hs.bai_thi:
@@ -245,21 +262,24 @@ def tinh_phuong_an(
                 for c in hs.chung_chi:
                     if c.ma == q.ma_chung_chi and con_han(c) and _khop_muc(q, c.diem, c.cap_do):
                         v = _lon_hon(v, _quy_doi(q, c.diem))
-        if v is not None:
-            gia_tri_tp[tp.id] = lam_tron(v, 4)
+        nho_tp[tp.id] = lam_tron(v, 4)
+        return nho_tp[tp.id]
 
     # 4. Nhóm điều kiện: đạt khi một điều kiện trong nhóm đạt.
-    nhom_dat = {
-        n.id: any(_so_sanh(cs.get((d.chi_so, d.khoa)), d.toan_tu, d.gia_tri) for d in cm.dieu_kien.get(n.id, []))
-        for n in qt.nhom_dieu_kien
-    }
+    nho_nhom: dict[int, bool] = {}
+
+    def nhom_dat(nhom_id: int) -> bool:
+        if nhom_id not in nho_nhom:
+            nho_nhom[nhom_id] = any(
+                _so_sanh(cs.get((d.chi_so, d.khoa)), d.toan_tu, d.gia_tri) for d in cm.dieu_kien.get(nhom_id, [])
+            )
+        return nho_nhom[nhom_id]
 
     def nhom_cua(cong_thuc_id: int, ctr: ChuongTrinhTinh) -> list[NhomDieuKienTinh]:
         return [
             n
-            for n in qt.nhom_dieu_kien
-            if n.de_an_id == ctr.de_an_id
-            and (n.cong_thuc_id is None or n.cong_thuc_id == cong_thuc_id)
+            for n in cm.nhom_theo_de_an.get(ctr.de_an_id, [])
+            if (n.cong_thuc_id is None or n.cong_thuc_id == cong_thuc_id)
             and (n.chuong_trinh_id is None or n.chuong_trinh_id == ctr.id)
         ]
 
@@ -272,8 +292,8 @@ def tinh_phuong_an(
         tong = 0.0
         if ct.ap_dung_diem_cong:
             theo_nhom: dict[str, float] = {}
-            for d in qt.diem_cong:
-                if d.de_an_id != ct.de_an_id or (d.cong_thuc_id is not None and d.cong_thuc_id != ct.id):
+            for d in cm.diem_cong_theo_de_an.get(ct.de_an_id, []):
+                if d.cong_thuc_id is not None and d.cong_thuc_id != ct.id:
                     continue
                 if _so_sanh(cs.get((d.chi_so, d.khoa)), d.toan_tu, d.gia_tri):
                     theo_nhom[d.nhom] = _lon_hon(theo_nhom.get(d.nhom), d.diem)
@@ -283,8 +303,15 @@ def tinh_phuong_an(
         diem_cong_cache[ct.id] = v
         return v
 
+    # Điểm chuẩn theo (trường, mã xét tuyển), giữ thứ tự gốc để chọn mốc giống hệt khi quét cả danh sách.
+    diem_chuan_theo_ma: dict[tuple[str, str | None], list[DiemChuanTinh]] = {}
+    for d in diem_chuan or []:
+        diem_chuan_theo_ma.setdefault((d.ma_truong, d.ma_xet_tuyen), []).append(d)
+
     ket_qua: list[KetQuaPhuongAn] = []
     for pa in qt.phuong_an:
+        if chuong_trinh_ids is not None and pa.chuong_trinh_id not in chuong_trinh_ids:
+            continue
         ct = cm.cong_thuc.get(pa.cong_thuc_id)
         ctr = cm.chuong_trinh.get(pa.chuong_trinh_id)
         if ct is None or ctr is None or not ct.trang_thai or ctr.nam != nam:
@@ -307,11 +334,11 @@ def tinh_phuong_an(
                 continue
         else:
             # CHI_DIEU_KIEN / THU_CONG: chỉ giữ khi đạt mọi nhóm và có nhóm riêng của công thức.
-            if not nhom or not all(nhom_dat[n.id] for n in nhom) or not any(n.cong_thuc_id is not None for n in nhom):
+            if not nhom or not all(nhom_dat(n.id) for n in nhom) or not any(n.cong_thuc_id is not None for n in nhom):
                 continue
             r.chi_tiet = "Không tính điểm" if ct.kieu == "CHI_DIEU_KIEN" else "Hệ thống chưa tự tính điểm"
 
-        ly_do = [n.ten for n in nhom if not nhom_dat[n.id]]
+        ly_do = [n.ten for n in nhom if not nhom_dat(n.id)]
         r.so_nhom = len(nhom)
         r.so_nhom_dat = len(nhom) - len(ly_do)
 
@@ -350,7 +377,9 @@ def tinh_phuong_an(
 
         # 10. Điểm chuẩn tham chiếu: năm gần nhất, ưu tiên dòng khớp tổ hợp rồi khớp phương thức.
         if r.diem_xet is not None:
-            _gan_diem_chuan(r, ct, ctr, pa.ma_to_hop, nam, diem_chuan or [])
+            _gan_diem_chuan(
+                r, ct, ctr, pa.ma_to_hop, nam, diem_chuan_theo_ma.get((ctr.ma_truong, ctr.ma_xet_tuyen), [])
+            )
         ket_qua.append(r)
     return KetQuaTinh(chi_so=cs, phuong_an=ket_qua, muc_uu_tien=muc_ut)
 
@@ -378,7 +407,7 @@ def _tinh_to_hop(r, ct, qt, cm, ma_to_hop, thpt, hoc_ba, ngoai_ngu) -> bool:
                 w = 1
             nguon = thpt.get(m) if ct.nguon == "THI_THPT" else hoc_ba.get(m)
             la_ngoai_ngu = mon.nhom == NHOM_NGOAI_NGU
-            chung_chi = ngoai_ngu.get(ct.bang_ngoai_ngu_id, {}).get(m) if ct.bang_ngoai_ngu_id is not None else None
+            chung_chi = ngoai_ngu(ct.bang_ngoai_ngu_id).get(m) if ct.bang_ngoai_ngu_id is not None else None
             dung_chung_chi = False
             if la_ngoai_ngu and ct.thay_ngoai_ngu == "BAT_BUOC":
                 diem = chung_chi
@@ -428,14 +457,15 @@ def _tinh_thanh_phan(r, ct, cm, gia_tri_tp) -> bool:
     """Điểm gốc công thức THANH_PHAN; các thành phần cùng vị trí thay thế nhau, lấy giá trị cao nhất."""
     theo_vi_tri: dict[int, tuple[float | None, str]] = {}
     for tp in cm.thanh_phan.get(ct.id, []):
-        co = tp.id in gia_tri_tp
-        v = tp.he_so * gia_tri_tp[tp.id] if co else None
+        gia_tri = gia_tri_tp(tp)
+        co = gia_tri is not None
+        v = tp.he_so * gia_tri if co else None
         hien_tai = theo_vi_tri.get(tp.vi_tri)
         if hien_tai is None or (v is not None and (hien_tai[0] is None or v > hien_tai[0])):
             mo_ta = (
                 (tp.ten or tp.loai)
                 + " "
-                + (_so_js(lam_tron(gia_tri_tp[tp.id], 2)) if co else "?")
+                + (_so_js(lam_tron(gia_tri, 2)) if co else "?")
                 + (" × " + _so_js(tp.he_so) if tp.he_so != 1 else "")
             )
             theo_vi_tri[tp.vi_tri] = (v if v is not None else (hien_tai[0] if hien_tai else None), mo_ta)

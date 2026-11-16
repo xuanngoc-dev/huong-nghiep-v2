@@ -107,6 +107,8 @@ class TimTruongPhuHopResult(BaseModel):
     so_truong_tim_thay: int
     so_truong_phu_hop_so_bo: int
     luot: LuotTimTruong
+    # Có khi năm đó có đề án "đang áp dụng" và bộ tính xét tuyển chạy được.
+    lan_danh_gia_id: int | None = None
 
 
 class LichSuTimTruongQuanTri(BaseModel):
