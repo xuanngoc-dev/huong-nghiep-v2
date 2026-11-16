@@ -1,6 +1,6 @@
 # Danh sách API
 
-Tự sinh từ code lúc 16/11/2026 21:31 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 16/11/2026 23:06 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
 Tiền tố chung: `/api/v1`. Tổng cộng **298** API.
 
@@ -373,7 +373,7 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `GET` | `/api/v1/chuong-trinh-dao-tao` | Bắt buộc | Lấy danh sách chương trình có phân trang. Lọc theo từ khóa, trường và năm của đề án. |
+| `GET` | `/api/v1/chuong-trinh-dao-tao` | Bắt buộc | Lấy danh sách chương trình có phân trang. Lọc theo từ khóa, trường, năm, đề án và ngành. |
 | `POST` | `/api/v1/chuong-trinh-dao-tao` | Bắt buộc | Thêm một chương trình đào tạo vào đề án đã chọn. |
 | `DELETE` | `/api/v1/chuong-trinh-dao-tao` | Bắt buộc | Xóa nhiều chương trình đào tạo theo danh sách id. |
 | `GET` | `/api/v1/chuong-trinh-dao-tao/gan-nganh-co-so` | Bắt buộc | Chương trình của một đề án kèm ngành, cơ sở hiện tại và gợi ý ngành theo tên / mã xét tuyển. |

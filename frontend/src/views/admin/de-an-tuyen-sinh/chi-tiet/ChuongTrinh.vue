@@ -58,7 +58,12 @@
     <el-table-column label="TT" width="64" align="center">
       <template #default="{ $index }">{{ $index + 1 }}</template>
     </el-table-column>
+    <el-table-column v-if="hienTruong" label="Trường" min-width="200">
+      <template #default="{ row }">{{ row.truong }}</template>
+    </el-table-column>
+    <el-table-column v-if="hienTruong" prop="nam" label="Năm" width="80" align="center" />
     <el-table-column prop="ten" label="Chương trình/ngành đào tạo" min-width="260" />
+    <el-table-column v-if="hienTruong" prop="nganh" label="Mã ngành" width="110" align="center" />
     <el-table-column prop="chiTieu" label="Chỉ tiêu dự kiến" width="120" align="center" />
     <el-table-column prop="ma" label="Mã xét tuyển" width="130" align="center" />
     <el-table-column
@@ -82,7 +87,7 @@
               </template>
               <span class="method-name">{{ column.label }}</span>
             </CustomTooltip>
-            <CustomTooltip v-if="column.used" content="Xem chi tiết" placement="top">
+            <CustomTooltip v-if="column.used && !hienTruong" content="Xem chi tiết" placement="top">
               <button
                 type="button"
                 class="method-detail"
@@ -110,6 +115,17 @@
           </CustomIcon>
         </template>
       </el-table-column>
+    </el-table-column>
+    <el-table-column v-if="hienTruong" label="Thao tác" width="90" fixed="right" align="center">
+      <template #default="{ row }">
+        <div class="row-actions">
+          <CustomTooltip content="Xem chi tiết đề án" placement="top">
+            <CustomButton link type="primary" aria-label="Xem chi tiết đề án" @click="emit('xem-de-an', row.deAnId)">
+              <CustomIcon><View /></CustomIcon>
+            </CustomButton>
+          </CustomTooltip>
+        </div>
+      </template>
     </el-table-column>
     <template #empty>
       <CustomEmpty :description="emptyText" />
@@ -181,7 +197,11 @@ const props = defineProps({
   programs: { type: Array, default: () => [] },
   methods: { type: Array, default: () => [] },
   criteria: { type: Array, default: () => [] },
+  // Bảng gộp nhiều đề án: thêm cột Trường, Năm, Mã ngành và nút xem chi tiết đề án (phát sự kiện xem-de-an).
+  hienTruong: { type: Boolean, default: false },
 })
+
+const emit = defineEmits(['xem-de-an'])
 
 const detailVisible = ref(false)
 const activeDetail = ref(null)
@@ -296,7 +316,8 @@ const methodColumns = computed(() => {
 const tableRows = computed(() => {
   const usedByProgram = new Map()
   for (const method of props.methods) {
-    const label = method.chuong_trinh || ''
+    // chuong_trinh_key: khóa riêng khi gộp nhiều đề án (nhãn "mã — tên" có thể trùng giữa các trường).
+    const label = method.chuong_trinh_key ?? method.chuong_trinh ?? ''
     const key = methodKey(method)
     if (!label || !key) continue
     if (!usedByProgram.has(label)) usedByProgram.set(label, new Map())
@@ -309,7 +330,7 @@ const tableRows = computed(() => {
   }
 
   return props.programs.map((program) => {
-    const used = usedByProgram.get(programLabel(program)) || new Map()
+    const used = usedByProgram.get(program.chuong_trinh_key ?? programLabel(program)) || new Map()
     const cells = {}
     for (const column of methodColumns.value) {
       cells[column.key] = used.has(column.key)
@@ -322,6 +343,10 @@ const tableRows = computed(() => {
       ten: program.ten_chuong_trinh || '—',
       chiTieu: quota == null || quota === '' ? '—' : Number(quota).toLocaleString('vi-VN'),
       ma: program.ma_xet_tuyen || '—',
+      truong: [program.ma_truong, program.ten_truong].filter(Boolean).join(' — ') || '—',
+      nam: program.nam_tuyen_sinh ?? '—',
+      nganh: program.ma_nganh_hien_thi || '—',
+      deAnId: program.de_an_id,
       cells,
     }
   })

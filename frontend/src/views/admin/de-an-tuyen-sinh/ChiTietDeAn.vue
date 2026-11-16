@@ -19,7 +19,7 @@
         <component
           :is="tab.component"
           v-else-if="tab.merged"
-          :programs="rowsOf('dats_chuong_trinh_dao_tao')"
+          :programs="chuongTrinhLoc"
           :methods="rowsOf('dats_phuong_thuc')"
           :criteria="rowsOf('dats_tieu_chi_xet_tuyen')"
         />
@@ -90,6 +90,8 @@ const props = defineProps({
   tabMacDinh: { type: String, default: 'tong_quan' },
   // Tải lại khi true (dialog truyền trạng thái mở; trang luôn true).
   active: { type: Boolean, default: true },
+  // Lọc tab Chương trình & phương thức theo mã ngành (hoặc đầu mã), ví dụ 7140103.
+  maNganh: { type: String, default: '' },
 })
 
 const loading = ref(false)
@@ -108,13 +110,32 @@ const subtitle = computed(() => {
 
 function tabLabel(tab) {
   if (tab.overview || tab.quyTac || !detail.value) return tab.label
-  const count = detail.value.bang?.[tab.key]?.length || 0
+  const count = tab.merged ? chuongTrinhLoc.value.length : detail.value.bang?.[tab.key]?.length || 0
   return `${tab.label} (${count})`
 }
 
 function rowsOf(key) {
   return detail.value?.bang?.[key] || []
 }
+
+function nhanChuongTrinh(program) {
+  const code = String(program?.ma_xet_tuyen || '').trim()
+  const name = String(program?.ten_chuong_trinh || '').trim()
+  return code && name ? `${code} — ${name}` : code || name
+}
+
+// Ngành khớp theo ngành đã gắn (nhãn "mã — tên") hoặc mã ngành chuẩn ở trình độ ngành, so khớp đầu mã.
+const chuongTrinhLoc = computed(() => {
+  const programs = rowsOf('dats_chuong_trinh_dao_tao')
+  const ma = props.maNganh.trim()
+  if (!ma) return programs
+  const theoTrinhDo = new Set(
+    rowsOf('dats_trinh_do_nganh')
+      .filter((row) => String(row.ma_nganh_chuan || '').startsWith(ma))
+      .map((row) => row.chuong_trinh),
+  )
+  return programs.filter((p) => String(p.nganh || '').startsWith(ma) || theoTrinhDo.has(nhanChuongTrinh(p)))
+})
 
 function errorMessage(error) {
   const message = error?.response?.data?.detail

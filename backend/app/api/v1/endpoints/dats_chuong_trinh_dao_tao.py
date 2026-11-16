@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
+from app.models.dats_phuong_thuc import DatsPhuongThuc
 from app.models.dats_trinh_do_nganh import DatsTrinhDoNganh
 from app.models.dats_tru_so import DatsTruSo
 from app.models.dats_tuyen_sinh import DatsTuyenSinh
@@ -19,6 +20,7 @@ from app.schemas.dats_chuong_trinh_dao_tao import (
     ChuongTrinhGanNganhPublic,
     ChuongTrinhGanNganhResult,
     ChuongTrinhGanNganhWrite,
+    ChuongTrinhPhuongThucTomTat,
     DatsChuongTrinhDaoTaoDeleteMany,
     DatsChuongTrinhDaoTaoDeleteManyResult,
     DatsChuongTrinhDaoTaoFields,
@@ -177,12 +179,20 @@ def list_chuong_trinh(
     q: str | None = Query(default=None, max_length=255),
     nam_tuyen_sinh: int | None = Query(default=None, ge=1990, le=2100),
     ma_truong: str | None = Query(default=None, max_length=20),
+    ma_nganh: str | None = Query(
+        default=None, max_length=20, description="Mã ngành hoặc đầu mã (nhóm ngành), ví dụ 7140103"
+    ),
+    de_an_id: int | None = Query(default=None, ge=1),
+    kem_phuong_thuc: bool = Query(default=False, description="Trả kèm phương thức, tổ hợp và mã ngành chuẩn"),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=1000),
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DatsChuongTrinhDaoTaoPage:
-    """Lấy danh sách chương trình có phân trang. Lọc theo từ khóa, trường và năm của đề án."""
+    """Lấy danh sách chương trình có phân trang. Lọc theo từ khóa, trường, năm, đề án và ngành.
+
+    Ngành khớp theo ngành đã gắn cho chương trình hoặc mã ngành chuẩn khai ở trình độ ngành (so khớp đầu mã).
+    """
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())
@@ -200,11 +210,26 @@ def list_chuong_trinh(
         filters.append(DatsTuyenSinh.nam_tuyen_sinh == nam_tuyen_sinh)
     if ma_truong and ma_truong.strip():
         filters.append(DatsTuyenSinh.ma_truong == ma_truong.strip())
+    if de_an_id is not None:
+        filters.append(DatsChuongTrinhDaoTao.de_an_id == de_an_id)
+    if ma_nganh and ma_nganh.strip():
+        dau_ma = _like_pattern(ma_nganh.strip())[1:]  # chỉ so khớp đầu mã
+        filters.append(
+            or_(
+                DmNganhDaoTao.ma_nganh.like(dau_ma, escape="\\"),
+                select(DatsTrinhDoNganh.id)
+                .where(
+                    DatsTrinhDoNganh.de_an_chuong_trinh_id == DatsChuongTrinhDaoTao.id,
+                    DatsTrinhDoNganh.ma_nganh_chuan.like(dau_ma, escape="\\"),
+                )
+                .exists(),
+            )
+        )
 
     joined = (
-        DatsChuongTrinhDaoTao.__table__.join(DatsTuyenSinh, DatsChuongTrinhDaoTao.de_an_id == DatsTuyenSinh.id).join(
-            DmTruong, DatsTuyenSinh.ma_truong == DmTruong.ma_truong
-        )
+        DatsChuongTrinhDaoTao.__table__.join(DatsTuyenSinh, DatsChuongTrinhDaoTao.de_an_id == DatsTuyenSinh.id)
+        .join(DmTruong, DatsTuyenSinh.ma_truong == DmTruong.ma_truong)
+        .outerjoin(DmNganhDaoTao, DatsChuongTrinhDaoTao.nganh_dao_tao_id == DmNganhDaoTao.id)
     )
     count_stmt = select(func.count()).select_from(joined)
     stmt = _joined()
@@ -223,12 +248,41 @@ def list_chuong_trinh(
         .offset((page - 1) * page_size)
         .limit(page_size)
     ).all()
-    return DatsChuongTrinhDaoTaoPage(
-        items=[_to_public(item, de_an, truong, nganh, co_so) for item, de_an, truong, nganh, co_so in rows],
-        total=total,
-        page=page,
-        page_size=page_size,
-    )
+    items = [_to_public(item, de_an, truong, nganh, co_so) for item, de_an, truong, nganh, co_so in rows]
+    if kem_phuong_thuc and items:
+        _gan_phuong_thuc(db, items)
+    return DatsChuongTrinhDaoTaoPage(items=items, total=total, page=page, page_size=page_size)
+
+
+def _gan_phuong_thuc(db: Session, items: list[DatsChuongTrinhDaoTaoPublic]) -> None:
+    """Gắn phương thức (kèm tổ hợp) và mã ngành chuẩn ở trình độ ngành cho các chương trình của trang."""
+    ids = [item.id for item in items]
+    phuong_thuc: dict[int, list[ChuongTrinhPhuongThucTomTat]] = {i: [] for i in ids}
+    for pt in db.scalars(
+        select(DatsPhuongThuc)
+        .where(DatsPhuongThuc.de_an_chuong_trinh_id.in_(ids))
+        .order_by(DatsPhuongThuc.thu_tu_uu_tien, DatsPhuongThuc.id)
+    ):
+        to_hop = pt.to_hop_mon_hoc if isinstance(pt.to_hop_mon_hoc, list) else None
+        phuong_thuc[pt.de_an_chuong_trinh_id].append(
+            ChuongTrinhPhuongThucTomTat(
+                ma_phuong_thuc_cua_bo=pt.ma_phuong_thuc_cua_bo,
+                ma_phuong_thuc_cua_truong=pt.ma_phuong_thuc_cua_truong,
+                ten_phuong_thuc_cua_truong=pt.ten_phuong_thuc_cua_truong,
+                to_hop_mon_hoc=[str(x) for x in to_hop] if to_hop else None,
+            )
+        )
+    ma_chuan: dict[int, list[str]] = {i: [] for i in ids}
+    for ct_id, ma in db.execute(
+        select(DatsTrinhDoNganh.de_an_chuong_trinh_id, DatsTrinhDoNganh.ma_nganh_chuan).where(
+            DatsTrinhDoNganh.de_an_chuong_trinh_id.in_(ids), DatsTrinhDoNganh.ma_nganh_chuan.is_not(None)
+        )
+    ):
+        if ma and ma not in ma_chuan[ct_id]:
+            ma_chuan[ct_id].append(ma)
+    for item in items:
+        item.phuong_thuc = phuong_thuc[item.id]
+        item.ma_nganh_chuan = ma_chuan[item.id]
 
 
 @router.get("/gan-nganh-co-so", response_model=ChuongTrinhGanNganhPage)

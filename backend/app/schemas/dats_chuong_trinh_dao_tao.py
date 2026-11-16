@@ -82,6 +82,15 @@ class DatsChuongTrinhDaoTaoWrite(DatsChuongTrinhDaoTaoFields):
     de_an_id: int = Field(..., ge=1)
 
 
+class ChuongTrinhPhuongThucTomTat(BaseModel):
+    """Phương thức của chương trình (trả kèm khi kem_phuong_thuc = true)."""
+
+    ma_phuong_thuc_cua_bo: str
+    ma_phuong_thuc_cua_truong: str | None = None
+    ten_phuong_thuc_cua_truong: str | None = None
+    to_hop_mon_hoc: list[str] | None = None
+
+
 class DatsChuongTrinhDaoTaoPublic(BaseModel):
     id: int
     de_an_id: int
@@ -105,6 +114,9 @@ class DatsChuongTrinhDaoTaoPublic(BaseModel):
     chi_tieu_tuyen_sinh: int | None = None
     kieu_phan_bo_chi_tieu: str | None = None
     ghi_chu: str | None = None
+    # Chỉ có khi kem_phuong_thuc = true: phương thức và mã ngành chuẩn khai ở trình độ ngành.
+    phuong_thuc: list[ChuongTrinhPhuongThucTomTat] | None = None
+    ma_nganh_chuan: list[str] | None = None
 
 
 class DatsChuongTrinhDaoTaoPage(BaseModel):
