@@ -55,6 +55,14 @@ def _kiem_tra_api_key(authorization: str | None) -> None:
         return
     kieu, _, gia_tri = (authorization or "").strip().partition(" ")
     if kieu.lower() not in ("apikey", "bearer") or not hmac.compare_digest(gia_tri.strip(), khoa):
+        # Chỉ ghi kiểu header và độ dài để tra lỗi, không ghi khóa.
+        logger.warning(
+            "Webhook ngân hàng sai API key: có header=%s, kiểu=%r, độ dài nhận=%d, độ dài cấu hình=%d",
+            authorization is not None,
+            kieu[:20],
+            len(gia_tri.strip()),
+            len(khoa),
+        )
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="API key webhook không hợp lệ")
 
 
