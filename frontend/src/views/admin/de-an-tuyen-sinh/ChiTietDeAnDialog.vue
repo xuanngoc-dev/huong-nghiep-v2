@@ -22,6 +22,7 @@
             :de-an="deAn"
             :loading="loading"
           />
+          <component :is="tab.component" v-else-if="tab.quyTac && props.deAnId" :de-an-id="props.deAnId" />
           <component
             :is="tab.component"
             v-else-if="tab.merged"
@@ -65,9 +66,11 @@ import QuyDoiNguong from './chi-tiet/QuyDoiNguong.vue'
 import QuyDoiDiem from './chi-tiet/QuyDoiDiem.vue'
 import XetTuyenThang from './chi-tiet/XetTuyenThang.vue'
 import UuTien from './chi-tiet/UuTien.vue'
+import QuyTacXetTuyen from './chi-tiet/QuyTacXetTuyen.vue'
 
 const tabs = [
   { key: 'tong_quan', label: 'Tổng quan', component: TongQuan, overview: true },
+  { key: 'quy_tac', label: 'Quy tắc xét tuyển', component: QuyTacXetTuyen, quyTac: true },
   { key: 'dats_tru_so', label: 'Trụ sở', component: TruSo },
   { key: 'dats_website', label: 'Website', component: Website },
   { key: 'dats_lien_he_tuyen_sinh', label: 'Liên hệ', component: LienHe },
@@ -112,7 +115,7 @@ const subtitle = computed(() => {
 })
 
 function tabLabel(tab) {
-  if (tab.overview || !detail.value) return tab.label
+  if (tab.overview || tab.quyTac || !detail.value) return tab.label
   const count = detail.value.bang?.[tab.key]?.length || 0
   return `${tab.label} (${count})`
 }

@@ -39,3 +39,11 @@ export function deleteDeAnTuyenSinhMany(ids) {
 export function saoChepDeAnTuyenSinh(id, payload, config) {
   return api.post(`/de-an-tuyen-sinh/${id}/sao-chep`, payload, config).then((res) => res.data)
 }
+
+export function fetchQuyTacXetTuyen(id, config) {
+  return api.get(`/de-an-tuyen-sinh/${id}/quy-tac`, config).then((res) => res.data)
+}
+
+export function importQuyTacXetTuyen(id, payload, config) {
+  return api.post(`/de-an-tuyen-sinh/${id}/quy-tac/import`, payload, config).then((res) => res.data)
+}
