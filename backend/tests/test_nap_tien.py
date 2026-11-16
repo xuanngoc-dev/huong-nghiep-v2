@@ -144,6 +144,56 @@ class TestDoiSoat(unittest.TestCase):
         self.assertEqual(gd.trang_thai, nap_tien.THANH_CONG)
 
 
+class _DbKiemTra(_DbGia):
+    """Session giả cho kiem_tra_thanh_toan: scalars() trả danh sách khoản tiền vào ứng viên."""
+
+    def __init__(self, ung_vien, *ket_qua):
+        super().__init__(*ket_qua)
+        self.ung_vien = ung_vien
+
+    def scalars(self, *_args, **_kwargs):
+        return SimpleNamespace(all=lambda: self.ung_vien)
+
+
+class TestKiemTraThanhToan(unittest.TestCase):
+    def test_khop_ma_thi_xac_nhan_va_cong_so_du(self):
+        gd = _giao_dich(created_at=None)
+        ho_so = SimpleNamespace(luot_tra_cuu=2)
+        tien = _tien_vao("NGUYEN VAN A DH 4K9F 7Q", 15000)
+        self.assertTrue(nap_tien.kiem_tra_thanh_toan(_DbKiemTra([tien], ho_so), gd))
+        self.assertEqual(gd.trang_thai, nap_tien.THANH_CONG)
+        self.assertEqual(ho_so.luot_tra_cuu, 12)
+        self.assertEqual(tien.trang_thai_doi_soat, nap_tien.DA_KHOP)
+        self.assertEqual(tien.lich_su_nap_tien_id, 7)
+
+    def test_ma_dinh_chuoi_khac_truoc_sau_van_khop(self):
+        for noi_dung in ("123DH4K9F7Q", "DH4K9F7Q DEF", "abcdh4k9f7qxyz"):
+            with self.subTest(noi_dung=noi_dung):
+                gd = _giao_dich(created_at=None)
+                tien = _tien_vao(noi_dung, 15000)
+                self.assertTrue(nap_tien.kiem_tra_thanh_toan(_DbKiemTra([tien], SimpleNamespace(luot_tra_cuu=0)), gd))
+                self.assertEqual(tien.trang_thai_doi_soat, nap_tien.DA_KHOP)
+
+    def test_chi_tim_trong_noi_dung(self):
+        gd = _giao_dich(created_at=None)
+        tien = _tien_vao("chuyen tien", 15000)
+        tien.ma_thanh_toan = "DH4K9F7Q"
+        self.assertFalse(nap_tien.kiem_tra_thanh_toan(_DbKiemTra([tien]), gd))
+
+    def test_noi_dung_khong_co_ma_thi_khong_cong(self):
+        gd = _giao_dich(created_at=None)
+        tien = _tien_vao("DH2222AB chuyen tien", 15000)
+        self.assertFalse(nap_tien.kiem_tra_thanh_toan(_DbKiemTra([tien]), gd))
+        self.assertEqual(gd.trang_thai, nap_tien.CHO_THANH_TOAN)
+        self.assertIsNone(tien.lich_su_nap_tien_id)
+
+    def test_giao_dich_khong_con_cho_thi_bo_qua(self):
+        gd = _giao_dich(trang_thai=nap_tien.THANH_CONG, created_at=None)
+        tien = _tien_vao("DH4K9F7Q", 15000)
+        self.assertFalse(nap_tien.kiem_tra_thanh_toan(_DbKiemTra([tien]), gd))
+        self.assertIsNone(tien.lich_su_nap_tien_id)
+
+
 class TestWebhook(unittest.TestCase):
     def setUp(self):
         self.db = _DbGia()

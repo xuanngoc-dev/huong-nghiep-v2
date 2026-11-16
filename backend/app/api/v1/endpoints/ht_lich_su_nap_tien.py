@@ -197,6 +197,34 @@ def cap_nhat_nap_tien(
     return giao_dich
 
 
+@member_router.post("/{item_id}/kiem-tra-thanh-toan", response_model=NapTienPublic)
+def kiem_tra_thanh_toan(
+    item_id: int,
+    db: Session = Depends(get_db),
+    user: NguoiDung = Depends(get_current_user),
+) -> HtLichSuNapTien:
+    """Kiểm tra giao dịch đang chờ đã có tiền về chưa (modal thanh toán gọi định kỳ).
+
+    Có khoản tiền vào đúng số tiền, nội dung chứa mã giao dịch thì xác nhận và cộng Edu coin/lượt.
+    Giao dịch không còn chờ thì trả nguyên trạng để modal dừng kiểm tra.
+    """
+    giao_dich = db.scalar(
+        select(HtLichSuNapTien)
+        .where(HtLichSuNapTien.id == item_id, HtLichSuNapTien.nguoi_dung_id == user.id)
+        .with_for_update()
+    )
+    if giao_dich is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy giao dịch nạp tiền có id = {item_id}",
+        )
+    nap_tien.kiem_tra_thanh_toan(db, giao_dich)
+    # Commit cả khi không khớp để nhả khóa dòng.
+    db.commit()
+    db.refresh(giao_dich)
+    return giao_dich
+
+
 @member_router.post("/{item_id}/huy", response_model=NapTienPublic)
 def huy_nap_tien(
     item_id: int,

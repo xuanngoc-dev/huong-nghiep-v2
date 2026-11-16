@@ -16,6 +16,11 @@ export function capNhatNapTien(id, payload, config = {}) {
   return api.patch(`/tai-khoan/nap-tien/${id}`, payload, config).then((res) => res.data)
 }
 
+// Kiểm tra giao dịch đang chờ đã có tiền về chưa; khớp thì backend xác nhận và cộng số dư.
+export function kiemTraThanhToan(id, config = {}) {
+  return api.post(`/tai-khoan/nap-tien/${id}/kiem-tra-thanh-toan`, null, config).then((res) => res.data)
+}
+
 export function huyNapTien(id) {
   return api.post(`/tai-khoan/nap-tien/${id}/huy`).then((res) => res.data)
 }

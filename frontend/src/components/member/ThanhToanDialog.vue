@@ -25,6 +25,26 @@
         </dl>
       </section>
 
+      <!-- Đếm ngược tự kiểm tra tiền về; hết giờ thì cho kiểm tra lại. -->
+      <div
+        v-if="giaoDich.trang_thai === TRANG_THAI_CHO"
+        class="cho-thanh-toan"
+        :class="{ 'is-het-gio': !dangCho }"
+        role="status"
+        aria-live="polite"
+      >
+        <template v-if="dangCho">
+          <CustomIcon class="cho-thanh-toan__icon"><Loading /></CustomIcon>
+          <span>
+            Đang chờ thanh toán...
+          </span>
+        </template>
+        <template v-else>
+          <span>Chưa nhận được tiền. Nếu bạn đã chuyển khoản, hãy kiểm tra lại.</span>
+          <CustomButton size="small" type="primary" plain @click="batDauCho">Kiểm tra lại</CustomButton>
+        </template>
+      </div>
+
       <!-- Trái: danh sách ngân hàng; phải: mã QR và thông tin chuyển khoản. Khung hẹp thì xếp dọc. -->
       <div class="thanh-toan__than">
         <section class="thanh-toan__ngan-hang" aria-label="Chọn ngân hàng">
@@ -122,12 +142,16 @@
  * Modal thanh toán một giao dịch nạp tiền đang chờ: chọn ngân hàng nhận tiền, hiện mã VietQR và thông tin chuyển
  * khoản. Đổi ngân hàng và "Tôi đã chuyển khoản" được lưu vào giao dịch (PATCH /tai-khoan/nap-tien/{id}).
  */
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { apiAssetUrl } from '@/api/apiUrl'
-import { capNhatNapTien } from '@/api/napTien'
+import { capNhatNapTien, kiemTraThanhToan } from '@/api/napTien'
 import { fetchNganHangNhanTien } from '@/api/nganHangThanhToan'
-import { LOAI_AP_DUNG, hienSo, hienTien, timTheoGiaTri } from '@/data/napTien'
+import { LOAI_AP_DUNG, TRANG_THAI_NAP_TIEN, hienSo, hienTien, timTheoGiaTri } from '@/data/napTien'
+
+const TRANG_THAI_CHO = 0
+const TRANG_THAI_THANH_CONG = 1
+const CHU_KY_KIEM_TRA = 2000
 
 const visible = defineModel({ type: Boolean, default: false })
 
@@ -136,8 +160,10 @@ const props = defineProps({
   giaoDich: { type: Object, default: null },
   // Gói cước gốc (tùy chọn): có thì hiện giá/lượt gốc gạch ngang khi đang khuyến mãi.
   goi: { type: Object, default: null },
+  // Thời gian tự kiểm tra tiền về sau khi mở modal (giây).
+  thoiGianCho: { type: Number, default: 180 },
 })
-const emit = defineEmits(['updated'])
+const emit = defineEmits(['updated', 'thanh-cong'])
 
 const nganHang = ref([])
 const dangTaiNganHang = ref(false)
@@ -145,6 +171,12 @@ const loiNganHang = ref('')
 const nganHangChonId = ref(null)
 const loiQr = ref(false)
 const dangBao = ref(false)
+const conLai = ref(0)
+const dangCho = ref(false)
+let hetHanLuc = 0
+let henGioKiemTra = null
+let henDemNguoc = null
+let dangGoi = false
 
 const loai = computed(() => {
   const item = timTheoGiaTri(LOAI_AP_DUNG, props.giaoDich?.loai_ap_dung)
@@ -200,6 +232,71 @@ function errorMessage(error, fallback) {
   return fallback
 }
 
+async function saoChep(text, nhan) {
+  try {
+    await navigator.clipboard.writeText(text)
+    ElMessage.success(`Đã sao chép ${nhan.toLowerCase()}`)
+  } catch {
+    ElMessage.error('Không sao chép được, vui lòng chép thủ công')
+  }
+}
+
+function dungCho() {
+  dangCho.value = false
+  clearInterval(henDemNguoc)
+  clearTimeout(henGioKiemTra)
+  henDemNguoc = null
+  henGioKiemTra = null
+}
+
+// Bắt đầu đếm ngược và cứ CHU_KY_KIEM_TRA gọi backend kiểm tra một lần (không chồng request).
+function batDauCho() {
+  dungCho()
+  if (props.giaoDich?.trang_thai !== TRANG_THAI_CHO) return
+  dangCho.value = true
+  hetHanLuc = Date.now() + props.thoiGianCho * 1000
+  conLai.value = props.thoiGianCho
+  henDemNguoc = setInterval(() => {
+    conLai.value = Math.max(0, Math.ceil((hetHanLuc - Date.now()) / 1000))
+    if (conLai.value === 0) dungCho()
+  }, 1000)
+  henKiemTraTiep()
+}
+
+function henKiemTraTiep() {
+  henGioKiemTra = setTimeout(kiemTra, CHU_KY_KIEM_TRA)
+}
+
+async function kiemTra() {
+  const gd = props.giaoDich
+  if (!dangCho.value || !gd || dangGoi) return
+  dangGoi = true
+  try {
+    const data = await kiemTraThanhToan(gd.id, { skipLoading: true })
+    if (data.trang_thai !== TRANG_THAI_CHO) {
+      dungCho()
+      emit('updated', data)
+      xuLyKetThuc(data)
+      return
+    }
+  } catch {
+    // Lỗi mạng tạm thời: bỏ qua, lần sau kiểm tra lại.
+  } finally {
+    dangGoi = false
+  }
+  if (dangCho.value) henKiemTraTiep()
+}
+
+function xuLyKetThuc(data) {
+  if (data.trang_thai === TRANG_THAI_THANH_CONG) {
+    ElMessage.success(`Thanh toán thành công, đã cộng ${hienSo(data.so_luot_nhan_duoc)} ${loai.value.donVi}.`)
+    emit('thanh-cong', data)
+    visible.value = false
+    return
+  }
+  ElMessage.warning(`Giao dịch ${data.ma_giao_dich}: ${timTheoGiaTri(TRANG_THAI_NAP_TIEN, data.trang_thai).label}.`)
+}
+
 async function taiNganHang() {
   if (nganHang.value.length) return
   dangTaiNganHang.value = true
@@ -233,14 +330,27 @@ async function baoDaChuyenKhoan() {
   try {
     const data = await capNhatNapTien(gd.id, { ngan_hang_thanh_toan_id: nganHangChonId.value, da_chuyen_khoan: true })
     emit('updated', data)
-    ElMessage.success('Đã ghi nhận. Số dư sẽ được cộng ngay khi hệ thống nhận được tiền.')
-    visible.value = false
+    ElMessage.success('Đã ghi nhận. Hệ thống đang kiểm tra tiền về.')
+    // Giữ modal mở và đếm lại từ đầu để tiếp tục tự kiểm tra.
+    batDauCho()
   } catch (error) {
     ElMessage.error(errorMessage(error, 'Không ghi nhận được'))
   } finally {
     dangBao.value = false
   }
 }
+
+// Mở modal (hoặc đổi giao dịch) thì bắt đầu đếm ngược; đóng modal thì dừng.
+watch(
+  () => [visible.value, props.giaoDich?.id],
+  ([open]) => {
+    if (open && props.giaoDich) batDauCho()
+    else dungCho()
+  },
+  { immediate: true },
+)
+
+onBeforeUnmount(dungCho)
 
 // Mở modal: tải ngân hàng, chọn sẵn ngân hàng đã lưu trong giao dịch (hoặc ngân hàng đầu tiên).
 watch(
@@ -262,6 +372,41 @@ watch(
   container-type: inline-size;
   display: grid;
   gap: 16px;
+}
+
+.cho-thanh-toan {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 10px 14px;
+  border: 1px solid #b7dcc6;
+  border-radius: 10px;
+  background: #eef6f1;
+  color: #0c5c34;
+  font-size: 14px;
+}
+
+.cho-thanh-toan.is-het-gio {
+  border-color: var(--el-color-warning-light-5);
+  background: var(--el-color-warning-light-9);
+  color: var(--el-text-color-primary);
+}
+
+.cho-thanh-toan__icon {
+  animation: cho-thanh-toan-quay 1s linear infinite;
+}
+
+@keyframes cho-thanh-toan-quay {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cho-thanh-toan__icon {
+    animation: none;
+  }
 }
 
 .thanh-toan__muted {

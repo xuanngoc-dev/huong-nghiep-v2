@@ -8,7 +8,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from app.models.ht_lich_su_giao_dich_ngan_hang import HtLichSuGiaoDichNganHang
@@ -71,13 +71,18 @@ def tao_ma_giao_dich(db: Session, thoi_diem: datetime | None = None) -> str:
     raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Không sinh được mã giao dịch")
 
 
+def _rut_gon(text: str | None) -> str:
+    """Viết hoa và chỉ giữ chữ/số để so khớp mã trong nội dung chuyển khoản."""
+    return re.sub(r"[^0-9A-Z]", "", (text or "").upper())
+
+
 def tim_ma_giao_dich(*van_ban: str | None) -> list[str]:
     """Tìm các mã giao dịch có trong nội dung chuyển khoản (bỏ khoảng trắng/ký tự đặc biệt ngân hàng chèn vào)."""
     ket_qua: list[str] = []
     for text in van_ban:
         if not text:
             continue
-        gon = re.sub(r"[^0-9A-Z]", "", text.upper())
+        gon = _rut_gon(text)
         for ma in _MAU_MA.findall(gon):
             if ma not in ket_qua:
                 ket_qua.append(ma)
@@ -192,3 +197,51 @@ def doi_soat(db: Session, gd_ngan_hang: HtLichSuGiaoDichNganHang) -> None:
     )
     gd_ngan_hang.trang_thai_doi_soat = DA_KHOP
     gd_ngan_hang.ghi_chu_doi_soat = f"Đã cộng cho giao dịch {giao_dich.ma_giao_dich}"
+
+
+def kiem_tra_thanh_toan(db: Session, giao_dich: HtLichSuNapTien) -> bool:
+    """Tìm khoản tiền vào chưa đối soát khớp giao dịch nạp tiền đang chờ; khớp thì xác nhận và cộng số dư. Chưa commit.
+
+    Khớp khi: loai_giao_dich = in, số tiền bằng đúng số tiền nạp, cột noi_dung chứa mã giao dịch (có thể dính chuỗi
+    khác trước/sau, ví dụ "123DH4K9F7Q" hay "DH4K9F7Q DEF") và khoản tiền chưa được dùng cho giao dịch khác. Chỉ xét khoản tiền ghi nhận từ lúc tạo giao dịch (trước đó mã chưa tồn tại).
+    """
+    if giao_dich.trang_thai != CHO_THANH_TOAN:
+        return False
+    filters = [
+        HtLichSuGiaoDichNganHang.loai_giao_dich == "in",
+        HtLichSuGiaoDichNganHang.so_tien == giao_dich.so_tien_nap,
+        HtLichSuGiaoDichNganHang.trang_thai_doi_soat != DA_KHOP,
+        or_(
+            HtLichSuGiaoDichNganHang.lich_su_nap_tien_id.is_(None),
+            HtLichSuGiaoDichNganHang.lich_su_nap_tien_id == giao_dich.id,
+        ),
+    ]
+    if giao_dich.created_at is not None:
+        filters.append(HtLichSuGiaoDichNganHang.created_at >= giao_dich.created_at)
+    ung_vien = db.scalars(
+        select(HtLichSuGiaoDichNganHang)
+        .where(*filters)
+        .order_by(HtLichSuGiaoDichNganHang.id.asc())
+        .limit(50)
+        .with_for_update()
+    ).all()
+    # So khớp chuỗi con sau khi bỏ khoảng trắng/ký tự đặc biệt (không dùng LIKE) vì ngân hàng có thể chèn
+    # khoảng trắng vào giữa mã.
+    ma = _rut_gon(giao_dich.ma_giao_dich)
+    gd_ngan_hang = next((gd for gd in ung_vien if ma and ma in _rut_gon(gd.noi_dung)), None)
+    if gd_ngan_hang is None:
+        return False
+
+    if giao_dich.thoi_gian_thanh_toan is None:
+        giao_dich.thoi_gian_thanh_toan = gd_ngan_hang.thoi_gian_giao_dich
+    xac_nhan_thanh_cong(
+        db,
+        giao_dich,
+        so_tien_thuc_nhan=Decimal(gd_ngan_hang.so_tien),
+        ma_tham_chieu=gd_ngan_hang.ma_tham_chieu,
+        ghi_chu="Tự động xác nhận khi kiểm tra thanh toán",
+    )
+    gd_ngan_hang.lich_su_nap_tien_id = giao_dich.id
+    gd_ngan_hang.trang_thai_doi_soat = DA_KHOP
+    gd_ngan_hang.ghi_chu_doi_soat = f"Đã cộng cho giao dịch {giao_dich.ma_giao_dich}"
+    return True
