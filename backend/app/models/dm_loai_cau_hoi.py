@@ -30,7 +30,7 @@ class DmLoaiCauHoi(Base):
         default="diem_so",
         server_default="diem_so",
     )
-    # Tiêu đề các câu trả lời dùng chung cho loại, vd. ["Rất không thích", ..., "Rất thích"]
+    # Câu trả lời dùng chung cho loại: [{"tieu_de": "Rất không thích", "diem": 1}, ...]
     danh_sach_tieu_de_cau_tra_loi: Mapped[Any | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, server_default=func.now()

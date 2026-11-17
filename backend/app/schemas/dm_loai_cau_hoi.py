@@ -1,7 +1,25 @@
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
+
+
+class TieuDeCauTraLoi(BaseModel):
+    """Một câu trả lời dùng chung của loại câu hỏi: tiêu đề và số điểm (có thể để trống)."""
+
+    tieu_de: str = Field(..., max_length=255)
+    diem: int | None = Field(default=None, ge=-1000, le=1000)
+
+    @model_validator(mode="before")
+    @classmethod
+    def tu_chuoi(cls, data):
+        """Dữ liệu cũ lưu mỗi tiêu đề là một chuỗi: đổi thành {tieu_de} chưa có điểm."""
+        return {"tieu_de": data} if isinstance(data, str) else data
+
+    @field_validator("tieu_de")
+    @classmethod
+    def strip_tieu_de(cls, value: str) -> str:
+        return value.strip()
 
 
 class DmLoaiCauHoiWrite(BaseModel):
@@ -10,18 +28,15 @@ class DmLoaiCauHoiWrite(BaseModel):
     thu_tu_uu_tien: int = Field(..., ge=1, le=9999)
     trang_thai: int = Field(default=1, ge=0, le=1)
     loai_tra_loi: Literal["diem_so", "tinh_huong"] = "diem_so"
-    danh_sach_tieu_de_cau_tra_loi: list[str] | None = Field(default=None, max_length=50)
+    danh_sach_tieu_de_cau_tra_loi: list[TieuDeCauTraLoi] | None = Field(default=None, max_length=50)
 
     @field_validator("danh_sach_tieu_de_cau_tra_loi")
     @classmethod
-    def clean_tieu_de(cls, value: list[str] | None) -> list[str] | None:
-        """Bỏ khoảng trắng và dòng trống; không còn tiêu đề nào thì lưu null."""
+    def bo_dong_trong(cls, value: list[TieuDeCauTraLoi] | None) -> list[TieuDeCauTraLoi] | None:
+        """Bỏ dòng không có tiêu đề; không còn dòng nào thì lưu null."""
         if value is None:
             return None
-        cleaned = [item.strip() for item in value if item and item.strip()]
-        if any(len(item) > 255 for item in cleaned):
-            raise ValueError("Mỗi tiêu đề câu trả lời tối đa 255 ký tự")
-        return cleaned or None
+        return [item for item in value if item.tieu_de] or None
 
     @field_validator("ten_loai_cau_hoi")
     @classmethod
@@ -47,7 +62,7 @@ class DmLoaiCauHoiPublic(BaseModel):
     thu_tu_uu_tien: int
     trang_thai: int
     loai_tra_loi: str = "diem_so"
-    danh_sach_tieu_de_cau_tra_loi: list[str] | None = None
+    danh_sach_tieu_de_cau_tra_loi: list[TieuDeCauTraLoi] | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None
 

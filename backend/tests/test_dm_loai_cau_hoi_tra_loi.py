@@ -29,13 +29,27 @@ class LoaiTraLoiTests(unittest.TestCase):
         payload = DmLoaiCauHoiWrite(
             ten_loai_cau_hoi="A",
             thu_tu_uu_tien=1,
-            danh_sach_tieu_de_cau_tra_loi=[" Rất không thích ", "", "Rất thích"],
+            danh_sach_tieu_de_cau_tra_loi=[
+                {"tieu_de": " Rất không thích ", "diem": 1},
+                {"tieu_de": "", "diem": 2},
+                {"tieu_de": "Rất thích", "diem": 5},
+            ],
         )
         item = create_loai_cau_hoi(payload, self.db)
-        self.assertEqual(item.danh_sach_tieu_de_cau_tra_loi, ["Rất không thích", "Rất thích"])
+        self.assertEqual(
+            item.danh_sach_tieu_de_cau_tra_loi,
+            [{"tieu_de": "Rất không thích", "diem": 1}, {"tieu_de": "Rất thích", "diem": 5}],
+        )
         sua = DmLoaiCauHoiWrite(ten_loai_cau_hoi="A", thu_tu_uu_tien=1, loai_tra_loi="tinh_huong")
         item = update_loai_cau_hoi(item.id, sua, self.db)
         self.assertEqual((item.loai_tra_loi, item.danh_sach_tieu_de_cau_tra_loi), ("tinh_huong", None))
+
+    def test_doc_duoc_du_lieu_cu_dang_chuoi(self):
+        item = DmLoaiCauHoi(ten_loai_cau_hoi="A", thu_tu_uu_tien=1, danh_sach_tieu_de_cau_tra_loi=["Thích"])
+        self.db.add(item)
+        self.db.commit()
+        public = DmLoaiCauHoiPublic.model_validate(item)
+        self.assertEqual(public.model_dump()["danh_sach_tieu_de_cau_tra_loi"], [{"tieu_de": "Thích", "diem": None}])
 
     def test_tu_choi_loai_tra_loi_la(self):
         with self.assertRaises(ValidationError):

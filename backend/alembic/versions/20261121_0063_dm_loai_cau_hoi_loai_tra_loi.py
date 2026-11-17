@@ -1,7 +1,7 @@
 """Them loai_tra_loi va danh_sach_tieu_de_cau_tra_loi vao dm_loai_cau_hoi.
 
 - loai_tra_loi: diem_so (chon muc diem) | tinh_huong (chon phuong an theo tinh huong); mac dinh diem_so.
-- danh_sach_tieu_de_cau_tra_loi: JSON mang tieu de cac cau tra loi dung chung cho loai, vd. thang muc do.
+- danh_sach_tieu_de_cau_tra_loi: JSON mang [{tieu_de, diem}] cac cau tra loi dung chung cho loai, vd. thang muc do.
 
 Revision ID: 20261121_0063
 Revises: 20261120_0062
@@ -45,7 +45,7 @@ def upgrade() -> None:
                 "danh_sach_tieu_de_cau_tra_loi",
                 sa.JSON(),
                 nullable=True,
-                comment="Mảng tiêu đề các câu trả lời dùng chung cho loại câu hỏi",
+                comment="Mảng câu trả lời dùng chung cho loại câu hỏi: [{tieu_de, diem}]",
             ),
         )
 

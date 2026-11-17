@@ -78,13 +78,13 @@
           <template #default="{ row }">
             <span v-if="row.danh_sach_tieu_de_cau_tra_loi?.length" class="tieu-de-list">
               <CustomTag
-                v-for="(tieuDe, index) in row.danh_sach_tieu_de_cau_tra_loi"
+                v-for="(item, index) in row.danh_sach_tieu_de_cau_tra_loi"
                 :key="index"
                 type="info"
                 effect="plain"
                 size="small"
               >
-                {{ tieuDe }}
+                {{ nhanTieuDe(item) }}
               </CustomTag>
             </span>
             <span v-else>—</span>
@@ -201,13 +201,52 @@
             <CustomOption v-for="item in LOAI_TRA_LOI" :key="item.value" :label="item.label" :value="item.value" />
           </CustomSelect>
         </CustomFormItem>
-        <CustomFormItem class="form-grid__full" label="Danh sách tiêu đề câu trả lời" prop="tieu_de_cau_tra_loi">
-          <CustomInput
-            v-model="form.tieu_de_cau_tra_loi"
-            type="textarea"
-            :rows="5"
-            placeholder="Nhập mỗi tiêu đề một dòng, theo thứ tự hiển thị. Ví dụ: Rất không thích, Không thích, Bình thường, Thích, Rất thích"
-          />
+        <CustomFormItem class="form-grid__full" label="Danh sách tiêu đề câu trả lời">
+          <CustomTable :data="form.tieu_de_cau_tra_loi" border size="small" class="tieu-de-table">
+            <CustomTableColumn label="STT" width="60" align="center">
+              <template #default="{ $index }">{{ $index + 1 }}</template>
+            </CustomTableColumn>
+            <CustomTableColumn label="Tiêu đề" min-width="220">
+              <template #default="{ row }">
+                <CustomInput v-model="row.tieu_de" maxlength="255" placeholder="Nhập tiêu đề" />
+              </template>
+            </CustomTableColumn>
+            <CustomTableColumn label="Số điểm" width="150">
+              <template #default="{ row }">
+                <CustomInputNumber
+                  v-model="row.diem"
+                  :min="-1000"
+                  :max="1000"
+                  :step="1"
+                  :precision="0"
+                  controls-position="right"
+                  placeholder="Nhập số điểm"
+                />
+              </template>
+            </CustomTableColumn>
+            <CustomTableColumn label="Thao tác" width="100" align="center">
+              <template #default="{ $index }">
+                <div class="row-actions">
+                  <CustomTooltip content="Xóa" placement="top">
+                    <CustomButton link type="danger" aria-label="Xóa" @click="xoaTieuDe($index)">
+                      <CustomIcon><Delete /></CustomIcon>
+                    </CustomButton>
+                  </CustomTooltip>
+                  <CustomTooltip v-if="$index === form.tieu_de_cau_tra_loi.length - 1" content="Thêm" placement="top">
+                    <CustomButton link type="primary" aria-label="Thêm" @click="themTieuDe">
+                      <CustomIcon><Plus /></CustomIcon>
+                    </CustomButton>
+                  </CustomTooltip>
+                </div>
+              </template>
+            </CustomTableColumn>
+            <template #empty>
+              <CustomButton link type="primary" @click="themTieuDe">
+                <CustomIcon><Plus /></CustomIcon>
+                Thêm tiêu đề câu trả lời
+              </CustomButton>
+            </template>
+          </CustomTable>
         </CustomFormItem>
         <CustomFormItem class="form-grid__full" label="Ghi chú" prop="ghi_chu">
           <CustomInput
@@ -258,13 +297,34 @@ function nhanLoaiTraLoi(value) {
   return LOAI_TRA_LOI.find((item) => item.value === value)?.label || value || '—'
 }
 
-// Textarea mỗi dòng một tiêu đề ↔ mảng JSON; bỏ dòng trống, không còn tiêu đề thì gửi null.
-function tachTieuDe(text) {
-  const ds = String(text || '')
-    .split('\n')
-    .map((dong) => dong.trim())
-    .filter(Boolean)
-  return ds.length ? ds : null
+// Dữ liệu cũ có thể là chuỗi; dòng không có tiêu đề thì bỏ, không còn dòng nào thì gửi null.
+function docTieuDe(ds) {
+  return (ds || []).map((item) =>
+    typeof item === 'string' ? { tieu_de: item, diem: null } : { tieu_de: item.tieu_de || '', diem: item.diem ?? null },
+  )
+}
+
+function guiTieuDe(ds) {
+  const conLai = ds
+    .map((item) => ({ tieu_de: item.tieu_de.trim(), diem: item.diem ?? null }))
+    .filter((item) => item.tieu_de)
+  return conLai.length ? conLai : null
+}
+
+function nhanTieuDe(item) {
+  if (typeof item === 'string') return item
+  return item.diem == null ? item.tieu_de : `${item.tieu_de} (${item.diem})`
+}
+
+function themTieuDe() {
+  const ds = form.tieu_de_cau_tra_loi
+  // Điểm gợi ý: dòng trước + 1 (thang mức độ), dòng đầu là 1.
+  const diemTruoc = ds.length ? ds[ds.length - 1].diem : 0
+  ds.push({ tieu_de: '', diem: diemTruoc == null ? null : diemTruoc + 1 })
+}
+
+function xoaTieuDe(index) {
+  form.tieu_de_cau_tra_loi.splice(index, 1)
 }
 
 const JSON_SAMPLE = `[
@@ -273,7 +333,13 @@ const JSON_SAMPLE = `[
     "thu_tu_uu_tien": 1,
     "trang_thai": 1,
     "loai_tra_loi": "diem_so",
-    "danh_sach_tieu_de_cau_tra_loi": ["Rất không thích", "Không thích", "Bình thường", "Thích", "Rất thích"]
+    "danh_sach_tieu_de_cau_tra_loi": [
+      { "tieu_de": "Rất không thích", "diem": 1 },
+      { "tieu_de": "Không thích", "diem": 2 },
+      { "tieu_de": "Bình thường", "diem": 3 },
+      { "tieu_de": "Thích", "diem": 4 },
+      { "tieu_de": "Rất thích", "diem": 5 }
+    ]
   },
   {
     "ten_loai_cau_hoi": "Trắc nghiệm nhiều đáp án",
@@ -321,7 +387,7 @@ function emptyForm() {
     thu_tu_uu_tien: 1,
     trang_thai: 1,
     loai_tra_loi: 'diem_so',
-    tieu_de_cau_tra_loi: '',
+    tieu_de_cau_tra_loi: [],
   }
 }
 
@@ -446,7 +512,7 @@ function openEdit(row) {
     thu_tu_uu_tien: row.thu_tu_uu_tien,
     trang_thai: row.trang_thai,
     loai_tra_loi: row.loai_tra_loi || 'diem_so',
-    tieu_de_cau_tra_loi: (row.danh_sach_tieu_de_cau_tra_loi || []).join('\n'),
+    tieu_de_cau_tra_loi: docTieuDe(row.danh_sach_tieu_de_cau_tra_loi),
   })
   dialogVisible.value = true
 }
@@ -458,7 +524,7 @@ function payloadFromForm() {
     trang_thai: form.trang_thai,
     ghi_chu: form.ghi_chu?.trim() || null,
     loai_tra_loi: form.loai_tra_loi,
-    danh_sach_tieu_de_cau_tra_loi: tachTieuDe(form.tieu_de_cau_tra_loi),
+    danh_sach_tieu_de_cau_tra_loi: guiTieuDe(form.tieu_de_cau_tra_loi),
   }
 }
 
@@ -602,6 +668,10 @@ onMounted(load)
 </script>
 
 <style scoped>
+.tieu-de-table {
+  width: 100%;
+}
+
 .tieu-de-list {
   display: inline-flex;
   flex-wrap: wrap;
