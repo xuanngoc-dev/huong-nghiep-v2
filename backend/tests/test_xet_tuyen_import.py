@@ -104,10 +104,10 @@ class ChuanBiNhapTests(unittest.TestCase):
     def test_loi_cau_truc_neu_duong_dan(self):
         du_lieu = _mau("mau_BKA_2026.json")
         du_lieu["khoa_la"] = 1
-        del du_lieu["cong_thuc"][0]["nguon_diem_mon"]
+        du_lieu["cong_thuc"][0]["nguon_diem_mon"] = 5
         loi = _loi(du_lieu)
         self.assertTrue(any(x.startswith("khoa_la:") for x in loi))
-        self.assertTrue(any(x.startswith("cong_thuc/0") and "nguon_diem_mon" in x for x in loi))
+        self.assertTrue(any(x.startswith("cong_thuc/0/nguon_diem_mon") for x in loi))
 
     def test_gom_moi_loi_tham_chieu_va_danh_muc(self):
         du_lieu = _mau("mau_BKA_2026.json")

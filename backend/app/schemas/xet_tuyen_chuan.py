@@ -184,7 +184,7 @@ class CongThucChuan(_Khoi):
     @model_validator(mode="before")
     @classmethod
     def _bo_truong_khong_dung(cls, data):
-        """nguon_diem_mon chỉ có nghĩa với TO_HOP_MON; CHI_DIEU_KIEN không tính điểm nên thang_diem mặc định 30;
+        """nguon_diem_mon chỉ có nghĩa với TO_HOP_MON; CHI_DIEU_KIEN / THU_CONG không tự tính điểm nên thang_diem mặc định 30;
         ma_phuong_thuc_cua_bo trống thì là phương thức khác (500)."""
         if isinstance(data, dict):
             data = dict(data)
@@ -192,7 +192,7 @@ class CongThucChuan(_Khoi):
                 data.pop("ma_phuong_thuc_cua_bo")
             if data.get("kieu_tinh") != "TO_HOP_MON":
                 data.pop("nguon_diem_mon", None)
-            if data.get("kieu_tinh") == "CHI_DIEU_KIEN" and data.get("thang_diem") is None:
+            if data.get("kieu_tinh") in ("CHI_DIEU_KIEN", "THU_CONG") and data.get("thang_diem") is None:
                 data["thang_diem"] = 30
         return data
 

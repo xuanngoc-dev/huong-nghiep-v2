@@ -139,6 +139,11 @@ vào `quy_dinh_chua_mo_hinh_hoa` thay vì chặn cả lần import.
 | Thành phần `CHUNG_CHI` không có bảng quy đổi nhưng là bài thi trong danh mục (SAT, ACT) | `BAI_THI` |
 | Thành phần không tính được (nguồn lạ, mã bài thi không có trong danh mục) | Công thức thành `THU_CONG` (hệ thống chưa tự tính điểm) |
 | `kieu_tinh` lạ | `THU_CONG` |
+| `THANH_PHAN` chưa có `thanh_phan`, `TO_HOP_MON` chưa có `nguon_diem_mon`, thiếu `thang_diem` (chưa lấy đủ dữ liệu) | `THU_CONG`, `thang_diem` mặc định 30 |
+| Mức quy đổi ghi mã bài thi ở `ma_chung_chi` (`HSA_2026`) | `ma_bai_thi: HSA` |
+| Mã danh mục kèm hậu tố năm (`TSA_2026`) | Mã không có hậu tố (`TSA`) |
+| Mức quy đổi dùng mã không xác định (`KQHB`, `HSK`…) | Bỏ mức đó; bảng không còn mức nào thì bỏ bảng, thành phần dùng bảng đó coi như không tính được |
+| `thay_ngoai_ngu: KHONG_AP_DUNG` | `KHONG` |
 | `nguon_diem_mon` gần đúng (`HOC_BA_THPT_VA_CHUNG_CHI`) | `HOC_BA` / `THI_THPT`, phần còn lại ghi chưa mô hình hóa |
 | `thay_ngoai_ngu` khác `KHONG` nhưng thiếu bảng quy đổi | `KHONG` |
 | `hoc_phi` có `hoc_phi_tu: null` | Dùng `hoc_phi_den`; cả hai trống thì bỏ khối học phí |

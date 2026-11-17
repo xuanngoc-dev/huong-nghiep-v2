@@ -59,15 +59,19 @@ def _gon(ma: str) -> str:
 
 
 def tim_ma(ma, tap, bi_danh: dict | None = None) -> str | None:
-    """Mã trong danh mục `tap` ứng với `ma`: trùng khớp, theo bí danh, hoặc khớp duy nhất khi bỏ dấu `-`, `_`."""
+    """Mã trong danh mục `tap` ứng với `ma`: trùng khớp, theo bí danh, khớp duy nhất khi bỏ dấu `-`, `_`;
+    không được thì thử lại sau khi bỏ hậu tố năm (`HSA_2026` → `HSA`)."""
     if not isinstance(ma, str) or not ma.strip():
         return None
     ma = ma.strip().upper()
-    ma = (bi_danh or {}).get(ma, ma)
-    if ma in tap:
-        return ma
-    khop = [x for x in tap if _gon(x) == _gon(ma)]
-    return khop[0] if len(khop) == 1 else None
+    for thu in dict.fromkeys((ma, _HAU_TO_NAM.sub("", ma))):
+        thu = (bi_danh or {}).get(thu, thu)
+        if thu in tap:
+            return thu
+        khop = [x for x in tap if _gon(x) == _gon(thu)]
+        if len(khop) == 1:
+            return khop[0]
+    return None
 
 
 def _tim_khoa(loai: str, khoa: str, dm: "DanhMucXetTuyen") -> str | None:
@@ -202,14 +206,70 @@ def _chuan_hoa_nhom(ds_nhom, vi_tri: str, dm, kq: _KetQua):
     return giu
 
 
-def _chuan_hoa_thanh_phan(tp: dict, dm) -> dict | None:
+def _chuan_hoa_bang(doc: dict, dm, kq: _KetQua) -> set[str] | None:
+    """Mức quy đổi: mã bài thi ghi ở chỗ chứng chỉ (`HSA_2026`) thì chuyển sang ma_bai_thi, mã gần đúng đổi về chuẩn,
+    mã không xác định thì bỏ mức đó; bảng không còn mức nào thì bỏ bảng. Trả mã các bảng còn lại."""
+    if not isinstance(doc.get("bang_quy_doi"), list):
+        return None
+    con_lai = []
+    for i, b in enumerate(doc["bang_quy_doi"]):
+        if not isinstance(b, dict) or not isinstance(b.get("muc"), list):
+            con_lai.append(b)
+            continue
+        vt = f"bang_quy_doi/{i} ({b.get('ma_bang')})"
+        giu, bo, doi = [], {}, {}
+        for m in b["muc"]:
+            if not isinstance(m, dict):
+                giu.append(m)
+                continue
+            cc, bt = m.get("ma_chung_chi"), m.get("ma_bai_thi")
+            if cc:
+                if moi := _tim_khoa("chung_chi", cc, dm):
+                    m = {**m, "ma_chung_chi": moi}
+                elif not bt and (moi := tim_ma(cc, dm.bai_thi)):
+                    m = {**m, "ma_chung_chi": None, "ma_bai_thi": moi}
+                else:
+                    bo[cc] = bo.get(cc, 0) + 1
+                    continue
+            elif bt:
+                if moi := tim_ma(bt, dm.bai_thi):
+                    m = {**m, "ma_bai_thi": moi}
+                else:
+                    bo[bt] = bo.get(bt, 0) + 1
+                    continue
+            if (cc or bt) != (m.get("ma_chung_chi") or m.get("ma_bai_thi")):
+                doi[cc or bt] = m.get("ma_chung_chi") or m.get("ma_bai_thi")
+            giu.append(m)
+        for cu, moi in doi.items():
+            kq.canh_bao.append(f'{vt}: đổi mã "{cu}" thành "{moi}"')
+        for ma, so in bo.items():
+            kq.bo(
+                "QUY_DOI_CHUA_MO_HINH_HOA",
+                b.get("ma_bang"),
+                f"{b.get('ten_bang') or b.get('ma_bang')}: {so} mức quy đổi theo mã {ma}",
+                vt,
+                f'{so} mức dùng mã "{ma}" chưa có trong danh mục chứng chỉ / bài thi',
+            )
+        if b["muc"] and not giu:
+            kq.canh_bao.append(f"{vt}: không còn mức quy đổi nào dùng được, đã bỏ bảng")
+            continue
+        con_lai.append({**b, "muc": giu})
+    doc["bang_quy_doi"] = con_lai
+    return {b.get("ma_bang") for b in con_lai if isinstance(b, dict)}
+
+
+def _chuan_hoa_thanh_phan(tp: dict, dm, bang: set[str] | None) -> dict | None:
     """Thành phần tính được thì trả bản chuẩn; không tính được (nguồn lạ, thiếu bảng quy đổi...) thì None."""
     loai = tp.get("loai_nguon")
+    co_bang = tp.get("ma_bang_quy_doi") and (bang is None or tp["ma_bang_quy_doi"] in bang)
     if loai == "BAI_THI":
         ma = tim_ma(tp.get("ma_bai_thi"), dm.bai_thi)
-        return {**tp, "ma_bai_thi": ma} if ma else None
+        # Bảng quy đổi của bài thi đã bị bỏ: điểm thô khác thang nên không tính được.
+        if not ma or (tp.get("ma_bang_quy_doi") and not co_bang):
+            return None
+        return {**tp, "ma_bai_thi": ma}
     if loai == "CHUNG_CHI":
-        if tp.get("ma_bang_quy_doi"):
+        if co_bang:
             return tp
         # Chứng chỉ chưa có bảng quy đổi nhưng là bài thi trong danh mục (SAT, ACT): tính thẳng theo điểm bài thi.
         ma = tim_ma(tp.get("ma_bai_thi"), dm.bai_thi)
@@ -217,7 +277,7 @@ def _chuan_hoa_thanh_phan(tp: dict, dm) -> dict | None:
     return None
 
 
-def _chuan_hoa_cong_thuc(c: dict, vt: str, dm, kq: _KetQua) -> dict:
+def _chuan_hoa_cong_thuc(c: dict, vt: str, dm, kq: _KetQua, bang: set[str] | None) -> dict:
     ma = c.get("ma_cong_thuc")
     ten = c.get("ten_cong_thuc") or ma
     kieu = c.get("kieu_tinh")
@@ -238,6 +298,14 @@ def _chuan_hoa_cong_thuc(c: dict, vt: str, dm, kq: _KetQua) -> dict:
             )
             c = {**c, "nguon_diem_mon": moi}
 
+    thay_nn = c.get("thay_ngoai_ngu")
+    if isinstance(thay_nn, str) and thay_nn != "KHONG" and thay_nn.upper().startswith("KHONG"):
+        # KHONG_AP_DUNG, KHONG_DUOC_PHEP...: cùng nghĩa không thay điểm ngoại ngữ.
+        c = {**c, "thay_ngoai_ngu": "KHONG"}
+    ma_bang_nn = c.get("ma_bang_quy_doi_ngoai_ngu")
+    if ma_bang_nn and bang is not None and ma_bang_nn not in bang:
+        kq.canh_bao.append(f'{vt}: bảng quy đổi ngoại ngữ "{ma_bang_nn}" không dùng được, bỏ thay điểm ngoại ngữ')
+        c = {**c, "ma_bang_quy_doi_ngoai_ngu": None}
     if c.get("thay_ngoai_ngu") not in (None, "KHONG") and not c.get("ma_bang_quy_doi_ngoai_ngu"):
         kq.canh_bao.append(f"{vt}: thay_ngoai_ngu cần ma_bang_quy_doi_ngoai_ngu nhưng chưa khai, chuyển thành KHONG")
         c = {**c, "thay_ngoai_ngu": "KHONG"}
@@ -247,7 +315,7 @@ def _chuan_hoa_cong_thuc(c: dict, vt: str, dm, kq: _KetQua) -> dict:
         moi = []
         khong_tinh = []
         for j, tp in enumerate(thanh_phan):
-            chuan = _chuan_hoa_thanh_phan(tp, dm) if isinstance(tp, dict) else tp
+            chuan = _chuan_hoa_thanh_phan(tp, dm, bang) if isinstance(tp, dict) else tp
             if chuan is None:
                 khong_tinh.append(
                     f"{tp.get('ten_thanh_phan') or tp.get('vi_tri')} ({tp.get('loai_nguon')} {tp.get('ma_bai_thi') or ''})".strip()
@@ -267,6 +335,19 @@ def _chuan_hoa_cong_thuc(c: dict, vt: str, dm, kq: _KetQua) -> dict:
             c = {**c, "kieu_tinh": "THU_CONG", "thanh_phan": []}
         else:
             c = {**c, "thanh_phan": moi}
+
+    # Chưa lấy đủ dữ liệu để tính (thiếu thành phần / nguồn điểm / thang điểm): vẫn nhập, hệ thống chưa tự tính điểm.
+    kieu = c.get("kieu_tinh")
+    thieu = None
+    if kieu == "THANH_PHAN" and not c.get("thanh_phan"):
+        thieu = "chưa có thanh_phan"
+    elif kieu == "TO_HOP_MON" and not c.get("nguon_diem_mon"):
+        thieu = "chưa có nguon_diem_mon"
+    elif kieu in ("TO_HOP_MON", "THANH_PHAN") and c.get("thang_diem") is None:
+        thieu = "chưa có thang_diem"
+    if thieu:
+        kq.canh_bao.append(f"{vt}: {kieu} {thieu}, chuyển công thức thành THU_CONG (hệ thống chưa tự tính điểm)")
+        c = {**c, "kieu_tinh": "THU_CONG", "thanh_phan": [], "he_so_mon": []}
     return c
 
 
@@ -277,10 +358,11 @@ def chuan_hoa(du_lieu, dm: "DanhMucXetTuyen") -> tuple[object, list[str], list[d
     doc = copy.deepcopy(du_lieu)
     kq = _KetQua()
 
+    bang = _chuan_hoa_bang(doc, dm, kq)
     if isinstance(doc.get("cong_thuc"), list):
         for i, c in enumerate(doc["cong_thuc"]):
             if isinstance(c, dict):
-                c = _chuan_hoa_cong_thuc(c, f"cong_thuc/{i}", dm, kq)
+                c = _chuan_hoa_cong_thuc(c, f"cong_thuc/{i}", dm, kq, bang)
                 if "dieu_kien" in c:
                     c["dieu_kien"] = _chuan_hoa_nhom(c["dieu_kien"], f"cong_thuc/{i}/dieu_kien", dm, kq)
                 doc["cong_thuc"][i] = c

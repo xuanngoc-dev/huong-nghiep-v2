@@ -116,6 +116,49 @@ class ChuanHoaFileTests(unittest.TestCase):
         self.assertEqual(moi["cong_thuc"][0]["nguon_diem_mon"], "HOC_BA")
         self.assertEqual(chua[0]["loai"], "NGUON_DIEM_CHUA_MO_HINH_HOA")
 
+    def test_cong_thuc_chua_du_du_lieu_van_nhap_duoc(self):
+        du_lieu = _mau("mau_BKA_2026.json")
+        tsa = next(c for c in du_lieu["cong_thuc"] if c["ma_cong_thuc"] == "BKA_TSA")
+        tsa["thanh_phan"] = []
+        du_lieu["cong_thuc"][0]["nguon_diem_mon"] = None
+        ke_hoach = chuan_bi_nhap(du_lieu, DANH_MUC)
+
+        theo_ma = {c["ma_cong_thuc"]: c for c in ke_hoach.cong_thuc}
+        self.assertEqual(theo_ma["BKA_TSA"]["kieu_tinh"], "THU_CONG")
+        self.assertEqual(theo_ma[du_lieu["cong_thuc"][0]["ma_cong_thuc"]]["kieu_tinh"], "THU_CONG")
+        self.assertTrue(any("chưa có thanh_phan" in x for x in ke_hoach.canh_bao))
+        self.assertTrue(any("chưa có nguon_diem_mon" in x for x in ke_hoach.canh_bao))
+
+    def test_bang_quy_doi_ma_gan_dung(self):
+        du_lieu = _mau("mau_BKA_2026.json")
+        du_lieu["cong_thuc"][0]["thay_ngoai_ngu"] = "KHONG_AP_DUNG"
+        du_lieu["bang_quy_doi"] = [
+            {
+                "ma_bang": "QD",
+                "ten_bang": "Quy đổi",
+                "thang_diem_dich": 30,
+                "muc": [
+                    {"ma_chung_chi": "HSA_2026", "diem_tu": 100, "diem_quy_doi": 28},
+                    {"ma_chung_chi": "IELTS_ACADEMIC", "diem_tu": 7, "diem_quy_doi": 29},
+                    {"ma_chung_chi": "KHONG_RO", "diem_tu": 1, "diem_quy_doi": 20},
+                ],
+            },
+            {
+                "ma_bang": "HB",
+                "ten_bang": "Học bạ",
+                "thang_diem_dich": 30,
+                "muc": [{"ma_chung_chi": "KQHB", "diem_quy_doi": 1}],
+            },
+        ]
+        moi, canh_bao, chua = chuan_hoa(du_lieu, DANH_MUC)
+        self.assertEqual(moi["cong_thuc"][0]["thay_ngoai_ngu"], "KHONG")
+        self.assertEqual([b["ma_bang"] for b in moi["bang_quy_doi"]], ["QD"])
+        muc = moi["bang_quy_doi"][0]["muc"]
+        self.assertEqual((muc[0]["ma_chung_chi"], muc[0]["ma_bai_thi"]), (None, "HSA"))
+        self.assertEqual(muc[1]["ma_chung_chi"], "IELTS")
+        self.assertEqual(len(muc), 2)
+        self.assertEqual({x["loai"] for x in chua}, {"QUY_DOI_CHUA_MO_HINH_HOA"})
+
     def test_chi_dieu_kien_chua_co_nhom_chi_canh_bao(self):
         du_lieu = _mau("mau_BKA_2026.json")
         xtt = next(c for c in du_lieu["cong_thuc"] if c["kieu_tinh"] == "CHI_DIEU_KIEN")
