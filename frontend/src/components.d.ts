@@ -179,6 +179,7 @@ declare module 'vue' {
     TruongDaoTao: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/TruongDaoTao.vue')['default']
     TruongPhuHop: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/TruongPhuHop.vue')['default']
     XacNhanGoiDialog: typeof import('./components/member/XacNhanGoiDialog.vue')['default']
+    XacNhanXoaDialog: typeof import('./components/admin/XacNhanXoaDialog.vue')['default']
     XuatKhauLaoDong: typeof import('./components/guest/doi-tuong/HocSinhThpt/XuatKhauLaoDong.vue')['default']
   }
   export interface GlobalDirectives {
