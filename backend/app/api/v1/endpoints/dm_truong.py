@@ -72,7 +72,7 @@ def list_truong(
     trang_thai_hoat_dong: str | None = Query(default=None, max_length=30),
     ngau_nhien: bool = Query(default=False),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> DmTruongPage:
     """Lấy danh sách trường học từ dm_truong, có phân trang, không cần đăng nhập.

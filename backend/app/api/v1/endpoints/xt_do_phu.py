@@ -106,7 +106,7 @@ def get_do_phu(
     q: str | None = Query(default=None, max_length=150, description="Tìm theo mã, tên trường"),
     trang_thai_xet_tuyen: int | None = Query(default=None, ge=0, le=2),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=20, ge=1, le=500),
+    page_size: int = Query(default=20, ge=1),
     db: Session = Depends(get_db),
 ) -> XtDoPhuPage:
     """Độ phủ dữ liệu xét tuyển của các đề án trong năm. `tong` tính trên mọi đề án của năm (không theo bộ lọc)."""

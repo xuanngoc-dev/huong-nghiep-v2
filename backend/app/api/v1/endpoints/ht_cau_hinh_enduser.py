@@ -76,7 +76,7 @@ def list_cau_hinh_enduser(
     kieu_tra_loi: KieuTraLoi | None = Query(default=None),
     trang_thai: int | None = Query(default=None, ge=0, le=1),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> HtCauHinhEnduserPage:
     """Lấy danh sách cấu hình EndUser có phân trang. Lọc theo từ khóa (tên, mô tả), kiểu trả lời và trạng thái."""

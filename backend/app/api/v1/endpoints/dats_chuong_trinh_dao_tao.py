@@ -185,7 +185,7 @@ def list_chuong_trinh(
     de_an_id: int | None = Query(default=None, ge=1),
     kem_phuong_thuc: bool = Query(default=False, description="Trả kèm phương thức, tổ hợp và mã ngành chuẩn"),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DatsChuongTrinhDaoTaoPage:
@@ -291,7 +291,7 @@ def list_gan_nganh_co_so(
     q: str | None = Query(default=None, max_length=255),
     chi_thieu: bool = Query(default=False),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=500, ge=1, le=2000),
+    page_size: int = Query(default=500, ge=1),
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> ChuongTrinhGanNganhPage:

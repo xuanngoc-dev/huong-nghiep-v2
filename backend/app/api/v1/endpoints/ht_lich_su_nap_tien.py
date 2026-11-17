@@ -92,7 +92,7 @@ def list_nap_tien_cua_toi(
     trang_thai: int | None = Query(default=None, ge=0, le=3),
     loai_ap_dung: LoaiApDung | None = Query(default=None),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=100),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
     user: NguoiDung = Depends(get_current_user),
 ) -> NapTienPage:
@@ -257,7 +257,7 @@ def list_lich_su_nap_tien(
     trang_thai: int | None = Query(default=None, ge=0, le=3),
     loai_ap_dung: LoaiApDung | None = Query(default=None),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> NapTienQuanTriPage:
     """Toàn bộ lịch sử nạp tiền, mới nhất trước.

@@ -165,7 +165,7 @@ def list_giao_dich_ngan_hang(
     trang_thai_doi_soat: int | None = Query(default=None, ge=0, le=3),
     so_tai_khoan: str | None = Query(default=None, max_length=50),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> GiaoDichNganHangPage:
     """Lịch sử giao dịch ngân hàng (tiền vào/ra), mới nhất trước.

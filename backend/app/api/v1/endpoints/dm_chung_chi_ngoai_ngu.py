@@ -42,7 +42,7 @@ def list_chung_chi_ngoai_ngu(
     trang_thai: str | None = Query(default=None, max_length=20),
     loai_chung_chi: str | None = Query(default=None, max_length=50),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> DmChungChiNgoaiNguPage:
     """Lấy danh sách chứng chỉ ngoại ngữ có phân trang, không cần đăng nhập."""

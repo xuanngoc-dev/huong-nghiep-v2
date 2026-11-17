@@ -89,7 +89,7 @@ def list_muc_diem_uu_tien(
     loai: str | None = Query(default=None, pattern="^(KHU_VUC|DOI_TUONG)$"),
     nam: int | None = Query(default=None, ge=2000, le=2100, description="Chỉ lấy mức áp dụng cho năm này"),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> DmMucDiemUuTienPage:
     """Danh sách mức điểm ưu tiên theo năm, lọc theo mã / căn cứ, loại và năm. Không cần đăng nhập."""

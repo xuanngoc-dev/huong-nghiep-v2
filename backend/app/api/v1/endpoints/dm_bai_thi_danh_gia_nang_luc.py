@@ -43,7 +43,7 @@ def list_bai_thi_danh_gia_nang_luc(
     trang_thai: str | None = Query(default=None, max_length=20),
     loai_chung_chi: str | None = Query(default=None, max_length=50),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> DmBaiThiDanhGiaNangLucPage:
     """Lấy danh sách bài thi đánh giá năng lực có phân trang, không cần đăng nhập."""

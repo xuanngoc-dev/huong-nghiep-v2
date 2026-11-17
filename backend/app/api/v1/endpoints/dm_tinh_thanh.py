@@ -42,7 +42,7 @@ def list_tinh_thanh(
     khu_vuc: str | None = Query(default=None, max_length=100),
     trang_thai: int | None = Query(default=None, ge=0, le=1),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> DmTinhThanhPage:
     """Lấy danh sách tỉnh thành có phân trang, không cần đăng nhập."""

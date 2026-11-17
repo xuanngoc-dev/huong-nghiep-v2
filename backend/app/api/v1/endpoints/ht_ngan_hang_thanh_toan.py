@@ -57,7 +57,7 @@ def list_ngan_hang_thanh_toan(
     co_logo: bool | None = Query(default=None),
     trang_thai: int | None = Query(default=None, ge=0, le=1),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> HtNganHangThanhToanPage:
     """Lấy danh sách ngân hàng thanh toán có phân trang.

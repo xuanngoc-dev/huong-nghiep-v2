@@ -147,7 +147,7 @@ def list_de_an(
     nam_tuyen_sinh: int | None = Query(default=None, ge=1990, le=2100),
     ma_truong: str | None = Query(default=None, max_length=20),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DatsTuyenSinhPage:
@@ -209,7 +209,7 @@ def list_truong_dao_tao(
     uu_tien_tinh: str | None = Query(default=None, max_length=100),
     uu_tien_khu_vuc: str | None = Query(default=None, max_length=20),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=12, ge=1, le=100),
+    page_size: int = Query(default=12, ge=1),
     db: Session = Depends(get_db),
 ) -> TruongDaoTaoPage:
     """Liệt kê trường có chương trình của ngành trong một năm tuyển sinh. Không cần đăng nhập.

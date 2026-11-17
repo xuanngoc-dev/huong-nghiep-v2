@@ -41,7 +41,7 @@ def list_doi_tuong_uu_tien(
     q: str | None = Query(default=None, max_length=150),
     trang_thai: int | None = Query(default=None, ge=0, le=1),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> DmDoiTuongUuTienPage:
     """Lấy danh sách đối tượng ưu tiên có phân trang. Lọc theo từ khóa (tên, mã) và trạng thái. Không cần đăng nhập."""

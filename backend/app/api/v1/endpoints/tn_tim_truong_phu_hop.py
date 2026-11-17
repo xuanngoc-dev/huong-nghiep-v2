@@ -241,7 +241,7 @@ def danh_sach_truong_phu_hop(
     uu_tien_tinh: str | None = Query(default=None, max_length=100),
     uu_tien_khu_vuc: str | None = Query(default=None, max_length=20),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=12, ge=1, le=100),
+    page_size: int = Query(default=12, ge=1),
     db: Session = Depends(get_db),
 ) -> TruongDaoTaoPage:
     """Danh sách trường phù hợp của một ngành, lấy từ dm_nganh_hoc_theo_truong.
@@ -535,7 +535,7 @@ def lich_su_tim_truong_cua_toi(
     tu_ngay: date | None = Query(default=None),
     den_ngay: date | None = Query(default=None),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=100),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
     user: NguoiDung = Depends(get_current_user),
 ) -> LichSuTimTruongQuanTriPage:

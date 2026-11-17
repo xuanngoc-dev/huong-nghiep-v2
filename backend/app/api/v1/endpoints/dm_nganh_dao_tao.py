@@ -113,7 +113,7 @@ def list_nganh_dao_tao(
     ma_holand: str | None = Query(default=None, max_length=50),
     ngau_nhien: bool = Query(default=False),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> DmNganhDaoTaoPage:
     """Lấy danh sách ngành đào tạo có phân trang, không cần đăng nhập.

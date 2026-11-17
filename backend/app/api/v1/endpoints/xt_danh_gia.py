@@ -104,7 +104,7 @@ def list_ket_qua_chuong_trinh(
     ma_phuong_thuc: str | None = Query(default=None, max_length=20),
     ma_to_hop: str | None = Query(default=None, max_length=20),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=20, ge=1, le=200),
+    page_size: int = Query(default=20, ge=1),
     db: Session = Depends(get_db),
     user: NguoiDung | None = Depends(get_optional_user),
 ) -> KetQuaChuongTrinhPage:

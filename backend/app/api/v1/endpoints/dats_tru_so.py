@@ -105,7 +105,7 @@ def list_tru_so(
     ma_truong: str | None = Query(default=None, max_length=20),
     de_an_id: int | None = Query(default=None, ge=1),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_current_user),
 ) -> DatsTruSoPage:

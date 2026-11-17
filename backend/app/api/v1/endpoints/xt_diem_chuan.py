@@ -170,7 +170,7 @@ def list_diem_chuan(
     nam_tuyen_sinh: int | None = Query(default=None, ge=1990, le=2100),
     ma_phuong_thuc_cua_bo: str | None = Query(default=None, max_length=20),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=20, ge=1, le=1000),
+    page_size: int = Query(default=20, ge=1),
     db: Session = Depends(get_db),
 ) -> XtDiemChuanPage:
     """Danh sách điểm chuẩn có phân trang, lọc theo từ khóa, trường, năm và phương thức."""

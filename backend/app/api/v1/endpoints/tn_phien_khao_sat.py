@@ -270,7 +270,7 @@ def lich_su_khao_sat(
     tu_ngay: date | None = Query(default=None),
     den_ngay: date | None = Query(default=None),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=100),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
     current_user: NguoiDung = Depends(get_current_user),
 ) -> TnPhienLichSuPage:

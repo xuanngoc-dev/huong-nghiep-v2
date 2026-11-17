@@ -68,7 +68,7 @@ def list_nguoi_dung(
     vai_tro: int | None = Query(default=None, ge=0, le=1),
     trang_thai: int | None = Query(default=None, ge=0, le=1),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> NguoiDungPage:
     """Danh sách tài khoản có phân trang. Lọc theo từ khóa, vai trò, trạng thái."""

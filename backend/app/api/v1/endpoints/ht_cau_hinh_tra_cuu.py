@@ -64,7 +64,7 @@ def _chi_ap_dung(db: Session, item: HtCauHinhTraCuu) -> None:
 def list_cau_hinh_tra_cuu(
     trang_thai: int | None = Query(default=None, ge=0, le=1),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> HtCauHinhTraCuuPage:
     """Lấy danh sách cấu hình tra cứu, cấu hình đang áp dụng đứng đầu."""

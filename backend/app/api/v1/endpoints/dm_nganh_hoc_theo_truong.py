@@ -77,7 +77,7 @@ def list_nganh_hoc_theo_truong(
     ma_truong: str | None = Query(default=None, max_length=20),
     nam_hoc: int | None = Query(default=None, ge=2000, le=2100),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=20, ge=1, le=1000),
+    page_size: int = Query(default=20, ge=1),
     db: Session = Depends(get_db),
 ) -> DmNganhHocTheoTruongPage:
     """Lấy danh sách ngành đào tạo theo trường có phân trang. Không cần đăng nhập.
@@ -327,7 +327,7 @@ def list_truong_theo_nganh(
     ten_tinh_thanh: str | None = Query(default=None, max_length=100),
     nam_tuyen_sinh: int | None = Query(default=None, ge=2000, le=2100),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=12, ge=1, le=100),
+    page_size: int = Query(default=12, ge=1),
     db: Session = Depends(get_db),
 ) -> TruongDaoTaoPage:
     """Liệt kê trường đào tạo một ngành trong năm học, dựa trên dm_nganh_hoc_theo_truong.

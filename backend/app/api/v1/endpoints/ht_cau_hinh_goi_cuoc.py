@@ -59,7 +59,7 @@ def list_cau_hinh_goi_cuoc(
     gia_tu: int | None = Query(default=None, ge=0),
     gia_den: int | None = Query(default=None, ge=0),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=10, ge=1, le=1000),
+    page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> HtCauHinhGoiCuocPage:
     """Lấy danh sách gói cước có phân trang.
