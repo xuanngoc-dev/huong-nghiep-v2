@@ -1,6 +1,6 @@
 <template>
   <section class="quiz-flow">
-    <div class="container-fluid">
+    <div class="container-fluid mb-3">
       <div class="holland-overview">
         <header class="holland-overview__header">
           <h2 class="holland-overview__title">Kết quả trắc nghiệm Holland</h2>
@@ -17,7 +17,7 @@
           <BuocLamBai :ssid="ssid" :buoc="buoc" hien-tai="ket-qua" />
 
           <div class="kq">
-            <div v-if="top.length" class="row g-3">
+            <div v-if="top.length" class="row g-3 mt-2">
               <div v-for="(item, index) in top" :key="item.ma_nhom" class="col-12 col-md-4">
                 <article class="kq-card kq-nhom">
                   <div class="kq-nhom__head">
@@ -28,7 +28,7 @@
                     </div>
                     <span class="kq-nhom__diem">{{ item.diem }} điểm</span>
                   </div>
-                  <p class="kq-nhom__mo-ta">{{ NOI_DUNG_NHOM[item.ma_nhom]?.xu_huong || item.mo_ta }}</p>
+                  <!-- <p class="kq-nhom__mo-ta">{{ NOI_DUNG_NHOM[item.ma_nhom]?.xu_huong || item.mo_ta }}</p> -->
                   <RouterLink
                     class="kq-nhom__dem"
                     :to="{ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid }, query: queryGiuLai }"
@@ -82,7 +82,7 @@
               </div>
             </div>
 
-            <article class="kq-card kq-cta">
+            <article class="kq-card kq-cta" v-if="false">
               <div>
                 <h3 class="kq-card__title">Tìm trường phù hợp</h3>
                 <p class="kq-muted">Chọn ngành để xem trường đào tạo và khả năng trúng tuyển theo điểm của bạn.</p>
@@ -128,7 +128,7 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchNhomHolland } from '@/api/nhomTinhCachHolland'
 import { fetchKetQua, fetchNganhPhuHop } from '@/api/phienKhaoSat'
-import { NOI_DUNG_NHOM, demNganhTheoNhom, xepHang } from '@/utils/ketQuaHolland'
+import { demNganhTheoNhom, xepHang } from '@/utils/ketQuaHolland'
 import BuocLamBai from './BuocLamBai.vue'
 import ToiCaiThien from './ket-qua/ToiCaiThien.vue'
 import ToiLaAi from './ket-qua/ToiLaAi.vue'
