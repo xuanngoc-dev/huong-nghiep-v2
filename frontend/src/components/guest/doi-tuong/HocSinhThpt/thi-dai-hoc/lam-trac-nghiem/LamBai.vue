@@ -195,10 +195,12 @@ const loaiDangLam = computed(
 const kieuTraLoi = computed(() => loaiDangLam.value?.loai_tra_loi || 'tinh_huong')
 const laDiemSo = computed(() => kieuTraLoi.value === 'diem_so')
 // Mỗi mức là một cột của bảng điểm số; mức `diem` ứng với đáp án có cùng `diem` của từng câu.
+// Lấy từ danh_sach_tieu_de_cau_tra_loi của loại câu hỏi (dòng chưa nhập điểm thì điểm = thứ tự 1, 2, ...);
+// loại chưa khai tiêu đề nào thì mới dùng MUC_DIEM_MAC_DINH.
 const mucDiem = computed(() => {
   const ds = (loaiDangLam.value?.danh_sach_tieu_de_cau_tra_loi || [])
-    .filter((item) => item?.tieu_de && item.diem != null)
-    .map((item) => ({ diem: item.diem, ten: item.tieu_de }))
+    .filter((item) => item?.tieu_de)
+    .map((item, index) => ({ diem: item.diem ?? index + 1, ten: item.tieu_de }))
   return ds.length ? ds : MUC_DIEM_MAC_DINH
 })
 
