@@ -189,7 +189,7 @@
 
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { baoLoi } from '@/utils/baoLoi'
 import { fetchPhuongThucTuyenSinh } from '@/api/phuongThucTuyenSinh'
 import { buildMethodDetail } from './phuongThucChiTiet'
 
@@ -239,7 +239,7 @@ async function loadCatalogMethods() {
     }
     catalogMethods.value = collected
   } catch {
-    ElMessage.error('Không tải được danh mục phương thức tuyển sinh')
+    baoLoi('Không tải được danh mục phương thức tuyển sinh')
   }
 }
 

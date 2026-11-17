@@ -130,7 +130,7 @@
  * mã ngành, điểm chuẩn, học phí, vị trí (đúng cách bộ tính dùng), quy định chưa mô hình hóa theo trường.
  */
 import { onMounted, reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { baoLoi } from '@/utils/baoLoi'
 import { fetchDoPhuXetTuyen } from '@/api/xetTuyen'
 import { hienThoiGian } from '@/data/napTien'
 
@@ -184,7 +184,7 @@ async function load() {
     nam.value = data.nam
     if (!filters.nam) filters.nam = data.nam
   } catch (error) {
-    ElMessage.error(thongBaoLoi(error, 'Không tải được độ phủ dữ liệu xét tuyển'))
+    baoLoi(thongBaoLoi(error, 'Không tải được độ phủ dữ liệu xét tuyển'))
   } finally {
     loading.value = false
   }

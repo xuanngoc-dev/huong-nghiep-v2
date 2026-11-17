@@ -89,7 +89,7 @@
 <script setup>
 /** Chạy thử quy tắc của một đề án (bước 5.4): đối chiếu trên dữ liệu thật trước khi chuyển sang "đang áp dụng". */
 import { computed, ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { baoLoi } from '@/utils/baoLoi'
 import { chayThuQuyTacXetTuyen } from '@/api/deAnTuyenSinh'
 import { fetchHoSoXetTuyen } from '@/api/hoSoXetTuyen'
 import { taiFileJson } from '@/utils/jsonFile'
@@ -154,7 +154,7 @@ async function layHoSoCuaToi() {
     for (const k of CHI_DOC) delete hoSo[k]
     jsonText.value = JSON.stringify(hoSo, null, 2)
   } catch (error) {
-    ElMessage.error(thongBaoLoi(error, 'Không lấy được hồ sơ xét tuyển của bạn'))
+    baoLoi(thongBaoLoi(error, 'Không lấy được hồ sơ xét tuyển của bạn'))
   } finally {
     dangLayHoSo.value = false
   }
@@ -165,7 +165,7 @@ async function chay() {
   try {
     hoSo = JSON.parse(jsonText.value)
   } catch {
-    ElMessage.error('Hồ sơ không phải JSON hợp lệ')
+    baoLoi('Hồ sơ không phải JSON hợp lệ')
     return
   }
   dangChay.value = true
@@ -173,7 +173,7 @@ async function chay() {
     ketQua.value = await chayThuQuyTacXetTuyen(props.deAnId, { ho_so: hoSo, hom_nay: homNay.value || null })
   } catch (error) {
     ketQua.value = null
-    ElMessage.error(thongBaoLoi(error, 'Không chạy thử được'))
+    baoLoi(thongBaoLoi(error, 'Không chạy thử được'))
   } finally {
     dangChay.value = false
   }

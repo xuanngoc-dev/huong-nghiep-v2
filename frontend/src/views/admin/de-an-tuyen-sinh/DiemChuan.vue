@@ -273,6 +273,7 @@
  */
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { baoLoi } from '@/utils/baoLoi'
 import { fetchChuongTrinhDaoTao } from '@/api/chuongTrinhDaoTao'
 import {
   createDiemChuan,
@@ -453,7 +454,7 @@ async function load() {
   } catch (error) {
     rows.value = []
     total.value = 0
-    ElMessage.error(errorMessage(error, 'Không tải được danh sách điểm chuẩn'))
+    baoLoi(errorMessage(error, 'Không tải được danh sách điểm chuẩn'))
   } finally {
     loading.value = false
   }
@@ -528,7 +529,7 @@ async function onSubmit() {
     try {
       items = parseJson()
     } catch (error) {
-      ElMessage.error(error.message)
+      baoLoi(error.message)
       return
     }
     saving.value = true
@@ -538,7 +539,7 @@ async function onSubmit() {
       dialogVisible.value = false
       await load()
     } catch (error) {
-      ElMessage.error(errorMessage(error, 'Không nhập được điểm chuẩn'))
+      baoLoi(errorMessage(error, 'Không nhập được điểm chuẩn'))
     } finally {
       saving.value = false
     }
@@ -562,7 +563,7 @@ async function onSubmit() {
     dialogVisible.value = false
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không lưu được điểm chuẩn'))
+    baoLoi(errorMessage(error, 'Không lưu được điểm chuẩn'))
   } finally {
     saving.value = false
   }
@@ -585,7 +586,7 @@ async function onDelete(row) {
     if (rows.value.length === 1 && page.value > 1) page.value -= 1
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không xóa được điểm chuẩn'))
+    baoLoi(errorMessage(error, 'Không xóa được điểm chuẩn'))
   }
 }
 
@@ -609,7 +610,7 @@ async function onDeleteSelected() {
     if (rows.value.length === ids.length && page.value > 1) page.value -= 1
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không xóa được điểm chuẩn'))
+    baoLoi(errorMessage(error, 'Không xóa được điểm chuẩn'))
   } finally {
     deleting.value = false
   }
@@ -617,7 +618,7 @@ async function onDeleteSelected() {
 
 onMounted(() => {
   load()
-  loadOptions().catch(() => ElMessage.error('Không tải được danh mục trường, phương thức, tổ hợp'))
+  loadOptions().catch(() => baoLoi('Không tải được danh mục trường, phương thức, tổ hợp'))
 })
 </script>
 

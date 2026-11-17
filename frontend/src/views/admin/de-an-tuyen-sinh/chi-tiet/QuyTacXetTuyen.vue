@@ -251,6 +251,7 @@
  */
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { baoLoi } from '@/utils/baoLoi'
 import { doiTrangThaiQuyTacXetTuyen, fetchQuyTacXetTuyen, importQuyTacXetTuyen } from '@/api/deAnTuyenSinh'
 import { hienThoiGian } from '@/data/napTien'
 import { docFileJson } from '@/utils/jsonFile'
@@ -344,7 +345,7 @@ async function load() {
   } catch (error) {
     data.value = null
     const detail = error?.response?.data?.detail
-    ElMessage.error(typeof detail === 'string' ? detail : 'Không tải được quy tắc xét tuyển')
+    baoLoi(typeof detail === 'string' ? detail : 'Không tải được quy tắc xét tuyển')
   } finally {
     loading.value = false
   }
@@ -374,7 +375,7 @@ async function onImport() {
   try {
     duLieu = JSON.parse(jsonText.value)
   } catch {
-    ElMessage.error('JSON không hợp lệ')
+    baoLoi('JSON không hợp lệ')
     return
   }
   dangImport.value = true
@@ -423,7 +424,7 @@ async function onDoiTrangThai(moi) {
     ElMessage.success(`Đã chuyển sang ${TRANG_THAI[kq.trang_thai_xet_tuyen].label.toLowerCase()}`)
   } catch (error) {
     const detail = error?.response?.data?.detail
-    ElMessage.error(typeof detail === 'string' ? detail : 'Không đổi được trạng thái')
+    baoLoi(typeof detail === 'string' ? detail : 'Không đổi được trạng thái')
   } finally {
     dangDoiTrangThai.value = false
   }

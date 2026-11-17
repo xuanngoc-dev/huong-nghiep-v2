@@ -288,6 +288,7 @@
 import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { baoLoi } from '@/utils/baoLoi'
 import { fetchDeAnTuyenSinh } from '@/api/deAnTuyenSinh'
 import { fetchTruongHoc } from '@/api/truongHoc'
 import {
@@ -458,15 +459,15 @@ function yearFilter() {
 
 function ensureContext() {
   if (!context.ma_truong) {
-    ElMessage.error('Vui lòng chọn trường')
+    baoLoi('Vui lòng chọn trường')
     return false
   }
   if (selectedYear.value == null) {
-    ElMessage.error('Vui lòng chọn năm học')
+    baoLoi('Vui lòng chọn năm học')
     return false
   }
   if (!context.de_an_id) {
-    ElMessage.error('Vui lòng chọn đề án tuyển sinh')
+    baoLoi('Vui lòng chọn đề án tuyển sinh')
     return false
   }
   return true
@@ -507,7 +508,7 @@ async function loadDeAnOptions() {
   } catch (error) {
     if (requestId !== deAnRequest) return
     deAnOptions.value = []
-    ElMessage.error(errorMessage(error, 'Không tải được danh sách đề án tuyển sinh'))
+    baoLoi(errorMessage(error, 'Không tải được danh sách đề án tuyển sinh'))
   } finally {
     if (requestId === deAnRequest) deAnLoading.value = false
   }
@@ -531,7 +532,7 @@ async function loadFilterDeAnOptions() {
   } catch (error) {
     if (requestId !== filterDeAnRequest) return
     filterDeAnOptions.value = []
-    ElMessage.error(errorMessage(error, 'Không tải được danh sách đề án tuyển sinh'))
+    baoLoi(errorMessage(error, 'Không tải được danh sách đề án tuyển sinh'))
   } finally {
     if (requestId === filterDeAnRequest) filterDeAnLoading.value = false
   }
@@ -565,7 +566,7 @@ async function load() {
     rows.value = data.items
     total.value = data.total
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không tải được danh sách website'))
+    baoLoi(errorMessage(error, 'Không tải được danh sách website'))
   } finally {
     loading.value = false
   }
@@ -654,7 +655,7 @@ async function onSubmitJson() {
   try {
     items = parseJsonItems(jsonText.value)
   } catch (error) {
-    ElMessage.error(error.message)
+    baoLoi(error.message)
     return
   }
 
@@ -671,7 +672,7 @@ async function onSubmitJson() {
     dialogVisible.value = false
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không nhập được website'))
+    baoLoi(errorMessage(error, 'Không nhập được website'))
   } finally {
     saving.value = false
   }
@@ -700,7 +701,7 @@ async function onSubmit() {
     dialogVisible.value = false
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không lưu được website'))
+    baoLoi(errorMessage(error, 'Không lưu được website'))
   } finally {
     saving.value = false
   }
@@ -728,7 +729,7 @@ async function onDelete(row) {
     }
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không xóa được website'))
+    baoLoi(errorMessage(error, 'Không xóa được website'))
   }
 }
 
@@ -759,7 +760,7 @@ async function onDeleteSelected() {
     }
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không xóa được các website đã chọn'))
+    baoLoi(errorMessage(error, 'Không xóa được các website đã chọn'))
   } finally {
     deleting.value = false
   }

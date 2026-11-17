@@ -32,7 +32,7 @@
 <script setup>
 /** Nội dung chi tiết đề án tuyển sinh theo tab; dùng trong ChiTietDeAnDialog và trang Chương trình & phương thức. */
 import { computed, ref, watch } from 'vue'
-import { ElMessage } from 'element-plus'
+import { baoLoi } from '@/utils/baoLoi'
 import { fetchDeAnTuyenSinhChiTiet } from '@/api/deAnTuyenSinh'
 import TongQuan from './chi-tiet/TongQuan.vue'
 import TruSo from './chi-tiet/TruSo.vue'
@@ -153,7 +153,7 @@ async function loadDetail(id) {
     detail.value = data
   } catch (error) {
     if (serial !== requestSerial) return
-    ElMessage.error(errorMessage(error))
+    baoLoi(errorMessage(error))
   } finally {
     if (serial === requestSerial) loading.value = false
   }

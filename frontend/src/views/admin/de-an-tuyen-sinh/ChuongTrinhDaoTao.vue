@@ -98,7 +98,7 @@
  * Có đề án: hiển thị như dialog chi tiết đề án. Không có: bảng chương trình gộp các đề án khớp bộ lọc.
  */
 import { computed, onMounted, reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { baoLoi } from '@/utils/baoLoi'
 import { fetchChuongTrinhDaoTao } from '@/api/chuongTrinhDaoTao'
 import { fetchDeAnTuyenSinh } from '@/api/deAnTuyenSinh'
 import { fetchNganh } from '@/api/nganhDaoTao'
@@ -218,7 +218,7 @@ async function loadDeAnOptions() {
   } catch (error) {
     if (requestId !== deAnRequest) return
     deAnOptions.value = []
-    ElMessage.error(errorMessage(error, 'Không tải được danh sách đề án tuyển sinh'))
+    baoLoi(errorMessage(error, 'Không tải được danh sách đề án tuyển sinh'))
   } finally {
     if (requestId === deAnRequest) deAnLoading.value = false
   }
@@ -247,7 +247,7 @@ async function loadList() {
     if (requestId !== listRequest) return
     listItems.value = []
     listTotal.value = 0
-    ElMessage.error(errorMessage(error, 'Không tải được chương trình và phương thức'))
+    baoLoi(errorMessage(error, 'Không tải được chương trình và phương thức'))
   } finally {
     if (requestId === listRequest) listLoading.value = false
   }

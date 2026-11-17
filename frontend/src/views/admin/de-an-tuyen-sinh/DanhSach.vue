@@ -375,6 +375,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { baoLoi } from '@/utils/baoLoi'
 import {
   createDeAnTuyenSinh,
   deleteDeAnTuyenSinh,
@@ -704,7 +705,7 @@ async function load() {
     rows.value = data.items
     total.value = data.total
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không tải được danh sách đề án tuyển sinh'))
+    baoLoi(errorMessage(error, 'Không tải được danh sách đề án tuyển sinh'))
   } finally {
     loading.value = false
   }
@@ -791,7 +792,7 @@ function fillJsonSample() {
   try {
     applyDocumentSelection(parseJsonDocument(jsonText.value))
   } catch (error) {
-    ElMessage.error(error.message)
+    baoLoi(error.message)
   }
 }
 
@@ -809,11 +810,11 @@ function onJsonFile(event) {
     try {
       applyDocumentSelection(parseJsonDocument(jsonText.value))
     } catch (error) {
-      ElMessage.error(error.message)
+      baoLoi(error.message)
     }
   }
   reader.onerror = () => {
-    ElMessage.error('Không đọc được file JSON')
+    baoLoi('Không đọc được file JSON')
   }
   reader.readAsText(file)
 }
@@ -824,18 +825,18 @@ async function onSubmitJson() {
     document = parseJsonDocument(jsonText.value)
     applyDocumentSelection(document)
   } catch (error) {
-    ElMessage.error(error.message)
+    baoLoi(error.message)
     return
   }
 
   const schoolAfterFile = selectedJsonSchool()
   const yearAfterFile = selectedJsonYear()
   if (!schoolAfterFile) {
-    ElMessage.error('Vui lòng chọn trường')
+    baoLoi('Vui lòng chọn trường')
     return
   }
   if (yearAfterFile == null) {
-    ElMessage.error('Năm tuyển sinh phải là số từ 1990 đến 2100')
+    baoLoi('Năm tuyển sinh phải là số từ 1990 đến 2100')
     return
   }
 
@@ -858,7 +859,7 @@ async function onSubmitJson() {
     dialogVisible.value = false
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không nhập được đề án tuyển sinh'))
+    baoLoi(errorMessage(error, 'Không nhập được đề án tuyển sinh'))
   } finally {
     saving.value = false
   }
@@ -886,7 +887,7 @@ async function onSubmit() {
     dialogVisible.value = false
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không lưu được đề án tuyển sinh'))
+    baoLoi(errorMessage(error, 'Không lưu được đề án tuyển sinh'))
   } finally {
     saving.value = false
   }
@@ -910,7 +911,7 @@ async function onSaoChep() {
     saoChep.visible = false
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không sao chép được đề án tuyển sinh'))
+    baoLoi(errorMessage(error, 'Không sao chép được đề án tuyển sinh'))
   } finally {
     saoChep.dangLuu = false
   }
@@ -942,7 +943,7 @@ async function onDelete(row) {
     }
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không xóa được đề án tuyển sinh'))
+    baoLoi(errorMessage(error, 'Không xóa được đề án tuyển sinh'))
   }
 }
 
@@ -977,7 +978,7 @@ async function onDeleteSelected() {
     }
     await load()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không xóa được các đề án tuyển sinh đã chọn'))
+    baoLoi(errorMessage(error, 'Không xóa được các đề án tuyển sinh đã chọn'))
   } finally {
     deleting.value = false
   }

@@ -184,6 +184,7 @@
  */
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { baoLoi } from '@/utils/baoLoi'
 import { fetchGanNganhCoSo, luuGanNganhCoSo } from '@/api/chuongTrinhDaoTao'
 import { fetchDeAnTuyenSinh } from '@/api/deAnTuyenSinh'
 import { fetchNganh } from '@/api/nganhDaoTao'
@@ -321,7 +322,7 @@ async function loadDeAnOptions() {
   } catch (error) {
     if (requestId !== deAnRequest) return
     deAnOptions.value = []
-    ElMessage.error(errorMessage(error, 'Không tải được danh sách đề án tuyển sinh'))
+    baoLoi(errorMessage(error, 'Không tải được danh sách đề án tuyển sinh'))
   } finally {
     if (requestId === deAnRequest) deAnLoading.value = false
   }
@@ -346,7 +347,7 @@ async function loadRows() {
     coSoOptions.value = coSo.items || []
     rows.value = (data.items || []).map((item) => ({ ...item, goc: giaTriForm(item), form: giaTriForm(item) }))
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không tải được chương trình của đề án'))
+    baoLoi(errorMessage(error, 'Không tải được chương trình của đề án'))
   } finally {
     loading.value = false
   }
@@ -409,7 +410,7 @@ async function onSave() {
     ElMessage.success(`Đã lưu ${result.updated} chương trình`)
     await loadRows()
   } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không lưu được ngành và cơ sở'))
+    baoLoi(errorMessage(error, 'Không lưu được ngành và cơ sở'))
   } finally {
     saving.value = false
   }
@@ -417,7 +418,7 @@ async function onSave() {
 
 onMounted(() => {
   loadTruongOptions().catch(() => {})
-  loadNganhOptions().catch(() => ElMessage.error('Không tải được danh mục ngành đào tạo'))
+  loadNganhOptions().catch(() => baoLoi('Không tải được danh mục ngành đào tạo'))
 })
 </script>
 
