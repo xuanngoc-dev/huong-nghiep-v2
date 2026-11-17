@@ -35,3 +35,11 @@ export function fetchPhienKhaoSatQuanTri(params, config = {}) {
 export function fetchLichSuKhaoSat(params, config = {}) {
   return api.get('/trac-nghiem/phien/lich-su', { ...config, params }).then((res) => res.data)
 }
+
+export function deletePhienKhaoSatQuanTri(id) {
+  return api.delete(`/trac-nghiem/phien/quan-tri/${id}`)
+}
+
+export function deletePhienKhaoSatQuanTriMany(ids) {
+  return api.delete('/trac-nghiem/phien/quan-tri', { data: { ids } }).then((res) => res.data)
+}

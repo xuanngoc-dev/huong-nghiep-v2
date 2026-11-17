@@ -7,7 +7,7 @@ from typing import Literal
 from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import case, func, or_, select
+from sqlalchemy import case, delete, func, or_, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user, get_current_user, get_optional_user
@@ -25,6 +25,8 @@ from app.schemas.tn_phien_khao_sat import (
     TnPhienBuocPublic,
     TnPhienCauHoiPublic,
     TnPhienCauTraLoiPublic,
+    TnPhienDeleteMany,
+    TnPhienDeleteManyResult,
     TnPhienDiemHolland,
     TnPhienKetQuaPublic,
     TnPhienKhaoSatPublic,
@@ -352,6 +354,44 @@ def danh_sach_phien_quan_tri(
         for phien, nguoi in rows
     ]
     return TnPhienQuanTriPage(items=items, total=total, page=page, page_size=page_size)
+
+
+def _xoa_phien(db: Session, phien_list: list[TnPhienKhaoSat]) -> int:
+    """Xóa các phiên cùng câu trả lời của chúng (xóa con trước, không dựa vào ON DELETE CASCADE của CSDL)."""
+    if not phien_list:
+        return 0
+    db.execute(delete(TnChiTietTraLoi).where(TnChiTietTraLoi.ssid.in_([p.ssid for p in phien_list])))
+    for phien in phien_list:
+        db.delete(phien)
+    db.commit()
+    return len(phien_list)
+
+
+@router.delete(
+    "/quan-tri",
+    response_model=TnPhienDeleteManyResult,
+    dependencies=[Depends(get_admin_user)],
+)
+def xoa_nhieu_phien_quan_tri(payload: TnPhienDeleteMany, db: Session = Depends(get_db)) -> TnPhienDeleteManyResult:
+    """Xóa nhiều phiên trắc nghiệm theo id, kèm toàn bộ câu trả lời. Id không tồn tại thì bỏ qua."""
+    phien_list = list(db.scalars(select(TnPhienKhaoSat).where(TnPhienKhaoSat.id.in_(set(payload.ids)))).all())
+    return TnPhienDeleteManyResult(deleted=_xoa_phien(db, phien_list))
+
+
+@router.delete(
+    "/quan-tri/{item_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(get_admin_user)],
+)
+def xoa_phien_quan_tri(item_id: int, db: Session = Depends(get_db)) -> None:
+    """Xóa một phiên trắc nghiệm theo id, kèm toàn bộ câu trả lời."""
+    phien = db.get(TnPhienKhaoSat, item_id)
+    if phien is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy phiên trắc nghiệm có id = {item_id}",
+        )
+    _xoa_phien(db, [phien])
 
 
 def _noi_dung_hien_thi(text: str) -> str:

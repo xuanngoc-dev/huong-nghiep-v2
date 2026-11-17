@@ -63,10 +63,33 @@
   <CustomCard shadow="never" class="catalog-card">
     <div class="toolbar">
       <h2 class="toolbar__title">Lịch sử trắc nghiệm</h2>
-      <span class="toolbar__count">{{ total.toLocaleString('vi-VN') }} phiên</span>
+      <div class="toolbar__actions">
+        <span class="toolbar__count">{{ total.toLocaleString('vi-VN') }} phiên</span>
+        <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
+          <CustomButton
+            type="danger"
+            plain
+            :disabled="!selectedRows.length"
+            :loading="deleting"
+            @click="onDeleteSelected"
+          >
+            <CustomIcon><Delete /></CustomIcon>
+            Xóa
+          </CustomButton>
+        </CustomBadge>
+      </div>
     </div>
 
-    <CustomTable :loading="loading" :data="rows" row-key="id" stripe border>
+    <CustomTable
+      ref="tableRef"
+      :loading="loading"
+      :data="rows"
+      row-key="id"
+      stripe
+      border
+      @selection-change="onSelectionChange"
+    >
+      <CustomTableColumn type="selection" width="48" reserve-selection align="center" />
       <CustomTableColumn label="STT" width="64" align="center">
         <template #default="{ $index }">{{ rowIndex($index) }}</template>
       </CustomTableColumn>
@@ -115,10 +138,10 @@
           </CustomTag>
         </template>
       </CustomTableColumn>
-      <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
+      <CustomTableColumn label="Thao tác" width="130" fixed="right" align="center">
         <template #default="{ row }">
-          <div v-if="row.da_xong" class="row-actions">
-            <CustomTooltip content="Xem kết quả" placement="top">
+          <div class="row-actions">
+            <CustomTooltip v-if="row.da_xong" content="Xem kết quả" placement="top">
               <CustomButton
                 link
                 type="primary"
@@ -128,7 +151,7 @@
                 <CustomIcon><DataAnalysis /></CustomIcon>
               </CustomButton>
             </CustomTooltip>
-            <CustomTooltip content="Ngành phù hợp" placement="top">
+            <CustomTooltip v-if="row.da_xong" content="Ngành phù hợp" placement="top">
               <CustomButton
                 link
                 type="primary"
@@ -138,8 +161,12 @@
                 <CustomIcon><School /></CustomIcon>
               </CustomButton>
             </CustomTooltip>
+            <CustomTooltip content="Xóa" placement="top">
+              <CustomButton link type="danger" aria-label="Xóa" @click="onDelete(row)">
+                <CustomIcon><Delete /></CustomIcon>
+              </CustomButton>
+            </CustomTooltip>
           </div>
-          <span v-else class="cell-sub">—</span>
         </template>
       </CustomTableColumn>
       <template #empty>
@@ -165,8 +192,12 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { fetchPhienKhaoSatQuanTri } from '@/api/phienKhaoSat'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import {
+  deletePhienKhaoSatQuanTri,
+  deletePhienKhaoSatQuanTriMany,
+  fetchPhienKhaoSatQuanTri,
+} from '@/api/phienKhaoSat'
 
 const TRANG_THAI_OPTIONS = [
   { value: 'hoan-thanh', label: 'Hoàn thành' },
@@ -183,6 +214,9 @@ const rows = ref([])
 const total = ref(0)
 const page = ref(1)
 const pageSize = ref(20)
+const tableRef = ref()
+const selectedRows = ref([])
+const deleting = ref(false)
 
 const filters = reactive(emptyFilters())
 
@@ -271,6 +305,63 @@ function onSizeChange() {
 function moTab(name, row) {
   const href = router.resolve({ name, params: { ssid: row.ssid } }).href
   window.open(href, '_blank', 'noopener')
+}
+
+function onSelectionChange(selection) {
+  selectedRows.value = selection
+}
+
+function clearSelection() {
+  selectedRows.value = []
+  tableRef.value?.clearSelection()
+}
+
+function xacNhanXoa(message) {
+  return ElMessageBox.confirm(message, 'Xác nhận xóa', {
+    type: 'warning',
+    confirmButtonText: 'Xóa',
+    cancelButtonText: 'Hủy',
+    confirmButtonClass: 'el-button--danger',
+  })
+    .then(() => true)
+    .catch(() => false)
+}
+
+// Xóa hết các dòng của trang đang xem thì lùi về trang trước rồi tải lại.
+async function taiLaiSauXoa(soDongXoaTrenTrang) {
+  if (soDongXoaTrenTrang >= rows.value.length && page.value > 1) page.value -= 1
+  await load()
+}
+
+async function onDelete(row) {
+  const ten = row.ma_giao_dich || row.ssid
+  if (!(await xacNhanXoa(`Xóa phiên trắc nghiệm "${ten}" cùng toàn bộ câu trả lời?`))) return
+  try {
+    await deletePhienKhaoSatQuanTri(row.id)
+    ElMessage.success('Đã xóa phiên trắc nghiệm')
+    selectedRows.value = selectedRows.value.filter((item) => item.id !== row.id)
+    await taiLaiSauXoa(1)
+  } catch (error) {
+    ElMessage.error(errorMessage(error, 'Không xóa được phiên trắc nghiệm'))
+  }
+}
+
+async function onDeleteSelected() {
+  const ids = selectedRows.value.map((row) => row.id)
+  if (!ids.length) return
+  if (!(await xacNhanXoa(`Xóa ${ids.length} phiên trắc nghiệm đã chọn cùng toàn bộ câu trả lời?`))) return
+  deleting.value = true
+  try {
+    const removedOnPage = rows.value.filter((row) => ids.includes(row.id)).length
+    const result = await deletePhienKhaoSatQuanTriMany(ids)
+    ElMessage.success(`Đã xóa ${result.deleted} phiên trắc nghiệm`)
+    clearSelection()
+    await taiLaiSauXoa(removedOnPage)
+  } catch (error) {
+    ElMessage.error(errorMessage(error, 'Không xóa được các phiên đã chọn'))
+  } finally {
+    deleting.value = false
+  }
 }
 
 async function copySsid(row) {

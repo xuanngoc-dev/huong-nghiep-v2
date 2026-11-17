@@ -1,14 +1,14 @@
 # Danh sách API
 
-Tự sinh từ code lúc 16/11/2026 23:06 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 17/11/2026 11:51 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **298** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **300** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 169 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Quản trị (admin)](#quan_tri) | 171 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
 | [Thành viên (user)](#thanh_vien) | 81 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 48 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
@@ -350,6 +350,8 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/trac-nghiem/phien/quan-tri` | Bắt buộc (admin) | Tất cả phiên khảo sát cho quản trị, mới nhất trước. |
+| `DELETE` | `/api/v1/trac-nghiem/phien/quan-tri` | Bắt buộc (admin) | Xóa nhiều phiên trắc nghiệm theo id, kèm toàn bộ câu trả lời. Id không tồn tại thì bỏ qua. |
+| `DELETE` | `/api/v1/trac-nghiem/phien/quan-tri/{item_id}` | Bắt buộc (admin) | Xóa một phiên trắc nghiệm theo id, kèm toàn bộ câu trả lời. |
 
 ### `xet-tuyen`
 

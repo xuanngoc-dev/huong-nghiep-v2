@@ -117,3 +117,11 @@ class TnPhienQuanTriPage(BaseModel):
     total: int
     page: int
     page_size: int
+
+
+class TnPhienDeleteMany(BaseModel):
+    ids: list[int] = Field(..., min_length=1, max_length=500)
+
+
+class TnPhienDeleteManyResult(BaseModel):
+    deleted: int
