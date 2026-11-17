@@ -10,6 +10,11 @@
           <p v-else class="holland-overview__lead">Thông tin đào tạo theo mã ngành trên đường dẫn.</p>
         </header> -->
 
+        <!-- Nút quay lại đặt trên cùng, hiện cả khi đang tải hoặc lỗi. -->
+        <div class="major-nav mt-3">
+          <button type="button" class="btn btn-outline-success" @click="quayLai">Quay lại ngành phù hợp</button>
+        </div>
+
         <p v-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
         <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải thông tin ngành…</p>
 
@@ -88,9 +93,6 @@
           <CauHoiThuongGap class="mt-3" />
         </template>
 
-        <div class="major-nav">
-          <button type="button" class="btn btn-outline-success" @click="quayLai">Quay lại ngành phù hợp</button>
-        </div>
       </div>
     </div>
   </section>

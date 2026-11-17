@@ -1,5 +1,5 @@
 <template>
-  <CustomDialog v-model="visible" title="Xác nhận xóa" width="640px" append-to-body @closed="onClosed">
+  <CustomDialog v-model="visible" title="Xác nhận xóa" width="50%" append-to-body @closed="onClosed">
     <div v-loading="dangTai" class="xac-nhan">
       <p class="xac-nhan__cau-hoi">
         <CustomIcon class="xac-nhan__icon"><WarningFilled /></CustomIcon>
@@ -11,6 +11,11 @@
 
       <template v-if="dong.length">
         <CustomTable :data="dong" border size="small" class="xac-nhan__bang">
+          <CustomTableColumn label="STT" width="50" align="center">
+            <template #default="{ $index }">
+              {{ $index + 1 }}
+            </template>
+          </CustomTableColumn>
           <CustomTableColumn label="Dữ liệu" min-width="160" prop="du_lieu" />
           <CustomTableColumn label="Số lượng" width="100" align="right">
             <template #default="{ row }">
@@ -19,7 +24,7 @@
           </CustomTableColumn>
           <CustomTableColumn label="Ghi chú" min-width="200" prop="ghi_chu" />
         </CustomTable>
-        <p class="xac-nhan__canh-bao">Dữ liệu đã xóa không thể khôi phục.</p>
+        <!-- <p class="xac-nhan__canh-bao">Dữ liệu đã xóa không thể khôi phục.</p> -->
       </template>
     </div>
 
