@@ -9,7 +9,11 @@
             <RouterLink v-if="daDangNhap" class="btn btn-sm btn-outline-success" :to="{ name: 'lich-su-tim-truong' }">
               Lịch sử tìm trường
             </RouterLink>
-            <CustomButton link type="primary" @click="quayLai">Quay lại</CustomButton>
+            <!-- Hồ sơ cá nhân: mở ngăn kéo hồ sơ ngay trên trang để xem & cập nhật -->
+            <button v-if="daDangNhap" type="button" class="btn btn-sm btn-outline-success" @click="hoSoMo = true">
+              Hồ sơ cá nhân
+            </button>
+            <!-- <CustomButton link type="primary" @click="quayLai">Quay lại</CustomButton> -->
           </div>
         </header>
 
@@ -44,7 +48,11 @@
               <h3 class="ho-so-tom-tat__title">Thông tin của bạn</h3>
               <p class="ho-so-tom-tat__sub">
                 {{ hoSo.ho_ten }}
-                <span v-if="soMucThieu"> · còn {{ soMucThieu }} mục chưa cập nhật</span>
+                <span v-if="soMucThieu"> · còn {{ soMucThieu }} mục chưa cập nhật. Bổ sung ngay để tìm trường phù hợp.</span>
+                <RouterLink class="ho-so-tom-tat__link" :to="{ name: 'ho-so-ca-nhan' }">
+                  <CustomIcon><EditPen /></CustomIcon>
+                  <span>Xem & cập nhật hồ sơ</span>
+                </RouterLink>
               </p>
             </div>
             <div class="ho-so-tom-tat__actions">
@@ -203,33 +211,36 @@
                 </div>
               </fieldset>
 
-              <p class="ho-so-khach__luu-y">
-                <CustomIcon><InfoFilled /></CustomIcon>
-                <span>
-                  Để có thông tin chính xác nhất, hãy
-                  <button type="button" class="ho-so-khach__link" @click="diDangNhap">đăng nhập</button> hoặc
-                  <button type="button" class="ho-so-khach__link" @click="diDangKy">đăng ký</button>
-                  để cung cấp đầy đủ thông tin. Khi đó kết quả tìm kiếm sẽ được phân tích một cách chính xác nhất.
-                </span>
-              </p>
 
-              <div class="ho-so-khach__submit">
+              <!-- <div class="ho-so-khach__submit">
                 <CustomButton native-type="button" :disabled="!conLuot" @click="xoaHoSoKhach">Nhập lại</CustomButton>
                 <CustomButton type="primary" native-type="submit" :disabled="!conLuot" :loading="dangGhiLuot">
                   Tìm trường phù hợp
                 </CustomButton>
-              </div>
+              </div> -->
             </form>
           </el-collapse-transition>
           <div class="ho-so-khach__cta">
-            <p>
+
+            <p class="ho-so-khach__luu-y">
+              <CustomIcon>
+                <InfoFilled />
+              </CustomIcon>
+              <span>
+                Để có thông tin chính xác nhất, hãy
+                <button type="button" class="ho-so-khach__link" @click="diDangNhap">đăng nhập</button> hoặc
+                <button type="button" class="ho-so-khach__link" @click="diDangKy">đăng ký</button>
+                để cung cấp đầy đủ thông tin. Khi đó kết quả tìm kiếm sẽ được phân tích một cách chính xác nhất.
+              </span>
+            </p>
+            <!-- <p>
               Đăng ký tài khoản để được tìm <strong>{{ soLuotThanhVien }} lượt mỗi ngày</strong> và lưu hồ sơ đầy đủ:
               học lực, điểm thi thử từng môn, ưu tiên tuyển sinh, chứng chỉ và bài thi đánh giá năng lực.
-            </p>
-            <div class="truong-phu-hop__links">
+            </p> -->
+            <!-- <div class="truong-phu-hop__links">
               <CustomButton type="primary" @click="diDangKy">Đăng ký</CustomButton>
               <CustomButton @click="diDangNhap">Đăng nhập</CustomButton>
-            </div>
+            </div> -->
           </div>
         </article>
 
@@ -732,13 +743,6 @@ function chiTieu(value) {
   return Number(value).toLocaleString('vi-VN')
 }
 
-function quayLai() {
-  router.push({
-    name: 'thpt-thi-dai-hoc-chon-truong',
-    params: { maNganh: maNganh.value },
-  })
-}
-
 function diDangNhap() {
   router.push({ name: 'login', query: { redirect: route.fullPath } })
 }
@@ -1042,15 +1046,6 @@ function luuHoSoKhach() {
     localStorage.setItem(KHOA_HO_SO_KHACH, JSON.stringify(hoSoKhach.value))
   } catch {
     // Không lưu được thì vẫn tìm kiếm bình thường.
-  }
-}
-
-function xoaHoSoKhach() {
-  hoSoKhach.value = hoSoKhachTrong()
-  try {
-    localStorage.removeItem(KHOA_HO_SO_KHACH)
-  } catch {
-    // Bỏ qua.
   }
 }
 
