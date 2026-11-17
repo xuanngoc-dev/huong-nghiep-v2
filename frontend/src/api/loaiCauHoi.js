@@ -16,10 +16,17 @@ export function updateLoaiCauHoi(id, payload) {
   return api.put(`/danh-muc/loai-cau-hoi/${id}`, payload).then((res) => res.data)
 }
 
-export function deleteLoaiCauHoi(id) {
-  return api.delete(`/danh-muc/loai-cau-hoi/${id}`)
+// xoaLienQuan: xóa kèm câu hỏi, đáp án và các phiên khảo sát có câu hỏi thuộc loại này.
+export function deleteLoaiCauHoi(id, xoaLienQuan = false) {
+  return api.delete(`/danh-muc/loai-cau-hoi/${id}`, { params: { xoa_lien_quan: xoaLienQuan } })
 }
 
-export function deleteLoaiCauHoiMany(ids) {
-  return api.delete('/danh-muc/loai-cau-hoi', { data: { ids } }).then((res) => res.data)
+export function deleteLoaiCauHoiMany(ids, xoaLienQuan = false) {
+  return api
+    .delete('/danh-muc/loai-cau-hoi', { data: { ids }, params: { xoa_lien_quan: xoaLienQuan } })
+    .then((res) => res.data)
+}
+
+export function fetchAnhHuongXoaLoaiCauHoi(ids) {
+  return api.post('/danh-muc/loai-cau-hoi/anh-huong-xoa', { ids }).then((res) => res.data)
 }

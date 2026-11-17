@@ -198,7 +198,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { h, onMounted, reactive, ref } from 'vue'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
@@ -206,6 +206,7 @@ import {
   createLoaiCauHoiBulk,
   deleteLoaiCauHoi,
   deleteLoaiCauHoiMany,
+  fetchAnhHuongXoaLoaiCauHoi,
   fetchLoaiCauHoi,
   updateLoaiCauHoi,
 } from '@/api/loaiCauHoi'
@@ -463,24 +464,49 @@ async function onSubmit() {
   }
 }
 
-async function onDelete(row) {
+/**
+ * Hỏi xác nhận xóa; còn câu hỏi / phiên khảo sát liên quan thì liệt kê số lượng sẽ bị xóa kèm.
+ * Trả null nếu người dùng hủy (hoặc không xem trước được), ngược lại trả xoaLienQuan để gửi kèm lệnh xóa.
+ */
+async function xacNhanXoa(ids, tieuDe) {
+  let anhHuong
   try {
-    await ElMessageBox.confirm(
-      `Xóa loại câu hỏi "${row.ten_loai_cau_hoi}"?`,
-      'Xác nhận xóa',
-      {
-        type: 'warning',
-        confirmButtonText: 'Xóa',
-        cancelButtonText: 'Hủy',
-        confirmButtonClass: 'el-button--danger',
-      },
-    )
-  } catch {
-    return
+    anhHuong = await fetchAnhHuongXoaLoaiCauHoi(ids)
+  } catch (error) {
+    ElMessage.error(errorMessage(error, 'Không kiểm tra được dữ liệu liên quan'))
+    return null
   }
+  const xoaLienQuan = Boolean(anhHuong.so_cau_hoi || anhHuong.so_phien)
+  const message = xoaLienQuan
+    ? h('div', [
+        h('p', `${tieuDe}? Thao tác này sẽ xóa luôn:`),
+        h('ul', { style: 'margin: 8px 0; padding-left: 20px' }, [
+          h('li', `${anhHuong.so_cau_hoi} câu hỏi thuộc loại này`),
+          h('li', `${anhHuong.so_dap_an} đáp án của các câu hỏi đó`),
+          h('li', `${anhHuong.so_phien} phiên khảo sát đã thực hiện có câu hỏi thuộc loại này (xóa cả phiên)`),
+        ]),
+        h('p', { style: 'color: var(--el-color-danger)' }, 'Dữ liệu đã xóa không thể khôi phục.'),
+      ])
+    : `${tieuDe}?`
+  try {
+    await ElMessageBox.confirm(message, 'Xác nhận xóa', {
+      type: 'warning',
+      confirmButtonText: xoaLienQuan ? 'Đồng ý xóa tất cả' : 'Xóa',
+      cancelButtonText: 'Hủy',
+      confirmButtonClass: 'el-button--danger',
+    })
+  } catch {
+    return null
+  }
+  return { xoaLienQuan }
+}
+
+async function onDelete(row) {
+  const xacNhan = await xacNhanXoa([row.id], `Xóa loại câu hỏi "${row.ten_loai_cau_hoi}"`)
+  if (!xacNhan) return
 
   try {
-    await deleteLoaiCauHoi(row.id)
+    await deleteLoaiCauHoi(row.id, xacNhan.xoaLienQuan)
     ElMessage.success('Đã xóa loại câu hỏi')
     tableRef.value?.toggleRowSelection(row, false)
     if (rows.value.length === 1 && page.value > 1) {
@@ -496,21 +522,13 @@ async function onDeleteSelected() {
   const ids = selectedRows.value.map((row) => row.id)
   if (!ids.length) return
 
-  try {
-    await ElMessageBox.confirm(`Xóa ${ids.length} loại câu hỏi đã chọn?`, 'Xác nhận xóa', {
-      type: 'warning',
-      confirmButtonText: 'Xóa',
-      cancelButtonText: 'Hủy',
-      confirmButtonClass: 'el-button--danger',
-    })
-  } catch {
-    return
-  }
+  const xacNhan = await xacNhanXoa(ids, `Xóa ${ids.length} loại câu hỏi đã chọn`)
+  if (!xacNhan) return
 
   deleting.value = true
   try {
     const removedOnPage = rows.value.filter((row) => ids.includes(row.id)).length
-    const result = await deleteLoaiCauHoiMany(ids)
+    const result = await deleteLoaiCauHoiMany(ids, xacNhan.xoaLienQuan)
     ElMessage.success(`Đã xóa ${result.deleted} loại câu hỏi`)
     clearSelection()
     if (removedOnPage >= rows.value.length && page.value > 1) {

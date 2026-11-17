@@ -1,14 +1,14 @@
 # Danh sách API
 
-Tự sinh từ code lúc 17/11/2026 11:51 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 17/11/2026 11:57 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **300** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **301** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 171 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Quản trị (admin)](#quan_tri) | 172 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
 | [Thành viên (user)](#thanh_vien) | 81 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 48 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
@@ -94,9 +94,10 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 |---|---|---|---|
 | `POST` | `/api/v1/danh-muc/loai-cau-hoi` | Bắt buộc (admin) | Thêm một loại câu hỏi. Từ chối nếu thứ tự ưu tiên đã tồn tại. |
 | `DELETE` | `/api/v1/danh-muc/loai-cau-hoi` | Bắt buộc (admin) | Xóa nhiều loại câu hỏi theo danh sách id. |
+| `POST` | `/api/v1/danh-muc/loai-cau-hoi/anh-huong-xoa` | Bắt buộc (admin) | Xem trước số câu hỏi, đáp án và phiên khảo sát sẽ bị xóa theo nếu xóa các loại câu hỏi này. |
 | `POST` | `/api/v1/danh-muc/loai-cau-hoi/bulk` | Bắt buộc (admin) | Thêm nhiều loại câu hỏi cùng lúc. Từ chối nếu thứ tự ưu tiên trùng trong dữ liệu hoặc đã có trong hệ thống. |
 | `PUT` | `/api/v1/danh-muc/loai-cau-hoi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một loại câu hỏi theo id. |
-| `DELETE` | `/api/v1/danh-muc/loai-cau-hoi/{item_id}` | Bắt buộc (admin) | Xóa một loại câu hỏi theo id. |
+| `DELETE` | `/api/v1/danh-muc/loai-cau-hoi/{item_id}` | Bắt buộc (admin) | Xóa một loại câu hỏi theo id; `xoa_lien_quan=true` xóa kèm câu hỏi, đáp án và phiên khảo sát liên quan. |
 
 ### `danh-muc/mon-hoc`
 

@@ -8,6 +8,7 @@ from app.db.session import get_db
 from app.models.dm_loai_cau_hoi import DmLoaiCauHoi
 from app.models.nguoi_dung import NguoiDung
 from app.schemas.dm_loai_cau_hoi import (
+    DmLoaiCauHoiAnhHuongXoa,
     DmLoaiCauHoiBulkResult,
     DmLoaiCauHoiDeleteMany,
     DmLoaiCauHoiDeleteManyResult,
@@ -15,6 +16,7 @@ from app.schemas.dm_loai_cau_hoi import (
     DmLoaiCauHoiPublic,
     DmLoaiCauHoiWrite,
 )
+from app.services import xoa_loai_cau_hoi
 
 router = APIRouter(prefix="/danh-muc/loai-cau-hoi", tags=["danh-muc"])
 
@@ -172,43 +174,67 @@ def update_loai_cau_hoi(
     return item
 
 
-@router.delete("", response_model=DmLoaiCauHoiDeleteManyResult)
-def delete_loai_cau_hoi_many(
+def _chan_neu_con_lien_quan(db: Session, ids: list[int]) -> None:
+    """Còn câu hỏi hoặc phiên khảo sát dùng loại này thì trả 400 nêu số lượng (xóa kèm bằng xoa_lien_quan=true)."""
+    anh_huong = xoa_loai_cau_hoi.anh_huong(db, ids)
+    if anh_huong["so_cau_hoi"] or anh_huong["so_phien"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                f"Không thể xóa vì còn {anh_huong['so_cau_hoi']} câu hỏi và {anh_huong['so_phien']} phiên khảo sát "
+                "liên quan; xác nhận xóa kèm dữ liệu liên quan để tiếp tục"
+            ),
+        )
+
+
+@router.post("/anh-huong-xoa", response_model=DmLoaiCauHoiAnhHuongXoa)
+def anh_huong_xoa_loai_cau_hoi(
     payload: DmLoaiCauHoiDeleteMany,
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_admin_user),
+) -> DmLoaiCauHoiAnhHuongXoa:
+    """Xem trước số câu hỏi, đáp án và phiên khảo sát sẽ bị xóa theo nếu xóa các loại câu hỏi này."""
+    return DmLoaiCauHoiAnhHuongXoa(**xoa_loai_cau_hoi.anh_huong(db, payload.ids))
+
+
+@router.delete("", response_model=DmLoaiCauHoiDeleteManyResult)
+def delete_loai_cau_hoi_many(
+    payload: DmLoaiCauHoiDeleteMany,
+    xoa_lien_quan: bool = Query(default=False),
+    db: Session = Depends(get_db),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> DmLoaiCauHoiDeleteManyResult:
-    """Xóa nhiều loại câu hỏi theo danh sách id."""
+    """Xóa nhiều loại câu hỏi theo danh sách id.
+
+    `xoa_lien_quan=true`: xóa luôn câu hỏi, đáp án thuộc các loại này và các phiên khảo sát đã làm có câu hỏi thuộc
+    loại này (xem trước số lượng bằng POST /anh-huong-xoa). Không bật mà còn dữ liệu liên quan thì trả 400.
+    """
+    if xoa_lien_quan:
+        deleted = xoa_loai_cau_hoi.xoa(db, payload.ids)
+        db.commit()
+        return DmLoaiCauHoiDeleteManyResult(deleted=deleted)
     items = db.scalars(select(DmLoaiCauHoi).where(DmLoaiCauHoi.id.in_(payload.ids))).all()
     if not items:
         return DmLoaiCauHoiDeleteManyResult(deleted=0)
+    _chan_neu_con_lien_quan(db, [item.id for item in items])
     for item in items:
         db.delete(item)
-    try:
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Không thể xóa vì còn câu hỏi trắc nghiệm thuộc loại này",
-        ) from None
+    db.commit()
     return DmLoaiCauHoiDeleteManyResult(deleted=len(items))
 
 
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_loai_cau_hoi(
     item_id: int,
+    xoa_lien_quan: bool = Query(default=False),
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_admin_user),
 ) -> None:
-    """Xóa một loại câu hỏi theo id."""
+    """Xóa một loại câu hỏi theo id; `xoa_lien_quan=true` xóa kèm câu hỏi, đáp án và phiên khảo sát liên quan."""
     item = _get_or_400(db, item_id)
-    db.delete(item)
-    try:
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Không thể xóa vì còn câu hỏi trắc nghiệm thuộc loại này",
-        ) from None
+    if xoa_lien_quan:
+        xoa_loai_cau_hoi.xoa(db, [item.id])
+    else:
+        _chan_neu_con_lien_quan(db, [item.id])
+        db.delete(item)
+    db.commit()

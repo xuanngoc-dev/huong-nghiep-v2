@@ -69,3 +69,12 @@ class DmLoaiCauHoiDeleteMany(BaseModel):
 
 class DmLoaiCauHoiDeleteManyResult(BaseModel):
     deleted: int
+
+
+class DmLoaiCauHoiAnhHuongXoa(BaseModel):
+    """Số bản ghi sẽ bị xóa theo khi xóa các loại câu hỏi kèm dữ liệu liên quan."""
+
+    so_loai: int
+    so_cau_hoi: int
+    so_dap_an: int
+    so_phien: int
