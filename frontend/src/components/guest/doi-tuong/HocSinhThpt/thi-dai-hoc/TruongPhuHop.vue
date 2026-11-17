@@ -5,7 +5,12 @@
       <div class="stages-card holland-overview mt-3">
         <header class="holland-overview__header truong-phu-hop__header">
           <h2 class="holland-overview__title">Trường phù hợp</h2>
-          <CustomButton link type="primary" @click="quayLai">Quay lại</CustomButton>
+          <div class="d-flex flex-wrap align-items-center gap-3">
+            <RouterLink v-if="daDangNhap" class="btn btn-sm btn-outline-success" :to="{ name: 'lich-su-tim-truong' }">
+              Lịch sử tìm trường
+            </RouterLink>
+            <CustomButton link type="primary" @click="quayLai">Quay lại</CustomButton>
+          </div>
         </header>
 
         <article class="truong-phu-hop__hero">
