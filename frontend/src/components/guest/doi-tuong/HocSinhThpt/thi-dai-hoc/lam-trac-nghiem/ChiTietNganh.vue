@@ -24,9 +24,9 @@
               <img class="major-detail__image" :src="anh" :alt="`Hình minh họa ngành ${nganh.ten_nganh}`" @error="anhHong = true" />
               <div class="major-detail__intro">
                 <div class="major-detail__top">
-                  <p class="major-detail__code">{{ nganh.ma_nganh }}</p>
+                  <p class="major-detail__code btn-outline-success major-detail__back">{{ nganh.ma_nganh }}</p>
                   <button type="button" class="btn btn-sm btn-outline-success major-detail__back" @click="quayLai">
-                    Quay lại ngành phù hợp
+                    Quay lại
                   </button>
                 </div>
                 <h3 class="major-detail__name">{{ nganh.ten_nganh }}</h3>

@@ -13,7 +13,7 @@
             <button v-if="daDangNhap" type="button" class="btn btn-sm btn-outline-success" @click="hoSoMo = true">
               Hồ sơ cá nhân
             </button>
-            <!-- <CustomButton link type="primary" @click="quayLai">Quay lại</CustomButton> -->
+            <CustomButton class="btn btn-sm btn-outline-success major-detail__back" @click="quayLai">Quay lại</CustomButton>
           </div>
         </header>
 
@@ -1081,6 +1081,13 @@ function timTheoHoSoKhach() {
   timCoLuot()
 }
 
+function quayLai() {
+  daTim.value = false
+  danhSach.value = []
+  total.value = 0
+  trang.value = 1
+  window.history.back()
+}
 // Lưu hồ sơ chỉ cập nhật bộ lọc; danh sách đang hiển thị (nếu đã tìm) được tải lại, không tính lượt.
 function daLuuHoSo(data) {
   hoSo.value = data
@@ -1655,6 +1662,7 @@ onMounted(async () => {
 
 .truong-phu-hop__cho-tim :deep(.el-icon) {
   flex: 0 0 auto;
+  margin-top: 3px;
   color: #3f9466;
   font-size: 18px;
 }
@@ -1662,7 +1670,6 @@ onMounted(async () => {
 @media (max-width: 767px) {
   .truong-phu-hop__hero {
     flex-direction: column;
-  margin-top: 3px;
   }
 
   .ho-so-tom-tat__head :deep(.el-button) {
