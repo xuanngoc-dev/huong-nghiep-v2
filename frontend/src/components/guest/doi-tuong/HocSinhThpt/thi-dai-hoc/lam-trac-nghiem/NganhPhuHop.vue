@@ -213,7 +213,7 @@
             </div>
           </el-dialog>
 
-          <div class="major-nav d-flex flex-wrap justify-content-between gap-2">
+          <div class="major-nav d-flex flex-wrap justify-content-between gap-2 mb-5">
             <button type="button" class="btn btn-outline-success" :disabled="!buocTruoc" @click="lui">
               Phần trước
             </button>
