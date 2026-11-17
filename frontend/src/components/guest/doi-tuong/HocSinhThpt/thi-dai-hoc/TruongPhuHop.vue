@@ -1640,8 +1640,8 @@ onMounted(async () => {
 
 .truong-phu-hop__cho-tim {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   gap: 8px;
   margin: 16px 0 0;
   padding: 20px 16px;
@@ -1650,7 +1650,7 @@ onMounted(async () => {
   background: #f6faf7;
   color: #3a4742;
   line-height: 1.5;
-  text-align: center;
+  text-align: left;
 }
 
 .truong-phu-hop__cho-tim :deep(.el-icon) {
@@ -1662,6 +1662,7 @@ onMounted(async () => {
 @media (max-width: 767px) {
   .truong-phu-hop__hero {
     flex-direction: column;
+  margin-top: 3px;
   }
 
   .ho-so-tom-tat__head :deep(.el-button) {
