@@ -138,7 +138,7 @@
           </CustomTag>
         </template>
       </CustomTableColumn>
-      <CustomTableColumn label="Thao tác" width="130" fixed="right" align="center">
+      <CustomTableColumn label="Thao tác" width="150" fixed="right" align="center">
         <template #default="{ row }">
           <div class="row-actions">
             <CustomTooltip v-if="row.da_xong" content="Xem kết quả" placement="top">
