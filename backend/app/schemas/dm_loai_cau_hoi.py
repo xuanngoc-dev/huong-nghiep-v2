@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -8,6 +9,19 @@ class DmLoaiCauHoiWrite(BaseModel):
     ghi_chu: str | None = Field(default=None, max_length=2000)
     thu_tu_uu_tien: int = Field(..., ge=1, le=9999)
     trang_thai: int = Field(default=1, ge=0, le=1)
+    loai_tra_loi: Literal["diem_so", "tinh_huong"] = "diem_so"
+    danh_sach_tieu_de_cau_tra_loi: list[str] | None = Field(default=None, max_length=50)
+
+    @field_validator("danh_sach_tieu_de_cau_tra_loi")
+    @classmethod
+    def clean_tieu_de(cls, value: list[str] | None) -> list[str] | None:
+        """Bỏ khoảng trắng và dòng trống; không còn tiêu đề nào thì lưu null."""
+        if value is None:
+            return None
+        cleaned = [item.strip() for item in value if item and item.strip()]
+        if any(len(item) > 255 for item in cleaned):
+            raise ValueError("Mỗi tiêu đề câu trả lời tối đa 255 ký tự")
+        return cleaned or None
 
     @field_validator("ten_loai_cau_hoi")
     @classmethod
@@ -32,6 +46,8 @@ class DmLoaiCauHoiPublic(BaseModel):
     ghi_chu: str | None = None
     thu_tu_uu_tien: int
     trang_thai: int
+    loai_tra_loi: str = "diem_so"
+    danh_sach_tieu_de_cau_tra_loi: list[str] | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None
 

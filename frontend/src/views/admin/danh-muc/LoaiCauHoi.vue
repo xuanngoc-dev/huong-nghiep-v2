@@ -67,6 +67,29 @@
         <CustomTableColumn prop="id" label="ID" width="100" align="center" />
         <CustomTableColumn prop="thu_tu_uu_tien" label="Thứ tự hiển thị" width="180" align="center" />
         <CustomTableColumn prop="ten_loai_cau_hoi" label="Tên loại câu hỏi" min-width="220" />
+        <CustomTableColumn label="Loại trả lời" width="130" align="center">
+          <template #default="{ row }">
+            <CustomTag :type="row.loai_tra_loi === 'tinh_huong' ? 'warning' : 'primary'" effect="light">
+              {{ nhanLoaiTraLoi(row.loai_tra_loi) }}
+            </CustomTag>
+          </template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Tiêu đề câu trả lời" min-width="240">
+          <template #default="{ row }">
+            <span v-if="row.danh_sach_tieu_de_cau_tra_loi?.length" class="tieu-de-list">
+              <CustomTag
+                v-for="(tieuDe, index) in row.danh_sach_tieu_de_cau_tra_loi"
+                :key="index"
+                type="info"
+                effect="plain"
+                size="small"
+              >
+                {{ tieuDe }}
+              </CustomTag>
+            </span>
+            <span v-else>—</span>
+          </template>
+        </CustomTableColumn>
         <CustomTableColumn label="Trạng thái" width="150" align="center">
           <template #default="{ row }">
             <CustomSwitch
@@ -173,6 +196,19 @@
             <CustomOption label="Ngừng sử dụng" :value="0" />
           </CustomSelect>
         </CustomFormItem>
+        <CustomFormItem label="Loại trả lời" prop="loai_tra_loi">
+          <CustomSelect v-model="form.loai_tra_loi" placeholder="Chọn loại trả lời" :clearable="false">
+            <CustomOption v-for="item in LOAI_TRA_LOI" :key="item.value" :label="item.label" :value="item.value" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Danh sách tiêu đề câu trả lời" prop="tieu_de_cau_tra_loi">
+          <CustomInput
+            v-model="form.tieu_de_cau_tra_loi"
+            type="textarea"
+            :rows="5"
+            placeholder="Nhập mỗi tiêu đề một dòng, theo thứ tự hiển thị. Ví dụ: Rất không thích, Không thích, Bình thường, Thích, Rất thích"
+          />
+        </CustomFormItem>
         <CustomFormItem class="form-grid__full" label="Ghi chú" prop="ghi_chu">
           <CustomInput
             v-model="form.ghi_chu"
@@ -213,15 +249,36 @@ import {
   updateLoaiCauHoi,
 } from '@/api/loaiCauHoi'
 
+const LOAI_TRA_LOI = [
+  { value: 'diem_so', label: 'Điểm số' },
+  { value: 'tinh_huong', label: 'Tình huống' },
+]
+
+function nhanLoaiTraLoi(value) {
+  return LOAI_TRA_LOI.find((item) => item.value === value)?.label || value || '—'
+}
+
+// Textarea mỗi dòng một tiêu đề ↔ mảng JSON; bỏ dòng trống, không còn tiêu đề thì gửi null.
+function tachTieuDe(text) {
+  const ds = String(text || '')
+    .split('\n')
+    .map((dong) => dong.trim())
+    .filter(Boolean)
+  return ds.length ? ds : null
+}
+
 const JSON_SAMPLE = `[
   {
     "ten_loai_cau_hoi": "Trắc nghiệm một đáp án",
     "thu_tu_uu_tien": 1,
-    "trang_thai": 1
+    "trang_thai": 1,
+    "loai_tra_loi": "diem_so",
+    "danh_sach_tieu_de_cau_tra_loi": ["Rất không thích", "Không thích", "Bình thường", "Thích", "Rất thích"]
   },
   {
     "ten_loai_cau_hoi": "Trắc nghiệm nhiều đáp án",
     "thu_tu_uu_tien": 2,
+    "loai_tra_loi": "tinh_huong",
     "ghi_chu": "Chọn một hoặc nhiều phương án"
   }
 ]`
@@ -254,6 +311,7 @@ const rules = {
   ten_loai_cau_hoi: [{ required: true, message: 'Vui lòng nhập tên loại câu hỏi', trigger: 'blur' }],
   thu_tu_uu_tien: [{ required: true, message: 'Vui lòng nhập thứ tự ưu tiên', trigger: 'change' }],
   trang_thai: [{ required: true, message: 'Vui lòng chọn trạng thái', trigger: 'change' }],
+  loai_tra_loi: [{ required: true, message: 'Vui lòng chọn loại trả lời', trigger: 'change' }],
 }
 
 function emptyForm() {
@@ -262,6 +320,8 @@ function emptyForm() {
     ghi_chu: '',
     thu_tu_uu_tien: 1,
     trang_thai: 1,
+    loai_tra_loi: 'diem_so',
+    tieu_de_cau_tra_loi: '',
   }
 }
 
@@ -303,6 +363,10 @@ function parseJsonItems(text) {
       thu_tu_uu_tien: order,
       trang_thai: item.trang_thai ?? 1,
       ghi_chu: item.ghi_chu == null ? null : String(item.ghi_chu).trim() || null,
+      loai_tra_loi: item.loai_tra_loi ?? 'diem_so',
+      danh_sach_tieu_de_cau_tra_loi: Array.isArray(item.danh_sach_tieu_de_cau_tra_loi)
+        ? item.danh_sach_tieu_de_cau_tra_loi
+        : null,
     }
   })
 }
@@ -381,6 +445,8 @@ function openEdit(row) {
     ghi_chu: row.ghi_chu || '',
     thu_tu_uu_tien: row.thu_tu_uu_tien,
     trang_thai: row.trang_thai,
+    loai_tra_loi: row.loai_tra_loi || 'diem_so',
+    tieu_de_cau_tra_loi: (row.danh_sach_tieu_de_cau_tra_loi || []).join('\n'),
   })
   dialogVisible.value = true
 }
@@ -391,6 +457,8 @@ function payloadFromForm() {
     thu_tu_uu_tien: form.thu_tu_uu_tien,
     trang_thai: form.trang_thai,
     ghi_chu: form.ghi_chu?.trim() || null,
+    loai_tra_loi: form.loai_tra_loi,
+    danh_sach_tieu_de_cau_tra_loi: tachTieuDe(form.tieu_de_cau_tra_loi),
   }
 }
 
@@ -532,3 +600,11 @@ async function onDeleteSelected() {
 
 onMounted(load)
 </script>
+
+<style scoped>
+.tieu-de-list {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+</style>
