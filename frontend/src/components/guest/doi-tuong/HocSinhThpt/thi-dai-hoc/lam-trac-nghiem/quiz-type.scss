@@ -59,6 +59,20 @@
     min-width: 0;
   }
 
+  .major-detail__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px 12px;
+  }
+
+  .major-detail__back {
+    // Nền trắng nổi trên nền card; dùng biến của Bootstrap để giữ màu khi hover.
+    --bs-btn-bg: #fff;
+    margin-left: auto;
+  }
+
   .major-detail__code {
     display: inline-block;
     margin: 0 0 6px;

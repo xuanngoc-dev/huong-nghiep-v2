@@ -10,8 +10,8 @@
           <p v-else class="holland-overview__lead">Thông tin đào tạo theo mã ngành trên đường dẫn.</p>
         </header> -->
 
-        <!-- Nút quay lại đặt trên cùng, hiện cả khi đang tải hoặc lỗi. -->
-        <div class="major-nav mt-3">
+        <!-- Đang tải / lỗi (chưa có card ngành) thì nút quay lại nằm trên cùng; có card thì nằm trong card. -->
+        <div v-if="!nganh || loi" class="major-nav mt-3">
           <button type="button" class="btn btn-outline-success" @click="quayLai">Quay lại ngành phù hợp</button>
         </div>
 
@@ -23,7 +23,12 @@
             <div class="major-detail__head">
               <img class="major-detail__image" :src="anh" :alt="`Hình minh họa ngành ${nganh.ten_nganh}`" @error="anhHong = true" />
               <div class="major-detail__intro">
-                <p class="major-detail__code">{{ nganh.ma_nganh }}</p>
+                <div class="major-detail__top">
+                  <p class="major-detail__code">{{ nganh.ma_nganh }}</p>
+                  <button type="button" class="btn btn-sm btn-outline-success major-detail__back" @click="quayLai">
+                    Quay lại ngành phù hợp
+                  </button>
+                </div>
                 <h3 class="major-detail__name">{{ nganh.ten_nganh }}</h3>
                 <p v-if="nganh.ten_tieng_anh" class="major-detail__en">{{ nganh.ten_tieng_anh }}</p>
                 <p class="major-detail__text">{{ moTa || 'Chưa có mô tả cho ngành này.' }}</p>
