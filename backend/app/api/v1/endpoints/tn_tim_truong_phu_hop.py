@@ -479,7 +479,7 @@ def danh_sach_lich_su_tim_truong(
     tu_ngay: date | None = Query(default=None),
     den_ngay: date | None = Query(default=None),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=20, ge=1, le=200),
+    page_size: int = Query(default=20, ge=1),  # Quản trị: không giới hạn số dòng mỗi trang.
     db: Session = Depends(get_db),
 ) -> LichSuTimTruongQuanTriPage:
     """Lịch sử tìm trường phù hợp của mọi tài khoản, mới nhất trước.

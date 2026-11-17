@@ -305,7 +305,7 @@ def danh_sach_phien_quan_tri(
     tu_ngay: date | None = Query(default=None),
     den_ngay: date | None = Query(default=None),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=20, ge=1, le=200),
+    page_size: int = Query(default=20, ge=1),  # Quản trị: không giới hạn số dòng mỗi trang.
     db: Session = Depends(get_db),
 ) -> TnPhienQuanTriPage:
     """Tất cả phiên khảo sát cho quản trị, mới nhất trước.
