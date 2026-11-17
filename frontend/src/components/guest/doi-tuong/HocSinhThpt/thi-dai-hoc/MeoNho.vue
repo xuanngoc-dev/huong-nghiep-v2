@@ -11,12 +11,13 @@
 </template>
 
 <script setup>
-/** Mẹo nhỏ ở trang Trường phù hợp: gõ từng ký tự, giữ nguyên 5 giây rồi đổi sang mẹo ngẫu nhiên khác. */
+/** Mẹo nhỏ ở trang Trường phù hợp: gõ từng ký tự, giữ nguyên 5 giây, xóa lùi rồi gõ mẹo ngẫu nhiên khác. */
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { MEO_TIM_TRUONG, meoNgauNhien } from '@/data/meoTimTruong'
 
 const GIU_MS = 5000
 const GO_MS = 30
+const XOA_MS = 15
 
 const meo = ref('')
 const daGo = ref('')
@@ -44,10 +45,21 @@ function hienMeo(noiDung) {
       datHen(go, GO_MS)
     } else {
       dangGo.value = false
-      datHen(() => hienMeo(meoNgauNhien(MEO_TIM_TRUONG, noiDung)), GIU_MS)
+      datHen(xoaMeo, GIU_MS)
     }
   }
   datHen(go, GO_MS)
+}
+
+// Xóa lùi từng ký tự (nhanh hơn lúc gõ), xóa hết thì gõ mẹo khác.
+function xoaMeo() {
+  dangGo.value = true
+  const xoa = () => {
+    daGo.value = daGo.value.slice(0, -1)
+    if (daGo.value) datHen(xoa, XOA_MS)
+    else datHen(() => hienMeo(meoNgauNhien(MEO_TIM_TRUONG, meo.value)), GO_MS * 10)
+  }
+  datHen(xoa, XOA_MS)
 }
 
 onMounted(() => hienMeo(meoNgauNhien()))
