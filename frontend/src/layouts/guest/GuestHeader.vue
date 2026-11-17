@@ -127,7 +127,12 @@ const menuTaiKhoan = computed(() => [
   { command: 'ho-so', label: 'Hồ sơ năng lực', icon: Postcard },
   { command: 'nap-tien', label: 'Nạp tiền', icon: Wallet },
   { command: 'lich-su-nap-tien', label: 'Lịch sử nạp tiền', icon: Tickets },
-  { command: 'lich-su-trac-nghiem', label: 'Lịch sử trắc nghiệm', icon: Clock },
+  // Quản trị viên xem lịch sử trắc nghiệm của mọi người ở trang quản trị.
+  {
+    command: auth.isAdmin ? 'admin-lich-su-trac-nghiem' : 'lich-su-trac-nghiem',
+    label: 'Lịch sử trắc nghiệm',
+    icon: Clock,
+  },
   { command: 'logout', label: 'Đăng xuất', icon: SwitchButton, divided: true },
 ])
 

@@ -29,7 +29,7 @@
             >
               Bắt đầu
             </RouterLink>
-            <RouterLink v-if="daDangNhap" class="btn btn-sm btn-outline-success" :to="{ name: 'lich-su-tim-truong' }">
+            <RouterLink v-if="daDangNhap" class="btn btn-sm btn-outline-success" :to="{ name: trangLichSu.timTruong }">
               Xem lịch sử tìm trường
             </RouterLink>
           </div>
@@ -58,7 +58,7 @@
             <button type="button" class="btn btn-sm btn-outline-success" :disabled="!top.length" @click="tuVanAi">
               Hỏi trợ lý AI
             </button>
-            <RouterLink v-if="daDangNhap" class="btn btn-sm btn-outline-success" :to="{ name: 'lich-su-trac-nghiem' }">
+            <RouterLink v-if="daDangNhap" class="btn btn-sm btn-outline-success" :to="{ name: trangLichSu.tracNghiem }">
               Lịch sử trắc nghiệm
             </RouterLink>
             <button type="button" class="btn btn-sm btn-light" @click="saoChepLienKet">Sao chép đường dẫn kết quả</button>
@@ -89,6 +89,12 @@ const auth = useAuthStore()
 const chat = useChatStore()
 
 const daDangNhap = computed(() => auth.isAuthenticated)
+// Quản trị viên xem lịch sử của mọi người ở trang quản trị; thành viên xem lịch sử của mình.
+const trangLichSu = computed(() =>
+  auth.isAdmin
+    ? { tracNghiem: 'admin-lich-su-trac-nghiem', timTruong: 'admin-lich-su-tim-truong' }
+    : { tracNghiem: 'lich-su-trac-nghiem', timTruong: 'lich-su-tim-truong' },
+)
 const traiNghiem = computed(() => gopNoiDung(props.top, 'trai_nghiem'))
 
 function tuVanAi() {

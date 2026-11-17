@@ -6,7 +6,11 @@
         <header class="holland-overview__header truong-phu-hop__header">
           <h2 class="holland-overview__title">Trường phù hợp</h2>
           <div class="d-flex flex-wrap align-items-center gap-3">
-            <RouterLink v-if="daDangNhap" class="btn btn-sm btn-outline-success" :to="{ name: 'lich-su-tim-truong' }">
+            <RouterLink
+              v-if="daDangNhap"
+              class="btn btn-sm btn-outline-success"
+              :to="{ name: auth.isAdmin ? 'admin-lich-su-tim-truong' : 'lich-su-tim-truong' }"
+            >
               Lịch sử tìm trường
             </RouterLink>
             <!-- Hồ sơ cá nhân: mở ngăn kéo hồ sơ ngay trên trang để xem & cập nhật -->
