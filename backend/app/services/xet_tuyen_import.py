@@ -32,6 +32,7 @@ from app.models.dm_to_hop_mon_hoc import DmToHopMonHoc
 from app.models.dm_to_hop_mon_hoc_chi_tiet import DmToHopMonHocChiTiet
 from app.models.dm_truong import DmTruong
 from app.schemas.xet_tuyen_chuan import CongThucChuan, DeAnXetTuyenChuan, NhomDieuKienChuan
+from app.services.xet_tuyen_chuan_hoa import chuan_hoa
 
 NHOM_NGOAI_NGU = "Ngoại ngữ"
 _DO_DAI_MA_TO_HOP = 20
@@ -215,9 +216,10 @@ def _gia_tri_nhan(value) -> str:
 
 def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen) -> KeHoachNhap:
     """Kiểm tra file và đổi sang các dòng chờ ghi. Có lỗi thì ném XetTuyenImportError, không trả kế hoạch dở."""
+    du_lieu, canh_bao_chuan_hoa, chua_mo_hinh_hoa = chuan_hoa(du_lieu, dm)
     doc = doc_cau_truc(du_lieu)
     loi: list[str] = []
-    canh_bao: list[str] = []
+    canh_bao: list[str] = list(canh_bao_chuan_hoa)
 
     def co_ma(loai: str, ma, vi_tri: str) -> bool:
         if ma is None:
@@ -518,7 +520,7 @@ def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen) -> KeHoachNhap:
     if not doc.diem_chuan:
         canh_bao.append("diem_chuan: chưa có điểm chuẩn năm trước, hệ thống sẽ không chấm được điểm phù hợp cho trường này")
 
-    ke_hoach.quy_dinh_chua_mo_hinh_hoa = _quy_dinh_chua_mo_hinh_hoa(doc)
+    ke_hoach.quy_dinh_chua_mo_hinh_hoa = _quy_dinh_chua_mo_hinh_hoa(doc) + chua_mo_hinh_hoa
     if loi:
         raise XetTuyenImportError(loi, canh_bao)
     return ke_hoach
@@ -536,6 +538,8 @@ def _cong_thuc(c: CongThucChuan, ke_hoach: KeHoachNhap, bang: dict, dm: DanhMucX
         canh_bao.append(f"{vt}: he_so_mon chỉ có tác dụng với TO_HOP_MON")
     if c.kieu_tinh != "THANH_PHAN" and c.thanh_phan:
         canh_bao.append(f"{vt}: thanh_phan chỉ có tác dụng với THANH_PHAN")
+    if c.kieu_tinh in ("CHI_DIEU_KIEN", "THU_CONG") and not c.dieu_kien:
+        canh_bao.append(f"{vt}: {c.kieu_tinh} chưa có nhóm dieu_kien nên hệ thống chưa xét được phương thức này")
 
     he_so_mon = []
     for h in c.he_so_mon:

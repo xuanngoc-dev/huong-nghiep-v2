@@ -87,14 +87,14 @@ class XtQuyTacApiTests(unittest.TestCase):
     def test_file_loi_luu_vao_log_kem_du_loi_va_gia_tri_sai(self):
         self._chuan_bi()
         du_lieu = _mau("mau_BKA_2026.json")
-        du_lieu["cong_thuc"][0]["kieu_tinh"] = "KHONG_HOP_LE"
+        du_lieu["cong_thuc"][0]["thang_diem"] = "ba mươi"
         detail = self._loi_400(self._import, du_lieu)
-        self.assertTrue(any('(nhận: "KHONG_HOP_LE")' in x for x in detail["loi"]))
+        self.assertTrue(any('(nhận: "ba mươi")' in x for x in detail["loi"]))
         files = list(self.log_dir.glob("*/*_quy_tac_BKA_2026_loi.json"))
         self.assertEqual(len(files), 1)
         noi_dung = json.loads(files[0].read_text(encoding="utf-8"))
         self.assertEqual(noi_dung["loi"], detail["loi"])
-        self.assertEqual(noi_dung["du_lieu"]["cong_thuc"][0]["kieu_tinh"], "KHONG_HOP_LE")
+        self.assertEqual(noi_dung["du_lieu"]["cong_thuc"][0]["thang_diem"], "ba mươi")
 
     def test_import_roi_xem_quy_tac(self):
         self._chuan_bi()

@@ -122,3 +122,28 @@ không tính điểm; bắt buộc có ít nhất một nhóm `dieu_kien`).
 
 Cập nhật riêng quy tắc của đề án đã có: tab "Quy tắc xét tuyển" → Import (cùng cấu trúc khối này, đủ `ma_truong`,
 `nam_tuyen_sinh`, `phien_ban`, `de_an`).
+
+### Chuẩn hóa tự động khối quy tắc
+
+Trước khi kiểm tra, backend (`app/services/xet_tuyen_chuan_hoa.py`) tự sửa các cách ghi gần đúng hay gặp để file từ nhiều
+nguồn vẫn nhập được. Mỗi chỗ đổi đều có trong `canh_bao` của kết quả import; phần hệ thống chưa tính được thì được ghi
+vào `quy_dinh_chua_mo_hinh_hoa` thay vì chặn cả lần import.
+
+| Trong file | Được hiểu là |
+|---|---|
+| `ma_chi_so: TOT_NGHIEP_HOP_LE` / `TOT_NGHIEP_THPT` | `DA_TOT_NGHIEP_THPT` |
+| `ma_chi_so: IELTS` (khoa `IELTS_7`), `TOEFL_IBT`, `TOEFL_ITP` | `DIEM_CHUNG_CHI`, khoa `IELTS` / `TOEFL_IBT_120` / `TOEFL_ITP_L1` |
+| `ma_chi_so: DIEM_THI_TOAN_2026`, `DIEM_HOC_BA_TOAN` | `DIEM_THI_THPT` / `DIEM_HOC_BA_TB`, khoa `TOAN` |
+| `THANH_TICH`, khoa `HSGQG_NHAT` `= 1` (`_NHI`, `_BA`, `_KK`) | `THANH_TICH`, khoa `HSG-QG` `= 1` (2, 3, 4) |
+| Mã danh mục khác dấu `-`/`_` (`VACT`) | Mã khớp duy nhất trong danh mục (`V-ACT`) |
+| Thành phần `CHUNG_CHI` không có bảng quy đổi nhưng là bài thi trong danh mục (SAT, ACT) | `BAI_THI` |
+| Thành phần không tính được (nguồn lạ, mã bài thi không có trong danh mục) | Công thức thành `THU_CONG` (hệ thống chưa tự tính điểm) |
+| `kieu_tinh` lạ | `THU_CONG` |
+| `nguon_diem_mon` gần đúng (`HOC_BA_THPT_VA_CHUNG_CHI`) | `HOC_BA` / `THI_THPT`, phần còn lại ghi chưa mô hình hóa |
+| `thay_ngoai_ngu` khác `KHONG` nhưng thiếu bảng quy đổi | `KHONG` |
+| `hoc_phi` có `hoc_phi_tu: null` | Dùng `hoc_phi_den`; cả hai trống thì bỏ khối học phí |
+| Điều kiện / điểm cộng dùng chỉ số chưa có (ví dụ tổng điểm tổ hợp) | Bỏ qua, ghi chưa mô hình hóa; nhóm không còn điều kiện thì bỏ nhóm |
+| `CHI_DIEU_KIEN` / `THU_CONG` chưa có nhóm `dieu_kien` | Chỉ cảnh báo; hệ thống không xét phương thức đó |
+
+Không đoán khi có nhiều khả năng (ví dụ `SPT` ứng với nhiều bài thi `SPT_*`). Bỏ một điều kiện bắt buộc khiến hệ
+thống xét rộng hơn đề án thật, nên cần đọc cảnh báo sau khi import.

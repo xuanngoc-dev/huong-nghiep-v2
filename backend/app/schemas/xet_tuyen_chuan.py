@@ -202,8 +202,8 @@ class CongThucChuan(_Khoi):
             raise ValueError("công thức TO_HOP_MON phải có nguon_diem_mon")
         if self.kieu_tinh == "THANH_PHAN" and not self.thanh_phan:
             raise ValueError("công thức THANH_PHAN phải có ít nhất một thanh_phan")
-        if self.kieu_tinh in ("CHI_DIEU_KIEN", "THU_CONG") and not self.dieu_kien:
-            raise ValueError(f"công thức {self.kieu_tinh} phải có ít nhất một nhóm dieu_kien")
+        # CHI_DIEU_KIEN / THU_CONG chưa có nhóm dieu_kien: không chặn import, bước kiểm tra nghiệp vụ cảnh báo
+        # (bộ tính bỏ qua công thức không có nhóm điều kiện riêng nên không ai được xét đạt nhầm).
         if self.thay_ngoai_ngu != "KHONG" and not self.ma_bang_quy_doi_ngoai_ngu:
             raise ValueError("thay_ngoai_ngu khác KHONG thì phải có ma_bang_quy_doi_ngoai_ngu")
         return self
