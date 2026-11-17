@@ -195,12 +195,13 @@
       />
     </template>
   </CustomDialog>
+  <XacNhanXoaDialog ref="xacNhanRef" />
 </template>
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
-import { xacNhanXoaLienQuan } from '@/utils/xacNhanXoaLienQuan'
+import XacNhanXoaDialog from '@/components/admin/XacNhanXoaDialog.vue'
 import { ElMessage } from 'element-plus'
 import {
   createLoaiCauHoi,
@@ -465,17 +466,23 @@ async function onSubmit() {
   }
 }
 
+const xacNhanRef = ref()
+
 // Còn câu hỏi / phiên khảo sát liên quan thì liệt kê số lượng sẽ bị xóa kèm.
 function xacNhanXoa(ids, tieuDe) {
-  return xacNhanXoaLienQuan({
+  return xacNhanRef.value.mo({
     tieuDe,
     taiAnhHuong: () => fetchAnhHuongXoaLoaiCauHoi(ids),
     dongLienQuan: (a) =>
       a.so_cau_hoi || a.so_phien
         ? [
-            `${a.so_cau_hoi} câu hỏi thuộc loại này`,
-            `${a.so_dap_an} đáp án của các câu hỏi đó`,
-            `${a.so_phien} phiên khảo sát đã thực hiện có câu hỏi thuộc loại này (xóa cả phiên)`,
+            { du_lieu: 'Câu hỏi trắc nghiệm', so_luong: a.so_cau_hoi, ghi_chu: 'Các câu hỏi thuộc loại này' },
+            { du_lieu: 'Đáp án', so_luong: a.so_dap_an, ghi_chu: 'Đáp án của các câu hỏi trên' },
+            {
+              du_lieu: 'Phiên khảo sát đã thực hiện',
+              so_luong: a.so_phien,
+              ghi_chu: 'Phiên có câu hỏi thuộc loại này; xóa cả phiên',
+            },
           ]
         : [],
   })

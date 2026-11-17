@@ -352,12 +352,13 @@
       />
     </template>
   </CustomDialog>
+  <XacNhanXoaDialog ref="xacNhanRef" />
 </template>
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
-import { xacNhanXoaLienQuan } from '@/utils/xacNhanXoaLienQuan'
+import XacNhanXoaDialog from '@/components/admin/XacNhanXoaDialog.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   createCauHoi,
@@ -836,16 +837,22 @@ async function onSubmit() {
   }
 }
 
+const xacNhanRef = ref()
+
 // Câu hỏi đã có phiên khảo sát trả lời thì liệt kê đáp án và số phiên sẽ bị xóa kèm.
 function xacNhanXoa(ids, tieuDe) {
-  return xacNhanXoaLienQuan({
+  return xacNhanRef.value.mo({
     tieuDe,
     taiAnhHuong: () => fetchAnhHuongXoaCauHoi(ids),
     dongLienQuan: (a) =>
       a.so_phien
         ? [
-            `${a.so_dap_an} đáp án của ${ids.length > 1 ? 'các câu hỏi' : 'câu hỏi'}`,
-            `${a.so_phien} phiên khảo sát đã thực hiện có trả lời ${ids.length > 1 ? 'các câu hỏi' : 'câu hỏi'} này (xóa cả phiên)`,
+            { du_lieu: 'Đáp án', so_luong: a.so_dap_an, ghi_chu: 'Đáp án của câu hỏi bị xóa' },
+            {
+              du_lieu: 'Phiên khảo sát đã thực hiện',
+              so_luong: a.so_phien,
+              ghi_chu: 'Phiên có trả lời câu hỏi bị xóa; xóa cả phiên',
+            },
           ]
         : [],
   })
