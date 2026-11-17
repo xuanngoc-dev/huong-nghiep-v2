@@ -1,4 +1,4 @@
-"""Xóa loại câu hỏi: xem trước ảnh hưởng, chặn khi còn dữ liệu liên quan, xóa kèm khi được xác nhận."""
+"""Xóa loại câu hỏi / câu hỏi: xem trước ảnh hưởng, chặn khi còn dữ liệu liên quan, xóa kèm khi được xác nhận."""
 
 import unittest
 
@@ -11,12 +11,14 @@ from app.api.v1.endpoints.dm_loai_cau_hoi import (
     delete_loai_cau_hoi,
     delete_loai_cau_hoi_many,
 )
+from app.api.v1.endpoints.tn_cau_hoi import anh_huong_xoa_cau_hoi, delete_cau_hoi, delete_cau_hoi_many
 from app.models.dm_loai_cau_hoi import DmLoaiCauHoi
 from app.models.tn_cau_hoi_trac_nghiem import TnCauHoiTracNghiem
 from app.models.tn_cau_tra_loi import TnCauTraLoi
 from app.models.tn_chi_tiet_tra_loi import TnChiTietTraLoi
 from app.models.tn_phien_khao_sat import TnPhienKhaoSat
 from app.schemas.dm_loai_cau_hoi import DmLoaiCauHoiDeleteMany
+from app.schemas.tn_cau_hoi_trac_nghiem import TnCauHoiTracNghiemDeleteMany
 
 _BANG = (DmLoaiCauHoi, TnCauHoiTracNghiem, TnCauTraLoi, TnPhienKhaoSat, TnChiTietTraLoi)
 
@@ -82,6 +84,44 @@ class XoaLoaiCauHoiTests(unittest.TestCase):
 
     def test_xoa_nhieu_kem_lien_quan(self):
         kq = delete_loai_cau_hoi_many(DmLoaiCauHoiDeleteMany(ids=[self.loai_a.id, self.loai_b.id]), True, self.db)
+        self.assertEqual(kq.deleted, 2)
+        for model in (TnCauHoiTracNghiem, TnCauTraLoi, TnPhienKhaoSat, TnChiTietTraLoi):
+            self.assertEqual(self._dem(model), 0)
+
+
+class XoaCauHoiTests(unittest.TestCase):
+    # Dùng chung dữ liệu: câu A (2 đáp án) ở phiên p1; câu B (1 đáp án) ở phiên p1, p2.
+    setUp = XoaLoaiCauHoiTests.setUp
+    tearDown = XoaLoaiCauHoiTests.tearDown
+    _dem = XoaLoaiCauHoiTests._dem
+
+    def test_xem_truoc_anh_huong(self):
+        kq = anh_huong_xoa_cau_hoi(TnCauHoiTracNghiemDeleteMany(ids=[self.ch_b.id, 999]), self.db)
+        self.assertEqual(kq.model_dump(), {"so_cau_hoi": 1, "so_dap_an": 1, "so_phien": 2})
+
+    def test_chua_xac_nhan_thi_chan(self):
+        with self.assertRaises(HTTPException) as caught:
+            delete_cau_hoi(self.ch_a.id, False, self.db)
+        self.assertIn("1 phiên", caught.exception.detail)
+        self.assertEqual(self._dem(TnCauHoiTracNghiem), 2)
+
+    def test_cau_hoi_chua_ai_lam_xoa_binh_thuong(self):
+        moi = TnCauHoiTracNghiem(ma_holand="A", loai_cau_hoi_id=self.loai_trong.id, noi_dung_cau_hoi="c")
+        self.db.add(moi)
+        self.db.commit()
+        delete_cau_hoi(moi.id, False, self.db)
+        self.assertEqual(self._dem(TnCauHoiTracNghiem), 2)
+
+    def test_xac_nhan_xoa_kem_dap_an_va_phien(self):
+        delete_cau_hoi(self.ch_a.id, True, self.db)
+        self.assertEqual(self._dem(TnCauHoiTracNghiem), 1)
+        self.assertEqual(self._dem(TnCauTraLoi), 1)
+        self.assertEqual(self.db.scalars(select(TnPhienKhaoSat.ssid)).all(), ["p2"])
+        # Loại câu hỏi giữ nguyên.
+        self.assertEqual(self._dem(DmLoaiCauHoi), 3)
+
+    def test_xoa_nhieu_kem_lien_quan(self):
+        kq = delete_cau_hoi_many(TnCauHoiTracNghiemDeleteMany(ids=[self.ch_a.id, self.ch_b.id]), True, self.db)
         self.assertEqual(kq.deleted, 2)
         for model in (TnCauHoiTracNghiem, TnCauTraLoi, TnPhienKhaoSat, TnChiTietTraLoi):
             self.assertEqual(self._dem(model), 0)

@@ -198,9 +198,10 @@
 </template>
 
 <script setup>
-import { h, onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { xacNhanXoaLienQuan } from '@/utils/xacNhanXoaLienQuan'
+import { ElMessage } from 'element-plus'
 import {
   createLoaiCauHoi,
   createLoaiCauHoiBulk,
@@ -464,41 +465,20 @@ async function onSubmit() {
   }
 }
 
-/**
- * Hỏi xác nhận xóa; còn câu hỏi / phiên khảo sát liên quan thì liệt kê số lượng sẽ bị xóa kèm.
- * Trả null nếu người dùng hủy (hoặc không xem trước được), ngược lại trả xoaLienQuan để gửi kèm lệnh xóa.
- */
-async function xacNhanXoa(ids, tieuDe) {
-  let anhHuong
-  try {
-    anhHuong = await fetchAnhHuongXoaLoaiCauHoi(ids)
-  } catch (error) {
-    ElMessage.error(errorMessage(error, 'Không kiểm tra được dữ liệu liên quan'))
-    return null
-  }
-  const xoaLienQuan = Boolean(anhHuong.so_cau_hoi || anhHuong.so_phien)
-  const message = xoaLienQuan
-    ? h('div', [
-        h('p', `${tieuDe}? Thao tác này sẽ xóa luôn:`),
-        h('ul', { style: 'margin: 8px 0; padding-left: 20px' }, [
-          h('li', `${anhHuong.so_cau_hoi} câu hỏi thuộc loại này`),
-          h('li', `${anhHuong.so_dap_an} đáp án của các câu hỏi đó`),
-          h('li', `${anhHuong.so_phien} phiên khảo sát đã thực hiện có câu hỏi thuộc loại này (xóa cả phiên)`),
-        ]),
-        h('p', { style: 'color: var(--el-color-danger)' }, 'Dữ liệu đã xóa không thể khôi phục.'),
-      ])
-    : `${tieuDe}?`
-  try {
-    await ElMessageBox.confirm(message, 'Xác nhận xóa', {
-      type: 'warning',
-      confirmButtonText: xoaLienQuan ? 'Đồng ý xóa tất cả' : 'Xóa',
-      cancelButtonText: 'Hủy',
-      confirmButtonClass: 'el-button--danger',
-    })
-  } catch {
-    return null
-  }
-  return { xoaLienQuan }
+// Còn câu hỏi / phiên khảo sát liên quan thì liệt kê số lượng sẽ bị xóa kèm.
+function xacNhanXoa(ids, tieuDe) {
+  return xacNhanXoaLienQuan({
+    tieuDe,
+    taiAnhHuong: () => fetchAnhHuongXoaLoaiCauHoi(ids),
+    dongLienQuan: (a) =>
+      a.so_cau_hoi || a.so_phien
+        ? [
+            `${a.so_cau_hoi} câu hỏi thuộc loại này`,
+            `${a.so_dap_an} đáp án của các câu hỏi đó`,
+            `${a.so_phien} phiên khảo sát đã thực hiện có câu hỏi thuộc loại này (xóa cả phiên)`,
+          ]
+        : [],
+  })
 }
 
 async function onDelete(row) {

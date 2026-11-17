@@ -16,7 +16,7 @@ from app.schemas.dm_loai_cau_hoi import (
     DmLoaiCauHoiPublic,
     DmLoaiCauHoiWrite,
 )
-from app.services import xoa_loai_cau_hoi
+from app.services import xoa_trac_nghiem
 
 router = APIRouter(prefix="/danh-muc/loai-cau-hoi", tags=["danh-muc"])
 
@@ -176,7 +176,7 @@ def update_loai_cau_hoi(
 
 def _chan_neu_con_lien_quan(db: Session, ids: list[int]) -> None:
     """Còn câu hỏi hoặc phiên khảo sát dùng loại này thì trả 400 nêu số lượng (xóa kèm bằng xoa_lien_quan=true)."""
-    anh_huong = xoa_loai_cau_hoi.anh_huong(db, ids)
+    anh_huong = xoa_trac_nghiem.anh_huong_loai(db, ids)
     if anh_huong["so_cau_hoi"] or anh_huong["so_phien"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -194,7 +194,7 @@ def anh_huong_xoa_loai_cau_hoi(
     _: NguoiDung = Depends(get_admin_user),
 ) -> DmLoaiCauHoiAnhHuongXoa:
     """Xem trước số câu hỏi, đáp án và phiên khảo sát sẽ bị xóa theo nếu xóa các loại câu hỏi này."""
-    return DmLoaiCauHoiAnhHuongXoa(**xoa_loai_cau_hoi.anh_huong(db, payload.ids))
+    return DmLoaiCauHoiAnhHuongXoa(**xoa_trac_nghiem.anh_huong_loai(db, payload.ids))
 
 
 @router.delete("", response_model=DmLoaiCauHoiDeleteManyResult)
@@ -210,7 +210,7 @@ def delete_loai_cau_hoi_many(
     loại này (xem trước số lượng bằng POST /anh-huong-xoa). Không bật mà còn dữ liệu liên quan thì trả 400.
     """
     if xoa_lien_quan:
-        deleted = xoa_loai_cau_hoi.xoa(db, payload.ids)
+        deleted = xoa_trac_nghiem.xoa_loai(db, payload.ids)
         db.commit()
         return DmLoaiCauHoiDeleteManyResult(deleted=deleted)
     items = db.scalars(select(DmLoaiCauHoi).where(DmLoaiCauHoi.id.in_(payload.ids))).all()
@@ -233,7 +233,7 @@ def delete_loai_cau_hoi(
     """Xóa một loại câu hỏi theo id; `xoa_lien_quan=true` xóa kèm câu hỏi, đáp án và phiên khảo sát liên quan."""
     item = _get_or_400(db, item_id)
     if xoa_lien_quan:
-        xoa_loai_cau_hoi.xoa(db, [item.id])
+        xoa_trac_nghiem.xoa_loai(db, [item.id])
     else:
         _chan_neu_con_lien_quan(db, [item.id])
         db.delete(item)

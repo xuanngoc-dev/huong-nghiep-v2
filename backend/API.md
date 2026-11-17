@@ -1,15 +1,15 @@
 # Danh sách API
 
-Tự sinh từ code lúc 17/11/2026 11:57 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 17/11/2026 12:01 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **301** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **302** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 172 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 81 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Quản trị (admin)](#quan_tri) | 175 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Thành viên (user)](#thanh_vien) | 79 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 48 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
@@ -350,6 +350,9 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
+| `DELETE` | `/api/v1/trac-nghiem/cau-hoi` | Bắt buộc (admin) | Xóa nhiều câu hỏi theo danh sách id, đáp án của các câu hỏi đó bị xóa theo. |
+| `POST` | `/api/v1/trac-nghiem/cau-hoi/anh-huong-xoa` | Bắt buộc (admin) | Xem trước số đáp án và phiên khảo sát sẽ bị xóa theo nếu xóa các câu hỏi này. |
+| `DELETE` | `/api/v1/trac-nghiem/cau-hoi/{item_id}` | Bắt buộc (admin) | Xóa một câu hỏi trắc nghiệm theo id, đáp án bị xóa theo; `xoa_lien_quan=true` xóa kèm phiên khảo sát đã làm. |
 | `GET` | `/api/v1/trac-nghiem/phien/quan-tri` | Bắt buộc (admin) | Tất cả phiên khảo sát cho quản trị, mới nhất trước. |
 | `DELETE` | `/api/v1/trac-nghiem/phien/quan-tri` | Bắt buộc (admin) | Xóa nhiều phiên trắc nghiệm theo id, kèm toàn bộ câu trả lời. Id không tồn tại thì bỏ qua. |
 | `DELETE` | `/api/v1/trac-nghiem/phien/quan-tri/{item_id}` | Bắt buộc (admin) | Xóa một phiên trắc nghiệm theo id, kèm toàn bộ câu trả lời. |
@@ -562,11 +565,9 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 |---|---|---|---|
 | `GET` | `/api/v1/trac-nghiem/cau-hoi` | Bắt buộc | Lấy danh sách câu hỏi trắc nghiệm có phân trang, kèm đáp án. Lọc theo từ khóa, mã Holland, loại và trạng thái. |
 | `POST` | `/api/v1/trac-nghiem/cau-hoi` | Bắt buộc | Thêm một câu hỏi trắc nghiệm và các đáp án đi kèm. |
-| `DELETE` | `/api/v1/trac-nghiem/cau-hoi` | Bắt buộc | Xóa nhiều câu hỏi theo danh sách id. Đáp án của các câu hỏi đó bị xóa theo. |
 | `POST` | `/api/v1/trac-nghiem/cau-hoi/bulk` | Bắt buộc | Thêm nhiều câu hỏi cùng đáp án. Từ chối nếu mã Holland hoặc loại câu hỏi không tồn tại. |
 | `GET` | `/api/v1/trac-nghiem/cau-hoi/{item_id}` | Bắt buộc | Lấy chi tiết một câu hỏi trắc nghiệm kèm danh sách đáp án. |
 | `PUT` | `/api/v1/trac-nghiem/cau-hoi/{item_id}` | Bắt buộc | Cập nhật câu hỏi và đồng bộ toàn bộ đáp án theo danh sách gửi lên. |
-| `DELETE` | `/api/v1/trac-nghiem/cau-hoi/{item_id}` | Bắt buộc | Xóa một câu hỏi trắc nghiệm theo id. Đáp án của câu hỏi bị xóa theo. |
 | `GET` | `/api/v1/trac-nghiem/cau-hoi/{item_id}/cau-tra-loi` | Bắt buộc | Lấy danh sách đáp án của một câu hỏi. |
 | `POST` | `/api/v1/trac-nghiem/cau-hoi/{item_id}/cau-tra-loi` | Bắt buộc | Thêm một đáp án cho câu hỏi. |
 | `PUT` | `/api/v1/trac-nghiem/cau-hoi/{item_id}/cau-tra-loi/{answer_id}` | Bắt buộc | Cập nhật nội dung và điểm của một đáp án. |

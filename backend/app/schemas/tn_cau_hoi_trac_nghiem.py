@@ -117,3 +117,11 @@ class TnCauHoiTracNghiemDeleteMany(BaseModel):
 
 class TnCauHoiTracNghiemDeleteManyResult(BaseModel):
     deleted: int
+
+
+class TnCauHoiAnhHuongXoa(BaseModel):
+    """Số bản ghi sẽ bị xóa theo khi xóa các câu hỏi kèm dữ liệu liên quan."""
+
+    so_cau_hoi: int
+    so_dap_an: int
+    so_phien: int

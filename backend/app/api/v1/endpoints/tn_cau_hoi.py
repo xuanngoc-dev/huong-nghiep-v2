@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
 from app.models.dm_loai_cau_hoi import DmLoaiCauHoi
 from app.models.dm_nhom_tinh_cach_holland import DmNhomTinhCachHolland
@@ -12,6 +12,7 @@ from app.models.nguoi_dung import NguoiDung
 from app.models.tn_cau_hoi_trac_nghiem import TnCauHoiTracNghiem
 from app.models.tn_cau_tra_loi import TnCauTraLoi
 from app.schemas.tn_cau_hoi_trac_nghiem import (
+    TnCauHoiAnhHuongXoa,
     TnCauHoiTracNghiemBulkResult,
     TnCauHoiTracNghiemDeleteMany,
     TnCauHoiTracNghiemDeleteManyResult,
@@ -21,6 +22,7 @@ from app.schemas.tn_cau_hoi_trac_nghiem import (
     TnCauTraLoiPublic,
     TnCauTraLoiWrite,
 )
+from app.services import xoa_trac_nghiem
 
 router = APIRouter(prefix="/trac-nghiem/cau-hoi", tags=["trac-nghiem"])
 
@@ -290,31 +292,60 @@ def update_cau_hoi(
     return _to_public(saved, loai, answers)
 
 
+def _chan_neu_con_phien(db: Session, ids: list[int]) -> None:
+    """Câu hỏi đã có phiên khảo sát trả lời thì trả 400 nêu số phiên (xóa kèm bằng xoa_lien_quan=true)."""
+    so_phien = xoa_trac_nghiem.anh_huong_cau_hoi(db, ids)["so_phien"]
+    if so_phien:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                f"Không thể xóa vì còn {so_phien} phiên khảo sát đã trả lời câu hỏi này; "
+                "xác nhận xóa kèm dữ liệu liên quan để tiếp tục"
+            ),
+        )
+
+
+@router.post("/anh-huong-xoa", response_model=TnCauHoiAnhHuongXoa)
+def anh_huong_xoa_cau_hoi(
+    payload: TnCauHoiTracNghiemDeleteMany,
+    db: Session = Depends(get_db),
+    _: NguoiDung = Depends(get_admin_user),
+) -> TnCauHoiAnhHuongXoa:
+    """Xem trước số đáp án và phiên khảo sát sẽ bị xóa theo nếu xóa các câu hỏi này."""
+    return TnCauHoiAnhHuongXoa(**xoa_trac_nghiem.anh_huong_cau_hoi(db, payload.ids))
+
+
 @router.delete("", response_model=TnCauHoiTracNghiemDeleteManyResult)
 def delete_cau_hoi_many(
     payload: TnCauHoiTracNghiemDeleteMany,
+    xoa_lien_quan: bool = Query(default=False),
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> TnCauHoiTracNghiemDeleteManyResult:
-    """Xóa nhiều câu hỏi theo danh sách id. Đáp án của các câu hỏi đó bị xóa theo."""
-    items = db.scalars(select(TnCauHoiTracNghiem).where(TnCauHoiTracNghiem.id.in_(payload.ids))).all()
-    if not items:
-        return TnCauHoiTracNghiemDeleteManyResult(deleted=0)
-    for item in items:
-        db.delete(item)
+    """Xóa nhiều câu hỏi theo danh sách id, đáp án của các câu hỏi đó bị xóa theo.
+
+    Câu hỏi đã có phiên khảo sát trả lời: cần `xoa_lien_quan=true` để xóa luôn các phiên đó (xem trước số lượng bằng
+    POST /anh-huong-xoa), không thì trả 400.
+    """
+    if not xoa_lien_quan:
+        _chan_neu_con_phien(db, payload.ids)
+    deleted = xoa_trac_nghiem.xoa_cau_hoi(db, payload.ids)
     db.commit()
-    return TnCauHoiTracNghiemDeleteManyResult(deleted=len(items))
+    return TnCauHoiTracNghiemDeleteManyResult(deleted=deleted)
 
 
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_cau_hoi(
     item_id: int,
+    xoa_lien_quan: bool = Query(default=False),
     db: Session = Depends(get_db),
-    _: NguoiDung = Depends(get_current_user),
+    _: NguoiDung = Depends(get_admin_user),
 ) -> None:
-    """Xóa một câu hỏi trắc nghiệm theo id. Đáp án của câu hỏi bị xóa theo."""
+    """Xóa một câu hỏi trắc nghiệm theo id, đáp án bị xóa theo; `xoa_lien_quan=true` xóa kèm phiên khảo sát đã làm."""
     item, _loai = _load_pair(db, item_id)
-    db.delete(item)
+    if not xoa_lien_quan:
+        _chan_neu_con_phien(db, [item.id])
+    xoa_trac_nghiem.xoa_cau_hoi(db, [item.id])
     db.commit()
 
 
