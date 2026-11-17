@@ -19,9 +19,17 @@
           <span class="kq-buoc__so">2</span>
           <h3 class="kq-card__title">Chọn trường</h3>
           <p class="kq-muted">
-            Xem trường đào tạo ngành đã chọn, phương thức xét tuyển, điểm chuẩn và khả năng trúng tuyển theo điểm của
-            bạn bằng nút "Tìm trường phù hợp" bên dưới.
+            Từ danh sách ngành phù hợp, xem trường đào tạo từng ngành, phương thức xét tuyển, điểm chuẩn và khả năng
+            trúng tuyển theo điểm của bạn.
           </p>
+          <div class="kq-actions">
+            <RouterLink
+              class="btn btn-sm btn-success"
+              :to="{ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid }, query: routeQuery }"
+            >
+              Bắt đầu
+            </RouterLink>
+          </div>
         </article>
       </div>
       <div class="col-12 col-md-6">
