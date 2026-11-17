@@ -19,6 +19,10 @@ from app.schemas.tn_cau_hoi_trac_nghiem import (
     TnCauHoiTracNghiemPage,
     TnCauHoiTracNghiemPublic,
     TnCauHoiTracNghiemWrite,
+    TnCauHoiTrangThai,
+    TnCauHoiTrangThaiMany,
+    TnCauHoiTrangThaiManyResult,
+    TnCauHoiTrangThaiResult,
     TnCauTraLoiPublic,
     TnCauTraLoiWrite,
 )
@@ -290,6 +294,34 @@ def update_cau_hoi(
     saved, loai = _load_pair(db, item.id)
     answers = _answers_of(db, [saved.id]).get(saved.id, [])
     return _to_public(saved, loai, answers)
+
+
+@router.patch("/trang-thai", response_model=TnCauHoiTrangThaiManyResult)
+def update_trang_thai_cau_hoi_many(
+    payload: TnCauHoiTrangThaiMany,
+    db: Session = Depends(get_db),
+    _: NguoiDung = Depends(get_admin_user),
+) -> TnCauHoiTrangThaiManyResult:
+    """Bật/tắt nhiều câu hỏi cùng lúc. Id không tồn tại thì bỏ qua."""
+    items = db.scalars(select(TnCauHoiTracNghiem).where(TnCauHoiTracNghiem.id.in_(payload.ids))).all()
+    for item in items:
+        item.trang_thai = payload.trang_thai
+    db.commit()
+    return TnCauHoiTrangThaiManyResult(updated=len(items))
+
+
+@router.patch("/{item_id}/trang-thai", response_model=TnCauHoiTrangThaiResult)
+def update_trang_thai_cau_hoi(
+    item_id: int,
+    payload: TnCauHoiTrangThai,
+    db: Session = Depends(get_db),
+    _: NguoiDung = Depends(get_admin_user),
+) -> TnCauHoiTrangThaiResult:
+    """Bật/tắt nhanh một câu hỏi, không đụng tới nội dung và đáp án."""
+    item, _loai = _load_pair(db, item_id)
+    item.trang_thai = payload.trang_thai
+    db.commit()
+    return TnCauHoiTrangThaiResult(id=item.id, trang_thai=item.trang_thai)
 
 
 def _chan_neu_con_phien(db: Session, ids: list[int]) -> None:

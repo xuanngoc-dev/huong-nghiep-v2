@@ -62,6 +62,26 @@
       <div class="toolbar">
         <h2 class="toolbar__title">Danh sách câu hỏi - đáp án</h2>
         <div class="toolbar__actions">
+          <CustomButton
+            type="success"
+            plain
+            :disabled="!selectedRows.length"
+            :loading="dangDoiNhieu === 1"
+            @click="doiTrangThaiDaChon(1)"
+          >
+            <CustomIcon><CircleCheck /></CustomIcon>
+            Bật
+          </CustomButton>
+          <CustomButton
+            type="warning"
+            plain
+            :disabled="!selectedRows.length"
+            :loading="dangDoiNhieu === 0"
+            @click="doiTrangThaiDaChon(0)"
+          >
+            <CustomIcon><CircleClose /></CustomIcon>
+            Tắt
+          </CustomButton>
           <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
             <CustomButton
               type="danger"
@@ -179,9 +199,16 @@
         <CustomTableColumn prop="noi_dung_cau_hoi" label="Nội dung câu hỏi" min-width="280" />
         <CustomTableColumn label="Trạng thái" width="150" align="center">
           <template #default="{ row }">
-            <CustomTag :type="row.trang_thai === 1 ? 'success' : 'info'" effect="light">
-              {{ row.trang_thai === 1 ? 'Hoạt động' : 'Ngừng sử dụng' }}
-            </CustomTag>
+            <CustomSwitch
+              :model-value="row.trang_thai"
+              :active-value="1"
+              :inactive-value="0"
+              active-text="Hoạt động"
+              inactive-text="Ngừng"
+              :loading="!!dangDoiTrangThai[row.id]"
+              :before-change="() => doiTrangThai(row)"
+              :aria-label="`Trạng thái câu hỏi ${row.id}`"
+            />
           </template>
         </CustomTableColumn>
         <CustomTableColumn label="Ghi chú" min-width="160">
@@ -368,6 +395,8 @@ import {
   deleteCauHoiMany,
   deleteCauTraLoi,
   fetchAnhHuongXoaCauHoi,
+  updateTrangThaiCauHoi,
+  updateTrangThaiCauHoiMany,
   fetchCauHoi,
   updateCauHoi,
   updateCauTraLoi,
@@ -391,6 +420,9 @@ const JSON_SAMPLE = `[
 const loading = ref(false)
 const saving = ref(false)
 const deleting = ref(false)
+const dangDoiTrangThai = ref({})
+// Trạng thái đang áp dụng cho các dòng đã chọn (1 bật / 0 tắt), null khi không chạy.
+const dangDoiNhieu = ref(null)
 const rows = ref([])
 const selectedRows = ref([])
 const tableRef = ref()
@@ -869,6 +901,40 @@ async function onDelete(row) {
     await load()
   } catch (error) {
     ElMessage.error(errorMessage(error, 'Không xóa được câu hỏi'))
+  }
+}
+
+// Switch đổi trạng thái qua API rồi tự cập nhật dòng, nên before-change luôn trả false.
+async function doiTrangThai(row) {
+  const moi = row.trang_thai === 1 ? 0 : 1
+  dangDoiTrangThai.value = { ...dangDoiTrangThai.value, [row.id]: true }
+  try {
+    const data = await updateTrangThaiCauHoi(row.id, moi)
+    row.trang_thai = data.trang_thai
+    ElMessage.success(moi === 1 ? 'Đã bật câu hỏi' : 'Đã tắt câu hỏi')
+  } catch (error) {
+    ElMessage.error(errorMessage(error, 'Không đổi được trạng thái câu hỏi'))
+  } finally {
+    const conLai = { ...dangDoiTrangThai.value }
+    delete conLai[row.id]
+    dangDoiTrangThai.value = conLai
+  }
+  return false
+}
+
+async function doiTrangThaiDaChon(trangThai) {
+  const ids = selectedRows.value.map((row) => row.id)
+  if (!ids.length) return
+  dangDoiNhieu.value = trangThai
+  try {
+    const result = await updateTrangThaiCauHoiMany(ids, trangThai)
+    ElMessage.success(`Đã ${trangThai === 1 ? 'bật' : 'tắt'} ${result.updated} câu hỏi`)
+    clearSelection()
+    await load()
+  } catch (error) {
+    ElMessage.error(errorMessage(error, 'Không đổi được trạng thái các câu hỏi đã chọn'))
+  } finally {
+    dangDoiNhieu.value = null
   }
 }
 

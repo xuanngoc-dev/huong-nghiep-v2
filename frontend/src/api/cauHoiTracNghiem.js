@@ -27,6 +27,14 @@ export function deleteCauHoiMany(ids, xoaLienQuan = false) {
     .then((res) => res.data)
 }
 
+export function updateTrangThaiCauHoi(id, trangThai) {
+  return api.patch(`/trac-nghiem/cau-hoi/${id}/trang-thai`, { trang_thai: trangThai }).then((res) => res.data)
+}
+
+export function updateTrangThaiCauHoiMany(ids, trangThai) {
+  return api.patch('/trac-nghiem/cau-hoi/trang-thai', { ids, trang_thai: trangThai }).then((res) => res.data)
+}
+
 export function fetchAnhHuongXoaCauHoi(ids) {
   return api.post('/trac-nghiem/cau-hoi/anh-huong-xoa', { ids }).then((res) => res.data)
 }

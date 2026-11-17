@@ -125,3 +125,22 @@ class TnCauHoiAnhHuongXoa(BaseModel):
     so_cau_hoi: int
     so_dap_an: int
     so_phien: int
+
+
+class TnCauHoiTrangThai(BaseModel):
+    trang_thai: int = Field(..., ge=0, le=1)
+
+
+class TnCauHoiTrangThaiMany(TnCauHoiTracNghiemDeleteMany):
+    """Đổi trạng thái nhiều câu hỏi theo danh sách id (cùng cách kiểm tra ids như xóa nhiều)."""
+
+    trang_thai: int = Field(..., ge=0, le=1)
+
+
+class TnCauHoiTrangThaiResult(BaseModel):
+    id: int
+    trang_thai: int
+
+
+class TnCauHoiTrangThaiManyResult(BaseModel):
+    updated: int

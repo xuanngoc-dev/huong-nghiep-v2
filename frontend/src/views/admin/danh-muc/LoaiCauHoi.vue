@@ -537,6 +537,9 @@ async function doiTrangThai(row) {
       thu_tu_uu_tien: row.thu_tu_uu_tien,
       trang_thai: moi,
       ghi_chu: row.ghi_chu ?? null,
+      // PUT ghi đè toàn bộ: gửi lại các trường còn lại để bật/tắt không làm mất cấu hình trả lời.
+      loai_tra_loi: row.loai_tra_loi || 'diem_so',
+      danh_sach_tieu_de_cau_tra_loi: row.danh_sach_tieu_de_cau_tra_loi ?? null,
     })
     row.trang_thai = data.trang_thai
     ElMessage.success(moi === 1 ? `Đã bật "${row.ten_loai_cau_hoi}"` : `Đã tắt "${row.ten_loai_cau_hoi}"`)

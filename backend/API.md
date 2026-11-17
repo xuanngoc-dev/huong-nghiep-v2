@@ -1,14 +1,14 @@
 # Danh sách API
 
-Tự sinh từ code lúc 17/11/2026 16:14 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 17/11/2026 17:10 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **302** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **304** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 175 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Quản trị (admin)](#quan_tri) | 177 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
 | [Thành viên (user)](#thanh_vien) | 79 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 48 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
@@ -352,7 +352,9 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 |---|---|---|---|
 | `DELETE` | `/api/v1/trac-nghiem/cau-hoi` | Bắt buộc (admin) | Xóa nhiều câu hỏi theo danh sách id, đáp án của các câu hỏi đó bị xóa theo. |
 | `POST` | `/api/v1/trac-nghiem/cau-hoi/anh-huong-xoa` | Bắt buộc (admin) | Xem trước số đáp án và phiên khảo sát sẽ bị xóa theo nếu xóa các câu hỏi này. |
+| `PATCH` | `/api/v1/trac-nghiem/cau-hoi/trang-thai` | Bắt buộc (admin) | Bật/tắt nhiều câu hỏi cùng lúc. Id không tồn tại thì bỏ qua. |
 | `DELETE` | `/api/v1/trac-nghiem/cau-hoi/{item_id}` | Bắt buộc (admin) | Xóa một câu hỏi trắc nghiệm theo id, đáp án bị xóa theo; `xoa_lien_quan=true` xóa kèm phiên khảo sát đã làm. |
+| `PATCH` | `/api/v1/trac-nghiem/cau-hoi/{item_id}/trang-thai` | Bắt buộc (admin) | Bật/tắt nhanh một câu hỏi, không đụng tới nội dung và đáp án. |
 | `GET` | `/api/v1/trac-nghiem/phien/quan-tri` | Bắt buộc (admin) | Tất cả phiên khảo sát cho quản trị, mới nhất trước. |
 | `DELETE` | `/api/v1/trac-nghiem/phien/quan-tri` | Bắt buộc (admin) | Xóa nhiều phiên trắc nghiệm theo id, kèm toàn bộ câu trả lời. Id không tồn tại thì bỏ qua. |
 | `DELETE` | `/api/v1/trac-nghiem/phien/quan-tri/{item_id}` | Bắt buộc (admin) | Xóa một phiên trắc nghiệm theo id, kèm toàn bộ câu trả lời. |
