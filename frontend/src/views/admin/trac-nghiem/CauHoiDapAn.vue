@@ -62,26 +62,31 @@
       <div class="toolbar">
         <h2 class="toolbar__title">Danh sách câu hỏi - đáp án</h2>
         <div class="toolbar__actions">
-          <CustomButton
-            type="success"
-            plain
-            :disabled="!selectedRows.length"
-            :loading="dangDoiNhieu === 1"
-            @click="doiTrangThaiDaChon(1)"
-          >
-            <CustomIcon><CircleCheck /></CustomIcon>
-            Bật
-          </CustomButton>
-          <CustomButton
-            type="warning"
-            plain
-            :disabled="!selectedRows.length"
-            :loading="dangDoiNhieu === 0"
-            @click="doiTrangThaiDaChon(0)"
-          >
-            <CustomIcon><CircleClose /></CustomIcon>
-            Tắt
-          </CustomButton>
+          <!-- Bật chỉ áp dụng cho dòng đã chọn đang tắt, Tắt cho dòng đang bật; badge là số dòng sẽ đổi. -->
+          <CustomBadge :value="idsDangTat.length" :hidden="!idsDangTat.length" type="success">
+            <CustomButton
+              type="success"
+              plain
+              :disabled="!idsDangTat.length"
+              :loading="dangDoiNhieu === 1"
+              @click="doiTrangThaiDaChon(1)"
+            >
+              <CustomIcon><CircleCheck /></CustomIcon>
+              Bật
+            </CustomButton>
+          </CustomBadge>
+          <CustomBadge :value="idsDangBat.length" :hidden="!idsDangBat.length" type="warning">
+            <CustomButton
+              type="warning"
+              plain
+              :disabled="!idsDangBat.length"
+              :loading="dangDoiNhieu === 0"
+              @click="doiTrangThaiDaChon(0)"
+            >
+              <CustomIcon><CircleClose /></CustomIcon>
+              Tắt
+            </CustomButton>
+          </CustomBadge>
           <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
             <CustomButton
               type="danger"
@@ -383,7 +388,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
 import XacNhanXoaDialog from '@/components/admin/XacNhanXoaDialog.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -425,6 +430,8 @@ const dangDoiTrangThai = ref({})
 const dangDoiNhieu = ref(null)
 const rows = ref([])
 const selectedRows = ref([])
+const idsDangBat = computed(() => selectedRows.value.filter((row) => row.trang_thai === 1).map((row) => row.id))
+const idsDangTat = computed(() => selectedRows.value.filter((row) => row.trang_thai !== 1).map((row) => row.id))
 const tableRef = ref()
 const total = ref(0)
 const page = ref(1)
@@ -923,8 +930,23 @@ async function doiTrangThai(row) {
 }
 
 async function doiTrangThaiDaChon(trangThai) {
-  const ids = selectedRows.value.map((row) => row.id)
+  const ids = trangThai === 1 ? idsDangTat.value : idsDangBat.value
   if (!ids.length) return
+  const hanhDong = trangThai === 1 ? 'Bật' : 'Tắt'
+  try {
+    await ElMessageBox.confirm(
+      `${hanhDong} ${ids.length} câu hỏi đã chọn đang ${trangThai === 1 ? 'tắt' : 'bật'}?`,
+      `Xác nhận ${hanhDong.toLowerCase()} câu hỏi`,
+      {
+        type: 'warning',
+        confirmButtonText: hanhDong,
+        cancelButtonText: 'Hủy',
+        confirmButtonClass: trangThai === 1 ? 'el-button--success' : 'el-button--warning',
+      },
+    )
+  } catch {
+    return
+  }
   dangDoiNhieu.value = trangThai
   try {
     const result = await updateTrangThaiCauHoiMany(ids, trangThai)
