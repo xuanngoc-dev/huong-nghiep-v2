@@ -49,10 +49,10 @@
               <p class="ho-so-tom-tat__sub">
                 {{ hoSo.ho_ten }}
                 <span v-if="soMucThieu"> · còn {{ soMucThieu }} mục chưa cập nhật. Bổ sung ngay để tìm trường phù hợp.</span>
-                <RouterLink class="ho-so-tom-tat__link" :to="{ name: 'ho-so-ca-nhan' }">
+                <button type="button" class="ho-so-tom-tat__link" @click="hoSoMo = true">
                   <CustomIcon><EditPen /></CustomIcon>
                   <span>Xem & cập nhật hồ sơ</span>
-                </RouterLink>
+                </button>
               </p>
             </div>
             <div class="ho-so-tom-tat__actions">
@@ -1622,6 +1622,20 @@ onMounted(async () => {
   background: #eef6f1;
   color: #3a4742;
   font-size: 0.85rem;
+}
+
+.ho-so-tom-tat__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #3f9466;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .truong-phu-hop__cho-tim {
