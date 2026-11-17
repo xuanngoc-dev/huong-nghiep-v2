@@ -35,7 +35,7 @@
       filterable
     >
       <CustomOption
-        v-for="item in catalogMethods"
+        v-for="item in methodOptions"
         :key="item.id"
         :label="catalogLabel(item)"
         :value="item.ma_phuong_thuc"
@@ -388,18 +388,30 @@ const filteredRows = computed(() =>
   }),
 )
 
+// Trong một đề án chỉ hiện phương thức đề án có dùng; danh sách nhiều trường (hienTruong) giữ đủ cột danh mục Bộ.
+const usedColumns = computed(() =>
+  props.hienTruong ? methodColumns.value : methodColumns.value.filter((column) => column.used),
+)
+
+// Lựa chọn lọc phương thức khớp các cột đang có.
+const methodOptions = computed(() => {
+  if (props.hienTruong) return catalogMethods.value
+  const keys = new Set(usedColumns.value.map((column) => column.key))
+  return catalogMethods.value.filter((item) => keys.has(String(item.ma_phuong_thuc || '').trim()))
+})
+
 const visibleColumns = computed(() => {
   if (filters.phuongThuc.length) {
-    return methodColumns.value.filter((column) => filters.phuongThuc.includes(column.key))
+    return usedColumns.value.filter((column) => filters.phuongThuc.includes(column.key))
   }
   if (filters.toHop.length) {
-    return methodColumns.value.filter((column) =>
+    return usedColumns.value.filter((column) =>
       filteredRows.value.some((row) =>
         filters.toHop.some((code) => listsCombo(row.cells[column.key], code)),
       ),
     )
   }
-  return methodColumns.value
+  return usedColumns.value
 })
 
 const emptyText = computed(() => {
