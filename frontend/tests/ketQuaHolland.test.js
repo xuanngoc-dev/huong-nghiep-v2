@@ -1,8 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {
-  docQuanTam,
-  ghiQuanTam,
+  demNganhTheoNhom,
   khoangCach,
   ngheGoiY,
   nhanXetTongQuan,
@@ -56,13 +55,12 @@ test('nghề gợi ý tách từ ví dụ nghề, không lặp giữa các nhóm
   assert.ok(nghe[0].mo_ta)
 })
 
-test('danh sách quan tâm đọc / ghi an toàn khi bộ nhớ lỗi', () => {
-  const data = new Map()
-  const storage = { getItem: (k) => data.get(k), setItem: (k, v) => data.set(k, v) }
-  assert.deepEqual(docQuanTam(storage, 'abc'), { nganh: [], truong: [] })
-  ghiQuanTam(storage, 'abc', { nganh: [{ ma_nganh: '7480201' }], truong: [] })
-  assert.equal(docQuanTam(storage, 'abc').nganh[0].ma_nganh, '7480201')
-  const hong = { getItem: () => { throw new Error('x') }, setItem: () => { throw new Error('x') } }
-  assert.deepEqual(docQuanTam(hong, 'abc'), { nganh: [], truong: [] })
-  assert.equal(ghiQuanTam(hong, 'abc', {}), false)
+test('đếm ngành theo nhóm Holland, mã lặp trong một ngành chỉ tính một lần', () => {
+  const dem = demNganhTheoNhom([
+    { ma_nganh: '1', ma_holand: ['R', 'I'] },
+    { ma_nganh: '2', ma_holand: ['I', 'I', 'C'] },
+    { ma_nganh: '3', ma_holand: [] },
+  ])
+  assert.deepEqual(dem, { R: 1, I: 2, C: 1 })
+  assert.deepEqual(demNganhTheoNhom(null), {})
 })

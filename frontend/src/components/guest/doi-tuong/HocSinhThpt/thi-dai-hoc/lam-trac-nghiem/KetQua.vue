@@ -16,62 +16,102 @@
         <template v-else-if="ketQua">
           <BuocLamBai :ssid="ssid" :buoc="buoc" hien-tai="ket-qua" />
 
-          <div class="major-tabs">
-            <div class="major-tabs__bar" role="tablist" aria-label="Kết quả trắc nghiệm Holland">
-              <button
-                v-for="tab in TABS"
-                :id="idTab(tab.id)"
-                :key="tab.id"
-                type="button"
-                role="tab"
-                class="major-tabs__pill"
-                :class="{ 'is-active': tabDangChon === tab.id }"
-                :aria-selected="tabDangChon === tab.id"
-                :aria-controls="`ket-qua-panel-${tab.id}`"
-                :tabindex="tabDangChon === tab.id ? 0 : -1"
-                @click="chonTab(tab.id)"
-                @keydown="dieuHuongTab"
+          <div class="kq">
+            <div v-if="top.length" class="row g-3">
+              <div v-for="(item, index) in top" :key="item.ma_nhom" class="col-12 col-md-4">
+                <article class="kq-card kq-nhom">
+                  <div class="kq-nhom__head">
+                    <span class="kq-ma__badge" :class="`kq-ma__badge--${index + 1}`">{{ item.ma_nhom }}</span>
+                    <div class="kq-nhom__ten">
+                      <p class="kq-kicker">Nhóm nổi bật {{ index + 1 }}</p>
+                      <h3>{{ item.ten_nhom }}</h3>
+                    </div>
+                    <span class="kq-nhom__diem">{{ item.diem }} điểm</span>
+                  </div>
+                  <p class="kq-nhom__mo-ta">{{ NOI_DUNG_NHOM[item.ma_nhom]?.xu_huong || item.mo_ta }}</p>
+                  <RouterLink
+                    class="kq-nhom__dem"
+                    :to="{ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid }, query: queryGiuLai }"
+                  >
+                    <strong>{{ dangTaiNganh ? '…' : soNganh[item.ma_nhom] || 0 }}</strong>
+                    <span>ngành đào tạo liên quan</span>
+                  </RouterLink>
+                </article>
+              </div>
+            </div>
+            <p v-else class="kq-card kq-muted">Chưa đủ câu trả lời để xác định nhóm sở thích nổi bật.</p>
+
+            <div class="major-tabs">
+              <div class="major-tabs__bar" role="tablist" aria-label="Kết quả trắc nghiệm Holland">
+                <button
+                  v-for="tab in TABS"
+                  :id="idTab(tab.id)"
+                  :key="tab.id"
+                  type="button"
+                  role="tab"
+                  class="major-tabs__pill"
+                  :class="{ 'is-active': tabDangChon === tab.id }"
+                  :aria-selected="tabDangChon === tab.id"
+                  :aria-controls="`ket-qua-panel-${tab.id}`"
+                  :tabindex="tabDangChon === tab.id ? 0 : -1"
+                  @click="chonTab(tab.id)"
+                  @keydown="dieuHuongTab"
+                >
+                  {{ tab.nhan }}
+                </button>
+              </div>
+              <div
+                :id="`ket-qua-panel-${tabDangChon}`"
+                class="major-tabs__panel"
+                role="tabpanel"
+                :aria-labelledby="idTab(tabDangChon)"
               >
-                {{ tab.nhan }}
-              </button>
+                <ToiLaAi v-if="tabDangChon === 'toi-la-ai'" :nhom="ketQua.nhom" :top="top" />
+                <ToiPhuHop
+                  v-else-if="tabDangChon === 'phu-hop'"
+                  :ssid="ssid"
+                  :top="top"
+                  :danh-muc-nhom="danhMucNhom"
+                  :nganh="nganh"
+                  :dang-tai-nganh="dangTaiNganh"
+                  :loi-nganh="loiNganh"
+                  :route-query="queryGiuLai"
+                />
+                <ToiCaiThien v-else-if="tabDangChon === 'cai-thien'" :nhom="ketQua.nhom" :top="top" />
+                <ToiLamGiTiep v-else :ssid="ssid" :top="top" :route-query="queryGiuLai" @chuyen-tab="chonTab" />
+              </div>
             </div>
-            <div
-              :id="`ket-qua-panel-${tabDangChon}`"
-              class="major-tabs__panel"
-              role="tabpanel"
-              :aria-labelledby="idTab(tabDangChon)"
-            >
-              <TongQuanKetQua
-                v-if="tabDangChon === 'tong-quan'"
-                :nhom="ketQua.nhom"
-                :top="top"
-                :ma-noi-bat="ketQua.ma_noi_bat"
-              />
-              <NgheNghiepDaoTao
-                v-else-if="tabDangChon === 'nghe-nghiep'"
-                :ssid="ssid"
-                :top="top"
-                :ma-noi-bat="ketQua.ma_noi_bat"
-                :danh-muc-nhom="danhMucNhom"
-                :nganh="nganh"
-                :dang-tai-nganh="dangTaiNganh"
-                :loi-nganh="loiNganh"
-                :quan-tam="quanTam"
-                :route-query="queryGiuLai"
-                @doi-quan-tam="doiQuanTam"
-              />
-              <LoTrinhTiepTheo
-                v-else
-                :ssid="ssid"
-                :top="top"
-                :ma-noi-bat="ketQua.ma_noi_bat"
-                :nganh="nganh"
-                :quan-tam="quanTam"
-                :route-query="queryGiuLai"
-                @doi-quan-tam="doiQuanTam"
-                @chuyen-tab="chonTab"
-              />
-            </div>
+
+            <article class="kq-card kq-cta">
+              <div>
+                <h3 class="kq-card__title">Tìm trường phù hợp</h3>
+                <p class="kq-muted">Chọn ngành để xem trường đào tạo và khả năng trúng tuyển theo điểm của bạn.</p>
+              </div>
+              <div class="kq-cta__form">
+                <CustomSelect
+                  v-model="maNganhTimTruong"
+                  class="kq-select"
+                  filterable
+                  :loading="dangTaiNganh"
+                  placeholder="Chọn ngành"
+                >
+                  <CustomOption
+                    v-for="item in nganh.slice(0, 30)"
+                    :key="item.ma_nganh"
+                    :label="`${item.ma_nganh} — ${item.ten_nganh}`"
+                    :value="item.ma_nganh"
+                  />
+                </CustomSelect>
+                <RouterLink
+                  v-if="maNganhTimTruong"
+                  class="btn btn-success"
+                  :to="{ name: 'thpt-thi-dai-hoc-truong-phu-hop', params: { maNganh: maNganhTimTruong } }"
+                >
+                  Tìm trường phù hợp
+                </RouterLink>
+                <button v-else type="button" class="btn btn-success" disabled>Tìm trường phù hợp</button>
+              </div>
+            </article>
           </div>
         </template>
       </div>
@@ -81,25 +121,27 @@
 
 <script setup>
 /**
- * Kết quả trắc nghiệm Holland theo 3 tab: Tổng quan (mã Holland, biểu đồ, nhận xét, khám phá bản thân),
- * Nghề nghiệp & đào tạo (nghề, ngành, trường), Lộ trình tiếp theo (các bước, trải nghiệm, hành động).
+ * Kết quả trắc nghiệm Holland: 3 thẻ nhóm nổi bật (kèm số ngành liên quan), 4 tab câu hỏi định hướng
+ * (Tôi là ai? / phù hợp / cần cải thiện / làm gì tiếp theo) và hành động "Tìm trường phù hợp" ở cuối.
  */
-import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchNhomHolland } from '@/api/nhomTinhCachHolland'
 import { fetchKetQua, fetchNganhPhuHop } from '@/api/phienKhaoSat'
-import { docQuanTam, ghiQuanTam, xepHang } from '@/utils/ketQuaHolland'
+import { NOI_DUNG_NHOM, demNganhTheoNhom, xepHang } from '@/utils/ketQuaHolland'
 import BuocLamBai from './BuocLamBai.vue'
-import LoTrinhTiepTheo from './ket-qua/LoTrinhTiepTheo.vue'
-import NgheNghiepDaoTao from './ket-qua/NgheNghiepDaoTao.vue'
-import TongQuanKetQua from './ket-qua/TongQuanKetQua.vue'
+import ToiCaiThien from './ket-qua/ToiCaiThien.vue'
+import ToiLaAi from './ket-qua/ToiLaAi.vue'
+import ToiLamGiTiep from './ket-qua/ToiLamGiTiep.vue'
+import ToiPhuHop from './ket-qua/ToiPhuHop.vue'
 
 defineOptions({ name: 'ThptKetQuaTracNghiem' })
 
 const TABS = [
-  { id: 'tong-quan', nhan: 'Tổng quan' },
-  { id: 'nghe-nghiep', nhan: 'Nghề nghiệp & đào tạo' },
-  { id: 'lo-trinh', nhan: 'Lộ trình tiếp theo' },
+  { id: 'toi-la-ai', nhan: 'Tôi là ai?' },
+  { id: 'phu-hop', nhan: 'Tôi phù hợp với điều gì?' },
+  { id: 'cai-thien', nhan: 'Tôi cần cải thiện điều gì?' },
+  { id: 'tiep-theo', nhan: 'Tôi nên làm gì tiếp theo?' },
 ]
 
 const route = useRoute()
@@ -112,12 +154,13 @@ const danhMucNhom = ref([])
 const nganh = ref([])
 const dangTaiNganh = ref(false)
 const loiNganh = ref('')
-const quanTam = reactive({ nganh: [], truong: [] })
+const maNganhTimTruong = ref('')
 
-const tabDangChon = computed(() => (TABS.some((tab) => tab.id === route.query.tab) ? route.query.tab : 'tong-quan'))
+const tabDangChon = computed(() => (TABS.some((tab) => tab.id === route.query.tab) ? route.query.tab : TABS[0].id))
 // Giữ ma_nganh của luồng làm bài khi sang trang chi tiết ngành / trường.
 const queryGiuLai = computed(() => (route.query.ma_nganh ? { ma_nganh: route.query.ma_nganh } : {}))
 const top = computed(() => xepHang(ketQua.value?.nhom).slice(0, 3))
+const soNganh = computed(() => demNganhTheoNhom(nganh.value))
 
 const buoc = computed(() => [
   ...(ketQua.value?.buoc || []).map((item) => ({ ...item, xong: true })),
@@ -130,7 +173,7 @@ function idTab(id) {
 }
 
 function chonTab(id) {
-  router.replace({ query: { ...route.query, tab: id === 'tong-quan' ? undefined : id } })
+  router.replace({ query: { ...route.query, tab: id === TABS[0].id ? undefined : id } })
 }
 
 function dieuHuongTab(event) {
@@ -141,15 +184,6 @@ function dieuHuongTab(event) {
   const ke = huong === 'dau' ? 0 : huong === 'cuoi' ? TABS.length - 1 : (index + huong + TABS.length) % TABS.length
   chonTab(TABS[ke].id)
   nextTick(() => document.getElementById(idTab(TABS[ke].id))?.focus())
-}
-
-function doiQuanTam(loai, item) {
-  const khoa = loai === 'nganh' ? 'ma_nganh' : 'ma_truong'
-  const ds = quanTam[loai]
-  const index = ds.findIndex((x) => x[khoa] === item[khoa])
-  if (index >= 0) ds.splice(index, 1)
-  else ds.push(item)
-  ghiQuanTam(globalThis.localStorage, ssid.value, { nganh: quanTam.nganh, truong: quanTam.truong })
 }
 
 async function taiNganh(value) {
@@ -163,12 +197,16 @@ async function taiNganh(value) {
   } finally {
     dangTaiNganh.value = false
   }
+  // Mặc định tìm trường theo ngành của luồng làm bài, không có thì ngành phù hợp nhất.
+  const maTuLuong = String(route.query.ma_nganh || '')
+  maNganhTimTruong.value = nganh.value.some((item) => item.ma_nganh === maTuLuong)
+    ? maTuLuong
+    : nganh.value[0]?.ma_nganh || ''
 }
 
 async function taiKetQua(value) {
   ketQua.value = null
   loi.value = ''
-  Object.assign(quanTam, docQuanTam(globalThis.localStorage, value))
   if (!value) {
     loi.value = 'Không có mã phiên khảo sát.'
     return
@@ -201,3 +239,4 @@ taiDanhMucNhom()
 </script>
 
 <style src="./quiz-type.scss"></style>
+<style scoped src="./ket-qua/ket-qua.css"></style>

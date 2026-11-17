@@ -11,6 +11,7 @@ export const THU_TU_RIASEC = ['R', 'I', 'A', 'S', 'E', 'C']
 export const NOI_DUNG_NHOM = {
   R: {
     ten: 'Kỹ thuật',
+    xu_huong: 'Thích làm việc với đồ vật, máy móc, công cụ; học tốt nhất qua thực hành.',
     dac_diem: ['Thực tế, thích làm việc bằng tay và công cụ', 'Thích kết quả cụ thể, nhìn thấy được', 'Kiên trì, ưa hành động hơn lý thuyết'],
     hoat_dong: ['Lắp ráp, sửa chữa đồ vật, máy móc', 'Làm mô hình, thí nghiệm thực hành', 'Hoạt động ngoài trời, thể thao, chăm sóc cây trồng vật nuôi'],
     moi_truong: 'Môi trường thực hành như xưởng, công trường, phòng thí nghiệm, ngoài trời; nhiệm vụ rõ ràng, có sản phẩm cụ thể.',
@@ -21,6 +22,7 @@ export const NOI_DUNG_NHOM = {
   },
   I: {
     ten: 'Nghiên cứu',
+    xu_huong: 'Thích làm việc với ý tưởng và dữ liệu; tự tìm hiểu, làm việc độc lập.',
     dac_diem: ['Tò mò, thích đặt câu hỏi "vì sao"', 'Thích phân tích, suy luận logic', 'Độc lập, tập trung sâu vào vấn đề'],
     hoat_dong: ['Giải bài toán, câu đố logic', 'Đọc sách khoa học, tìm hiểu công nghệ', 'Làm thí nghiệm, dự án nghiên cứu nhỏ'],
     moi_truong: 'Môi trường coi trọng tư duy và dữ liệu như phòng thí nghiệm, viện nghiên cứu, nhóm phân tích, công ty công nghệ.',
@@ -31,6 +33,7 @@ export const NOI_DUNG_NHOM = {
   },
   A: {
     ten: 'Nghệ thuật',
+    xu_huong: 'Thích làm việc với ý tưởng và cảm xúc; cần không gian tự do để sáng tạo.',
     dac_diem: ['Giàu trí tưởng tượng, nhạy cảm với cái đẹp', 'Thích thể hiện cá tính, ý tưởng riêng', 'Ưa tự do, linh hoạt'],
     hoat_dong: ['Vẽ, thiết kế, chụp ảnh, làm video', 'Viết, đọc sáng tác, biểu diễn âm nhạc, sân khấu', 'Trang trí, sáng tạo nội dung'],
     moi_truong: 'Môi trường mở, linh hoạt, khuyến khích sáng tạo như studio, agency, tòa soạn, nhà hát, dự án tự do.',
@@ -41,6 +44,7 @@ export const NOI_DUNG_NHOM = {
   },
   S: {
     ten: 'Xã hội',
+    xu_huong: 'Thích làm việc với con người; hợp tác, hỗ trợ và kết nối mọi người.',
     dac_diem: ['Quan tâm, thấu hiểu người khác', 'Thích hợp tác, giúp đỡ, chia sẻ', 'Giao tiếp tốt, kiên nhẫn'],
     hoat_dong: ['Hướng dẫn bạn bè học bài', 'Tham gia hoạt động tình nguyện, cộng đồng', 'Lắng nghe, tư vấn, tổ chức sinh hoạt tập thể'],
     moi_truong: 'Môi trường làm việc với con người như trường học, bệnh viện, tổ chức xã hội, bộ phận nhân sự, chăm sóc khách hàng.',
@@ -51,6 +55,7 @@ export const NOI_DUNG_NHOM = {
   },
   E: {
     ten: 'Quản lý',
+    xu_huong: 'Thích làm việc với con người để đạt mục tiêu; chủ động, dẫn dắt, ra quyết định.',
     dac_diem: ['Năng động, tự tin, thích dẫn dắt', 'Thích thuyết phục, thương lượng', 'Định hướng mục tiêu, dám chấp nhận thử thách'],
     hoat_dong: ['Tổ chức sự kiện, dẫn dắt nhóm', 'Kinh doanh nhỏ, bán hàng, gây quỹ', 'Tranh biện, thuyết trình'],
     moi_truong: 'Môi trường năng động, cạnh tranh, gắn với mục tiêu và kết quả như doanh nghiệp, khởi nghiệp, kinh doanh, truyền thông.',
@@ -61,6 +66,7 @@ export const NOI_DUNG_NHOM = {
   },
   C: {
     ten: 'Nghiệp vụ',
+    xu_huong: 'Thích làm việc với dữ liệu, hồ sơ theo quy trình; chi tiết, có kế hoạch.',
     dac_diem: ['Cẩn thận, chính xác, ngăn nắp', 'Thích quy trình rõ ràng', 'Đáng tin cậy, có trách nhiệm'],
     hoat_dong: ['Sắp xếp, quản lý tài liệu, số liệu', 'Lập bảng tính, kế hoạch chi tiêu', 'Làm thủ quỹ, thư ký cho lớp, câu lạc bộ'],
     moi_truong: 'Môi trường ổn định, có quy định và quy trình như văn phòng, ngân hàng, cơ quan hành chính, bộ phận kế toán.',
@@ -173,21 +179,11 @@ export function cauHoiTuVan(top) {
   return `Kết quả trắc nghiệm Holland của tôi là ${ma}: nổi bật các nhóm ${ten}. Hãy gợi ý giúp tôi các ngành học, nghề nghiệp phù hợp và tôi nên chuẩn bị gì trong thời gian tới.`
 }
 
-/** Danh sách quan tâm (ngành, trường) lưu trong trình duyệt theo phiên khảo sát; lỗi bộ nhớ thì bỏ qua. */
-export function docQuanTam(storage, ssid) {
-  try {
-    const data = JSON.parse(storage?.getItem(`holland-quan-tam:${ssid}`) || '{}')
-    return { nganh: Array.isArray(data.nganh) ? data.nganh : [], truong: Array.isArray(data.truong) ? data.truong : [] }
-  } catch {
-    return { nganh: [], truong: [] }
+/** Số ngành phù hợp có mã Holland chứa từng nhóm, dạng { R: 12, I: 30, ... }. */
+export function demNganhTheoNhom(nganh) {
+  const dem = {}
+  for (const item of nganh || []) {
+    for (const ma of new Set(item.ma_holand || [])) dem[ma] = (dem[ma] || 0) + 1
   }
-}
-
-export function ghiQuanTam(storage, ssid, data) {
-  try {
-    storage?.setItem(`holland-quan-tam:${ssid}`, JSON.stringify(data))
-    return true
-  } catch {
-    return false
-  }
+  return dem
 }
