@@ -201,8 +201,16 @@ def doc_cau_truc(du_lieu) -> DeAnXetTuyenChuan:
         loi = []
         for e in exc.errors():
             duong_dan = "/".join(str(p) for p in e["loc"]) or "(gốc)"
-            loi.append(f"{duong_dan}: {e['msg']}")
+            loi.append(f"{duong_dan}: {e['msg']}{_gia_tri_nhan(e.get('input'))}")
         raise XetTuyenImportError(loi) from None
+
+
+def _gia_tri_nhan(value) -> str:
+    """Giá trị sai trong file (chỉ với giá trị đơn) để người nhập biết cần sửa gì; object/mảng thì bỏ qua."""
+    if isinstance(value, dict | list):
+        return ""
+    text = json.dumps(value, ensure_ascii=False, default=str)
+    return f" (nhận: {text[:80] + '…' if len(text) > 80 else text})"
 
 
 def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen) -> KeHoachNhap:

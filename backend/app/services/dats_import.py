@@ -132,7 +132,11 @@ _PARENT_FK = {parent: column for column, parent in _DATS_FK.items()}
 
 
 class DatsImportError(ValueError):
-    """Dữ liệu JSON không nhập được. Thông điệp dành cho người dùng."""
+    """Dữ liệu JSON không nhập được. Thông điệp dành cho người dùng; `loi` là danh sách lỗi đầy đủ để ghi log."""
+
+    def __init__(self, message: str, loi: list[str] | None = None):
+        super().__init__(message)
+        self.loi = loi or [message]
 
 
 def _thanh_mang(table: str, value):
@@ -280,7 +284,10 @@ def import_day_du(
         )
     except XetTuyenImportError as exc:
         loi = "; ".join(exc.loi[:20]) + (f" và {len(exc.loi) - 20} lỗi khác" if len(exc.loi) > 20 else "")
-        raise DatsImportError(f"{KHOA_QUY_TAC} có {len(exc.loi)} lỗi: {loi}") from None
+        raise DatsImportError(
+            f"{KHOA_QUY_TAC} có {len(exc.loi)} lỗi: {loi}",
+            [f"{KHOA_QUY_TAC}/{dong}" for dong in exc.loi],
+        ) from None
     ten = {"dats_chuong_trinh_dao_tao": "chương trình", "dats_tru_so": "cơ sở"}
     for bang, so in so_truoc.items():
         them = ket_qua.so_dong.get(bang, 0)

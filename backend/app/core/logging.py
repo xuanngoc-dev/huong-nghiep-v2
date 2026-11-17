@@ -85,6 +85,44 @@ class DailyFileHandler(logging.Handler):
                 path.unlink(missing_ok=True)
 
 
+IMPORT_LOG_DIR = LOG_DIR / "import"
+
+
+def luu_lan_import(ten: str, du_lieu, *, ket_qua: dict) -> Path | None:
+    """Lưu nguyên file import kèm kết quả (lỗi / số dòng / cảnh báo) vào logs/import/<ngày>/ để rà soát.
+
+    Thư mục ngày cũ hơn `log_retention_days` bị xóa. Ghi không được thì chỉ ghi log, không làm hỏng API.
+    """
+    try:
+        hom_nay = date.today()
+        thu_muc = IMPORT_LOG_DIR / hom_nay.isoformat()
+        thu_muc.mkdir(parents=True, exist_ok=True)
+        cutoff = hom_nay - timedelta(days=settings.log_retention_days - 1)
+        for cu in IMPORT_LOG_DIR.iterdir():
+            try:
+                if cu.is_dir() and date.fromisoformat(cu.name) < cutoff:
+                    for file in cu.iterdir():
+                        file.unlink(missing_ok=True)
+                    cu.rmdir()
+            except (ValueError, OSError):
+                continue
+        ten_file = "".join(c if c.isalnum() or c in "-_" else "_" for c in ten)
+        path = thu_muc / f"{time.strftime('%H%M%S')}_{ten_file}.json"
+        path.write_text(
+            json.dumps(
+                {"thoi_gian": time.strftime("%Y-%m-%d %H:%M:%S"), **ket_qua, "du_lieu": _redact(du_lieu)},
+                ensure_ascii=False,
+                indent=2,
+                default=str,
+            ),
+            encoding="utf-8",
+        )
+        return path
+    except Exception:
+        logger.exception("Không lưu được file import %s vào thư mục log", ten)
+        return None
+
+
 def setup_logging() -> None:
     """Cấu hình log ra console (uvicorn) và file theo ngày."""
     global _configured

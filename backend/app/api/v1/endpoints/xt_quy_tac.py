@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 from collections import defaultdict
 from dataclasses import asdict
 from datetime import date, datetime
@@ -10,6 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user
+from app.core.logging import luu_lan_import
 from app.db.session import get_db
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
 from app.models.dats_tuyen_sinh import DatsTuyenSinh
@@ -47,6 +49,7 @@ from app.services.xet_tuyen_ghi import nhap_quy_tac
 from app.services.xet_tuyen_import import XetTuyenImportError
 
 # Quy tắc xét tuyển (xt_*) của một đề án: xem và import file JSON chuẩn. Chỉ quản trị viên.
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/de-an-tuyen-sinh", tags=["de-an-tuyen-sinh"], dependencies=[Depends(get_admin_user)])
 
 _SO_LICH_SU = 10
@@ -324,21 +327,60 @@ def import_quy_tac(
             ),
         )
     ma_bam = hashlib.sha256(json.dumps(du_lieu, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
+    nhan = f"đề án #{item_id} ({de_an.ma_truong} năm {de_an.nam_tuyen_sinh})"
+    ten_log = f"quy_tac_{de_an.ma_truong}_{de_an.nam_tuyen_sinh}"
+    logger.info("Import quy tắc xét tuyển %s | file %s | %s <%s>", nhan, payload.ten_file, user.ho_ten, user.email)
     try:
         ket_qua = nhap_quy_tac(db, du_lieu, ten_file=payload.ten_file, ma_bam=ma_bam, nguoi_import_id=user.id)
         db.commit()
     except XetTuyenImportError as exc:
         db.rollback()
+        file_log = luu_lan_import(
+            f"{ten_log}_loi",
+            du_lieu,
+            ket_qua={
+                "api": f"POST /de-an-tuyen-sinh/{item_id}/quy-tac/import",
+                "nguoi_import": user.email,
+                "so_loi": len(exc.loi),
+                "loi": exc.loi,
+                "canh_bao": exc.canh_bao,
+            },
+        )
+        logger.warning(
+            "Import quy tắc xét tuyển %s thất bại: %d lỗi | file: %s\n  %s",
+            nhan,
+            len(exc.loi),
+            file_log,
+            "\n  ".join(exc.loi),
+        )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"thong_bao": str(exc), "loi": exc.loi, "canh_bao": exc.canh_bao},
         ) from None
-    except IntegrityError:
+    except IntegrityError as exc:
         db.rollback()
+        logger.warning("Import quy tắc xét tuyển %s vi phạm ràng buộc CSDL: %s", nhan, exc.orig)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Không lưu được quy tắc xét tuyển (dữ liệu vi phạm ràng buộc của CSDL)",
         ) from None
+    file_log = luu_lan_import(
+        f"{ten_log}_thanh_cong",
+        du_lieu,
+        ket_qua={
+            "api": f"POST /de-an-tuyen-sinh/{item_id}/quy-tac/import",
+            "nguoi_import": user.email,
+            "so_dong": ket_qua.so_dong,
+            "canh_bao": ket_qua.canh_bao,
+        },
+    )
+    logger.info(
+        "Import quy tắc xét tuyển %s thành công | so_dong=%s | cảnh báo=%s | file: %s",
+        nhan,
+        ket_qua.so_dong,
+        ket_qua.canh_bao,
+        file_log,
+    )
     return XtImportResult(
         de_an_id=ket_qua.de_an_id,
         lich_su_id=ket_qua.lich_su_id,

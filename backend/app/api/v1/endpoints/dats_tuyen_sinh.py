@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from typing import Literal
 
@@ -7,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user, la_quan_tri
+from app.core.logging import luu_lan_import
 from app.db.session import get_db
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
 from app.models.dats_trinh_do_nganh import DatsTrinhDoNganh
@@ -35,6 +37,8 @@ from app.services.sao_chep_de_an import SaoChepDeAnError, sao_chep_de_an
 from app.services.truong_hien_thi import join_tinh_thanh
 from app.services.truong_hien_thi import khu_vuc_hien_thi as khu_vuc_hien_thi_expr
 from app.services.truong_hien_thi import loai_hien_thi as loai_hien_thi_expr
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/de-an-tuyen-sinh", tags=["de-an-tuyen-sinh"])
 
@@ -383,6 +387,23 @@ def create_de_an_bulk(
     return DatsTuyenSinhBulkResult(created=len(items))
 
 
+def _log_import_loi(payload: DatsImportRequest, user: NguoiDung, loi: list[str]) -> None:
+    """Ghi đủ danh sách lỗi import (response chỉ tóm tắt 20 lỗi) và lưu file import để rà soát."""
+    file_log = luu_lan_import(
+        f"de_an_{payload.ma_truong}_{payload.nam_tuyen_sinh}_loi",
+        payload.du_lieu,
+        ket_qua={"api": "POST /de-an-tuyen-sinh/import", "nguoi_import": user.email, "so_loi": len(loi), "loi": loi},
+    )
+    logger.warning(
+        "Import đề án %s năm %s thất bại: %d lỗi | file: %s\n  %s",
+        payload.ma_truong,
+        payload.nam_tuyen_sinh,
+        len(loi),
+        file_log,
+        "\n  ".join(loi),
+    )
+
+
 @router.post("/import", response_model=DatsImportResult, status_code=status.HTTP_201_CREATED)
 def import_de_an(
     payload: DatsImportRequest,
@@ -399,6 +420,9 @@ def import_de_an(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"Chỉ quản trị viên được import {KHOA_QUY_TAC}",
         )
+    nhan = f"{payload.ma_truong} năm {payload.nam_tuyen_sinh}"
+    co_quy_tac = isinstance(payload.du_lieu, dict) and payload.du_lieu.get(KHOA_QUY_TAC) is not None
+    logger.info("Import đề án %s | %s <%s> | có %s: %s", nhan, user.ho_ten, user.email, KHOA_QUY_TAC, co_quy_tac)
     try:
         de_an_id, counts, quy_tac = import_day_du(
             db, payload.ma_truong, payload.nam_tuyen_sinh, payload.du_lieu, nguoi_import_id=user.id
@@ -406,13 +430,35 @@ def import_de_an(
         db.commit()
     except DatsImportError as exc:
         db.rollback()
+        _log_import_loi(payload, user, exc.loi)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from None
-    except IntegrityError:
+    except IntegrityError as exc:
         db.rollback()
+        _log_import_loi(payload, user, [f"Vi phạm ràng buộc CSDL: {exc.orig}"])
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Không lưu được dữ liệu đề án",
         ) from None
+    file_log = luu_lan_import(
+        f"de_an_{payload.ma_truong}_{payload.nam_tuyen_sinh}_thanh_cong",
+        payload.du_lieu,
+        ket_qua={
+            "api": "POST /de-an-tuyen-sinh/import",
+            "nguoi_import": user.email,
+            "de_an_id": de_an_id,
+            "so_dong": counts,
+            "quy_tac": None if quy_tac is None else {"so_dong": quy_tac.so_dong, "canh_bao": quy_tac.canh_bao},
+        },
+    )
+    logger.info(
+        "Import đề án %s thành công | de_an_id=%s | so_dong=%s | quy_tac=%s | cảnh báo=%s | file: %s",
+        nhan,
+        de_an_id,
+        counts,
+        None if quy_tac is None else quy_tac.so_dong,
+        [] if quy_tac is None else quy_tac.canh_bao,
+        file_log,
+    )
     return DatsImportResult(
         de_an_id=de_an_id,
         counts=counts,

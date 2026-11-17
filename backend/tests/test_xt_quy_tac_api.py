@@ -1,4 +1,7 @@
+import json
+import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 from fastapi import HTTPException
@@ -37,6 +40,13 @@ class XtQuyTacApiTests(unittest.TestCase):
         patcher = patch("app.services.xet_tuyen_ghi.DanhMucXetTuyen.tu_csdl", return_value=DANH_MUC)
         patcher.start()
         self.addCleanup(patcher.stop)
+        # File import lưu vào thư mục tạm, không ghi vào logs/ thật.
+        thu_muc = tempfile.TemporaryDirectory()
+        self.addCleanup(thu_muc.cleanup)
+        self.log_dir = Path(thu_muc.name)
+        log_patcher = patch("app.core.logging.IMPORT_LOG_DIR", self.log_dir)
+        log_patcher.start()
+        self.addCleanup(log_patcher.stop)
 
     def _import(self, du_lieu, de_an_id=None):
         payload = XtImportRequest(du_lieu=du_lieu, ten_file="mau_BKA_2026.json")
@@ -73,6 +83,18 @@ class XtQuyTacApiTests(unittest.TestCase):
         self.assertTrue(any("KHONG_CO" in x for x in detail["loi"]))
         self.assertIn("thong_bao", detail)
         self.assertEqual(self.db.scalar(select(func.count()).select_from(XtCongThuc)), 0)
+
+    def test_file_loi_luu_vao_log_kem_du_loi_va_gia_tri_sai(self):
+        self._chuan_bi()
+        du_lieu = _mau("mau_BKA_2026.json")
+        du_lieu["cong_thuc"][0]["kieu_tinh"] = "KHONG_HOP_LE"
+        detail = self._loi_400(self._import, du_lieu)
+        self.assertTrue(any('(nhận: "KHONG_HOP_LE")' in x for x in detail["loi"]))
+        files = list(self.log_dir.glob("*/*_quy_tac_BKA_2026_loi.json"))
+        self.assertEqual(len(files), 1)
+        noi_dung = json.loads(files[0].read_text(encoding="utf-8"))
+        self.assertEqual(noi_dung["loi"], detail["loi"])
+        self.assertEqual(noi_dung["du_lieu"]["cong_thuc"][0]["kieu_tinh"], "KHONG_HOP_LE")
 
     def test_import_roi_xem_quy_tac(self):
         self._chuan_bi()
