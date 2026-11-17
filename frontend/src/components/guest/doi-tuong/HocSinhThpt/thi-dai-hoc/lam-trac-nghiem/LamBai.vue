@@ -17,10 +17,10 @@
                 <tr>
                   <th rowspan="2" class="quiz-scale__stt">STT</th>
                   <th rowspan="2" class="quiz-scale__question">Câu hỏi</th>
-                  <th :colspan="MUC_DIEM.length">Câu trả lời</th>
+                  <th :colspan="mucDiem.length">Câu trả lời</th>
                 </tr>
                 <tr>
-                  <th v-for="muc in MUC_DIEM" :key="muc.diem" class="quiz-scale__level">{{ muc.ten }}</th>
+                  <th v-for="muc in mucDiem" :key="muc.diem" class="quiz-scale__level">{{ muc.ten }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -38,7 +38,7 @@
                 >
                   <td class="quiz-scale__stt">{{ cauIndex + 1 }}</td>
                   <td class="quiz-scale__question" :data-stt="cauIndex + 1">{{ cau.noi_dung_cau_hoi }}</td>
-                  <td v-for="muc in MUC_DIEM" :key="muc.diem" class="quiz-scale__cell">
+                  <td v-for="muc in mucDiem" :key="muc.diem" class="quiz-scale__cell">
                     <label
                       v-if="dapAnTheoDiem(cau, muc.diem)"
                       class="quiz-scale__choice"
@@ -153,7 +153,6 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { fetchNganhPhuHop, fetchPhienLamBai, luuTraLoi } from '@/api/phienKhaoSat'
-import { fetchCauHinhEnduserDangApDung } from '@/api/cauHinhEnduser'
 import LoadingSuyNghi from '@/components/guest/LoadingSuyNghi.vue'
 import BuocLamBai from './BuocLamBai.vue'
 
@@ -181,33 +180,33 @@ const chiSo = ref(0)
 const theCau = ref([])
 const thanhDieuHuong = ref(null)
 
-// Các mức của kiểu trả lời điểm số, điểm 1–5 ứng với đáp án có cùng `diem` của từng câu.
-const MUC_DIEM = [
+// Các mức mặc định khi loại câu hỏi chưa khai danh sách tiêu đề câu trả lời (có điểm).
+const MUC_DIEM_MAC_DINH = [
   { diem: 1, ten: 'Rất không thích' },
   { diem: 2, ten: 'Không thích' },
   { diem: 3, ten: 'Bình thường' },
   { diem: 4, ten: 'Thích' },
   { diem: 5, ten: 'Rất thích' },
 ]
-// Kiểu trả lời lấy từ cấu hình EndUser đang áp dụng; lỗi thì giữ cách hiển thị tình huống.
-const kieuTraLoi = ref('tinh_huong')
+// Kiểu trả lời và các mức lấy theo loại câu hỏi đang làm (API bài làm trả kèm `loai_cau_hoi`).
+const loaiDangLam = computed(
+  () => phien.value?.loai_cau_hoi?.find((item) => item.id === loaiCauHoiId.value) || null,
+)
+const kieuTraLoi = computed(() => loaiDangLam.value?.loai_tra_loi || 'tinh_huong')
 const laDiemSo = computed(() => kieuTraLoi.value === 'diem_so')
+// Mỗi mức là một cột của bảng điểm số; mức `diem` ứng với đáp án có cùng `diem` của từng câu.
+const mucDiem = computed(() => {
+  const ds = (loaiDangLam.value?.danh_sach_tieu_de_cau_tra_loi || [])
+    .filter((item) => item?.tieu_de && item.diem != null)
+    .map((item) => ({ diem: item.diem, ten: item.tieu_de }))
+  return ds.length ? ds : MUC_DIEM_MAC_DINH
+})
 
 const cauHoi = computed(() => phien.value?.cau_hoi || [])
 const cauHoiLoai = ref([])
 
 function dapAnTheoDiem(cau, diem) {
   return cau.cau_tra_loi.find((answer) => answer.diem === diem) || null
-}
-
-async function taiCauHinh() {
-  try {
-    const data = await fetchCauHinhEnduserDangApDung()
-    // Chưa có cấu hình đang áp dụng thì API trả null.
-    kieuTraLoi.value = data?.kieu_tra_loi === 'diem_so' ? 'diem_so' : 'tinh_huong'
-  } catch {
-    kieuTraLoi.value = 'tinh_huong'
-  }
 }
 
 function xaoTron(list) {
@@ -341,11 +340,13 @@ function xuLyPhim(event) {
     chonCau(chiSo.value - 1)
     return
   }
-  if (khoaTraLoi.value || !/^[1-5]$/.test(event.key) || !cauDangChon.value) return
-  // Điểm số: phím 1–5 là đúng mức điểm; tình huống: thứ tự đáp án đang hiển thị.
+  if (khoaTraLoi.value || !/^[1-9]$/.test(event.key) || !cauDangChon.value) return
+  // Phím số là thứ tự cột: điểm số theo các mức của loại câu hỏi, tình huống theo đáp án đang hiển thị.
+  const thuTu = Number(event.key) - 1
+  const muc = mucDiem.value[thuTu]
   const answer = laDiemSo.value
-    ? dapAnTheoDiem(cauDangChon.value, Number(event.key))
-    : cauDangChon.value.cau_tra_loi[Number(event.key) - 1]
+    ? muc && dapAnTheoDiem(cauDangChon.value, muc.diem)
+    : cauDangChon.value.cau_tra_loi[thuTu]
   if (!answer) return
   event.preventDefault()
   chonDapAn(cauDangChon.value, answer.id)
@@ -490,7 +491,7 @@ async function taiDeBai(value) {
   }
   dangTai.value = true
   try {
-    const [data] = await Promise.all([fetchPhienLamBai(value), taiCauHinh()])
+    const data = await fetchPhienLamBai(value)
     phien.value = data
     const selected = {}
     for (const item of data.cau_hoi || []) {

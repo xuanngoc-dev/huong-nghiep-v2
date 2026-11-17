@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
+from app.schemas.dm_loai_cau_hoi import TieuDeCauTraLoi
+
 
 class TnPhienCauTraLoiPublic(BaseModel):
     id: int
@@ -18,10 +20,22 @@ class TnPhienCauHoiPublic(BaseModel):
     cau_tra_loi: list[TnPhienCauTraLoiPublic]
 
 
+class TnPhienLoaiCauHoiPublic(BaseModel):
+    """Loại câu hỏi có trong phiên: cách hiển thị câu trả lời khi làm bài."""
+
+    id: int
+    ten_loai_cau_hoi: str
+    # diem_so: bảng chọn mức theo danh_sach_tieu_de_cau_tra_loi; tinh_huong: chọn phương án của từng câu.
+    loai_tra_loi: str
+    danh_sach_tieu_de_cau_tra_loi: list[TieuDeCauTraLoi] | None = None
+
+
 class TnPhienLamBaiPublic(BaseModel):
     ssid: str
     ma_giao_dich: str | None
     cau_hoi: list[TnPhienCauHoiPublic]
+    # Theo thứ tự làm bài; frontend lấy kiểu trả lời của loại đang làm từ đây.
+    loai_cau_hoi: list[TnPhienLoaiCauHoiPublic] = []
 
 
 class TnPhienTraLoiWrite(BaseModel):

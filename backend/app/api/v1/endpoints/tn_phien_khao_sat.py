@@ -33,6 +33,7 @@ from app.schemas.tn_phien_khao_sat import (
     TnPhienLamBaiPublic,
     TnPhienLichSuItem,
     TnPhienLichSuPage,
+    TnPhienLoaiCauHoiPublic,
     TnPhienNganhPhuHopItem,
     TnPhienNganhPhuHopPublic,
     TnPhienQuanTriItem,
@@ -447,6 +448,15 @@ def lay_de_bai(ssid: str, db: Session = Depends(get_db)) -> TnPhienLamBaiPublic:
                 ],
             )
             for chi_tiet, cau_hoi, loai in rows
+        ],
+        loai_cau_hoi=[
+            TnPhienLoaiCauHoiPublic(
+                id=loai.id,
+                ten_loai_cau_hoi=loai.ten_loai_cau_hoi,
+                loai_tra_loi=loai.loai_tra_loi or "diem_so",
+                danh_sach_tieu_de_cau_tra_loi=loai.danh_sach_tieu_de_cau_tra_loi,
+            )
+            for loai in dict.fromkeys(loai for _chi_tiet, _cau_hoi, loai in rows)
         ],
     )
 
