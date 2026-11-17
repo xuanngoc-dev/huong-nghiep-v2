@@ -15,7 +15,8 @@ export const MEO_TIM_TRUONG = [
   'Không thấy trường mong muốn? Thử nới rộng bộ lọc hoặc chọn thêm tổ hợp môn bạn có thế mạnh.',
 ]
 
-/** Một mẹo ngẫu nhiên trong danh sách. */
-export function meoNgauNhien(danhSach = MEO_TIM_TRUONG) {
-  return danhSach[Math.floor(Math.random() * danhSach.length)] || ''
+/** Một mẹo ngẫu nhiên trong danh sách, khác `boQua` (mẹo đang hiện) nếu còn mẹo khác. */
+export function meoNgauNhien(danhSach = MEO_TIM_TRUONG, boQua = '') {
+  const conLai = danhSach.length > 1 ? danhSach.filter((meo) => meo !== boQua) : danhSach
+  return conLai[Math.floor(Math.random() * conLai.length)] || ''
 }

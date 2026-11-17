@@ -146,6 +146,7 @@ declare module 'vue' {
     LenDauTrang: typeof import('./components/guest/chung/LenDauTrang.vue')['default']
     LoadingSuyNghi: typeof import('./components/guest/LoadingSuyNghi.vue')['default']
     LoTrinhPhatTrien: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/LoTrinhPhatTrien.vue')['default']
+    MeoNho: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/MeoNho.vue')['default']
     MoneyInput: typeof import('./components/element/MoneyInput.vue')['default']
     MoTaCongViec: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/MoTaCongViec.vue')['default']
     MucLuongKyNang: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/MucLuongKyNang.vue')['default']

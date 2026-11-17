@@ -300,7 +300,7 @@
           />
           <p v-if="!daTim" class="truong-phu-hop__cho-tim">
             <CustomIcon><Opportunity /></CustomIcon>
-            <span><strong>Mẹo nhỏ:</strong> {{ meo }}</span>
+            <MeoNho />
           </p>
           <p v-else-if="loi" class="holland-note holland-note__text">{{ loi }}</p>
           <p v-else-if="dangTai" class="holland-overview__lead text-center">Đang tải trường phù hợp…</p>
@@ -424,11 +424,11 @@ import { danhSachNamHoc, nhanNamHoc } from '@/constants/namHoc'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { hienSo } from '@/data/napTien'
-import { meoNgauNhien } from '@/data/meoTimTruong'
 import anhMacDinh from '@/assets/guest/sinh-vien.jpg'
 import HoSo from '@/views/member/HoSo.vue'
 import HetLuotTimTruong from './HetLuotTimTruong.vue'
 import KetQuaXetTuyen from './KetQuaXetTuyen.vue'
+import MeoNho from './MeoNho.vue'
 import TienTrinhXuLyDialog from '@/components/guest/chung/TienTrinhXuLyDialog.vue'
 import { BUOC_TIEN_TRINH, THOI_GIAN_HOAN_TAT, THOI_GIAN_MOI_BUOC } from '@/data/tienTrinhXuLy'
 
@@ -476,8 +476,6 @@ const KHOA_THIET_BI = 'thpt-tim-truong-phu-hop-thiet-bi'
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
-// Mẹo nhỏ hiện trước khi tìm, chọn ngẫu nhiên mỗi lần vào trang.
-const meo = meoNgauNhien()
 const maNganh = computed(() => String(route.params.maNganh || '').trim())
 
 const nganh = ref(null)
