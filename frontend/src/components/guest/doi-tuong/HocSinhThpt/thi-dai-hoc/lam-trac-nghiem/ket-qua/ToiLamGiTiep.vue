@@ -29,7 +29,7 @@
             >
               Bắt đầu
             </RouterLink>
-            <RouterLink class="btn btn-sm btn-outline-success" :to="{ name: 'lich-su-tim-truong' }">
+            <RouterLink v-if="daDangNhap" class="btn btn-sm btn-outline-success" :to="{ name: 'lich-su-tim-truong' }">
               Xem lịch sử tìm trường
             </RouterLink>
           </div>
