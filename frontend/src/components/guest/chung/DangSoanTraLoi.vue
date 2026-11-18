@@ -2,7 +2,6 @@
   <p class="dang-soan" role="status">
     <!-- Trình đọc màn hình chỉ đọc một câu cố định, không đọc lại mỗi lần đổi chữ. -->
     <span class="dang-soan__an">Trợ lý đang soạn câu trả lời</span>
-    <span class="dang-soan__cham" aria-hidden="true"><i /><i /><i /></span>
     <Transition name="dang-soan" mode="out-in">
       <span :key="buoc" class="dang-soan__chu" aria-hidden="true">
         <span
@@ -11,7 +10,9 @@
           class="dang-soan__ky-tu"
           :style="{ animationDelay: `${i * 0.05}s` }"
           >{{ kyTu }}</span
-        >…
+        >
+        <!-- Ba chấm nằm trong câu để cùng chuyển (mờ, trượt) khi đổi câu. -->
+        <span class="dang-soan__cham"><i /><i /><i /></span>
       </span>
     </Transition>
   </p>
@@ -48,8 +49,8 @@ onBeforeUnmount(() => clearInterval(hen))
 <style scoped>
 .dang-soan {
   display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  align-items: baseline;
+  gap: 6px;
   margin: 0;
   color: var(--el-text-color-secondary, #607169);
 }
@@ -88,10 +89,11 @@ onBeforeUnmount(() => clearInterval(hen))
   }
 }
 
-/* Ba chấm nhún nhảy phía trước. */
+/* Ba chấm nhún nhảy phía sau câu. */
 .dang-soan__cham {
   display: inline-flex;
   gap: 3px;
+  margin-left: 6px;
 }
 
 .dang-soan__cham i {
