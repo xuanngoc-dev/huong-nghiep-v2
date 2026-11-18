@@ -111,14 +111,20 @@ def danh_sach_phien(
     return ChatPhienPage(items=items, total=total, page=page, page_size=page_size)
 
 
-@router.get("/phien/{item_id}", response_model=ChatPhienChiTiet)
-def chi_tiet_phien(item_id: int, db: Session = Depends(get_db)) -> ChatPhienChiTiet:
-    """Thông tin một phiên hội thoại và toàn bộ tin nhắn theo thứ tự gửi."""
-    phien = db.get(ChatConversation, item_id)
+@router.get("/phien/{ma_phien}", response_model=ChatPhienChiTiet)
+def chi_tiet_phien(ma_phien: str, db: Session = Depends(get_db)) -> ChatPhienChiTiet:
+    """Thông tin một phiên hội thoại và toàn bộ tin nhắn theo thứ tự gửi.
+
+    `ma_phien` là mã định danh (UUID, dùng trên URL trang quản trị) hoặc id số của phiên.
+    """
+    if ma_phien.isdigit():
+        phien = db.get(ChatConversation, int(ma_phien))
+    else:
+        phien = db.scalar(select(ChatConversation).where(ChatConversation.ma_dinh_danh == ma_phien))
     if phien is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Không tìm thấy phiên hội thoại có id = {item_id}",
+            detail=f"Không tìm thấy phiên hội thoại có mã = {ma_phien}",
         )
     nguoi = db.get(NguoiDung, phien.user_id) if phien.user_id else None
     tin_nhan = list(

@@ -50,7 +50,7 @@
     <section class="hoi-thoai__noi-dung">
       <template v-if="phienDangChon">
         <header class="hoi-thoai__dau">
-          <CustomButton class="hoi-thoai__lui" link aria-label="Quay lại danh sách" @click="phienDangChon = null">
+          <CustomButton class="hoi-thoai__lui" link aria-label="Quay lại danh sách" @click="boChon">
             <CustomIcon><ArrowLeft /></CustomIcon>
           </CustomButton>
           <span class="avatar" :class="{ 'avatar--khach': !phienDangChon.user_id }">{{ chuDau(phienDangChon) }}</span>
@@ -122,6 +122,7 @@
 <script setup>
 /** Phiên hội thoại với trợ lý: trái là danh sách phiên (chat_conversations), phải là tin nhắn của phiên đang chọn. */
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { fetchChiTietPhienHoiThoai, fetchPhienHoiThoai } from '@/api/hoiThoai'
 import ChatMarkdown from '@/components/guest/chung/ChatMarkdown.vue'
@@ -133,6 +134,8 @@ const TRANG_THAI = {
   luu_tru: { nhan: 'Lưu trữ', type: 'warning' },
 }
 
+const route = useRoute()
+const router = useRouter()
 const tuKhoa = ref('')
 const doiTuong = ref('')
 const phienList = ref([])
@@ -235,20 +238,38 @@ function taiThem() {
   taiDanhSach({ them: true })
 }
 
-async function chonPhien(phien) {
-  phienDangChon.value = phien
+// Mã phiên đang xem nằm trên URL (?phien=<ma_dinh_danh>) để tải lại trang vẫn mở đúng phiên.
+function chonPhien(phien) {
+  if (route.query.phien === phien.ma_dinh_danh) return
+  router.replace({ query: { ...route.query, phien: phien.ma_dinh_danh } })
+}
+
+function boChon() {
+  router.replace({ query: { ...route.query, phien: undefined } })
+}
+
+async function moPhien(ma) {
+  if (!ma) {
+    phienDangChon.value = null
+    tinNhan.value = []
+    return
+  }
+  // Hiện ngay thông tin có sẵn trong danh sách trong lúc tải tin nhắn.
+  phienDangChon.value = phienList.value.find((item) => item.ma_dinh_danh === ma) || phienDangChon.value
   tinNhan.value = []
   const lan = ++lanTaiTinNhan
   dangTaiTinNhan.value = true
   try {
-    const data = await fetchChiTietPhienHoiThoai(phien.id, { skipLoading: true })
+    const data = await fetchChiTietPhienHoiThoai(ma, { skipLoading: true })
     if (lan !== lanTaiTinNhan) return
     phienDangChon.value = data.phien
     tinNhan.value = data.tin_nhan
     await nextTick()
     if (khungTinNhan.value) khungTinNhan.value.scrollTop = khungTinNhan.value.scrollHeight
   } catch (error) {
-    if (lan === lanTaiTinNhan) ElMessage.error(loiApi(error, 'Không tải được nội dung phiên hội thoại'))
+    if (lan !== lanTaiTinNhan) return
+    ElMessage.error(loiApi(error, 'Không tải được nội dung phiên hội thoại'))
+    phienDangChon.value = null
   } finally {
     if (lan === lanTaiTinNhan) dangTaiTinNhan.value = false
   }
@@ -260,8 +281,12 @@ watch(tuKhoa, () => {
   henTim = setTimeout(() => taiDanhSach(), 300)
 })
 watch(doiTuong, () => taiDanhSach())
+watch(() => route.query.phien, (ma) => moPhien(typeof ma === 'string' ? ma : ''))
 
-onMounted(() => taiDanhSach())
+onMounted(() => {
+  taiDanhSach()
+  if (typeof route.query.phien === 'string') moPhien(route.query.phien)
+})
 </script>
 
 <style scoped>

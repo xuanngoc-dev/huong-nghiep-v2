@@ -45,13 +45,14 @@ class ChatHoiThoaiApiTests(unittest.TestCase):
             self.db, p.id, tra_loi="", model_ai="m", nguon=None, usage=None, thoi_gian_ms=5, loi="Hết giờ"
         )
         self.db.commit()
-        kq = chi_tiet_phien(p.id, self.db)
+        kq = chi_tiet_phien(p.ma_dinh_danh, self.db)
+        self.assertEqual(chi_tiet_phien(str(p.id), self.db).phien.id, p.id)
         self.assertEqual([m.loai_nguoi_gui for m in kq.tin_nhan], ["user", "bot"])
         self.assertEqual((kq.tin_nhan[1].trang_thai, kq.phien.tin_nhan_cuoi), ("loi", "Hết giờ"))
 
     def test_phien_khong_ton_tai_tra_400(self):
         with self.assertRaises(HTTPException) as caught:
-            chi_tiet_phien(999, self.db)
+            chi_tiet_phien("999", self.db)
         self.assertEqual(caught.exception.status_code, 400)
         self.assertIn("999", caught.exception.detail)
 

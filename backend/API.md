@@ -1,6 +1,6 @@
 # Danh sách API
 
-Tự sinh từ code lúc 18/11/2026 09:16 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 18/11/2026 09:29 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
 Tiền tố chung: `/api/v1`. Tổng cộng **310** API.
 
@@ -324,7 +324,7 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/hoi-thoai/phien` | Bắt buộc (admin) | Danh sách phiên hội thoại với trợ lý, phiên có tin nhắn mới nhất trước. |
-| `GET` | `/api/v1/hoi-thoai/phien/{item_id}` | Bắt buộc (admin) | Thông tin một phiên hội thoại và toàn bộ tin nhắn theo thứ tự gửi. |
+| `GET` | `/api/v1/hoi-thoai/phien/{ma_phien}` | Bắt buộc (admin) | Thông tin một phiên hội thoại và toàn bộ tin nhắn theo thứ tự gửi. |
 
 ### `tai-lieu`
 
