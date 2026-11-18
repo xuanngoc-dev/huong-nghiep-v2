@@ -133,7 +133,7 @@
           </div>
         </template>
       </CustomTableColumn>
-      <CustomTableColumn label="Số lượt" width="120" align="center">
+      <CustomTableColumn label="Số lượt / token" width="130" align="center">
         <template #default="{ row }">
           <div class="gia-tri">
             <template v-if="khacGoc(row.so_luot_nhan_duoc_khuyen_mai, row.so_luot_nhan_duoc_goc)">
@@ -244,17 +244,17 @@
             controls-position="right"
           />
         </CustomFormItem>
-        <CustomFormItem label="Số lượt nhận được (gốc)" prop="so_luot_nhan_duoc_goc">
+        <CustomFormItem :label="`${nhanSoLuong} nhận được (gốc)`" prop="so_luot_nhan_duoc_goc">
           <CustomInputNumber
             v-model="form.so_luot_nhan_duoc_goc"
-            placeholder="Nhập số lượt nhận được"
+            :placeholder="`Nhập ${nhanSoLuong.toLowerCase()} nhận được`"
             :min="0"
             :max="LUOT_TOI_DA"
             :precision="0"
             controls-position="right"
           />
         </CustomFormItem>
-        <CustomFormItem label="Số lượt nhận được (khuyến mãi)" prop="so_luot_nhan_duoc_khuyen_mai">
+        <CustomFormItem :label="`${nhanSoLuong} nhận được (khuyến mãi)`" prop="so_luot_nhan_duoc_khuyen_mai">
           <CustomInputNumber
             v-model="form.so_luot_nhan_duoc_khuyen_mai"
             :min="0"
@@ -284,7 +284,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   createCauHinhGoiCuoc,
@@ -301,6 +301,7 @@ const LOAI_AP_DUNG = [
   { value: 'tra_cuu', label: 'Tra cứu', tag: 'primary' },
   { value: 'khao_sat', label: 'Khảo sát', tag: 'success' },
   { value: 'hoi_dap', label: 'Hỏi đáp', tag: 'warning' },
+  { value: 'token', label: 'Token', tag: 'info' },
 ]
 const GIA_TOI_DA = 999_999_999_999
 const LUOT_TOI_DA = 1_000_000_000
@@ -333,6 +334,8 @@ function emptyFilters() {
 }
 
 const form = reactive(emptyForm())
+// Gói token: trường "số lượt" là số token người dùng nhận được (cộng vào so_luong_token_kha_dung).
+const nhanSoLuong = computed(() => (form.loai_ap_dung === 'token' ? 'Số token' : 'Số lượt'))
 
 function kiemTraGiaKhuyenMai(_rule, value, callback) {
   if (value !== null && value !== undefined && value > (form.gia_goc ?? 0)) {
@@ -348,7 +351,7 @@ const rules = {
   loai_ap_dung: [{ required: true, message: 'Vui lòng chọn loại áp dụng', trigger: 'change' }],
   gia_goc: [{ required: true, message: 'Vui lòng nhập giá gốc', trigger: 'blur' }],
   gia_khuyen_mai: [{ validator: kiemTraGiaKhuyenMai, trigger: 'blur' }],
-  so_luot_nhan_duoc_goc: [{ required: true, message: 'Vui lòng nhập số lượt nhận được', trigger: 'blur' }],
+  so_luot_nhan_duoc_goc: [{ required: true, message: 'Vui lòng nhập số lượt / token nhận được', trigger: 'blur' }],
   trang_thai: [{ required: true, message: 'Vui lòng chọn trạng thái', trigger: 'change' }],
 }
 

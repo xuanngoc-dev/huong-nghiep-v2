@@ -293,6 +293,8 @@ class HoSoPublic(HoSoWrite):
     luot_tra_cuu: int = 0
     luot_hoi_dap: int = 0
     luot_khao_sat: int = 0
+    so_luong_token_kha_dung: int = 0
+    so_luong_token_da_dung: int = 0
     # Chỉ cho biết đã đặt mật khẩu thanh toán hay chưa, không trả mật khẩu.
     co_mat_khau_thanh_toan: bool = False
     created_at: datetime | None = None

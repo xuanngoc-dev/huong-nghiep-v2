@@ -5,6 +5,7 @@ export const LOAI_AP_DUNG = [
   { value: 'tra_cuu', label: 'Tra cứu', donVi: 'lượt tra cứu', tag: 'primary' },
   { value: 'hoi_dap', label: 'Hỏi đáp', donVi: 'lượt hỏi đáp', tag: 'warning' },
   { value: 'khao_sat', label: 'Khảo sát', donVi: 'lượt khảo sát', tag: 'success' },
+  { value: 'token', label: 'Token', donVi: 'token', tag: 'info' },
 ]
 
 // trang_thai ht_lich_su_nap_tien

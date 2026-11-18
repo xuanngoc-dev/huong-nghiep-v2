@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import Any
 
-from sqlalchemy import JSON, Date, DateTime, ForeignKey, Integer, SmallInteger, String, func
+from sqlalchemy import JSON, BigInteger, Date, DateTime, ForeignKey, Integer, SmallInteger, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -49,6 +49,10 @@ class NguoiDungThongTin(Base):
     luot_tra_cuu: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     luot_hoi_dap: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     luot_khao_sat: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+    # Token AI (hỏi đáp): khả dụng cộng khi nạp gói token, đã dùng cộng dồn theo lượt sử dụng.
+    # BIGINT: gói token có thể tới 1 tỷ token, cộng dồn nhiều gói / token đã dùng lâu dài vượt giới hạn INT.
+    so_luong_token_kha_dung: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0, server_default="0")
+    so_luong_token_da_dung: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0, server_default="0")
     mat_khau_thanh_toan: Mapped[str | None] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, server_default=func.now()

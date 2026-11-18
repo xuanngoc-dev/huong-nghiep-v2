@@ -107,6 +107,8 @@ def _to_public(user: NguoiDung, profile: NguoiDungThongTin | None) -> HoSoPublic
                 "luot_tra_cuu": profile.luot_tra_cuu or 0,
                 "luot_hoi_dap": profile.luot_hoi_dap or 0,
                 "luot_khao_sat": profile.luot_khao_sat or 0,
+                "so_luong_token_kha_dung": profile.so_luong_token_kha_dung or 0,
+                "so_luong_token_da_dung": profile.so_luong_token_da_dung or 0,
                 "co_mat_khau_thanh_toan": bool(profile.mat_khau_thanh_toan),
                 "created_at": profile.created_at,
                 "updated_at": profile.updated_at,

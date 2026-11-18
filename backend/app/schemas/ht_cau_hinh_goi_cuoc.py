@@ -3,7 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-LoaiApDung = Literal["edu_coin", "tra_cuu", "khao_sat", "hoi_dap"]
+LoaiApDung = Literal["edu_coin", "tra_cuu", "khao_sat", "hoi_dap", "token"]
 
 _GIA_TOI_DA = 999_999_999_999_999
 

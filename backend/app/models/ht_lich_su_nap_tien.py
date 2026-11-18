@@ -37,7 +37,7 @@ class HtLichSuNapTien(Base):
     )
     ma_goi_cuoc: Mapped[str] = mapped_column(String(50), nullable=False)
     ten_goi_cuoc: Mapped[str] = mapped_column(String(255), nullable=False)
-    # edu_coin, tra_cuu, khao_sat, hoi_dap
+    # edu_coin, tra_cuu, khao_sat, hoi_dap, token
     loai_ap_dung: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     # Số Edu coin/lượt được cộng khi giao dịch thành công (đã tính khuyến mãi).
     so_luot_nhan_duoc: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")

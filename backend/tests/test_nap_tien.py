@@ -123,6 +123,13 @@ class TestDoiSoat(unittest.TestCase):
         self.assertEqual(gd.ma_tham_chieu_ngan_hang, "FT1")
         self.assertEqual(ho_so.luot_tra_cuu, 12)
 
+    def test_goi_token_cong_vao_token_kha_dung(self):
+        gd = _giao_dich(loai_ap_dung="token", so_luot_nhan_duoc=50000)
+        ho_so = SimpleNamespace(so_luong_token_kha_dung=1000, so_luong_token_da_dung=300)
+        nap_tien.doi_soat(_DbGia(gd, ho_so), _tien_vao("DH4K9F7Q chuyen tien", 15000))
+        self.assertEqual(gd.trang_thai, nap_tien.THANH_CONG)
+        self.assertEqual((ho_so.so_luong_token_kha_dung, ho_so.so_luong_token_da_dung), (51000, 300))
+
     def test_thieu_tien_thi_khong_cong(self):
         gd = _giao_dich()
         tien = _tien_vao("DH4K9F7Q", 10000)

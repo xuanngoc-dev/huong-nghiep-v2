@@ -47,6 +47,7 @@ TRUONG_SO_DU = {
     "tra_cuu": "luot_tra_cuu",
     "hoi_dap": "luot_hoi_dap",
     "khao_sat": "luot_khao_sat",
+    "token": "so_luong_token_kha_dung",
 }
 
 

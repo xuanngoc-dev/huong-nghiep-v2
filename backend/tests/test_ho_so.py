@@ -25,6 +25,8 @@ def _ho_so(**kwargs):
         luot_tra_cuu=0,
         luot_hoi_dap=0,
         luot_khao_sat=0,
+        so_luong_token_kha_dung=0,
+        so_luong_token_da_dung=0,
         mat_khau_thanh_toan=None,
         created_at=None,
         updated_at=None,
@@ -105,11 +107,13 @@ class TestLayHoSo(unittest.TestCase):
 
     def test_tra_ve_so_du_va_khong_lo_mat_khau_thanh_toan(self):
         profile = _ho_so(
-            gioi_tinh=2, edu_coin=120, luot_tra_cuu=5, luot_khao_sat=2, mat_khau_thanh_toan="hash-bi-mat"
+            gioi_tinh=2, edu_coin=120, luot_tra_cuu=5, luot_khao_sat=2, mat_khau_thanh_toan="hash-bi-mat",
+            so_luong_token_kha_dung=5000, so_luong_token_da_dung=1200,
         )
         result = get_ho_so(_DbGia(profile), _tai_khoan())
         self.assertEqual(result.gioi_tinh, 2)
         self.assertEqual((result.edu_coin, result.luot_tra_cuu, result.luot_khao_sat), (120, 5, 2))
+        self.assertEqual((result.so_luong_token_kha_dung, result.so_luong_token_da_dung), (5000, 1200))
         self.assertTrue(result.co_mat_khau_thanh_toan)
         self.assertNotIn("hash-bi-mat", result.model_dump_json())
 
