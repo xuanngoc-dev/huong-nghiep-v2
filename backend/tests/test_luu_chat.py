@@ -15,7 +15,7 @@ from app.api.v1.endpoints import chat as chat_api
 from app.models.chat_conversations import ChatConversation
 from app.models.chat_messages import ChatMessage
 from app.models.nguoi_dung import NguoiDung
-from app.schemas.chat import HoiChatRequest, HoiChatResponse
+from app.schemas.chat import HoiChatRequest, HoiChatResponse, KetThucPhienChat
 from app.services import luu_chat
 from tests import hoi_quy_xet_tuyen  # noqa: F401  (khai báo BIGINT → INTEGER trên SQLite để id tự tăng)
 
@@ -134,6 +134,19 @@ class LuuChatTests(unittest.TestCase):
         self.assertEqual((cua_minh.trang_thai, cua_minh.da_ket_thuc), ("da_dong", True))
         nguoi_khac = chat_api.get_trang_thai_phien(p.ma_dinh_danh, "tb2", None, self.db)
         self.assertEqual((nguoi_khac.trang_thai, nguoi_khac.da_ket_thuc), (None, False))
+
+    def test_nguoi_dung_tu_ket_thuc_phien_cua_minh(self):
+        p = luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "a", None)
+        self.db.commit()
+        with self.assertRaises(HTTPException) as caught:
+            chat_api.post_ket_thuc_phien(p.ma_dinh_danh, KetThucPhienChat(ma_khach_vang_lai="tb2"), None, self.db)
+        self.assertEqual(caught.exception.status_code, 400)
+        kq = chat_api.post_ket_thuc_phien(p.ma_dinh_danh, KetThucPhienChat(ma_khach_vang_lai="tb1"), None, self.db)
+        self.assertEqual((kq.trang_thai, kq.da_ket_thuc), ("da_dong", True))
+        self.db.refresh(p)
+        self.assertEqual(p.du_lieu_bo_sung["ket_thuc_boi"], "nguoi_dung")
+        with self.assertRaises(luu_chat.PhienDaKetThuc):
+            luu_chat.luu_cau_hoi(self.db, p.ma_dinh_danh, None, "tb1", "b", None)
 
     def _chay_stream(self, su_kien):
         """Gọi /chat/hoi/stream với luồng sự kiện giả; trả các khối SSE đã gửi."""

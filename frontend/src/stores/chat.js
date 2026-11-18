@@ -1,7 +1,8 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import { hoiChatStream, layDanhSachModel, layTrangThaiPhien } from '@/api/chat'
+import { hoiChatStream, ketThucPhienChat, layDanhSachModel, layTrangThaiPhien } from '@/api/chat'
 import { fetchHoSo } from '@/api/hoSo'
+import { phanTichLenh, taoBoChayLenh } from '@/utils/chatLenh'
 import { createChatSession, fromServerMessages, newConversation } from '@/utils/chatSession'
 import { clearHoSoCache, loadHoSo, toChatProfile } from '@/utils/hoSoCache'
 import { maThietBi } from '@/utils/maThietBi'
@@ -73,6 +74,44 @@ export const useChatStore = defineStore('chat', () => {
     })()
     return loading
   }
+  // Lệnh "/..." trong khung chat (utils/chatLenh.js).
+  const chayLenh = taoBoChayLenh({
+    state,
+    loadModels,
+    async ketThucPhien(ma) {
+      try {
+        return await ketThucPhienChat(ma, auth.isAuthenticated ? null : maThietBi())
+      } catch (error) {
+        const detail = error?.response?.data?.detail
+        throw new Error(typeof detail === 'string' ? detail : 'Không kết thúc được cuộc hội thoại. Vui lòng thử lại.')
+      }
+    },
+    saoChep: (vanBan) => navigator.clipboard.writeText(vanBan),
+  })
+  // Gửi từ khung chat nổi: tin bắt đầu bằng "/" là lệnh, chạy tại chỗ và hiện câu trả lời như tin nhắn cục bộ.
+  async function send(input, retry = false) {
+    const text = (typeof input === 'string' ? input : state.draft).trim()
+    if (retry || state.sending || !phanTichLenh(text)) return session.send(input, retry)
+    state.draft = ''
+    state.error = ''
+    const at = new Date().toISOString()
+    const tinNhan = state.messages.filter(m => m.id !== 'welcome' && !m.local).map(m => ({ role: m.role, text: m.text }))
+    const traLoi = await chayLenh(text, {
+      maPhien: state.maPhien,
+      tinNhan,
+      moi: session.clear,
+      thuLai() {
+        if (!tinNhan.some(m => m.role === 'user')) return 'Chưa có câu hỏi nào để hỏi lại.'
+        session.retry()
+      },
+    })
+    if (!traLoi) return
+    const id = () => `lenh-${Date.now()}-${Math.random().toString(36).slice(2)}`
+    state.messages.push({ id: id(), role: 'user', text, status: 'done', local: true, at },
+      { id: id(), role: 'bot', text: traLoi, status: 'done', local: true, sources: [], notes: [], meta: 'Trả lời lệnh', at })
+    state.messages = state.messages.slice(-100)
+    session.persist()
+  }
   warmProfile()
   watch(() => auth.user?.id, (userId, previousId) => {
     if (previousId && previousId !== userId) clearHoSoCache(previousId)
@@ -82,5 +121,5 @@ export const useChatStore = defineStore('chat', () => {
     if (userId) warmProfile()
   })
   watch(() => [state.draft, state.modelId], () => session.persist())
-  return { state, model, khungMo, moKhungChat, loadModels, kiemTraPhien, moHoiThoai, send: session.send, stop: session.stop, clear: session.clear, retry: session.retry }
+  return { state, model, khungMo, moKhungChat, loadModels, kiemTraPhien, moHoiThoai, chayLenh, send, stop: session.stop, clear: session.clear, retry: session.retry }
 })

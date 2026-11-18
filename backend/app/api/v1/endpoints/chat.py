@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import bearer_scheme, get_current_user
 from app.db.session import SessionLocal, get_db
-from app.schemas.chat import HoiChatRequest, HoiChatResponse, ModelChat, TrangThaiPhienChat
+from app.schemas.chat import HoiChatRequest, HoiChatResponse, KetThucPhienChat, ModelChat, TrangThaiPhienChat
 from app.services import luu_chat
 from app.services.chat_stream import encode_event, events, prepare
 from app.services.hoi_dap import danh_sach_model, hoi
@@ -112,6 +112,24 @@ def get_trang_thai_phien(
         trang_thai=trang_thai,
         da_ket_thuc=trang_thai is not None and trang_thai != luu_chat.DANG_HOAT_DONG,
     )
+
+
+@router.post("/phien/{ma_phien}/ket-thuc", response_model=TrangThaiPhienChat)
+def post_ket_thuc_phien(
+    ma_phien: str,
+    payload: KetThucPhienChat,
+    user_id: int | None = Depends(_nguoi_hoi),
+    db: Session = Depends(get_db),
+) -> TrangThaiPhienChat:
+    """Người hỏi tự kết thúc phiên của mình (lệnh /end trong khung chat); sau đó không hỏi tiếp được trong phiên."""
+    phien = luu_chat.ket_thuc_phien(db, ma_phien, user_id, payload.ma_khach_vang_lai)
+    if phien is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy phiên hội thoại có mã = {ma_phien}",
+        )
+    db.commit()
+    return TrangThaiPhienChat(ma_phien=phien.ma_dinh_danh, trang_thai=phien.trang_thai, da_ket_thuc=True)
 
 
 @router.post("/hoi", response_model=HoiChatResponse)

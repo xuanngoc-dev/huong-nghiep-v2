@@ -1,8 +1,8 @@
 # Danh sách API
 
-Tự sinh từ code lúc 18/11/2026 14:28 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 18/11/2026 15:01 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **315** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **316** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
@@ -10,7 +10,7 @@ Tiền tố chung: `/api/v1`. Tổng cộng **315** API.
 |---|---:|---|
 | [Quản trị (admin)](#quan_tri) | 185 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
 | [Thành viên (user)](#thanh_vien) | 81 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
-| [Khách vãng lai](#khach) | 49 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
+| [Khách vãng lai](#khach) | 50 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
 
@@ -642,6 +642,7 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | `GET` | `/api/v1/chat/model` | Không | Danh sách model hỏi đáp và trạng thái đã có API key. |
 | `GET` | `/api/v1/chat/nguon/{ten}` | Không | Nguồn dữ liệu công khai dùng để đối chiếu câu trả lời tuyển sinh. |
 | `GET` | `/api/v1/chat/phien/{ma_phien}` | Không | Trạng thái phiên của chính người hỏi (để frontend khóa ô nhập khi phiên đã kết thúc). |
+| `POST` | `/api/v1/chat/phien/{ma_phien}/ket-thuc` | Không | Người hỏi tự kết thúc phiên của mình (lệnh /end trong khung chat); sau đó không hỏi tiếp được trong phiên. |
 
 ### `danh-muc/bai-thi-danh-gia-nang-luc`
 

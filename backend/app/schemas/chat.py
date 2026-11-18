@@ -130,6 +130,11 @@ class HoiChatResponse(BaseModel):
     ma_phien: str | None = None
 
 
+class KetThucPhienChat(BaseModel):
+    # Mã thiết bị của khách vãng lai (chưa đăng nhập).
+    ma_khach_vang_lai: str | None = Field(default=None, max_length=64)
+
+
 class TrangThaiPhienChat(BaseModel):
     ma_phien: str
     # Null: phiên chưa lưu hoặc không thuộc người hỏi.

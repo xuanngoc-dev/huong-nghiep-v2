@@ -277,3 +277,17 @@ test('mở lại hội thoại đã lưu trên server: chuyển tin nhắn và n
   assert.equal(state.messages[1].sources[0].ten, 'BKA')
   assert.equal(state.messages[3].error, 'Hết giờ')
 })
+
+test('tin nhắn lệnh cục bộ không gửi kèm lịch sử và không bị chọn khi hỏi lại', async () => {
+  const payloads = []
+  const { state, session } = fixture(async (payload, options) => {
+    payloads.push(payload)
+    options.onEvent('done', { tra_loi: 'Đáp', nguon: [] })
+  })
+  await session.send('Câu hỏi thật')
+  state.messages.push({ id: 'l1', role: 'user', text: '/help', status: 'done', local: true },
+    { id: 'l2', role: 'bot', text: 'Danh sách lệnh', status: 'done', local: true })
+  await session.retry()
+  assert.equal(payloads[1].cau_hoi, 'Câu hỏi thật')
+  assert.ok(payloads[1].lich_su.every(m => m.noi_dung !== '/help' && m.noi_dung !== 'Danh sách lệnh'))
+})

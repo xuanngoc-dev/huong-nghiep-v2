@@ -21,6 +21,7 @@ export function fromServerMessages(tinNhan) {
 // state.maPhien: mã phiên hội thoại phía server (chat_conversations.ma_dinh_danh), nhận ở sự kiện meta/done của câu hỏi
 // đầu và gửi lại ở các câu sau để cùng một phiên; hội thoại mới thì bỏ. guestId(): mã thiết bị khi là khách.
 // state.daKetThuc: phiên đã bị quản trị kết thúc (server trả 409) — không gửi tiếp, phải mở hội thoại mới.
+// Tin nhắn có local: true là lệnh "/..." và câu trả lời của lệnh (utils/chatLenh.js): chỉ hiện, không gửi kèm lịch sử.
 export function createChatSession(state, { stream, storage, storageKey, loadProfile, guestId }) {
   let controller = null
   let revision = 0
@@ -123,7 +124,7 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
     state.error = ''
     state.suggestions = []
     if (retry) {
-      const lastUserIndex = state.messages.findLastIndex(m => m.role === 'user')
+      const lastUserIndex = state.messages.findLastIndex(m => m.role === 'user' && !m.local)
       if (lastUserIndex < 0) return
       state.messages = state.messages.slice(0, lastUserIndex)
     }
@@ -131,7 +132,7 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
     let budget = 24000
     for (const message of [...state.messages].reverse()) {
       if (history.length >= 30) break
-      if (message.id === 'welcome' || (message.role === 'bot' && message.status !== 'done')) continue
+      if (message.id === 'welcome' || message.local || (message.role === 'bot' && message.status !== 'done')) continue
       if (message.text.length > budget) break
       history.unshift({ vai_tro: message.role === 'user' ? 'user' : 'bot', noi_dung: message.text })
       budget -= message.text.length
@@ -208,7 +209,7 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
     }
   }
   function retry() {
-    const last = [...state.messages].reverse().find(m => m.role === 'user')
+    const last = [...state.messages].reverse().find(m => m.role === 'user' && !m.local)
     if (last) return send(last.text, true)
   }
   return { send, retry, stop, clear, restore, persist, open }

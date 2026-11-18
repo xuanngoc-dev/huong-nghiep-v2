@@ -7,7 +7,7 @@
     </p>
     <div ref="list" class="ai-chat__thread" role="log" aria-label="Hội thoại tuyển sinh" aria-live="polite" aria-relevant="additions" :aria-busy="chat.state.sending" @scroll="onScroll">
       <ChatMessage v-for="(message, index) in chat.state.messages" :key="message.id" :message="message"
-        :retryable="index === chat.state.messages.length - 1 && message.role === 'bot' && message.id !== 'welcome' && !chat.state.sending && !chat.state.daKetThuc"
+        :retryable="index === chat.state.messages.length - 1 && message.role === 'bot' && message.id !== 'welcome' && !message.local && !chat.state.sending && !chat.state.daKetThuc"
         @retry="chat.retry" />
     </div>
     <div v-if="suggestions.length && !chat.state.daKetThuc" class="ai-chat__suggestions">
@@ -25,9 +25,10 @@
         <button type="button" :disabled="!hasUser && !chat.state.sending" @click="chat.clear">Hội thoại mới</button>
       </div>
       <div class="ai-chat__composer-row">
+        <GoiYLenh :text="chat.state.draft" @chon="chonLenh" />
         <textarea ref="input" v-model="chat.state.draft" maxlength="4000" :rows="compact ? 2 : 3" aria-label="Nội dung câu hỏi"
           :disabled="chat.state.daKetThuc"
-          :placeholder="chat.state.daKetThuc ? 'Cuộc hội thoại đã kết thúc — mở hội thoại mới để hỏi tiếp.' : 'Hỏi về trường, ngành, tổ hợp, điểm hoặc điều kiện xét tuyển…'"
+          :placeholder="chat.state.daKetThuc ? 'Cuộc hội thoại đã kết thúc — mở hội thoại mới để hỏi tiếp.' : 'Hỏi về trường, ngành, tổ hợp, điểm… (gõ / để xem lệnh)'"
           @keydown="keydown" />
         <button v-if="chat.state.sending" type="button" class="ai-chat__stop" @click="chat.stop()">Dừng</button>
         <button v-else type="submit" :disabled="chat.state.daKetThuc || !chat.state.draft.trim() || !chat.state.modelId">Gửi</button>
@@ -41,6 +42,8 @@
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useChatStore } from '@/stores/chat'
 import ChatMessage from './ChatMessage.vue'
+import GoiYLenh from './GoiYLenh.vue'
+import { cuPhap, goiYLenh } from '@/utils/chatLenh'
 
 const props = defineProps({ compact: Boolean })
 const chat = useChatStore()
@@ -62,7 +65,18 @@ function submit(text) {
   stickToBottom.value = true
   chat.send(typeof text === 'string' ? text : undefined)
 }
+function chonLenh(lenh) {
+  chat.state.draft = `/${lenh.ten}${lenh.thamSo ? ' ' : ''}`
+  input.value?.focus()
+}
 function keydown(event) {
+  // Tab: điền lệnh đầu tiên đang được gợi ý.
+  const goiY = goiYLenh(chat.state.draft)
+  if (event.key === 'Tab' && goiY.length && chat.state.draft !== cuPhap(goiY[0]).split(' ')[0]) {
+    event.preventDefault()
+    chonLenh(goiY[0])
+    return
+  }
   if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
     event.preventDefault()
     submit()
@@ -118,7 +132,7 @@ onMounted(() => { chat.loadModels(); chat.kiemTraPhien(); scroll(); if (props.co
   &__suggestions { display:flex; flex-wrap:wrap; gap:8px; padding:10px 14px; max-height:130px; overflow-y:auto; }
   &__suggestions button { text-align:left; font-size:13px; }
   &__composer { display:flex; flex-direction:column; gap:8px; align-items:stretch; padding:10px 14px 4px; border-top:1px solid #e2ece5; }
-  &__composer-row { display:flex; gap:10px; align-items:flex-end; }
+  &__composer-row { position:relative; display:flex; gap:10px; align-items:flex-end; }
   &__composer-row textarea { flex:1; min-width:0; resize:vertical; max-height:150px; padding:10px; border:1px solid #c9ddd1; border-radius:10px; }
   &__composer-row button { background:#237b51; color:#fff; padding:10px 16px; }
   &__composer-row &__stop { background:#fff; color:#a33a26; border-color:#dba999; }

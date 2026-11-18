@@ -56,6 +56,12 @@ export function layTrangThaiPhien(maPhien, maKhach) {
   return api.get(`/chat/phien/${encodeURIComponent(maPhien)}`, { ...quiet, params }).then((res) => res.data)
 }
 
+/** Người hỏi tự kết thúc phiên của mình (lệnh /end). */
+export function ketThucPhienChat(maPhien, maKhach) {
+  const payload = maKhach ? { ma_khach_vang_lai: maKhach } : {}
+  return api.post(`/chat/phien/${encodeURIComponent(maPhien)}/ket-thuc`, payload, quiet).then((res) => res.data)
+}
+
 export function layTaiLieu() {
   return api.get('/tai-lieu', quiet).then((res) => res.data)
 }

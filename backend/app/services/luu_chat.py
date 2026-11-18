@@ -49,6 +49,21 @@ def tim_phien(db: Session, ma_phien: str | None, user_id: int | None, ma_khach: 
     return phien if phien is not None and _thuoc_nguoi_hoi(phien, user_id, ma_khach) else None
 
 
+def ket_thuc_phien(db: Session, ma_phien: str | None, user_id: int | None, ma_khach: str | None) -> ChatConversation | None:
+    """Người hỏi tự kết thúc phiên của mình (lệnh /end); phiên không thuộc người hỏi thì None. Đã kết thúc thì giữ nguyên."""
+    phien = tim_phien(db, ma_phien, user_id, ma_khach)
+    if phien is None or phien.trang_thai != DANG_HOAT_DONG:
+        return phien
+    phien.trang_thai = "da_dong"
+    phien.du_lieu_bo_sung = {
+        **(phien.du_lieu_bo_sung or {}),
+        "ket_thuc_boi": "nguoi_dung",
+        "ket_thuc_luc": datetime.now().isoformat(timespec="seconds"),
+    }
+    db.flush()
+    return phien
+
+
 def mo_phien(
     db: Session, ma_phien: str | None, user_id: int | None, ma_khach: str | None, cau_hoi: str, model_ai: str | None
 ) -> ChatConversation:

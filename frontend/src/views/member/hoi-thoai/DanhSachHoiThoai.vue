@@ -151,6 +151,7 @@
           <CustomButton link type="primary" @click="batDauMoi">Bắt đầu cuộc hội thoại mới</CustomButton>
         </p>
         <form v-else class="hoi-thoai__soan" @submit.prevent="gui">
+          <GoiYLenh :text="cauHoi" class="hoi-thoai__goi-y-lenh" @chon="chonLenh" />
           <CustomInput
             ref="oNhap"
             v-model="cauHoi"
@@ -159,7 +160,7 @@
             resize="none"
             maxlength="4000"
             :disabled="dangGuiTaiDay || dangTaiTinNhan"
-            placeholder="Nhập câu hỏi… (Enter để gửi, Shift + Enter để xuống dòng)"
+            placeholder="Nhập câu hỏi… (Enter để gửi, Shift + Enter để xuống dòng, gõ / để xem lệnh)"
             aria-label="Nội dung câu hỏi"
             @keydown="phimNhap"
           />
@@ -193,6 +194,8 @@ import { fetchChiTietHoiThoaiCuaToi, fetchHoiThoaiCuaToi } from '@/api/hoiThoai'
 import { useChatStore } from '@/stores/chat'
 import ChatMarkdown from '@/components/guest/chung/ChatMarkdown.vue'
 import DangSoanTraLoi from '@/components/guest/chung/DangSoanTraLoi.vue'
+import GoiYLenh from '@/components/guest/chung/GoiYLenh.vue'
+import { cuPhap, goiYLenh, phanTichLenh } from '@/utils/chatLenh'
 import { WELCOME as LOI_CHAO } from '@/utils/chatSession'
 
 const PAGE_SIZE = 30
@@ -271,11 +274,14 @@ function tuKhungChat(m) {
   }
 }
 
+// Lệnh "/..." và câu trả lời của lệnh: chỉ hiện trong trang, không lưu server; xóa khi đổi hội thoại hoặc gửi câu hỏi thật.
+const tinCucBo = ref([])
+
 const tinHienThi = computed(() => {
   if (dangGuiTaiDay.value && chat.state.maPhien === phienDangChon.value?.ma_dinh_danh) {
-    return chat.state.messages.filter((m) => m.id !== 'welcome').map(tuKhungChat)
+    return chat.state.messages.filter((m) => m.id !== 'welcome' && !m.local).map(tuKhungChat)
   }
-  return tinNhan.value
+  return [...tinNhan.value, ...tinCucBo.value]
 })
 
 // Gộp các tin liên tiếp của cùng một bên (bạn / trợ lý) thành một nhóm như khung chat.
@@ -337,6 +343,7 @@ function khoiTaoMoi() {
   dangTaiTinNhan.value = false
   cauHoi.value = ''
   tinNhan.value = []
+  tinCucBo.value = []
   phienDangChon.value = {
     id: null,
     moi: true,
@@ -367,6 +374,7 @@ function dongBoTuUrl() {
 
 async function moPhien(ma) {
   cauHoi.value = ''
+  tinCucBo.value = []
   if (!ma) {
     phienDangChon.value = null
     tinNhan.value = []
@@ -430,6 +438,8 @@ async function gui() {
   const phien = phienDangChon.value
   const text = cauHoi.value.trim()
   if (!phien || !text || chat.state.sending || dangTaiTinNhan.value || !dangHoatDong(phien)) return
+  if (phanTichLenh(text)) return chayLenh(text, phien)
+  tinCucBo.value = []
   await chat.loadModels()
   chat.moHoiThoai(phien.ma_dinh_danh, tinNhan.value)
   dangGuiTaiDay.value = true
@@ -455,7 +465,52 @@ function hoiGoiY(cau) {
   gui()
 }
 
+// Chạy lệnh "/..." (utils/chatLenh.js) trên hội thoại đang xem; câu trả lời hiện như tin nhắn của trợ lý.
+async function chayLenh(text, phien) {
+  cauHoi.value = ''
+  const tinNhanThat = tinNhan.value.map((t) => ({
+    role: t.loai_nguoi_gui === 'user' ? 'user' : 'bot',
+    text: t.loai_nguoi_gui === 'user' ? t.noi_dung_tin_nhan : t.noi_dung_phan_hoi,
+  }))
+  const at = new Date().toISOString()
+  const traLoi = await chat.chayLenh(text, {
+    maPhien: phien.moi ? null : phien.ma_dinh_danh,
+    tinNhan: tinNhanThat,
+    moi: batDauMoi,
+    thuLai() {
+      const cuoi = [...tinNhanThat].reverse().find((t) => t.role === 'user')
+      if (!cuoi) return 'Chưa có câu hỏi nào để hỏi lại.'
+      cauHoi.value = cuoi.text
+      gui()
+    },
+    sauKetThuc() {
+      const daDong = { ...phien, trang_thai: 'da_dong' }
+      if (phienDangChon.value?.id === phien.id) phienDangChon.value = daDong
+      phienList.value = phienList.value.map((item) => (item.id === phien.id ? daDong : item))
+    },
+  })
+  if (!traLoi || phienDangChon.value?.ma_dinh_danh !== phien.ma_dinh_danh) return
+  const id = `lenh-${Date.now()}`
+  tinCucBo.value.push(
+    { id: `${id}-hoi`, loai_nguoi_gui: 'user', noi_dung_tin_nhan: text, trang_thai: 'thanh_cong', created_at: at },
+    { id: `${id}-dap`, loai_nguoi_gui: 'bot', noi_dung_phan_hoi: traLoi, trang_thai: 'thanh_cong', created_at: at },
+  )
+  cuonXuong()
+}
+
+function chonLenh(lenh) {
+  cauHoi.value = `/${lenh.ten}${lenh.thamSo ? ' ' : ''}`
+  oNhap.value?.focus()
+}
+
 function phimNhap(event) {
+  // Tab: điền lệnh đầu tiên đang được gợi ý.
+  const goiY = goiYLenh(cauHoi.value)
+  if (event.key === 'Tab' && goiY.length && cauHoi.value !== cuPhap(goiY[0]).split(' ')[0]) {
+    event.preventDefault()
+    chonLenh(goiY[0])
+    return
+  }
   if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
     event.preventDefault()
     gui()
@@ -939,11 +994,17 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
 }
 
 .hoi-thoai__soan {
+  position: relative;
   display: flex;
   align-items: flex-end;
   gap: 10px;
   padding: 14px 20px;
   border-top: 1px solid var(--el-border-color-lighter);
+}
+
+.hoi-thoai__goi-y-lenh {
+  right: 20px;
+  left: 20px;
 }
 
 .hoi-thoai__trong {
