@@ -35,9 +35,9 @@ class Settings(BaseSettings):
     # Hỏi đáp tài liệu. Nếu để trống, tự động tìm data_dh_json ở thư mục gốc hoặc backend/tai_lieu.
     tai_lieu_dir: str = ""
     tai_lieu_max_bytes: int = 15 * 1024 * 1024
-    # Nguồn dữ liệu tuyển sinh cho chat: "thu_muc" đọc file JSON/TXT trong TAI_LIEU_DIR (mặc định),
-    # "database" dựng từ các đề án đã công bố (dats_tuyen_sinh và bảng liên quan). Env: CHAT_NGUON_DU_LIEU.
-    chat_nguon_du_lieu: Literal["thu_muc", "database"] = "thu_muc"
+    # Nguồn dữ liệu tuyển sinh cho chat: "database" dựng từ các đề án đã công bố (dats_tuyen_sinh và bảng liên quan,
+    # mặc định), "thu_muc" đọc file JSON/TXT trong TAI_LIEU_DIR. Env: CHAT_NGUON_DU_LIEU.
+    chat_nguon_du_lieu: Literal["thu_muc", "database"] = "database"
     # Chế độ database: số giây giữ dữ liệu đã dựng trước khi đọc lại CSDL. Env: CHAT_DB_CACHE_SECONDS.
     chat_db_cache_seconds: int = Field(default=300, ge=0, le=86_400)
     # Ảnh và video thư viện. Nếu để trống, lưu tại backend/thu_vien.

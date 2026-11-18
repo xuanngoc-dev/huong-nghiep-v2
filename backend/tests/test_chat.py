@@ -11,6 +11,9 @@ import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
+from sqlalchemy import create_engine, func, select
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 from starlette.requests import Request
 from starlette.responses import StreamingResponse
 
@@ -18,6 +21,10 @@ from app.api.deps import get_current_user
 from app.api.v1.endpoints import chat, tai_lieu
 from app.core.config import settings
 from app.core.logging import register_request_logging
+from app.db.session import get_db
+from app.models.chat_conversations import ChatConversation
+from app.models.chat_messages import ChatMessage
+from app.models.nguoi_dung import NguoiDung
 from app.schemas.chat import HoiChatRequest, ModelChat, TinNhan
 from app.services import chat_stream, tra_cuu_tuyen_sinh as lookup
 
@@ -38,6 +45,10 @@ class CorpusFixture:
         setting = patch.object(settings, "tai_lieu_dir", str(self.root))
         setting.start()
         self.addCleanup(setting.stop)
+        # Dữ liệu test là file tạm: đọc theo chế độ thư mục (mặc định là CSDL).
+        nguon = patch.object(settings, "chat_nguon_du_lieu", "thu_muc")
+        nguon.start()
+        self.addCleanup(nguon.stop)
         self.write("alpha.json", "AAA", "Đại học Alpha Hà Nội", [program("Marketing", 20, condition="Điều kiện A"), program("Marketing số", 28, condition="Điều kiện B"), program("Logistics", 25)])
         self.write("beta.json", "BBB", "Đại học Beta Đà Nẵng", [program("Logistics", 22)])
 
@@ -135,6 +146,9 @@ class RealCorpusRegressionTests(unittest.TestCase):
         setting = patch.object(settings, "tai_lieu_dir", str(root))
         setting.start()
         self.addCleanup(setting.stop)
+        nguon = patch.object(settings, "chat_nguon_du_lieu", "thu_muc")
+        nguon.start()
+        self.addCleanup(nguon.stop)
 
     def test_neu_marketing_preserves_all_five_programs(self):
         result = lookup.search("Phương thức xét tuyển ngành Marketing trường NEU 2026?")
@@ -311,6 +325,24 @@ class EndpointTests(CorpusFixture, unittest.TestCase):
         self.app = FastAPI()
         self.app.include_router(chat.router)
         self.app.include_router(tai_lieu.router)
+        # CSDL SQLite trong bộ nhớ: route chat lưu phiên / tin nhắn, không được ghi vào CSDL dùng chung.
+        import tests.hoi_quy_xet_tuyen  # noqa: F401  (BIGINT → INTEGER trên SQLite)
+
+        engine = create_engine("sqlite://", poolclass=StaticPool, connect_args={"check_same_thread": False})
+        for model in (NguoiDung, ChatConversation, ChatMessage):
+            model.__table__.create(engine)
+        self.Session = sessionmaker(bind=engine)
+        session_local = patch.object(chat, "SessionLocal", self.Session)
+        session_local.start()
+        self.addCleanup(session_local.stop)
+
+        def sqlite_db():
+            db = self.Session()
+            try:
+                yield db
+            finally:
+                db.close()
+        self.app.dependency_overrides[get_db] = sqlite_db
 
     def test_stream_route_contract(self):
         model = ModelChat(id="test", ten="Test", nha_cung_cap="OpenAI", phi=True, mo_ta="", san_sang=True, provider="openai")
@@ -327,6 +359,8 @@ class EndpointTests(CorpusFixture, unittest.TestCase):
                 self.assertIn("event: done", response.text)
                 response = client.post("/chat/hoi", json={"model_id": "test", "cau_hoi": "Marketing AAA"})
                 self.assertEqual(response.json()["tra_loi"], "Kết quả [1]")
+        with self.Session() as db:
+            self.assertEqual(db.scalar(select(func.count()).select_from(ChatMessage)), 4)
 
     def test_document_permissions_and_public_sources(self):
         with TestClient(self.app) as client:
