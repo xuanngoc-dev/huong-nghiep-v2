@@ -1,14 +1,17 @@
-"""Tạo dữ liệu mẫu cho bảng ht_cau_hinh_goi_cuoc: 5 gói cho mỗi loại áp dụng (Edu coin, tra cứu, khảo sát, hỏi đáp).
+"""Tạo dữ liệu mẫu cho bảng ht_cau_hinh_goi_cuoc: các gói cho mỗi loại áp dụng (Edu coin, tra cứu, khảo sát,
+hỏi đáp, token AI).
 
 Chạy từ thư mục backend (cần đã chạy migration tạo bảng):
 
-    python -m app.scripts.tao_du_lieu_mau_goi_cuoc
+    python -m app.scripts.tao_du_lieu_mau_goi_cuoc               # mọi loại
+    python -m app.scripts.tao_du_lieu_mau_goi_cuoc --loai token  # chỉ một loại
 
 Gói đã có mã trùng thì bỏ qua, nên chạy lại nhiều lần không sinh bản ghi trùng.
 """
 
 from __future__ import annotations
 
+import argparse
 import sys
 
 from sqlalchemy import select
@@ -38,14 +41,26 @@ GOI_CUOC_MAU = [
     ("HOI_DAP_100", "Gói hỏi đáp 100 lượt", "hoi_dap", 60000, 60000, 100, 120, 1, "Tặng thêm 20 lượt"),
     ("HOI_DAP_200", "Gói hỏi đáp 200 lượt", "hoi_dap", 110000, 89000, 200, 250, 1, "Giảm giá và tặng thêm 50 lượt"),
     ("HOI_DAP_500", "Gói hỏi đáp 500 lượt", "hoi_dap", 250000, None, 500, None, 0, "Tạm ngừng bán"),
+    # Token AI: mỗi câu hỏi chat tốn khoảng 30.000 token (lập kế hoạch tra cứu + trả lời), 1 triệu ≈ 30 câu.
+    ("TOKEN_300K", "Gói Token AI 300.000 token", "token", 10000, None, 300_000, None, 1, "Dùng thử, khoảng 10 câu hỏi"),
+    ("TOKEN_1M", "Gói Token AI 1 triệu token", "token", 29000, None, 1_000_000, None, 1, "Khoảng 30 câu hỏi"),
+    ("TOKEN_3M", "Gói Token AI 3 triệu token", "token", 79000, 69000, 3_000_000, None, 1, "Giảm giá 10.000đ, khoảng 100 câu hỏi"),
+    ("TOKEN_5M", "Gói Token AI 5 triệu token", "token", 129000, 129000, 5_000_000, 5_500_000, 1, "Tặng thêm 500.000 token"),
+    ("TOKEN_10M", "Gói Token AI 10 triệu token", "token", 239000, 199000, 10_000_000, 11_000_000, 1,
+     "Giảm giá và tặng thêm 1 triệu token"),
+    ("TOKEN_50M", "Gói Token AI 50 triệu token", "token", 1090000, None, 50_000_000, None, 0, "Tạm ngừng bán"),
 ]
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Tạo gói cước mẫu (bỏ qua gói đã có mã).")
+    parser.add_argument("--loai", choices=sorted({g[2] for g in GOI_CUOC_MAU}), help="Chỉ tạo gói của loại áp dụng này")
+    loai_chon = parser.parse_args(argv).loai
+    goi_mau = [g for g in GOI_CUOC_MAU if loai_chon is None or g[2] == loai_chon]
     with SessionLocal() as db:
         da_co = set(db.scalars(select(HtCauHinhGoiCuoc.ma_goi_cuoc)).all())
         them = 0
-        for ma, ten, loai, gia_goc, gia_km, luot_goc, luot_km, trang_thai, ghi_chu in GOI_CUOC_MAU:
+        for ma, ten, loai, gia_goc, gia_km, luot_goc, luot_km, trang_thai, ghi_chu in goi_mau:
             if ma in da_co:
                 print(f"Bỏ qua {ma}: đã có")
                 continue
@@ -64,7 +79,7 @@ def main() -> int:
             )
             them += 1
         db.commit()
-    print(f"Đã thêm {them}/{len(GOI_CUOC_MAU)} gói cước mẫu")
+    print(f"Đã thêm {them}/{len(goi_mau)} gói cước mẫu")
     return 0
 
 
