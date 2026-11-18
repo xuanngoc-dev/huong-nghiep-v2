@@ -82,7 +82,7 @@
     <!-- Phải: nội dung hội thoại -->
     <section class="hoi-thoai__noi-dung">
       <template v-if="phienDangChon">
-        <header class="hoi-thoai__dau">
+        <header class="hoi-thoai__dau" :class="{ 'hoi-thoai__dau--token': token }">
           <CustomButton class="hoi-thoai__lui" link aria-label="Quay lại danh sách" @click="boChon">
             <CustomIcon><ArrowLeft /></CustomIcon>
           </CustomButton>
@@ -144,13 +144,22 @@
           <!-- Token AI: % token khả dụng trên tổng token (khả dụng + đã dùng); bấm để nạp thêm. -->
           <CustomTooltip v-if="token" :content="moTaToken">
             <RouterLink :to="{ name: 'nap-tien', query: { loai: 'token' } }" class="hoi-thoai__token" :aria-label="moTaToken">
-              <span class="hoi-thoai__token-dong">
-                <span>Token AI</span>
-                <strong :style="{ color: mauToken }">{{ phanTramToken }}%</strong>
-              </span>
-              <el-progress :percentage="phanTramToken" :stroke-width="6" :show-text="false" :color="mauToken" />
+              <span>Token AI</span>
+              <strong :style="{ color: mauToken }">{{ phanTramToken }}%</strong>
             </RouterLink>
           </CustomTooltip>
+          <!-- Thanh token chạy hết bề ngang, làm luôn đường viền dưới của đầu khung. -->
+          <div
+            v-if="token"
+            class="hoi-thoai__token-thanh"
+            role="progressbar"
+            aria-label="Token AI còn lại"
+            :aria-valuenow="phanTramToken"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <span :style="{ width: `${phanTramToken}%`, background: mauToken }" />
+          </div>
         </header>
 
         <div ref="khungTinNhan" v-loading="dangTaiTinNhan" class="hoi-thoai__tin-nhan">
@@ -293,9 +302,16 @@ const phanTramToken = computed(() => {
   return tong ? Math.min(100, Math.round(((token.value.con || 0) / tong) * 100)) : 0
 })
 
+// Màu theo % còn lại: từ 90% trở lên xanh dương; 90% → 20% đổi dần (xanh dương → xanh lá → vàng → cam)
+// theo sắc độ HSL; 10–20% cam; dưới 10% đỏ.
+const MAU_XANH_DUONG = 217
+const MAU_CAM = 30
 const mauToken = computed(() => {
-  if (phanTramToken.value >= 50) return '#0f766e'
-  return phanTramToken.value >= 20 ? 'var(--el-color-warning)' : 'var(--el-color-danger)'
+  const p = phanTramToken.value
+  if (p < 10) return 'hsl(0, 78%, 50%)'
+  if (p < 20) return `hsl(${MAU_CAM}, 92%, 48%)`
+  const tiLe = Math.min(1, (p - 20) / (90 - 20))
+  return `hsl(${Math.round(MAU_CAM + tiLe * (MAU_XANH_DUONG - MAU_CAM))}, 80%, 46%)`
 })
 
 const moTaToken = computed(() => {
@@ -1057,11 +1073,34 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
 }
 
 .hoi-thoai__dau {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 14px 20px;
   border-bottom: 1px solid var(--el-border-color-lighter);
+}
+
+/* Có thanh token: thanh thay cho đường viền dưới. */
+.hoi-thoai__dau--token {
+  border-bottom-color: transparent;
+}
+
+.hoi-thoai__token-thanh {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 3px;
+  background: var(--el-border-color-lighter);
+}
+
+.hoi-thoai__token-thanh span {
+  display: block;
+  height: 100%;
+  transition:
+    width 0.4s ease,
+    background-color 0.4s ease;
 }
 
 .hoi-thoai__lui {
@@ -1137,22 +1176,16 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
 .hoi-thoai__token {
   display: flex;
   flex: 0 0 auto;
-  flex-direction: column;
-  gap: 4px;
-  width: 150px;
+  align-items: baseline;
+  gap: 6px;
   color: var(--el-text-color-secondary);
   font-size: 12px;
   text-decoration: none;
+  white-space: nowrap;
 }
 
-.hoi-thoai__token:hover .hoi-thoai__token-dong span {
+.hoi-thoai__token:hover span {
   color: var(--el-color-primary);
-}
-
-.hoi-thoai__token-dong {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
 }
 
 .hoi-thoai__tin-nhan {
@@ -1297,10 +1330,6 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
 @media (max-width: 767px) {
   .hoi-thoai {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .hoi-thoai__token {
-    width: 96px;
   }
 
   .hoi-thoai__noi-dung {
