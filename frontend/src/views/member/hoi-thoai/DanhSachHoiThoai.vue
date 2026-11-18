@@ -141,26 +141,30 @@
               {{ dangHoatDong(phienDangChon) ? 'Đang hoạt động' : 'Đã kết thúc' }}
             </CustomTag>
           </div>
-          <!-- Token AI: % token khả dụng trên tổng token (khả dụng + đã dùng); bấm để nạp thêm. -->
-          <CustomTooltip v-if="token" :content="moTaToken">
-            <RouterLink :to="{ name: 'nap-tien', query: { loai: 'token' } }" class="hoi-thoai__token" :aria-label="moTaToken">
-              <span>Token AI</span>
-              <strong :style="{ color: mauToken }">{{ phanTramToken }}%</strong>
-            </RouterLink>
-          </CustomTooltip>
-          <!-- Thanh token chạy hết bề ngang, làm luôn đường viền dưới của đầu khung. -->
-          <div
-            v-if="token"
+        </header>
+        <!-- Thanh Token AI ngay dưới đầu khung, chạy hết bề ngang (thay đường viền dưới): % token khả dụng trên
+             tổng token (khả dụng + đã dùng), số % ở giữa; bấm để nạp thêm. Hai lớp chữ chồng khít nhau: chữ tối
+             trên nền, chữ trắng trên phần có màu (cắt theo %), nên chữ luôn đọc được. -->
+        <CustomTooltip v-if="token" :content="moTaToken">
+          <RouterLink
+            :to="{ name: 'nap-tien', query: { loai: 'token' } }"
             class="hoi-thoai__token-thanh"
             role="progressbar"
-            aria-label="Token AI còn lại"
+            :aria-label="moTaToken"
             :aria-valuenow="phanTramToken"
             aria-valuemin="0"
             aria-valuemax="100"
           >
-            <span :style="{ width: `${phanTramToken}%`, background: mauToken }" />
-          </div>
-        </header>
+            <span class="hoi-thoai__token-chu">{{ nhanToken }}</span>
+            <span
+              class="hoi-thoai__token-mau"
+              :style="{ background: mauToken, clipPath: `inset(0 ${100 - phanTramToken}% 0 0)` }"
+              aria-hidden="true"
+            >
+              <span class="hoi-thoai__token-chu">{{ nhanToken }}</span>
+            </span>
+          </RouterLink>
+        </CustomTooltip>
 
         <div ref="khungTinNhan" v-loading="dangTaiTinNhan" class="hoi-thoai__tin-nhan">
           <div
@@ -312,6 +316,11 @@ const mauToken = computed(() => {
   if (p < 20) return `hsl(${MAU_CAM}, 92%, 48%)`
   const tiLe = Math.min(1, (p - 20) / (90 - 20))
   return `hsl(${Math.round(MAU_CAM + tiLe * (MAU_XANH_DUONG - MAU_CAM))}, 80%, 46%)`
+})
+
+const nhanToken = computed(() => {
+  const { con = 0, da = 0 } = token.value || {}
+  return con || da ? `Token AI còn ${phanTramToken.value}%` : 'Chưa có Token AI — bấm để nạp'
 })
 
 const moTaToken = computed(() => {
@@ -1073,7 +1082,6 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
 }
 
 .hoi-thoai__dau {
-  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -1081,26 +1089,49 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
   border-bottom: 1px solid var(--el-border-color-lighter);
 }
 
-/* Có thanh token: thanh thay cho đường viền dưới. */
+/* Có thanh token: thanh (ngay dưới đầu khung) thay cho đường viền dưới. */
 .hoi-thoai__dau--token {
   border-bottom-color: transparent;
 }
 
 .hoi-thoai__token-thanh {
-  position: absolute;
-  right: 0;
-  bottom: -1px;
-  left: 0;
-  height: 3px;
-  background: var(--el-border-color-lighter);
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  height: 18px;
+  overflow: hidden;
+  background: var(--el-fill-color);
+  text-decoration: none;
 }
 
-.hoi-thoai__token-thanh span {
-  display: block;
-  height: 100%;
+.hoi-thoai__token-mau {
+  position: absolute;
+  inset: 0;
   transition:
-    width 0.4s ease,
+    clip-path 0.4s ease,
     background-color 0.4s ease;
+}
+
+.hoi-thoai__token-chu {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--el-text-color-regular);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.hoi-thoai__token-mau .hoi-thoai__token-chu {
+  color: #fff;
+}
+
+.hoi-thoai__token-thanh:focus-visible {
+  outline: 2px solid var(--el-color-primary);
+  outline-offset: -2px;
 }
 
 .hoi-thoai__lui {
@@ -1173,20 +1204,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
   justify-content: flex-end;
 }
 
-.hoi-thoai__token {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: baseline;
-  gap: 6px;
-  color: var(--el-text-color-secondary);
-  font-size: 12px;
-  text-decoration: none;
-  white-space: nowrap;
-}
 
-.hoi-thoai__token:hover span {
-  color: var(--el-color-primary);
-}
 
 .hoi-thoai__tin-nhan {
   flex: 1;
