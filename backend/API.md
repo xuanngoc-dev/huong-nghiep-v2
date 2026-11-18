@@ -1,15 +1,15 @@
 # Danh sách API
 
-Tự sinh từ code lúc 18/11/2026 14:00 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 18/11/2026 14:28 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **313** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **315** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
 | [Quản trị (admin)](#quan_tri) | 185 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 79 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Thành viên (user)](#thanh_vien) | 81 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 49 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
@@ -551,6 +551,13 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 |---|---|---|---|
 | `GET` | `/api/v1/ho-so-xet-tuyen/cua-toi` | Bắt buộc | Hồ sơ xét tuyển chính của tài khoản. Chưa có thì dựng từ hồ sơ năng lực cũ (`tu_du_lieu_cu = true`, chưa lưu). |
 | `PUT` | `/api/v1/ho-so-xet-tuyen/cua-toi` | Bắt buộc | Ghi đè hồ sơ xét tuyển chính; đồng thời cập nhật hồ sơ năng lực cũ (JSON, khu vực, đối tượng, tỉnh) cho khớp. |
+
+### `hoi-thoai`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/hoi-thoai/cua-toi` | Bắt buộc | Các cuộc hội thoại của thành viên đang đăng nhập, mới nhất trước. |
+| `GET` | `/api/v1/hoi-thoai/cua-toi/{ma_phien}` | Bắt buộc | Toàn bộ tin nhắn một cuộc hội thoại của thành viên đang đăng nhập (`ma_phien` là mã định danh UUID). |
 
 ### `tai-khoan`
 

@@ -56,7 +56,8 @@ export const heroSlides = [
     image: phuHuynhImage,
     alt: 'Mẹ và con trai cùng xem tài liệu chọn ngành học',
     primary: { label: 'Giải pháp cho phụ huynh', to: { name: 'phu-huynh' } },
-    secondary: { label: 'Hỏi trợ lý AI', to: { name: 'demo-chat' } },
+    // moChat: mở khung chat nổi (trang /demo-chat đã tạm bỏ; trước đây: to: { name: 'demo-chat' }).
+    secondary: { label: 'Hỏi trợ lý AI', moChat: true },
   },
 ]
 
@@ -194,7 +195,8 @@ export const features = [
     title: 'Tư vấn hướng nghiệp bằng AI',
     description: 'Trò chuyện với trợ lý AI để nhận gợi ý định hướng mang tính cá nhân hóa.',
     icon: 'ChatDotRound',
-    to: { name: 'demo-chat' },
+    // Mở khung chat nổi (trang /demo-chat đã tạm bỏ; trước đây: to: { name: 'demo-chat' }).
+    moChat: true,
   },
   {
     id: 'lo-trinh',
@@ -594,7 +596,8 @@ export const footerColumns = [
       { label: 'Trang chủ', to: { name: 'home' } },
       { label: 'Chọn đối tượng', to: { name: 'chon-doi-tuong' } },
       { label: 'Trắc nghiệm Holland', to: { name: 'thpt-thi-dai-hoc-chua-co' } },
-      { label: 'Trợ lý AI', to: { name: 'demo-chat' } },
+      // Trang /demo-chat đã tạm bỏ:
+      // { label: 'Trợ lý AI', to: { name: 'demo-chat' } },
     ],
   },
   {

@@ -1287,6 +1287,20 @@ a.lp-media-card:hover,
   margin-top: var(--lp-gap);
 }
 
+/* Nút mở khung chat nổi (thay link /demo-chat) mang kiểu của link: bỏ kiểu mặc định của button. */
+button.landing__btn,
+button.landing-ai__prompt,
+button.lp-media-card {
+  font-family: inherit;
+  line-height: inherit;
+}
+
+button.lp-media-card {
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
 .landing-ai__prompt {
   padding: 0.55rem 0.9rem;
   border: 1px solid rgba(var(--lp-primary-rgb), 0.18);

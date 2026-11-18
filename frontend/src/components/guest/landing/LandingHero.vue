@@ -50,7 +50,15 @@
                 {{ slide.primary.label }}
                 <el-icon aria-hidden="true"><Right /></el-icon>
               </RouterLink>
-              <RouterLink class="landing__btn landing__btn--glass" :to="linkTo(slide.secondary)">
+              <button
+                v-if="slide.secondary.moChat"
+                type="button"
+                class="landing__btn landing__btn--glass"
+                @click="chat.moKhungChat()"
+              >
+                {{ slide.secondary.label }}
+              </button>
+              <RouterLink v-else class="landing__btn landing__btn--glass" :to="linkTo(slide.secondary)">
                 {{ slide.secondary.label }}
               </RouterLink>
             </div>
@@ -119,6 +127,9 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { audiences, heroSlides, hollandGroups, steps, studyPaths } from '@/data/landing'
 import LandingCounter from './LandingCounter.vue'
+import { useChatStore } from '@/stores/chat'
+
+const chat = useChatStore()
 
 const INTERVAL = 6500
 

@@ -11,20 +11,24 @@
             cá nhân hóa.
           </p>
           <div class="landing-ai__prompts" aria-label="Gợi ý câu hỏi">
-            <RouterLink
+            <!-- Trang /demo-chat đã tạm bỏ: mở khung chat nổi với câu hỏi gợi ý điền sẵn
+              (trước đây: <RouterLink class="landing-ai__prompt" :to="{ name: 'demo-chat' }">). -->
+            <button
               v-for="prompt in aiPrompts"
               :key="prompt"
+              type="button"
               class="landing-ai__prompt"
-              :to="{ name: 'demo-chat' }"
+              @click="chat.moKhungChat(prompt)"
             >
               {{ prompt }}
-            </RouterLink>
+            </button>
           </div>
           <div class="mt-4">
-            <RouterLink class="landing__btn landing__btn--primary" :to="{ name: 'demo-chat' }">
+            <!-- Trước đây: <RouterLink :to="{ name: 'demo-chat' }"> (trang /demo-chat đã tạm bỏ). -->
+            <button type="button" class="landing__btn landing__btn--primary" @click="chat.moKhungChat()">
               Trò chuyện với AI
               <el-icon aria-hidden="true"><ChatDotRound /></el-icon>
-            </RouterLink>
+            </button>
           </div>
         </div>
 
@@ -55,4 +59,7 @@
 
 <script setup>
 import { aiMessages, aiPrompts } from '@/data/landing'
+import { useChatStore } from '@/stores/chat'
+
+const chat = useChatStore()
 </script>

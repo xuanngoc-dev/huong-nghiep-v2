@@ -10,9 +10,10 @@
             bạn. Chưa tìm thấy câu trả lời? Hãy hỏi trợ lý AI hoặc liên hệ với chúng tôi.
           </p>
           <div class="landing-faq__actions">
-            <RouterLink class="landing__btn landing__btn--primary" :to="{ name: 'demo-chat' }">
+            <!-- Trước đây: <RouterLink :to="{ name: 'demo-chat' }"> (trang /demo-chat đã tạm bỏ). -->
+            <button type="button" class="landing__btn landing__btn--primary" @click="chat.moKhungChat()">
               Hỏi trợ lý AI
-            </RouterLink>
+            </button>
             <a class="landing__btn landing__btn--ghost" href="mailto:hotro@dinhhuongnghe.vn">Gửi email hỗ trợ</a>
           </div>
         </div>
@@ -56,6 +57,9 @@
 <script setup>
 import { ref } from 'vue'
 import { faqs } from '@/data/landing'
+import { useChatStore } from '@/stores/chat'
+
+const chat = useChatStore()
 
 const openId = ref(faqs[0].id)
 

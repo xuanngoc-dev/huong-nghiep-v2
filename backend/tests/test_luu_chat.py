@@ -55,6 +55,13 @@ class LuuChatTests(unittest.TestCase):
         self.assertEqual(len({p1.id, p2.id, p3.id}), 3)
         uuid.UUID(p3.ma_dinh_danh)
 
+    def test_ma_phien_moi_do_frontend_tao_duoc_giu_lam_ma_phien(self):
+        # Trang "Cuộc hội thoại mới" tạo sẵn UUID; câu hỏi đầu tiên tạo phiên đúng mã đó, câu sau nối tiếp.
+        ma = str(uuid.uuid4())
+        p1 = luu_chat.luu_cau_hoi(self.db, ma, 1, None, "Câu đầu", None)
+        self.assertEqual(p1.ma_dinh_danh, ma)
+        self.assertEqual(luu_chat.luu_cau_hoi(self.db, ma, 1, None, "Câu sau", None).id, p1.id)
+
     def test_khach_cung_thiet_bi_noi_tiep_phien(self):
         p1 = luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "a", None)
         self.assertEqual(luu_chat.luu_cau_hoi(self.db, p1.ma_dinh_danh, None, "tb1", "b", None).id, p1.id)

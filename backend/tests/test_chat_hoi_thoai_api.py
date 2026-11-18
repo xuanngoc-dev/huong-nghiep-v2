@@ -4,9 +4,17 @@ import unittest
 
 from fastapi import HTTPException
 
-from app.api.v1.endpoints.chat_hoi_thoai import chi_tiet_phien, danh_sach_phien, doi_trang_thai_phien, xoa_phien
+from app.api.v1.endpoints.chat_hoi_thoai import (
+    chi_tiet_hoi_thoai_cua_toi,
+    chi_tiet_phien,
+    danh_sach_hoi_thoai_cua_toi,
+    danh_sach_phien,
+    doi_trang_thai_phien,
+    xoa_phien,
+)
 from app.models.chat_conversations import ChatConversation
 from app.models.chat_messages import ChatMessage
+from app.models.nguoi_dung import NguoiDung
 from app.schemas.chat_hoi_thoai import ChatPhienTrangThai
 from app.services import luu_chat
 from tests import test_luu_chat as mau
@@ -74,6 +82,29 @@ class ChatHoiThoaiApiTests(unittest.TestCase):
         self.assertEqual({m.phien_chat_id for m in self.db.query(ChatMessage)}, {con_lai.id})
         with self.assertRaises(HTTPException) as caught:
             xoa_phien(p.ma_dinh_danh, self.db)
+        self.assertEqual(caught.exception.status_code, 400)
+
+    def test_thanh_vien_chi_thay_hoi_thoai_cua_minh(self):
+        a1 = luu_chat.luu_cau_hoi(self.db, None, 1, None, "Ngành CNTT", "m")
+        a2 = luu_chat.luu_cau_hoi(self.db, None, 1, None, "Điểm chuẩn BKA", "m")
+        b = luu_chat.luu_cau_hoi(self.db, None, 2, None, "Của B", "m")
+        luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "Của khách", "m")
+        a2.trang_thai = "luu_tru"
+        self.db.commit()
+        nguoi_a = self.db.get(NguoiDung, 1)
+
+        def ds(**loc):
+            params = {"q": None, "trang_thai": None, "page": 1, "page_size": 20, **loc}
+            return danh_sach_hoi_thoai_cua_toi(nguoi_dung=nguoi_a, db=self.db, **params)
+
+        self.assertEqual({x.id for x in ds().items}, {a1.id, a2.id})
+        self.assertEqual([x.id for x in ds(trang_thai="da-ket-thuc").items], [a2.id])
+        self.assertEqual([x.id for x in ds(trang_thai="dang-hoat-dong").items], [a1.id])
+        self.assertEqual([x.id for x in ds(q="cntt").items], [a1.id])
+        kq = chi_tiet_hoi_thoai_cua_toi(a1.ma_dinh_danh, nguoi_a, self.db)
+        self.assertEqual([m.noi_dung_tin_nhan for m in kq.tin_nhan], ["Ngành CNTT"])
+        with self.assertRaises(HTTPException) as caught:
+            chi_tiet_hoi_thoai_cua_toi(b.ma_dinh_danh, nguoi_a, self.db)
         self.assertEqual(caught.exception.status_code, 400)
 
     def test_phien_khong_ton_tai_tra_400(self):

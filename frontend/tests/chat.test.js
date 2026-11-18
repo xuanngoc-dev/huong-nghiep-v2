@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { renderToString } from 'vue/server-renderer'
 import { h } from 'vue'
-import { createChatSession, newConversation } from '../src/utils/chatSession.js'
+import { createChatSession, fromServerMessages, newConversation } from '../src/utils/chatSession.js'
 import { createEventParser, readChatStream } from '../src/utils/chatStream.js'
 import { renderMarkdown } from '../src/utils/chatMarkdown.js'
 
@@ -259,4 +259,21 @@ test('server báo phiên đã kết thúc (409) thì khóa gửi tiếp tới kh
   session.clear()
   assert.equal(state.daKetThuc, false)
   assert.equal(state.maPhien, null)
+})
+
+test('mở lại hội thoại đã lưu trên server: chuyển tin nhắn và nối tiếp đúng mã phiên', () => {
+  const { state, session } = fixture()
+  state.daKetThuc = true
+  session.open('phien-cu', fromServerMessages([
+    { id: 1, loai_nguoi_gui: 'user', noi_dung_tin_nhan: 'Ngành CNTT?', trang_thai: 'thanh_cong' },
+    { id: 2, loai_nguoi_gui: 'bot', noi_dung_phan_hoi: 'CNTT học lập trình', nguon_tham_khao: [{ id: 1, ten: 'BKA' }], model_ai: 'm', trang_thai: 'thanh_cong' },
+    { id: 3, loai_nguoi_gui: 'user', noi_dung_tin_nhan: 'Điểm chuẩn?', trang_thai: 'thanh_cong' },
+    { id: 4, loai_nguoi_gui: 'bot', noi_dung_phan_hoi: null, loi_chi_tiet: 'Hết giờ', trang_thai: 'loi' },
+  ]))
+  assert.equal(state.maPhien, 'phien-cu')
+  assert.equal(state.daKetThuc, false)
+  assert.deepEqual(state.messages.map(m => [m.role, m.text, m.status]), [
+    ['user', 'Ngành CNTT?', 'done'], ['bot', 'CNTT học lập trình', 'done'], ['user', 'Điểm chuẩn?', 'done'], ['bot', '', 'error']])
+  assert.equal(state.messages[1].sources[0].ten, 'BKA')
+  assert.equal(state.messages[3].error, 'Hết giờ')
 })

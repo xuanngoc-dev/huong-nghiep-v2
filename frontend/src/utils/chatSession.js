@@ -1,6 +1,22 @@
 export const WELCOME = 'Xin chào! Mình có thể giúp bạn tra cứu ngành học, trường, tổ hợp, điểm và điều kiện tuyển sinh. Bạn muốn tìm hiểu trường hoặc ngành nào?'
 export const newConversation = () => [{ id: 'welcome', role: 'bot', text: WELCOME, status: 'done', sources: [], notes: [] }]
 
+/** Tin nhắn đã lưu trên server (chat_messages) → tin nhắn của khung chat, để mở lại hội thoại cũ. */
+export function fromServerMessages(tinNhan) {
+  const messages = []
+  for (const m of Array.isArray(tinNhan) ? tinNhan : []) {
+    if (m.loai_nguoi_gui === 'user') {
+      if (m.noi_dung_tin_nhan) messages.push({ id: `s${m.id}`, role: 'user', text: m.noi_dung_tin_nhan.slice(0, 16000), status: 'done', at: m.created_at })
+      continue
+    }
+    const loi = m.trang_thai === 'loi'
+    messages.push({ id: `s${m.id}`, role: 'bot', text: (m.noi_dung_phan_hoi || '').slice(0, 16000), status: loi ? 'error' : 'done',
+      ...(loi ? { error: m.loi_chi_tiet || 'Không trả lời được.' } : {}),
+      sources: Array.isArray(m.nguon_tham_khao) ? m.nguon_tham_khao : [], notes: [], meta: m.model_ai || undefined, at: m.created_at })
+  }
+  return messages.slice(-100)
+}
+
 /** One request owner per shared conversation; stale requests cannot update a new conversation. */
 // state.maPhien: mã phiên hội thoại phía server (chat_conversations.ma_dinh_danh), nhận ở sự kiện meta/done của câu hỏi
 // đầu và gửi lại ở các câu sau để cùng một phiên; hội thoại mới thì bỏ. guestId(): mã thiết bị khi là khách.
@@ -80,6 +96,18 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
     state.daKetThuc = false
     persist()
   }
+  // Mở lại một phiên đã lưu trên server (trang Danh sách hội thoại) để hỏi tiếp trong cùng phiên.
+  function open(maPhien, messages) {
+    stop(false)
+    state.messages = messages.length ? messages : newConversation()
+    state.maPhien = maPhien
+    state.daKetThuc = false
+    state.context = null
+    state.suggestions = []
+    state.draft = ''
+    state.error = ''
+    persist()
+  }
   async function send(input, retry = false) {
     const text = (typeof input === 'string' ? input : state.draft).trim()
     if (!text || state.sending || state.daKetThuc) return
@@ -109,8 +137,10 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
       budget -= message.text.length
     }
     const botId = id()
-    state.messages.push({ id: id(), role: 'user', text, status: 'done' },
-      { id: botId, role: 'bot', text: '', status: 'streaming', sources: [], notes: [], meta: model.ten })
+    // at: thời điểm gửi, để trang Danh sách hội thoại hiện giờ của tin nhắn đang gửi.
+    const at = new Date().toISOString()
+    state.messages.push({ id: id(), role: 'user', text, status: 'done', at },
+      { id: botId, role: 'bot', text: '', status: 'streaming', sources: [], notes: [], meta: model.ten, at })
     state.messages = state.messages.slice(-100)
     state.draft = ''
     state.sending = true
@@ -181,5 +211,5 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
     const last = [...state.messages].reverse().find(m => m.role === 'user')
     if (last) return send(last.text, true)
   }
-  return { send, retry, stop, clear, restore, persist }
+  return { send, retry, stop, clear, restore, persist, open }
 }

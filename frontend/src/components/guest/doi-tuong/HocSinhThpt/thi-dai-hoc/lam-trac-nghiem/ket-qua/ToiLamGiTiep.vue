@@ -71,7 +71,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router' // chỉ dùng cho /demo-chat (đã tạm bỏ)
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
@@ -84,7 +84,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['chuyen-tab'])
 
-const router = useRouter()
+// const router = useRouter()
 const auth = useAuthStore()
 const chat = useChatStore()
 
@@ -97,9 +97,11 @@ const trangLichSu = computed(() =>
 )
 const traiNghiem = computed(() => gopNoiDung(props.top, 'trai_nghiem'))
 
+// Mở khung chat nổi với câu hỏi tư vấn điền sẵn (trang /demo-chat đã tạm bỏ).
 function tuVanAi() {
-  chat.state.draft = cauHoiTuVan(props.top)
-  router.push({ name: 'demo-chat' })
+  chat.moKhungChat(cauHoiTuVan(props.top))
+  // chat.state.draft = cauHoiTuVan(props.top)
+  // router.push({ name: 'demo-chat' })
 }
 
 async function saoChepLienKet() {

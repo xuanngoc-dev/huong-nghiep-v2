@@ -10,7 +10,14 @@
 
       <div class="row g-lp" data-stagger>
         <div v-for="(item, index) in features" :key="item.id" :class="colClass(index)">
-          <RouterLink :to="item.to" class="lp-media-card landing-features__card">
+          <!-- moChat: mở khung chat nổi thay cho trang /demo-chat (đã tạm bỏ). -->
+          <component
+            :is="item.moChat ? 'button' : 'RouterLink'"
+            :to="item.moChat ? undefined : item.to"
+            :type="item.moChat ? 'button' : undefined"
+            class="lp-media-card landing-features__card"
+            @click="item.moChat && chat.moKhungChat()"
+          >
             <LandingImage :src="item.image" :alt="item.alt" ratio="auto" class="landing-features__bg" />
             <div class="landing-features__content">
               <span class="landing-features__icon" aria-hidden="true">
@@ -20,7 +27,7 @@
               <p>{{ item.description }}</p>
               <span class="lp-link">Tìm hiểu thêm <el-icon aria-hidden="true"><Right /></el-icon></span>
             </div>
-          </RouterLink>
+          </component>
         </div>
       </div>
     </div>
@@ -29,7 +36,10 @@
 
 <script setup>
 import { features } from '@/data/landing'
+import { useChatStore } from '@/stores/chat'
 import LandingImage from './LandingImage.vue'
+
+const chat = useChatStore()
 
 // Bố cục so le trên desktop: thẻ 1, 4, 5 rộng gấp đôi.
 const WIDE = [0, 3, 4]

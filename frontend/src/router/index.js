@@ -65,12 +65,13 @@ const router = createRouter({
           meta: { title: item.name, public: true, doiTuong: item.code },
         })),
         ...dinhHuongThptRoutes,
-        {
-          path: 'demo-chat',
-          name: 'demo-chat',
-          component: () => import('@/views/guest/DemoChat.vue'),
-          meta: { title: 'Demo chat', public: true, hideAssist: true },
-        },
+        // Tạm bỏ trang chat đầy đủ: dùng khung chat nổi (khách) và trang Danh sách hội thoại (thành viên).
+        // {
+        //   path: 'demo-chat',
+        //   name: 'demo-chat',
+        //   component: () => import('@/views/guest/DemoChat.vue'),
+        //   meta: { title: 'Demo chat', public: true, hideAssist: true },
+        // },
         {
           path: 'validate-data',
           name: 'validate-data',
@@ -123,7 +124,8 @@ const router = createRouter({
         {
           path: 'hoi-thoai/moi',
           name: 'hoi-thoai-moi',
-          component: () => import('@/views/member/hoi-thoai/HoiThoaiMoi.vue'),
+          // Dùng chung trang Danh sách hội thoại, mở sẵn một hội thoại mới để hỏi.
+          component: () => import('@/views/member/hoi-thoai/DanhSachHoiThoai.vue'),
           meta: { title: 'Cuộc hội thoại mới', requiresAuth: true },
         },
         {

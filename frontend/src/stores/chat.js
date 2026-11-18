@@ -1,8 +1,8 @@
-import { computed, reactive, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { hoiChatStream, layDanhSachModel, layTrangThaiPhien } from '@/api/chat'
 import { fetchHoSo } from '@/api/hoSo'
-import { createChatSession, newConversation } from '@/utils/chatSession'
+import { createChatSession, fromServerMessages, newConversation } from '@/utils/chatSession'
 import { clearHoSoCache, loadHoSo, toChatProfile } from '@/utils/hoSoCache'
 import { maThietBi } from '@/utils/maThietBi'
 import { useAuthStore } from '@/stores/auth'
@@ -41,6 +41,16 @@ export const useChatStore = defineStore('chat', () => {
   }
   session.restore()
   kiemTraPhien()
+  // tinNhan: tin nhắn của phiên lấy từ API hội thoại của thành viên.
+  function moHoiThoai(maPhien, tinNhan) {
+    session.open(maPhien, fromServerMessages(tinNhan))
+  }
+  // Khung chat nổi (Chatbot.vue) — các nút "Hỏi trợ lý AI" mở khung này (trang /demo-chat đã tạm bỏ).
+  const khungMo = ref(false)
+  function moKhungChat(cauHoi) {
+    if (typeof cauHoi === 'string' && cauHoi.trim() && !state.sending) state.draft = cauHoi
+    khungMo.value = true
+  }
   const model = computed(() => state.models.find(m => m.id === state.modelId))
   let loading = null
   async function loadModels() {
@@ -72,5 +82,5 @@ export const useChatStore = defineStore('chat', () => {
     if (userId) warmProfile()
   })
   watch(() => [state.draft, state.modelId], () => session.persist())
-  return { state, model, loadModels, kiemTraPhien, send: session.send, stop: session.stop, clear: session.clear, retry: session.retry }
+  return { state, model, khungMo, moKhungChat, loadModels, kiemTraPhien, moHoiThoai, send: session.send, stop: session.stop, clear: session.clear, retry: session.retry }
 })
