@@ -6,7 +6,8 @@ export const LENH = [
   { ten: 'new', bietDanh: ['moi'], moTa: 'Bắt đầu cuộc hội thoại mới' },
   { ten: 'end', bietDanh: ['ketthuc'], moTa: 'Kết thúc cuộc hội thoại hiện tại, sau đó không hỏi tiếp được' },
   { ten: 'retry', bietDanh: ['thulai'], moTa: 'Hỏi lại câu hỏi gần nhất' },
-  { ten: 'model', bietDanh: ['mohinh'], thamSo: '[tên]', moTa: 'Xem các mô hình AI hoặc đổi sang mô hình khác' },
+  // Tạm ẩn cùng phần chọn mô hình AI (luôn dùng mô hình mặc định):
+  // { ten: 'model', bietDanh: ['mohinh'], thamSo: '[tên]', moTa: 'Xem các mô hình AI hoặc đổi sang mô hình khác' },
   { ten: 'goiy', bietDanh: ['suggest'], moTa: 'Gợi ý một số câu hỏi mẫu' },
   { ten: 'copy', bietDanh: ['saochep'], moTa: 'Sao chép nội dung cuộc hội thoại' },
 ]
@@ -75,31 +76,33 @@ export function vanBanHoiThoai(tinNhan) {
 
 /**
  * Bộ chạy lệnh dùng chung cho khung chat nổi và trang hội thoại của thành viên.
- * Phụ thuộc truyền vào để test được: state (chat store), loadModels(), ketThucPhien(maPhien), saoChep(vanBan).
+ * Phụ thuộc truyền vào để test được: state (chat store), ketThucPhien(maPhien), saoChep(vanBan)
+ * (và loadModels() khi bật lại lệnh /model).
  * nguCanh của từng lần chạy: { maPhien, tinNhan: [{ role, text }], moi(), thuLai() → câu báo | void, sauKetThuc() }.
  * Trả câu trả lời (markdown) để hiện như tin nhắn của trợ lý, hoặc null khi lệnh không cần trả lời (/new, /retry).
  */
-export function taoBoChayLenh({ state, loadModels, ketThucPhien, saoChep }) {
-  async function lenhModel(thamSo) {
-    await loadModels()
-    if (!state.models.length) return 'Chưa tải được danh sách mô hình AI. Vui lòng thử lại sau.'
-    if (!thamSo) {
-      const hienTai = state.models.find((m) => m.id === state.modelId)
-      return [
-        `**Mô hình đang dùng:** ${hienTai?.ten || 'chưa chọn'}`,
-        '',
-        ...state.models.map((m) => `- \`${m.id}\`: ${m.ten}${m.san_sang ? '' : ' (chưa sẵn sàng)'}`),
-        '',
-        'Gõ `/model <tên>` để đổi mô hình.',
-      ].join('\n')
-    }
-    const model = timModel(state.models, thamSo)
-    if (!model) return `Không tìm thấy mô hình "${thamSo}". Gõ \`/model\` để xem danh sách.`
-    state.modelId = model.id
-    return `Đã chuyển sang mô hình **${model.ten}**.${
-      model.san_sang ? '' : ' Mô hình này chưa sẵn sàng (chưa có API key) nên có thể không trả lời được.'
-    }`
-  }
+export function taoBoChayLenh({ state, ketThucPhien, saoChep }) {
+  // Lệnh /model tạm ẩn (bỏ comment cùng mục trong LENH, case trong chayLenh và thêm loadModels vào tham số để bật lại):
+  // async function lenhModel(thamSo) {
+  //   await loadModels()
+  //   if (!state.models.length) return 'Chưa tải được danh sách mô hình AI. Vui lòng thử lại sau.'
+  //   if (!thamSo) {
+  //     const hienTai = state.models.find((m) => m.id === state.modelId)
+  //     return [
+  //       `**Mô hình đang dùng:** ${hienTai?.ten || 'chưa chọn'}`,
+  //       '',
+  //       ...state.models.map((m) => `- \`${m.id}\`: ${m.ten}${m.san_sang ? '' : ' (chưa sẵn sàng)'}`),
+  //       '',
+  //       'Gõ `/model <tên>` để đổi mô hình.',
+  //     ].join('\n')
+  //   }
+  //   const model = timModel(state.models, thamSo)
+  //   if (!model) return `Không tìm thấy mô hình "${thamSo}". Gõ \`/model\` để xem danh sách.`
+  //   state.modelId = model.id
+  //   return `Đã chuyển sang mô hình **${model.ten}**.${
+  //     model.san_sang ? '' : ' Mô hình này chưa sẵn sàng (chưa có API key) nên có thể không trả lời được.'
+  //   }`
+  // }
 
   async function lenhKetThuc(nguCanh) {
     if (!nguCanh.maPhien) return 'Cuộc hội thoại chưa có câu hỏi nào nên chưa cần kết thúc.'
@@ -138,8 +141,7 @@ export function taoBoChayLenh({ state, loadModels, ketThucPhien, saoChep }) {
         return null
       case 'retry':
         return (await nguCanh.thuLai?.()) || null
-      case 'model':
-        return lenhModel(lenh.thamSo)
+      // Lệnh /model tạm ẩn: case 'model': return lenhModel(lenh.thamSo)
       case 'copy':
         return lenhSaoChep(nguCanh.tinNhan)
       case 'end':

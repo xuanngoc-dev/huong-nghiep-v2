@@ -39,7 +39,7 @@ class Settings(BaseSettings):
     thu_vien_dir: str = ""
     thu_vien_max_bytes: int = 100 * 1024 * 1024
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-3.5-flash-lite"
+    gemini_model: str = "gemini-3.8-flash"
     openai_api_key: str = ""
     openai_model: str = "gpt-6-luna"
     chat_timeout_seconds: int = Field(default=75, ge=10, le=300)

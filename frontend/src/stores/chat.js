@@ -8,6 +8,9 @@ import { clearHoSoCache, loadHoSo, toChatProfile } from '@/utils/hoSoCache'
 import { maThietBi } from '@/utils/maThietBi'
 import { useAuthStore } from '@/stores/auth'
 
+// Mô hình AI luôn dùng (đã ẩn phần chọn mô hình); backend không có thì lấy mô hình sẵn sàng đầu tiên.
+export const MODEL_MAC_DINH = 'gemini-3.8-flash'
+
 export const useChatStore = defineStore('chat', () => {
   const auth = useAuthStore()
   const state = reactive({ messages: newConversation(), draft: '', sending: false, models: [], modelId: '',
@@ -60,9 +63,13 @@ export const useChatStore = defineStore('chat', () => {
     loading = (async () => {
       try {
         state.models = await layDanhSachModel()
-        if (!state.models.some(m => m.id === state.modelId)) {
-          state.modelId = (state.models.find(m => m.san_sang) || state.models[0])?.id || ''
-        }
+        // Luôn đặt lại về mô hình mặc định (kể cả khi trình duyệt còn lưu mô hình chọn trước đây).
+        state.modelId = (state.models.find(m => m.id === MODEL_MAC_DINH) || state.models.find(m => m.san_sang)
+          || state.models[0])?.id || ''
+        // Trước đây giữ mô hình người dùng đã chọn:
+        // if (!state.models.some(m => m.id === state.modelId)) {
+        //   state.modelId = (state.models.find(m => m.san_sang) || state.models[0])?.id || ''
+        // }
         state.error = ''
         session.persist()
       } catch {

@@ -20,7 +20,7 @@ test('phân tích lệnh: tên, bí danh tiếng Việt, tham số; tin thườn
   assert.equal(phanTichLenh('Điểm chuẩn NEU?'), null)
   assert.equal(phanTichLenh('/HELP').lenh.ten, 'help')
   assert.equal(phanTichLenh('/ketthuc').lenh.ten, 'end')
-  assert.deepEqual([phanTichLenh('/model  gpt 4o').lenh.ten, phanTichLenh('/model  gpt 4o').thamSo], ['model', 'gpt 4o'])
+  assert.deepEqual([phanTichLenh('/copy  tất cả').lenh.ten, phanTichLenh('/copy  tất cả').thamSo], ['copy', 'tất cả'])
   assert.equal(phanTichLenh('/abc').lenh, undefined)
   assert.equal(phanTichLenh('/').lenh.ten, 'help')
 })
@@ -28,7 +28,9 @@ test('phân tích lệnh: tên, bí danh tiếng Việt, tham số; tin thườn
 test('gợi ý lệnh theo phần đang gõ, hết gợi ý khi đã gõ tham số', () => {
   assert.deepEqual(goiYLenh('/e').map((l) => l.ten), ['end'])
   assert.ok(goiYLenh('/').length > 5)
-  assert.deepEqual(goiYLenh('/model gpt'), [])
+  assert.deepEqual(goiYLenh('/copy abc'), [])
+  // /model tạm ẩn cùng phần chọn mô hình AI.
+  assert.deepEqual(goiYLenh('/mo'), [{ ...goiYLenh('/moi')[0] }])
   assert.deepEqual(goiYLenh('hỏi'), [])
 })
 
@@ -54,11 +56,10 @@ test('/end lỗi từ server thì trả lời bằng nội dung lỗi, không kh
   assert.equal(state.daKetThuc, false)
 })
 
-test('/model đổi mô hình, cảnh báo khi chưa sẵn sàng; /copy, /new, /retry và lệnh lạ', async () => {
+test('/copy, /new, /retry và lệnh lạ (/model đã tạm ẩn nên là lệnh lạ)', async () => {
   const { state, goi, chay } = boChay()
-  assert.match(await chay('/model'), /Gemini Flash/)
-  assert.match(await chay('/model gpt'), /chưa sẵn sàng/)
-  assert.equal(state.modelId, 'gpt-4o')
+  assert.match(await chay('/model gpt'), /Không có lệnh/)
+  assert.equal(state.modelId, 'gemini-flash')
   assert.match(await chay('/copy', { tinNhan: [{ role: 'user', text: 'Hỏi' }, { role: 'bot', text: 'Đáp' }] }), /2 tin nhắn/)
   assert.equal(goi.saoChep[0], 'Bạn: Hỏi\n\nTrợ lý: Đáp')
   let moi = false

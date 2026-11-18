@@ -29,7 +29,7 @@ def danh_sach_model() -> list[ModelChat]:
     gemini_key_ready = bool(settings.gemini_api_key.strip())
     openai_key_ready = bool(settings.openai_api_key.strip())
 
-    configured_gemini = _normalize_gemini_model(settings.gemini_model.strip() or "gemini-3.5-flash-lite")
+    configured_gemini = _normalize_gemini_model(settings.gemini_model.strip() or "gemini-3.8-flash")
     configured_openai = _normalize_openai_model(settings.openai_model.strip() or "gpt-6-luna")
 
     gemini_ten = (

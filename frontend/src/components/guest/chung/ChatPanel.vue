@@ -15,13 +15,15 @@
     </div>
     <form class="ai-chat__composer" @submit.prevent="submit()">
       <div class="ai-chat__toolbar">
+        <!-- Tạm ẩn chọn mô hình AI: luôn dùng mô hình mặc định (MODEL_MAC_DINH trong stores/chat.js).
         <label>Mô hình AI
           <select v-model="chat.state.modelId" :disabled="chat.state.sending || chat.state.loadingModels" aria-label="Chọn mô hình AI">
             <option v-if="!chat.state.models.length" value="">{{ chat.state.loadingModels ? 'Đang tải…' : 'Chưa có model' }}</option>
             <option v-for="model in chat.state.models" :key="model.id" :value="model.id">{{ model.ten }}{{ model.san_sang ? '' : ' · Chưa sẵn sàng' }}</option>
           </select>
         </label>
-        <button v-if="!chat.state.models.length && !chat.state.loadingModels" type="button" @click="chat.loadModels">Tải lại</button>
+        -->
+        <button v-if="!chat.state.models.length && !chat.state.loadingModels" type="button" @click="chat.loadModels">Tải lại trợ lý</button>
         <button type="button" :disabled="!hasUser && !chat.state.sending" @click="chat.clear">Hội thoại mới</button>
       </div>
       <div class="ai-chat__composer-row">
@@ -92,7 +94,7 @@ onMounted(() => { chat.loadModels(); chat.kiemTraPhien(); scroll(); if (props.co
   button { border:1px solid #c9ddd1; border-radius:8px; padding:6px 10px; background:#fff; color:#215b3d; cursor:pointer; }
   button:disabled { opacity:.5; cursor:not-allowed; }
   button:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible { outline:2px solid #237b51; outline-offset:2px; }
-  &__toolbar { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  &__toolbar { display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; }
   &__toolbar label { display:flex; align-items:center; gap:8px; margin:0; }
   select { max-width:260px; padding:6px; border:1px solid #c9ddd1; border-radius:6px; background:#fff; color:inherit; }
   &__thread { display:flex; flex-direction:column; gap:16px; padding:18px; overflow-y:auto; flex:1; min-height:0; overscroll-behavior:contain; }
