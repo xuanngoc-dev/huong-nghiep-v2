@@ -9,11 +9,12 @@ Các hàm nhận Session để test được; nơi gọi tự commit. Lỗi khi 
 import uuid
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import case, select, update
 from sqlalchemy.orm import Session
 
 from app.models.chat_conversations import ChatConversation
 from app.models.chat_messages import ChatMessage
+from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
 
 _DO_DAI_TIEU_DE = 120
 DANG_HOAT_DONG = "dang_hoat_dong"
@@ -111,6 +112,49 @@ def luu_cau_hoi(
     return phien
 
 
+class HetToken(Exception):
+    """Thành viên đã hết token AI (chỉ khi bật CHAT_YEU_CAU_TOKEN): không hỏi AI, nơi gọi mời nạp gói token."""
+
+
+def kiem_tra_token(db: Session, user_id: int | None) -> None:
+    """Thành viên còn token khả dụng thì cho hỏi; hết thì raise HetToken. Khách vãng lai không có tài khoản token."""
+    if user_id is None:
+        return
+    con_lai = db.scalar(
+        select(NguoiDungThongTin.so_luong_token_kha_dung).where(NguoiDungThongTin.nguoi_dung_id == user_id)
+    )
+    if not con_lai or con_lai <= 0:
+        raise HetToken(user_id)
+
+
+def tong_token(usage: dict | None) -> int:
+    """Tổng token một lần gọi AI: dùng tổng nhà cung cấp trả về (gồm cả token suy luận của Gemini) nếu có."""
+    usage = usage or {}
+    tong = usage.get("total_tokens") or usage.get("totalTokenCount")
+    if tong:
+        return int(tong)
+    vao, ra = _so_token(usage)
+    return (vao or 0) + (ra or 0)
+
+
+def tru_token(db: Session, user_id: int | None, so_token: int) -> None:
+    """Sau một lượt trả lời của thành viên: cộng token đã dùng, trừ token khả dụng (không xuống dưới 0).
+
+    Cập nhật bằng một câu UPDATE để hai lượt chat đồng thời không ghi đè số dư của nhau.
+    """
+    if user_id is None or so_token <= 0:
+        return
+    kha_dung = NguoiDungThongTin.so_luong_token_kha_dung
+    db.execute(
+        update(NguoiDungThongTin)
+        .where(NguoiDungThongTin.nguoi_dung_id == user_id)
+        .values(
+            so_luong_token_da_dung=NguoiDungThongTin.so_luong_token_da_dung + so_token,
+            so_luong_token_kha_dung=case((kha_dung > so_token, kha_dung - so_token), else_=0),
+        )
+    )
+
+
 def _so_token(usage: dict | None) -> tuple[int | None, int | None]:
     """Số token vào / ra theo cách đặt tên của từng nhà cung cấp (OpenAI, Gemini, Anthropic)."""
     usage = usage or {}
@@ -129,12 +173,18 @@ def luu_tra_loi(
     usage: dict | None,
     thoi_gian_ms: int | None,
     loi: str | None = None,
+    usage_lap_ke_hoach: dict | None = None,
 ) -> ChatMessage | None:
-    """Ghi câu trả lời của bot (kể cả trả lời dở / lỗi) vào phiên `phien_id`."""
+    """Ghi câu trả lời của bot (kể cả trả lời dở / lỗi) vào phiên `phien_id`.
+
+    Phiên của thành viên: trừ token khả dụng / cộng token đã dùng bằng tổng token lượt này (bước lập kế hoạch
+    tra cứu + bước trả lời). so_token_vao / so_token_ra của tin nhắn chỉ ghi bước trả lời như trước.
+    """
     phien = db.get(ChatConversation, phien_id)
     if phien is None:
         return None
     vao, ra = _so_token(usage)
+    tru_token(db, phien.user_id, tong_token(usage) + tong_token(usage_lap_ke_hoach))
     return _them_tin_nhan(
         db,
         phien,

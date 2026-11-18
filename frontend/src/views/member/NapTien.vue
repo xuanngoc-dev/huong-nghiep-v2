@@ -92,7 +92,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { ChatDotRound, Coin, EditPen, Search } from '@element-plus/icons-vue'
+import { ChatDotRound, Coin, Cpu, EditPen, Search } from '@element-plus/icons-vue'
 import ThanhToanDialog from '@/components/member/ThanhToanDialog.vue'
 import XacNhanGoiDialog from '@/components/member/XacNhanGoiDialog.vue'
 import { fetchGoiCuocDangBan } from '@/api/cauHinhGoiCuoc'
@@ -108,6 +108,7 @@ const LOAI = [
   { key: 'tra_cuu', tenTab: 'Tra cứu', nhanSoDu: 'Lượt tra cứu', truongSoDu: 'luot_tra_cuu', donVi: 'lượt tra cứu', icon: Search },
   { key: 'hoi_dap', tenTab: 'Hỏi đáp', nhanSoDu: 'Lượt hỏi đáp', truongSoDu: 'luot_hoi_dap', donVi: 'lượt hỏi đáp', icon: ChatDotRound },
   { key: 'khao_sat', tenTab: 'Khảo sát', nhanSoDu: 'Lượt khảo sát', truongSoDu: 'luot_khao_sat', donVi: 'lượt khảo sát', icon: EditPen },
+  { key: 'token', tenTab: 'Token AI', nhanSoDu: 'Token AI', truongSoDu: 'so_luong_token_kha_dung', donVi: 'token', icon: Cpu },
 ]
 const KEYS = LOAI.map((item) => item.key)
 
@@ -293,7 +294,7 @@ onMounted(() => {
 /* Card số dư */
 .so-du {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 8px;
 }
@@ -324,6 +325,11 @@ onMounted(() => {
 .so-du__card--khao_sat {
   --so-du-color: #7a3fb0;
   --so-du-bg: #f4ecfb;
+}
+
+.so-du__card--token {
+  --so-du-color: #0f766e;
+  --so-du-bg: #e6f6f4;
 }
 
 .so-du__icon {
@@ -440,6 +446,13 @@ onMounted(() => {
   color: #0c5c34;
   font-size: 20px;
   font-weight: 700;
+}
+
+/* 5 thẻ số dư: 5 cột khi đủ rộng, rồi 3, rồi 2. */
+@media (max-width: 1280px) {
+  .so-du {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 991px) {

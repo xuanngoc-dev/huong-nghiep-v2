@@ -291,3 +291,16 @@ test('tin nhắn lệnh cục bộ không gửi kèm lịch sử và không bị
   assert.equal(payloads[1].cau_hoi, 'Câu hỏi thật')
   assert.ok(payloads[1].lich_su.every(m => m.noi_dung !== '/help' && m.noi_dung !== 'Danh sách lệnh'))
 })
+
+test('hết token AI (402): báo ở thanh lỗi, vẫn gửi lại được sau khi nạp', async () => {
+  let calls = 0
+  const { state, session } = fixture(async () => {
+    calls++
+    throw Object.assign(new Error('Bạn đã dùng hết token AI.'), { status: 402 })
+  })
+  await session.send('Hỏi')
+  assert.equal(state.error, 'Bạn đã dùng hết token AI.')
+  assert.ok(!state.daKetThuc)
+  await session.send('Hỏi lại')
+  assert.equal(calls, 2)
+})

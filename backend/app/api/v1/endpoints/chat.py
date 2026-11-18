@@ -24,6 +24,8 @@ logger = logging.getLogger(__name__)
 
 # 409: frontend dựa vào mã này để khóa ô nhập và mời mở hội thoại mới.
 PHIEN_DA_KET_THUC = "Cuộc hội thoại này đã kết thúc. Vui lòng bắt đầu hội thoại mới để tiếp tục hỏi đáp."
+# 402: thành viên hết token AI (chỉ khi bật CHAT_YEU_CAU_TOKEN).
+HET_TOKEN = "Bạn đã dùng hết token AI. Vui lòng nạp thêm gói Token AI tại Tài khoản → Nạp tiền để tiếp tục hỏi đáp."
 
 
 def _nguoi_hoi(credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme)) -> int | None:
@@ -46,7 +48,7 @@ def _ghi(ham, *args, **kwargs):
         ket_qua = ham(db, *args, **kwargs)
         db.commit()
         return ket_qua
-    except luu_chat.PhienDaKetThuc:
+    except (luu_chat.PhienDaKetThuc, luu_chat.HetToken):
         db.rollback()
         raise
     except Exception:
@@ -58,6 +60,8 @@ def _ghi(ham, *args, **kwargs):
 
 
 def _luu_cau_hoi(db, payload: HoiChatRequest, user_id: int | None) -> tuple[int, str]:
+    if settings.chat_yeu_cau_token:
+        luu_chat.kiem_tra_token(db, user_id)
     phien = luu_chat.luu_cau_hoi(
         db, payload.ma_phien, user_id, payload.ma_khach_vang_lai, payload.cau_hoi, payload.model_id
     )
@@ -65,14 +69,19 @@ def _luu_cau_hoi(db, payload: HoiChatRequest, user_id: int | None) -> tuple[int,
 
 
 async def _mo_phien(payload: HoiChatRequest, user_id: int | None) -> tuple[int, str] | None:
-    """(id, mã) của phiên vừa ghi câu hỏi; None nếu không lưu được. Phiên đã kết thúc thì trả 409, không hỏi AI."""
+    """(id, mã) của phiên vừa ghi câu hỏi; None nếu không lưu được.
+
+    Phiên đã kết thúc thì 409, thành viên hết token (khi bật CHAT_YEU_CAU_TOKEN) thì 402; cả hai không hỏi AI.
+    """
     try:
         return await anyio.to_thread.run_sync(partial(_ghi, _luu_cau_hoi, payload, user_id))
     except luu_chat.PhienDaKetThuc:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=PHIEN_DA_KET_THUC) from None
+    except luu_chat.HetToken:
+        raise HTTPException(status_code=status.HTTP_402_PAYMENT_REQUIRED, detail=HET_TOKEN) from None
 
 
-async def _luu_tra_loi(phien, *, tra_loi, model_ai, nguon, usage, started, loi) -> None:
+async def _luu_tra_loi(phien, *, tra_loi, model_ai, nguon, usage, started, loi, usage_lap_ke_hoach=None) -> None:
     if phien is None:
         return
     await anyio.to_thread.run_sync(
@@ -86,6 +95,7 @@ async def _luu_tra_loi(phien, *, tra_loi, model_ai, nguon, usage, started, loi) 
             usage=usage,
             thoi_gian_ms=round((perf_counter() - started) * 1000),
             loi=loi,
+            usage_lap_ke_hoach=usage_lap_ke_hoach,
         )
     )
 
@@ -197,6 +207,7 @@ async def post_hoi_stream(payload: HoiChatRequest, user_id: int | None = Depends
                     model_ai=(xong or {}).get("model_id") or prepared.model.id,
                     nguon=(xong or {}).get("nguon"),
                     usage=prepared.usage,
+                    usage_lap_ke_hoach=prepared.planning_usage,
                     started=started,
                     loi=loi,
                 )

@@ -51,6 +51,9 @@ class Settings(BaseSettings):
     chat_detail_context_max_chars: int = Field(default=100_000, ge=4_000, le=300_000)
     chat_planning_timeout_seconds: int = Field(default=20, ge=3, le=60)
     chat_score_margin: float = Field(default=1.0, ge=0, le=100)
+    # Chat luôn trừ token khả dụng / cộng token đã dùng của thành viên sau mỗi lượt trả lời. True: thành viên hết
+    # token thì không hỏi được (402, mời nạp gói token); khách vãng lai không bị chặn. Env: CHAT_YEU_CAU_TOKEN.
+    chat_yeu_cau_token: bool = False
     # Tìm trường phù hợp: False chỉ dùng dm_nganh_hoc_theo_truong; True giữ thêm điều kiện
     # trường có ngành trong đề án/phương thức tuyển sinh cùng năm. Env: TIM_TRUONG_KET_HOP_PHUONG_THUC.
     tim_truong_ket_hop_phuong_thuc: bool = False

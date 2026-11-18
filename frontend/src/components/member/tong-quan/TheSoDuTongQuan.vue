@@ -33,7 +33,7 @@
  * khảo sát. Nút "+" mở trang nạp tiền đúng tab.
  */
 import { useRouter } from 'vue-router'
-import { ChatDotRound, Coin, EditPen, Plus, Search } from '@element-plus/icons-vue'
+import { ChatDotRound, Coin, Cpu, EditPen, Plus, Search } from '@element-plus/icons-vue'
 import { hienSo } from '@/data/napTien'
 
 defineProps({
@@ -49,6 +49,7 @@ const THE = [
   { truong: 'luot_tra_cuu', loai: 'tra_cuu', nhan: 'Lượt tra cứu', donVi: 'lượt', icon: Search },
   { truong: 'luot_hoi_dap', loai: 'hoi_dap', nhan: 'Lượt hỏi đáp', donVi: 'lượt', icon: ChatDotRound },
   { truong: 'luot_khao_sat', loai: 'khao_sat', nhan: 'Lượt khảo sát', donVi: 'lượt', icon: EditPen },
+  { truong: 'so_luong_token_kha_dung', loai: 'token', nhan: 'Token AI', donVi: 'token', icon: Cpu },
 ]
 
 const router = useRouter()
@@ -58,7 +59,7 @@ const router = useRouter()
 .so-du-tong-quan {
   container-type: inline-size;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -89,6 +90,11 @@ const router = useRouter()
 .so-du-the--khao_sat {
   --the-mau: #7a3fb0;
   --the-nen: #f4ecfb;
+}
+
+.so-du-the--token {
+  --the-mau: #0f766e;
+  --the-nen: #e6f6f4;
 }
 
 .so-du-the__icon {
@@ -131,6 +137,13 @@ const router = useRouter()
   position: absolute;
   top: 8px;
   right: 8px;
+}
+
+/* 5 thẻ: 5 cột khi đủ rộng, rồi 3, rồi 2. */
+@container (max-width: 1100px) {
+  .so-du-tong-quan {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @container (max-width: 860px) {

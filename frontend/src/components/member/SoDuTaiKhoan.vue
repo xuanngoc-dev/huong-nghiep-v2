@@ -46,7 +46,7 @@
  */
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { ChatDotRound, Coin, EditPen, Search, Tickets, Wallet } from '@element-plus/icons-vue'
+import { ChatDotRound, Coin, Cpu, EditPen, Search, Tickets, Wallet } from '@element-plus/icons-vue'
 import { fetchHoSo } from '@/api/hoSo'
 import { fetchLuotTimTruong } from '@/api/timTruongPhuHop'
 import { useIsMobile } from '@/composables/useResponsiveSize'
@@ -58,6 +58,7 @@ const SO_DU = [
   { truong: 'luot_tra_cuu', nhan: 'Lượt tra cứu', icon: Search },
   { truong: 'luot_hoi_dap', nhan: 'Lượt hỏi đáp', icon: ChatDotRound },
   { truong: 'luot_khao_sat', nhan: 'Lượt khảo sát', icon: EditPen },
+  { truong: 'so_luong_token_kha_dung', nhan: 'Token AI', icon: Cpu },
 ]
 
 const router = useRouter()

@@ -195,6 +195,8 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
         state.daKetThuc = true
         state.suggestions = []
       }
+      // 402: thành viên hết token AI (server bật CHAT_YEU_CAU_TOKEN) — báo ở thanh lỗi, mời nạp gói token.
+      if (error?.status === 402) state.error = error.message
       const bot = state.messages.find(m => m.id === botId)
       if (bot) {
         bot.status = requestController.signal.aborted ? 'cancelled' : 'error'
