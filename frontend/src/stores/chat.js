@@ -4,12 +4,13 @@ import { hoiChatStream, layDanhSachModel } from '@/api/chat'
 import { fetchHoSo } from '@/api/hoSo'
 import { createChatSession, newConversation } from '@/utils/chatSession'
 import { clearHoSoCache, loadHoSo, toChatProfile } from '@/utils/hoSoCache'
+import { maThietBi } from '@/utils/maThietBi'
 import { useAuthStore } from '@/stores/auth'
 
 export const useChatStore = defineStore('chat', () => {
   const auth = useAuthStore()
   const state = reactive({ messages: newConversation(), draft: '', sending: false, models: [], modelId: '',
-    suggestions: [], error: '', loadingModels: false, storageWarning: '', context: null })
+    suggestions: [], error: '', loadingModels: false, storageWarning: '', context: null, maPhien: null })
   const key = () => `huong-nghiep-chat-v2:${auth.user?.id || 'guest'}`
   function warmProfile() {
     const userId = auth.user?.id
@@ -25,7 +26,8 @@ export const useChatStore = defineStore('chat', () => {
       return null
     }
   }
-  const session = createChatSession(state, { stream: hoiChatStream, storage: localStorage, storageKey: key, loadProfile })
+  const session = createChatSession(state, { stream: hoiChatStream, storage: localStorage, storageKey: key, loadProfile,
+    guestId: () => (auth.isAuthenticated ? null : maThietBi()) })
   session.restore()
   const model = computed(() => state.models.find(m => m.id === state.modelId))
   let loading = null

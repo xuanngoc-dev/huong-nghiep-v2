@@ -91,6 +91,10 @@ class HoiChatRequest(BaseModel):
     lich_su: list[TinNhan] = Field(default_factory=list, max_length=50)
     ngu_canh: NguCanhChat | None = None
     ho_so: HoSoChat | None = None
+    # Mã phiên hội thoại (UUID, chat_conversations.ma_dinh_danh); trống hoặc không hợp lệ thì server tạo phiên mới.
+    ma_phien: str | None = Field(default=None, max_length=36)
+    # Mã thiết bị của khách vãng lai (chưa đăng nhập).
+    ma_khach_vang_lai: str | None = Field(default=None, max_length=64)
 
     @model_validator(mode="after")
     def check_history_budget(self):
@@ -122,3 +126,5 @@ class HoiChatResponse(BaseModel):
     goi_y: list[str] = Field(default_factory=list)
     ghi_chu: list[str] = Field(default_factory=list)
     ngu_canh: NguCanhChat | None = None
+    # Mã phiên hội thoại đã lưu; frontend gửi lại ở câu hỏi tiếp theo để cùng một phiên.
+    ma_phien: str | None = None

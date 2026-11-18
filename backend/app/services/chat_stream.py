@@ -65,6 +65,8 @@ class PreparedChat:
     messages: list[dict]
     started: float = field(default_factory=perf_counter)
     planning_usage: dict = field(default_factory=dict)
+    # Số token của lượt trả lời, gán khi events() kết thúc (dùng để lưu tin nhắn).
+    usage: dict = field(default_factory=dict)
 
 
 def _profile_note(profile: HoSoChat | None) -> str:
@@ -298,6 +300,7 @@ async def events(prepared: PreparedChat):
         logger.error("chat failure=%s", type(exc).__name__)
         yield "error", {"message": "Không thể hoàn thành câu trả lời. Vui lòng thử lại."}
     finally:
+        prepared.usage = usage
         logger.info("chat provider=%s model=%s sources=%s elapsed_ms=%.0f usage=%s planning_usage=%s", prepared.model.provider,
                     metadata.model_id, len(result.sources), (perf_counter() - started) * 1000,
                     json.dumps(usage), json.dumps(prepared.planning_usage))

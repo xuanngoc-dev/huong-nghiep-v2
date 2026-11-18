@@ -211,3 +211,35 @@ test('Markdown renders tables and keeps HTML and javascript inert', async () => 
   assert.doesNotMatch(html, /href="javascript:/)
   assert.match(html, /noopener noreferrer/)
 })
+
+test('mã phiên từ server được gửi lại ở câu sau và bỏ khi mở hội thoại mới', async () => {
+  const payloads = []
+  const { state, session, data } = fixture(async (payload, options) => {
+    payloads.push(payload)
+    options.onEvent('meta', { ma_phien: 'phien-1' })
+    options.onEvent('done', { tra_loi: 'OK', ma_phien: 'phien-1' })
+  })
+  await session.send('Câu 1')
+  await session.send('Câu 2')
+  assert.deepEqual(payloads.map(p => p.ma_phien), [null, 'phien-1'])
+  assert.equal(JSON.parse(data.get('test')).maPhien, 'phien-1')
+  session.clear()
+  assert.equal(state.maPhien, null)
+  await session.send('Câu 3')
+  assert.equal(payloads[2].ma_phien, null)
+})
+
+test('khách gửi kèm mã thiết bị', async () => {
+  let payload
+  const data = new Map()
+  const state = { messages: newConversation(), modelId: 'm', models: [{ id: 'm', ten: 'M', san_sang: true }],
+    draft: '', sending: false, error: '', suggestions: [], storageWarning: '' }
+  const session = createChatSession(state, {
+    stream: async (p) => { payload = p },
+    storage: { getItem: k => data.get(k), setItem: (k, v) => data.set(k, v) },
+    storageKey: () => 'test',
+    guestId: () => 'thiet-bi-1',
+  })
+  await session.send('Xin chào')
+  assert.equal(payload.ma_khach_vang_lai, 'thiet-bi-1')
+})

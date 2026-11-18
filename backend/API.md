@@ -1,6 +1,6 @@
 # Danh sách API
 
-Tự sinh từ code lúc 18/11/2026 08:14 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 18/11/2026 09:03 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
 Tiền tố chung: `/api/v1`. Tổng cộng **308** API.
 
@@ -621,8 +621,8 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/chat/hoi` | Không | Hỏi đáp dựa trên các file json/txt trong thư mục tài liệu. |
-| `POST` | `/api/v1/chat/hoi/stream` | Không | — |
+| `POST` | `/api/v1/chat/hoi` | Không | Hỏi đáp dựa trên các file json/txt trong thư mục tài liệu; câu hỏi và câu trả lời được lưu vào phiên chat. |
+| `POST` | `/api/v1/chat/hoi/stream` | Không | Hỏi đáp dạng stream (SSE). Sự kiện `meta` có `ma_phien` để frontend gửi lại ở câu hỏi sau. |
 | `GET` | `/api/v1/chat/model` | Không | Danh sách model hỏi đáp và trạng thái đã có API key. |
 | `GET` | `/api/v1/chat/nguon/{ten}` | Không | Nguồn dữ liệu công khai dùng để đối chiếu câu trả lời tuyển sinh. |
 

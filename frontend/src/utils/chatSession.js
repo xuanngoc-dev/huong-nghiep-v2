@@ -2,7 +2,9 @@ export const WELCOME = 'Xin chào! Mình có thể giúp bạn tra cứu ngành 
 export const newConversation = () => [{ id: 'welcome', role: 'bot', text: WELCOME, status: 'done', sources: [], notes: [] }]
 
 /** One request owner per shared conversation; stale requests cannot update a new conversation. */
-export function createChatSession(state, { stream, storage, storageKey, loadProfile }) {
+// state.maPhien: mã phiên hội thoại phía server (chat_conversations.ma_dinh_danh), nhận ở sự kiện meta/done của câu hỏi
+// đầu và gửi lại ở các câu sau để cùng một phiên; hội thoại mới thì bỏ. guestId(): mã thiết bị khi là khách.
+export function createChatSession(state, { stream, storage, storageKey, loadProfile, guestId }) {
   let controller = null
   let revision = 0
   let saveTimer = null
@@ -11,6 +13,7 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
     clearTimeout(saveTimer)
     try {
       storage.setItem(storageKey(), JSON.stringify({ version: 2, modelId: state.modelId, draft: state.draft, context: state.context,
+        ...(state.maPhien ? { maPhien: state.maPhien } : {}),
         messages: state.messages.slice(-100).map(m => ({ ...m, status: m.status === 'streaming' ? 'cancelled' : m.status })) }))
       state.storageWarning = ''
     } catch {
@@ -23,6 +26,7 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
     state.draft = ''
     state.modelId = ''
     state.context = null
+    state.maPhien = null
     state.suggestions = []
     state.error = ''
     try {
@@ -32,6 +36,7 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
       state.messages = valid.length ? valid.map(m => ({ ...m, status: m.status === 'streaming' ? 'cancelled' : m.status,
         sources: Array.isArray(m.sources) ? m.sources : [], notes: Array.isArray(m.notes) ? m.notes : [] })) : newConversation()
       state.modelId = typeof saved.modelId === 'string' ? saved.modelId : ''
+      if (typeof saved.maPhien === 'string' && saved.maPhien.length <= 36) state.maPhien = saved.maPhien
       state.draft = typeof saved.draft === 'string' ? saved.draft.slice(0, 4000) : ''
       if (saved.context && typeof saved.context === 'object' && !Array.isArray(saved.context)) {
         state.context = {
@@ -69,6 +74,7 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
     state.messages = newConversation()
     state.draft = ''
     state.context = null
+    state.maPhien = null
     persist()
   }
   async function send(input, retry = false) {
@@ -118,7 +124,10 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
       }
     }
     if (owner !== revision) return
-    const payload = { cau_hoi: text, model_id: model.id, lich_su: history, ngu_canh: state.context || null }
+    const payload = { cau_hoi: text, model_id: model.id, lich_su: history, ngu_canh: state.context || null,
+      ma_phien: state.maPhien || null }
+    const maKhach = typeof guestId === 'function' ? guestId() : null
+    if (maKhach) payload.ma_khach_vang_lai = maKhach
     if (hoSo) payload.ho_so = hoSo
     try {
       await stream(payload, {
@@ -129,6 +138,7 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
           const bot = state.messages.find(m => m.id === botId)
           if (!bot) return
           if (event === 'meta' || event === 'done') {
+            if (typeof data.ma_phien === 'string' && data.ma_phien) state.maPhien = data.ma_phien
             if (data.ngu_canh && typeof data.ngu_canh === 'object') state.context = data.ngu_canh
             bot.sources = data.nguon || []
             bot.notes = data.ghi_chu || []
