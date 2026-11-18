@@ -91,3 +91,17 @@ class DmNhomTinhCachHollandDeleteMany(BaseModel):
 
 class DmNhomTinhCachHollandDeleteManyResult(BaseModel):
     deleted: int
+
+
+class DmNhomTinhCachHollandTrangThai(BaseModel):
+    trang_thai: int = Field(..., ge=0, le=1)
+
+
+class DmNhomTinhCachHollandTrangThaiMany(DmNhomTinhCachHollandDeleteMany):
+    """Đổi trạng thái nhiều nhóm theo danh sách id (cùng cách kiểm tra ids như xóa nhiều)."""
+
+    trang_thai: int = Field(..., ge=0, le=1)
+
+
+class DmNhomTinhCachHollandTrangThaiManyResult(BaseModel):
+    updated: int

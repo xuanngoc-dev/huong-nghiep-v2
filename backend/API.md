@@ -1,14 +1,14 @@
 # Danh sách API
 
-Tự sinh từ code lúc 18/11/2026 08:11 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 18/11/2026 08:14 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **306** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **308** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 179 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Quản trị (admin)](#quan_tri) | 181 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
 | [Thành viên (user)](#thanh_vien) | 79 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 48 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
@@ -159,8 +159,10 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `POST` | `/api/v1/danh-muc/nhom-tinh-cach-holland` | Bắt buộc (admin) | Thêm một nhóm tính cách Holland. Từ chối nếu mã nhóm đã tồn tại. |
 | `DELETE` | `/api/v1/danh-muc/nhom-tinh-cach-holland` | Bắt buộc (admin) | Xóa nhiều nhóm tính cách Holland theo danh sách id. |
 | `POST` | `/api/v1/danh-muc/nhom-tinh-cach-holland/bulk` | Bắt buộc (admin) | Thêm nhiều nhóm Holland cùng lúc. Từ chối nếu mã nhóm trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PATCH` | `/api/v1/danh-muc/nhom-tinh-cach-holland/trang-thai` | Bắt buộc (admin) | Bật/tắt nhiều nhóm tính cách Holland cùng lúc. Id không tồn tại thì bỏ qua. |
 | `PUT` | `/api/v1/danh-muc/nhom-tinh-cach-holland/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một nhóm tính cách Holland theo id. |
 | `DELETE` | `/api/v1/danh-muc/nhom-tinh-cach-holland/{item_id}` | Bắt buộc (admin) | Xóa một nhóm tính cách Holland theo id. |
+| `PATCH` | `/api/v1/danh-muc/nhom-tinh-cach-holland/{item_id}/trang-thai` | Bắt buộc (admin) | Bật/tắt nhanh một nhóm tính cách Holland, giữ nguyên các thông tin khác. |
 
 ### `danh-muc/phuong-thuc-tuyen-sinh`
 

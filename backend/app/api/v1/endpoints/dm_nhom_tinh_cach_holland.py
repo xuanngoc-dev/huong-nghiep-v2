@@ -13,6 +13,9 @@ from app.schemas.dm_nhom_tinh_cach_holland import (
     DmNhomTinhCachHollandDeleteManyResult,
     DmNhomTinhCachHollandPage,
     DmNhomTinhCachHollandPublic,
+    DmNhomTinhCachHollandTrangThai,
+    DmNhomTinhCachHollandTrangThaiMany,
+    DmNhomTinhCachHollandTrangThaiManyResult,
     DmNhomTinhCachHollandWrite,
 )
 
@@ -175,6 +178,35 @@ def update_nhom_tinh_cach_holland(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Mã nhóm đã tồn tại",
         ) from None
+    db.refresh(item)
+    return item
+
+
+@router.patch("/trang-thai", response_model=DmNhomTinhCachHollandTrangThaiManyResult)
+def update_trang_thai_nhom_tinh_cach_holland_many(
+    payload: DmNhomTinhCachHollandTrangThaiMany,
+    db: Session = Depends(get_db),
+    _: NguoiDung = Depends(get_admin_user),
+) -> DmNhomTinhCachHollandTrangThaiManyResult:
+    """Bật/tắt nhiều nhóm tính cách Holland cùng lúc. Id không tồn tại thì bỏ qua."""
+    items = db.scalars(select(DmNhomTinhCachHolland).where(DmNhomTinhCachHolland.id.in_(payload.ids))).all()
+    for item in items:
+        item.trang_thai = payload.trang_thai
+    db.commit()
+    return DmNhomTinhCachHollandTrangThaiManyResult(updated=len(items))
+
+
+@router.patch("/{item_id}/trang-thai", response_model=DmNhomTinhCachHollandPublic)
+def update_trang_thai_nhom_tinh_cach_holland(
+    item_id: int,
+    payload: DmNhomTinhCachHollandTrangThai,
+    db: Session = Depends(get_db),
+    _: NguoiDung = Depends(get_admin_user),
+) -> DmNhomTinhCachHolland:
+    """Bật/tắt nhanh một nhóm tính cách Holland, giữ nguyên các thông tin khác."""
+    item = _get_or_400(db, item_id)
+    item.trang_thai = payload.trang_thai
+    db.commit()
     db.refresh(item)
     return item
 
