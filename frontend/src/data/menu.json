@@ -487,6 +487,31 @@
       ]
     },
     {
+      "header": "HỘI THOẠI",
+      "tooltip": "Trò chuyện với trợ lý tư vấn tuyển sinh, hướng nghiệp",
+      "abbr": "HT",
+      "items": [
+        {
+          "index": "/member/hoi-thoai/moi",
+          "title": "Cuộc hội thoại mới",
+          "tooltip": "Bắt đầu cuộc trò chuyện mới với trợ lý",
+          "icon": "ChatLineRound"
+        },
+        {
+          "index": "/member/hoi-thoai/danh-sach",
+          "title": "Danh sách hội thoại",
+          "tooltip": "Xem lại các cuộc hội thoại đã có với trợ lý",
+          "icon": "ChatDotRound"
+        },
+        {
+          "index": "/member/hoi-thoai/cau-hinh",
+          "title": "Cấu hình",
+          "tooltip": "Thiết lập mô hình AI và tùy chọn hội thoại",
+          "icon": "Setting"
+        }
+      ]
+    },
+    {
       "header": "TÀI KHOẢN",
       "tooltip": "Hồ sơ và thông tin tài khoản",
       "abbr": "TK",

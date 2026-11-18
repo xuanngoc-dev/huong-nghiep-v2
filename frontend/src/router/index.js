@@ -121,6 +121,24 @@ const router = createRouter({
           meta: { title: 'Lịch sử trắc nghiệm', requiresAuth: true },
         },
         {
+          path: 'hoi-thoai/moi',
+          name: 'hoi-thoai-moi',
+          component: () => import('@/views/member/hoi-thoai/HoiThoaiMoi.vue'),
+          meta: { title: 'Cuộc hội thoại mới', requiresAuth: true },
+        },
+        {
+          path: 'hoi-thoai/danh-sach',
+          name: 'danh-sach-hoi-thoai',
+          component: () => import('@/views/member/hoi-thoai/DanhSachHoiThoai.vue'),
+          meta: { title: 'Danh sách hội thoại', requiresAuth: true },
+        },
+        {
+          path: 'hoi-thoai/cau-hinh',
+          name: 'cau-hinh-hoi-thoai',
+          component: () => import('@/views/member/hoi-thoai/CauHinhHoiThoai.vue'),
+          meta: { title: 'Cấu hình hội thoại', requiresAuth: true },
+        },
+        {
           path: 'tai-khoan/thong-tin-ca-nhan',
           name: 'thong-tin-ca-nhan',
           component: () => import('@/views/member/ThongTinCaNhan.vue'),
