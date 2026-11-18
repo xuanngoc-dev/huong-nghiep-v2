@@ -54,6 +54,7 @@ declare module 'vue' {
     CustomTag: typeof import('./components/element/CustomTag.vue')['default']
     CustomTooltip: typeof import('./components/element/CustomTooltip.vue')['default']
     DaCo: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/DaCo.vue')['default']
+    DangSoanTraLoi: typeof import('./components/guest/chung/DangSoanTraLoi.vue')['default']
     DanhSachGanDay: typeof import('./components/member/tong-quan/DanhSachGanDay.vue')['default']
     DiLam: typeof import('./components/guest/doi-tuong/HocSinhThpt/DiLam.vue')['default']
     DinhHuongPlaceholder: typeof import('./components/guest/doi-tuong/HocSinhThpt/DinhHuongPlaceholder.vue')['default']

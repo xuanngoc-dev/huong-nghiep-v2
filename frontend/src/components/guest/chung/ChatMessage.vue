@@ -2,7 +2,7 @@
   <article class="ai-chat__message" :class="[`is-${message.role}`, `is-${message.status}`]">
     <ChatMarkdown v-if="message.role === 'bot'" :text="message.text" />
     <p v-else class="ai-chat__user-text">{{ message.text }}</p>
-    <p v-if="message.status === 'streaming' && !message.text" class="ai-chat__pending" role="status">Đang tìm thông tin và soạn câu trả lời…</p>
+    <DangSoanTraLoi v-if="message.status === 'streaming' && !message.text" class="ai-chat__pending" />
     <p v-if="message.error" class="ai-chat__error" role="status">{{ message.error }}</p>
     <p v-else-if="message.status === 'cancelled' && message.text !== 'Đã dừng trả lời.'" class="ai-chat__muted">Đã dừng trả lời.</p>
     <ul v-if="message.notes?.length" class="ai-chat__notes">
@@ -31,6 +31,7 @@
 <script setup>
 import { ref } from 'vue'
 import ChatMarkdown from './ChatMarkdown.vue'
+import DangSoanTraLoi from './DangSoanTraLoi.vue'
 import { apiAssetUrl } from '@/api/apiUrl'
 import { safeLink } from '@/utils/chatMarkdown'
 
