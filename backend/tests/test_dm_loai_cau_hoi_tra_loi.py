@@ -6,9 +6,19 @@ from pydantic import ValidationError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from app.api.v1.endpoints.dm_loai_cau_hoi import create_loai_cau_hoi, update_loai_cau_hoi
+from app.api.v1.endpoints.dm_loai_cau_hoi import (
+    create_loai_cau_hoi,
+    update_loai_cau_hoi,
+    update_trang_thai_loai_cau_hoi,
+    update_trang_thai_loai_cau_hoi_many,
+)
 from app.models.dm_loai_cau_hoi import DmLoaiCauHoi
-from app.schemas.dm_loai_cau_hoi import DmLoaiCauHoiPublic, DmLoaiCauHoiWrite
+from app.schemas.dm_loai_cau_hoi import (
+    DmLoaiCauHoiPublic,
+    DmLoaiCauHoiTrangThai,
+    DmLoaiCauHoiTrangThaiMany,
+    DmLoaiCauHoiWrite,
+)
 
 
 class LoaiTraLoiTests(unittest.TestCase):
@@ -50,6 +60,22 @@ class LoaiTraLoiTests(unittest.TestCase):
         self.db.commit()
         public = DmLoaiCauHoiPublic.model_validate(item)
         self.assertEqual(public.model_dump()["danh_sach_tieu_de_cau_tra_loi"], [{"tieu_de": "Thích", "diem": None}])
+
+    def test_bat_tat_giu_nguyen_cau_hinh_tra_loi(self):
+        payload = DmLoaiCauHoiWrite(
+            ten_loai_cau_hoi="A",
+            thu_tu_uu_tien=1,
+            loai_tra_loi="tinh_huong",
+            danh_sach_tieu_de_cau_tra_loi=[{"tieu_de": "Có", "diem": 1}],
+        )
+        item = create_loai_cau_hoi(payload, self.db)
+        item = update_trang_thai_loai_cau_hoi(item.id, DmLoaiCauHoiTrangThai(trang_thai=0), self.db)
+        self.assertEqual(
+            (item.trang_thai, item.loai_tra_loi, item.danh_sach_tieu_de_cau_tra_loi),
+            (0, "tinh_huong", [{"tieu_de": "Có", "diem": 1}]),
+        )
+        nhieu = DmLoaiCauHoiTrangThaiMany(ids=[item.id, 999], trang_thai=1)
+        self.assertEqual(update_trang_thai_loai_cau_hoi_many(nhieu, self.db).updated, 1)
 
     def test_tu_choi_loai_tra_loi_la(self):
         with self.assertRaises(ValidationError):

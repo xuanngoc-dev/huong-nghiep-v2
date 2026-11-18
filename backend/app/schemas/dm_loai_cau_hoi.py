@@ -109,3 +109,17 @@ class DmLoaiCauHoiAnhHuongXoa(BaseModel):
     so_cau_hoi: int
     so_dap_an: int
     so_phien: int
+
+
+class DmLoaiCauHoiTrangThai(BaseModel):
+    trang_thai: int = Field(..., ge=0, le=1)
+
+
+class DmLoaiCauHoiTrangThaiMany(DmLoaiCauHoiDeleteMany):
+    """Đổi trạng thái nhiều loại câu hỏi theo danh sách id (cùng cách kiểm tra ids như xóa nhiều)."""
+
+    trang_thai: int = Field(..., ge=0, le=1)
+
+
+class DmLoaiCauHoiTrangThaiManyResult(BaseModel):
+    updated: int

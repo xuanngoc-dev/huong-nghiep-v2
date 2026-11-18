@@ -32,6 +32,31 @@
       <div class="toolbar">
         <h2 class="toolbar__title">Danh sách loại câu hỏi</h2>
         <div class="toolbar__actions">
+          <!-- Bật chỉ áp dụng cho dòng đã chọn đang tắt, Tắt cho dòng đang bật; badge là số dòng sẽ đổi. -->
+          <CustomBadge :value="idsDangTat.length" :hidden="!idsDangTat.length" type="success">
+            <CustomButton
+              type="success"
+              plain
+              :disabled="!idsDangTat.length"
+              :loading="dangDoiNhieu === 1"
+              @click="doiTrangThaiDaChon(1)"
+            >
+              <CustomIcon><CircleCheck /></CustomIcon>
+              Bật
+            </CustomButton>
+          </CustomBadge>
+          <CustomBadge :value="idsDangBat.length" :hidden="!idsDangBat.length" type="warning">
+            <CustomButton
+              type="warning"
+              plain
+              :disabled="!idsDangBat.length"
+              :loading="dangDoiNhieu === 0"
+              @click="doiTrangThaiDaChon(0)"
+            >
+              <CustomIcon><CircleClose /></CustomIcon>
+              Tắt
+            </CustomButton>
+          </CustomBadge>
           <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
             <CustomButton
               type="danger"
@@ -274,10 +299,10 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
 import XacNhanXoaDialog from '@/components/admin/XacNhanXoaDialog.vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   createLoaiCauHoi,
   createLoaiCauHoiBulk,
@@ -286,6 +311,8 @@ import {
   fetchAnhHuongXoaLoaiCauHoi,
   fetchLoaiCauHoi,
   updateLoaiCauHoi,
+  updateTrangThaiLoaiCauHoi,
+  updateTrangThaiLoaiCauHoiMany,
 } from '@/api/loaiCauHoi'
 
 const LOAI_TRA_LOI = [
@@ -354,6 +381,10 @@ const saving = ref(false)
 const deleting = ref(false)
 const rows = ref([])
 const selectedRows = ref([])
+const idsDangBat = computed(() => selectedRows.value.filter((row) => row.trang_thai === 1).map((row) => row.id))
+const idsDangTat = computed(() => selectedRows.value.filter((row) => row.trang_thai !== 1).map((row) => row.id))
+// Trạng thái đang áp dụng cho các dòng đã chọn (1 bật / 0 tắt), null khi không chạy.
+const dangDoiNhieu = ref(null)
 const tableRef = ref()
 const total = ref(0)
 const page = ref(1)
@@ -532,15 +563,7 @@ async function doiTrangThai(row) {
   const moi = row.trang_thai === 1 ? 0 : 1
   dangDoiTrangThai.value = { ...dangDoiTrangThai.value, [row.id]: true }
   try {
-    const data = await updateLoaiCauHoi(row.id, {
-      ten_loai_cau_hoi: row.ten_loai_cau_hoi,
-      thu_tu_uu_tien: row.thu_tu_uu_tien,
-      trang_thai: moi,
-      ghi_chu: row.ghi_chu ?? null,
-      // PUT ghi đè toàn bộ: gửi lại các trường còn lại để bật/tắt không làm mất cấu hình trả lời.
-      loai_tra_loi: row.loai_tra_loi || 'diem_so',
-      danh_sach_tieu_de_cau_tra_loi: row.danh_sach_tieu_de_cau_tra_loi ?? null,
-    })
+    const data = await updateTrangThaiLoaiCauHoi(row.id, moi)
     row.trang_thai = data.trang_thai
     ElMessage.success(moi === 1 ? `Đã bật "${row.ten_loai_cau_hoi}"` : `Đã tắt "${row.ten_loai_cau_hoi}"`)
   } catch (error) {
@@ -550,6 +573,37 @@ async function doiTrangThai(row) {
     dangDoiTrangThai.value = conLai
   }
   return false
+}
+
+async function doiTrangThaiDaChon(trangThai) {
+  const ids = trangThai === 1 ? idsDangTat.value : idsDangBat.value
+  if (!ids.length) return
+  const hanhDong = trangThai === 1 ? 'Bật' : 'Tắt'
+  try {
+    await ElMessageBox.confirm(
+      `${hanhDong} ${ids.length} loại câu hỏi đã chọn đang ${trangThai === 1 ? 'tắt' : 'bật'}?`,
+      `Xác nhận ${hanhDong.toLowerCase()} loại câu hỏi`,
+      {
+        type: 'warning',
+        confirmButtonText: hanhDong,
+        cancelButtonText: 'Hủy',
+        confirmButtonClass: trangThai === 1 ? 'el-button--success' : 'el-button--warning',
+      },
+    )
+  } catch {
+    return
+  }
+  dangDoiNhieu.value = trangThai
+  try {
+    const result = await updateTrangThaiLoaiCauHoiMany(ids, trangThai)
+    ElMessage.success(`Đã ${trangThai === 1 ? 'bật' : 'tắt'} ${result.updated} loại câu hỏi`)
+    clearSelection()
+    await load()
+  } catch (error) {
+    ElMessage.error(errorMessage(error, 'Không đổi được trạng thái các loại câu hỏi đã chọn'))
+  } finally {
+    dangDoiNhieu.value = null
+  }
 }
 
 function fillJsonSample() {

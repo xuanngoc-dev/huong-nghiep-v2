@@ -14,6 +14,9 @@ from app.schemas.dm_loai_cau_hoi import (
     DmLoaiCauHoiDeleteManyResult,
     DmLoaiCauHoiPage,
     DmLoaiCauHoiPublic,
+    DmLoaiCauHoiTrangThai,
+    DmLoaiCauHoiTrangThaiMany,
+    DmLoaiCauHoiTrangThaiManyResult,
     DmLoaiCauHoiWrite,
 )
 from app.services import xoa_trac_nghiem
@@ -170,6 +173,35 @@ def update_loai_cau_hoi(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Thứ tự ưu tiên đã tồn tại",
         ) from None
+    db.refresh(item)
+    return item
+
+
+@router.patch("/trang-thai", response_model=DmLoaiCauHoiTrangThaiManyResult)
+def update_trang_thai_loai_cau_hoi_many(
+    payload: DmLoaiCauHoiTrangThaiMany,
+    db: Session = Depends(get_db),
+    _: NguoiDung = Depends(get_admin_user),
+) -> DmLoaiCauHoiTrangThaiManyResult:
+    """Bật/tắt nhiều loại câu hỏi cùng lúc. Id không tồn tại thì bỏ qua."""
+    items = db.scalars(select(DmLoaiCauHoi).where(DmLoaiCauHoi.id.in_(payload.ids))).all()
+    for item in items:
+        item.trang_thai = payload.trang_thai
+    db.commit()
+    return DmLoaiCauHoiTrangThaiManyResult(updated=len(items))
+
+
+@router.patch("/{item_id}/trang-thai", response_model=DmLoaiCauHoiPublic)
+def update_trang_thai_loai_cau_hoi(
+    item_id: int,
+    payload: DmLoaiCauHoiTrangThai,
+    db: Session = Depends(get_db),
+    _: NguoiDung = Depends(get_admin_user),
+) -> DmLoaiCauHoi:
+    """Bật/tắt nhanh một loại câu hỏi, giữ nguyên các thông tin khác."""
+    item = _get_or_400(db, item_id)
+    item.trang_thai = payload.trang_thai
+    db.commit()
     db.refresh(item)
     return item
 
