@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 
 
 class ChatPhienItem(BaseModel):
@@ -55,3 +55,15 @@ class ChatPhienChiTiet(BaseModel):
 class ChatPhienTrangThai(BaseModel):
     # dang_hoat_dong: đang hỏi đáp; da_dong: đã kết thúc; luu_tru: lưu trữ. Hai trạng thái sau không hỏi tiếp được.
     trang_thai: Literal["dang_hoat_dong", "da_dong", "luu_tru"]
+
+
+class ChatPhienDoiTieuDe(BaseModel):
+    tieu_de: str = Field(max_length=255)
+
+    @field_validator("tieu_de")
+    @classmethod
+    def bo_khoang_trang(cls, value: str) -> str:
+        value = " ".join(value.split())
+        if not value:
+            raise ValueError("Vui lòng nhập tiêu đề cuộc hội thoại.")
+        return value

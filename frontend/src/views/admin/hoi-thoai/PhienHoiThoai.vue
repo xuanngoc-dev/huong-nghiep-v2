@@ -129,7 +129,47 @@
         </header>
 
         <div ref="khungTinNhan" v-loading="dangTaiTinNhan" class="hoi-thoai__tin-nhan">
-          <p v-if="phienDangChon.tieu_de" class="hoi-thoai__tieu-de">{{ phienDangChon.tieu_de }}</p>
+          <!-- Tiêu đề phiên, sửa tại chỗ: Enter hoặc nút ✓ để lưu, Esc hoặc nút ✕ để hủy. -->
+          <div class="hoi-thoai__tieu-de">
+            <div v-if="dangSuaTieuDe" class="hoi-thoai__sua-tieu-de">
+              <CustomInput
+                ref="oTieuDe"
+                v-model="tieuDeMoi"
+                size="small"
+                maxlength="255"
+                placeholder="Tiêu đề phiên hội thoại"
+                aria-label="Tiêu đề phiên hội thoại"
+                @keydown.enter.prevent="(event) => luuTieuDe(event.target.value)"
+                @keydown.esc.prevent="huySuaTieuDe"
+              />
+              <CustomTooltip content="Lưu tiêu đề">
+                <CustomButton
+                  size="small"
+                  type="primary"
+                  aria-label="Lưu tiêu đề"
+                  :loading="dangLuuTieuDe"
+                  @click="luuTieuDe()"
+                >
+                  <CustomIcon><Check /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+              <CustomTooltip content="Hủy">
+                <CustomButton size="small" aria-label="Hủy sửa tiêu đề" @click="huySuaTieuDe">
+                  <CustomIcon><Close /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+            </div>
+            <template v-else>
+              <span title="Bấm đúp để sửa tiêu đề" @dblclick="batDauSuaTieuDe">
+                {{ phienDangChon.tieu_de || 'Phiên không tiêu đề' }}
+              </span>
+              <CustomTooltip content="Sửa tiêu đề">
+                <CustomButton link class="hoi-thoai__nut-sua" aria-label="Sửa tiêu đề" @click="batDauSuaTieuDe">
+                  <CustomIcon><EditPen /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+            </template>
+          </div>
           <div
             v-for="nhom in nhomTinNhan"
             :key="nhom.key"
@@ -192,6 +232,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   deletePhienHoiThoai,
+  doiTieuDePhienHoiThoai,
   doiTrangThaiPhienHoiThoai,
   fetchChiTietPhienHoiThoai,
   fetchPhienHoiThoai,
@@ -219,6 +260,10 @@ const tinNhan = ref([])
 const dangTaiTinNhan = ref(false)
 const khungTinNhan = ref(null)
 const dangXuLy = ref('')
+const dangSuaTieuDe = ref(false)
+const dangLuuTieuDe = ref(false)
+const tieuDeMoi = ref('')
+const oTieuDe = ref(null)
 let lanTaiTinNhan = 0
 
 const dangHoatDong = computed(() => phienDangChon.value?.trang_thai === 'dang_hoat_dong')
@@ -325,6 +370,7 @@ function boChon() {
 }
 
 async function moPhien(ma) {
+  dangSuaTieuDe.value = false
   if (!ma) {
     phienDangChon.value = null
     tinNhan.value = []
@@ -385,6 +431,70 @@ async function doiTrangThai(moi, phien = phienDangChon.value) {
   }
 }
 
+async function doiTieuDe(phien, tieuDe) {
+  try {
+    const data = await doiTieuDePhienHoiThoai(phien.ma_dinh_danh, tieuDe)
+    if (phienDangChon.value?.id === data.id) phienDangChon.value = data
+    phienList.value = phienList.value.map((item) => (item.id === data.id ? data : item))
+    ElMessage.success('Đã đổi tiêu đề phiên hội thoại')
+    return true
+  } catch (error) {
+    ElMessage.error(loiApi(error, 'Không đổi được tiêu đề phiên hội thoại'))
+    return false
+  }
+}
+
+function batDauSuaTieuDe() {
+  if (!phienDangChon.value) return
+  tieuDeMoi.value = phienDangChon.value.tieu_de || ''
+  dangSuaTieuDe.value = true
+  nextTick(() => oTieuDe.value?.focus())
+}
+
+// Lưu khi nhấn Enter hoặc bấm nút ✓. Enter truyền giá trị đang hiện trong ô (event.target.value): bộ gõ tiếng Việt
+// (Telex/VNI) chưa chốt chữ đang gõ dở thì v-model vẫn là giá trị cũ, vd. "Hỏi đáp về NEU" bị lưu thành "Hỏi đáp về".
+// Bấm nút ✓ thì ô mất focus trước nên bộ gõ đã chốt chữ, v-model đúng.
+async function luuTieuDe(giaTri = tieuDeMoi.value) {
+  const phien = phienDangChon.value
+  if (!phien || !dangSuaTieuDe.value || dangLuuTieuDe.value) return
+  const tieuDe = String(giaTri).trim()
+  if (!tieuDe) {
+    ElMessage.warning('Vui lòng nhập tiêu đề.')
+    return
+  }
+  if (tieuDe === phien.tieu_de) {
+    dangSuaTieuDe.value = false
+    return
+  }
+  dangLuuTieuDe.value = true
+  // Lỗi thì giữ ô sửa để sửa lại.
+  if (await doiTieuDe(phien, tieuDe)) dangSuaTieuDe.value = false
+  dangLuuTieuDe.value = false
+}
+
+function huySuaTieuDe() {
+  dangSuaTieuDe.value = false
+}
+
+async function doiTenQuaHopThoai(phien) {
+  let tieuDe
+  try {
+    ;({ value: tieuDe } = await ElMessageBox.prompt(`Tiêu đề mới cho phiên của ${tenNguoi(phien)}`, 'Đổi tên', {
+      inputValue: phien.tieu_de || '',
+      inputValidator: (value) => {
+        const t = String(value || '').trim()
+        if (!t) return 'Vui lòng nhập tiêu đề.'
+        return t.length <= 255 || 'Tiêu đề tối đa 255 ký tự.'
+      },
+      confirmButtonText: 'Lưu',
+      cancelButtonText: 'Hủy',
+    }))
+  } catch {
+    return
+  }
+  if (tieuDe.trim() !== phien.tieu_de) await doiTieuDe(phien, tieuDe.trim())
+}
+
 async function xoaPhien(phien = phienDangChon.value) {
   if (!phien || dangXuLy.value) return
   try {
@@ -415,7 +525,10 @@ const menuMoId = ref(null)
 const menuRefs = {}
 
 function thaoTacPhien(phien) {
-  const items = [{ command: 'xem', label: 'Xem hội thoại', icon: 'View' }]
+  const items = [
+    { command: 'xem', label: 'Xem hội thoại', icon: 'View' },
+    { command: 'doi-ten', label: 'Đổi tên', icon: 'EditPen' },
+  ]
   if (phien.trang_thai === 'dang_hoat_dong') {
     items.push({ command: 'da_dong', label: 'Kết thúc hội thoại', icon: 'CircleClose', type: 'warning' })
   } else {
@@ -428,6 +541,7 @@ function thaoTacPhien(phien) {
 
 function thucHien(viec, phien) {
   if (viec === 'xem') chonPhien(phien)
+  else if (viec === 'doi-ten') doiTenQuaHopThoai(phien)
   else if (viec === 'xoa') xoaPhien(phien)
   else doiTrangThai(viec, phien)
 }
@@ -757,11 +871,45 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
 }
 
 .hoi-thoai__tieu-de {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
   margin: 0 auto 16px;
   max-width: 80%;
   color: var(--el-text-color-secondary);
   font-size: 12px;
   text-align: center;
+}
+
+.hoi-thoai__sua-tieu-de {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: min(100%, 460px);
+}
+
+.hoi-thoai__sua-tieu-de :deep(.el-button + .el-button) {
+  margin-left: 0;
+}
+
+/* Nút sửa tiêu đề: hiện rõ khi rê chuột vào tiêu đề; màn hình cảm ứng thì luôn hiện. */
+.hoi-thoai__nut-sua {
+  flex: 0 0 auto;
+  font-size: 12px;
+  opacity: 0.45;
+  transition: opacity 0.15s;
+}
+
+.hoi-thoai__tieu-de:hover .hoi-thoai__nut-sua,
+.hoi-thoai__nut-sua:focus-visible {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .hoi-thoai__nut-sua {
+    opacity: 1;
+  }
 }
 
 .nhom {

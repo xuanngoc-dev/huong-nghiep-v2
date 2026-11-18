@@ -7,6 +7,9 @@ from fastapi import HTTPException
 from app.api.v1.endpoints.chat_hoi_thoai import (
     chi_tiet_hoi_thoai_cua_toi,
     chi_tiet_phien,
+    doi_tieu_de_hoi_thoai_cua_toi,
+    doi_tieu_de_phien,
+    ket_thuc_hoi_thoai_cua_toi,
     danh_sach_hoi_thoai_cua_toi,
     danh_sach_phien,
     doi_trang_thai_phien,
@@ -15,7 +18,7 @@ from app.api.v1.endpoints.chat_hoi_thoai import (
 from app.models.chat_conversations import ChatConversation
 from app.models.chat_messages import ChatMessage
 from app.models.nguoi_dung import NguoiDung
-from app.schemas.chat_hoi_thoai import ChatPhienTrangThai
+from app.schemas.chat_hoi_thoai import ChatPhienDoiTieuDe, ChatPhienTrangThai
 from app.services import luu_chat
 from tests import test_luu_chat as mau
 
@@ -73,6 +76,15 @@ class ChatHoiThoaiApiTests(unittest.TestCase):
         doi_trang_thai_phien(str(p.id), ChatPhienTrangThai(trang_thai="dang_hoat_dong"), self.db)
         self.assertEqual(luu_chat.luu_cau_hoi(self.db, p.ma_dinh_danh, None, "tb1", "Tiếp", "m").id, p.id)
 
+    def test_quan_tri_doi_tieu_de_phien(self):
+        p = luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "Hỏi", "m")
+        self.db.commit()
+        kq = doi_tieu_de_phien(str(p.id), ChatPhienDoiTieuDe(tieu_de=" Khách hỏi  điểm chuẩn "), self.db)
+        self.assertEqual((kq.tieu_de, kq.tin_nhan_cuoi), ("Khách hỏi điểm chuẩn", "Hỏi"))
+        with self.assertRaises(HTTPException) as caught:
+            doi_tieu_de_phien("999", ChatPhienDoiTieuDe(tieu_de="x"), self.db)
+        self.assertEqual(caught.exception.status_code, 400)
+
     def test_xoa_phien_xoa_ca_tin_nhan(self):
         p = luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "Hỏi", "m")
         con_lai = luu_chat.luu_cau_hoi(self.db, None, None, "tb2", "Khác", "m")
@@ -106,6 +118,26 @@ class ChatHoiThoaiApiTests(unittest.TestCase):
         with self.assertRaises(HTTPException) as caught:
             chi_tiet_hoi_thoai_cua_toi(b.ma_dinh_danh, nguoi_a, self.db)
         self.assertEqual(caught.exception.status_code, 400)
+
+    def test_thanh_vien_doi_tieu_de_va_ket_thuc_hoi_thoai_cua_minh(self):
+        a = luu_chat.luu_cau_hoi(self.db, None, 1, None, "Ngành CNTT", "m")
+        b = luu_chat.luu_cau_hoi(self.db, None, 2, None, "Của B", "m")
+        self.db.commit()
+        nguoi_a = self.db.get(NguoiDung, 1)
+        kq = doi_tieu_de_hoi_thoai_cua_toi(a.ma_dinh_danh, ChatPhienDoiTieuDe(tieu_de="  Tìm hiểu   CNTT "), nguoi_a, self.db)
+        self.assertEqual(kq.tieu_de, "Tìm hiểu CNTT")
+        with self.assertRaises(ValueError):
+            ChatPhienDoiTieuDe(tieu_de="   ")
+        with self.assertRaises(HTTPException) as caught:
+            doi_tieu_de_hoi_thoai_cua_toi(b.ma_dinh_danh, ChatPhienDoiTieuDe(tieu_de="x"), nguoi_a, self.db)
+        self.assertEqual(caught.exception.status_code, 400)
+
+        self.assertEqual(ket_thuc_hoi_thoai_cua_toi(a.ma_dinh_danh, nguoi_a, self.db).trang_thai, "da_dong")
+        with self.assertRaises(luu_chat.PhienDaKetThuc):
+            luu_chat.luu_cau_hoi(self.db, a.ma_dinh_danh, 1, None, "Tiếp", "m")
+        self.db.rollback()
+        with self.assertRaises(HTTPException):
+            ket_thuc_hoi_thoai_cua_toi(b.ma_dinh_danh, nguoi_a, self.db)
 
     def test_phien_khong_ton_tai_tra_400(self):
         with self.assertRaises(HTTPException) as caught:

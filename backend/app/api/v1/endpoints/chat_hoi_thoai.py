@@ -12,6 +12,7 @@ from app.models.nguoi_dung import NguoiDung
 from app.services import luu_chat
 from app.schemas.chat_hoi_thoai import (
     ChatPhienChiTiet,
+    ChatPhienDoiTieuDe,
     ChatPhienItem,
     ChatPhienPage,
     ChatPhienTrangThai,
@@ -179,6 +180,16 @@ def doi_trang_thai_phien(
     return _item_cua(db, phien)
 
 
+@router.patch("/phien/{ma_phien}/tieu-de", response_model=ChatPhienItem)
+def doi_tieu_de_phien(ma_phien: str, payload: ChatPhienDoiTieuDe, db: Session = Depends(get_db)) -> ChatPhienItem:
+    """Quản trị đổi tiêu đề một phiên hội thoại (mặc định là câu hỏi đầu tiên của người dùng)."""
+    phien = _phien_or_400(db, ma_phien)
+    phien.tieu_de = payload.tieu_de
+    db.commit()
+    db.refresh(phien)
+    return _item_cua(db, phien)
+
+
 @router.delete("/phien/{ma_phien}", status_code=status.HTTP_204_NO_CONTENT)
 def xoa_phien(ma_phien: str, db: Session = Depends(get_db)) -> Response:
     """Xóa một phiên cùng toàn bộ tin nhắn của phiên."""
@@ -212,6 +223,17 @@ def danh_sach_hoi_thoai_cua_toi(
     return _trang_phien(db, dieu_kien, page, page_size)
 
 
+def _phien_cua_toi_or_400(db: Session, ma_phien: str, nguoi_dung: NguoiDung) -> ChatConversation:
+    """Phiên (theo mã định danh UUID) của thành viên đang đăng nhập; của người khác cũng báo không tìm thấy."""
+    phien = db.scalar(select(ChatConversation).where(ChatConversation.ma_dinh_danh == ma_phien))
+    if phien is None or phien.user_id != nguoi_dung.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy phiên hội thoại có mã = {ma_phien}",
+        )
+    return phien
+
+
 @cua_toi_router.get("/{ma_phien}", response_model=ChatPhienChiTiet)
 def chi_tiet_hoi_thoai_cua_toi(
     ma_phien: str,
@@ -219,10 +241,33 @@ def chi_tiet_hoi_thoai_cua_toi(
     db: Session = Depends(get_db),
 ) -> ChatPhienChiTiet:
     """Toàn bộ tin nhắn một cuộc hội thoại của thành viên đang đăng nhập (`ma_phien` là mã định danh UUID)."""
-    phien = db.scalar(select(ChatConversation).where(ChatConversation.ma_dinh_danh == ma_phien))
-    if phien is None or phien.user_id != nguoi_dung.id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Không tìm thấy phiên hội thoại có mã = {ma_phien}",
-        )
-    return _chi_tiet(db, phien)
+    return _chi_tiet(db, _phien_cua_toi_or_400(db, ma_phien, nguoi_dung))
+
+
+@cua_toi_router.patch("/{ma_phien}/tieu-de", response_model=ChatPhienItem)
+def doi_tieu_de_hoi_thoai_cua_toi(
+    ma_phien: str,
+    payload: ChatPhienDoiTieuDe,
+    nguoi_dung: NguoiDung = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ChatPhienItem:
+    """Thành viên đổi tiêu đề cuộc hội thoại của mình (mặc định là câu hỏi đầu tiên)."""
+    phien = _phien_cua_toi_or_400(db, ma_phien, nguoi_dung)
+    phien.tieu_de = payload.tieu_de
+    db.commit()
+    db.refresh(phien)
+    return _item_cua(db, phien)
+
+
+@cua_toi_router.post("/{ma_phien}/ket-thuc", response_model=ChatPhienItem)
+def ket_thuc_hoi_thoai_cua_toi(
+    ma_phien: str,
+    nguoi_dung: NguoiDung = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ChatPhienItem:
+    """Thành viên tự kết thúc cuộc hội thoại của mình; sau đó không hỏi tiếp được. Đã kết thúc thì giữ nguyên."""
+    phien = _phien_cua_toi_or_400(db, ma_phien, nguoi_dung)
+    luu_chat.ket_thuc_phien(db, phien.ma_dinh_danh, nguoi_dung.id, None)
+    db.commit()
+    db.refresh(phien)
+    return _item_cua(db, phien)

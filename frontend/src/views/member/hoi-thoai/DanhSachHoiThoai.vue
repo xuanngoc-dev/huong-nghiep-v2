@@ -88,12 +88,52 @@
           </CustomButton>
           <span class="avatar avatar--bot">AI</span>
           <div v-if="phienDangChon.moi" class="hoi-thoai__nguoi">
-            <strong>Cuộc hội thoại mới</strong>
-            <span>Đặt câu hỏi đầu tiên để bắt đầu trò chuyện với trợ lý</span>
+            <strong class="hoi-thoai__ten">Cuộc hội thoại mới</strong>
+            <span class="hoi-thoai__phu">Đặt câu hỏi đầu tiên để bắt đầu trò chuyện với trợ lý</span>
           </div>
           <div v-else class="hoi-thoai__nguoi">
-            <strong>{{ phienDangChon.tieu_de || 'Hội thoại không tiêu đề' }}</strong>
-            <span>Bắt đầu {{ gioPhut(phienDangChon.created_at) }} · {{ phienDangChon.so_tin_nhan }} tin nhắn</span>
+            <!-- Sửa tiêu đề tại chỗ: Enter hoặc nút ✓ để lưu, Esc hoặc nút ✕ để hủy. -->
+            <div v-if="dangSuaTieuDe" class="hoi-thoai__sua-tieu-de">
+              <CustomInput
+                ref="oTieuDe"
+                v-model="tieuDeMoi"
+                size="small"
+                maxlength="255"
+                placeholder="Tiêu đề cuộc hội thoại"
+                aria-label="Tiêu đề cuộc hội thoại"
+                @keydown.enter.prevent="(event) => luuTieuDe(event.target.value)"
+                @keydown.esc.prevent="huySuaTieuDe"
+              />
+              <CustomTooltip content="Lưu tiêu đề">
+                <CustomButton
+                  size="small"
+                  type="primary"
+                  aria-label="Lưu tiêu đề"
+                  :loading="dangLuuTieuDe"
+                  @click="luuTieuDe()"
+                >
+                  <CustomIcon><Check /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+              <CustomTooltip content="Hủy">
+                <CustomButton size="small" aria-label="Hủy sửa tiêu đề" @click="huySuaTieuDe">
+                  <CustomIcon><Close /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+            </div>
+            <div v-else class="hoi-thoai__tieu-de-dong">
+              <strong class="hoi-thoai__ten" title="Bấm đúp để sửa tiêu đề" @dblclick="batDauSuaTieuDe">
+                {{ phienDangChon.tieu_de || 'Hội thoại không tiêu đề' }}
+              </strong>
+              <CustomTooltip content="Sửa tiêu đề">
+                <CustomButton link class="hoi-thoai__nut-sua" aria-label="Sửa tiêu đề" @click="batDauSuaTieuDe">
+                  <CustomIcon><EditPen /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+            </div>
+            <span class="hoi-thoai__phu">
+              Bắt đầu {{ gioPhut(phienDangChon.created_at) }} · {{ phienDangChon.so_tin_nhan }} tin nhắn
+            </span>
           </div>
           <div class="hoi-thoai__the">
             <CustomTag v-if="phienDangChon.moi" type="primary" effect="light" size="small">Mới</CustomTag>
@@ -189,8 +229,13 @@
 /** Thành viên: trái là các cuộc hội thoại của mình với trợ lý, phải là tin nhắn của cuộc đang chọn và ô hỏi tiếp. */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { fetchChiTietHoiThoaiCuaToi, fetchHoiThoaiCuaToi } from '@/api/hoiThoai'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import {
+  doiTieuDeHoiThoaiCuaToi,
+  fetchChiTietHoiThoaiCuaToi,
+  fetchHoiThoaiCuaToi,
+  ketThucHoiThoaiCuaToi,
+} from '@/api/hoiThoai'
 import { useChatStore } from '@/stores/chat'
 import ChatMarkdown from '@/components/guest/chung/ChatMarkdown.vue'
 import DangSoanTraLoi from '@/components/guest/chung/DangSoanTraLoi.vue'
@@ -224,6 +269,10 @@ const oNhap = ref(null)
 const dangGuiTaiDay = ref(false)
 let lanTaiTinNhan = 0
 let henFocus = false
+const dangSuaTieuDe = ref(false)
+const dangLuuTieuDe = ref(false)
+const tieuDeMoi = ref('')
+const oTieuDe = ref(null)
 
 function loiApi(error, fallback) {
   const detail = error?.response?.data?.detail
@@ -340,6 +389,7 @@ function taoMaPhien() {
 // nên vào trang mà không hỏi gì thì không sinh phiên rỗng.
 function khoiTaoMoi() {
   lanTaiTinNhan++
+  dangSuaTieuDe.value = false
   dangTaiTinNhan.value = false
   cauHoi.value = ''
   tinNhan.value = []
@@ -374,6 +424,7 @@ function dongBoTuUrl() {
 
 async function moPhien(ma) {
   cauHoi.value = ''
+  dangSuaTieuDe.value = false
   tinCucBo.value = []
   if (!ma) {
     phienDangChon.value = null
@@ -524,15 +575,108 @@ const menuRefs = {}
 function thaoTacPhien(phien) {
   const items = [{ command: 'xem', label: 'Xem hội thoại', icon: 'View' }]
   if (dangHoatDong(phien)) items.push({ command: 'hoi-tiep', label: 'Hỏi tiếp', icon: 'ChatLineRound', type: 'primary' })
+  items.push({ command: 'doi-ten', label: 'Đổi tên', icon: 'EditPen' })
+  if (dangHoatDong(phien)) {
+    items.push({ command: 'ket-thuc', label: 'Kết thúc hội thoại', icon: 'CircleClose', type: 'warning', divided: true })
+  }
   return items
 }
 
 function thucHien(viec, phien) {
+  if (viec === 'doi-ten') return doiTenQuaHopThoai(phien)
+  if (viec === 'ket-thuc') return ketThuc(phien)
   if (viec === 'hoi-tiep') {
     henFocus = true
     if (route.query.phien === phien.ma_dinh_danh) oNhap.value?.focus()
   }
   chonPhien(phien)
+}
+
+// Cập nhật phiên vừa sửa ở khung phải (nếu đang xem) và trong danh sách.
+function capNhatPhien(data) {
+  if (phienDangChon.value?.id === data.id) phienDangChon.value = data
+  phienList.value = phienList.value.map((item) => (item.id === data.id ? data : item))
+}
+
+async function doiTieuDe(phien, tieuDe) {
+  try {
+    capNhatPhien(await doiTieuDeHoiThoaiCuaToi(phien.ma_dinh_danh, tieuDe))
+    ElMessage.success('Đã đổi tiêu đề cuộc hội thoại')
+    return true
+  } catch (error) {
+    ElMessage.error(loiApi(error, 'Không đổi được tiêu đề cuộc hội thoại'))
+    return false
+  }
+}
+
+function batDauSuaTieuDe() {
+  if (!phienDangChon.value || phienDangChon.value.moi) return
+  tieuDeMoi.value = phienDangChon.value.tieu_de || ''
+  dangSuaTieuDe.value = true
+  nextTick(() => oTieuDe.value?.focus())
+}
+
+function huySuaTieuDe() {
+  dangSuaTieuDe.value = false
+}
+
+// Lưu khi nhấn Enter hoặc bấm nút ✓. Enter truyền giá trị đang hiện trong ô (event.target.value): bộ gõ tiếng Việt
+// (Telex/VNI) chưa chốt chữ đang gõ dở thì v-model vẫn là giá trị cũ, vd. "Hỏi đáp về NEU" bị lưu thành "Hỏi đáp về".
+// Bấm nút ✓ thì ô mất focus trước nên bộ gõ đã chốt chữ, v-model đúng.
+async function luuTieuDe(giaTri = tieuDeMoi.value) {
+  const phien = phienDangChon.value
+  if (!phien || phien.moi || !dangSuaTieuDe.value || dangLuuTieuDe.value) return
+  const tieuDe = String(giaTri).trim()
+  if (!tieuDe) {
+    ElMessage.warning('Vui lòng nhập tiêu đề.')
+    return
+  }
+  if (tieuDe === phien.tieu_de) {
+    dangSuaTieuDe.value = false
+    return
+  }
+  dangLuuTieuDe.value = true
+  // Lỗi thì giữ ô sửa để sửa lại.
+  if (await doiTieuDe(phien, tieuDe)) dangSuaTieuDe.value = false
+  dangLuuTieuDe.value = false
+}
+
+async function doiTenQuaHopThoai(phien) {
+  let tieuDe
+  try {
+    ;({ value: tieuDe } = await ElMessageBox.prompt('Tiêu đề mới của cuộc hội thoại', 'Đổi tên', {
+      inputValue: phien.tieu_de || '',
+      inputValidator: (value) => {
+        const t = String(value || '').trim()
+        if (!t) return 'Vui lòng nhập tiêu đề.'
+        return t.length <= 255 || 'Tiêu đề tối đa 255 ký tự.'
+      },
+      confirmButtonText: 'Lưu',
+      cancelButtonText: 'Hủy',
+    }))
+  } catch {
+    return
+  }
+  if (tieuDe.trim() !== phien.tieu_de) await doiTieuDe(phien, tieuDe.trim())
+}
+
+async function ketThuc(phien) {
+  try {
+    await ElMessageBox.confirm(
+      `Kết thúc cuộc hội thoại "${phien.tieu_de || 'không tiêu đề'}"? Sau khi kết thúc bạn không thể hỏi tiếp trong cuộc này.`,
+      'Kết thúc hội thoại',
+      { type: 'warning', confirmButtonText: 'Kết thúc', cancelButtonText: 'Hủy' },
+    )
+  } catch {
+    return
+  }
+  try {
+    capNhatPhien(await ketThucHoiThoaiCuaToi(phien.ma_dinh_danh))
+    if (chat.state.maPhien === phien.ma_dinh_danh) chat.state.daKetThuc = true
+    ElMessage.success('Đã kết thúc cuộc hội thoại')
+  } catch (error) {
+    ElMessage.error(loiApi(error, 'Không kết thúc được cuộc hội thoại'))
+  }
 }
 
 function ganMenu(id, el) {
@@ -861,16 +1005,56 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
   min-width: 0;
 }
 
-.hoi-thoai__nguoi strong,
-.hoi-thoai__nguoi span {
+.hoi-thoai__ten,
+.hoi-thoai__phu {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.hoi-thoai__nguoi span {
+.hoi-thoai__phu {
   color: var(--el-text-color-secondary);
   font-size: 13px;
+}
+
+.hoi-thoai__sua-tieu-de {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 460px;
+}
+
+.hoi-thoai__sua-tieu-de :deep(.el-button + .el-button) {
+  margin-left: 0;
+}
+
+.hoi-thoai__tieu-de-dong {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.hoi-thoai__ten {
+  min-width: 0;
+}
+
+/* Nút sửa tiêu đề: hiện rõ khi rê chuột vào tiêu đề; màn hình cảm ứng thì luôn hiện. */
+.hoi-thoai__nut-sua {
+  flex: 0 0 auto;
+  opacity: 0.45;
+  transition: opacity 0.15s;
+}
+
+.hoi-thoai__tieu-de-dong:hover .hoi-thoai__nut-sua,
+.hoi-thoai__nut-sua:focus-visible {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .hoi-thoai__nut-sua {
+    opacity: 1;
+  }
 }
 
 .hoi-thoai__the {

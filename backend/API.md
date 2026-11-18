@@ -1,15 +1,15 @@
 # Danh sách API
 
-Tự sinh từ code lúc 18/11/2026 15:01 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 18/11/2026 15:12 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **316** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **319** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 185 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 81 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Quản trị (admin)](#quan_tri) | 186 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Thành viên (user)](#thanh_vien) | 83 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 50 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
@@ -326,6 +326,7 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `GET` | `/api/v1/hoi-thoai/phien` | Bắt buộc (admin) | Danh sách phiên hội thoại với trợ lý, phiên có tin nhắn mới nhất trước. |
 | `GET` | `/api/v1/hoi-thoai/phien/{ma_phien}` | Bắt buộc (admin) | Thông tin một phiên hội thoại và toàn bộ tin nhắn theo thứ tự gửi. |
 | `DELETE` | `/api/v1/hoi-thoai/phien/{ma_phien}` | Bắt buộc (admin) | Xóa một phiên cùng toàn bộ tin nhắn của phiên. |
+| `PATCH` | `/api/v1/hoi-thoai/phien/{ma_phien}/tieu-de` | Bắt buộc (admin) | Quản trị đổi tiêu đề một phiên hội thoại (mặc định là câu hỏi đầu tiên của người dùng). |
 | `PATCH` | `/api/v1/hoi-thoai/phien/{ma_phien}/trang-thai` | Bắt buộc (admin) | Kết thúc (`da_dong`), lưu trữ (`luu_tru`) hoặc mở lại (`dang_hoat_dong`) một phiên. |
 
 ### `tai-lieu`
@@ -558,6 +559,8 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 |---|---|---|---|
 | `GET` | `/api/v1/hoi-thoai/cua-toi` | Bắt buộc | Các cuộc hội thoại của thành viên đang đăng nhập, mới nhất trước. |
 | `GET` | `/api/v1/hoi-thoai/cua-toi/{ma_phien}` | Bắt buộc | Toàn bộ tin nhắn một cuộc hội thoại của thành viên đang đăng nhập (`ma_phien` là mã định danh UUID). |
+| `POST` | `/api/v1/hoi-thoai/cua-toi/{ma_phien}/ket-thuc` | Bắt buộc | Thành viên tự kết thúc cuộc hội thoại của mình; sau đó không hỏi tiếp được. Đã kết thúc thì giữ nguyên. |
+| `PATCH` | `/api/v1/hoi-thoai/cua-toi/{ma_phien}/tieu-de` | Bắt buộc | Thành viên đổi tiêu đề cuộc hội thoại của mình (mặc định là câu hỏi đầu tiên). |
 
 ### `tai-khoan`
 
