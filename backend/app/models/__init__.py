@@ -1,3 +1,5 @@
+from app.models.chat_conversations import ChatConversation
+from app.models.chat_messages import ChatMessage
 from app.models.dm_chuyen_nganh import DmChuyenNganh
 from app.models.dm_dan_toc import DmDanToc
 from app.models.dm_doi_tuong_uu_tien import DmDoiTuongUuTien
@@ -165,4 +167,6 @@ __all__ = [
     "HsChungChi",
     "HsThanhTich",
     "HsTieuChiMongMuon",
+    "ChatConversation",
+    "ChatMessage",
 ]
