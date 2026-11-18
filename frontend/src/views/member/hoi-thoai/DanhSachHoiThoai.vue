@@ -1094,13 +1094,20 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
   border-bottom-color: transparent;
 }
 
+/* Nền thanh = phần token đã dùng: sọc chéo đan xen 3 màu nhạt (chữ tối ở giữa vẫn đọc rõ). */
 .hoi-thoai__token-thanh {
   position: relative;
   display: block;
   flex: 0 0 auto;
   height: 18px;
   overflow: hidden;
-  background: var(--el-fill-color);
+  background: repeating-linear-gradient(
+    135deg,
+    #e4e7ed 0 6px,
+    #f4f4f5 6px 12px,
+    #fde2e2 12px 18px,
+    #f4f4f5 18px 24px
+  );
   text-decoration: none;
 }
 
