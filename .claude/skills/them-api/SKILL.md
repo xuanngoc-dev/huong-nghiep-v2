@@ -44,8 +44,23 @@ Thêm resource `$ARGUMENTS` theo đúng các bước dưới. Mẫu tham khảo:
 
 ## Frontend (`frontend/src/`)
 
+**Hai khu vực tách biệt — xác định trước khi làm, không lẫn lộn:**
+
+| | Admin (CMS quản trị) | Member (thành viên) |
+|---|---|---|
+| Người dùng | Quản trị viên (`vai_tro == 1`) quản lý dữ liệu toàn hệ thống | Thành viên đã đăng nhập, chỉ xem/làm việc với dữ liệu của chính mình |
+| URL / layout | `/admin/...` — `layouts/MainLayout.vue` | `/member/...` — `layouts/UserLayout.vue` |
+| View | `views/admin/<nhom>/...` | `views/member/<nhom>/...` |
+| Route `meta` | `requiresAuth: true, requiresAdmin: true`, `name` tiền tố `admin-` | `requiresAuth: true` |
+| Menu `data/menu.json` | key `admin` | key `user` |
+| API backend | `get_admin_user` | `get_current_user`, lọc theo người đang đăng nhập |
+
+- Hai khu vực có thể trùng tên nhóm menu (vd. cùng có "TRẮC NGHIỆM", "HỘI THOẠI") nhưng là chức năng khác nhau: admin quản lý của mọi người, member là của riêng thành viên. Thêm vào khu vực nào thì chỉ sửa đúng khu vực đó.
+- Yêu cầu không nói rõ khu vực: "quản trị", "CMS", quản lý danh mục / dữ liệu chung → admin; "thành viên", "người dùng", "của tôi" → member. Vẫn mơ hồ thì hỏi lại, không tự đoán.
+- Key `doi-tuong` là menu trang công khai theo đối tượng (khách), không thuộc hai khu vực trên.
+
 8. **API** `api/<tenCamelCase>.js` dùng instance trong `api/axios.js`.
-9. **View** trong `views/admin/...` (hoặc khu vực tương ứng), Element Plus (auto-import, không import tay).
+9. **View** trong `views/admin/...` hoặc `views/member/...` theo đúng khu vực ở bảng trên, Element Plus (auto-import, không import tay).
 10. **Responsive** (bắt buộc, làm luôn không cần hỏi) cho mọi form trong view, kể cả form trong dialog:
     - Dùng lưới `form-grid` trong `styles/form-grid.css`, KHÔNG dùng `CustomRow`/`CustomCol` với `:span`/`:xs`/`:md` cho form: breakpoint của `el-col` theo viewport nên sai trong dialog (dialog hẹp hơn màn hình và kéo đổi cỡ được). `form-grid` dùng container query nên số cột theo bề rộng thực của khung chứa form.
     - Số cột tự đổi: khung ≥1200px → 6 ô/hàng, ≥960px → 4, ≥720px → 3, nhỏ hơn (mobile) → 2.
@@ -90,8 +105,8 @@ Thêm resource `$ARGUMENTS` theo đúng các bước dưới. Mẫu tham khảo:
       ```
     - Icon gợi ý: xem `View`, sửa `Edit`, xóa `Delete`, thêm `Plus`, sao chép `CopyDocument`, tải xuống `Download`, tải lên `Upload`, xác nhận `CircleCheck`, từ chối/hủy `CircleClose`, khóa/mở khóa `Lock`/`Unlock`, thanh toán `Wallet`, liên kết ngoài `Link`. `type`: `primary` mặc định, `danger` cho xóa/hủy, `success` cho xác nhận. Độ rộng cột ≈ 50px mỗi icon (tối thiểu 80px).
     - **Tooltip**: mọi nút chỉ có icon, nút thao tác, liên kết icon đều bọc `CustomTooltip` với `content` trùng `aria-label`. `CustomTooltip` tự tắt trên mobile (< 768px) và thiết bị cảm ứng không có hover, nên KHÔNG tự viết `v-if`/`:disabled` theo màn hình và KHÔNG dùng thẳng `el-tooltip`. Nút đã có chữ rõ ràng thì không cần tooltip.
-12. **Route** trong `router/index.js` với `meta` đúng (`requiresAuth`/`requiresAdmin`/`public`).
-13. **Menu** trong `data/menu.json` đúng key (`admin`, `user`, `doi-tuong`).
+12. **Route** trong `router/index.js`, đặt trong đúng nhánh `/admin` hoặc `/member`, với `meta` đúng (`requiresAuth`/`requiresAdmin`/`public`).
+13. **Menu** trong `data/menu.json` đúng key: `admin` cho CMS quản trị, `user` cho thành viên, `doi-tuong` cho trang công khai.
 
 ## Kết thúc
 

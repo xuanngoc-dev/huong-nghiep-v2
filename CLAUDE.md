@@ -36,6 +36,7 @@ Monorepo: `backend/` (FastAPI + SQLAlchemy 2 + Alembic, MySQL) và `frontend/` (
 - Resource vừa có route public vừa admin: tách `public_router` và include **trước** admin router, nếu không `/{item_id}` sẽ bắt mất path public (xem `ht_cau_hinh_enduser.py`).
 - Sắp có thêm vai trò ngoài admin/user: dùng dependency trong `deps.py` (backend) và store `auth` (frontend), không rải thêm `vai_tro == 1` hard-code.
 - Frontend: guard trong `src/router/index.js` dùng `meta.requiresAuth|requiresAdmin|guest|public`; menu sidebar lấy từ `src/data/menu.json` (key `admin`, `user`, `doi-tuong`).
+- Admin và member là 2 khu vực khác nhau, không lẫn lộn: admin = CMS quản trị (`/admin`, `views/admin/`, menu key `admin`); member = trang của thành viên (`/member`, `views/member/`, menu key `user`). Trùng tên nhóm menu vẫn là chức năng khác nhau; yêu cầu không rõ khu vực thì hỏi lại. Chi tiết ở skill `them-api`.
 
 ## Gotchas
 
