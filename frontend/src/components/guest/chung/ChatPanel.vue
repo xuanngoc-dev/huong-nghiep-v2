@@ -1,7 +1,10 @@
 <template>
   <div class="ai-chat" :class="{ 'is-compact': compact }">
     <p v-if="chat.state.storageWarning" class="ai-chat__notice" role="status">{{ chat.state.storageWarning }}</p>
-    <p v-if="chat.state.error" class="ai-chat__error" role="alert">{{ chat.state.error }}</p>
+    <p v-if="chat.state.error" class="ai-chat__error" role="alert">
+      {{ chat.state.error }}
+      <RouterLink v-if="chat.state.hetToken" :to="{ name: 'nap-tien', query: { loai: 'token' } }">Nạp Token AI</RouterLink>
+    </p>
     <p v-if="chat.state.daKetThuc" class="ai-chat__ended" role="status">
       Cuộc hội thoại này đã kết thúc. Bấm <button type="button" @click="chat.clear">Hội thoại mới</button> để tiếp tục hỏi đáp.
     </p>

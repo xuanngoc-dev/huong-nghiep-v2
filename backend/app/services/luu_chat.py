@@ -102,10 +102,22 @@ def _them_tin_nhan(db: Session, phien: ChatConversation, **values) -> ChatMessag
 
 
 def luu_cau_hoi(
-    db: Session, ma_phien: str | None, user_id: int | None, ma_khach: str | None, cau_hoi: str, model_ai: str | None
+    db: Session,
+    ma_phien: str | None,
+    user_id: int | None,
+    ma_khach: str | None,
+    cau_hoi: str,
+    model_ai: str | None,
+    yeu_cau_token: bool = False,
 ) -> ChatConversation:
-    """Mở (hoặc tạo) phiên và ghi câu hỏi của người dùng. Trả phiên để ghi câu trả lời sau."""
+    """Mở (hoặc tạo) phiên và ghi câu hỏi của người dùng. Trả phiên để ghi câu trả lời sau.
+
+    yeu_cau_token: thành viên hết token thì raise HetToken. Kiểm tra sau khi mở phiên để phiên đã kết thúc
+    được báo trước (PhienDaKetThuc); nơi gọi rollback nên không lưu gì.
+    """
     phien = mo_phien(db, ma_phien, user_id, ma_khach, cau_hoi, model_ai)
+    if yeu_cau_token:
+        kiem_tra_token(db, user_id)
     if model_ai:
         phien.model_ai = model_ai
     _them_tin_nhan(db, phien, loai_nguoi_gui="user", nguoi_gui_id=user_id, noi_dung_tin_nhan=cau_hoi)

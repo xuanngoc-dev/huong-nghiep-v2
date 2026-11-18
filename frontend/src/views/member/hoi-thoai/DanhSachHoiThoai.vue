@@ -498,7 +498,11 @@ async function gui() {
   cuonXuong()
   try {
     await chat.send(text)
-    if (chat.state.error) {
+    if (chat.state.hetToken) {
+      // Hết token AI: câu hỏi chưa được lưu, trả lại ô nhập và mời nạp gói Token AI.
+      cauHoi.value = text
+      moiNapToken(chat.state.error)
+    } else if (chat.state.error) {
       // Không gửi được (chưa có model, câu hỏi quá dài…): trả lại câu hỏi để sửa.
       ElMessage.error(chat.state.error)
       cauHoi.value = text
@@ -509,6 +513,19 @@ async function gui() {
     dangGuiTaiDay.value = false
     cuonXuong()
   }
+}
+
+async function moiNapToken(thongBao) {
+  try {
+    await ElMessageBox.confirm(thongBao, 'Hết token AI', {
+      type: 'warning',
+      confirmButtonText: 'Nạp Token AI',
+      cancelButtonText: 'Để sau',
+    })
+  } catch {
+    return
+  }
+  router.push({ name: 'nap-tien', query: { loai: 'token' } })
 }
 
 function hoiGoiY(cau) {

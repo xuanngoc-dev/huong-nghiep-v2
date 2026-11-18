@@ -300,7 +300,15 @@ test('hết token AI (402): báo ở thanh lỗi, vẫn gửi lại được sau
   })
   await session.send('Hỏi')
   assert.equal(state.error, 'Bạn đã dùng hết token AI.')
+  assert.equal(state.hetToken, true)
   assert.ok(!state.daKetThuc)
   await session.send('Hỏi lại')
   assert.equal(calls, 2)
+})
+
+test('gửi câu mới thì xóa cờ hết token của lượt trước', async () => {
+  const { state, session } = fixture(async (_, options) => options.onEvent('done', { tra_loi: 'Đáp', nguon: [] }))
+  state.hetToken = true
+  await session.send('Hỏi')
+  assert.equal(state.hetToken, false)
 })

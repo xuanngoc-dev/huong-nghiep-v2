@@ -71,3 +71,10 @@ async def hoi(payload: HoiChatRequest) -> HoiChatResponse:
     from app.services.chat_stream import answer
 
     return await answer(payload)
+
+
+async def hoi_kem_usage(payload: HoiChatRequest) -> tuple[HoiChatResponse, dict, dict]:
+    """Như hoi() nhưng trả thêm số token bước trả lời và bước lập kế hoạch."""
+    from app.services.chat_stream import answer_with_usage
+
+    return await answer_with_usage(payload)

@@ -94,7 +94,7 @@ class LuuChatTests(unittest.TestCase):
         payload = HoiChatRequest(cau_hoi="Chào", model_id="m", ma_khach_vang_lai="tb9")
         with (
             patch.object(chat_api, "SessionLocal", self.Session),
-            patch.object(chat_api, "hoi", AsyncMock(return_value=tra_loi)),
+            patch.object(chat_api, "hoi_kem_usage", AsyncMock(return_value=(tra_loi, {}, {}))),
         ):
             ket_qua = asyncio.run(chat_api.post_hoi(payload, None))
             payload2 = HoiChatRequest(cau_hoi="Tiếp", model_id="m", ma_khach_vang_lai="tb9", ma_phien=ket_qua.ma_phien)
@@ -119,7 +119,7 @@ class LuuChatTests(unittest.TestCase):
         self.db.commit()
         hoi = AsyncMock()
         payload = HoiChatRequest(cau_hoi="Tiếp", model_id="m", ma_phien=p.ma_dinh_danh)
-        with patch.object(chat_api, "SessionLocal", self.Session), patch.object(chat_api, "hoi", hoi):
+        with patch.object(chat_api, "SessionLocal", self.Session), patch.object(chat_api, "hoi_kem_usage", hoi):
             with self.assertRaises(HTTPException) as caught:
                 asyncio.run(chat_api.post_hoi(payload, 1))
         self.assertEqual(caught.exception.status_code, 409)
@@ -172,6 +172,15 @@ class LuuChatTests(unittest.TestCase):
         self.db.commit()
         self.assertEqual(self._token(1), (0, 2800 + 10_000))
 
+    def test_api_khong_stream_cung_tru_token(self):
+        self.db.add(NguoiDungThongTin(nguoi_dung_id=1, so_luong_token_kha_dung=5000))
+        self.db.commit()
+        tra_loi = HoiChatResponse(tra_loi="Đáp", model_id="m", model_ten="M", tai_lieu=[])
+        hoi = AsyncMock(return_value=(tra_loi, {"total_tokens": 1200}, {"total_tokens": 300}))
+        with patch.object(chat_api, "SessionLocal", self.Session), patch.object(chat_api, "hoi_kem_usage", hoi):
+            asyncio.run(chat_api.post_hoi(HoiChatRequest(cau_hoi="Hỏi", model_id="m"), 1))
+        self.assertEqual(self._token(1), (3500, 1500))
+
     def test_khach_va_loi_khong_co_usage_khong_tru_token(self):
         self.db.add(NguoiDungThongTin(nguoi_dung_id=1, so_luong_token_kha_dung=100))
         self.db.commit()
@@ -190,13 +199,13 @@ class LuuChatTests(unittest.TestCase):
         payload = HoiChatRequest(cau_hoi="Hỏi", model_id="m")
         with (
             patch.object(chat_api, "SessionLocal", self.Session),
-            patch.object(chat_api, "hoi", hoi),
+            patch.object(chat_api, "hoi_kem_usage", hoi),
             patch.object(chat_api.settings, "chat_yeu_cau_token", True),
         ):
             with self.assertRaises(HTTPException) as caught:
                 asyncio.run(chat_api.post_hoi(payload, 1))
             # Khách vãng lai không có tài khoản token nên không bị chặn.
-            hoi.return_value = HoiChatResponse(tra_loi="Đáp", model_id="m", model_ten="M", tai_lieu=[])
+            hoi.return_value = (HoiChatResponse(tra_loi="Đáp", model_id="m", model_ten="M", tai_lieu=[]), {}, {})
             asyncio.run(chat_api.post_hoi(HoiChatRequest(cau_hoi="Hỏi", model_id="m", ma_khach_vang_lai="tb1"), None))
         self.assertEqual(caught.exception.status_code, 402)
         self.assertEqual(hoi.await_count, 1)

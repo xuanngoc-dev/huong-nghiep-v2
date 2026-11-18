@@ -323,15 +323,24 @@ async def events(prepared: PreparedChat):
                     json.dumps(usage), json.dumps(prepared.planning_usage))
 
 
-async def answer(payload: HoiChatRequest) -> HoiChatResponse:
+async def answer_with_usage(payload: HoiChatRequest) -> tuple[HoiChatResponse, dict, dict]:
+    """Câu trả lời kèm số token bước trả lời và bước lập kế hoạch (để trừ token của thành viên)."""
     prepared = await prepare(payload)
     async with aclosing(events(prepared)) as response_events:
         async for event, data in response_events:
             if event == "error":
                 raise HTTPException(data.get("status", 502), data["message"])
             if event == "done":
-                return HoiChatResponse(**data)
-    raise HTTPException(502, "AI chưa hoàn thành câu trả lời.")
+                response = HoiChatResponse(**data)
+                break
+        else:
+            raise HTTPException(502, "AI chưa hoàn thành câu trả lời.")
+    # events() gán prepared.usage khi kết thúc (aclosing đã đóng generator).
+    return response, prepared.usage, prepared.planning_usage
+
+
+async def answer(payload: HoiChatRequest) -> HoiChatResponse:
+    return (await answer_with_usage(payload))[0]
 
 
 def encode_event(event: str, data: dict) -> str:

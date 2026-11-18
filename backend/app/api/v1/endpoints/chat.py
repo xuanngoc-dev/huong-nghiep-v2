@@ -15,7 +15,7 @@ from app.db.session import SessionLocal, get_db
 from app.schemas.chat import HoiChatRequest, HoiChatResponse, KetThucPhienChat, ModelChat, TrangThaiPhienChat
 from app.services import luu_chat
 from app.services.chat_stream import encode_event, events, prepare
-from app.services.hoi_dap import danh_sach_model, hoi
+from app.services.hoi_dap import danh_sach_model, hoi_kem_usage
 from app.services.tai_lieu import resolve_inside
 from app.services.tra_cuu_tuyen_sinh import documents
 
@@ -60,10 +60,9 @@ def _ghi(ham, *args, **kwargs):
 
 
 def _luu_cau_hoi(db, payload: HoiChatRequest, user_id: int | None) -> tuple[int, str]:
-    if settings.chat_yeu_cau_token:
-        luu_chat.kiem_tra_token(db, user_id)
     phien = luu_chat.luu_cau_hoi(
-        db, payload.ma_phien, user_id, payload.ma_khach_vang_lai, payload.cau_hoi, payload.model_id
+        db, payload.ma_phien, user_id, payload.ma_khach_vang_lai, payload.cau_hoi, payload.model_id,
+        yeu_cau_token=settings.chat_yeu_cau_token,
     )
     return phien.id, phien.ma_dinh_danh
 
@@ -146,11 +145,11 @@ def post_ket_thuc_phien(
 
 @router.post("/hoi", response_model=HoiChatResponse)
 async def post_hoi(payload: HoiChatRequest, user_id: int | None = Depends(_nguoi_hoi)) -> HoiChatResponse:
-    """Hỏi đáp dựa trên các file json/txt trong thư mục tài liệu; câu hỏi và câu trả lời được lưu vào phiên chat."""
+    """Hỏi đáp (không stream); câu hỏi và câu trả lời được lưu vào phiên chat, trừ token như bản stream."""
     phien = await _mo_phien(payload, user_id)
     started = perf_counter()
     try:
-        ket_qua = await hoi(payload)
+        ket_qua, usage, usage_lap_ke_hoach = await hoi_kem_usage(payload)
     except HTTPException as exc:
         await _luu_tra_loi(
             phien, tra_loi="", model_ai=payload.model_id, nguon=None, usage=None, started=started, loi=str(exc.detail)
@@ -161,9 +160,10 @@ async def post_hoi(payload: HoiChatRequest, user_id: int | None = Depends(_nguoi
         tra_loi=ket_qua.tra_loi,
         model_ai=ket_qua.model_id,
         nguon=[item.model_dump(mode="json") for item in ket_qua.nguon],
-        usage=None,
+        usage=usage,
         started=started,
         loi=None,
+        usage_lap_ke_hoach=usage_lap_ke_hoach,
     )
     ket_qua.ma_phien = phien[1] if phien else None
     return ket_qua

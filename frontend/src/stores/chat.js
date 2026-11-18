@@ -14,7 +14,7 @@ export const MODEL_MAC_DINH = 'gemini-3.8-flash'
 export const useChatStore = defineStore('chat', () => {
   const auth = useAuthStore()
   const state = reactive({ messages: newConversation(), draft: '', sending: false, models: [], modelId: '',
-    suggestions: [], error: '', loadingModels: false, storageWarning: '', context: null, maPhien: null, daKetThuc: false })
+    suggestions: [], error: '', loadingModels: false, storageWarning: '', context: null, maPhien: null, daKetThuc: false, hetToken: false })
   const key = () => `huong-nghiep-chat-v2:${auth.user?.id || 'guest'}`
   function warmProfile() {
     const userId = auth.user?.id
