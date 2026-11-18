@@ -33,9 +33,16 @@ class DynamicLookupTests(CorpusFixture, unittest.TestCase):
                       key=lambda r: r["thu_tu_tra_cuu"])
 
     def test_target_score_shows_only_cutoffs_within_the_configured_margin(self):
-        rows = self.records(lookup.search("Tư vấn", plan=self.plan()))
-        self.assertEqual([r["ten_nganh"] for r in rows], ["Gần", "Cao"])
+        # Khoảng điểm đặt rõ trong test, không phụ thuộc CHAT_SCORE_MARGIN của máy chạy test.
+        with patch.object(settings, "chat_score_margin", 1.0):
+            rows = self.records(lookup.search("Tư vấn", plan=self.plan()))
+        # 28 ± 1: chỉ "Gần" (27.8); "Cao" (29.5) và "Thấp" (22) nằm ngoài khoảng.
+        self.assertEqual([r["ten_nganh"] for r in rows], ["Gần"])
         self.assertEqual(rows[0]["phuong_thuc_tom_tat"][0][3], 27.8)
+        with patch.object(settings, "chat_score_margin", 2.0):
+            rows = self.records(lookup.search("Tư vấn", plan=self.plan()))
+        # 28 ± 2: thêm "Cao" (29.5), gần mục tiêu hơn thì đứng trước.
+        self.assertEqual([r["ten_nganh"] for r in rows], ["Gần", "Cao"])
 
     def test_filters_follow_the_plan_instead_of_a_default_score_window(self):
         result = lookup.search("Ưu tiên chắc chắn", plan=self.plan(diem_tu=20, diem_den=25))
