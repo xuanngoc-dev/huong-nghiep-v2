@@ -5,17 +5,16 @@ from urllib.parse import quote_plus
 from pydantic import Field, computed_field, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
-_LOCAL_FRONTEND_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+# Mặc định cho phép mọi domain gọi API từ trình duyệt. Muốn giới hạn thì đặt CORS_ORIGINS là danh sách domain.
+_MOI_DOMAIN = ["*"]
 
 
 class Settings(BaseSettings):
     app_name: str = "Định hướng nghề"
     api_v1_prefix: str = "/api/v1"
-    # Domain frontend được phép gọi API từ trình duyệt. Postman/Bruno không cần nằm trong danh sách này.
-    cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=lambda: list(_LOCAL_FRONTEND_ORIGINS))
+    # Domain được phép gọi API từ trình duyệt; "*" (mặc định, kể cả khi để trống) là mọi domain.
+    # Postman/Bruno không bị CORS nên không cần nằm trong danh sách này.
+    cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=lambda: list(_MOI_DOMAIN))
     # Origin công khai của API, không gồm /api/v1. Để trống thì /docs dùng đúng host đang mở.
     api_public_url: str = ""
     port: int = 3060
@@ -69,7 +68,7 @@ class Settings(BaseSettings):
     @classmethod
     def parse_cors_origins(cls, value):
         if value is None or value == "":
-            return list(_LOCAL_FRONTEND_ORIGINS)
+            return list(_MOI_DOMAIN)
         if isinstance(value, str):
             text = value.strip()
             parsed = json.loads(text) if text.startswith("[") else text.split(",")
@@ -82,7 +81,7 @@ class Settings(BaseSettings):
             origin = str(item).strip().rstrip("/")
             if origin and origin not in origins:
                 origins.append(origin)
-        return origins or list(_LOCAL_FRONTEND_ORIGINS)
+        return origins or list(_MOI_DOMAIN)
 
     @field_validator("api_public_url")
     @classmethod

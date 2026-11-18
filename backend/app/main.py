@@ -1,9 +1,9 @@
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 
 from app.api.v1.router import api_router
 from app.core.config import settings
@@ -41,6 +41,20 @@ app = FastAPI(
     servers=[{"url": settings.api_public_url, "description": "API công khai"}] if settings.api_public_url else None,
 )
 
+
+
+# Khai báo trước CORS nên nằm bên trong CORS: lỗi không bắt được đổi thành JSON 500 vẫn có header CORS.
+# Không có lớp này, lỗi 500 đi thẳng ra ngoài CORS và trình duyệt báo "bị chặn CORS" thay vì lỗi thật.
+@app.middleware("http")
+async def loi_khong_bat_van_co_cors(request: Request, call_next):
+    try:
+        return await call_next(request)
+    except Exception:
+        logger.exception("Lỗi không xử lý: %s %s", request.method, request.url.path)
+        return JSONResponse({"detail": "Lỗi hệ thống. Vui lòng thử lại sau."}, status_code=500)
+
+
+# CORS_ORIGINS="*" (mặc định): mọi domain đều gọi được; trả đúng origin của request nên vẫn dùng được credentials.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,

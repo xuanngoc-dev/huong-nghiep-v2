@@ -93,15 +93,16 @@ Build frontend với URL tuyệt đối của backend. Biến này được gắ
 VITE_API_BASE_URL=https://api.example.com/api/v1
 ```
 
-Backend chỉ cần cho phép đúng domain frontend. Postman và Bruno gọi thẳng domain API, không cần khai báo trong danh sách này:
+Mặc định backend cho phép mọi domain gọi API từ trình duyệt (`CORS_ORIGINS=*`, hoặc không đặt biến này). Muốn chỉ cho phép domain frontend thì đặt danh sách domain. Postman và Bruno gọi thẳng domain API, không bị CORS:
 
 ```bash
 # backend/.env
-CORS_ORIGINS=https://dinhhuong.example.com
+CORS_ORIGINS=*                                   # mọi domain (mặc định)
+# CORS_ORIGINS=https://dinhhuong.example.com     # chỉ domain frontend
 API_PUBLIC_URL=https://api.example.com
 ```
 
-`CORS_ORIGINS` nhận JSON (`["https://dinhhuong.example.com"]`) hoặc danh sách cách nhau bởi dấu phẩy. `API_PUBLIC_URL` là origin của API, không gồm `/api/v1`; khi có giá trị, file OpenAPI ghi server này để Postman/Bruno gọi đúng domain.
+`CORS_ORIGINS` nhận `*`, JSON (`["https://dinhhuong.example.com"]`) hoặc danh sách cách nhau bởi dấu phẩy. Lỗi 500 của backend vẫn kèm header CORS, nên trình duyệt hiện đúng lỗi thay vì báo "bị chặn CORS". `API_PUBLIC_URL` là origin của API, không gồm `/api/v1`; khi có giá trị, file OpenAPI ghi server này để Postman/Bruno gọi đúng domain.
 
 Ảnh, video và liên kết nguồn do API trả về dạng `/api/v1/...`. Frontend tự ghép origin của `VITE_API_BASE_URL`, nên các đường dẫn đó vẫn mở trên domain backend.
 
