@@ -5,17 +5,19 @@ from time import perf_counter
 
 import anyio
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, Response, StreamingResponse
 from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from app.api.deps import bearer_scheme, get_current_user
+from app.core.config import settings
 from app.db.session import SessionLocal, get_db
 from app.schemas.chat import HoiChatRequest, HoiChatResponse, KetThucPhienChat, ModelChat, TrangThaiPhienChat
 from app.services import luu_chat
 from app.services.chat_stream import encode_event, events, prepare
 from app.services.hoi_dap import danh_sach_model, hoi
 from app.services.tai_lieu import resolve_inside
+from app.services.tra_cuu_tuyen_sinh import documents
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 logger = logging.getLogger(__name__)
@@ -208,7 +210,15 @@ async def post_hoi_stream(payload: HoiChatRequest, user_id: int | None = Depends
 
 @router.get("/nguon/{ten}")
 def get_nguon(ten: str):
-    """Nguồn dữ liệu công khai dùng để đối chiếu câu trả lời tuyển sinh."""
+    """Nguồn dữ liệu công khai dùng để đối chiếu câu trả lời tuyển sinh.
+
+    Chế độ CHAT_NGUON_DU_LIEU=database: trả dữ liệu đề án đã dựng từ CSDL (cùng nội dung chat dùng để trả lời).
+    """
+    if settings.chat_nguon_du_lieu == "database":
+        doc = next((d for d in documents() if d.name == ten), None)
+        if doc is None:
+            raise HTTPException(400, f"Không tìm thấy nguồn dữ liệu có tên = {ten}")
+        return Response(doc.text, media_type="application/json; charset=utf-8")
     path = resolve_inside(ten)
     if not path.is_file():
         raise HTTPException(400, f"Không tìm thấy nguồn dữ liệu có tên = {ten}")

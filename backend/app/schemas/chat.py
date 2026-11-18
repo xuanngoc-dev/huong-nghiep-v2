@@ -57,6 +57,8 @@ class KeHoachTraCuu(BaseModel):
     thong_tin: list[Literal["diem", "to_hop", "chi_tieu", "hoc_phi", "dieu_kien", "phuong_thuc", "danh_sach"]] = Field(default_factory=list, max_length=7)
     can_lam_ro: str = Field(default="", max_length=1000)
     khong_can_tra_cuu: bool = False
+    # Trường người dùng hỏi tới nhưng không có trong danh mục dữ liệu hệ thống: trả lời "chưa có dữ liệu".
+    truong_chua_co_du_lieu: list[Annotated[str, Field(max_length=255)]] = Field(default_factory=list, max_length=10)
     ly_do: str = Field(default="", max_length=1000)
 
     @model_validator(mode="after")

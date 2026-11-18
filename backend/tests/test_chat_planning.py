@@ -175,7 +175,7 @@ class PlannerFlowTests(CorpusFixture, unittest.IsolatedAsyncioTestCase):
 
     async def test_invalid_plan_does_not_invent_restrictive_filters(self):
         async def invalid(_):
-            yield "delta", {"text": '{"ma_truong":["UNKNOWN"]}'}
+            yield "delta", {"text": '{"ma_truong":["AAA"], "diem_den": "khong phai so"'}
         scope = NguCanhChat(diem=28, to_hop=["A00"])
         with patch.object(chat_stream, "_provider", invalid):
             prepared = await chat_stream.prepare(HoiChatRequest(cau_hoi="Hỏi tiếp", model_id="test", ngu_canh=scope))
@@ -183,6 +183,56 @@ class PlannerFlowTests(CorpusFixture, unittest.IsolatedAsyncioTestCase):
         self.assertEqual(data["ke_hoach_tra_cuu"]["bo_loc"]["ma_truong"], [])
         self.assertIsNone(data["ke_hoach_tra_cuu"]["bo_loc"]["diem_den"])
         self.assertEqual(prepared.result.scope, scope)
+
+    async def test_school_without_data_answers_fixed_message_without_ai(self):
+        calls = []
+
+        async def planner(_):
+            calls.append(1)
+            # Mã ngoài danh mục cũng được coi là trường chưa có dữ liệu (không bỏ kế hoạch rồi tra cứu mọi trường).
+            yield "delta", {"text": '{"ma_truong":["ZZZ"], "truong_chua_co_du_lieu":["Đại học Zeta"]}'}
+        with patch.object(chat_stream, "_provider", planner):
+            prepared = await chat_stream.prepare(HoiChatRequest(cau_hoi="Điểm chuẩn Đại học Zeta?", model_id="test"))
+            events = [event async for event in chat_stream.events(prepared)]
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(prepared.result.missing_schools, ["Đại học Zeta", "ZZZ"])
+        answer = events[-1][1]["tra_loi"]
+        self.assertIn("chưa có dữ liệu tuyển sinh", answer)
+        self.assertIn("Đại học Zeta", answer)
+        self.assertIn("Đại học Alpha Hà Nội (AAA)", answer)
+
+    async def test_school_in_catalog_without_data_is_caught_even_if_planner_misses_it(self):
+        calls = []
+
+        async def planner(_):
+            calls.append(1)
+            # AI lập kế hoạch bỏ sót trường chưa có dữ liệu: kiểm tra cứng theo danh mục trường vẫn chặn.
+            yield "delta", {"text": '{"khong_can_tra_cuu": true, "can_lam_ro": "Bạn hỏi trường nào?"}'}
+        with patch.object(chat_stream, "_provider", planner):
+            prepared = await chat_stream.prepare(
+                HoiChatRequest(cau_hoi="Trường Đại học Thương mại tuyển sinh những ngành nào?", model_id="test"))
+            events = [event async for event in chat_stream.events(prepared)]
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(prepared.result.missing_schools, ["Trường Đại học Thương mại"])
+        self.assertIn("chưa có dữ liệu tuyển sinh", events[-1][1]["tra_loi"])
+
+    def test_missing_school_detection_uses_longest_name_and_ignores_schools_with_data(self):
+        docs = [d for d in lookup.documents() if d.data]
+        self.assertEqual(lookup.missing_schools_in_question("Đại học Kiến trúc Hà Nội tuyển ngành nào?", docs),
+                         ["Đại học Kiến trúc Hà Nội"])
+        self.assertEqual(lookup.missing_schools_in_question("Đại học Alpha Hà Nội tuyển ngành nào?", docs), [])
+        self.assertEqual(lookup.missing_schools_in_question("Ngành CNTT học gì, ra làm gì?", docs), [])
+
+    async def test_known_and_missing_school_tells_ai_not_to_use_outside_knowledge(self):
+        async def planner(_):
+            yield "delta", {"text": '{"ma_truong":["AAA"], "truong_chua_co_du_lieu":["Đại học Zeta"]}'}
+        with patch.object(chat_stream, "_provider", planner):
+            prepared = await chat_stream.prepare(HoiChatRequest(cau_hoi="So sánh Alpha và Zeta", model_id="test"))
+        system = prepared.messages[0]["content"]
+        self.assertIn("TRƯỜNG CHƯA CÓ DỮ LIỆU TRÊN HỆ THỐNG: Đại học Zeta", system)
+        self.assertIn("Không lấy các thông tin này từ kiến thức sẵn có, Internet", system)
+        self.assertIn("Marketing", system)
+        self.assertIn("Hệ thống chưa có dữ liệu tuyển sinh của Đại học Zeta.", prepared.result.notes)
 
     async def test_gemini_planning_and_answer_use_the_same_stream_protocol(self):
         self.model.provider = "gemini"

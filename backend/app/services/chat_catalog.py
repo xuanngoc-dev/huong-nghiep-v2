@@ -22,6 +22,17 @@ def _catalog(signature: tuple) -> tuple[dict, dict]:
         return {}, {}
 
 
+def school_catalog() -> list[dict]:
+    """Danh mục toàn bộ trường (data/dm_truong_dai_hoc.json), kể cả trường chưa có dữ liệu tuyển sinh."""
+    path = Path(__file__).resolve().parents[2] / "data" / "dm_truong_dai_hoc.json"
+    try:
+        stat = path.stat()
+        codes, _ = _catalog((stat.st_mtime_ns, stat.st_size))
+    except OSError:
+        return []
+    return list(codes.values())
+
+
 def school_location(school: dict) -> dict:
     path = Path(__file__).resolve().parents[2] / "data" / "dm_truong_dai_hoc.json"
     try:

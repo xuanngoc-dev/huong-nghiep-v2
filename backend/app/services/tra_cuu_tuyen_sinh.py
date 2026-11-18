@@ -1,7 +1,9 @@
 """Tra cứu bản ghi tuyển sinh. Không dùng điểm từ khóa chung để chọn trường."""
 import json
+import logging
 import math
 import re
+import threading
 import unicodedata
 from copy import deepcopy
 from dataclasses import dataclass, field
@@ -9,13 +11,18 @@ from collections import Counter
 from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
+from time import monotonic
 from urllib.parse import quote, urlparse
+
+from fastapi import HTTPException
 
 from app.core.config import settings
 from app.schemas.chat import KeHoachTraCuu, NguCanhChat, NguonChat, TinNhan
 from app.services.tai_lieu import tai_lieu_root
-from app.services.chat_catalog import school_location
+from app.services.chat_catalog import school_catalog, school_location
+from app.services.nhan_dien_truong import chuan_hoa, truong_chua_co_du_lieu, viet_tat_bo_sung
 
+logger = logging.getLogger(__name__)
 CONTEXT_BUDGET = settings.chat_detail_context_max_chars
 STOP = set("truong dai hoc hoc vien thanh pho tinh phan hieu tru so co so nam tuyen sinh cho cac nhung cua va voi la co duoc nhu the nao bao nhieu gi o tai sao thi hoi ve biet em minh toi ban nganh chuong trinh".split())
 LOCATIONS = set("ha noi ho chi minh da nang vinh long bac nam".split())
@@ -119,6 +126,19 @@ class SearchResult:
     notes: list[str] = field(default_factory=list)
     scope: NguCanhChat | None = None
     ask_ai_to_clarify: bool = False
+    # Trường được hỏi nhưng chưa có dữ liệu trên hệ thống (báo AI nói rõ, không dùng kiến thức ngoài).
+    missing_schools: list[str] = field(default_factory=list)
+
+
+def _make_document(name: str, updated: datetime, data: dict | None, text: str) -> Document:
+    stem = Path(name).stem
+    school = data["truong"] if data else {}
+    name_normal = normalize(school.get("ten_truong", stem.replace("_", " ")))
+    aliases = {normalize(school.get("ma_truong", ""))}
+    aliases.update(w for w in re.findall(r"[a-zA-Z]+", stem.lower()) if len(w) >= 3 and w not in FILE_WORDS)
+    for alias in school.get("aliases", []) if isinstance(school.get("aliases"), list) else []:
+        aliases.add(normalize(alias))
+    return Document(name, updated, data, text, aliases - {""}, name_normal, set(name_normal.split()) - STOP)
 
 
 @lru_cache(maxsize=2)
@@ -132,20 +152,49 @@ def _load_documents(root: str, signature: tuple) -> tuple[Document, ...]:
             data = parsed if isinstance(parsed, dict) and isinstance(parsed.get("truong"), dict) and isinstance(parsed.get("danh_sach_nganh"), list) else None
             if data and not valid_admission_data(data):
                 continue
-            school = data["truong"] if data else {}
-            name_normal = normalize(school.get("ten_truong", path.stem.replace("_", " ")))
-            aliases = {normalize(school.get("ma_truong", ""))}
-            aliases.update(w for w in re.findall(r"[a-zA-Z]+", path.stem.lower()) if len(w) >= 3 and w not in FILE_WORDS)
-            for alias in school.get("aliases", []) if isinstance(school.get("aliases"), list) else []:
-                aliases.add(normalize(alias))
-            documents.append(Document(name, datetime.fromtimestamp(path.stat().st_mtime, timezone.utc), data, text,
-                                      aliases - {""}, name_normal, set(name_normal.split()) - STOP))
+            documents.append(_make_document(name, datetime.fromtimestamp(path.stat().st_mtime, timezone.utc), data, text))
         except (OSError, ValueError, TypeError):
             continue
     return tuple(documents)
 
 
+# Chế độ CSDL: dựng lại tài liệu từ các bảng dats_ sau mỗi CHAT_DB_CACHE_SECONDS giây.
+_db_cache: dict = {"het_han": 0.0, "docs": None, "danh_muc": None}
+_db_lock = threading.Lock()
+
+
+def _documents_from_db() -> tuple[Document, ...]:
+    with _db_lock:
+        if _db_cache["docs"] is not None and monotonic() < _db_cache["het_han"]:
+            return _db_cache["docs"]
+        from app.db.session import SessionLocal
+        from app.services.tai_lieu_db import danh_muc_truong, tai_lieu_tu_csdl
+
+        db = SessionLocal()
+        try:
+            docs = []
+            for item in tai_lieu_tu_csdl(db):
+                data = deepcopy(item.du_lieu)
+                if not valid_admission_data(data):
+                    continue
+                docs.append(_make_document(item.ten, item.cap_nhat, data, json.dumps(item.du_lieu, ensure_ascii=False, indent=1)))
+            _db_cache["danh_muc"] = danh_muc_truong(db)
+        except Exception:
+            logger.exception("Không đọc được dữ liệu tuyển sinh từ CSDL cho chat")
+            # Lỗi tạm thời thì dùng lại dữ liệu đã đọc lần trước nếu có.
+            if _db_cache["docs"] is not None:
+                return _db_cache["docs"]
+            raise HTTPException(503, "Chưa đọc được dữ liệu tuyển sinh. Vui lòng thử lại sau.") from None
+        finally:
+            db.close()
+        _db_cache.update(docs=tuple(docs), het_han=monotonic() + settings.chat_db_cache_seconds)
+        return _db_cache["docs"]
+
+
 def documents() -> tuple[Document, ...]:
+    """Tài liệu tuyển sinh cho chat: file trong TAI_LIEU_DIR hoặc đề án trong CSDL (CHAT_NGUON_DU_LIEU)."""
+    if settings.chat_nguon_du_lieu == "database":
+        return _documents_from_db()
     root = tai_lieu_root()
     signature = []
     for path in sorted(root.iterdir()):
@@ -244,7 +293,8 @@ def _intents(query: str) -> set[str]:
         "diem": ("diem", "diem chuan", "diem san"),
         "chi_tieu": ("chi tieu", "so luong"),
         "hoc_phi": ("hoc phi", "chi phi"),
-        "dieu_kien": ("dieu kien", "yeu cau", "du dieu kien", "quy doi", "cong thuc", "ielts", "sat", "tsa", "hsa", "hoc ba"),
+        "dieu_kien": ("dieu kien", "yeu cau", "du dieu kien", "quy doi", "tuong ung", "tuong duong", "doi sang", "cong thuc",
+                      "ielts", "sat", "tsa", "hsa", "hoc ba"),
         "phuong_thuc": ("phuong thuc", "cach xet", "xet tuyen"),
         "danh_sach": ("truong nao", "nhung truong", "cac truong", "nganh nao", "nhung nganh", "cac nganh", "danh sach"),
         "dinh_huong": ("tot nhat", "nen hoc", "nen chon", "phu hop", "goi y", "tu van"),
@@ -268,7 +318,10 @@ def _clean(value):
 
 
 def _project(record: dict, intents: set[str], detailed: bool, combinations: set[str]) -> dict:
-    keys = {"ma_nganh", "ma_xet_tuyen", "ten_nganh", "ten_chuong_trinh", "chi_tieu_nganh"}
+    # co_so_dao_tao, diem_chuan_cac_nam chỉ có ở dữ liệu dựng từ CSDL (tai_lieu_db).
+    keys = {"ma_nganh", "ma_xet_tuyen", "ten_nganh", "ten_chuong_trinh", "chi_tieu_nganh", "co_so_dao_tao"}
+    if "diem" in intents or detailed:
+        keys.add("diem_chuan_cac_nam")
     if "hoc_phi" in intents:
         keys.update(k for k in record if "phi" in k or "chi_phi" in k)
     if "dieu_kien" in intents or detailed:
@@ -351,7 +404,7 @@ def _number(value):
 
 
 def _overview(record: dict) -> dict:
-    result = {k: record[k] for k in ("ma_nganh", "ma_xet_tuyen", "ten_nganh", "ten_chuong_trinh", "chi_tieu_nganh") if record.get(k) is not None}
+    result = {k: record[k] for k in ("ma_nganh", "ma_xet_tuyen", "ten_nganh", "ten_chuong_trinh", "chi_tieu_nganh", "co_so_dao_tao") if record.get(k) is not None}
     if result.get("ten_nganh") == result.get("ten_chuong_trinh"):
         result.pop("ten_chuong_trinh", None)
     # Columnar values remove repeated JSON keys, not admission facts or cutoffs.
@@ -360,10 +413,67 @@ def _overview(record: dict) -> dict:
          m.get("diem_chuan"), m.get("diem_san"),
          [[c.get("ma_to_hap") or c.get("ma_to_hop"), c.get("diem_chuan")] for c in m.get("to_hop_mon", [])]]
         for m in record.get("phuong_thuc_tuyen_sinh", [])]
+    if record.get("diem_chuan_cac_nam"):
+        # [năm, mã phương thức, tổ hợp, điểm chuẩn, thang điểm] — chỉ có ở dữ liệu dựng từ CSDL.
+        result["diem_chuan_cac_nam"] = [[d.get("nam"), d.get("ma_phuong_thuc"), d.get("to_hop"), d.get("diem_chuan"), d.get("thang_diem")]
+                                       for d in record["diem_chuan_cac_nam"]]
     return result
 
 
+def _school_catalog_rows() -> list[dict]:
+    """Danh mục trường để nhận diện: data/dm_truong_dai_hoc.json, thêm dm_truong khi đọc CSDL, cộng tên viết tắt bổ sung."""
+    rows = {}
+    for row in school_catalog():
+        if row.get("ma_truong") and row.get("ten_truong"):
+            rows[str(row["ma_truong"])] = {"ma_truong": str(row["ma_truong"]), "ten_truong": row["ten_truong"],
+                                           "ten_khac": [row["ten_viet_tat"]] if row.get("ten_viet_tat") else []}
+    for row in _db_cache.get("danh_muc") or [] if settings.chat_nguon_du_lieu == "database" else []:
+        current = rows.setdefault(row["ma_truong"], {**row, "ten_khac": []})
+        current["ten_khac"] = [*current["ten_khac"], *row["ten_khac"]]
+    for ma, aliases in viet_tat_bo_sung().items():
+        if ma in rows:
+            rows[ma]["ten_khac"] = [*rows[ma]["ten_khac"], *aliases]
+    return list(rows.values())
+
+
+def missing_schools_in_question(question: str, docs: list[Document]) -> list[str]:
+    """Trường nhắc tới trong câu hỏi (theo danh mục toàn bộ trường) nhưng chưa có dữ liệu tuyển sinh (nhan_dien_truong)."""
+    with_data, majors = [], set()
+    for doc in docs:
+        school = doc.data["truong"]
+        with_data.append({"ma_truong": str(school.get("ma_truong", "")), "ten_truong": school.get("ten_truong", ""),
+                          "ten_khac": school.get("aliases") if isinstance(school.get("aliases"), list) else []})
+        for record in doc.data["danh_sach_nganh"]:
+            majors.update(chuan_hoa(record.get(k)) for k in ("ten_nganh", "ten_chuong_trinh") if record.get(k))
+    majors.discard("")
+    return truong_chua_co_du_lieu(question, _school_catalog_rows(), with_data, majors)
+
+
+def _missing_schools_message(missing: list[str], docs: list[Document]) -> str:
+    """Trả lời cố định khi chỉ hỏi về trường chưa có dữ liệu: không gọi AI để không lấy thông tin ngoài hệ thống."""
+    names = ", ".join(missing)
+    available = sorted({f"{d.data['truong'].get('ten_truong')} ({d.data['truong'].get('ma_truong', '')})" for d in docs})
+    lines = [f"Hệ thống hiện **chưa có dữ liệu tuyển sinh** của {names}.",
+             "Trợ lý chỉ trả lời dựa trên dữ liệu đã có trên hệ thống nên chưa thể cung cấp thông tin về trường này."]
+    if available:
+        lines += ["", "Các trường đang có dữ liệu:", *[f"- {name}" for name in available[:30]]]
+        if len(available) > 30:
+            lines.append(f"- … và {len(available) - 30} trường khác")
+    return "\n".join(lines)
+
+
 def _planned_search(plan: KeHoachTraCuu, docs: list[Document]) -> SearchResult:
+    missing = [s.strip() for s in plan.truong_chua_co_du_lieu if s.strip()]
+    if missing and not plan.ma_truong:
+        return SearchResult(message=_missing_schools_message(missing, docs), scope=plan.ngu_canh, missing_schools=missing)
+    result = _planned_search_known(plan, docs)
+    if missing:
+        result.missing_schools = missing
+        result.notes.append(f"Hệ thống chưa có dữ liệu tuyển sinh của {', '.join(missing)}.")
+    return result
+
+
+def _planned_search_known(plan: KeHoachTraCuu, docs: list[Document]) -> SearchResult:
     if plan.khong_can_tra_cuu:
         return SearchResult(message="Lượt này không cần tra cứu bản ghi tuyển sinh. " + plan.can_lam_ro,
                             scope=plan.ngu_canh, ask_ai_to_clarify=True)
@@ -389,6 +499,9 @@ def _planned_search(plan: KeHoachTraCuu, docs: list[Document]) -> SearchResult:
         school_data.update(school_location(school))
         if detailed:
             school_data.update({k: v for k, v in school.items() if k == "dieu_kien_chung" or "phi" in k})
+        # quy_doi_diem (bảng / mốc quy đổi điểm) chỉ có ở dữ liệu dựng từ CSDL (tai_lieu_db).
+        if (detailed or "dieu_kien" in plan.thong_tin) and school.get("quy_doi_diem"):
+            school_data["quy_doi_diem"] = school["quy_doi_diem"]
         for record in doc.data["danh_sach_nganh"]:
             identity = normalize(" ".join(str(record.get(k) or "") for k in ("ma_nganh", "ma_xet_tuyen", "ten_nganh", "ten_chuong_trinh")))
             if plan.nganh and not any(contains(identity, normalize(m)) for m in plan.nganh):
@@ -492,6 +605,12 @@ def search(question: str, history: list[TinNhan] | None = None, scope: NguCanhCh
            plan: KeHoachTraCuu | None = None) -> SearchResult:
     all_docs = list(documents())
     docs = [d for d in all_docs if d.data]
+    # Trường nêu tên trong câu hỏi mà chưa có dữ liệu: báo "chưa có dữ liệu", không để AI lấy nguồn khác.
+    missing = missing_schools_in_question(question, docs)
+    if plan is not None and missing:
+        plan = plan.model_copy(update={"truong_chua_co_du_lieu": list(dict.fromkeys([*plan.truong_chua_co_du_lieu, *missing]))[:10]})
+    if plan is None and missing and not _schools(normalize(question), docs)[0]:
+        return SearchResult(message=_missing_schools_message(missing, docs), scope=scope, missing_schools=missing)
     if plan is not None:
         result = _planned_search(plan, docs)
         if not result.context and any(not d.data for d in all_docs):
@@ -592,7 +711,7 @@ def search(question: str, history: list[TinNhan] | None = None, scope: NguCanhCh
             continue
         school_keys = {"ten_truong", "ma_truong", "nam_tuyen_sinh"}
         if "dieu_kien" in intents or "phuong_thuc" in intents:
-            school_keys.add("dieu_kien_chung")
+            school_keys.update({"dieu_kien_chung", "quy_doi_diem"})
         if "hoc_phi" in intents:
             school_keys.update(k for k in doc.data["truong"] if "phi" in k)
         school = {k: v for k, v in doc.data["truong"].items() if k in school_keys}
