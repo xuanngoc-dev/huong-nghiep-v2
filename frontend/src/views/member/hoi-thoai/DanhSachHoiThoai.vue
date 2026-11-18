@@ -141,6 +141,16 @@
               {{ dangHoatDong(phienDangChon) ? 'Đang hoạt động' : 'Đã kết thúc' }}
             </CustomTag>
           </div>
+          <!-- Token AI: % token khả dụng trên tổng token (khả dụng + đã dùng); bấm để nạp thêm. -->
+          <CustomTooltip v-if="token" :content="moTaToken">
+            <RouterLink :to="{ name: 'nap-tien', query: { loai: 'token' } }" class="hoi-thoai__token" :aria-label="moTaToken">
+              <span class="hoi-thoai__token-dong">
+                <span>Token AI</span>
+                <strong :style="{ color: mauToken }">{{ phanTramToken }}%</strong>
+              </span>
+              <el-progress :percentage="phanTramToken" :stroke-width="6" :show-text="false" :color="mauToken" />
+            </RouterLink>
+          </CustomTooltip>
         </header>
 
         <div ref="khungTinNhan" v-loading="dangTaiTinNhan" class="hoi-thoai__tin-nhan">
@@ -237,6 +247,8 @@ import {
   ketThucHoiThoaiCuaToi,
 } from '@/api/hoiThoai'
 import { useChatStore } from '@/stores/chat'
+import { fetchHoSo } from '@/api/hoSo'
+import { hienSo } from '@/data/napTien'
 import ChatMarkdown from '@/components/guest/chung/ChatMarkdown.vue'
 import DangSoanTraLoi from '@/components/guest/chung/DangSoanTraLoi.vue'
 import GoiYLenh from '@/components/guest/chung/GoiYLenh.vue'
@@ -270,9 +282,37 @@ const dangGuiTaiDay = ref(false)
 let lanTaiTinNhan = 0
 let henFocus = false
 const dangSuaTieuDe = ref(false)
+// Số dư token AI của tài khoản: { con, da } — khả dụng / đã dùng; null khi chưa tải được.
+const token = ref(null)
 const dangLuuTieuDe = ref(false)
 const tieuDeMoi = ref('')
 const oTieuDe = ref(null)
+
+const phanTramToken = computed(() => {
+  const tong = (token.value?.con || 0) + (token.value?.da || 0)
+  return tong ? Math.min(100, Math.round(((token.value.con || 0) / tong) * 100)) : 0
+})
+
+const mauToken = computed(() => {
+  if (phanTramToken.value >= 50) return '#0f766e'
+  return phanTramToken.value >= 20 ? 'var(--el-color-warning)' : 'var(--el-color-danger)'
+})
+
+const moTaToken = computed(() => {
+  if (!token.value) return ''
+  const { con, da } = token.value
+  if (!con && !da) return 'Bạn chưa có token AI. Bấm để nạp gói Token AI.'
+  return `Còn ${hienSo(con)} / ${hienSo(con + da)} token (đã dùng ${hienSo(da)}). Bấm để nạp thêm.`
+})
+
+async function taiToken() {
+  try {
+    const hoSo = await fetchHoSo({ skipLoading: true })
+    token.value = { con: hoSo.so_luong_token_kha_dung || 0, da: hoSo.so_luong_token_da_dung || 0 }
+  } catch {
+    // Không tải được thì giữ số cũ (hoặc ẩn thanh token).
+  }
+}
 
 function loiApi(error, fallback) {
   const detail = error?.response?.data?.detail
@@ -462,11 +502,18 @@ async function cuonXuong() {
 
 // Tải lại phiên sau khi gửi (tin nhắn đã lưu, số tin nhắn, trạng thái) và cập nhật dòng trong danh sách.
 // Hội thoại mới: server vừa tạo phiên → thêm vào danh sách và chuyển URL sang hội thoại đó.
+// Hội thoại vừa có tin nhắn mới lên đầu danh sách (như server: tin nhắn gần nhất trước). Chỉ chuyển dòng đang có
+// trong danh sách, không tự thêm để giữ đúng bộ lọc đang chọn.
+function lenDauDanhSach(phien) {
+  if (!phienList.value.some((item) => item.id === phien.id)) return
+  phienList.value = [phien, ...phienList.value.filter((item) => item.id !== phien.id)]
+}
+
 async function lamMoiPhien(ma, moi = false) {
   try {
     const data = await fetchChiTietHoiThoaiCuaToi(ma, { skipLoading: true })
     if (moi) taiDanhSach()
-    else phienList.value = phienList.value.map((item) => (item.id === data.phien.id ? data.phien : item))
+    else lenDauDanhSach(data.phien)
     if (phienDangChon.value?.ma_dinh_danh !== ma) return
     phienDangChon.value = data.phien
     tinNhan.value = data.tin_nhan
@@ -493,6 +540,9 @@ async function gui() {
   tinCucBo.value = []
   await chat.loadModels()
   chat.moHoiThoai(phien.ma_dinh_danh, tinNhan.value)
+  // Đưa hội thoại lên đầu ngay khi gửi (xem trước là câu vừa hỏi); có câu trả lời thì lamMoiPhien cập nhật lại.
+  const dong = phienList.value.find((item) => item.id === phien.id)
+  if (dong) lenDauDanhSach({ ...dong, tin_nhan_cuoi: text, tin_nhan_cuoi_luc: new Date().toISOString() })
   dangGuiTaiDay.value = true
   cauHoi.value = ''
   cuonXuong()
@@ -512,6 +562,8 @@ async function gui() {
   } finally {
     dangGuiTaiDay.value = false
     cuonXuong()
+    // Token được trừ sau mỗi lượt trả lời.
+    taiToken()
   }
 }
 
@@ -732,6 +784,7 @@ watch(() => [chat.state.messages.length, chat.state.messages.at(-1)?.text], () =
 onMounted(() => {
   document.addEventListener('pointerdown', dongMenuKhiBamNgoai, true)
   chat.loadModels()
+  taiToken()
   taiDanhSach()
   dongBoTuUrl()
 })
@@ -1081,6 +1134,27 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
   justify-content: flex-end;
 }
 
+.hoi-thoai__token {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 4px;
+  width: 150px;
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.hoi-thoai__token:hover .hoi-thoai__token-dong span {
+  color: var(--el-color-primary);
+}
+
+.hoi-thoai__token-dong {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .hoi-thoai__tin-nhan {
   flex: 1;
   min-height: 0;
@@ -1223,6 +1297,10 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
 @media (max-width: 767px) {
   .hoi-thoai {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hoi-thoai__token {
+    width: 96px;
   }
 
   .hoi-thoai__noi-dung {
