@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel
 
@@ -50,3 +50,8 @@ class ChatTinNhanItem(BaseModel):
 class ChatPhienChiTiet(BaseModel):
     phien: ChatPhienItem
     tin_nhan: list[ChatTinNhanItem]
+
+
+class ChatPhienTrangThai(BaseModel):
+    # dang_hoat_dong: đang hỏi đáp; da_dong: đã kết thúc; luu_tru: lưu trữ. Hai trạng thái sau không hỏi tiếp được.
+    trang_thai: Literal["dang_hoat_dong", "da_dong", "luu_tru"]

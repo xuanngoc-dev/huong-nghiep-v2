@@ -4,7 +4,10 @@ import unittest
 
 from fastapi import HTTPException
 
-from app.api.v1.endpoints.chat_hoi_thoai import chi_tiet_phien, danh_sach_phien
+from app.api.v1.endpoints.chat_hoi_thoai import chi_tiet_phien, danh_sach_phien, doi_trang_thai_phien, xoa_phien
+from app.models.chat_conversations import ChatConversation
+from app.models.chat_messages import ChatMessage
+from app.schemas.chat_hoi_thoai import ChatPhienTrangThai
 from app.services import luu_chat
 from tests import test_luu_chat as mau
 
@@ -49,6 +52,29 @@ class ChatHoiThoaiApiTests(unittest.TestCase):
         self.assertEqual(chi_tiet_phien(str(p.id), self.db).phien.id, p.id)
         self.assertEqual([m.loai_nguoi_gui for m in kq.tin_nhan], ["user", "bot"])
         self.assertEqual((kq.tin_nhan[1].trang_thai, kq.phien.tin_nhan_cuoi), ("loi", "Hết giờ"))
+
+    def test_ket_thuc_va_mo_lai_phien(self):
+        p = luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "Hỏi", "m")
+        self.db.commit()
+        kq = doi_trang_thai_phien(p.ma_dinh_danh, ChatPhienTrangThai(trang_thai="da_dong"), self.db)
+        self.assertEqual((kq.trang_thai, kq.tin_nhan_cuoi), ("da_dong", "Hỏi"))
+        self.assertEqual([x.id for x in self._ds(trang_thai="da_dong").items], [p.id])
+        with self.assertRaises(luu_chat.PhienDaKetThuc):
+            luu_chat.luu_cau_hoi(self.db, p.ma_dinh_danh, None, "tb1", "Tiếp", "m")
+        self.db.rollback()
+        doi_trang_thai_phien(str(p.id), ChatPhienTrangThai(trang_thai="dang_hoat_dong"), self.db)
+        self.assertEqual(luu_chat.luu_cau_hoi(self.db, p.ma_dinh_danh, None, "tb1", "Tiếp", "m").id, p.id)
+
+    def test_xoa_phien_xoa_ca_tin_nhan(self):
+        p = luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "Hỏi", "m")
+        con_lai = luu_chat.luu_cau_hoi(self.db, None, None, "tb2", "Khác", "m")
+        self.db.commit()
+        self.assertEqual(xoa_phien(p.ma_dinh_danh, self.db).status_code, 204)
+        self.assertEqual([x.id for x in self.db.query(ChatConversation)], [con_lai.id])
+        self.assertEqual({m.phien_chat_id for m in self.db.query(ChatMessage)}, {con_lai.id})
+        with self.assertRaises(HTTPException) as caught:
+            xoa_phien(p.ma_dinh_danh, self.db)
+        self.assertEqual(caught.exception.status_code, 400)
 
     def test_phien_khong_ton_tai_tra_400(self):
         with self.assertRaises(HTTPException) as caught:

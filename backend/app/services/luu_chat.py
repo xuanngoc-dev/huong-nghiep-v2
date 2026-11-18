@@ -2,6 +2,7 @@
 
 Mỗi lượt hỏi: tìm phiên theo mã phiên (UUID) do frontend gửi, chưa có hoặc không thuộc người hỏi thì tạo phiên mới;
 ghi một tin nhắn `user` (câu hỏi) và sau khi trả lời xong một tin nhắn `bot` (câu trả lời / lỗi).
+Phiên bị quản trị kết thúc (`da_dong`) hoặc lưu trữ (`luu_tru`) thì không nhận câu hỏi mới (`PhienDaKetThuc`).
 Các hàm nhận Session để test được; nơi gọi tự commit. Lỗi khi lưu không được làm hỏng việc chat (nơi gọi bắt lỗi).
 """
 
@@ -15,6 +16,11 @@ from app.models.chat_conversations import ChatConversation
 from app.models.chat_messages import ChatMessage
 
 _DO_DAI_TIEU_DE = 120
+DANG_HOAT_DONG = "dang_hoat_dong"
+
+
+class PhienDaKetThuc(Exception):
+    """Phiên của người hỏi đã kết thúc / lưu trữ: không ghi tiếp, nơi gọi báo người dùng mở hội thoại mới."""
 
 
 def _uuid_hop_le(value: str | None) -> str | None:
@@ -36,14 +42,26 @@ def _tieu_de(cau_hoi: str) -> str:
     return dong if len(dong) <= _DO_DAI_TIEU_DE else dong[: _DO_DAI_TIEU_DE - 1] + "…"
 
 
+def tim_phien(db: Session, ma_phien: str | None, user_id: int | None, ma_khach: str | None) -> ChatConversation | None:
+    """Phiên có mã `ma_phien` thuộc người hỏi; mã không hợp lệ / chưa có / của người khác thì None."""
+    ma = _uuid_hop_le(ma_phien)
+    phien = db.scalar(select(ChatConversation).where(ChatConversation.ma_dinh_danh == ma)) if ma else None
+    return phien if phien is not None and _thuoc_nguoi_hoi(phien, user_id, ma_khach) else None
+
+
 def mo_phien(
     db: Session, ma_phien: str | None, user_id: int | None, ma_khach: str | None, cau_hoi: str, model_ai: str | None
 ) -> ChatConversation:
-    """Lấy phiên theo mã; chưa có / mã không hợp lệ / không thuộc người hỏi thì tạo phiên mới (tiêu đề = câu hỏi đầu)."""
+    """Lấy phiên theo mã; chưa có / mã không hợp lệ / không thuộc người hỏi thì tạo phiên mới (tiêu đề = câu hỏi đầu).
+
+    Phiên của người hỏi đã kết thúc thì raise `PhienDaKetThuc`.
+    """
     ma = _uuid_hop_le(ma_phien)
     phien = db.scalar(select(ChatConversation).where(ChatConversation.ma_dinh_danh == ma)) if ma else None
     if phien is not None and not _thuoc_nguoi_hoi(phien, user_id, ma_khach):
         phien, ma = None, None
+    if phien is not None and phien.trang_thai != DANG_HOAT_DONG:
+        raise PhienDaKetThuc(phien.ma_dinh_danh)
     if phien is None:
         phien = ChatConversation(
             user_id=user_id,

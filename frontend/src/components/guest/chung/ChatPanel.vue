@@ -2,12 +2,15 @@
   <div class="ai-chat" :class="{ 'is-compact': compact }">
     <p v-if="chat.state.storageWarning" class="ai-chat__notice" role="status">{{ chat.state.storageWarning }}</p>
     <p v-if="chat.state.error" class="ai-chat__error" role="alert">{{ chat.state.error }}</p>
+    <p v-if="chat.state.daKetThuc" class="ai-chat__ended" role="status">
+      Cuộc hội thoại này đã kết thúc. Bấm <button type="button" @click="chat.clear">Hội thoại mới</button> để tiếp tục hỏi đáp.
+    </p>
     <div ref="list" class="ai-chat__thread" role="log" aria-label="Hội thoại tuyển sinh" aria-live="polite" aria-relevant="additions" :aria-busy="chat.state.sending" @scroll="onScroll">
       <ChatMessage v-for="(message, index) in chat.state.messages" :key="message.id" :message="message"
-        :retryable="index === chat.state.messages.length - 1 && message.role === 'bot' && message.id !== 'welcome' && !chat.state.sending"
+        :retryable="index === chat.state.messages.length - 1 && message.role === 'bot' && message.id !== 'welcome' && !chat.state.sending && !chat.state.daKetThuc"
         @retry="chat.retry" />
     </div>
-    <div v-if="suggestions.length" class="ai-chat__suggestions">
+    <div v-if="suggestions.length && !chat.state.daKetThuc" class="ai-chat__suggestions">
       <button v-for="question in suggestions" :key="question" type="button" :disabled="chat.state.sending" @click="submit(question)">{{ question }}</button>
     </div>
     <form class="ai-chat__composer" @submit.prevent="submit()">
@@ -23,9 +26,11 @@
       </div>
       <div class="ai-chat__composer-row">
         <textarea ref="input" v-model="chat.state.draft" maxlength="4000" :rows="compact ? 2 : 3" aria-label="Nội dung câu hỏi"
-          placeholder="Hỏi về trường, ngành, tổ hợp, điểm hoặc điều kiện xét tuyển…" @keydown="keydown" />
+          :disabled="chat.state.daKetThuc"
+          :placeholder="chat.state.daKetThuc ? 'Cuộc hội thoại đã kết thúc — mở hội thoại mới để hỏi tiếp.' : 'Hỏi về trường, ngành, tổ hợp, điểm hoặc điều kiện xét tuyển…'"
+          @keydown="keydown" />
         <button v-if="chat.state.sending" type="button" class="ai-chat__stop" @click="chat.stop()">Dừng</button>
-        <button v-else type="submit" :disabled="!chat.state.draft.trim() || !chat.state.modelId">Gửi</button>
+        <button v-else type="submit" :disabled="chat.state.daKetThuc || !chat.state.draft.trim() || !chat.state.modelId">Gửi</button>
       </div>
     </form>
     <small class="ai-chat__hint">Enter để gửi · Shift + Enter để xuống dòng · Kiểm tra nguồn trước khi quyết định.</small>
@@ -64,7 +69,7 @@ function keydown(event) {
   }
 }
 watch(() => [chat.state.messages.length, chat.state.messages.at(-1)?.text, chat.state.sending], scroll)
-onMounted(() => { chat.loadModels(); scroll(); if (props.compact) input.value?.focus() })
+onMounted(() => { chat.loadModels(); chat.kiemTraPhien(); scroll(); if (props.compact) input.value?.focus() })
 </script>
 
 <style lang="scss">
@@ -94,6 +99,9 @@ onMounted(() => { chat.loadModels(); scroll(); if (props.compact) input.value?.f
   th, td { padding:8px 10px; border:1px solid #d3e3d9; vertical-align:top; }
   th { background:#e7f3ec; }
   &__error { color:#a33a26; margin:8px 14px; }
+  &__ended { margin:0; padding:10px 14px; font-size:13px; color:#755622; background:#fff8e8; border-bottom:1px solid #f0e2bf; }
+  &__ended button { padding:2px 8px; font-size:12px; }
+  textarea:disabled { background:#f3f5f4; cursor:not-allowed; }
   &__message &__error { margin:8px 0; }
   &__muted, &__pending { color:#607169; margin:4px 0; }
   &__notice, &__notes { padding:8px 14px; font-size:12px; color:#755622; background:#fff8e8; }

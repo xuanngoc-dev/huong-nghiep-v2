@@ -37,7 +37,8 @@ export async function hoiChatStream(payload, { signal, onEvent, timeoutMs = 9500
       const body = await response.json().catch(() => ({}))
       const detail = typeof body.detail === 'string' ? body.detail : 'Không thể gửi câu hỏi. Vui lòng thử lại.'
       const retry = response.headers.get('Retry-After')
-      throw new Error(`${detail}${retry ? ` Thử lại sau khoảng ${retry} giây.` : ''}`)
+      // status để nơi gọi nhận biết 409 (phiên hội thoại đã kết thúc).
+      throw Object.assign(new Error(`${detail}${retry ? ` Thử lại sau khoảng ${retry} giây.` : ''}`), { status: response.status })
     }
     await readChatStream(response, onEvent)
   } catch (error) {
@@ -47,6 +48,12 @@ export async function hoiChatStream(payload, { signal, onEvent, timeoutMs = 9500
     clearTimeout(timeout)
     signal?.removeEventListener('abort', cancel)
   }
+}
+
+/** Trạng thái phiên hội thoại của người đang hỏi: { trang_thai, da_ket_thuc }. */
+export function layTrangThaiPhien(maPhien, maKhach) {
+  const params = maKhach ? { ma_khach_vang_lai: maKhach } : {}
+  return api.get(`/chat/phien/${encodeURIComponent(maPhien)}`, { ...quiet, params }).then((res) => res.data)
 }
 
 export function layTaiLieu() {

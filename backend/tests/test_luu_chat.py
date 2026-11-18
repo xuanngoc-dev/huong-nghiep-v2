@@ -6,6 +6,7 @@ import uuid
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
+from fastapi import HTTPException
 from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
@@ -94,6 +95,38 @@ class LuuChatTests(unittest.TestCase):
         tin_nhan = self.db.scalars(select(ChatMessage).order_by(ChatMessage.id)).all()
         self.assertEqual([m.loai_nguoi_gui for m in tin_nhan], ["user", "bot", "user", "bot"])
         self.assertEqual(tin_nhan[1].noi_dung_phan_hoi, "Xin chào")
+
+    def test_phien_da_ket_thuc_khong_hoi_tiep_duoc(self):
+        p = luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "a", None)
+        p.trang_thai = "da_dong"
+        self.db.commit()
+        with self.assertRaises(luu_chat.PhienDaKetThuc):
+            luu_chat.luu_cau_hoi(self.db, p.ma_dinh_danh, None, "tb1", "b", None)
+        # Thiết bị khác dùng mã đó vẫn chỉ mở phiên mới của mình như trước.
+        self.assertNotEqual(luu_chat.luu_cau_hoi(self.db, p.ma_dinh_danh, None, "tb2", "c", None).id, p.id)
+
+    def test_api_hoi_phien_da_ket_thuc_tra_409_khong_goi_ai(self):
+        p = luu_chat.luu_cau_hoi(self.db, None, 1, None, "a", None)
+        p.trang_thai = "luu_tru"
+        self.db.commit()
+        hoi = AsyncMock()
+        payload = HoiChatRequest(cau_hoi="Tiếp", model_id="m", ma_phien=p.ma_dinh_danh)
+        with patch.object(chat_api, "SessionLocal", self.Session), patch.object(chat_api, "hoi", hoi):
+            with self.assertRaises(HTTPException) as caught:
+                asyncio.run(chat_api.post_hoi(payload, 1))
+        self.assertEqual(caught.exception.status_code, 409)
+        hoi.assert_not_called()
+        self.db.expire_all()
+        self.assertEqual(self.db.get(ChatConversation, p.id).so_tin_nhan, 1)
+
+    def test_trang_thai_phien_chi_cho_nguoi_so_huu(self):
+        p = luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "a", None)
+        p.trang_thai = "da_dong"
+        self.db.commit()
+        cua_minh = chat_api.get_trang_thai_phien(p.ma_dinh_danh, "tb1", None, self.db)
+        self.assertEqual((cua_minh.trang_thai, cua_minh.da_ket_thuc), ("da_dong", True))
+        nguoi_khac = chat_api.get_trang_thai_phien(p.ma_dinh_danh, "tb2", None, self.db)
+        self.assertEqual((nguoi_khac.trang_thai, nguoi_khac.da_ket_thuc), (None, False))
 
     def _chay_stream(self, su_kien):
         """Gọi /chat/hoi/stream với luồng sự kiện giả; trả các khối SSE đã gửi."""

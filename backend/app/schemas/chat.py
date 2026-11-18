@@ -128,3 +128,11 @@ class HoiChatResponse(BaseModel):
     ngu_canh: NguCanhChat | None = None
     # Mã phiên hội thoại đã lưu; frontend gửi lại ở câu hỏi tiếp theo để cùng một phiên.
     ma_phien: str | None = None
+
+
+class TrangThaiPhienChat(BaseModel):
+    ma_phien: str
+    # Null: phiên chưa lưu hoặc không thuộc người hỏi.
+    trang_thai: str | None = None
+    # Phiên đã kết thúc / lưu trữ: không hỏi tiếp được.
+    da_ket_thuc: bool = False

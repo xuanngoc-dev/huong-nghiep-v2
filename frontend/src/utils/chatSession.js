@@ -4,6 +4,7 @@ export const newConversation = () => [{ id: 'welcome', role: 'bot', text: WELCOM
 /** One request owner per shared conversation; stale requests cannot update a new conversation. */
 // state.maPhien: mã phiên hội thoại phía server (chat_conversations.ma_dinh_danh), nhận ở sự kiện meta/done của câu hỏi
 // đầu và gửi lại ở các câu sau để cùng một phiên; hội thoại mới thì bỏ. guestId(): mã thiết bị khi là khách.
+// state.daKetThuc: phiên đã bị quản trị kết thúc (server trả 409) — không gửi tiếp, phải mở hội thoại mới.
 export function createChatSession(state, { stream, storage, storageKey, loadProfile, guestId }) {
   let controller = null
   let revision = 0
@@ -27,6 +28,7 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
     state.modelId = ''
     state.context = null
     state.maPhien = null
+    state.daKetThuc = false
     state.suggestions = []
     state.error = ''
     try {
@@ -75,11 +77,12 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
     state.draft = ''
     state.context = null
     state.maPhien = null
+    state.daKetThuc = false
     persist()
   }
   async function send(input, retry = false) {
     const text = (typeof input === 'string' ? input : state.draft).trim()
-    if (!text || state.sending) return
+    if (!text || state.sending || state.daKetThuc) return
     if (text.length > 4000) {
       state.error = 'Câu hỏi tối đa 4.000 ký tự.'
       return
@@ -157,6 +160,10 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
       })
     } catch (error) {
       if (owner !== revision) return
+      if (error?.status === 409) {
+        state.daKetThuc = true
+        state.suggestions = []
+      }
       const bot = state.messages.find(m => m.id === botId)
       if (bot) {
         bot.status = requestController.signal.aborted ? 'cancelled' : 'error'

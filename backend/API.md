@@ -1,16 +1,16 @@
 # Danh sách API
 
-Tự sinh từ code lúc 18/11/2026 09:29 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 18/11/2026 14:00 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **310** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **313** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 183 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Quản trị (admin)](#quan_tri) | 185 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
 | [Thành viên (user)](#thanh_vien) | 79 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
-| [Khách vãng lai](#khach) | 48 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
+| [Khách vãng lai](#khach) | 49 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
 
@@ -325,6 +325,8 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 |---|---|---|---|
 | `GET` | `/api/v1/hoi-thoai/phien` | Bắt buộc (admin) | Danh sách phiên hội thoại với trợ lý, phiên có tin nhắn mới nhất trước. |
 | `GET` | `/api/v1/hoi-thoai/phien/{ma_phien}` | Bắt buộc (admin) | Thông tin một phiên hội thoại và toàn bộ tin nhắn theo thứ tự gửi. |
+| `DELETE` | `/api/v1/hoi-thoai/phien/{ma_phien}` | Bắt buộc (admin) | Xóa một phiên cùng toàn bộ tin nhắn của phiên. |
+| `PATCH` | `/api/v1/hoi-thoai/phien/{ma_phien}/trang-thai` | Bắt buộc (admin) | Kết thúc (`da_dong`), lưu trữ (`luu_tru`) hoặc mở lại (`dang_hoat_dong`) một phiên. |
 
 ### `tai-lieu`
 
@@ -632,6 +634,7 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | `POST` | `/api/v1/chat/hoi/stream` | Không | Hỏi đáp dạng stream (SSE). Sự kiện `meta` có `ma_phien` để frontend gửi lại ở câu hỏi sau. |
 | `GET` | `/api/v1/chat/model` | Không | Danh sách model hỏi đáp và trạng thái đã có API key. |
 | `GET` | `/api/v1/chat/nguon/{ten}` | Không | Nguồn dữ liệu công khai dùng để đối chiếu câu trả lời tuyển sinh. |
+| `GET` | `/api/v1/chat/phien/{ma_phien}` | Không | Trạng thái phiên của chính người hỏi (để frontend khóa ô nhập khi phiên đã kết thúc). |
 
 ### `danh-muc/bai-thi-danh-gia-nang-luc`
 

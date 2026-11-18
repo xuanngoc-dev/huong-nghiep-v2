@@ -243,3 +243,20 @@ test('khách gửi kèm mã thiết bị', async () => {
   await session.send('Xin chào')
   assert.equal(payload.ma_khach_vang_lai, 'thiet-bi-1')
 })
+
+test('server báo phiên đã kết thúc (409) thì khóa gửi tiếp tới khi mở hội thoại mới', async () => {
+  let calls = 0
+  const { state, session } = fixture(async () => {
+    calls++
+    throw Object.assign(new Error('Cuộc hội thoại này đã kết thúc.'), { status: 409 })
+  })
+  state.maPhien = '11111111-1111-4111-8111-111111111111'
+  await session.send('Hỏi tiếp')
+  assert.equal(state.daKetThuc, true)
+  assert.equal(state.messages.at(-1).error, 'Cuộc hội thoại này đã kết thúc.')
+  await session.send('Hỏi nữa')
+  assert.equal(calls, 1)
+  session.clear()
+  assert.equal(state.daKetThuc, false)
+  assert.equal(state.maPhien, null)
+})

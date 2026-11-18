@@ -1,7 +1,7 @@
 from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import func, or_, select
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
+from sqlalchemy import delete, func, or_, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user
@@ -9,7 +9,13 @@ from app.db.session import get_db
 from app.models.chat_conversations import ChatConversation
 from app.models.chat_messages import ChatMessage
 from app.models.nguoi_dung import NguoiDung
-from app.schemas.chat_hoi_thoai import ChatPhienChiTiet, ChatPhienItem, ChatPhienPage, ChatTinNhanItem
+from app.schemas.chat_hoi_thoai import (
+    ChatPhienChiTiet,
+    ChatPhienItem,
+    ChatPhienPage,
+    ChatPhienTrangThai,
+    ChatTinNhanItem,
+)
 
 router = APIRouter(prefix="/hoi-thoai", tags=["hoi-thoai"], dependencies=[Depends(get_admin_user)])
 
@@ -55,6 +61,25 @@ def _tin_nhan_cuoi(db: Session, phien_ids: list[int]) -> dict[int, ChatMessage]:
         ChatMessage.phien_chat_id
     )
     return {m.phien_chat_id: m for m in db.scalars(select(ChatMessage).where(ChatMessage.id.in_(cuoi_ids)))}
+
+
+def _phien_or_400(db: Session, ma_phien: str) -> ChatConversation:
+    """Phiên theo mã định danh (UUID) hoặc id số; không có thì 400."""
+    if ma_phien.isdigit():
+        phien = db.get(ChatConversation, int(ma_phien))
+    else:
+        phien = db.scalar(select(ChatConversation).where(ChatConversation.ma_dinh_danh == ma_phien))
+    if phien is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy phiên hội thoại có mã = {ma_phien}",
+        )
+    return phien
+
+
+def _item_cua(db: Session, phien: ChatConversation) -> ChatPhienItem:
+    nguoi = db.get(NguoiDung, phien.user_id) if phien.user_id else None
+    return _item(phien, nguoi, _tin_nhan_cuoi(db, [phien.id]).get(phien.id))
 
 
 @router.get("/phien", response_model=ChatPhienPage)
@@ -117,15 +142,7 @@ def chi_tiet_phien(ma_phien: str, db: Session = Depends(get_db)) -> ChatPhienChi
 
     `ma_phien` là mã định danh (UUID, dùng trên URL trang quản trị) hoặc id số của phiên.
     """
-    if ma_phien.isdigit():
-        phien = db.get(ChatConversation, int(ma_phien))
-    else:
-        phien = db.scalar(select(ChatConversation).where(ChatConversation.ma_dinh_danh == ma_phien))
-    if phien is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Không tìm thấy phiên hội thoại có mã = {ma_phien}",
-        )
+    phien = _phien_or_400(db, ma_phien)
     nguoi = db.get(NguoiDung, phien.user_id) if phien.user_id else None
     tin_nhan = list(
         db.scalars(select(ChatMessage).where(ChatMessage.phien_chat_id == phien.id).order_by(ChatMessage.id))
@@ -134,3 +151,28 @@ def chi_tiet_phien(ma_phien: str, db: Session = Depends(get_db)) -> ChatPhienChi
         phien=_item(phien, nguoi, tin_nhan[-1] if tin_nhan else None),
         tin_nhan=[ChatTinNhanItem.model_validate(m) for m in tin_nhan],
     )
+
+
+@router.patch("/phien/{ma_phien}/trang-thai", response_model=ChatPhienItem)
+def doi_trang_thai_phien(
+    ma_phien: str, payload: ChatPhienTrangThai, db: Session = Depends(get_db)
+) -> ChatPhienItem:
+    """Kết thúc (`da_dong`), lưu trữ (`luu_tru`) hoặc mở lại (`dang_hoat_dong`) một phiên.
+
+    Phiên không ở trạng thái `dang_hoat_dong` thì người dùng không hỏi tiếp được trong phiên đó (API chat trả 409).
+    """
+    phien = _phien_or_400(db, ma_phien)
+    phien.trang_thai = payload.trang_thai
+    db.commit()
+    db.refresh(phien)
+    return _item_cua(db, phien)
+
+
+@router.delete("/phien/{ma_phien}", status_code=status.HTTP_204_NO_CONTENT)
+def xoa_phien(ma_phien: str, db: Session = Depends(get_db)) -> Response:
+    """Xóa một phiên cùng toàn bộ tin nhắn của phiên."""
+    phien = _phien_or_400(db, ma_phien)
+    db.execute(delete(ChatMessage).where(ChatMessage.phien_chat_id == phien.id))
+    db.delete(phien)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
