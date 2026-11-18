@@ -182,6 +182,18 @@ const router = createRouter({
           meta: { title: 'Lịch sử tìm trường', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'hoi-thoai/phien',
+          name: 'admin-phien-hoi-thoai',
+          component: () => import('@/views/admin/hoi-thoai/PhienHoiThoai.vue'),
+          meta: { title: 'Phiên hội thoại', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'hoi-thoai/tri-thuc-ai',
+          name: 'admin-tri-thuc-ai',
+          component: () => import('@/views/admin/hoi-thoai/TriThucAi.vue'),
+          meta: { title: 'Tri thức & AI', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'tai-khoan/ho-so',
           name: 'admin-ho-so',
           component: () => import('@/views/admin/PagePlaceholder.vue'),

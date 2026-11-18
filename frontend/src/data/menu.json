@@ -36,6 +36,25 @@
       ]
     },
     {
+      "header": "HỘI THOẠI",
+      "tooltip": "Quản lý hội thoại với trợ lý và tri thức AI",
+      "abbr": "HT",
+      "items": [
+        {
+          "index": "/admin/hoi-thoai/phien",
+          "title": "Phiên hội thoại",
+          "tooltip": "Xem các phiên trò chuyện của người dùng với trợ lý",
+          "icon": "ChatDotRound"
+        },
+        {
+          "index": "/admin/hoi-thoai/tri-thuc-ai",
+          "title": "Tri thức & AI",
+          "tooltip": "Quản lý nguồn tri thức và cấu hình AI cho trợ lý",
+          "icon": "Cpu"
+        }
+      ]
+    },
+    {
       "header": "ĐỀ ÁN TUYỂN SINH",
       "tooltip": "Quản lý đề án tuyển sinh theo trường và năm",
       "abbr": "ĐA",
