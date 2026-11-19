@@ -37,7 +37,7 @@
         <textarea ref="input" :value="chat.state.draft" maxlength="4000" :rows="compact ? 2 : 3" aria-label="Nội dung câu hỏi"
           @input="chat.state.draft = $event.target.value"
           :disabled="chat.state.daKetThuc"
-          :placeholder="chat.state.daKetThuc ? 'Cuộc hội thoại đã kết thúc — mở hội thoại mới để hỏi tiếp.' : 'Hỏi về trường, ngành, tổ hợp, điểm… (gõ / để xem lệnh)'"
+          :placeholder="chat.state.daKetThuc ? 'Cuộc hội thoại đã kết thúc — mở hội thoại mới để hỏi tiếp.' : 'Hỏi về trường, ngành, tổ hợp, điểm…'"
           @keydown="keydown" />
         <!-- Khung chat nổi (compact): luôn có cả Gửi và Hủy xếp dọc bên phải; Hủy dừng câu trả lời đang chạy. -->
         <div v-if="compact" class="ai-chat__nut-gui">
