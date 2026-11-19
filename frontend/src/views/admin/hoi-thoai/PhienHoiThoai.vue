@@ -1047,8 +1047,13 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
     display: inline-flex;
   }
 
+  /* Ẩn avatar người dùng và trợ lý cạnh tin nhắn để tiết kiệm diện tích; tin nhắn rộng hơn. */
+  .nhom .avatar--nho {
+    display: none;
+  }
+
   .nhom__than {
-    max-width: 85%;
+    max-width: 90%;
   }
 
   .hoi-thoai__the {
