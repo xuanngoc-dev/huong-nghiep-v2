@@ -947,7 +947,6 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
 .bong__chu {
   white-space: pre-wrap;
 }
-
 .nhom--phai .bong {
   background: var(--el-color-primary);
   color: #fff;
