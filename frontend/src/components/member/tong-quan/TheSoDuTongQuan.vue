@@ -1,29 +1,33 @@
 <template>
   <section class="so-du-tong-quan" aria-label="Số dư tài khoản">
-    <article v-for="item in THE" :key="item.truong" class="so-du-the" :class="`so-du-the--${item.loai}`">
-      <span class="so-du-the__icon" aria-hidden="true">
-        <CustomIcon><component :is="item.icon" /></CustomIcon>
-      </span>
-      <div class="so-du-the__than">
-        <span class="so-du-the__nhan">{{ item.nhan }}</span>
-        <strong class="so-du-the__so">{{ soDu ? hienSo(soDu[item.truong]) : '—' }}</strong>
-        <span v-if="item.truong === 'luot_tra_cuu' && luotMienPhi" class="so-du-the__phu">
-          Miễn phí hôm nay: {{ luotMienPhi.con_lai ?? 0 }}/{{ luotMienPhi.so_luot_ngay }}
+    <div class="so-du-tong-quan__luoi">
+      <article v-for="item in THE" :key="item.truong" class="so-du-the" :class="`so-du-the--${item.loai}`">
+        <span class="so-du-the__icon" aria-hidden="true">
+          <CustomIcon><component :is="item.icon" /></CustomIcon>
         </span>
-        <span v-else class="so-du-the__phu">{{ item.donVi }}</span>
-      </div>
-      <CustomTooltip :content="`Nạp thêm ${item.nhan.toLowerCase()}`" placement="top">
-        <CustomButton
-          link
-          type="primary"
-          class="so-du-the__nap"
-          :aria-label="`Nạp thêm ${item.nhan.toLowerCase()}`"
-          @click="router.push({ name: 'nap-tien', query: { loai: item.loai } })"
-        >
-          <CustomIcon><Plus /></CustomIcon>
-        </CustomButton>
-      </CustomTooltip>
-    </article>
+        <div class="so-du-the__than">
+          <span class="so-du-the__nhan">{{ item.nhan }}</span>
+          <span class="so-du-the__gia-tri">
+            <strong class="so-du-the__so">{{ soDu ? hienSo(soDu[item.truong]) : '—' }}</strong>
+            <span class="so-du-the__don-vi">{{ item.donVi }}</span>
+          </span>
+          <span v-if="item.truong === 'luot_tra_cuu' && luotMienPhi" class="so-du-the__phu">
+            Miễn phí hôm nay: {{ luotMienPhi.con_lai ?? 0 }}/{{ luotMienPhi.so_luot_ngay }}
+          </span>
+        </div>
+        <CustomTooltip :content="`Nạp thêm ${item.nhan.toLowerCase()}`" placement="top">
+          <CustomButton
+            link
+            type="primary"
+            class="so-du-the__nap"
+            :aria-label="`Nạp thêm ${item.nhan.toLowerCase()}`"
+            @click="router.push({ name: 'nap-tien', query: { loai: item.loai } })"
+          >
+            <CustomIcon><Plus /></CustomIcon>
+          </CustomButton>
+        </CustomTooltip>
+      </article>
+    </div>
   </section>
 </template>
 
@@ -56,8 +60,12 @@ const router = useRouter()
 </script>
 
 <style scoped>
+/* Khung ngoài là container, lưới bên trong mới đổi cột theo bề rộng (container query không áp dụng lên chính container). */
 .so-du-tong-quan {
   container-type: inline-size;
+}
+
+.so-du-tong-quan__luoi {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
@@ -117,20 +125,40 @@ const router = useRouter()
 }
 
 .so-du-the__nhan,
-.so-du-the__phu {
+.so-du-the__phu,
+.so-du-the__don-vi {
   color: var(--el-text-color-secondary);
   font-size: 13px;
   line-height: 1.4;
 }
 
-.so-du-the__phu {
+.so-du-the__nhan {
+  padding-right: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.so-du-the__phu,
+.so-du-the__don-vi {
   font-size: 12px;
 }
 
+/* Số và đơn vị cùng một dòng. */
+.so-du-the__gia-tri {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 4px;
+  min-width: 0;
+}
+
 .so-du-the__so {
+  min-width: 0;
   color: var(--el-text-color-primary);
   font-size: 24px;
   line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
 .so-du-the__nap {
@@ -141,23 +169,59 @@ const router = useRouter()
 
 /* 5 thẻ: 5 cột khi đủ rộng, rồi 3, rồi 2. */
 @container (max-width: 1100px) {
-  .so-du-tong-quan {
+  .so-du-tong-quan__luoi {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @container (max-width: 860px) {
-  .so-du-tong-quan {
+  .so-du-tong-quan__luoi {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Thẻ lẻ cuối cùng trải hết hàng cho cân. */
+  .so-du-the:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 }
 
-@container (max-width: 420px) {
-  .so-du-the {
-    flex-direction: column;
-    align-items: flex-start;
+/* Khung hẹp (mobile, 2 thẻ/hàng): thẻ gọn — icon nhỏ cạnh nội dung, giảm đệm và cỡ chữ. */
+@container (max-width: 560px) {
+  .so-du-tong-quan__luoi {
     gap: 8px;
-    padding: 12px;
+  }
+
+  .so-du-the {
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+
+  .so-du-the__icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+
+  .so-du-the__nhan {
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  .so-du-the__so {
+    font-size: 18px;
+  }
+
+  .so-du-the__phu,
+  .so-du-the__don-vi {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  .so-du-the__nap {
+    top: 4px;
+    right: 4px;
   }
 }
 </style>
