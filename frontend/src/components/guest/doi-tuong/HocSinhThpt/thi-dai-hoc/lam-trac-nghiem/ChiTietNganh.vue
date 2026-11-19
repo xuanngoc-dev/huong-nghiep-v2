@@ -119,6 +119,9 @@ import MoTaCongViec from './chi-tiet/MoTaCongViec.vue'
 import LoTrinhPhatTrien from './chi-tiet/LoTrinhPhatTrien.vue'
 import MucLuongKyNang from './chi-tiet/MucLuongKyNang.vue'
 import TruongDaoTao from './chi-tiet/TruongDaoTao.vue'
+import { useTenRouteThpt } from '../../useTenRouteThpt'
+
+const { tenRoute } = useTenRouteThpt()
 
 defineOptions({ name: 'ThptChiTietNganh' })
 
@@ -214,7 +217,7 @@ function xemNganh(ma) {
   const code = String(ma || '').trim()
   if (!code || code.toUpperCase() === maNganh.value.toUpperCase()) return
   router.push({
-    name: 'thpt-thi-dai-hoc-chi-tiet-nganh',
+    name: tenRoute('thpt-thi-dai-hoc-chi-tiet-nganh'),
     params: { ssid: ssid.value, maNganh: code },
     query: queryMaNganh(),
   })
@@ -222,11 +225,11 @@ function xemNganh(ma) {
 
 function quayLai() {
   if (!ssid.value) {
-    router.push({ name: 'thpt-thi-dai-hoc' })
+    router.push({ name: tenRoute('thpt-thi-dai-hoc') })
     return
   }
   router.push({
-    name: 'thpt-thi-dai-hoc-nganh-phu-hop',
+    name: tenRoute('thpt-thi-dai-hoc-nganh-phu-hop'),
     params: { ssid: ssid.value },
     query: queryMaNganh(),
   })

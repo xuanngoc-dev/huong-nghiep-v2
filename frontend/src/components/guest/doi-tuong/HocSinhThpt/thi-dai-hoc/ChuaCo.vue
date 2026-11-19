@@ -232,6 +232,9 @@ import { noiMucLuong } from '@/utils/capTenGiaTri'
 import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
 import CardNganhDaoTao from './CardNganhDaoTao.vue'
+import { useTenRouteThpt } from '../useTenRouteThpt'
+
+const { tenRoute, tienTo } = useTenRouteThpt()
 
 defineOptions({ name: 'ThptThiDaiHocChuaCo' })
 
@@ -273,16 +276,16 @@ const NHAN_MUC_NGANH = {
 
 function chonGiaiDoan(stage) {
   sessionStorage.setItem(GIAI_DOAN_THI_DAI_HOC_KEY, stage.code)
-  const name = routeNameGiaiDoanThiDaiHoc(stage.code)
+  const name = routeNameGiaiDoanThiDaiHoc(stage.code, tienTo.value)
   if (name && name !== route.name) {
     router.push({ name })
     return
   }
-  if (!name) router.push({ name: 'thpt-thi-dai-hoc' })
+  if (!name) router.push({ name: tenRoute('thpt-thi-dai-hoc') })
 }
 
 function moHuongDan() {
-  router.push({ name: 'thpt-thi-dai-hoc-huong-dan-khao-sat' })
+  router.push({ name: tenRoute('thpt-thi-dai-hoc-huong-dan-khao-sat') })
 }
 
 function moTaHolland(item) {

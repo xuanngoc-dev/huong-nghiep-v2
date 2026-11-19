@@ -67,6 +67,9 @@ import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
 import { DINH_HUONG_THPT_KEY, dinhHuongThptList } from './dinhHuong'
 import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './thi-dai-hoc/giaiDoan'
 import { routeNameDinhHuongThpt, routeNameGiaiDoanThiDaiHoc } from './routes'
+import { useTenRouteThpt } from './useTenRouteThpt'
+
+const { tienTo } = useTenRouteThpt()
 
 defineOptions({ name: 'ThptThiDaiHoc' })
 
@@ -80,13 +83,13 @@ const currentDirection = computed(() => route.meta.dinhHuong || '')
 function chonGiaiDoan(stage) {
   selectedStage.value = stage.code
   sessionStorage.setItem(GIAI_DOAN_THI_DAI_HOC_KEY, stage.code)
-  const name = routeNameGiaiDoanThiDaiHoc(stage.code)
+  const name = routeNameGiaiDoanThiDaiHoc(stage.code, tienTo.value)
   if (name && name !== route.name) router.push({ name })
 }
 
 function chonHuong(direction) {
   sessionStorage.setItem(DINH_HUONG_THPT_KEY, direction.code)
-  const name = routeNameDinhHuongThpt(direction.code)
+  const name = routeNameDinhHuongThpt(direction.code, tienTo.value)
   if (name && name !== route.name) router.push({ name })
 }
 </script>

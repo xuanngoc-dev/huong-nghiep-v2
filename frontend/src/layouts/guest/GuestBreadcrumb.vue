@@ -15,17 +15,20 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { doiTuongList } from '@/data/doiTuong'
-import { routeNameDinhHuongThpt } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
+import {
+  TIEN_TO_HOC_SINH,
+  doiTenRouteThpt,
+  routeNameDinhHuongThpt,
+} from '@/components/guest/doi-tuong/HocSinhThpt/routes'
 
 const route = useRoute()
 
 const trangChu = { label: 'Trang chủ', to: { name: 'home' } }
 const chonDoiTuong = { label: 'Chọn đối tượng', to: { name: 'chon-doi-tuong' } }
 const hocSinhThpt = { label: 'Học sinh THPT', to: { name: 'hoc-sinh-thpt' } }
-const thiDaiHoc = { label: 'Thi Đại học & cao đẳng', to: { name: 'thpt-thi-dai-hoc' } }
-const daCoNganh = { label: 'Đã có ngành nghề mong muốn', to: { name: 'thpt-thi-dai-hoc-da-co' } }
 const phuHuynh = { label: 'Phụ huynh', to: { name: 'phu-huynh' } }
 const phuHuynhThpt = { label: 'Con học Trung học phổ thông', to: { name: 'phu-huynh-thpt' } }
+const phuHuynhLop12 = { label: 'Con học lớp 12', to: { name: 'phu-huynh-thpt-lop-12' } }
 
 const muc = computed(() => {
   if (route.name === 'home') return []
@@ -46,18 +49,27 @@ const muc = computed(() => {
   }
 
   if (route.meta.dinhHuong) {
-    const goc = [trangChu, hocSinhThpt]
-    if (route.name === routeNameDinhHuongThpt(route.meta.dinhHuong)) return [...goc, hienTai]
+    // Cùng một luồng định hướng THPT, gắn dưới nhánh học sinh hoặc nhánh phụ huynh (meta.tienTo).
+    const tienTo = route.meta.tienTo || TIEN_TO_HOC_SINH
+    const ten = (tenHocSinh) => doiTenRouteThpt(tenHocSinh, tienTo)
+    const goc =
+      tienTo === TIEN_TO_HOC_SINH
+        ? [trangChu, hocSinhThpt]
+        : [trangChu, chonDoiTuong, phuHuynh, phuHuynhThpt, phuHuynhLop12]
+    const thiDaiHoc = { label: 'Thi Đại học & cao đẳng', to: { name: ten('thpt-thi-dai-hoc') } }
+    const daCoNganh = { label: 'Đã có ngành nghề mong muốn', to: { name: ten('thpt-thi-dai-hoc-da-co') } }
+
+    if (route.name === routeNameDinhHuongThpt(route.meta.dinhHuong, tienTo)) return [...goc, hienTai]
     if (route.meta.dinhHuong === 'thi-dai-hoc') {
-      if (route.name === 'thpt-thi-dai-hoc-chon-truong') return [...goc, thiDaiHoc, daCoNganh, hienTai]
-      if (route.name === 'thpt-thi-dai-hoc-truong-phu-hop') {
+      if (route.name === ten('thpt-thi-dai-hoc-chon-truong')) return [...goc, thiDaiHoc, daCoNganh, hienTai]
+      if (route.name === ten('thpt-thi-dai-hoc-truong-phu-hop')) {
         return [
           ...goc,
           thiDaiHoc,
           daCoNganh,
           {
             label: 'Chọn trường',
-            to: { name: 'thpt-thi-dai-hoc-chon-truong', params: { maNganh: route.params.maNganh } },
+            to: { name: ten('thpt-thi-dai-hoc-chon-truong'), params: { maNganh: route.params.maNganh } },
           },
           hienTai,
         ]

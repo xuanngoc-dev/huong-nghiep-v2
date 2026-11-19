@@ -31,7 +31,7 @@
                   <!-- <p class="kq-nhom__mo-ta">{{ NOI_DUNG_NHOM[item.ma_nhom]?.xu_huong || item.mo_ta }}</p> -->
                   <RouterLink
                     class="kq-nhom__dem"
-                    :to="{ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid }, query: queryGiuLai }"
+                    :to="{ name: tenRoute('thpt-thi-dai-hoc-nganh-phu-hop'), params: { ssid }, query: queryGiuLai }"
                   >
                     <strong>{{ dangTaiNganh ? '…' : soNganh[item.ma_nhom] || 0 }}</strong>
                     <span>ngành đào tạo liên quan</span>
@@ -105,7 +105,7 @@
                 <RouterLink
                   v-if="maNganhTimTruong"
                   class="btn btn-success"
-                  :to="{ name: 'thpt-thi-dai-hoc-truong-phu-hop', params: { maNganh: maNganhTimTruong } }"
+                  :to="{ name: tenRoute('thpt-thi-dai-hoc-truong-phu-hop'), params: { maNganh: maNganhTimTruong } }"
                 >
                   Tìm trường phù hợp
                 </RouterLink>
@@ -134,6 +134,9 @@ import ToiCaiThien from './ket-qua/ToiCaiThien.vue'
 import ToiLaAi from './ket-qua/ToiLaAi.vue'
 import ToiLamGiTiep from './ket-qua/ToiLamGiTiep.vue'
 import ToiPhuHop from './ket-qua/ToiPhuHop.vue'
+import { useTenRouteThpt } from '../../useTenRouteThpt'
+
+const { tenRoute } = useTenRouteThpt()
 
 defineOptions({ name: 'ThptKetQuaTracNghiem' })
 

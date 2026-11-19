@@ -84,6 +84,9 @@ import { fetchNganh } from '@/api/nganhDaoTao'
 import { fetchTruongHoc } from '@/api/truongHoc'
 import anhMacDinh from '@/assets/guest/sinh-vien.jpg'
 import { docChiTiet, layChiTiet, noiGiaTri } from './chi-tiet/chiTiet'
+import { useTenRouteThpt } from '../../useTenRouteThpt'
+
+const { tenRoute } = useTenRouteThpt()
 
 defineOptions({ name: 'ThptChiTietTruong' })
 
@@ -184,7 +187,7 @@ function idTab(id) {
 function quayLai() {
   if (ssid.value && maNganh.value) {
     router.push({
-      name: 'thpt-thi-dai-hoc-chi-tiet-nganh',
+      name: tenRoute('thpt-thi-dai-hoc-chi-tiet-nganh'),
       params: { ssid: ssid.value, maNganh: maNganh.value },
     })
     return
@@ -193,7 +196,7 @@ function quayLai() {
     router.back()
     return
   }
-  router.push({ name: 'thpt-thi-dai-hoc' })
+  router.push({ name: tenRoute('thpt-thi-dai-hoc') })
 }
 
 let lanTai = 0

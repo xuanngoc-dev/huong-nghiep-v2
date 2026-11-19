@@ -26,6 +26,9 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
+import { useTenRouteThpt } from '../../useTenRouteThpt'
+
+const { tenRoute } = useTenRouteThpt()
 
 const props = defineProps({
   ssid: { type: String, required: true },
@@ -65,15 +68,15 @@ function biKhoa(index) {
 function mo(step, index) {
   if (biKhoa(index) || String(step.id) === String(props.hienTai)) return
   if (step.id === 'nganh-phu-hop') {
-    router.push({ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid: props.ssid }, query: queryMaNganh() })
+    router.push({ name: tenRoute('thpt-thi-dai-hoc-nganh-phu-hop'), params: { ssid: props.ssid }, query: queryMaNganh() })
     return
   }
   if (step.id === 'ket-qua') {
-    router.push({ name: 'thpt-thi-dai-hoc-ket-qua', params: { ssid: props.ssid }, query: queryMaNganh() })
+    router.push({ name: tenRoute('thpt-thi-dai-hoc-ket-qua'), params: { ssid: props.ssid }, query: queryMaNganh() })
     return
   }
   router.push({
-    name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
+    name: tenRoute('thpt-thi-dai-hoc-lam-trac-nghiem'),
     params: { ssid: props.ssid, loaiCauHoiId: step.id },
     query: queryMaNganh(),
   })

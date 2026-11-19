@@ -22,13 +22,16 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import anhPhanVan from '@/assets/guest/phan-van.jpg'
+import { useTenRouteThpt } from '../useTenRouteThpt'
+
+const { tenRoute } = useTenRouteThpt()
 
 defineOptions({ name: 'ThptNhacKhaoSat' })
 
 const router = useRouter()
 
 function thamGia() {
-  router.push({ name: 'thpt-thi-dai-hoc-huong-dan-khao-sat' })
+  router.push({ name: tenRoute('thpt-thi-dai-hoc-huong-dan-khao-sat') })
 }
 </script>
 

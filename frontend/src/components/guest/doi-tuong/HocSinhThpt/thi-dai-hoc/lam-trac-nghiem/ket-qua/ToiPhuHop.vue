@@ -19,7 +19,7 @@
     <section class="kq-section">
       <header class="kq-section-head">
         <h3 class="kq-section-title">Ngành đào tạo</h3>
-        <RouterLink class="kq-link" :to="{ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid }, query: routeQuery }">
+        <RouterLink class="kq-link" :to="{ name: tenRoute('thpt-thi-dai-hoc-nganh-phu-hop'), params: { ssid }, query: routeQuery }">
           Xem tất cả {{ nganh.length }} ngành và so sánh
         </RouterLink>
       </header>
@@ -30,7 +30,7 @@
         <div v-for="item in nganh.slice(0, SO_NGANH)" :key="item.ma_nganh" class="col-12 col-md-6 col-xl-4">
           <RouterLink
             class="kq-card kq-nganh"
-            :to="{ name: 'thpt-thi-dai-hoc-chi-tiet-nganh', params: { ssid, maNganh: item.ma_nganh }, query: routeQuery }"
+            :to="{ name: tenRoute('thpt-thi-dai-hoc-chi-tiet-nganh'), params: { ssid, maNganh: item.ma_nganh }, query: routeQuery }"
           >
             <span class="kq-nganh__ma">{{ item.ma_nganh }} · {{ item.ten_nhom_nganh }}</span>
             <strong class="kq-nganh__ten">{{ item.ten_nganh }}</strong>
@@ -60,6 +60,9 @@
 <script setup>
 import { computed } from 'vue'
 import { NOI_DUNG_NHOM, ngheGoiY } from '@/utils/ketQuaHolland'
+import { useTenRouteThpt } from '../../../useTenRouteThpt'
+
+const { tenRoute } = useTenRouteThpt()
 
 const props = defineProps({
   ssid: { type: String, required: true },

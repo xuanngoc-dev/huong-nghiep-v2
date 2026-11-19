@@ -246,6 +246,9 @@ import { fetchNhomHolland } from '@/api/nhomTinhCachHolland'
 import { fetchTinhThanh } from '@/api/tinhThanh'
 import { fetchTruongHoc } from '@/api/truongHoc'
 import { noiMucLuong } from '@/utils/capTenGiaTri'
+import { useTenRouteThpt } from '../useTenRouteThpt'
+
+const { tenRoute } = useTenRouteThpt()
 
 defineOptions({ name: 'ThptThiDaiHocChonTruong' })
 
@@ -462,7 +465,7 @@ function diTruongPhuHop() {
   const ma = maNganh.value.trim()
   if (!ma) return
   router.push({
-    name: 'thpt-thi-dai-hoc-truong-phu-hop',
+    name: tenRoute('thpt-thi-dai-hoc-truong-phu-hop'),
     params: { maNganh: ma },
   })
 }
@@ -485,7 +488,7 @@ async function taiHoSo() {
 }
 
 function quayLai() {
-  router.push({ name: 'thpt-thi-dai-hoc-da-co' })
+  router.push({ name: tenRoute('thpt-thi-dai-hoc-da-co') })
 }
 
 
@@ -558,7 +561,7 @@ async function taiNganh() {
 function chonNganhKhac(item) {
   if (item.ma_nganh === maNganh.value) return
   router.push({
-    name: 'thpt-thi-dai-hoc-chon-truong',
+    name: tenRoute('thpt-thi-dai-hoc-chon-truong'),
     params: { maNganh: item.ma_nganh },
   })
 }

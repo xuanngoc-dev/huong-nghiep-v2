@@ -155,6 +155,9 @@ import { ElMessage } from 'element-plus'
 import { fetchNganhPhuHop, fetchPhienLamBai, luuTraLoi } from '@/api/phienKhaoSat'
 import LoadingSuyNghi from '@/components/guest/LoadingSuyNghi.vue'
 import BuocLamBai from './BuocLamBai.vue'
+import { useTenRouteThpt } from '../../useTenRouteThpt'
+
+const { tenRoute } = useTenRouteThpt()
 
 defineOptions({ name: 'ThptLamTracNghiem' })
 
@@ -370,7 +373,7 @@ function queryMaNganh() {
 
 function moLoai(id, thayThe = false) {
   const location = {
-    name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
+    name: tenRoute('thpt-thi-dai-hoc-lam-trac-nghiem'),
     params: { ssid: ssid.value, loaiCauHoiId: id },
     query: queryMaNganh(),
   }
@@ -418,7 +421,7 @@ async function moNganhPhuHop() {
     await doi(CHO_PHAN_TICH_MS)
     if (huyPhanTich) return
     await router.push({
-      name: 'thpt-thi-dai-hoc-nganh-phu-hop',
+      name: tenRoute('thpt-thi-dai-hoc-nganh-phu-hop'),
       params: { ssid: ssid.value },
       query: queryMaNganh(),
     })

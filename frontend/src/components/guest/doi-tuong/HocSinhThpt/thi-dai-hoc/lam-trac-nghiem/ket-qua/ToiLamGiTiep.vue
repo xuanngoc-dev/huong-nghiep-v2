@@ -8,7 +8,7 @@
           <p class="kq-muted">Tìm hiểu sâu 3–5 ngành phù hợp: môn học, cơ hội việc làm, mức lương tham khảo.</p>
           <div class="kq-actions">
             <button type="button" class="kq-link" @click="emit('chuyen-tab', 'phu-hop')">Xem ngành gợi ý</button>
-            <RouterLink class="kq-link" :to="{ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid }, query: routeQuery }">
+            <RouterLink class="kq-link" :to="{ name: tenRoute('thpt-thi-dai-hoc-nganh-phu-hop'), params: { ssid }, query: routeQuery }">
               So sánh ngành
             </RouterLink>
           </div>
@@ -25,7 +25,7 @@
           <div class="kq-actions">
             <RouterLink
               class="btn btn-sm btn-success"
-              :to="{ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid }, query: routeQuery }"
+              :to="{ name: tenRoute('thpt-thi-dai-hoc-nganh-phu-hop'), params: { ssid }, query: routeQuery }"
             >
               Bắt đầu
             </RouterLink>
@@ -76,6 +76,9 @@ import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
 import { cauHoiTuVan, gopNoiDung } from '@/utils/ketQuaHolland'
+import { useTenRouteThpt } from '../../../useTenRouteThpt'
+
+const { tenRoute } = useTenRouteThpt()
 
 const props = defineProps({
   ssid: { type: String, required: true },

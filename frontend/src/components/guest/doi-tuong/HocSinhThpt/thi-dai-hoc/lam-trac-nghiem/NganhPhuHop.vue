@@ -242,6 +242,9 @@ import anhS from '@/assets/guest/holland/s.svg'
 import anhMacDinh from '@/assets/guest/sinh-vien.jpg'
 import BuocLamBai from './BuocLamBai.vue'
 import { noiMucLuong } from '@/utils/capTenGiaTri'
+import { useTenRouteThpt } from '../../useTenRouteThpt'
+
+const { tenRoute } = useTenRouteThpt()
 
 const ANH_NHOM = { R: anhR, I: anhI, A: anhA, S: anhS, E: anhE, C: anhC }
 const SO_NHOM_HIEN = 3
@@ -498,7 +501,7 @@ function khamPhaNganh(ma) {
   const code = String(ma || '').trim()
   if (!code || !ssid.value) return
   router.push({
-    name: 'thpt-thi-dai-hoc-chi-tiet-nganh',
+    name: tenRoute('thpt-thi-dai-hoc-chi-tiet-nganh'),
     params: { ssid: ssid.value, maNganh: code },
     query: queryMaNganh(),
   })
@@ -537,7 +540,7 @@ async function chuyenVeLamBai(value) {
   if (!thieu) return false
   ElMessage.error('Vui lòng hoàn thành các câu hỏi trước khi xem ngành phù hợp.')
   await router.replace({
-    name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
+    name: tenRoute('thpt-thi-dai-hoc-lam-trac-nghiem'),
     params: { ssid: value, loaiCauHoiId: thieu.loai_cau_hoi_id },
     query: queryMaNganh(),
   })
@@ -579,7 +582,7 @@ async function taiNganh(value) {
 function lui() {
   if (!buocTruoc.value) return
   router.push({
-    name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
+    name: tenRoute('thpt-thi-dai-hoc-lam-trac-nghiem'),
     params: { ssid: ssid.value, loaiCauHoiId: buocTruoc.value.id },
     query: queryMaNganh(),
   })
@@ -590,7 +593,7 @@ function tiep() {
     ElMessage.error('Vui lòng hoàn thành các phần trước khi xem kết quả.')
     return
   }
-  router.push({ name: 'thpt-thi-dai-hoc-ket-qua', params: { ssid: ssid.value }, query: queryMaNganh() })
+  router.push({ name: tenRoute('thpt-thi-dai-hoc-ket-qua'), params: { ssid: ssid.value }, query: queryMaNganh() })
 }
 
 watch(ssid, taiNganh, { immediate: true })

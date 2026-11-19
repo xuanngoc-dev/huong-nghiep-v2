@@ -1,31 +1,32 @@
-export const dinhHuongThptRoutes = [
+// Cây route định hướng THPT; `path`/`name` là phần đuôi, ghép với tiền tố của từng nhánh trong taoRoutesDinhHuongThpt.
+const cayDinhHuongThpt = [
   {
-    path: 'hoc-sinh-thpt/di-lam',
-    name: 'thpt-di-lam',
+    path: 'di-lam',
+    name: 'di-lam',
     component: () => import('./DiLam.vue'),
     meta: { title: 'Đi làm ngay sau khi tốt nghiệp', public: true, dinhHuong: 'di-lam' },
   },
   {
-    path: 'hoc-sinh-thpt/du-hoc-nghe',
-    name: 'thpt-du-hoc-nghe',
+    path: 'du-hoc-nghe',
+    name: 'du-hoc-nghe',
     component: () => import('./DuHocNghe.vue'),
     meta: { title: 'Du học nghề', public: true, dinhHuong: 'du-hoc-nghe' },
   },
   {
-    path: 'hoc-sinh-thpt/du-hoc',
-    name: 'thpt-du-hoc',
+    path: 'du-hoc',
+    name: 'du-hoc',
     component: () => import('./DuHoc.vue'),
     meta: { title: 'Du học', public: true, dinhHuong: 'du-hoc' },
   },
   {
-    path: 'hoc-sinh-thpt/thi-dai-hoc',
-    name: 'thpt-thi-dai-hoc',
+    path: 'thi-dai-hoc',
+    name: 'thi-dai-hoc',
     component: () => import('./ThiDaiHoc.vue'),
     meta: { title: 'Thi Đại học & cao đẳng', public: true, dinhHuong: 'thi-dai-hoc' },
   },
   {
-    path: 'hoc-sinh-thpt/thi-dai-hoc/lam-trac-nghiem/:ssid/nganh-phu-hop',
-    name: 'thpt-thi-dai-hoc-nganh-phu-hop',
+    path: 'thi-dai-hoc/lam-trac-nghiem/:ssid/nganh-phu-hop',
+    name: 'thi-dai-hoc-nganh-phu-hop',
     component: () => import('./thi-dai-hoc/lam-trac-nghiem/NganhPhuHop.vue'),
     meta: {
       title: 'Ngành phù hợp',
@@ -34,8 +35,8 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
-    path: 'hoc-sinh-thpt/thi-dai-hoc/lam-trac-nghiem/:ssid/nganh/:maNganh',
-    name: 'thpt-thi-dai-hoc-chi-tiet-nganh',
+    path: 'thi-dai-hoc/lam-trac-nghiem/:ssid/nganh/:maNganh',
+    name: 'thi-dai-hoc-chi-tiet-nganh',
     component: () => import('./thi-dai-hoc/lam-trac-nghiem/ChiTietNganh.vue'),
     meta: {
       title: 'Chi tiết ngành',
@@ -44,8 +45,8 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
-    path: 'hoc-sinh-thpt/thi-dai-hoc/lam-trac-nghiem/:ssid/truong/:maTruong',
-    name: 'thpt-thi-dai-hoc-chi-tiet-truong',
+    path: 'thi-dai-hoc/lam-trac-nghiem/:ssid/truong/:maTruong',
+    name: 'thi-dai-hoc-chi-tiet-truong',
     component: () => import('./thi-dai-hoc/lam-trac-nghiem/ChiTietTruong.vue'),
     meta: {
       title: 'Chi tiết trường',
@@ -54,8 +55,8 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
-    path: 'hoc-sinh-thpt/thi-dai-hoc/lam-trac-nghiem/:ssid/ket-qua',
-    name: 'thpt-thi-dai-hoc-ket-qua',
+    path: 'thi-dai-hoc/lam-trac-nghiem/:ssid/ket-qua',
+    name: 'thi-dai-hoc-ket-qua',
     component: () => import('./thi-dai-hoc/lam-trac-nghiem/KetQua.vue'),
     meta: {
       title: 'Kết quả trắc nghiệm Holland',
@@ -64,8 +65,8 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
-    path: 'hoc-sinh-thpt/thi-dai-hoc/lam-trac-nghiem/:ssid/:loaiCauHoiId(\\d+)',
-    name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
+    path: 'thi-dai-hoc/lam-trac-nghiem/:ssid/:loaiCauHoiId(\\d+)',
+    name: 'thi-dai-hoc-lam-trac-nghiem',
     component: () => import('./thi-dai-hoc/lam-trac-nghiem/LamBai.vue'),
     meta: {
       title: 'Làm trắc nghiệm Holland',
@@ -74,8 +75,8 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
-    path: 'hoc-sinh-thpt/thi-dai-hoc/chua-co',
-    name: 'thpt-thi-dai-hoc-chua-co',
+    path: 'thi-dai-hoc/chua-co',
+    name: 'thi-dai-hoc-chua-co',
     component: () => import('./thi-dai-hoc/ChuaCo.vue'),
     meta: {
       title: 'Chưa có ngành nghề phù hợp',
@@ -85,8 +86,8 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
-    path: 'hoc-sinh-thpt/thi-dai-hoc/huong-dan-khao-sat',
-    name: 'thpt-thi-dai-hoc-huong-dan-khao-sat',
+    path: 'thi-dai-hoc/huong-dan-khao-sat',
+    name: 'thi-dai-hoc-huong-dan-khao-sat',
     component: () => import('./thi-dai-hoc/HuongDanKhaoSat.vue'),
     meta: {
       title: 'Hướng dẫn khảo sát',
@@ -95,8 +96,8 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
-    path: 'hoc-sinh-thpt/thi-dai-hoc/da-co',
-    name: 'thpt-thi-dai-hoc-da-co',
+    path: 'thi-dai-hoc/da-co',
+    name: 'thi-dai-hoc-da-co',
     component: () => import('./thi-dai-hoc/DaCo.vue'),
     meta: {
       title: 'Đã có ngành nghề mong muốn',
@@ -106,8 +107,8 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
-    path: 'hoc-sinh-thpt/thi-dai-hoc/da-co/chon-truong/:maNganh',
-    name: 'thpt-thi-dai-hoc-chon-truong',
+    path: 'thi-dai-hoc/da-co/chon-truong/:maNganh',
+    name: 'thi-dai-hoc-chon-truong',
     component: () => import('./thi-dai-hoc/ChonTruong.vue'),
     meta: {
       title: 'Chọn trường',
@@ -116,8 +117,8 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
-    path: 'hoc-sinh-thpt/thi-dai-hoc/da-co/truong-phu-hop/:maNganh',
-    name: 'thpt-thi-dai-hoc-truong-phu-hop',
+    path: 'thi-dai-hoc/da-co/truong-phu-hop/:maNganh',
+    name: 'thi-dai-hoc-truong-phu-hop',
     component: () => import('./thi-dai-hoc/TruongPhuHop.vue'),
     meta: {
       title: 'Trường phù hợp',
@@ -126,8 +127,8 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
-    path: 'hoc-sinh-thpt/thi-dai-hoc/phan-van',
-    name: 'thpt-thi-dai-hoc-phan-van',
+    path: 'thi-dai-hoc/phan-van',
+    name: 'thi-dai-hoc-phan-van',
     component: () => import('./thi-dai-hoc/PhanVan.vue'),
     meta: {
       title: 'Đang phân vân giữa vài ngành nghề',
@@ -137,23 +138,50 @@ export const dinhHuongThptRoutes = [
     },
   },
   {
-    path: 'hoc-sinh-thpt/khoi-nghiep',
-    name: 'thpt-khoi-nghiep',
+    path: 'khoi-nghiep',
+    name: 'khoi-nghiep',
     component: () => import('./KhoiNghiep.vue'),
     meta: { title: 'Khởi nghiệp', public: true, dinhHuong: 'khoi-nghiep' },
   },
   {
-    path: 'hoc-sinh-thpt/xuat-khau-lao-dong',
-    name: 'thpt-xuat-khau-lao-dong',
+    path: 'xuat-khau-lao-dong',
+    name: 'xuat-khau-lao-dong',
     component: () => import('./XuatKhauLaoDong.vue'),
     meta: { title: 'Xuất khẩu lao động', public: true, dinhHuong: 'xuat-khau-lao-dong' },
   },
 ]
 
-export function routeNameDinhHuongThpt(code) {
-  return dinhHuongThptRoutes.find((item) => item.meta?.dinhHuong === code && !item.meta?.giaiDoan)?.name
+// Nhánh học sinh: /hoc-sinh-thpt/..., tên route `thpt-...`.
+// Nhánh khác (vd. phụ huynh có con lớp 12) gắn lại đúng cây này dưới đường dẫn và tiền tố tên riêng;
+// component lấy tên route của nhánh đang đứng qua useTenRouteThpt (meta.tienTo).
+export function taoRoutesDinhHuongThpt({ duongDan, tienTo, goc }) {
+  return cayDinhHuongThpt.map((item) => ({
+    ...item,
+    path: `${duongDan}/${item.path}`,
+    name: `${tienTo}-${item.name}`,
+    meta: { ...item.meta, tienTo, goc },
+  }))
 }
 
-export function routeNameGiaiDoanThiDaiHoc(code) {
-  return dinhHuongThptRoutes.find((item) => item.meta?.giaiDoan === code)?.name
+export const TIEN_TO_HOC_SINH = 'thpt'
+
+export const dinhHuongThptRoutes = taoRoutesDinhHuongThpt({
+  duongDan: 'hoc-sinh-thpt',
+  tienTo: TIEN_TO_HOC_SINH,
+  goc: 'hoc-sinh-thpt',
+})
+
+export function routeNameDinhHuongThpt(code, tienTo = TIEN_TO_HOC_SINH) {
+  const item = cayDinhHuongThpt.find((route) => route.meta?.dinhHuong === code && !route.meta?.giaiDoan)
+  return item && `${tienTo}-${item.name}`
+}
+
+export function routeNameGiaiDoanThiDaiHoc(code, tienTo = TIEN_TO_HOC_SINH) {
+  const item = cayDinhHuongThpt.find((route) => route.meta?.giaiDoan === code)
+  return item && `${tienTo}-${item.name}`
+}
+
+// Đổi tên route gốc của nhánh học sinh (`thpt-...`) sang tên tương ứng ở nhánh có tiền tố `tienTo`.
+export function doiTenRouteThpt(ten, tienTo = TIEN_TO_HOC_SINH) {
+  return ten.replace(/^thpt-/, `${tienTo}-`)
 }

@@ -110,6 +110,9 @@ import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
 import CardNganhDaoTao from './CardNganhDaoTao.vue'
 import NhacKhaoSat from './NhacKhaoSat.vue'
+import { useTenRouteThpt } from '../useTenRouteThpt'
+
+const { tenRoute, tienTo } = useTenRouteThpt()
 
 defineOptions({ name: 'ThptThiDaiHocDaCo' })
 
@@ -169,19 +172,19 @@ function quayLaiNhom() {
 
 function diChonTruong(item) {
   router.push({
-    name: 'thpt-thi-dai-hoc-chon-truong',
+    name: tenRoute('thpt-thi-dai-hoc-chon-truong'),
     params: { maNganh: item.ma_nganh },
   })
 }
 
 function chonGiaiDoan(stage) {
   sessionStorage.setItem(GIAI_DOAN_THI_DAI_HOC_KEY, stage.code)
-  const name = routeNameGiaiDoanThiDaiHoc(stage.code)
+  const name = routeNameGiaiDoanThiDaiHoc(stage.code, tienTo.value)
   if (name && name !== route.name) {
     router.push({ name })
     return
   }
-  if (!name) router.push({ name: 'thpt-thi-dai-hoc' })
+  if (!name) router.push({ name: tenRoute('thpt-thi-dai-hoc') })
 }
 
 async function taiHetNganh() {

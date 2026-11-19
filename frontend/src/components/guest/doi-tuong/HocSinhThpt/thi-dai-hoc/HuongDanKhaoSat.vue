@@ -138,6 +138,9 @@ import { batDauPhienHolland } from '@/api/phienKhaoSat'
 import { fetchLoaiCauHoi } from '@/api/loaiCauHoi'
 import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
+import { useTenRouteThpt } from '../useTenRouteThpt'
+
+const { tenRoute, tienTo } = useTenRouteThpt()
 
 defineOptions({ name: 'HuongDanKhaoSat' })
 
@@ -189,12 +192,12 @@ onMounted(loadLoaiCauHoiSteps)
 
 function chonGiaiDoan(stage) {
   sessionStorage.setItem(GIAI_DOAN_THI_DAI_HOC_KEY, stage.code)
-  const name = routeNameGiaiDoanThiDaiHoc(stage.code)
+  const name = routeNameGiaiDoanThiDaiHoc(stage.code, tienTo.value)
   if (name && name !== route.name) {
     router.push({ name })
     return
   }
-  if (!name) router.push({ name: 'thpt-thi-dai-hoc' })
+  if (!name) router.push({ name: tenRoute('thpt-thi-dai-hoc') })
 }
 
 function queryMaNganh() {
@@ -208,7 +211,7 @@ async function batDauHolland() {
   try {
     const phien = await batDauPhienHolland()
     router.push({
-      name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
+      name: tenRoute('thpt-thi-dai-hoc-lam-trac-nghiem'),
       params: { ssid: phien.ssid, loaiCauHoiId: phien.loai_cau_hoi_id },
       query: queryMaNganh(),
     })

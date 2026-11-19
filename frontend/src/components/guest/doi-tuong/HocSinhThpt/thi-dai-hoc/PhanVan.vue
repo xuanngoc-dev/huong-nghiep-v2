@@ -191,6 +191,9 @@ import { routeNameGiaiDoanThiDaiHoc } from '../routes'
 import CardNganhDaoTao from './CardNganhDaoTao.vue'
 import NhacKhaoSat from './NhacKhaoSat.vue'
 import { noiMucLuong } from '@/utils/capTenGiaTri'
+import { useTenRouteThpt } from '../useTenRouteThpt'
+
+const { tenRoute, tienTo } = useTenRouteThpt()
 
 defineOptions({ name: 'ThptThiDaiHocPhanVan' })
 
@@ -351,7 +354,7 @@ async function taiNganhTheoMa(item) {
 function lamKhaoSat() {
   const ma = danhSachPhanVan.value.map((item) => item.ma_nganh).filter(Boolean)
   router.push({
-    name: 'thpt-thi-dai-hoc-huong-dan-khao-sat',
+    name: tenRoute('thpt-thi-dai-hoc-huong-dan-khao-sat'),
     query: ma.length ? { ma_nganh: ma } : {},
   })
 }
@@ -384,7 +387,7 @@ async function moSoSanh() {
 
 function hrefChonTruong(item) {
   return router.resolve({
-    name: 'thpt-thi-dai-hoc-chon-truong',
+    name: tenRoute('thpt-thi-dai-hoc-chon-truong'),
     params: { maNganh: item.ma_nganh },
   }).href
 }
@@ -400,12 +403,12 @@ function quayLaiNhom() {
 
 function chonGiaiDoan(stage) {
   sessionStorage.setItem(GIAI_DOAN_THI_DAI_HOC_KEY, stage.code)
-  const name = routeNameGiaiDoanThiDaiHoc(stage.code)
+  const name = routeNameGiaiDoanThiDaiHoc(stage.code, tienTo.value)
   if (name && name !== route.name) {
     router.push({ name })
     return
   }
-  if (!name) router.push({ name: 'thpt-thi-dai-hoc' })
+  if (!name) router.push({ name: tenRoute('thpt-thi-dai-hoc') })
 }
 
 async function taiHetNganh() {

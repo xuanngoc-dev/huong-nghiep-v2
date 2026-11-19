@@ -106,6 +106,9 @@ import anhThanhNien from '@/assets/guest/thanh-nien.jpg'
 import anhPhuHuynh from '@/assets/guest/phu-huynh.jpg'
 import anhNhaTruong from '@/assets/guest/nha-truong.jpg'
 import anhNhaTuyenDung from '@/assets/guest/nha-tuyen-dung.jpg'
+import { useTenRouteThpt } from '../../../useTenRouteThpt'
+
+const { tenRoute } = useTenRouteThpt()
 
 defineOptions({ name: 'ChiTietTruongDaoTao' })
 
@@ -358,7 +361,7 @@ function diChonTruong() {
   const ma = String(props.nganh?.ma_nganh || '').trim()
   if (!ma) return
   router.push({
-    name: 'thpt-thi-dai-hoc-truong-phu-hop',
+    name: tenRoute('thpt-thi-dai-hoc-truong-phu-hop'),
     params: { maNganh: ma },
   })
 }
@@ -372,7 +375,7 @@ function diChiTiet(item) {
   if (maNganh) query.ma_nganh = maNganh
   if (boLoc.value.namHoc) query.nam = String(boLoc.value.namHoc)
   router.push({
-    name: 'thpt-thi-dai-hoc-chi-tiet-truong',
+    name: tenRoute('thpt-thi-dai-hoc-chi-tiet-truong'),
     params: { ssid, maTruong },
     query,
   })
