@@ -546,19 +546,22 @@
   margin-bottom: 12px;
 }
 
-/* Đối tượng chưa mở (data/doiTuong.js `moTruyCap: false`): vẫn hiển thị nhưng mờ, không bấm được. */
+/* Đối tượng / định hướng chưa mở (`moTruyCap: false`): vẫn hiển thị nhưng mờ, không bấm được. */
 .guest-layout .audience-card.is-locked,
+.guest-layout .stage-card.is-locked,
 .guest-layout .switch-card.is-locked {
   cursor: not-allowed;
 }
 
 .guest-layout .audience-card.is-locked:hover,
+.guest-layout .stage-card.is-locked:hover,
 .guest-layout .switch-card.is-locked:hover {
   box-shadow: none;
   cursor: not-allowed;
 }
 
 .guest-layout .audience-card.is-locked :is(.audience-card__image, .audience-card__title, .audience-card__text),
+.guest-layout .stage-card.is-locked :is(.stage-card__image, .stage-card__title, .stage-card__text),
 .guest-layout .switch-card.is-locked :is(.switch-card__image, .switch-card__text) {
   opacity: 0.55;
   filter: grayscale(0.6);
@@ -568,7 +571,8 @@
   color: #6b7680;
 }
 
-.guest-layout .audience-card__button:disabled {
+.guest-layout .audience-card__button:disabled,
+.guest-layout .stage-card__button:disabled {
   background: #b8c2bd;
   cursor: not-allowed;
 }

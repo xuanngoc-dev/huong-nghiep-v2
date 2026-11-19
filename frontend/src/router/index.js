@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { doiTuongList, laDoiTuongMo } from '@/data/doiTuong'
 import { dinhHuongThptRoutes } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
+import { laDinhHuongMo } from '@/components/guest/doi-tuong/HocSinhThpt/dinhHuong'
 import { giaiDoanConRoutes } from '@/components/guest/doi-tuong/PhuHuynh/routes'
 
 // Chờ trang đủ cao (dữ liệu tải bất đồng bộ) rồi mới cuộn về vị trí cũ.
@@ -593,6 +594,10 @@ router.beforeEach(async (to) => {
 
   if (to.meta.doiTuong && !laDoiTuongMo(to.meta.doiTuong)) {
     return { name: 'chon-doi-tuong' }
+  }
+
+  if (to.meta.dinhHuong && !laDinhHuongMo(to.meta.dinhHuong)) {
+    return { name: to.meta.goc || 'hoc-sinh-thpt' }
   }
 
   const auth = useAuthStore()

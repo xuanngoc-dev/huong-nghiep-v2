@@ -14,11 +14,19 @@
             <h2 class="directions-heading">Là học sinh THPT, bạn định hướng làm gì sau khi tốt nghiệp</h2>
             <div class="row g-3">
               <div v-for="direction in directions" :key="direction.code" class="col-md-6 col-xl-4">
-                <article class="stage-card h-100" :class="{ 'is-selected': selectedDirection === direction.code }">
+                <article
+                  class="stage-card h-100"
+                  :class="{ 'is-selected': selectedDirection === direction.code, 'is-locked': !direction.moTruyCap }"
+                >
                   <div class="stage-card__media">
                     <img class="stage-card__image" :src="direction.image" :alt="direction.name" />
-                    <button type="button" class="stage-card__button" @click="chonDinhHuong(direction)">
-                      Bắt đầu
+                    <button
+                      type="button"
+                      class="stage-card__button"
+                      :disabled="!direction.moTruyCap"
+                      @click="chonDinhHuong(direction)"
+                    >
+                      {{ direction.moTruyCap ? 'Bắt đầu' : 'Sắp ra mắt' }}
                     </button>
                   </div>
                   <h3 class="stage-card__title">{{ direction.name }}</h3>
@@ -88,6 +96,7 @@ const { audiences, selectedCode, chonDoiTuong } = useDoiTuongAudiences()
 const router = useRouter()
 
 function chonDinhHuong(direction) {
+  if (!direction.moTruyCap) return
   selectedDirection.value = direction.code
   sessionStorage.setItem(DINH_HUONG_THPT_KEY, direction.code)
   const name = routeNameDinhHuongThpt(direction.code)
