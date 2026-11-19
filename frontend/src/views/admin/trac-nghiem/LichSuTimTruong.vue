@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-page">
   <CustomCard shadow="never" class="catalog-card">
-    <div class="filters">
+  <BoLoc>
       <CustomInput
         v-model="filters.nguoi_dung"
         class="filter-search"
@@ -75,7 +75,7 @@
       </CustomSelect>
       <CustomDatePicker
         v-model="filters.khoang_ngay"
-        class="filter-date"
+        class="bo-loc__rong filter-date"
         type="daterange"
         value-format="YYYY-MM-DD"
         format="DD/MM/YYYY"
@@ -85,12 +85,14 @@
         clearable
         @change="onSearch"
       />
-      <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-      <CustomButton @click="onResetFilters">
-        <CustomIcon><RefreshLeft /></CustomIcon>
-        <span>Đặt lại</span>
-      </CustomButton>
-    </div>
+      <template #nut>
+        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+        <CustomButton @click="onResetFilters">
+          <CustomIcon><RefreshLeft /></CustomIcon>
+          <span>Đặt lại</span>
+        </CustomButton>
+      </template>
+    </BoLoc>
   </CustomCard>
 
   <CustomCard shadow="never" class="catalog-card">
@@ -426,18 +428,6 @@ onMounted(load)
 </script>
 
 <style scoped>
-.filter-code {
-  width: 210px;
-}
-
-.filter-select {
-  width: 160px;
-}
-
-.filter-date {
-  max-width: 240px;
-}
-
 .toolbar__count {
   color: var(--el-text-color-secondary);
   font-size: 13px;
@@ -518,13 +508,6 @@ onMounted(load)
 }
 
 @media (max-width: 640px) {
-  .filter-code,
-  .filter-select,
-  .filter-date {
-    width: 100%;
-    max-width: none;
-  }
-
   .chi-tiet__grid {
     grid-template-columns: minmax(0, 1fr);
   }

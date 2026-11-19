@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-page">
   <CustomCard shadow="never" class="catalog-card">
-    <div class="filters">
+    <BoLoc>
       <CustomInput
         v-model="filters.nguoi_tham_gia"
         class="filter-search"
@@ -46,7 +46,7 @@
       </CustomSelect>
       <CustomDatePicker
         v-model="filters.khoang_ngay"
-        class="filter-date"
+        class="bo-loc__rong filter-date"
         type="daterange"
         value-format="YYYY-MM-DD"
         format="DD/MM/YYYY"
@@ -56,8 +56,10 @@
         clearable
         @change="onSearch"
       />
-      <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-    </div>
+      <template #nut>
+        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+      </template>
+    </BoLoc>
   </CustomCard>
 
   <CustomCard shadow="never" class="catalog-card">
@@ -377,25 +379,6 @@ onMounted(load)
 </script>
 
 <style scoped>
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.filter-code {
-  width: 190px;
-}
-
-.filter-select {
-  width: 140px;
-}
-
-.filter-date {
-  max-width: 240px;
-}
-
 .toolbar__count {
   color: var(--el-text-color-secondary);
   font-size: 13px;
@@ -408,12 +391,4 @@ onMounted(load)
   font-family: ui-monospace, Consolas, monospace;
 }
 
-@media (max-width: 640px) {
-  .filter-code,
-  .filter-select,
-  .filter-date {
-    width: 100%;
-    max-width: none;
-  }
-}
 </style>

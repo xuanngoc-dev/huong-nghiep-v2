@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-page">
     <CustomCard shadow="never" class="catalog-card">
-      <div class="filters">
+      <BoLoc>
         <CustomInput
           v-model="filters.q"
           class="filter-search"
@@ -62,8 +62,10 @@
         >
           <CustomOption v-for="item in TRANG_THAI" :key="item" :label="item" :value="item" />
         </CustomSelect>
-        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-      </div>
+        <template #nut>
+          <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+        </template>
+      </BoLoc>
     </CustomCard>
 
     <CustomCard shadow="never" class="catalog-card">
@@ -1002,15 +1004,3 @@ async function onDeleteSelected() {
 
 onMounted(load)
 </script>
-
-<style scoped>
-.filter-status {
-  width: 190px;
-}
-
-@media (max-width: 640px) {
-  .filter-status {
-    width: 100%;
-  }
-}
-</style>

@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-page">
     <CustomCard shadow="never" class="catalog-card">
-      <div class="filters">
+      <BoLoc>
         <CustomInput
           v-model="filters.q"
           class="filter-search"
@@ -55,8 +55,10 @@
             :value="item.id"
           />
         </CustomSelect>
-        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-      </div>
+        <template #nut>
+          <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+        </template>
+      </BoLoc>
     </CustomCard>
 
     <CustomCard shadow="never" class="catalog-card">

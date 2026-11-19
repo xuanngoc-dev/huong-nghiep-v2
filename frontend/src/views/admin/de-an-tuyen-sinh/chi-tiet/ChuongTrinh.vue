@@ -1,5 +1,5 @@
 <template>
-  <div class="filters">
+  <BoLoc>
     <CustomSelect
       v-model="filters.ten"
       class="filter-program"
@@ -53,7 +53,7 @@
     >
       <CustomOption v-for="code in comboOptions" :key="code" :label="code" :value="code" />
     </CustomSelect>
-  </div>
+  </BoLoc>
   <CustomTable :data="filteredRows" row-key="row_key" stripe border max-height="520" class="program-method-table">
     <el-table-column label="TT" width="64" align="center">
       <template #default="{ $index }">{{ $index + 1 }}</template>
@@ -446,25 +446,8 @@ function cellText(value) {
 </script>
 
 <style scoped>
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
+.bo-loc {
   margin-bottom: 12px;
-}
-
-.filter-program {
-  width: 280px;
-}
-
-.filter-code,
-.filter-combo {
-  width: 160px;
-}
-
-.filter-method {
-  width: 320px;
 }
 
 .program-method-table :deep(thead.is-group th.el-table__cell) {

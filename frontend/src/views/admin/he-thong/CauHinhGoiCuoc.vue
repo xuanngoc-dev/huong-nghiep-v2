@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-page">
   <CustomCard shadow="never" class="catalog-card">
-    <div class="filters">
+    <BoLoc>
       <CustomInput
         v-model="filters.q"
         class="filter-search"
@@ -43,7 +43,7 @@
         <CustomOption label="Có khuyến mãi" :value="true" />
         <CustomOption label="Không khuyến mãi" :value="false" />
       </CustomSelect>
-      <div class="filter-gia">
+      <div class="bo-loc__rong filter-gia">
         <CustomInputNumber
           v-model="filters.gia_tu"
           :min="0"
@@ -68,12 +68,14 @@
           @keyup.enter="onSearch"
         />
       </div>
-      <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-      <CustomButton @click="onResetFilters">
-        <CustomIcon><RefreshLeft /></CustomIcon>
-        <span>Đặt lại</span>
-      </CustomButton>
-    </div>
+      <template #nut>
+        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+        <CustomButton @click="onResetFilters">
+          <CustomIcon><RefreshLeft /></CustomIcon>
+          <span>Đặt lại</span>
+        </CustomButton>
+      </template>
+    </BoLoc>
   </CustomCard>
 
   <CustomCard shadow="never" class="catalog-card">
@@ -606,18 +608,16 @@ onMounted(load)
 </script>
 
 <style scoped>
-.filter-status {
-  width: 170px;
-}
-
 .filter-gia {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 6px;
 }
 
 .filter-gia :deep(.el-input-number) {
-  width: 130px;
+  flex: 1;
+  width: auto;
+  min-width: 0;
 }
 
 .gia-tri {
@@ -639,17 +639,5 @@ onMounted(load)
 
 .filter-gia__sep {
   color: var(--el-text-color-secondary);
-}
-
-@media (max-width: 640px) {
-  .filter-status,
-  .filter-gia {
-    width: 100%;
-  }
-
-  .filter-gia :deep(.el-input-number) {
-    flex: 1;
-    width: auto;
-  }
 }
 </style>

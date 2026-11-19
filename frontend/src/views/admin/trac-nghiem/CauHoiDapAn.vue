@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-page">
     <CustomCard shadow="never" class="catalog-card">
-      <div class="filters">
+      <BoLoc>
         <CustomInput
           v-model="filters.q"
           class="filter-search"
@@ -54,8 +54,10 @@
           <CustomOption label="Hoạt động" :value="1" />
           <CustomOption label="Ngừng sử dụng" :value="0" />
         </CustomSelect>
-        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-      </div>
+        <template #nut>
+          <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+        </template>
+      </BoLoc>
     </CustomCard>
 
     <CustomCard shadow="never" class="catalog-card">
@@ -989,10 +991,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.filter-parent {
-  width: 240px;
-}
-
 .answers-head {
   display: flex;
   align-items: center;
@@ -1018,8 +1016,6 @@ onMounted(async () => {
 }
 
 @media (max-width: 640px) {
-  .filter-parent,
-  .filter-status,
   .answer-row {
     width: 100%;
     grid-template-columns: minmax(0, 1fr) 40px;

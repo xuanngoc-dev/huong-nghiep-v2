@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-page">
     <CustomCard shadow="never" class="catalog-card">
-      <div class="filters">
+      <BoLoc>
         <CustomInput
           v-model="filters.q"
           class="filter-search"
@@ -52,8 +52,10 @@
             :value="item.value"
           />
         </CustomSelect>
-        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-      </div>
+        <template #nut>
+          <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+        </template>
+      </BoLoc>
     </CustomCard>
 
     <CustomCard shadow="never" class="catalog-card">
@@ -999,10 +1001,6 @@ onMounted(async () => {
   line-height: 1.4;
 }
 
-.filter-school {
-  width: 280px;
-}
-
 .json-panel__actions {
   display: flex;
   flex-shrink: 0;
@@ -1031,9 +1029,6 @@ onMounted(async () => {
 }
 
 @media (max-width: 640px) {
-  .filter-school,
-  .filter-year,
-  .filter-status,
   .json-school,
   .json-year {
     width: 100%;
