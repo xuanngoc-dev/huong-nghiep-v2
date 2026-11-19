@@ -107,7 +107,6 @@
         },
         {
           "index": "/admin/de-an-tuyen-sinh/diem-chuan",
-          "an": true,
           "title": "Điểm chuẩn",
           "tooltip": "Điểm chuẩn các năm theo mã xét tuyển, phương thức, tổ hợp",
           "icon": "TrendCharts"

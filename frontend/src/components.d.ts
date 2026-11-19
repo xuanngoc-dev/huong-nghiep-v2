@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AuthShell: typeof import('./components/guest/auth/AuthShell.vue')['default']
+    BangDiemTheoTruong: typeof import('./components/admin/diem-chuan/BangDiemTheoTruong.vue')['default']
     BieuDoCot: typeof import('./components/admin/charts/BieuDoCot.vue')['default']
     BieuDoDuong: typeof import('./components/admin/charts/BieuDoDuong.vue')['default']
     BieuDoRadar: typeof import('./components/guest/BieuDoRadar.vue')['default']

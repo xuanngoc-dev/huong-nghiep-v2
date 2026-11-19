@@ -48,9 +48,13 @@
 
     <CustomCard shadow="never" class="catalog-card">
       <div class="toolbar">
-        <h2 class="toolbar__title">Điểm chuẩn các năm</h2>
+        <h2 class="toolbar__title">{{ tieuDe }}</h2>
         <div class="toolbar__actions">
-          <CustomBadge :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
+          <CustomRadioGroup v-model="cheDo" @change="onSearch">
+            <CustomRadioButton value="danh-sach">Danh sách</CustomRadioButton>
+            <CustomRadioButton value="theo-truong">Theo trường</CustomRadioButton>
+          </CustomRadioGroup>
+          <CustomBadge v-if="cheDo === 'danh-sach'" :value="selectedRows.length" :hidden="!selectedRows.length" type="danger">
             <CustomButton
               type="danger"
               plain
@@ -69,7 +73,24 @@
         </div>
       </div>
 
+      <BangDiemTheoTruong
+        v-if="cheDo === 'theo-truong'"
+        :chuong-trinh="chuongTrinhNam"
+        :diem-chuan="diemChuanNam"
+        :danh-muc-phuong-thuc="phuongThucOptions"
+        :q="filters.q"
+        :ma-phuong-thuc="filters.ma_phuong_thuc_cua_bo"
+        :loading="loading"
+        :empty-text="
+          filters.ma_truong
+            ? `Trường chưa có chương trình hoặc điểm chuẩn năm ${filters.nam_tuyen_sinh || ''}.`
+            : 'Chọn trường để xem bảng điểm chuẩn.'
+        "
+        @sua="openEdit"
+      />
+
       <CustomTable
+        v-else
         ref="tableRef"
         :loading="loading"
         :data="rows"
@@ -86,17 +107,17 @@
         <CustomTableColumn label="Trường" min-width="200" show-overflow-tooltip>
           <template #default="{ row }">{{ schoolLabel(row) }}</template>
         </CustomTableColumn>
-        <CustomTableColumn prop="ma_xet_tuyen" label="Mã xét tuyển" width="120" />
+        <CustomTableColumn prop="ma_xet_tuyen" label="Mã xét tuyển" width="160" />
         <CustomTableColumn label="Chương trình" min-width="220" show-overflow-tooltip>
           <template #default="{ row }">{{ row.ten_chuong_trinh || '—' }}</template>
         </CustomTableColumn>
         <CustomTableColumn label="Phương thức" min-width="180" show-overflow-tooltip>
           <template #default="{ row }">{{ row.ma_phuong_thuc_cua_bo ? phuongThucLabel(row) : 'Mọi phương thức' }}</template>
         </CustomTableColumn>
-        <CustomTableColumn label="Tổ hợp" width="100" align="center">
+        <CustomTableColumn label="Tổ hợp" width="140" align="center">
           <template #default="{ row }">{{ row.ma_to_hop || 'Mọi tổ hợp' }}</template>
         </CustomTableColumn>
-        <CustomTableColumn label="Điểm chuẩn" width="120" align="center">
+        <CustomTableColumn label="Điểm chuẩn" width="150" align="center">
           <template #default="{ row }">
             <strong>{{ soDiem(row.diem_chuan) }}</strong> / {{ soDiem(row.thang_diem) }}
           </template>
@@ -125,7 +146,7 @@
         </template>
       </CustomTable>
 
-      <div class="pager">
+      <div v-if="cheDo === 'danh-sach'" class="pager">
         <CustomPagination
           v-model:current-page="page"
           v-model:page-size="pageSize"
@@ -271,9 +292,11 @@
  * Điểm chuẩn các năm (xt_diem_chuan, bước 1.6): nhập theo mã trường + năm + mã xét tuyển, có thể riêng
  * từng phương thức / tổ hợp. Dùng làm mốc so sánh khi tìm trường phù hợp.
  */
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import BangDiemTheoTruong from '@/components/admin/diem-chuan/BangDiemTheoTruong.vue'
 import { baoLoi } from '@/utils/baoLoi'
+import { namMoiNhat } from '@/utils/diemChuanTheoTruong'
 import { fetchChuongTrinhDaoTao } from '@/api/chuongTrinhDaoTao'
 import {
   createDiemChuan,
@@ -306,12 +329,37 @@ const JSON_SAMPLE = `[
 ]`
 
 const NAM_HIEN_TAI = new Date().getFullYear()
-const namOptions = Array.from({ length: 8 }, (_, i) => NAM_HIEN_TAI - i)
+const NAM_MAC_DINH = Array.from({ length: 8 }, (_, i) => NAM_HIEN_TAI - i)
 
 const loading = ref(false)
 const saving = ref(false)
 const deleting = ref(false)
 const rows = ref([])
+// 'danh-sach': bảng phẳng có phân trang; 'theo-truong': bảng chéo năm × phương thức của một trường.
+const cheDo = ref('danh-sach')
+// Chế độ theo trường tải toàn bộ điểm chuẩn và chương trình (mọi năm) của trường, rồi lọc năm tại chỗ.
+const diemChuanTruong = ref([])
+const chuongTrinhTruong = ref([])
+let chuongTrinhCuaTruong = ''
+const chuongTrinhNam = computed(() =>
+  chuongTrinhTruong.value.filter((item) => item.nam_tuyen_sinh === filters.nam_tuyen_sinh),
+)
+const diemChuanNam = computed(() =>
+  diemChuanTruong.value.filter((item) => item.nam_tuyen_sinh === filters.nam_tuyen_sinh),
+)
+// 8 năm gần nhất, cộng các năm có đề án hoặc điểm chuẩn của trường đang xem (kể cả năm sau, năm cũ hơn).
+const namOptions = computed(() => {
+  const nam = new Set(NAM_MAC_DINH)
+  for (const item of [...chuongTrinhTruong.value, ...diemChuanTruong.value]) {
+    if (item.nam_tuyen_sinh) nam.add(item.nam_tuyen_sinh)
+  }
+  return [...nam].sort((a, b) => b - a)
+})
+const tieuDe = computed(() =>
+  cheDo.value === 'theo-truong' && filters.nam_tuyen_sinh
+    ? `Điểm chuẩn năm ${filters.nam_tuyen_sinh}`
+    : 'Điểm chuẩn các năm',
+)
 const selectedRows = ref([])
 const tableRef = ref()
 const total = ref(0)
@@ -440,15 +488,65 @@ function onMaXetTuyenChange(value) {
   if (goiY && !form.ten_chuong_trinh) form.ten_chuong_trinh = goiY.ten
 }
 
-async function load() {
+function filterParams() {
+  const params = {}
+  if (filters.q.trim()) params.q = filters.q.trim()
+  if (filters.ma_truong) params.ma_truong = filters.ma_truong
+  if (filters.nam_tuyen_sinh) params.nam_tuyen_sinh = filters.nam_tuyen_sinh
+  if (filters.ma_phuong_thuc_cua_bo) params.ma_phuong_thuc_cua_bo = filters.ma_phuong_thuc_cua_bo
+  return params
+}
+
+function load() {
+  return cheDo.value === 'theo-truong' ? loadTheoTruong() : loadDanhSach()
+}
+
+async function loadTatCaTrang(fetcher, params) {
+  const items = []
+  for (let trang = 1; trang <= 20; trang += 1) {
+    const data = await fetcher({ ...params, page: trang, page_size: 1000 })
+    items.push(...(data.items || []))
+    if (items.length >= data.total || !data.items?.length) break
+  }
+  return items
+}
+
+// Chương trình đào tạo kèm phương thức, tổ hợp của trường (mọi năm); mỗi trường chỉ tải một lần.
+async function loadChuongTrinhTruong(maTruong) {
+  if (chuongTrinhCuaTruong === maTruong) return
+  chuongTrinhTruong.value = await loadTatCaTrang(fetchChuongTrinhDaoTao, { ma_truong: maTruong, kem_phuong_thuc: true })
+  chuongTrinhCuaTruong = maTruong
+}
+
+async function loadTheoTruong() {
+  diemChuanTruong.value = []
+  if (!filters.ma_truong) {
+    chuongTrinhTruong.value = []
+    chuongTrinhCuaTruong = ''
+    return
+  }
   loading.value = true
   try {
-    const params = { page: page.value, page_size: pageSize.value }
-    if (filters.q.trim()) params.q = filters.q.trim()
-    if (filters.ma_truong) params.ma_truong = filters.ma_truong
-    if (filters.nam_tuyen_sinh) params.nam_tuyen_sinh = filters.nam_tuyen_sinh
-    if (filters.ma_phuong_thuc_cua_bo) params.ma_phuong_thuc_cua_bo = filters.ma_phuong_thuc_cua_bo
-    const data = await fetchDiemChuan(params)
+    const [items] = await Promise.all([
+      loadTatCaTrang(fetchDiemChuan, { ma_truong: filters.ma_truong }),
+      loadChuongTrinhTruong(filters.ma_truong),
+    ])
+    diemChuanTruong.value = items
+    // Bảng theo trường xem một năm: chưa chọn năm thì lấy năm mới nhất có dữ liệu.
+    if (!filters.nam_tuyen_sinh) {
+      filters.nam_tuyen_sinh = namMoiNhat(chuongTrinhTruong.value, items) || NAM_HIEN_TAI
+    }
+  } catch (error) {
+    baoLoi(errorMessage(error, 'Không tải được điểm chuẩn của trường'))
+  } finally {
+    loading.value = false
+  }
+}
+
+async function loadDanhSach() {
+  loading.value = true
+  try {
+    const data = await fetchDiemChuan({ ...filterParams(), page: page.value, page_size: pageSize.value })
     rows.value = data.items || []
     total.value = data.total || 0
   } catch (error) {
