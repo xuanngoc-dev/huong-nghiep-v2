@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { doiTuongList } from '@/data/doiTuong'
 import { dinhHuongThptRoutes } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
+import { giaiDoanConRoutes } from '@/components/guest/doi-tuong/PhuHuynh/routes'
 
 // Chờ trang đủ cao (dữ liệu tải bất đồng bộ) rồi mới cuộn về vị trí cũ.
 function choDuChieuCao(top, thoiGianToiDa = 1500) {
@@ -65,6 +66,7 @@ const router = createRouter({
           meta: { title: item.name, public: true, doiTuong: item.code },
         })),
         ...dinhHuongThptRoutes,
+        ...giaiDoanConRoutes,
         // Tạm bỏ trang chat đầy đủ: dùng khung chat nổi (khách) và trang Danh sách hội thoại (thành viên).
         // {
         //   path: 'demo-chat',

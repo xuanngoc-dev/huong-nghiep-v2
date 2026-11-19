@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import menuData from '@/data/menu.json'
 import { dinhHuongThptRoutes } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
+import { giaiDoanConRoutes } from '@/components/guest/doi-tuong/PhuHuynh/routes'
 
 const MIN_VISIBLE_MS = 420
 const visible = ref(false)
@@ -18,7 +19,7 @@ for (const groups of Object.values(menuData)) {
     }
   }
 }
-for (const route of dinhHuongThptRoutes) {
+for (const route of [...dinhHuongThptRoutes, ...giaiDoanConRoutes]) {
   if (!route.path) continue
   loadingPaths.add(route.path.startsWith('/') ? route.path : `/${route.path}`)
 }
