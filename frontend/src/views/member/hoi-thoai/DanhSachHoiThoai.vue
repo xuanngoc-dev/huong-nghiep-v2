@@ -173,7 +173,6 @@
             class="nhom"
             :class="nhom.laNguoiDung ? 'nhom--phai' : 'nhom--trai'"
           >
-            <span v-if="!nhom.laNguoiDung" class="avatar avatar--nho avatar--bot">AI</span>
             <div class="nhom__than">
               <div
                 v-for="tin in nhom.tinNhan"
@@ -1054,12 +1053,6 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
   color: #fff;
 }
 
-.avatar--nho {
-  width: 32px;
-  height: 32px;
-  font-size: 12px;
-}
-
 .avatar--lon {
   width: 64px;
   height: 64px;
@@ -1221,7 +1214,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', dongMenuKhiBam
   background: var(--el-fill-color-light);
 }
 
-/* Trợ lý bên trái, câu hỏi của bạn bên phải. */
+/* Trợ lý bên trái (không có avatar để tiết kiệm diện tích), câu hỏi của bạn bên phải. */
 .nhom {
   display: flex;
   align-items: flex-start;

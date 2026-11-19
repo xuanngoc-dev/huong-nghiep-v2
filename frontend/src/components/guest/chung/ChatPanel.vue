@@ -10,6 +10,7 @@
     </p>
     <div ref="list" class="ai-chat__thread" role="log" aria-label="Hội thoại tuyển sinh" aria-live="polite" aria-relevant="additions" :aria-busy="chat.state.sending" @scroll="onScroll">
       <ChatMessage v-for="(message, index) in chat.state.messages" :key="message.id" :message="message"
+        :dau-nhom="!cungBen(chat.state.messages[index - 1], message)" :cuoi-nhom="!cungBen(chat.state.messages[index + 1], message)"
         :retryable="index === chat.state.messages.length - 1 && message.role === 'bot' && message.id !== 'welcome' && !message.local && !chat.state.sending && !chat.state.daKetThuc"
         @retry="chat.retry" />
     </div>
@@ -70,6 +71,10 @@ function submit(text) {
   stickToBottom.value = true
   chat.send(typeof text === 'string' ? text : undefined)
 }
+// Hai tin liền nhau cùng một bên (bạn / trợ lý) thì gộp nhóm như trang Danh sách hội thoại.
+function cungBen(a, b) {
+  return Boolean(a && b && a.role === b.role)
+}
 function chonLenh(lenh) {
   chat.state.draft = `/${lenh.ten}${lenh.thamSo ? ' ' : ''}`
   input.value?.focus()
@@ -100,9 +105,19 @@ onMounted(() => { chat.loadModels(); chat.kiemTraPhien(); scroll(); if (props.co
   &__toolbar { display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; }
   &__toolbar label { display:flex; align-items:center; gap:8px; margin:0; }
   select { max-width:260px; padding:6px; border:1px solid #c9ddd1; border-radius:6px; background:#fff; color:inherit; }
-  &__thread { display:flex; flex-direction:column; gap:16px; padding:18px; overflow-y:auto; flex:1; min-height:0; overscroll-behavior:contain; }
-  &__message { max-width:95%; align-self:flex-start; padding:12px 16px; border-radius:12px; border:1px solid #e1ece5; background:#f6fbf8; overflow-wrap:anywhere; }
-  &__message.is-user { align-self:flex-end; background:#237b51; color:#fff; max-width:85%; }
+  /* Giống nội dung hội thoại ở trang Danh sách hội thoại (views/member/hoi-thoai/DanhSachHoiThoai.vue). */
+  &__thread { display:flex; flex-direction:column; gap:6px; padding:18px; overflow-y:auto; flex:1; min-height:0; overscroll-behavior:contain; background:var(--el-fill-color-light, #f5f7fa); }
+  &__nhom { display:flex; align-items:flex-start; gap:10px; }
+  &__nhom.is-dau:not(:first-child) { margin-top:12px; }
+  &__nhom.is-user { justify-content:flex-end; }
+  &__than { display:flex; flex-direction:column; gap:4px; min-width:0; max-width:min(85%, 680px); }
+  &__nhom.is-user &__than { align-items:flex-end; }
+  /* Tin của trợ lý rộng hết khung chat, không có avatar để tiết kiệm diện tích. */
+  &__nhom.is-bot &__than { flex:1; max-width:100%; }
+  &__gio { color:var(--el-text-color-secondary, #607169); font-size:11px; }
+  &__message { padding:9px 14px; border-radius:8px; background:var(--el-bg-color, #fff); box-shadow:0 1px 2px rgba(0,0,0,.06); color:var(--el-text-color-primary, #1c2b23); line-height:1.55; overflow-wrap:anywhere; }
+  &__message.is-user { background:var(--el-color-primary, #237b51); color:#fff; }
+  &__message.is-bot.is-error { background:var(--el-color-danger-light-9, #fef0f0); }
   &__user-text { white-space:pre-wrap; margin:0; }
   &__markdown p { margin:0 0 8px; white-space:pre-wrap; }
   &__markdown p:last-child { margin-bottom:0; }
@@ -143,12 +158,13 @@ onMounted(() => { chat.loadModels(); chat.kiemTraPhien(); scroll(); if (props.co
   &__composer-row &__stop { background:#fff; color:#a33a26; border-color:#dba999; }
   &__hint { color:#607169; padding:5px 14px 10px; font-size:11px; }
   &.is-compact { font-size:13px; }
-  &.is-compact &__thread { padding:10px; gap:10px; }
-  &.is-compact &__message { padding:10px; max-width:100%; }
+  &.is-compact &__thread { padding:10px; }
+  &.is-compact &__nhom.is-user &__than { max-width:88%; }
+  &.is-compact &__message { padding:8px 12px; }
   &.is-compact &__toolbar { gap:6px; }
   &.is-compact &__toolbar label { font-size:12px; }
   &.is-compact select { max-width:200px; font-size:12px; }
   &.is-compact &__hint { display:none; }
-  @media(max-width:600px) { &__toolbar label { flex-wrap:wrap; } select { max-width:230px; } &__thread { padding:12px; } &__message { max-width:100%; } }
+  @media(max-width:600px) { &__toolbar label { flex-wrap:wrap; } select { max-width:230px; } &__thread { padding:12px; } &__nhom.is-user &__than { max-width:90%; } }
 }
 </style>
