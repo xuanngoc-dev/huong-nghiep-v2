@@ -225,13 +225,15 @@
             placeholder="Nhập câu hỏi… (Enter để gửi, Shift + Enter để xuống dòng, gõ / để xem lệnh)"
             aria-label="Nội dung câu hỏi"
             @keydown="phimNhap"
+            @compositionupdate="(event) => (dangGoDo = event.target.value)"
+            @compositionend="dangGoDo = ''"
           />
           <CustomButton v-if="dangGuiTaiDay" type="danger" plain @click="chat.stop()">Dừng</CustomButton>
           <CustomButton
             v-else
             type="primary"
             native-type="submit"
-            :disabled="!cauHoi.trim() || chat.state.sending || dangTaiTinNhan"
+            :disabled="!coNoiDung || chat.state.sending || dangTaiTinNhan"
           >
             Gửi
             <CustomIcon class="el-icon--right"><Promotion /></CustomIcon>
@@ -288,6 +290,10 @@ const tinNhan = ref([])
 const dangTaiTinNhan = ref(false)
 const khungTinNhan = ref(null)
 const cauHoi = ref('')
+// Nội dung ô nhập khi bộ gõ tiếng Việt (Telex/VNI) đang gõ dở một chữ: el-input chỉ cập nhật v-model khi chốt chữ
+// (nhấn phím cách), nên dùng thêm giá trị này để mở nút Gửi ngay khi ô có chữ.
+const dangGoDo = ref('')
+const coNoiDung = computed(() => Boolean(cauHoi.value.trim() || dangGoDo.value.trim()))
 const oNhap = ref(null)
 // Đang gửi câu hỏi từ trang này: khung phải hiện tin nhắn của chat store (có câu trả lời đang stream).
 const dangGuiTaiDay = ref(false)

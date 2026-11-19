@@ -28,16 +28,26 @@
         </label>
         -->
         <button v-if="!chat.state.models.length && !chat.state.loadingModels" type="button" @click="chat.loadModels">Tải lại trợ lý</button>
-        <button type="button" :disabled="!hasUser && !chat.state.sending" @click="chat.clear">Hội thoại mới</button>
+        <!-- <button type="button" :disabled="!hasUser && !chat.state.sending" @click="chat.clear">Hội thoại mới</button> -->
       </div>
       <div class="ai-chat__composer-row">
         <GoiYLenh :text="chat.state.draft" @chon="chonLenh" />
-        <textarea ref="input" v-model="chat.state.draft" maxlength="4000" :rows="compact ? 2 : 3" aria-label="Nội dung câu hỏi"
+        <!-- :value + @input thay cho v-model: v-model bỏ qua chữ đang gõ dở của bộ gõ tiếng Việt (Telex/VNI) tới khi
+             nhấn phím cách, nên nút Gửi bị khóa dù ô đã có chữ. -->
+        <textarea ref="input" :value="chat.state.draft" maxlength="4000" :rows="compact ? 2 : 3" aria-label="Nội dung câu hỏi"
+          @input="chat.state.draft = $event.target.value"
           :disabled="chat.state.daKetThuc"
           :placeholder="chat.state.daKetThuc ? 'Cuộc hội thoại đã kết thúc — mở hội thoại mới để hỏi tiếp.' : 'Hỏi về trường, ngành, tổ hợp, điểm… (gõ / để xem lệnh)'"
           @keydown="keydown" />
-        <button v-if="chat.state.sending" type="button" class="ai-chat__stop" @click="chat.stop()">Dừng</button>
-        <button v-else type="submit" :disabled="chat.state.daKetThuc || !chat.state.draft.trim() || !chat.state.modelId">Gửi</button>
+        <!-- Khung chat nổi (compact): luôn có cả Gửi và Hủy xếp dọc bên phải; Hủy dừng câu trả lời đang chạy. -->
+        <div v-if="compact" class="ai-chat__nut-gui">
+          <button type="submit" :disabled="chat.state.sending || chat.state.daKetThuc || !chat.state.draft.trim() || !chat.state.modelId">Gửi</button>
+          <button type="button" class="ai-chat__stop" :disabled="!chat.state.sending" @click="chat.stop()">Hủy</button>
+        </div>
+        <template v-else>
+          <button v-if="chat.state.sending" type="button" class="ai-chat__stop" @click="chat.stop()">Dừng</button>
+          <button v-else type="submit" :disabled="chat.state.daKetThuc || !chat.state.draft.trim() || !chat.state.modelId">Gửi</button>
+        </template>
       </div>
     </form>
     <small class="ai-chat__hint">Enter để gửi · Shift + Enter để xuống dòng · Kiểm tra nguồn trước khi quyết định.</small>
@@ -156,6 +166,10 @@ onMounted(() => { chat.loadModels(); chat.kiemTraPhien(); scroll(); if (props.co
   &__composer-row textarea { flex:1; min-width:0; resize:vertical; max-height:150px; padding:10px; border:1px solid #c9ddd1; border-radius:10px; }
   &__composer-row button { background:#237b51; color:#fff; padding:10px 16px; }
   &__composer-row &__stop { background:#fff; color:#a33a26; border-color:#dba999; }
+  &__nut-gui { display:flex; flex-direction:column; gap:6px; }
+  &.is-compact &__composer-row { align-items:stretch; }
+  &.is-compact &__composer-row textarea { resize:none; }
+  &.is-compact &__nut-gui button { padding:6px 14px; }
   &__hint { color:#607169; padding:5px 14px 10px; font-size:11px; }
   &.is-compact { font-size:13px; }
   &.is-compact &__thread { padding:10px; }
