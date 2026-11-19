@@ -193,15 +193,18 @@
   </CustomCard>
   </div>
 
-  <CustomDialog v-model="chiTietMo" title="Chi tiết lượt tìm trường" width="min(860px, 94vw)" destroy-on-close>
+  <CustomDialog v-model="chiTietMo" title="Chi tiết lượt tìm trường" width="min(1200px, 96vw)" destroy-on-close>
     <div v-loading="dangTaiChiTiet" class="chi-tiet">
       <template v-if="chiTiet">
-        <dl class="chi-tiet__grid">
-          <div v-for="dong in thongTinChung" :key="dong.nhan" class="chi-tiet__row">
-            <dt>{{ dong.nhan }}</dt>
-            <dd>{{ dong.giaTri || '—' }}</dd>
-          </div>
-        </dl>
+        <CustomForm class="chi-tiet__form" label-position="top" @submit.prevent>
+          <CustomRow :gutter="12">
+            <CustomCol v-for="dong in thongTinChung" :key="dong.nhan" v-bind="dong.rong ? COT_RONG : COT">
+              <CustomFormItem :label="dong.nhan">
+                <CustomInput :model-value="dong.giaTri || '—'" :title="dong.giaTri" readonly />
+              </CustomFormItem>
+            </CustomCol>
+          </CustomRow>
+        </CustomForm>
 
         <h3 class="chi-tiet__title">Tiêu chí tìm kiếm</h3>
         <div v-if="nhanTieuChi(chiTiet.tieu_chi_tim_kiem).length" class="tag-list">
@@ -209,11 +212,13 @@
         </div>
         <p v-else class="cell-sub">Không lọc</p>
 
-        <h3 class="chi-tiet__title">Dữ liệu năng lực</h3>
-        <pre class="chi-tiet__json">{{ hienJson(chiTiet.du_lieu_nang_luc) }}</pre>
-
-        <h3 class="chi-tiet__title">Dữ liệu tài chính</h3>
-        <pre class="chi-tiet__json">{{ hienJson(chiTiet.du_lieu_tai_chinh) }}</pre>
+        <CustomRadioGroup v-model="tabDuLieu" class="chi-tiet__tabs" size="small" aria-label="Dữ liệu người tìm">
+          <CustomRadioButton value="nang_luc">Dữ liệu năng lực</CustomRadioButton>
+          <CustomRadioButton value="tai_chinh">Dữ liệu tài chính</CustomRadioButton>
+        </CustomRadioGroup>
+        <pre class="chi-tiet__json">{{
+          hienJson(tabDuLieu === 'nang_luc' ? chiTiet.du_lieu_nang_luc : chiTiet.du_lieu_tai_chinh)
+        }}</pre>
 
         <h3 class="chi-tiet__title">
           Trường phù hợp sơ bộ
@@ -322,20 +327,26 @@ function hienJson(value) {
 
 const truongKetQua = computed(() => chiTiet.value?.du_lieu_ket_qua?.truong || [])
 
+// Lưới thông tin chung: 2 → 3 → 4 → 6 ô/hàng theo màn hình; ô nội dung dài (`rong`) chiếm gấp đôi.
+const COT = { xs: 12, sm: 8, md: 6, lg: 4 }
+const COT_RONG = { xs: 24, sm: 16, md: 12, lg: 8 }
+const tabDuLieu = ref('nang_luc')
+
+// Sắp sao cho mỗi hàng lấp kín: 6 ô/hàng trên desktop, từng cặp ô trên mobile.
 const thongTinChung = computed(() => {
   const item = chiTiet.value
   if (!item) return []
   return [
     { nhan: 'Mã yêu cầu', giaTri: item.ma_yeu_cau },
+    { nhan: 'Năm tuyển sinh', giaTri: String(item.nam_tuyen_sinh) },
     {
       nhan: 'Người tìm',
+      rong: true,
       giaTri:
         [item.la_khach ? 'Khách' : '', item.ho_ten, item.email, item.so_dien_thoai].filter(Boolean).join(' · ') ||
         `#${item.tai_khoan_id}`,
     },
-    { nhan: 'Mã thiết bị', giaTri: item.la_khach ? item.ma_thiet_bi : '' },
-    { nhan: 'Ngành', giaTri: `${item.ma_nganh}${item.ten_nganh ? ` · ${item.ten_nganh}` : ''}` },
-    { nhan: 'Năm tuyển sinh', giaTri: String(item.nam_tuyen_sinh) },
+    { nhan: 'Ngành', rong: true, giaTri: `${item.ma_nganh}${item.ten_nganh ? ` · ${item.ten_nganh}` : ''}` },
     { nhan: 'Thời gian tạo', giaTri: formatThoiGian(item.ngay_tao) },
     { nhan: 'Hoàn thành', giaTri: item.ngay_hoan_thanh ? formatThoiGian(item.ngay_hoan_thanh) : '' },
     { nhan: 'Trạng thái', giaTri: TRANG_THAI[item.trang_thai_xu_ly]?.nhan || item.trang_thai_xu_ly },
@@ -344,14 +355,17 @@ const thongTinChung = computed(() => {
       giaTri: `${LOAI_LUOT[item.loai_luot]?.nhan || item.loai_luot}${item.da_tinh_luot ? '' : ' (không tính lượt)'}`,
     },
     { nhan: 'Kết quả', giaTri: `${item.so_truong_phu_hop_so_bo} phù hợp / ${item.so_truong_tim_thay} có ngành` },
+    { nhan: 'Phiên bản thuật toán', giaTri: item.phien_ban_thuat_toan },
     {
       nhan: 'Báo cáo chuyên sâu',
+      rong: true,
       giaTri: item.da_mo_khoa_chuyen_sau
         ? `Đã mở khóa${item.ngay_mo_khoa ? ` lúc ${formatThoiGian(item.ngay_mo_khoa)}` : ''}`
         : 'Chưa mở khóa',
     },
-    { nhan: 'Phiên bản thuật toán', giaTri: item.phien_ban_thuat_toan },
-  ]
+    // Mã thiết bị chỉ có ở lượt của khách.
+    item.la_khach && { nhan: 'Mã thiết bị', rong: true, giaTri: item.ma_thiet_bi },
+  ].filter(Boolean)
 })
 
 function rowIndex(index) {
@@ -412,6 +426,7 @@ function onSizeChange() {
 
 async function moChiTiet(row) {
   chiTiet.value = null
+  tabDuLieu.value = 'nang_luc'
   chiTietMo.value = true
   dangTaiChiTiet.value = true
   try {
@@ -459,27 +474,36 @@ onMounted(load)
   min-height: 120px;
 }
 
-.chi-tiet__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px 24px;
-  margin: 0 0 8px;
+/* Thông tin chung: ô chỉ đọc có nhãn phía trên, xếp sát nhau cho gọn. */
+.chi-tiet__form :deep(.el-form-item) {
+  margin-bottom: 10px;
 }
 
-.chi-tiet__row {
-  display: grid;
-  grid-template-columns: 140px minmax(0, 1fr);
-  gap: 8px;
-}
-
-.chi-tiet__row dt {
+.chi-tiet__form :deep(.el-form-item__label) {
+  margin-bottom: 2px;
   color: var(--el-text-color-secondary);
-  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
 }
 
-.chi-tiet__row dd {
-  margin: 0;
-  overflow-wrap: anywhere;
+.chi-tiet__form :deep(.el-input__wrapper) {
+  background: var(--el-fill-color-lighter);
+}
+
+/* Tab dạng pills cho dữ liệu năng lực / tài chính. */
+.chi-tiet__tabs {
+  gap: 6px;
+  margin: 16px 0 8px;
+}
+
+.chi-tiet__tabs :deep(.el-radio-button__inner) {
+  border: 1px solid var(--el-border-color);
+  border-radius: 999px !important;
+  box-shadow: none !important;
+}
+
+.chi-tiet__tabs :deep(.el-radio-button.is-active .el-radio-button__inner) {
+  border-color: var(--el-color-primary);
 }
 
 .chi-tiet__title {
@@ -505,15 +529,5 @@ onMounted(load)
 .chi-tiet__loi {
   margin: 12px 0 0;
   color: var(--el-color-danger);
-}
-
-@media (max-width: 640px) {
-  .chi-tiet__grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .chi-tiet__row {
-    grid-template-columns: 120px minmax(0, 1fr);
-  }
 }
 </style>
