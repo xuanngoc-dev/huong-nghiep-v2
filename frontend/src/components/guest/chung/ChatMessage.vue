@@ -12,7 +12,7 @@
         <ul v-if="message.notes?.length" class="ai-chat__notes">
           <li v-for="note in message.notes" :key="note">{{ note }}</li>
         </ul>
-        <details v-if="message.sources?.length" class="ai-chat__sources">
+        <details v-if="message.sources?.length && false" class="ai-chat__sources">
           <summary>Nguồn tham khảo ({{ message.sources.length }})</summary>
           <ol>
             <li v-for="source in message.sources" :key="source.id">
@@ -24,7 +24,7 @@
             </li>
           </ol>
         </details>
-        <footer v-if="message.role === 'bot' && message.id !== 'welcome'" class="ai-chat__message-actions">
+        <footer v-if="message.role === 'bot' && message.id !== 'welcome' && false" class="ai-chat__message-actions">
           <small>{{ message.meta }}</small>
           <button v-if="message.text" type="button" @click="copy(message.text)">{{ copyStatus || 'Sao chép' }}</button>
           <button v-if="retryable" type="button" @click="$emit('retry')">Thử lại</button>
