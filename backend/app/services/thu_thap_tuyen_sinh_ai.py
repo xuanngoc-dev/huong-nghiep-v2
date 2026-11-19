@@ -693,7 +693,8 @@ def _loi_openai(response: httpx.Response) -> AdmissionAIError:
 
 
 def _openai(
-    instructions: str, noi_dung: dict, max_output_tokens: int, *, tim_kiem: bool = False, anh: list[str] | None = None
+    instructions: str, noi_dung: dict, max_output_tokens: int, *, tim_kiem: bool = False,
+    anh: list[str] | None = None, gioi_han_cho_phan_hoi: bool = True,
 ) -> tuple[dict, list]:
     key = settings.openai_api_key.strip()
     model = settings.openai_model.strip()
@@ -724,8 +725,10 @@ def _openai(
             {"type": "input_text", "text": payload["input"]},
             *({"type": "input_image", "image_url": du_lieu_anh, "detail": "original"} for du_lieu_anh in anh),
         ]}]
+    thoi_gian_cho = 100 if anh else 300
+    timeout = httpx.Timeout(thoi_gian_cho, connect=10, read=thoi_gian_cho if gioi_han_cho_phan_hoi else None)
     try:
-        with httpx.Client(timeout=httpx.Timeout(100 if anh else 300, connect=10), trust_env=False) as client:
+        with httpx.Client(timeout=timeout, trust_env=False) as client:
             response = client.post(_URL_OPENAI, headers={"Authorization": f"Bearer {key}"}, json=payload)
             response.raise_for_status()
             result = response.json()
@@ -1473,6 +1476,7 @@ Trả object JSON gồm du_lieu, muc, ghi_chu, nguon_xac_minh và doi_chieu_chuo
             "ban_truoc": previous,
         },
         64_000,
+        gioi_han_cho_phan_hoi=False,
     )
     return data
 

@@ -81,6 +81,8 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
         client = httpx.Client
 
         def tra_loi(request):
+            self.assertIsNone(request.extensions["timeout"]["read"])
+            self.assertEqual(request.extensions["timeout"]["connect"], 10)
             payload = json.loads(request.content)
             yeu_cau.append(payload)
             if "json" not in payload["input"].lower():
@@ -102,10 +104,11 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
             )
 
         with (
+            patch.object(ai.settings, "openai_model", "model-cau-hinh"),
             patch.object(ai.settings, "openai_api_key", "key-gia"),
             patch.object(ai.httpx, "Client", lambda **kw: client(transport=httpx.MockTransport(tra_loi), **kw)),
         ):
-            data, _ = ai._openai("Trích xuất bản nháp.", {"nam_tuyen_sinh": 2026}, 1000)
+            data = ai._trich_xuat_nhom(_TRUONG, 2026, [], None)
 
         self.assertEqual(data, {"muc": []})
         self.assertEqual(yeu_cau[0]["text"], {"format": {"type": "json_object"}})
@@ -261,7 +264,7 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
         tai_lieu = ai._TaiLieu(_URL, "", [(_MUC, _XAC_MINH)], [])
         danh_muc = [{"ma_phuong_thuc": "100", "ten_phuong_thuc": "Xét điểm thi tốt nghiệp THPT"}]
 
-        def trich_xuat(_huong_dan, payload, _so_token):
+        def trich_xuat(_huong_dan, payload, _so_token, **_tuy_chon):
             self.assertEqual(payload["danh_muc_phuong_thuc"], danh_muc)
             ids = [n["id"] for n in payload["nguon_da_chon"]]
             return {
@@ -292,7 +295,7 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
         sources = [{"id": i, "url": f"{_URL}?id={i}"} for i in range(1, 24)]
         tai_lieu = ai._TaiLieu(_URL, "", [(_MUC, _XAC_MINH + "\n" + "Dữ liệu khác.\n" * 2600)], [])
 
-        def trich_xuat(_huong_dan, payload, _so_token):
+        def trich_xuat(_huong_dan, payload, _so_token, **_tuy_chon):
             ids = [n["id"] for n in payload["nguon_da_chon"]]
             return {
                 "du_lieu": {
@@ -337,7 +340,7 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
             {"ma_phuong_thuc": "402", "ten_phuong_thuc": "Dùng bài thi đánh giá tư duy do đơn vị khác tổ chức"},
         ]
 
-        def trich_xuat(huong_dan, payload, _so_token):
+        def trich_xuat(huong_dan, payload, _so_token, **_tuy_chon):
             self.assertEqual(payload["danh_muc_phuong_thuc"], danh_muc)
             for noi_dung in ("danh_muc_phuong_thuc", "ma_phuong_thuc_cua_truong", "null", "500"):
                 self.assertIn(noi_dung, huong_dan)
@@ -573,7 +576,7 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
         tai_lieu = ai._TaiLieu(url, tieu_de_goc, [("Tiêu đề bài viết", tieu_de_goc), ("Nội dung trang", "Mã trường: PKA")], [])
         self.assertFalse(tai_lieu.co_trich_dan_trong_nguon_goc(tieu_de_tim_kiem))
 
-        def tra_loi_chon_doan(_, payload, __):
+        def tra_loi_chon_doan(_, payload, __, **_tuy_chon):
             du_lieu_nguon = payload["nguon_da_chon"][0]
             self.assertEqual(du_lieu_nguon["tieu_de"], tieu_de_goc)
             cac_doan = du_lieu_nguon["doan_xac_minh"]
