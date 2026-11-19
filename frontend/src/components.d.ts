@@ -160,6 +160,7 @@ declare module 'vue' {
     NoiDungPhuongThuc: typeof import('./components/guest/kiem-tra-du-lieu/NoiDungPhuongThuc.vue')['default']
     PageLoading: typeof import('./components/PageLoading.vue')['default']
     PhanVan: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/PhanVan.vue')['default']
+    PhienThuThap: typeof import('./components/admin/thu-thap/PhienThuThap.vue')['default']
     PhuHuynh: typeof import('./components/guest/doi-tuong/PhuHuynh.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
