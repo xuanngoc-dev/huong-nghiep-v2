@@ -19,8 +19,8 @@
       </div>
     </div>
 
-    <el-row :gutter="16" class="dashboard__row">
-      <el-col v-for="item in theThongKe" :key="item.key" :xs="24" :sm="12" :lg="6">
+    <el-row :gutter="16" class="dashboard__row dashboard__row--the">
+      <el-col v-for="item in theThongKe" :key="item.key" :xs="12" :sm="12" :lg="6">
         <TheThongKe v-bind="item" />
       </el-col>
     </el-row>
@@ -395,6 +395,18 @@ const luotToiDa = Math.max(...topTinhThanh.map((item) => item.luot))
 }
 
 @media (max-width: 640px) {
+  /* Thẻ thống kê 2 thẻ/hàng: khoảng cách hẹp hơn cho đỡ chật. */
+  .dashboard__row--the {
+    margin-right: -5px !important;
+    margin-left: -5px !important;
+  }
+
+  .dashboard__row--the > .el-col {
+    padding-right: 5px !important;
+    padding-left: 5px !important;
+    margin-bottom: 10px;
+  }
+
   .dashboard__filters,
   .dashboard__filters :deep(.el-date-editor) {
     width: 100%;
