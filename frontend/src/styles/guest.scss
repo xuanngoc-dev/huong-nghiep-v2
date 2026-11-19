@@ -720,6 +720,60 @@
   padding: 12px;
 }
 
+/* Hiệu ứng ẩn/hiện khung Kênh hỗ trợ: bật ra từ góc nút, các kênh hiện lần lượt. */
+.guest-layout .quick-support-enter-active,
+.guest-layout .quick-support-leave-active {
+  transform-origin: bottom left;
+  transition:
+    opacity 0.2s ease,
+    transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.guest-layout .quick-support-leave-active {
+  transition-duration: 0.15s;
+}
+
+.guest-layout .quick-support-enter-from,
+.guest-layout .quick-support-leave-to {
+  opacity: 0;
+  transform: translateY(8px) scale(0.92);
+}
+
+.guest-layout .quick-support-enter-active .quick-support__link {
+  animation: quick-support-link-in 0.3s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.guest-layout .quick-support-enter-active .quick-support__link:nth-of-type(2) {
+  animation-delay: 0.05s;
+}
+
+.guest-layout .quick-support-enter-active .quick-support__link:nth-of-type(3) {
+  animation-delay: 0.1s;
+}
+
+@keyframes quick-support-link-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guest-layout .quick-support-enter-active,
+  .guest-layout .quick-support-leave-active {
+    transition: none;
+  }
+
+  .guest-layout .quick-support-enter-active .quick-support__link {
+    animation: none;
+  }
+}
+
 .guest-layout .quick-support__title {
   margin: 0 0 8px;
   color: var(--guest-primary);
@@ -986,6 +1040,16 @@
 @media (max-width: 767px) {
   .guest-layout .chatbot__panel {
     height: 380px;
+  }
+
+  /* Khung chat mở toàn màn hình: ẩn các nút nổi (chatbot, kênh hỗ trợ, lên đầu trang) và khóa cuộn trang phía sau. */
+  .guest-layout:has(.chatbot__panel) .guest-fab,
+  .guest-layout:has(.chatbot__panel) .quick-support {
+    display: none !important;
+  }
+
+  html:has(.guest-layout .chatbot__panel) {
+    overflow: hidden;
   }
 }
 

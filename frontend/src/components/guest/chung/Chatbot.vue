@@ -61,4 +61,17 @@ function moDanhSachHoiThoai() {
 
 <style scoped>
 .chatbot__panel { height: min(680px, calc(100dvh - 110px)) !important; width: min(440px, calc(100vw - 24px)) !important; }
+/* Mobile: khung chat phủ toàn màn hình (ẩn nút nổi, khóa cuộn trang nằm ở guest.scss). */
+@media (max-width: 767px) {
+  .chatbot__panel {
+    position: fixed;
+    inset: 0;
+    width: 100vw !important;
+    height: 100dvh !important;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
 </style>

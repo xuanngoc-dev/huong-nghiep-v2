@@ -1,24 +1,26 @@
 <template>
   <div ref="rootEl" class="quick-support">
-    <div v-if="open" id="quick-support-panel" class="quick-support__panel">
-      <p class="quick-support__title">Kênh hỗ trợ</p>
-      <a
-        v-for="channel in channels"
-        :key="channel.name"
-        class="quick-support__link"
-        :href="channel.href"
-        :target="channel.external ? '_blank' : undefined"
-        :rel="channel.external ? 'noopener noreferrer' : undefined"
-      >
-        <span class="quick-support__mark">
-          <img :src="channel.icon" alt="" width="24" height="24" />
-        </span>
-        <span>
-          <strong>{{ channel.name }}</strong>
-          <small>{{ channel.text }}</small>
-        </span>
-      </a>
-    </div>
+    <Transition name="quick-support">
+      <div v-if="open" id="quick-support-panel" class="quick-support__panel">
+        <p class="quick-support__title">Kênh hỗ trợ</p>
+        <a
+          v-for="channel in channels"
+          :key="channel.name"
+          class="quick-support__link"
+          :href="channel.href"
+          :target="channel.external ? '_blank' : undefined"
+          :rel="channel.external ? 'noopener noreferrer' : undefined"
+        >
+          <span class="quick-support__mark">
+            <img :src="channel.icon" alt="" width="24" height="24" />
+          </span>
+          <span>
+            <strong>{{ channel.name }}</strong>
+            <small>{{ channel.text }}</small>
+          </span>
+        </a>
+      </div>
+    </Transition>
     <button
       type="button"
       class="guest-fab quick-support__fab"
