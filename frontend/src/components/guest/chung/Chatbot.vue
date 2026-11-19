@@ -1,7 +1,7 @@
 <template>
   <!-- Trang /demo-chat đã tạm bỏ: <div v-if="route.name !== 'demo-chat'" class="chatbot"> -->
   <div class="chatbot">
-    <section v-if="chat.khungMo" id="chatbot-panel" class="chatbot__panel" aria-label="Trợ lý tuyển sinh">
+    <section v-if="chat.khungMo" id="chatbot-panel" ref="panelEl" class="chatbot__panel" aria-label="Trợ lý tuyển sinh">
       <header class="chatbot__header">
         <strong>Trợ lý tuyển sinh</strong>
         <div class="chatbot__header-actions">
@@ -36,6 +36,7 @@
 </template>
 
 <script setup>
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
@@ -46,6 +47,24 @@ defineOptions({ name: 'Chatbot' })
 const chat = useChatStore()
 const auth = useAuthStore()
 const router = useRouter()
+// Mobile toàn màn hình: khung bám theo vùng đang nhìn thấy (visualViewport) để khi bàn phím bật lên,
+// trình duyệt cuộn trang không đẩy tiêu đề ra khỏi màn hình. Chỉ dùng trong media query mobile.
+const panelEl = ref(null)
+function capNhatKhungNhin() {
+  const vv = window.visualViewport
+  if (!vv || !panelEl.value) return
+  panelEl.value.style.setProperty('--khung-nhin-cao', `${vv.height}px`)
+  panelEl.value.style.setProperty('--khung-nhin-tren', `${vv.offsetTop}px`)
+}
+watch(panelEl, capNhatKhungNhin)
+onMounted(() => {
+  window.visualViewport?.addEventListener('resize', capNhatKhungNhin)
+  window.visualViewport?.addEventListener('scroll', capNhatKhungNhin)
+})
+onUnmounted(() => {
+  window.visualViewport?.removeEventListener('resize', capNhatKhungNhin)
+  window.visualViewport?.removeEventListener('scroll', capNhatKhungNhin)
+})
 // Hội thoại đã có câu hỏi (đã lưu, có mã phiên) mở đúng hội thoại đó; chưa hỏi gì thì mở hội thoại mới.
 function moDanhSachHoiThoai() {
   chat.khungMo = false
@@ -65,15 +84,25 @@ function moDanhSachHoiThoai() {
 @media (max-width: 767px) {
   .chatbot__panel {
     position: fixed;
-    inset: 0;
-    /* Kích thước theo inset (vùng hiển thị thực), không dùng 100vw vì vw tính cả thanh cuộn nên rộng hơn màn hình. */
+    /* Bề rộng theo left/right (vùng hiển thị thực), không dùng 100vw vì vw tính cả thanh cuộn nên rộng hơn màn hình.
+       Chiều cao và mép trên theo visualViewport (biến đặt trong script) để tiêu đề luôn ở đầu khi bàn phím mở. */
+    top: var(--khung-nhin-tren, 0);
+    right: 0;
+    bottom: auto;
+    left: 0;
     width: auto !important;
     max-width: 100%;
-    height: auto !important;
+    height: var(--khung-nhin-cao, 100dvh) !important;
     border: 0;
     border-radius: 0;
     box-shadow: none;
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Tiêu đề không bị co khi nội dung dài; chỉ vùng tin nhắn cuộn. */
+  .chatbot__header {
+    flex-shrink: 0;
+    padding-top: max(10px, env(safe-area-inset-top));
   }
 
   /* iOS Safari tự phóng to trang khi chạm vào ô nhập có chữ nhỏ hơn 16px. */
