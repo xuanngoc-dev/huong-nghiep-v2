@@ -60,6 +60,12 @@
       "abbr": "ĐA",
       "items": [
         {
+          "index": "/admin/de-an-tuyen-sinh/thu-thap-du-lieu",
+          "title": "Thu thập dữ liệu",
+          "tooltip": "Thu thập đề án tuyển sinh từ website hoặc file của trường",
+          "icon": "Download"
+        },
+        {
           "index": "/admin/de-an-tuyen-sinh/danh-sach",
           "title": "Danh sách",
           "tooltip": "Xem và quản lý danh sách đề án tuyển sinh",

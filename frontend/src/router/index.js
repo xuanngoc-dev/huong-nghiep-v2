@@ -388,6 +388,12 @@ const router = createRouter({
           meta: { title: 'Thư viện', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'de-an-tuyen-sinh/thu-thap-du-lieu',
+          name: 'de-an-tuyen-sinh-thu-thap-du-lieu',
+          component: () => import('@/views/admin/de-an-tuyen-sinh/ThuThapDuLieu.vue'),
+          meta: { title: 'Thu thập dữ liệu', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'de-an-tuyen-sinh/danh-sach',
           name: 'de-an-tuyen-sinh-danh-sach',
           component: () => import('@/views/admin/de-an-tuyen-sinh/DanhSach.vue'),
