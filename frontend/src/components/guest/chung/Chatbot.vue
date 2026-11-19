@@ -66,12 +66,21 @@ function moDanhSachHoiThoai() {
   .chatbot__panel {
     position: fixed;
     inset: 0;
-    width: 100vw !important;
-    height: 100dvh !important;
+    /* Kích thước theo inset (vùng hiển thị thực), không dùng 100vw vì vw tính cả thanh cuộn nên rộng hơn màn hình. */
+    width: auto !important;
+    max-width: 100%;
+    height: auto !important;
     border: 0;
     border-radius: 0;
     box-shadow: none;
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* iOS Safari tự phóng to trang khi chạm vào ô nhập có chữ nhỏ hơn 16px. */
+  .chatbot__panel :deep(textarea),
+  .chatbot__panel :deep(input),
+  .chatbot__panel :deep(select) {
+    font-size: 16px;
   }
 }
 </style>
