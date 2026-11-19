@@ -60,10 +60,11 @@
                     {{ benefit }}
                   </li>
                 </ul>
-                <RouterLink class="landing__btn landing__btn--primary" :to="{ name: active.route }">
+                <RouterLink v-if="laDoiTuongMo(active.route)" class="landing__btn landing__btn--primary" :to="{ name: active.route }">
                   {{ active.cta }}
                   <el-icon aria-hidden="true"><Right /></el-icon>
                 </RouterLink>
+                <span v-else class="landing__btn landing__btn--primary is-disabled" aria-disabled="true">Sắp ra mắt</span>
               </div>
             </div>
           </Transition>
@@ -76,6 +77,7 @@
 <script setup>
 import { computed, nextTick, ref } from 'vue'
 import { audiences } from '@/data/landing'
+import { laDoiTuongMo } from '@/data/doiTuong'
 
 const activeId = ref(audiences[0].id)
 const active = computed(() => audiences.find((item) => item.id === activeId.value) || audiences[0])

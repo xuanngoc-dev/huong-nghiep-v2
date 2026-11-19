@@ -44,12 +44,16 @@
                 :key="item.code"
                 type="button"
                 class="switch-card"
-                :class="{ 'is-selected': selectedCode === item.code }"
+                :class="{ 'is-selected': selectedCode === item.code, 'is-locked': !item.moTruyCap }"
+                :disabled="!item.moTruyCap"
                 @click="chonDoiTuong(item)"
               >
                 <img class="switch-card__image" :src="item.image" :alt="item.name" />
                 <span class="switch-card__body">
-                  <span class="switch-card__name">{{ item.name }}</span>
+                  <span class="switch-card__name">
+                    {{ item.name }}
+                    <span v-if="!item.moTruyCap" class="sap-ra-mat sap-ra-mat--inline">Sắp ra mắt</span>
+                  </span>
                   <span class="switch-card__text">{{ item.description }}</span>
                 </span>
               </button>

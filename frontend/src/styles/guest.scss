@@ -546,6 +546,56 @@
   margin-bottom: 12px;
 }
 
+/* Đối tượng chưa mở (data/doiTuong.js `moTruyCap: false`): vẫn hiển thị nhưng mờ, không bấm được. */
+.guest-layout .audience-card.is-locked,
+.guest-layout .switch-card.is-locked {
+  cursor: not-allowed;
+}
+
+.guest-layout .audience-card.is-locked:hover,
+.guest-layout .switch-card.is-locked:hover {
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.guest-layout .audience-card.is-locked :is(.audience-card__image, .audience-card__title, .audience-card__text),
+.guest-layout .switch-card.is-locked :is(.switch-card__image, .switch-card__text) {
+  opacity: 0.55;
+  filter: grayscale(0.6);
+}
+
+.guest-layout .switch-card.is-locked .switch-card__name {
+  color: #6b7680;
+}
+
+.guest-layout .audience-card__button:disabled {
+  background: #b8c2bd;
+  cursor: not-allowed;
+}
+
+.guest-layout .sap-ra-mat {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: var(--guest-radius-sm);
+  background: rgba(255, 255, 255, 0.94);
+  color: #6b7680;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.guest-layout .sap-ra-mat--inline {
+  position: static;
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 6px;
+  background: #eef1ef;
+  font-size: 0.72rem;
+  vertical-align: 1px;
+}
+
 .guest-layout .guest-banner {
   background:
     radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 32%),

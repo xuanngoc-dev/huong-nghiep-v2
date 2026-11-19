@@ -18,6 +18,7 @@
                 :name="audience.name"
                 :description="audience.description"
                 :selected="selectedCode === audience.code"
+                :khoa="!audience.moTruyCap"
                 @select="chonDoiTuong(audience)"
               />
             </div>

@@ -28,6 +28,7 @@ export function useDoiTuongAudiences() {
   const selectedCode = ref(sessionStorage.getItem(DOI_TUONG_KEY) || '')
 
   function chonDoiTuong(audience) {
+    if (!audience.moTruyCap) return
     selectedCode.value = audience.code
     sessionStorage.setItem(DOI_TUONG_KEY, audience.code)
     router.push({ name: audience.code })

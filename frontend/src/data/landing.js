@@ -84,6 +84,21 @@ export const audiences = [
     cta: 'Bắt đầu với học sinh',
   },
   {
+    id: 'phu-huynh',
+    name: 'Phụ huynh',
+    route: 'phu-huynh',
+    image: phuHuynhImage,
+    short: 'Hiểu con hơn để đồng hành chọn ngành và trường phù hợp.',
+    description:
+      'Cung cấp góc nhìn rõ ràng về năng lực của con, giúp phụ huynh hỗ trợ quyết định giáo dục sáng suốt.',
+    benefits: [
+      'Hiểu nhóm tính cách và sở thích của con',
+      'Đối chiếu ngành học – trường – chi phí',
+      'Gợi ý cách đồng hành không áp đặt',
+    ],
+    cta: 'Đồng hành cùng con',
+  },
+  {
     id: 'sinh-vien',
     name: 'Sinh viên',
     route: 'sinh-vien',
@@ -112,21 +127,6 @@ export const audiences = [
       'Gợi ý khóa học và lộ trình upskill',
     ],
     cta: 'Lập kế hoạch sự nghiệp',
-  },
-  {
-    id: 'phu-huynh',
-    name: 'Phụ huynh',
-    route: 'phu-huynh',
-    image: phuHuynhImage,
-    short: 'Hiểu con hơn để đồng hành chọn ngành và trường phù hợp.',
-    description:
-      'Cung cấp góc nhìn rõ ràng về năng lực của con, giúp phụ huynh hỗ trợ quyết định giáo dục sáng suốt.',
-    benefits: [
-      'Hiểu nhóm tính cách và sở thích của con',
-      'Đối chiếu ngành học – trường – chi phí',
-      'Gợi ý cách đồng hành không áp đặt',
-    ],
-    cta: 'Đồng hành cùng con',
   },
   {
     id: 'nha-truong',

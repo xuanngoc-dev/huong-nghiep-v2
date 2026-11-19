@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { doiTuongList } from '@/data/doiTuong'
+import { doiTuongList, laDoiTuongMo } from '@/data/doiTuong'
 import { dinhHuongThptRoutes } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
 import { giaiDoanConRoutes } from '@/components/guest/doi-tuong/PhuHuynh/routes'
 
@@ -590,6 +590,10 @@ function homeLocation(auth) {
 router.beforeEach(async (to) => {
   const title = to.meta?.title
   document.title = title ? `${title} | Định hướng nghề` : 'Định hướng nghề'
+
+  if (to.meta.doiTuong && !laDoiTuongMo(to.meta.doiTuong)) {
+    return { name: 'chon-doi-tuong' }
+  }
 
   const auth = useAuthStore()
 

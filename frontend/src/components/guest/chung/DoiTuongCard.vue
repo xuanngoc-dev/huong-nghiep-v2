@@ -1,8 +1,15 @@
 <template>
-  <article class="audience-card h-100" :class="{ 'is-selected': selected }">
+  <article class="audience-card h-100" :class="{ 'is-selected': selected, 'is-locked': khoa }">
     <div class="audience-card__media">
       <img class="audience-card__image" :src="image" :alt="name" />
-      <button type="button" class="audience-card__button" aria-label="Bắt đầu" @click="emit('select')">
+      <span v-if="khoa" class="sap-ra-mat">Sắp ra mắt</span>
+      <button
+        type="button"
+        class="audience-card__button"
+        :aria-label="khoa ? `${name}: sắp ra mắt` : 'Bắt đầu'"
+        :disabled="khoa"
+        @click="emit('select')"
+      >
         <ArrowRight />
       </button>
     </div>
@@ -21,6 +28,7 @@ defineProps({
   description: { type: String, default: '' },
   ma: { type: String, default: '' },
   selected: { type: Boolean, default: false },
+  khoa: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['select'])
