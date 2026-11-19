@@ -194,10 +194,10 @@ def _ngay(value: str | None) -> date | None:
     return date.fromisoformat(value) if value else None
 
 
-def doc_cau_truc(du_lieu) -> DeAnXetTuyenChuan:
+def doc_cau_truc(du_lieu, *, strict: bool = False) -> DeAnXetTuyenChuan:
     """Kiểm tra cấu trúc theo schema chuẩn; sai thì ném lỗi kèm đường dẫn tới từng chỗ sai."""
     try:
-        return DeAnXetTuyenChuan.model_validate(du_lieu)
+        return DeAnXetTuyenChuan.model_validate(du_lieu, strict=strict)
     except ValidationError as exc:
         loi = []
         for e in exc.errors():
@@ -214,10 +214,12 @@ def _gia_tri_nhan(value) -> str:
     return f" (nhận: {text[:80] + '…' if len(text) > 80 else text})"
 
 
-def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen) -> KeHoachNhap:
+def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen, *, tu_dong_chuan_hoa: bool = True) -> KeHoachNhap:
     """Kiểm tra file và đổi sang các dòng chờ ghi. Có lỗi thì ném XetTuyenImportError, không trả kế hoạch dở."""
-    du_lieu, canh_bao_chuan_hoa, chua_mo_hinh_hoa = chuan_hoa(du_lieu, dm)
-    doc = doc_cau_truc(du_lieu)
+    canh_bao_chuan_hoa, chua_mo_hinh_hoa = [], []
+    if tu_dong_chuan_hoa:
+        du_lieu, canh_bao_chuan_hoa, chua_mo_hinh_hoa = chuan_hoa(du_lieu, dm)
+    doc = doc_cau_truc(du_lieu, strict=not tu_dong_chuan_hoa)
     loi: list[str] = []
     canh_bao: list[str] = list(canh_bao_chuan_hoa)
 
@@ -250,6 +252,7 @@ def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen) -> KeHoachNhap:
 
     # Tổ hợp riêng: gắn tiền tố mã trường.
     ma_rieng = {t.ma_to_hop: f"{ma_truong}-{t.ma_to_hop}" for t in doc.to_hop_rieng}
+    ma_rieng_da_gan_tien_to = {luu: goc for goc, luu in ma_rieng.items()} if not tu_dong_chuan_hoa else {}
     vi_tri_rieng = {t.ma_to_hop: t.vi_tri for t in doc.to_hop_rieng}
     for goc, moi in ma_rieng.items():
         if len(moi) > _DO_DAI_MA_TO_HOP:
@@ -380,7 +383,8 @@ def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen) -> KeHoachNhap:
         )
 
     for c in doc.cong_thuc:
-        _cong_thuc(c, ke_hoach, bang, dm, co_ma, loi, canh_bao)
+        loi_tinh_diem = loi if not tu_dong_chuan_hoa and c.dang_dung else canh_bao
+        _cong_thuc(c, ke_hoach, bang, dm, co_ma, loi, loi_tinh_diem)
         for n in c.dieu_kien:
             if n.ma_cong_thuc is not None:
                 loi.append(f"cong_thuc {c.ma_cong_thuc}: nhóm {n.ma_nhom} không được khai ma_cong_thuc ở vị trí này")
@@ -454,16 +458,21 @@ def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen) -> KeHoachNhap:
             da_gap.add(ma)
             da_dung.add(ma)
             cthuc = cong_thuc[ma]
+            phuong_an = {
+                "ma_chuong_trinh": ct.ma_chuong_trinh,
+                "ma_cong_thuc": ma,
+                "ma_phuong_thuc_cua_truong": pa.ma_phuong_thuc_cua_truong,
+            }
             if cthuc.kieu_tinh != "TO_HOP_MON":
                 if pa.to_hop:
-                    canh_bao.append(f'{vt}: công thức "{ma}" không theo tổ hợp, to_hop sẽ bị bỏ qua')
-                ke_hoach.phuong_an.append(
-                    {"ma_chuong_trinh": ct.ma_chuong_trinh, "ma_cong_thuc": ma, "ma_to_hop": None, "to_hop_id": None}
-                )
+                    loi_to_hop = canh_bao if tu_dong_chuan_hoa else loi
+                    loi_to_hop.append(f'{vt}: công thức "{ma}" không theo tổ hợp, để to_hop rỗng')
+                ke_hoach.phuong_an.append({**phuong_an, "ma_to_hop": None, "to_hop_id": None})
                 continue
             if not pa.to_hop:
                 loi.append(f'{vt}: công thức "{ma}" kiểu TO_HOP_MON phải có to_hop')
-            for th in pa.to_hop:
+            for ma_to_hop in pa.to_hop:
+                th = ma_rieng_da_gan_tien_to.get(ma_to_hop, ma_to_hop)
                 if th not in ma_rieng and th not in dm.to_hop:
                     loi.append(f'{vt}: tổ hợp "{th}" không có trong danh mục và không khai ở to_hop_rieng')
                     continue
@@ -471,15 +480,11 @@ def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen) -> KeHoachNhap:
                 if vi_tri is None:
                     loi.append(f'{vt}: tổ hợp "{th}" chưa có cấu trúc vị trí môn, hãy khai ở to_hop_rieng')
                     continue
-                _kiem_he_so_to_hop(cthuc, th, vi_tri, dm, vt, loi, canh_bao, da_bao_thang)
+                loi_thang_diem = loi if not tu_dong_chuan_hoa and cthuc.dang_dung else canh_bao
+                _kiem_he_so_to_hop(cthuc, th, vi_tri, dm, vt, loi, loi_thang_diem, da_bao_thang)
                 ma_luu = ma_to_hop_luu(th)
                 ke_hoach.phuong_an.append(
-                    {
-                        "ma_chuong_trinh": ct.ma_chuong_trinh,
-                        "ma_cong_thuc": ma,
-                        "ma_to_hop": ma_luu,
-                        "to_hop_id": dm.to_hop.get(ma_luu),
-                    }
+                    {**phuong_an, "ma_to_hop": ma_luu, "to_hop_id": dm.to_hop.get(ma_luu)}
                 )
         for n in ct.dieu_kien_rieng:
             if n.ma_cong_thuc is not None and n.ma_cong_thuc not in cong_thuc:
@@ -494,15 +499,16 @@ def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen) -> KeHoachNhap:
     for i, d in enumerate(doc.diem_chuan, start=1):
         vt = f"diem_chuan dòng {i}"
         co_ma("phuong_thuc", d.ma_phuong_thuc_cua_bo, vt)
-        if d.ma_to_hop is not None and d.ma_to_hop not in ma_rieng:
-            co_ma("to_hop", d.ma_to_hop, vt)
+        ma_to_hop = ma_rieng_da_gan_tien_to.get(d.ma_to_hop, d.ma_to_hop)
+        if ma_to_hop is not None and ma_to_hop not in ma_rieng:
+            co_ma("to_hop", ma_to_hop, vt)
         if d.diem_chuan > d.thang_diem:
             loi.append(f"{vt}: diem_chuan lớn hơn thang_diem")
         if d.nam_tuyen_sinh > doc.nam_tuyen_sinh:
             loi.append(f"{vt}: năm điểm chuẩn lớn hơn năm của đề án")
         if d.ma_xet_tuyen not in ma_xet_tuyen:
             canh_bao.append(f'{vt}: mã xét tuyển "{d.ma_xet_tuyen}" không có trong đề án năm nay nên sẽ không được dùng')
-        ma_luu = ma_to_hop_luu(d.ma_to_hop) if d.ma_to_hop else None
+        ma_luu = ma_to_hop_luu(ma_to_hop) if ma_to_hop else None
         ke_hoach.diem_chuan.append(
             {
                 "nam_tuyen_sinh": d.nam_tuyen_sinh,
@@ -526,7 +532,7 @@ def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen) -> KeHoachNhap:
     return ke_hoach
 
 
-def _cong_thuc(c: CongThucChuan, ke_hoach: KeHoachNhap, bang: dict, dm: DanhMucXetTuyen, co_ma, loi, canh_bao) -> None:
+def _cong_thuc(c: CongThucChuan, ke_hoach: KeHoachNhap, bang: dict, dm: DanhMucXetTuyen, co_ma, loi, loi_tinh_diem) -> None:
     vt = f"cong_thuc {c.ma_cong_thuc}"
     co_ma("phuong_thuc", c.ma_phuong_thuc_cua_bo, vt)
     ma_bang_nn = c.ma_bang_quy_doi_ngoai_ngu
@@ -535,11 +541,11 @@ def _cong_thuc(c: CongThucChuan, ke_hoach: KeHoachNhap, bang: dict, dm: DanhMucX
     elif ma_bang_nn is not None and not any(m.ma_mon_thay_the for m in bang[ma_bang_nn].muc):
         loi.append(f'{vt}: bảng "{ma_bang_nn}" không có mức nào khai ma_mon_thay_the nên không thay được điểm môn ngoại ngữ')
     if c.kieu_tinh != "TO_HOP_MON" and c.he_so_mon:
-        canh_bao.append(f"{vt}: he_so_mon chỉ có tác dụng với TO_HOP_MON")
+        loi_tinh_diem.append(f"{vt}: he_so_mon chỉ có tác dụng với TO_HOP_MON")
     if c.kieu_tinh != "THANH_PHAN" and c.thanh_phan:
-        canh_bao.append(f"{vt}: thanh_phan chỉ có tác dụng với THANH_PHAN")
+        loi_tinh_diem.append(f"{vt}: thanh_phan chỉ có tác dụng với THANH_PHAN")
     if c.kieu_tinh in ("CHI_DIEU_KIEN", "THU_CONG") and not c.dieu_kien:
-        canh_bao.append(f"{vt}: {c.kieu_tinh} chưa có nhóm dieu_kien nên hệ thống chưa xét được phương thức này")
+        loi_tinh_diem.append(f"{vt}: {c.kieu_tinh} chưa có nhóm dieu_kien nên hệ thống chưa xét được phương thức này")
 
     he_so_mon = []
     for h in c.he_so_mon:
@@ -579,7 +585,7 @@ def _cong_thuc(c: CongThucChuan, ke_hoach: KeHoachNhap, bang: dict, dm: DanhMucX
         if theo_vi_tri:
             tong = sum(theo_vi_tri.values()) * c.he_so_nhan
             if abs(tong - c.thang_diem) > 0.01:
-                canh_bao.append(f"{vt}: điểm tối đa theo các thành phần là {tong:.2f}, khác thang_diem {c.thang_diem:g}")
+                loi_tinh_diem.append(f"{vt}: điểm tối đa theo các thành phần là {tong:.2f}, khác thang_diem {c.thang_diem:g}")
 
     ke_hoach.cong_thuc.append(
         {
@@ -615,7 +621,7 @@ def _kiem_he_so_to_hop(
     dm: DanhMucXetTuyen,
     vt: str,
     loi: list[str],
-    canh_bao: list[str],
+    loi_thang_diem: list[str],
     da_bao_thang: set[tuple[str, str]],
 ) -> None:
     """Môn thay thế nhau phải cùng hệ số; điểm tối đa theo hệ số phải bằng thang điểm của công thức."""
@@ -637,7 +643,7 @@ def _kiem_he_so_to_hop(
     tong = sum(max(w(m) for m in cac_mon) for cac_mon in vi_tri) * 10 * c.he_so_nhan
     if abs(tong - c.thang_diem) > 0.01 and (c.ma_cong_thuc, ma_to_hop) not in da_bao_thang:
         da_bao_thang.add((c.ma_cong_thuc, ma_to_hop))
-        canh_bao.append(
+        loi_thang_diem.append(
             f"cong_thuc {c.ma_cong_thuc} với tổ hợp {ma_to_hop}: điểm tối đa theo hệ số là {tong:.2f}, "
             f"khác thang_diem {c.thang_diem:g}"
         )

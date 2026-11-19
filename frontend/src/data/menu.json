@@ -62,8 +62,14 @@
         {
           "index": "/admin/de-an-tuyen-sinh/thu-thap-du-lieu",
           "title": "Thu thập dữ liệu",
-          "tooltip": "Thu thập đề án tuyển sinh từ website hoặc file của trường",
+          "tooltip": "Tìm nguồn chính thức và tạo bản nháp dữ liệu tuyển sinh",
           "icon": "Download"
+        },
+        {
+          "index": "/admin/de-an-tuyen-sinh/xet-duyet-du-lieu",
+          "title": "Xét duyệt dữ liệu",
+          "tooltip": "Đối chiếu dẫn chứng và duyệt dữ liệu tuyển sinh",
+          "icon": "CircleCheck"
         },
         {
           "index": "/admin/de-an-tuyen-sinh/danh-sach",

@@ -39,6 +39,7 @@ from app.models.dm_bai_thi_danh_gia import DmBaiThiDanhGia
 from app.models.dm_thanh_tich_hoc_tap import DmThanhTichHocTap
 from app.models.dm_to_hop_mon_hoc_chi_tiet import DmToHopMonHocChiTiet
 from app.models.dats_tuyen_sinh import DatsTuyenSinh
+from app.models.dats_thu_thap import DatsBanNhapThuThap, DatsNhatKyThuThap, DatsPhienThuThap
 from app.models.dats_tru_so import DatsTruSo
 from app.models.dats_website import DatsWebsite
 from app.models.dats_lien_he_tuyen_sinh import DatsLienHeTuyenSinh
@@ -119,6 +120,9 @@ __all__ = [
     "DmThanhTichHocTap",
     "DmToHopMonHocChiTiet",
     "DatsTuyenSinh",
+    "DatsPhienThuThap",
+    "DatsBanNhapThuThap",
+    "DatsNhatKyThuThap",
     "DatsTruSo",
     "DatsWebsite",
     "DatsLienHeTuyenSinh",

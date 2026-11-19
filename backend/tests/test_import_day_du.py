@@ -13,6 +13,7 @@ from sqlalchemy import func, select
 
 import app.models as M
 from app.services.dats_import import DatsImportError, import_day_du
+from app.services.thu_thap_tuyen_sinh_import import import_approved_admission, validate_admission_payload
 from tests.hoi_quy_xet_tuyen import DANH_MUC_MA, tao_csdl
 
 MAU = Path(__file__).resolve().parents[2] / "docs" / "de-an-tuyen-sinh" / "chuan_du_lieu" / "mau_import_day_du.json"
@@ -39,6 +40,56 @@ class ImportDayDuTests(unittest.TestCase):
 
     def _dem(self, model) -> int:
         return self.db.scalar(select(func.count()).select_from(model))
+
+    def test_cms_nhap_mau_xda_va_chan_thieu_chuong_trinh(self):
+        mau = json.loads((MAU.parent / "du_lieu_mau_da_sua.json").read_text(encoding="utf-8"))
+        validate_admission_payload(mau, "XDA", 2026)
+        _, counts, quy_tac = import_approved_admission(self.db, mau, "XDA", 2026, 1)
+        self.db.commit()
+        self.assertEqual(counts["dats_chuong_trinh_dao_tao"], 44)
+        self.assertEqual(quy_tac.so_dong["xt_diem_chuan"], 44)
+        self.assertEqual(quy_tac.so_dong["xt_phuong_an"], 642)
+        self.assertIsNone(self.db.scalar(select(M.DmToHopMonHoc.id).where(M.DmToHopMonHoc.ma_to_hop == "TT")))
+        theo_cong_thuc = dict(self.db.execute(
+            select(M.XtCongThuc.ma_cong_thuc, M.DatsPhuongThuc.ma_phuong_thuc_cua_truong)
+            .join(M.XtPhuongAn, M.XtPhuongAn.cong_thuc_id == M.XtCongThuc.id)
+            .join(M.DatsPhuongThuc, M.DatsPhuongThuc.id == M.XtPhuongAn.de_an_phuong_thuc_id)
+            .where(M.XtCongThuc.ma_cong_thuc.in_(("HUCE_TSA_2026", "HUCE_SPT_2026")))
+            .distinct()
+        ).all())
+        self.assertEqual(theo_cong_thuc, {"HUCE_TSA_2026": "402_TSA", "HUCE_SPT_2026": "402_SPT"})
+        mau["quy_tac_xet_tuyen"]["chuong_trinh"].pop()
+        with self.assertRaisesRegex(DatsImportError, "chưa đồng bộ"):
+            validate_admission_payload(mau, "XDA", 2026)
+
+    def test_cms_nhap_to_hop_rieng_giu_diem_chuan_ngoai_file(self):
+        de_an = self.mau["dats_tuyen_sinh"]
+        de_an["trang_thai_xet_tuyen"] = 2
+        phuong_thuc = de_an["dats_chuong_trinh_dao_tao"][0]["dats_phuong_thuc"][0]
+        phuong_thuc["cong_thuc_tinh_diem"] = "BKA_THPT"
+        phuong_thuc["to_hop_mon_hoc"].append("K01")
+        phuong_thuc["dats_phuong_thuc_to_hop"].append({"ma_to_hop": "K01"})
+        phuong_an = self.mau["quy_tac_xet_tuyen"]["chuong_trinh"][0]["phuong_an"][0]
+        phuong_an["to_hop"] = ["BKA-K01" if ma == "K01" else ma for ma in phuong_an["to_hop"]]
+        de_an["dats_chuong_trinh_dao_tao"][0]["dats_phuong_thuc"].extend([
+            {"ma_phuong_thuc_cua_bo": "415", "cong_thuc_tinh_diem": "BKA_SAT"},
+            {"ma_phuong_thuc_cua_bo": "414", "cong_thuc_tinh_diem": "BKA_PHONG_VAN"},
+        ])
+        for diem in self.mau["quy_tac_xet_tuyen"]["diem_chuan"]:
+            diem.setdefault("nguon_du_lieu_url", f"https://ts.hust.edu.vn/diem-chuan-{diem['nam_tuyen_sinh']}")
+
+        self.db.add(M.XtDiemChuan(ma_truong="BKA", nam_tuyen_sinh=2026, ma_xet_tuyen="MA-CU", diem_chuan=21))
+        self.db.commit()
+        de_an_id, _, _ = import_approved_admission(self.db, self.mau, "BKA", 2027, 1)
+        self.db.commit()
+        ban_ghi = self.db.get(M.DatsTuyenSinh, de_an_id)
+        self.assertEqual((ban_ghi.trang_thai, ban_ghi.trang_thai_xet_tuyen), ("nhap", 1))
+        self.assertEqual(de_an["trang_thai_xet_tuyen"], 2)
+        self.assertEqual(self._dem(M.XtDiemChuan), 5)
+        phuong_thuc_db = self.db.scalar(select(M.DatsPhuongThuc).where(M.DatsPhuongThuc.cong_thuc_tinh_diem == "BKA_THPT"))
+        self.assertIn("BKA-K01", phuong_thuc_db.to_hop_mon_hoc)
+        ma_to_hop = self.db.scalar(select(M.DmToHopMonHoc).where(M.DmToHopMonHoc.ma_to_hop == "BKA-K01"))
+        self.assertTrue(self.db.scalar(select(func.count()).where(M.DmToHopMonHocChiTiet.to_hop_id == ma_to_hop.id)))
 
     def test_file_mau_import_du_moi_bang(self):
         info = self.mau["thong_tin_import"]

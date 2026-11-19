@@ -206,8 +206,15 @@ def conflict_policy(document: dict) -> str | None:
     return None
 
 
-def import_document(db: Session, ma_truong: str, nam_tuyen_sinh: int, document: dict) -> tuple[int, dict[str, int]]:
-    """Lưu toàn bộ JSON trong một transaction. Id trong file chỉ dùng để nối khóa ngoại."""
+def import_document(
+    db: Session,
+    ma_truong: str,
+    nam_tuyen_sinh: int,
+    document: dict,
+    *,
+    phuong_thuc_da_nhap: dict[int, tuple[int, int]] | None = None,
+) -> tuple[int, dict[str, int]]:
+    """Lưu JSON trong một transaction và có thể trả ánh xạ ID phương thức đã ghi."""
     if not isinstance(document, dict):
         raise DatsImportError("JSON phải là một object một trường, một năm")
     code = ma_truong.strip()
@@ -230,7 +237,7 @@ def import_document(db: Session, ma_truong: str, nam_tuyen_sinh: int, document: 
     flat = flatten_nested_document(document)
     catalogs = _load_catalogs(db, flat)
     rows = prepare_import(flat, ma_truong=code, nam_tuyen_sinh=nam_tuyen_sinh, catalogs=catalogs)
-    return _apply(db, rows)
+    return _apply(db, rows, phuong_thuc_da_nhap=phuong_thuc_da_nhap)
 
 
 def import_day_du(
@@ -240,6 +247,9 @@ def import_day_du(
     document: dict,
     *,
     nguoi_import_id: int | None = None,
+    chuan_hoa_quy_tac: bool = True,
+    giu_diem_chuan_ngoai_file: bool = False,
+    phuong_thuc_theo_phuong_an: dict[tuple[str, str], int] | None = None,
 ) -> tuple[int, dict[str, int], KetQuaNhap | None]:
     """Nhập các bảng dats_ rồi khối quy_tac_xet_tuyen (nếu có) trong cùng transaction; commit do nơi gọi.
 
@@ -248,7 +258,12 @@ def import_day_du(
     bỏ trống thì lấy từ file chính.
     """
     quy_tac = document.get(KHOA_QUY_TAC) if isinstance(document, dict) else None
-    de_an_id, counts = import_document(db, ma_truong, nam_tuyen_sinh, document)
+    if isinstance(quy_tac, dict):
+        document = _chuan_bi_to_hop_rieng(db, ma_truong.strip(), document, quy_tac.get("to_hop_rieng"))
+    phuong_thuc_da_nhap: dict[int, tuple[int, int]] | None = {} if phuong_thuc_theo_phuong_an is not None else None
+    de_an_id, counts = import_document(
+        db, ma_truong, nam_tuyen_sinh, document, phuong_thuc_da_nhap=phuong_thuc_da_nhap
+    )
     if quy_tac is None:
         return de_an_id, counts, None
     if not isinstance(quy_tac, dict):
@@ -274,6 +289,14 @@ def import_day_du(
     so_truoc = {
         bang: counts.get(bang, 0) for bang in ("dats_chuong_trinh_dao_tao", "dats_tru_so")
     }
+    phuong_thuc_db: dict[tuple[str, str], tuple[int, int]] | None = None
+    if phuong_thuc_da_nhap is not None and phuong_thuc_theo_phuong_an is not None:
+        phuong_thuc_db = {}
+        for khoa, id_trong_file in phuong_thuc_theo_phuong_an.items():
+            da_ghi = phuong_thuc_da_nhap.get(id_trong_file)
+            if da_ghi is None:
+                raise DatsImportError(f"{KHOA_QUY_TAC}/chuong_trinh/{khoa[0]}: chưa ghi phương thức cho công thức {khoa[1]}")
+            phuong_thuc_db[khoa] = da_ghi
     try:
         ket_qua = nhap_quy_tac(
             db,
@@ -281,6 +304,9 @@ def import_day_du(
             ten_file="de-an-tuyen-sinh/import",
             ma_bam=hashlib.sha256(json.dumps(du_lieu, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest(),
             nguoi_import_id=nguoi_import_id,
+            tu_dong_chuan_hoa=chuan_hoa_quy_tac,
+            giu_diem_chuan_ngoai_file=giu_diem_chuan_ngoai_file,
+            phuong_thuc_theo_phuong_an=phuong_thuc_db,
         )
     except XetTuyenImportError as exc:
         loi = "; ".join(exc.loi[:20]) + (f" và {len(exc.loi) - 20} lỗi khác" if len(exc.loi) > 20 else "")
@@ -297,6 +323,59 @@ def import_day_du(
                 f"{'mã xét tuyển + tên chương trình' if bang == 'dats_chuong_trinh_dao_tao' else 'tên cơ sở'}), đã tạo mới"
             )
     return de_an_id, counts, ket_qua
+
+
+def _chuan_bi_to_hop_rieng(db: Session, ma_truong: str, document: dict, to_hop_rieng) -> dict:
+    """Đăng ký mã được phần dats_ dùng trước khi ghi chi tiết tổ hợp từ khối quy tắc."""
+    if not isinstance(to_hop_rieng, list):
+        return document
+    ten_theo_ma = {}
+    for to_hop in to_hop_rieng:
+        if isinstance(to_hop, dict) and isinstance(to_hop.get("ma_to_hop"), str):
+            ma_goc = to_hop["ma_to_hop"]
+            ten_theo_ma[ma_goc] = to_hop.get("ten_to_hop")
+    if not ten_theo_ma:
+        return document
+    da_dung: set[str] = set()
+
+    def ma_day_du(ma):
+        if isinstance(ma, str) and ma in ten_theo_ma:
+            da_dung.add(ma)
+            return f"{ma_truong}-{ma}"
+        if isinstance(ma, str) and ma.startswith(f"{ma_truong}-") and ma[len(ma_truong) + 1:] in ten_theo_ma:
+            da_dung.add(ma[len(ma_truong) + 1:])
+        return ma
+
+    def doi_ma(node):
+        if isinstance(node, list):
+            return [doi_ma(item) for item in node]
+        if not isinstance(node, dict):
+            return node
+        result = dict(node)
+        for key, value in node.items():
+            if key.startswith("dats_"):
+                result[key] = doi_ma(value)
+            elif key in {"ma_to_hop", "ma_to_hop_nguon", "ma_to_hop_dich"}:
+                result[key] = ma_day_du(value)
+            elif key in {"to_hop_mon_hoc", "to_hop_ids"} and isinstance(value, list):
+                result[key] = [ma_day_du(ma) for ma in value]
+        return result
+
+    document = doi_ma(document)
+    if da_dung:
+        # Cùng một mã tổ hợp được dùng lại giữa các năm của trường.
+        db.scalar(select(DmTruong.id).where(DmTruong.ma_truong == ma_truong).with_for_update())
+    for ma in sorted(da_dung):
+        ma_luu = f"{ma_truong}-{ma}"
+        ten = ten_theo_ma[ma]
+        if not ma or len(ma_luu) > DmToHopMonHoc.ma_to_hop.type.length or not isinstance(ten, str):
+            raise DatsImportError(f"{KHOA_QUY_TAC}/to_hop_rieng/{ma}: mã hoặc tên tổ hợp không hợp lệ")
+        ton_tai = db.scalar(select(DmToHopMonHoc.id).where(DmToHopMonHoc.ma_to_hop == ma_luu).with_for_update())
+        if ton_tai is None:
+            db.add(DmToHopMonHoc(ma_to_hop=ma_luu, ten_to_hop=ten, ds_mon_hoc=[], trang_thai=1))
+    if da_dung:
+        db.flush()
+    return document
 
 
 def prepare_import(
@@ -422,6 +501,16 @@ def flatten_nested_document(document: dict) -> dict:
         if source_id is not None:
             row["id"] = source_id
         if table == "dats_phuong_thuc":
+            if str(row.get("ma_phuong_thuc_cua_bo")) == "301":
+                for key in ("to_hop_mon_hoc", "to_hop_ids"):
+                    if isinstance(row.get(key), list):
+                        # TT trong bảng phương thức 301 là ký hiệu tuyển thẳng, không phải tổ hợp môn.
+                        row[key] = [ma for ma in row[key] if ma != "TT"] or None
+                children = [
+                    (child, [item for item in items if not isinstance(item, dict) or item.get("ma_to_hop") != "TT"])
+                    if child == "dats_phuong_thuc_to_hop" else (child, items)
+                    for child, items in children
+                ]
             _fill_method_combo_ids(row, children)
         for fk_name, parent_table in _DATS_FK.items():
             if fk_name not in columns:
@@ -879,7 +968,9 @@ def _ensure_catalog_id(catalogs: CatalogIndex, kind: str, value: int, message: s
         raise DatsImportError(message)
 
 
-def _apply(db: Session, rows: list[PreparedRow]) -> tuple[int, dict[str, int]]:
+def _apply(
+    db: Session, rows: list[PreparedRow], *, phuong_thuc_da_nhap: dict[int, tuple[int, int]] | None = None
+) -> tuple[int, dict[str, int]]:
     maps: dict[str, dict[int, int]] = defaultdict(dict)
     counts: Counter[str] = Counter()
     de_an_id = None
@@ -901,6 +992,8 @@ def _apply(db: Session, rows: list[PreparedRow]) -> tuple[int, dict[str, int]]:
         db.flush()
         if row.source_id is not None:
             maps[row.table][row.source_id] = obj.id
+            if phuong_thuc_da_nhap is not None and row.table == "dats_phuong_thuc":
+                phuong_thuc_da_nhap[row.source_id] = (obj.id, obj.de_an_chuong_trinh_id)
         if row.table == "dats_tuyen_sinh":
             de_an_id = obj.id
         counts[row.table] += 1

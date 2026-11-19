@@ -1,14 +1,14 @@
 # Danh sách API
 
-Tự sinh từ code lúc 18/11/2026 17:45 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 19/11/2026 16:58 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **319** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **335** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 186 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Quản trị (admin)](#quan_tri) | 202 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
 | [Thành viên (user)](#thanh_vien) | 83 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 50 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
@@ -228,6 +228,22 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
+| `GET` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien` | Bắt buộc (admin) | Liệt kê phiên thu thập và hàng đợi xét duyệt theo bộ lọc của CMS. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien` | Bắt buộc (admin) | Tạo phiên thu thập cho một trường và một năm. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/duyet-hang-loat` | Bắt buộc (admin) | Duyệt danh sách phiên đã xác nhận và trả kết quả riêng cho từng phiên bản. |
+| `GET` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}` | Bắt buộc (admin) | Mở phiên, nhật ký và một phiên bản nháp bất kỳ. |
+| `DELETE` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}` | Bắt buộc (admin) | Xóa phiên, bản nháp và nhật ký của phiên chưa được nhập vào hệ thống. |
+| `PATCH` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/ban-nhap` | Bắt buộc (admin) | Lưu giá trị, dẫn chứng và lý do sửa vào phiên bản mới, giữ nguyên lịch sử. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/dung-tao-ban-nhap` | Bắt buộc (admin) | Dừng lượt tạo đã chọn và trả phiên về bước trước khi tạo. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/duyet` | Bắt buộc (admin) | Duyệt đúng phiên bản và nhập đề án cùng quy tắc trong một giao dịch. |
+| `GET` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/json` | Bắt buộc (admin) | Tải JSON UTF-8 của phiên bản đã dùng để nhập. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/nguon` | Bắt buộc (admin) | Đọc URL do quản trị viên thêm và đối chiếu với trường, năm của phiên. |
+| `PATCH` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/nguon` | Bắt buộc (admin) | Chọn tất cả nguồn chính thức phù hợp đang chờ chọn. |
+| `PATCH` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/nguon/{nguon_id}` | Bắt buộc (admin) | Chọn tài liệu chính thức, loại nguồn hoặc bỏ lựa chọn. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/tao-ban-nhap` | Bắt buộc (admin) | Bắt đầu tạo nháp từ nguồn đã chọn. Theo dõi tiến độ qua API chi tiết phiên. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/tim-nguon` | Bắt buộc (admin) | Tìm tài liệu tuyển sinh với số lượng do AI xác định. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/yeu-cau-bo-sung` | Bắt buộc (admin) | Trả bản nháp về bước thu thập cùng các mục và lý do cần bổ sung. |
+| `GET` | `/api/v1/de-an-tuyen-sinh/thu-thap/truong` | Bắt buộc (admin) | Nhận diện trường hoặc cơ sở theo mã tuyển sinh trước khi tìm nguồn. |
 | `GET` | `/api/v1/de-an-tuyen-sinh/{item_id}/quy-tac` | Bắt buộc (admin) | Quy tắc xét tuyển của đề án: công thức, phương án theo chương trình, điều kiện, điểm cộng, lịch sử import. |
 | `POST` | `/api/v1/de-an-tuyen-sinh/{item_id}/quy-tac/chay-thu` | Bắt buộc (admin) | Chạy bộ tính cho một hồ sơ với quy tắc của riêng đề án này, bất kể trạng thái (đối chiếu trước khi áp dụng). |
 | `POST` | `/api/v1/de-an-tuyen-sinh/{item_id}/quy-tac/import` | Bắt buộc (admin) | Import file JSON chuẩn quy tắc xét tuyển, thay toàn bộ quy tắc cũ của đề án trong một transaction. |
@@ -640,7 +656,7 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/chat/hoi` | Không | Hỏi đáp dựa trên các file json/txt trong thư mục tài liệu; câu hỏi và câu trả lời được lưu vào phiên chat. |
+| `POST` | `/api/v1/chat/hoi` | Không | Hỏi đáp (không stream); câu hỏi và câu trả lời được lưu vào phiên chat, trừ token như bản stream. |
 | `POST` | `/api/v1/chat/hoi/stream` | Không | Hỏi đáp dạng stream (SSE). Sự kiện `meta` có `ma_phien` để frontend gửi lại ở câu hỏi sau. |
 | `GET` | `/api/v1/chat/model` | Không | Danh sách model hỏi đáp và trạng thái đã có API key. |
 | `GET` | `/api/v1/chat/nguon/{ten}` | Không | Nguồn dữ liệu công khai dùng để đối chiếu câu trả lời tuyển sinh. |

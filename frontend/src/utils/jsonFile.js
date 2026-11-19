@@ -28,7 +28,11 @@ export async function docFileJson(file, maxMb = JSON_FILE_MAX_MB) {
 
 /** Tải dữ liệu xuống thành file .json (thụt 1 khoảng như các file trong bộ test hồi quy). */
 export function taiFileJson(tenFile, duLieu) {
-  const blob = new Blob([`${JSON.stringify(duLieu, null, 1)}\n`], { type: 'application/json' })
+  taiNoiDungJson(tenFile, `${JSON.stringify(duLieu, null, 1)}\n`)
+}
+
+export function taiNoiDungJson(tenFile, noiDung) {
+  const blob = new Blob([noiDung], { type: 'application/json;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
