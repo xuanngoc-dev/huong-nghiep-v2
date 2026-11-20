@@ -61,10 +61,15 @@ export const heroSlides = [
   },
 ]
 
+// Menu chính ở header khách. hash: cuộn tới mục trên trang chủ; moChat: mở khung chat nổi (trợ lý AI).
 export const navLinks = [
-  { label: 'Khám phá nghề nghiệp', to: { name: 'chon-doi-tuong' } },
-  { label: 'Trắc nghiệm Holland', to: { name: 'thpt-thi-dai-hoc-chua-co' } },
-  { label: 'Tra cứu trường/ngành', to: { name: 'thpt-thi-dai-hoc' } },
+  { label: 'Khám phá', to: { name: 'chon-doi-tuong' } },
+  { label: 'HS THCS', to: { name: 'hoc-sinh-thcs' } },
+  { label: 'HS THPT', to: { name: 'hoc-sinh-thpt' } },
+  // Chưa có trang tra cứu nghề riêng: dẫn tới mục "Khám phá nghề & trường" trên trang chủ.
+  { label: 'Tra cứu', to: { name: 'home' }, hash: '#kham-pha' },
+  { label: 'Trợ lý tư vấn', moChat: true },
+  { label: 'Cẩm nang', to: { name: 'home' }, hash: '#cam-nang' },
 ]
 
 export const audiences = [

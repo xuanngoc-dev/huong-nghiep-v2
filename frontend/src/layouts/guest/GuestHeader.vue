@@ -25,7 +25,18 @@
       <div id="guestNav" class="collapse navbar-collapse">
         <ul class="navbar-nav landing-nav__links mx-lg-auto my-3 my-lg-0">
           <li v-for="item in navLinks" :key="item.label" class="nav-item">
+            <!-- moChat: mở khung chat nổi (trợ lý AI) thay vì chuyển trang. -->
+            <button
+              v-if="item.moChat"
+              type="button"
+              class="nav-link landing-nav__link landing-nav__link--nut"
+              :class="{ active: chat.khungMo }"
+              @click="chat.moKhungChat()"
+            >
+              {{ item.label }}
+            </button>
             <RouterLink
+              v-else
               class="nav-link landing-nav__link"
               :class="{ active: isActive(item) }"
               :to="linkTo(item)"
@@ -100,11 +111,13 @@ import {
 import DoiMatKhauDialog from '@/components/member/DoiMatKhauDialog.vue'
 import SoDuTaiKhoan from '@/components/member/SoDuTaiKhoan.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useChatStore } from '@/stores/chat'
 import { useIsMobile } from '@/composables/useResponsiveSize'
 import { navLinks } from '@/data/landing'
 import 'bootstrap/js/dist/collapse'
 
 const auth = useAuthStore()
+const chat = useChatStore()
 const route = useRoute()
 const router = useRouter()
 const scrolled = ref(false)
@@ -166,10 +179,12 @@ function linkTo(item) {
   return item.to
 }
 
+// Trang con (vd. hướng đi THPT → du học) vẫn sáng mục cha nhờ meta.doiTuong / doiTuongCha / goc.
 function isActive(item) {
   if (item.hash) return route.name === 'home' && route.hash === item.hash
   if (item.to?.name === 'home') return route.name === 'home' && !route.hash
-  return route.name === item.to?.name
+  const ten = item.to?.name
+  return route.name === ten || [route.meta.doiTuong, route.meta.doiTuongCha, route.meta.goc].includes(ten)
 }
 </script>
 
@@ -235,6 +250,23 @@ function isActive(item) {
   transition:
     color 0.2s ease,
     background 0.2s ease;
+}
+
+/* Mục "Trợ lý tư vấn" là nút (mở khung chat), trông như các link khác. */
+.landing-nav__link--nut {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+}
+
+/* 6 mục menu: thu gọn khoảng cách ở màn hình laptop nhỏ để không xuống dòng. */
+@media (min-width: 992px) and (max-width: 1279.98px) {
+  .landing-nav__link {
+    padding-inline: 0.5rem !important;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
 }
 
 .landing-nav__link::after {
