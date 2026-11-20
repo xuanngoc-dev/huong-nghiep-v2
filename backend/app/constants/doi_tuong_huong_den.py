@@ -6,6 +6,13 @@ Nhóm THPT tách theo hướng đi (`code` trong HocSinhThpt/dinhHuong.js, có t
 """
 
 DOI_TUONG_HUONG_DEN = {
+    "thpt-chua-dinh-huong": {
+        "ten": "Học sinh THPT chưa định hướng",
+        "ngu_canh": "Người hỏi là học sinh THPT chưa xác định sẽ làm gì sau khi tốt nghiệp. Không mặc định là sẽ thi"
+        " đại học; giúp người hỏi khám phá sở thích, điểm mạnh, hoàn cảnh và giới thiệu các hướng đi (thi đại học/cao"
+        " đẳng, du học, học nghề, đi làm, khởi nghiệp, xuất khẩu lao động) kèm ưu, nhược điểm; có thể gợi ý làm trắc"
+        " nghiệm hướng nghiệp Holland trên hệ thống. Khi người hỏi đã nghiêng về một hướng thì tư vấn sâu theo hướng đó.",
+    },
     "thpt-thi-dai-hoc": {
         "ten": "Học sinh THPT thi đại học & cao đẳng",
         "ngu_canh": "Người hỏi là học sinh THPT dự định thi/xét tuyển đại học, cao đẳng trong nước. Tập trung vào chọn ngành,"

@@ -2,6 +2,7 @@
 // Khớp backend/app/constants/doi_tuong_huong_den.py (backend giữ đoạn ngữ cảnh đưa vào lời nhắc AI).
 // Mã lưu trong CSDL: chỉ thêm mã mới, không đổi/xóa mã đã dùng.
 export const DOI_TUONG_HUONG_DEN = [
+  { ma: 'thpt-chua-dinh-huong', label: 'Học sinh THPT' },
   { ma: 'thpt-thi-dai-hoc', label: 'Học sinh THPT thi đại học & cao đẳng' },
   { ma: 'thpt-du-hoc', label: 'Học sinh THPT dự định du học' },
   { ma: 'thpt-di-lam', label: 'Học sinh THPT đi làm ngay sau tốt nghiệp' },
@@ -18,6 +19,11 @@ export const DOI_TUONG_HUONG_DEN_MAC_DINH = 'thpt-thi-dai-hoc'
 
 // Câu hỏi gợi ý của khung chat khi hội thoại chưa có câu hỏi nào, theo đối tượng hướng đến.
 const CAU_HOI_MAU = {
+  'thpt-chua-dinh-huong': [
+    'Em chưa biết sau THPT nên làm gì, nên bắt đầu từ đâu?',
+    'Làm sao biết mình hợp với ngành nghề nào?',
+    'Thi đại học, học nghề hay du học: hướng nào hợp với em?',
+  ],
   'thpt-thi-dai-hoc': [
     'Phương thức xét tuyển ngành Marketing trường NEU 2026?',
     'Bách khoa Hà Nội có những ngành nào?',
@@ -82,9 +88,10 @@ export function tenDoiTuongHuongDen(ma) {
   return DOI_TUONG_HUONG_DEN.find((item) => item.ma === ma)?.label || ''
 }
 
-// Đối tượng chính (data/doiTuong.js `code`) → đối tượng hướng đến mặc định.
+// Đối tượng chính (data/doiTuong.js `code`) → đối tượng hướng đến mặc định. Trang học sinh THPT chưa chọn hướng đi
+// (không có meta.dinhHuong) → học sinh THPT chưa định hướng.
 const THEO_DOI_TUONG = {
-  'hoc-sinh-thpt': 'thpt-thi-dai-hoc',
+  'hoc-sinh-thpt': 'thpt-chua-dinh-huong',
   'hoc-sinh-thcs': 'hoc-sinh-thcs',
   'phu-huynh': 'phu-huynh',
   'sinh-vien': 'sinh-vien',

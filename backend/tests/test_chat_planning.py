@@ -271,6 +271,17 @@ class PlannerFlowTests(CorpusFixture, unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("HỒ SƠ THÍ SINH", phu_huynh.messages[0]["content"])
         self.assertNotIn("CÁ NHÂN HÓA THEO HỒ SƠ", phu_huynh.messages[0]["content"])
 
+    async def test_thpt_chua_dinh_huong_is_a_thpt_audience(self):
+        async def planner(_):
+            yield "delta", {"text": '{"khong_can_tra_cuu": true}'}
+        with patch.object(chat_stream, "_provider", planner):
+            prepared = await chat_stream.prepare(HoiChatRequest(cau_hoi="Em chưa biết làm gì", model_id="test",
+                                                                ho_so=HoSoChat(tinh_thanh_id=7),
+                                                                doi_tuong_huong_den="thpt-chua-dinh-huong"))
+        system = prepared.messages[0]["content"]
+        self.assertIn("ĐỐI TƯỢNG NGƯỜI HỎI: Học sinh THPT chưa định hướng.", system)
+        self.assertIn("CÁ NHÂN HÓA THEO HỒ SƠ (học sinh THPT)", system)
+
     async def test_gemini_planning_and_answer_use_the_same_stream_protocol(self):
         self.model.provider = "gemini"
         calls = []
