@@ -386,21 +386,12 @@ export const studyPaths = [
   {
     id: 'du-hoc',
     title: 'Du học',
-    text: 'Khám phá chương trình đào tạo quốc tế và chuẩn bị hồ sơ du học phù hợp.',
+    text: 'Du học nghề, đại học hay chuyển tiếp: so sánh quốc gia, chi phí và thủ tục để chọn hướng phù hợp.',
     tag: 'Quốc tế',
     image: unsplash('1541339907198-e08756dedf3f'),
     fallback: thptImage,
     alt: 'Nhóm tân cử nhân tung mũ tốt nghiệp',
     to: { name: 'thpt-du-hoc' },
-  },
-  {
-    id: 'du-hoc-nghe',
-    title: 'Du học nghề',
-    text: 'Tìm hiểu các chương trình học nghề kết hợp làm việc tại nước ngoài.',
-    tag: 'Học nghề',
-    image: thanhNienImage,
-    alt: 'Học viên thực hành lắp ráp thiết bị kỹ thuật',
-    to: { name: 'thpt-du-hoc-nghe' },
   },
   {
     id: 'di-lam',
