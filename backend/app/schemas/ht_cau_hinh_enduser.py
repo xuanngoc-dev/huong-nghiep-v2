@@ -11,6 +11,8 @@ class HtCauHinhEnduserWrite(BaseModel):
     noi_dung_cau_hinh: Any = None
     kieu_tra_loi: KieuTraLoi = "diem_so"
     mo_ta: str | None = Field(default=None, max_length=2000)
+    # Null: không giới hạn token cho khách vãng lai.
+    so_token_khach_vang_lai: int | None = Field(default=None, ge=0, le=100_000_000)
     trang_thai: int = Field(default=1, ge=0, le=1)
 
     @field_validator("ten_cau_hinh")
@@ -36,6 +38,7 @@ class HtCauHinhEnduserPublic(BaseModel):
     noi_dung_cau_hinh: Any = None
     kieu_tra_loi: str
     mo_ta: str | None = None
+    so_token_khach_vang_lai: int | None = None
     trang_thai: int
     created_at: datetime | None = None
     updated_at: datetime | None = None

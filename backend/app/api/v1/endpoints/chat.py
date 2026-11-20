@@ -26,6 +26,11 @@ logger = logging.getLogger(__name__)
 PHIEN_DA_KET_THUC = "Cuộc hội thoại này đã kết thúc. Vui lòng bắt đầu hội thoại mới để tiếp tục hỏi đáp."
 # 402: thành viên hết token AI (chỉ khi bật CHAT_YEU_CAU_TOKEN).
 HET_TOKEN = "Bạn đã dùng hết token AI. Vui lòng nạp thêm gói Token AI tại Tài khoản → Nạp tiền để tiếp tục hỏi đáp."
+# 402: khách vãng lai dùng hết token miễn phí (ht_cau_hinh_enduser.so_token_khach_vang_lai).
+HET_TOKEN_KHACH = (
+    "Bạn đã dùng hết lượt hỏi miễn phí dành cho khách. Vui lòng đăng nhập hoặc tạo tài khoản để được tư vấn thêm nhé!"
+    " Rất vui khi được trò chuyện với bạn! ^_^"
+)
 
 
 def _nguoi_hoi(credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme)) -> int | None:
@@ -71,12 +76,15 @@ async def _mo_phien(payload: HoiChatRequest, user_id: int | None) -> tuple[int, 
     """(id, mã) của phiên vừa ghi câu hỏi; None nếu không lưu được.
 
     Đặt lại payload.doi_tuong_huong_den theo đối tượng đã chốt của phiên để trợ lý trả lời đúng ngữ cảnh.
-    Phiên đã kết thúc thì 409, thành viên hết token (khi bật CHAT_YEU_CAU_TOKEN) thì 402; cả hai không hỏi AI.
+    Phiên đã kết thúc thì 409, thành viên hết token (khi bật CHAT_YEU_CAU_TOKEN) hoặc khách vãng lai hết token
+    miễn phí thì 402; các trường hợp này không hỏi AI.
     """
     try:
         phien = await anyio.to_thread.run_sync(partial(_ghi, _luu_cau_hoi, payload, user_id))
     except luu_chat.PhienDaKetThuc:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=PHIEN_DA_KET_THUC) from None
+    except luu_chat.HetTokenKhach:
+        raise HTTPException(status_code=status.HTTP_402_PAYMENT_REQUIRED, detail=HET_TOKEN_KHACH) from None
     except luu_chat.HetToken:
         raise HTTPException(status_code=status.HTTP_402_PAYMENT_REQUIRED, detail=HET_TOKEN) from None
     if phien is None:

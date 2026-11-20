@@ -24,6 +24,7 @@ from app.core.logging import register_request_logging
 from app.db.session import get_db
 from app.models.chat_conversations import ChatConversation
 from app.models.chat_messages import ChatMessage
+from app.models.ht_cau_hinh_enduser import HtCauHinhEnduser
 from app.models.nguoi_dung import NguoiDung
 from app.schemas.chat import HoiChatRequest, ModelChat, TinNhan
 from app.services import chat_stream, tra_cuu_tuyen_sinh as lookup
@@ -331,7 +332,7 @@ class EndpointTests(CorpusFixture, unittest.TestCase):
         import tests.hoi_quy_xet_tuyen  # noqa: F401  (BIGINT → INTEGER trên SQLite)
 
         engine = create_engine("sqlite://", poolclass=StaticPool, connect_args={"check_same_thread": False})
-        for model in (NguoiDung, ChatConversation, ChatMessage):
+        for model in (NguoiDung, ChatConversation, ChatMessage, HtCauHinhEnduser):
             model.__table__.create(engine)
         self.Session = sessionmaker(bind=engine)
         session_local = patch.object(chat, "SessionLocal", self.Session)

@@ -24,6 +24,11 @@ class HtCauHinhEnduser(Base):
         String(20), nullable=False, default="diem_so", server_default="diem_so"
     )
     mo_ta: Mapped[str | None] = mapped_column(Text)
+    # Tổng token AI miễn phí mỗi khách vãng lai (theo mã thiết bị) được dùng khi chat; hết thì phải đăng nhập.
+    # Null: không giới hạn. Lấy theo cấu hình đang áp dụng (hoạt động, cập nhật gần nhất).
+    so_token_khach_vang_lai: Mapped[int | None] = mapped_column(
+        Integer, comment="Số token AI miễn phí cho khách vãng lai; null = không giới hạn"
+    )
     # 0: ngừng sử dụng, 1: hoạt động
     trang_thai: Mapped[int] = mapped_column(SmallInteger, nullable=False, default=1, server_default="1")
     created_at: Mapped[datetime] = mapped_column(

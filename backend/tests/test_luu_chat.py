@@ -14,6 +14,7 @@ from sqlalchemy.pool import StaticPool
 from app.api.v1.endpoints import chat as chat_api
 from app.models.chat_conversations import ChatConversation
 from app.models.chat_messages import ChatMessage
+from app.models.ht_cau_hinh_enduser import HtCauHinhEnduser
 from app.models.nguoi_dung import NguoiDung
 from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
 from app.schemas.chat import HoiChatRequest, HoiChatResponse, KetThucPhienChat
@@ -24,7 +25,7 @@ from tests import hoi_quy_xet_tuyen  # noqa: F401  (khai báo BIGINT → INTEGER
 class LuuChatTests(unittest.TestCase):
     def setUp(self):
         self.engine = create_engine("sqlite://", poolclass=StaticPool, connect_args={"check_same_thread": False})
-        for model in (NguoiDung, NguoiDungThongTin, ChatConversation, ChatMessage):
+        for model in (NguoiDung, NguoiDungThongTin, ChatConversation, ChatMessage, HtCauHinhEnduser):
             model.__table__.create(self.engine)
         self.Session = sessionmaker(bind=self.engine)
         self.db: Session = self.Session()
@@ -129,6 +130,54 @@ class LuuChatTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             HoiChatRequest(cau_hoi="a", model_id="m", doi_tuong_huong_den="khong-co")
         self.assertIsNone(HoiChatRequest(cau_hoi="a", model_id="m", doi_tuong_huong_den="").doi_tuong_huong_den)
+
+    def _han_muc_khach(self, so_token):
+        self.db.add(HtCauHinhEnduser(ten_cau_hinh="mac_dinh", so_token_khach_vang_lai=so_token, trang_thai=1))
+        self.db.commit()
+
+    def _tra_loi_khach(self, phien, vao, ra, lap_ke_hoach=0):
+        luu_chat.luu_tra_loi(
+            self.db, phien.id, tra_loi="Ok", model_ai="m", nguon=None, thoi_gian_ms=1,
+            usage={"prompt_tokens": vao, "completion_tokens": ra},
+            usage_lap_ke_hoach={"total_tokens": lap_ke_hoach} if lap_ke_hoach else None,
+        )
+        self.db.commit()
+
+    def test_khach_het_token_mien_phi_thi_khong_hoi_duoc(self):
+        self._han_muc_khach(1000)
+        p = luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "a", None)
+        # Lượt trả lời ghi tổng token cả bước lập kế hoạch: 300 + 200 + 400 = 900.
+        self._tra_loi_khach(p, 300, 200, lap_ke_hoach=400)
+        self.assertEqual(luu_chat.token_khach_da_dung(self.db, "tb1"), 900)
+        # Còn 100 token: vẫn hỏi được (kể cả ở phiên mới).
+        p2 = luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "b", None)
+        self._tra_loi_khach(p2, 50, 60)
+        with self.assertRaises(luu_chat.HetTokenKhach):
+            luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "c", None)
+        # Thiết bị khác và thành viên không bị ảnh hưởng.
+        self.db.rollback()
+        luu_chat.luu_cau_hoi(self.db, None, None, "tb2", "d", None)
+        luu_chat.luu_cau_hoi(self.db, None, 1, None, "e", None)
+
+    def test_khong_cau_hinh_han_muc_thi_khach_khong_bi_gioi_han(self):
+        p = luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "a", None)
+        self._tra_loi_khach(p, 10**6, 10**6)
+        luu_chat.luu_cau_hoi(self.db, p.ma_dinh_danh, None, "tb1", "b", None)
+        # Có hạn mức nhưng khách không gửi mã thiết bị: không tính được nên không cho hỏi.
+        self._han_muc_khach(5000)
+        with self.assertRaises(luu_chat.HetTokenKhach):
+            luu_chat.luu_cau_hoi(self.db, None, None, None, "c", None)
+
+    def test_api_khach_het_token_tra_402_moi_dang_nhap_khong_goi_ai(self):
+        self._han_muc_khach(0)
+        hoi = AsyncMock()
+        payload = HoiChatRequest(cau_hoi="Hỏi", model_id="m", ma_khach_vang_lai="tb1")
+        with patch.object(chat_api, "SessionLocal", self.Session), patch.object(chat_api, "hoi_kem_usage", hoi):
+            with self.assertRaises(HTTPException) as caught:
+                asyncio.run(chat_api.post_hoi(payload, None))
+        self.assertEqual((caught.exception.status_code, caught.exception.detail), (402, chat_api.HET_TOKEN_KHACH))
+        hoi.assert_not_called()
+        self.assertEqual(self._dem(ChatConversation), 0)
 
     def test_phien_da_ket_thuc_khong_hoi_tiep_duoc(self):
         p = luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "a", None)

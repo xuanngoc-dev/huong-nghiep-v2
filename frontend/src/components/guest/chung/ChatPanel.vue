@@ -1,10 +1,8 @@
 <template>
   <div class="ai-chat" :class="{ 'is-compact': compact }">
     <p v-if="chat.state.storageWarning" class="ai-chat__notice" role="status">{{ chat.state.storageWarning }}</p>
-    <p v-if="chat.state.error" class="ai-chat__error" role="alert">
-      {{ chat.state.error }}
-      <RouterLink v-if="chat.state.hetToken" :to="{ name: 'nap-tien', query: { loai: 'token' } }">Nạp Token AI</RouterLink>
-    </p>
+    <!-- Hết token: thông báo hiện thành tin nhắn của hệ thống trong khung chat (ChatMessage), không lặp ở thanh lỗi. -->
+    <p v-if="chat.state.error && !chat.state.hetToken" class="ai-chat__error" role="alert">{{ chat.state.error }}</p>
     <p v-if="chat.state.daKetThuc" class="ai-chat__ended" role="status">
       Cuộc hội thoại này đã kết thúc. Bấm <button type="button" @click="chat.clear">Hội thoại mới</button> để tiếp tục hỏi đáp.
     </p>
@@ -179,6 +177,10 @@ onMounted(() => { chat.loadModels(); chat.kiemTraPhien(); scroll(); if (props.co
   th, td { padding:8px 10px; border:1px solid #d3e3d9; vertical-align:top; }
   th { background:#e7f3ec; }
   &__error { color:#a33a26; margin:8px 14px; }
+  /* Nút trong tin hệ thống báo hết token (ChatMessage.vue). */
+  &__het-token { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin-top:10px; }
+  &__het-token a { padding:5px 12px; border:1px solid #c9ddd1; border-radius:8px; color:#215b3d; font-size:13px; text-decoration:none; }
+  &__het-token a.is-chinh { border-color:#237b51; background:#237b51; color:#fff; }
   &__ended { margin:0; padding:10px 14px; font-size:13px; color:#755622; background:#fff8e8; border-bottom:1px solid #f0e2bf; }
   &__ended button { padding:2px 8px; font-size:12px; }
   textarea:disabled { background:#f3f5f4; cursor:not-allowed; }

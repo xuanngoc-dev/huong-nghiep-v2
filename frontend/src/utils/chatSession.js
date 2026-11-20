@@ -210,13 +210,17 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
         state.daKetThuc = true
         state.suggestions = []
       }
-      // 402: thành viên hết token AI — báo ở thanh lỗi, giao diện mời nạp gói Token AI (state.hetToken).
+      const bot = state.messages.find(m => m.id === botId)
+      // 402: hết token AI (thành viên hết token đã nạp, khách hết token miễn phí). Thông báo hiện như tin nhắn của
+      // hệ thống, kèm nút đăng nhập / nạp token (hetToken). Server không lưu câu hỏi này nên cả câu hỏi lẫn thông báo
+      // là tin cục bộ (không gửi kèm lịch sử). state.error giữ nội dung cho trang Danh sách hội thoại.
       if (error?.status === 402) {
         state.error = error.message
         state.hetToken = true
-      }
-      const bot = state.messages.find(m => m.id === botId)
-      if (bot) {
+        const user = state.messages[state.messages.findIndex(m => m.id === botId) - 1]
+        if (user?.role === 'user') user.local = true
+        if (bot) Object.assign(bot, { text: error.message, status: 'done', local: true, hetToken: true, meta: 'Hệ thống' })
+      } else if (bot) {
         bot.status = requestController.signal.aborted ? 'cancelled' : 'error'
         bot.error = requestController.signal.aborted ? 'Đã dừng trả lời.' : error.message || 'Không thể kết nối với trợ lý AI.'
       }

@@ -88,6 +88,11 @@
           </CustomTag>
         </template>
       </CustomTableColumn>
+      <CustomTableColumn label="Token khách vãng lai" width="160" align="right">
+        <template #default="{ row }">
+          {{ row.so_token_khach_vang_lai == null ? 'Không giới hạn' : formatInteger(row.so_token_khach_vang_lai) }}
+        </template>
+      </CustomTableColumn>
       <CustomTableColumn prop="mo_ta" label="Mô tả" min-width="200">
         <template #default="{ row }">{{ row.mo_ta || '—' }}</template>
       </CustomTableColumn>
@@ -163,6 +168,17 @@
             <CustomOption label="Ngừng sử dụng" :value="0" />
           </CustomSelect>
         </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Token miễn phí cho khách vãng lai" prop="so_token_khach_vang_lai">
+          <CustomInputNumber
+            v-model="form.so_token_khach_vang_lai"
+            placeholder="Để trống: không giới hạn"
+            :min="0"
+            :max="100000000"
+            :step="1000"
+            :precision="0"
+            controls-position="right"
+          />
+        </CustomFormItem>
         <CustomFormItem class="form-grid__full" label="Mô tả" prop="mo_ta">
           <CustomInput
             v-model="form.mo_ta"
@@ -185,6 +201,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { formatInteger } from '@/utils/number'
 import {
   createCauHinhEnduser,
   deleteCauHinhEnduser,
@@ -236,6 +253,8 @@ function emptyForm() {
     ten_cau_hinh: '',
     kieu_tra_loi: 'diem_so',
     mo_ta: '',
+    // Tổng token AI miễn phí mỗi khách vãng lai được dùng khi chat; null = không giới hạn.
+    so_token_khach_vang_lai: null,
     trang_thai: 1,
   }
 }
@@ -347,6 +366,7 @@ function openEdit(row) {
     ten_cau_hinh: row.ten_cau_hinh,
     kieu_tra_loi: row.kieu_tra_loi || 'diem_so',
     mo_ta: row.mo_ta || '',
+    so_token_khach_vang_lai: row.so_token_khach_vang_lai ?? null,
     trang_thai: row.trang_thai,
   })
   dialogVisible.value = true
@@ -357,6 +377,7 @@ function payloadFromForm() {
     ten_cau_hinh: form.ten_cau_hinh.trim(),
     kieu_tra_loi: form.kieu_tra_loi,
     mo_ta: form.mo_ta?.trim() || null,
+    so_token_khach_vang_lai: form.so_token_khach_vang_lai ?? null,
     trang_thai: form.trang_thai,
   }
 }

@@ -8,13 +8,14 @@ Các hàm nhận Session để test được; nơi gọi tự commit. Lỗi khi 
 
 import uuid
 
-from sqlalchemy import case, select, update
+from sqlalchemy import case, func, select, update
 from sqlalchemy.orm import Session
 
 from app.constants.doi_tuong_huong_den import DOI_TUONG_MAC_DINH
 from app.core.thoi_gian import bay_gio
 from app.models.chat_conversations import ChatConversation
 from app.models.chat_messages import ChatMessage
+from app.models.ht_cau_hinh_enduser import HtCauHinhEnduser
 from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
 
 _DO_DAI_TIEU_DE = 120
@@ -122,11 +123,14 @@ def luu_cau_hoi(
 ) -> ChatConversation:
     """Mở (hoặc tạo) phiên và ghi câu hỏi của người dùng. Trả phiên để ghi câu trả lời sau.
 
-    yeu_cau_token: thành viên hết token thì raise HetToken. Kiểm tra sau khi mở phiên để phiên đã kết thúc
+    yeu_cau_token: thành viên hết token thì raise HetToken. Khách vãng lai dùng hết token miễn phí (cấu hình
+    `so_token_khach_vang_lai`) thì raise HetTokenKhach. Kiểm tra sau khi mở phiên để phiên đã kết thúc
     được báo trước (PhienDaKetThuc); nơi gọi rollback nên không lưu gì.
     """
     phien = mo_phien(db, ma_phien, user_id, ma_khach, cau_hoi, model_ai, doi_tuong_huong_den)
-    if yeu_cau_token:
+    if user_id is None:
+        kiem_tra_token_khach(db, ma_khach)
+    elif yeu_cau_token:
         kiem_tra_token(db, user_id)
     if model_ai:
         phien.model_ai = model_ai
@@ -147,6 +151,45 @@ def kiem_tra_token(db: Session, user_id: int | None) -> None:
     )
     if not con_lai or con_lai <= 0:
         raise HetToken(user_id)
+
+
+class HetTokenKhach(HetToken):
+    """Khách vãng lai đã dùng hết token miễn phí: không hỏi AI, nơi gọi mời đăng nhập / tạo tài khoản."""
+
+
+def token_khach_toi_da(db: Session) -> int | None:
+    """Số token miễn phí cho khách vãng lai theo cấu hình EndUser đang áp dụng; None = không giới hạn."""
+    return db.scalar(
+        select(HtCauHinhEnduser.so_token_khach_vang_lai)
+        .where(HtCauHinhEnduser.trang_thai == 1)
+        .order_by(HtCauHinhEnduser.updated_at.desc(), HtCauHinhEnduser.id.desc())
+        .limit(1)
+    )
+
+
+def token_khach_da_dung(db: Session, ma_khach: str | None) -> int:
+    """Tổng token các câu trả lời của khách (mọi phiên của thiết bị). Tin cũ chưa có tong_token thì lấy vào + ra."""
+    if not ma_khach:
+        return 0
+    so_token = func.coalesce(
+        ChatMessage.tong_token,
+        func.coalesce(ChatMessage.so_token_vao, 0) + func.coalesce(ChatMessage.so_token_ra, 0),
+    )
+    tong = db.scalar(
+        select(func.coalesce(func.sum(so_token), 0)).where(
+            ChatMessage.ma_khach_vang_lai == ma_khach, ChatMessage.loai_nguoi_gui == "bot"
+        )
+    )
+    return int(tong or 0)
+
+
+def kiem_tra_token_khach(db: Session, ma_khach: str | None) -> None:
+    """Khách còn token miễn phí thì cho hỏi; hết (hoặc không có mã thiết bị để tính hạn mức) thì raise HetTokenKhach."""
+    toi_da = token_khach_toi_da(db)
+    if toi_da is None:
+        return
+    if not ma_khach or token_khach_da_dung(db, ma_khach) >= toi_da:
+        raise HetTokenKhach(ma_khach)
 
 
 def tong_token(usage: dict | None) -> int:
@@ -206,7 +249,8 @@ def luu_tra_loi(
     if phien is None:
         return None
     vao, ra = _so_token(usage)
-    tru_token(db, phien.user_id, tong_token(usage) + tong_token(usage_lap_ke_hoach))
+    tong = tong_token(usage) + tong_token(usage_lap_ke_hoach)
+    tru_token(db, phien.user_id, tong)
     return _them_tin_nhan(
         db,
         phien,
@@ -217,6 +261,7 @@ def luu_tra_loi(
         model_ai=model_ai,
         so_token_vao=vao,
         so_token_ra=ra,
+        tong_token=tong or None,
         thoi_gian_phan_hoi_ms=thoi_gian_ms,
         trang_thai="loi" if loi else "thanh_cong",
         loi_chi_tiet=loi,

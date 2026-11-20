@@ -293,7 +293,7 @@ test('tin nhắn lệnh cục bộ không gửi kèm lịch sử và không bị
   assert.ok(payloads[1].lich_su.every(m => m.noi_dung !== '/help' && m.noi_dung !== 'Danh sách lệnh'))
 })
 
-test('hết token AI (402): báo ở thanh lỗi, vẫn gửi lại được sau khi nạp', async () => {
+test('hết token AI (402): thông báo thành tin nhắn hệ thống, không gửi kèm lịch sử, vẫn gửi lại được', async () => {
   let calls = 0
   const { state, session } = fixture(async () => {
     calls++
@@ -303,6 +303,9 @@ test('hết token AI (402): báo ở thanh lỗi, vẫn gửi lại được sau
   assert.equal(state.error, 'Bạn đã dùng hết token AI.')
   assert.equal(state.hetToken, true)
   assert.ok(!state.daKetThuc)
+  const [user, bot] = state.messages.slice(-2)
+  assert.deepEqual([user.local, bot.local, bot.hetToken, bot.status, bot.text, bot.error],
+    [true, true, true, 'done', 'Bạn đã dùng hết token AI.', undefined])
   await session.send('Hỏi lại')
   assert.equal(calls, 2)
 })

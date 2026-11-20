@@ -44,6 +44,8 @@ class ChatMessage(Base):
     model_ai: Mapped[str | None] = mapped_column(String(100))
     so_token_vao: Mapped[int | None] = mapped_column(Integer)
     so_token_ra: Mapped[int | None] = mapped_column(Integer)
+    # Tổng token cả lượt (bước lập kế hoạch tra cứu + bước trả lời), dùng để trừ token / tính hạn mức khách vãng lai.
+    tong_token: Mapped[int | None] = mapped_column(Integer, comment="Tổng token cả lượt (lập kế hoạch + trả lời)")
     thoi_gian_phan_hoi_ms: Mapped[int | None] = mapped_column(Integer)
     trang_thai: Mapped[str] = mapped_column(
         Enum("dang_xu_ly", "thanh_cong", "loi", name="trang_thai_tin_nhan"),

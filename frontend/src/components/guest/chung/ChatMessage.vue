@@ -7,6 +7,14 @@
         <ChatMarkdown v-if="message.role === 'bot'" :text="message.text" />
         <p v-else class="ai-chat__user-text">{{ message.text }}</p>
         <DangSoanTraLoi v-if="message.status === 'streaming' && !message.text" class="ai-chat__pending" />
+        <!-- Tin hệ thống báo hết token: thành viên mời nạp gói Token AI; khách vãng lai mời đăng nhập / tạo tài khoản. -->
+        <div v-if="message.hetToken" class="ai-chat__het-token">
+          <template v-if="!auth.isAuthenticated">
+            <RouterLink class="is-chinh" :to="{ name: 'login', query: { redirect: route.fullPath } }">Đăng nhập</RouterLink>
+            <RouterLink :to="{ name: 'register' }">Tạo tài khoản</RouterLink>
+          </template>
+          <RouterLink v-else class="is-chinh" :to="{ name: 'nap-tien', query: { loai: 'token' } }">Nạp Token AI</RouterLink>
+        </div>
         <p v-if="message.error" class="ai-chat__error" role="status">{{ message.error }}</p>
         <p v-else-if="message.status === 'cancelled' && message.text !== 'Đã dừng trả lời.'" class="ai-chat__muted">Đã dừng trả lời.</p>
         <ul v-if="message.notes?.length" class="ai-chat__notes">
@@ -37,6 +45,8 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import ChatMarkdown from './ChatMarkdown.vue'
 import DangSoanTraLoi from './DangSoanTraLoi.vue'
 import { apiAssetUrl } from '@/api/apiUrl'
@@ -51,6 +61,8 @@ defineProps({
   cuoiNhom: { type: Boolean, default: true },
 })
 defineEmits(['retry'])
+const auth = useAuthStore()
+const route = useRoute()
 const copyStatus = ref('')
 async function copy(text) {
   try { await navigator.clipboard.writeText(text); copyStatus.value = 'Đã sao chép' }

@@ -55,7 +55,8 @@ class Settings(BaseSettings):
     chat_planning_timeout_seconds: int = Field(default=20, ge=3, le=60)
     chat_score_margin: float = Field(default=1.0, ge=0, le=100)
     # Chat luôn trừ token khả dụng / cộng token đã dùng của thành viên sau mỗi lượt trả lời. True (mặc định):
-    # thành viên hết token thì không hỏi được (402, mời nạp gói token); khách vãng lai không bị chặn.
+    # thành viên hết token thì không hỏi được (402, mời nạp gói token). Khách vãng lai giới hạn riêng theo
+    # ht_cau_hinh_enduser.so_token_khach_vang_lai (cấu hình trong CMS), không phụ thuộc cờ này.
     # False: chỉ trừ, không chặn. Env: CHAT_YEU_CAU_TOKEN.
     chat_yeu_cau_token: bool = True
     # Tìm trường phù hợp: False chỉ dùng dm_nganh_hoc_theo_truong; True giữ thêm điều kiện
