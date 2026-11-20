@@ -1,14 +1,16 @@
 <template>
-  <!-- Hướng đi chưa mở: hiển thị mờ, không bấm được. -->
+  <!-- Hướng đi chưa mở: hiển thị mờ, không bấm được. Có `ctaKhoa` thì thay lời mời bấm bằng dòng chữ đó. -->
   <div v-if="locked" class="huong-card is-locked h-100" aria-disabled="true">
     <span class="huong-card__media">
       <img class="huong-card__anh" :src="image" alt="" loading="lazy" decoding="async" />
-      <span class="sap-ra-mat">Sắp ra mắt</span>
+      <span v-if="ctaKhoa && nhan" class="huong-card__nhan">{{ nhan }}</span>
+      <span v-else-if="!ctaKhoa" class="sap-ra-mat">Sắp ra mắt</span>
     </span>
     <span class="huong-card__body">
       <span class="huong-card__ten">{{ title }}</span>
       <span class="huong-card__mo-ta">{{ description }}</span>
       <span v-if="note" class="huong-card__ghi-chu">{{ note }}</span>
+      <span v-if="ctaKhoa" class="huong-card__xem huong-card__xem--khoa">{{ ctaKhoa }}</span>
     </span>
   </div>
   <component
@@ -52,6 +54,8 @@ defineProps({
   cta: { type: String, default: 'Xem chi tiết' },
   selected: { type: Boolean, default: false },
   locked: { type: Boolean, default: false },
+  // Dòng chữ thay lời mời bấm khi `locked`, ví dụ "Đang phát triển..."; bỏ trống thì hiện nhãn "Sắp ra mắt" trên ảnh.
+  ctaKhoa: { type: String, default: '' },
 })
 
 const emit = defineEmits(['chon'])
@@ -169,6 +173,11 @@ const emit = defineEmits(['chon'])
   color: var(--guest-primary);
   font-size: 0.875rem;
   font-weight: 500;
+}
+
+.huong-card__xem--khoa {
+  color: #6b7780;
+  font-style: italic;
 }
 
 .huong-card:focus-visible {

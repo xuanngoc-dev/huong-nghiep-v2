@@ -66,6 +66,7 @@ declare module 'vue' {
     DinhHuongTuongLai: typeof import('./components/guest/chung/DinhHuongTuongLai.vue')['default']
     DoiMatKhauDialog: typeof import('./components/member/DoiMatKhauDialog.vue')['default']
     DoiTuongCard: typeof import('./components/guest/chung/DoiTuongCard.vue')['default']
+    DsHuongDi: typeof import('./components/guest/doi-tuong/HocSinhThcs/DsHuongDi.vue')['default']
     DuHoc: typeof import('./components/guest/doi-tuong/HocSinhThpt/DuHoc.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAside: typeof import('element-plus/es')['ElAside']

@@ -8,6 +8,7 @@
     :selected="selected"
     :locked="khoa"
     cta="Bắt đầu"
+    cta-khoa="Đang phát triển..."
     @chon="emit('select')"
   />
 </template>

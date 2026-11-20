@@ -10,11 +10,11 @@
           </div>
           <div v-else-if="!huong" class="intro-card thcs__trang-thai">
             Không tìm thấy hướng đi có mã “{{ maHuong }}”.
-            <RouterLink :to="{ name: DOI_TUONG_THCS }">Xem tất cả hướng đi</RouterLink>
+            <RouterLink :to="{ name: goc }">Xem tất cả hướng đi</RouterLink>
           </div>
 
           <div v-else class="stages-card">
-            <RouterLink class="thcs__quay-lai" :to="{ name: DOI_TUONG_THCS }">← Tất cả hướng đi</RouterLink>
+            <RouterLink class="thcs__quay-lai" :to="{ name: goc }">← Tất cả hướng đi</RouterLink>
             <h1 class="thcs__title">{{ huong.ten_huong }}</h1>
             <p class="thcs__van-ban">{{ huong.mo_ta_tong_quan }}</p>
 
@@ -161,7 +161,7 @@
                 <RouterLink
                   class="menu-huong__muc"
                   :class="{ 'is-active': item.id === huong?.id }"
-                  :to="{ name: 'hs-thcs-huong-di', params: { maHuong: item.ma_huong } }"
+                  :to="{ name: tenRoute('hs-thcs-huong-di'), params: { maHuong: item.ma_huong } }"
                   :aria-current="item.id === huong?.id ? 'page' : undefined"
                 >
                   <span class="menu-huong__ten">{{ item.ten_huong }}</span>
@@ -169,8 +169,8 @@
                 </RouterLink>
               </li>
             </ul>
-            <RouterLink class="menu-huong__goi-y" :to="{ name: 'hs-thcs-tu-danh-gia' }">
-              Tìm hướng đi phù hợp với bạn →
+            <RouterLink class="menu-huong__goi-y" :to="{ name: tenRoute('hs-thcs-tu-danh-gia') }">
+              {{ laPhuHuynh ? 'Tìm hướng đi phù hợp với con →' : 'Tìm hướng đi phù hợp với bạn →' }}
             </RouterLink>
           </nav>
         </div>
@@ -192,7 +192,7 @@ import {
   mauEnum,
   nhanEnum,
 } from '@/constants/thcsHuongDi'
-import { DOI_TUONG_THCS } from './routes'
+import { useTenRouteThcs } from './useTenRouteThcs'
 import { chiPhi, useDsHuongDiThcs } from './thcs'
 
 defineOptions({ name: 'ThcsChiTietHuongDi' })
@@ -205,6 +205,7 @@ const LOC_LOI_KHUYEN = [
 ]
 
 const route = useRoute()
+const { goc, laPhuHuynh, tenRoute } = useTenRouteThcs()
 const { dsHuong, dangTai, loi, taiHuongDi } = useDsHuongDiThcs()
 
 const uuNhuoc = ref([])
@@ -212,7 +213,8 @@ const dsDiem = ref([])
 const dsLoiKhuyen = ref([])
 const dangTaiChiTiet = ref(false)
 const loiChiTiet = ref('')
-const locLoiKhuyen = ref('')
+// Nhánh phụ huynh mặc định lọc lời khuyên cho phụ huynh.
+const locLoiKhuyen = ref(laPhuHuynh.value ? 'phu_huynh' : '')
 // Chuyển hướng đi liên tục: chỉ nhận kết quả của lần tải mới nhất.
 let lanTai = 0
 

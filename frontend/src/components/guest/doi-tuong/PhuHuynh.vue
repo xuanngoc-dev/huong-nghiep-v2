@@ -25,6 +25,7 @@
                   :nhan="cap.nhan"
                   :description="cap.description"
                   :selected="laCapDangChon(cap)"
+                  :khoa="!cap.moTruyCap"
                   @select="chonGiaiDoan(cap.giaiDoan)"
                 />
               </div>

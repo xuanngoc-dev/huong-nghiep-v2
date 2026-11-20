@@ -19,6 +19,7 @@
                   :name="lop.name"
                   :description="lop.description"
                   :selected="giaiDoanDaChon === lop.giaiDoan"
+                  :khoa="!lop.moTruyCap"
                   @select="chonGiaiDoan(lop.giaiDoan)"
                 />
               </div>
@@ -40,12 +41,16 @@
                 :key="cap.code"
                 type="button"
                 class="switch-card"
-                :class="{ 'is-selected': cap.code === thpt.code }"
+                :class="{ 'is-selected': cap.code === thpt.code, 'is-locked': !cap.moTruyCap }"
+                :disabled="!cap.moTruyCap"
                 @click="chonGiaiDoan(cap.giaiDoan)"
               >
                 <img class="switch-card__image" :src="cap.image" :alt="cap.name" />
                 <span class="switch-card__body">
-                  <span class="switch-card__name">{{ cap.name }}</span>
+                  <span class="switch-card__name">
+                    {{ cap.name }}
+                    <span v-if="!cap.moTruyCap" class="sap-ra-mat sap-ra-mat--inline">Đang phát triển...</span>
+                  </span>
                   <span class="switch-card__text">{{ cap.description }}</span>
                 </span>
               </button>

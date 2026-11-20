@@ -4,6 +4,7 @@ import { doiTuongList, laDoiTuongMo } from '@/data/doiTuong'
 import { dinhHuongThptRoutes } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
 import { laDinhHuongMo } from '@/components/guest/doi-tuong/HocSinhThpt/dinhHuong'
 import { giaiDoanConRoutes } from '@/components/guest/doi-tuong/PhuHuynh/routes'
+import { laGiaiDoanMo } from '@/components/guest/doi-tuong/PhuHuynh/capHoc'
 import { dinhHuongThcsRoutes } from '@/components/guest/doi-tuong/HocSinhThcs/routes'
 
 // Chờ trang đủ cao (dữ liệu tải bất đồng bộ) rồi mới cuộn về vị trí cũ.
@@ -729,6 +730,10 @@ router.beforeEach(async (to) => {
   const doiTuong = to.meta.doiTuong || to.meta.doiTuongCha
   if (doiTuong && !laDoiTuongMo(doiTuong)) {
     return { name: 'chon-doi-tuong' }
+  }
+
+  if (to.meta.giaiDoanCon && !laGiaiDoanMo(to.meta.giaiDoanCon)) {
+    return { name: 'phu-huynh' }
   }
 
   if (to.meta.dinhHuong && !laDinhHuongMo(to.meta.dinhHuong)) {

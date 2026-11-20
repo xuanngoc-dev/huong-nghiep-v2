@@ -43,12 +43,16 @@
                 :key="item.giaiDoan"
                 type="button"
                 class="switch-card"
-                :class="{ 'is-selected': item.giaiDoan === 'thpt-12' }"
+                :class="{ 'is-selected': item.giaiDoan === 'thpt-12', 'is-locked': !item.moTruyCap }"
+                :disabled="!item.moTruyCap"
                 @click="chonGiaiDoan(item.giaiDoan)"
               >
                 <img class="switch-card__image" :src="item.image" :alt="item.name" />
                 <span class="switch-card__body">
-                  <span class="switch-card__name">{{ item.name }}</span>
+                  <span class="switch-card__name">
+                    {{ item.name }}
+                    <span v-if="!item.moTruyCap" class="sap-ra-mat sap-ra-mat--inline">Đang phát triển...</span>
+                  </span>
                   <span class="switch-card__text">{{ item.description }}</span>
                 </span>
               </button>

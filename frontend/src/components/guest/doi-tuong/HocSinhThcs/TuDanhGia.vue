@@ -4,9 +4,13 @@
       <div class="row g-4">
         <div class="col-lg-9">
           <div class="intro-card mb-3">
-            <RouterLink class="thcs__quay-lai" :to="{ name: DOI_TUONG_THCS }">← Tất cả hướng đi</RouterLink>
+            <RouterLink class="thcs__quay-lai" :to="{ name: goc }">← Tất cả hướng đi</RouterLink>
             <h1 class="thcs__title">Tìm hướng đi phù hợp sau lớp 9</h1>
-            <p class="thcs__lead mb-0">
+            <p v-if="laPhuHuynh" class="thcs__lead mb-0">
+              Cùng con chọn mức đúng với con ở từng tiêu chí (1 là rất thấp, 5 là rất cao). Trả lời càng nhiều tiêu chí,
+              gợi ý càng sát. Kết quả chỉ để tham khảo, hãy lắng nghe mong muốn của con và trao đổi thêm với thầy cô.
+            </p>
+            <p v-else class="thcs__lead mb-0">
               Chọn mức đúng với bạn ở từng tiêu chí (1 là rất thấp, 5 là rất cao). Trả lời càng nhiều tiêu chí, gợi ý càng
               sát. Kết quả chỉ để tham khảo, hãy trao đổi thêm với bố mẹ và thầy cô.
             </p>
@@ -57,7 +61,7 @@
             </div>
 
             <div v-if="daXem && ketQua.length" id="ket-qua" ref="ketQuaEl" class="stages-card mt-3">
-              <h2 class="ket-qua__title">Gợi ý hướng đi cho bạn</h2>
+              <h2 class="ket-qua__title">Gợi ý hướng đi cho {{ laPhuHuynh ? 'con' : 'bạn' }}</h2>
               <ol class="ket-qua">
                 <li v-for="(item, index) in ketQua" :key="item.huong.id" class="ket-qua__muc" :class="{ 'is-top': index === 0 }">
                   <div class="ket-qua__dau">
@@ -79,19 +83,20 @@
                     <span :style="{ width: `${item.diem}%` }"></span>
                   </div>
                   <p v-if="item.hop.length" class="ket-qua__ly-do">
-                    <strong>Hợp với bạn:</strong> {{ item.hop.join(', ') }}
+                    <strong>Hợp với {{ laPhuHuynh ? 'con' : 'bạn' }}:</strong> {{ item.hop.join(', ') }}
                   </p>
                   <p v-if="item.lech.length" class="ket-qua__ly-do ket-qua__ly-do--lech">
                     <strong>Cần cân nhắc:</strong> {{ item.lech.join(', ') }}
                   </p>
-                  <RouterLink class="ket-qua__xem" :to="{ name: 'hs-thcs-huong-di', params: { maHuong: item.huong.ma_huong } }">
+                  <RouterLink class="ket-qua__xem" :to="{ name: tenRoute('hs-thcs-huong-di'), params: { maHuong: item.huong.ma_huong } }">
                     Xem chi tiết hướng đi →
                   </RouterLink>
                 </li>
               </ol>
             </div>
             <div v-else-if="daXem" class="stages-card thcs__trang-thai mt-3">
-              Chưa đủ dữ liệu điểm phù hợp để gợi ý. Bạn hãy xem từng hướng đi để tự so sánh.
+              Chưa đủ dữ liệu điểm phù hợp để gợi ý.
+              {{ laPhuHuynh ? 'Hãy cùng con xem từng hướng đi để so sánh.' : 'Bạn hãy xem từng hướng đi để tự so sánh.' }}
             </div>
           </template>
         </div>
@@ -101,7 +106,7 @@
             <h2 id="menu-huong-di" class="h4 mb-3">Các hướng đi sau THCS</h2>
             <ul class="menu-huong">
               <li v-for="item in dsHuong" :key="item.id">
-                <RouterLink class="menu-huong__muc" :to="{ name: 'hs-thcs-huong-di', params: { maHuong: item.ma_huong } }">
+                <RouterLink class="menu-huong__muc" :to="{ name: tenRoute('hs-thcs-huong-di'), params: { maHuong: item.ma_huong } }">
                   <span class="menu-huong__ten">{{ item.ten_huong }}</span>
                   <span v-if="chiPhi(item)" class="menu-huong__phu">{{ chiPhi(item) }}</span>
                 </RouterLink>
@@ -118,7 +123,7 @@
 import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { huongDiTieuChiApi, tieuChiApi } from '@/api/thcsHuongDi'
 import { loadAll } from '@/composables/useThcsHuongDi'
-import { DOI_TUONG_THCS } from './routes'
+import { useTenRouteThcs } from './useTenRouteThcs'
 import { chiPhi, mucHop, useDsHuongDiThcs } from './thcs'
 
 defineOptions({ name: 'ThcsTuDanhGia' })
@@ -134,6 +139,7 @@ const THANG_DIEM = [
 ]
 
 const { dsHuong, taiHuongDi } = useDsHuongDiThcs()
+const { goc, laPhuHuynh, tenRoute } = useTenRouteThcs()
 const dsTieuChi = ref([])
 // { huongDiId: { tieuChiId: điểm phù hợp } }
 const diemTheoHuong = ref({})

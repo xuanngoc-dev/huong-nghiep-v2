@@ -20,6 +20,7 @@ import {
   doiTenRouteThpt,
   routeNameDinhHuongThpt,
 } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
+import { TIEN_TO_HOC_SINH_THCS } from '@/components/guest/doi-tuong/HocSinhThcs/routes'
 
 const route = useRoute()
 
@@ -28,6 +29,7 @@ const chonDoiTuong = { label: 'Chọn đối tượng', to: { name: 'chon-doi-tu
 const hocSinhThpt = { label: 'Học sinh THPT', to: { name: 'hoc-sinh-thpt' } }
 const hocSinhThcs = { label: 'Học sinh THCS', to: { name: 'hoc-sinh-thcs' } }
 const phuHuynh = { label: 'Phụ huynh', to: { name: 'phu-huynh' } }
+const phuHuynhThcs = { label: 'Con học Trung học cơ sở', to: { name: 'phu-huynh-thcs' } }
 const phuHuynhThpt = { label: 'Con học Trung học phổ thông', to: { name: 'phu-huynh-thpt' } }
 const phuHuynhLop12 = { label: 'Con học lớp 12', to: { name: 'phu-huynh-thpt-lop-12' } }
 
@@ -43,7 +45,11 @@ const muc = computed(() => {
     return [trangChu, chonDoiTuong, { label: doiTuong?.name || hienTai.label }]
   }
 
-  if (route.meta.doiTuongCha === 'hoc-sinh-thcs') return [trangChu, chonDoiTuong, hocSinhThcs, hienTai]
+  if (route.meta.huongDiThcs) {
+    // Cùng trang hướng đi sau THCS, gắn dưới nhánh học sinh hoặc nhánh phụ huynh (meta.tienTo).
+    if (route.meta.tienTo === TIEN_TO_HOC_SINH_THCS) return [trangChu, chonDoiTuong, hocSinhThcs, hienTai]
+    return [trangChu, chonDoiTuong, phuHuynh, phuHuynhThcs, hienTai]
+  }
 
   if (route.meta.giaiDoanCon) {
     const goc = [trangChu, chonDoiTuong, phuHuynh]
