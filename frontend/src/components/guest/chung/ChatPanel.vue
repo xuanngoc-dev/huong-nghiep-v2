@@ -39,10 +39,12 @@
           :disabled="chat.state.daKetThuc"
           :placeholder="chat.state.daKetThuc ? 'Cuộc hội thoại đã kết thúc — mở hội thoại mới để hỏi tiếp.' : 'Hỏi về trường, ngành, tổ hợp, điểm…'"
           @keydown="keydown" />
-        <!-- Khung chat nổi (compact): luôn có cả Gửi và Hủy xếp dọc bên phải; Hủy dừng câu trả lời đang chạy. -->
+        <!-- Khung chat nổi (compact): luôn có cả Gửi và Hủy xếp dọc bên phải; Hủy dừng câu trả lời đang chạy.
+             Ô nhập trống và không đang trả lời thì Hủy thay bằng Kết thúc (kết thúc cuộc hội thoại, làm mới khung chat). -->
         <div v-if="compact" class="ai-chat__nut-gui">
           <button type="submit" :disabled="chat.state.sending || chat.state.daKetThuc || !chat.state.draft.trim() || !chat.state.modelId">Gửi</button>
-          <button type="button" class="ai-chat__stop" :disabled="!chat.state.sending" @click="chat.stop()">Hủy</button>
+          <button v-if="!chat.state.sending && !chat.state.draft.trim()" type="button" class="ai-chat__stop" :disabled="!hasUser && !chat.state.maPhien" @click="ketThuc">Kết thúc</button>
+          <button v-else type="button" class="ai-chat__stop" :disabled="!chat.state.sending" @click="chat.stop()">Hủy</button>
         </div>
         <template v-else>
           <button v-if="chat.state.sending" type="button" class="ai-chat__stop" @click="chat.stop()">Dừng</button>
@@ -80,6 +82,24 @@ async function scroll() {
 function submit(text) {
   stickToBottom.value = true
   chat.send(typeof text === 'string' ? text : undefined)
+}
+async function ketThuc() {
+  try {
+    await ElMessageBox.confirm(
+      'Kết thúc cuộc hội thoại này? Sau khi kết thúc bạn không thể hỏi tiếp trong cuộc này, khung chat sẽ được làm mới.',
+      'Kết thúc hội thoại',
+      { type: 'warning', confirmButtonText: 'Kết thúc', cancelButtonText: 'Hủy' },
+    )
+  } catch {
+    return
+  }
+  try {
+    await chat.ketThucHoiThoai()
+    stickToBottom.value = true
+    input.value?.focus()
+  } catch (error) {
+    ElMessage.error(error?.message || 'Không kết thúc được cuộc hội thoại. Vui lòng thử lại.')
+  }
 }
 // Hai tin liền nhau cùng một bên (bạn / trợ lý) thì gộp nhóm như trang Danh sách hội thoại.
 function cungBen(a, b) {

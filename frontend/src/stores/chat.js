@@ -81,18 +81,24 @@ export const useChatStore = defineStore('chat', () => {
     })()
     return loading
   }
+  async function ketThucPhien(ma) {
+    try {
+      return await ketThucPhienChat(ma, auth.isAuthenticated ? null : maThietBi())
+    } catch (error) {
+      const detail = error?.response?.data?.detail
+      throw new Error(typeof detail === 'string' ? detail : 'Không kết thúc được cuộc hội thoại. Vui lòng thử lại.')
+    }
+  }
+  // Nút "Kết thúc" ở khung chat nổi: kết thúc phiên trên server (nếu đã có phiên, chưa kết thúc) rồi làm mới khung chat.
+  async function ketThucHoiThoai() {
+    if (state.maPhien && !state.daKetThuc) await ketThucPhien(state.maPhien)
+    session.clear()
+  }
   // Lệnh "/..." trong khung chat (utils/chatLenh.js).
   const chayLenh = taoBoChayLenh({
     state,
     loadModels,
-    async ketThucPhien(ma) {
-      try {
-        return await ketThucPhienChat(ma, auth.isAuthenticated ? null : maThietBi())
-      } catch (error) {
-        const detail = error?.response?.data?.detail
-        throw new Error(typeof detail === 'string' ? detail : 'Không kết thúc được cuộc hội thoại. Vui lòng thử lại.')
-      }
-    },
+    ketThucPhien,
     saoChep: (vanBan) => navigator.clipboard.writeText(vanBan),
   })
   // Gửi từ khung chat nổi: tin bắt đầu bằng "/" là lệnh, chạy tại chỗ và hiện câu trả lời như tin nhắn cục bộ.
@@ -128,5 +134,5 @@ export const useChatStore = defineStore('chat', () => {
     if (userId) warmProfile()
   })
   watch(() => [state.draft, state.modelId], () => session.persist())
-  return { state, model, khungMo, moKhungChat, loadModels, kiemTraPhien, moHoiThoai, chayLenh, send, stop: session.stop, clear: session.clear, retry: session.retry }
+  return { state, model, khungMo, moKhungChat, loadModels, kiemTraPhien, moHoiThoai, chayLenh, ketThucHoiThoai, send, stop: session.stop, clear: session.clear, retry: session.retry }
 })
