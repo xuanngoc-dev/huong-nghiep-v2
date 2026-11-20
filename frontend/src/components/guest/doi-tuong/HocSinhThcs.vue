@@ -35,28 +35,14 @@
             <div v-else-if="!dsHuong.length" class="thcs__trang-thai">Chưa có dữ liệu hướng đi sau THCS.</div>
 
             <div v-else class="row g-3">
-              <div v-for="huong in dsHuong" :key="huong.id" class="col-12 col-sm-6 col-xl-4">
-                <RouterLink
-                  class="huong-card h-100"
+              <div v-for="huong in dsHuong" :key="huong.id" class="col-12 col-xl-6">
+                <HuongDiCard
+                  :image="anhHuongDi(huong)"
+                  :title="huong.ten_huong"
+                  :description="huong.mo_ta_tong_quan"
+                  :note="chiPhi(huong)"
                   :to="{ name: 'hs-thcs-huong-di', params: { maHuong: huong.ma_huong } }"
-                >
-                  <span class="huong-card__ten">{{ huong.ten_huong }}</span>
-                  <span class="huong-card__mo-ta">{{ huong.mo_ta_tong_quan }}</span>
-                  <ul v-if="uuNhuocCua(huong.id).length" class="uu-nhuoc">
-                    <li
-                      v-for="item in uuNhuocCua(huong.id)"
-                      :key="item.id"
-                      class="uu-nhuoc__muc"
-                      :class="`uu-nhuoc__muc--${item.loai}`"
-                    >
-                      <span class="uu-nhuoc__dau" aria-hidden="true">{{ item.loai === 'uu_diem' ? '+' : '−' }}</span>
-                      <span class="visually-hidden">{{ item.loai === 'uu_diem' ? 'Ưu điểm:' : 'Nhược điểm:' }}</span>
-                      {{ item.tieu_de }}
-                    </li>
-                  </ul>
-                  <span v-if="chiPhi(huong)" class="huong-card__chi-phi">{{ chiPhi(huong) }}</span>
-                  <span class="huong-card__xem">Xem chi tiết →</span>
-                </RouterLink>
+                />
               </div>
             </div>
           </div>
@@ -98,14 +84,13 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import { Compass } from '@element-plus/icons-vue'
 import { useDoiTuongAudiences } from '@/composables/useDoiTuongAudiences'
-import { uuNhuocDiemApi } from '@/api/thcsHuongDi'
-import { loadAll } from '@/composables/useThcsHuongDi'
 import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
 import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
-import { chiPhi, useDsHuongDiThcs } from './HocSinhThcs/thcs'
+import HuongDiCard from '@/components/guest/chung/HuongDiCard.vue'
+import { anhHuongDi, chiPhi, useDsHuongDiThcs } from './HocSinhThcs/thcs'
 
 defineOptions({ name: 'HocSinhThcs' })
 
@@ -116,33 +101,7 @@ defineProps({
 const { audiences, selectedCode, chonDoiTuong } = useDoiTuongAudiences()
 const { dsHuong, dangTai, loi, taiHuongDi } = useDsHuongDiThcs()
 
-// Số ưu điểm, nhược điểm tối đa hiện trên mỗi thẻ; xem đủ ở trang chi tiết.
-const SO_MUC_MOI_LOAI = 2
-// { huongDiId: [ưu điểm..., nhược điểm...] }, API đã xếp ưu điểm trước và theo thứ tự hiển thị.
-const uuNhuocTheoHuong = ref({})
-
-function uuNhuocCua(huongId) {
-  return uuNhuocTheoHuong.value[huongId] || []
-}
-
-// Lỗi tải ưu/nhược điểm không chặn trang: thẻ chỉ ẩn phần này.
-async function taiUuNhuoc() {
-  try {
-    const theoHuong = {}
-    for (const item of await loadAll(uuNhuocDiemApi.fetch)) {
-      const ds = (theoHuong[item.thcs_huong_di_id] ??= [])
-      if (ds.filter((x) => x.loai === item.loai).length < SO_MUC_MOI_LOAI) ds.push(item)
-    }
-    uuNhuocTheoHuong.value = theoHuong
-  } catch {
-    uuNhuocTheoHuong.value = {}
-  }
-}
-
-onMounted(() => {
-  taiHuongDi()
-  taiUuNhuoc()
-})
+onMounted(taiHuongDi)
 </script>
 
 <style scoped>
@@ -234,97 +193,7 @@ onMounted(() => {
   white-space: nowrap;
 }
 
-.huong-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  width: 100%;
-  padding: 14px;
-  border: 1px solid #d7eadf;
-  border-top: 4px solid var(--guest-primary);
-  border-radius: var(--guest-radius);
-  background: #fff;
-  color: inherit;
-  text-decoration: none;
-  transition: box-shadow 0.3s ease;
-}
-
-.huong-card:hover {
-  box-shadow: 0 12px 24px rgba(31, 122, 77, 0.12);
-}
-
-.huong-card__ten {
-  color: #1c2b23;
-  font-size: 1.05rem;
-  font-weight: 700;
-  line-height: 1.35;
-}
-
-.huong-card__mo-ta {
-  display: -webkit-box;
-  overflow: hidden;
-  color: #3a4742;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-}
-
-.uu-nhuoc {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin: 2px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.uu-nhuoc__muc {
-  --mau: var(--guest-primary);
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  color: #1c2b23;
-  font-size: 0.85rem;
-  line-height: 1.4;
-}
-
-.uu-nhuoc__muc--nhuoc_diem {
-  --mau: #c2410c;
-}
-
-.uu-nhuoc__dau {
-  display: inline-flex;
-  flex: 0 0 18px;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  margin-top: 1px;
-  border-radius: 50%;
-  background: var(--mau);
-  color: #fff;
-  font-size: 0.8rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.huong-card__chi-phi {
-  color: #6b7780;
-  font-size: 0.82rem;
-}
-
-.huong-card__xem {
-  margin-top: auto;
-  color: var(--guest-primary);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
 .goi-y-card:focus-visible,
-.huong-card:focus-visible,
 .thcs__thu-lai:focus-visible {
   outline: 2px solid var(--guest-primary);
   outline-offset: 2px;

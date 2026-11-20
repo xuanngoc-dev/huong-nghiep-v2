@@ -1,7 +1,29 @@
 import { ref } from 'vue'
 import { huongDiApi } from '@/api/thcsHuongDi'
+import thcsImage from '@/assets/guest/thcs.jpg'
+import thptImage from '@/assets/guest/thpt.jpg'
+import phanVanImage from '@/assets/guest/phan-van.jpg'
+import nhaTruongImage from '@/assets/guest/nha-truong.jpg'
+import sinhVienImage from '@/assets/guest/sinh-vien.jpg'
+import thanhNienImage from '@/assets/guest/thanh-nien.jpg'
+import nhaTuyenDungImage from '@/assets/guest/nha-tuyen-dung.jpg'
 
 // Định dạng và tải dữ liệu danh mục hướng đi sau THCS cho trang khách.
+
+// Danh mục hướng đi chưa có cột ảnh: gán ảnh có sẵn theo mã hướng đi, mã khác dùng ảnh THCS.
+const ANH_HUONG_DI = {
+  THPT_CONG_LAP: thptImage,
+  THPT_CHUYEN: phanVanImage,
+  THPT_TU_THUC: nhaTruongImage,
+  THPT_QUOC_TE: sinhVienImage,
+  GDNN_GDTX: thcsImage,
+  TRUNG_CAP_9_PLUS: thanhNienImage,
+  HOC_NGHE_NGAN_HAN: nhaTuyenDungImage,
+}
+
+export function anhHuongDi(huong) {
+  return ANH_HUONG_DI[huong.ma_huong] || thcsImage
+}
 
 const dinhDangSo = new Intl.NumberFormat('vi-VN')
 

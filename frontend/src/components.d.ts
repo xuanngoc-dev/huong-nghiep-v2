@@ -126,6 +126,7 @@ declare module 'vue' {
     HoTroDinhHuong: typeof import('./components/guest/chung/HoTroDinhHuong.vue')['default']
     HoTroNhanh: typeof import('./components/guest/chung/HoTroNhanh.vue')['default']
     HuongDanKhaoSat: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/HuongDanKhaoSat.vue')['default']
+    HuongDiCard: typeof import('./components/guest/chung/HuongDiCard.vue')['default']
     JsonFileButton: typeof import('./components/admin/JsonFileButton.vue')['default']
     JsonImportDialogFooter: typeof import('./components/admin/JsonImportDialogFooter.vue')['default']
     KetQua: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/KetQua.vue')['default']
