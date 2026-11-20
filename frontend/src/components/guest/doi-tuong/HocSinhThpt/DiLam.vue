@@ -12,7 +12,13 @@
             </p>
 
             <div class="row g-3">
-              <div v-for="item in LOAI_HINH_DAU_VAO" :key="item.value" class="col-md-4">
+              <!-- 3 ô / hàng trên màn rộng; 2 ô / hàng thì ô cuối trải hết hàng; mobile 1 ô / hàng. -->
+              <div
+                v-for="(item, index) in LOAI_HINH_DAU_VAO"
+                :key="item.value"
+                class="col-12 col-xl-4"
+                :class="index < LOAI_HINH_DAU_VAO.length - 1 ? 'col-sm-6' : 'col-sm-12'"
+              >
                 <div class="loi-vao h-100">
                   <h2 class="loi-vao__title">{{ item.label }}</h2>
                   <p class="loi-vao__text">{{ item.moTa }}</p>
@@ -21,7 +27,7 @@
             </div>
 
             <div class="row g-3 mt-1">
-              <div class="col-md-6">
+              <div class="col-12 col-md-6">
                 <div class="can-nhac can-nhac--uu">
                   <h2 class="can-nhac__title">Ưu điểm</h2>
                   <ul class="can-nhac__list">
@@ -31,7 +37,7 @@
                   </ul>
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-12 col-md-6">
                 <div class="can-nhac can-nhac--luu-y">
                   <h2 class="can-nhac__title">Cần lưu ý</h2>
                   <ul class="can-nhac__list">
@@ -72,7 +78,7 @@
             </div>
 
             <div v-else class="row g-3">
-              <div v-for="nhom in dsHienThi" :key="nhom.id" class="col-md-6 col-xxl-4">
+              <div v-for="nhom in dsHienThi" :key="nhom.id" class="col-12 col-md-6">
                 <article class="nhom-nghe-card h-100" :class="`nhom-nghe-card--${nhom.nhom_muc_tieu || 'khac'}`">
                   <div class="nhom-nghe-card__tags">
                     <span v-if="nhom.nhom_muc_tieu" class="nhom-nghe-card__muc-tieu">
@@ -108,16 +114,18 @@
                     {{ nhom.danh_gia_trien_vong }}
                   </p>
 
-                  <template v-if="nhom.dieu_kien_dau_vao || nhom.lo_trinh_phat_trien">
-                    <div v-if="moRong[nhom.id]" :id="`chi-tiet-${nhom.id}`" class="nhom-nghe-card__chi-tiet">
-                      <p v-if="nhom.dieu_kien_dau_vao">
-                        <strong>Điều kiện đầu vào:</strong> {{ nhom.dieu_kien_dau_vao }}
-                      </p>
-                      <p v-if="nhom.lo_trinh_phat_trien">
-                        <strong>Lộ trình phát triển:</strong> {{ nhom.lo_trinh_phat_trien }}
-                      </p>
-                    </div>
+                  <div v-if="moRong[nhom.id]" :id="`chi-tiet-${nhom.id}`" class="nhom-nghe-card__chi-tiet">
+                    <p v-if="nhom.dieu_kien_dau_vao">
+                      <strong>Điều kiện đầu vào:</strong> {{ nhom.dieu_kien_dau_vao }}
+                    </p>
+                    <p v-if="nhom.lo_trinh_phat_trien">
+                      <strong>Lộ trình phát triển:</strong> {{ nhom.lo_trinh_phat_trien }}
+                    </p>
+                  </div>
+
+                  <div class="nhom-nghe-card__chan">
                     <button
+                      v-if="nhom.dieu_kien_dau_vao || nhom.lo_trinh_phat_trien"
                       type="button"
                       class="nhom-nghe-card__xem-them"
                       :aria-expanded="!!moRong[nhom.id]"
@@ -126,13 +134,21 @@
                     >
                       {{ moRong[nhom.id] ? 'Thu gọn' : 'Điều kiện & lộ trình' }}
                     </button>
-                  </template>
+                    <RouterLink
+                      class="nhom-nghe-card__chi-tiet-link"
+                      :to="{ name: tenRoute('thpt-di-lam-nhom-nghe'), params: { maNhom: nhom.ma_nhom } }"
+                      :aria-label="`Chi tiết nhóm nghề ${nhom.ten_nhom}`"
+                    >
+                      Chi tiết
+                    </RouterLink>
+                  </div>
                 </article>
               </div>
             </div>
           </div>
 
           <div class="d-flex flex-column gap-3 mt-3">
+            <GoiYKhaoSat />
             <HoTroDinhHuong />
             <CauHoiThuongGap />
           </div>
@@ -174,35 +190,17 @@ import { useRoute, useRouter } from 'vue-router'
 import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
 import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
 import { fetchNhomNgheDiLam } from '@/api/nhomNgheDiLam'
+import GoiYKhaoSat from './di-lam/GoiYKhaoSat.vue'
+import { LOAI_HINH_DAU_VAO, NHOM_MUC_TIEU, khoangLuong, nhan, soTrieu, thoiGianDaoTao } from './di-lam/nhomNghe'
 import { DINH_HUONG_THPT_KEY, dinhHuongThptList } from './dinhHuong'
 import { routeNameDinhHuongThpt } from './routes'
 import { useTenRouteThpt } from './useTenRouteThpt'
 
 defineOptions({ name: 'ThptDiLam' })
 
-const LOAI_HINH_DAU_VAO = [
-  { value: 'di_lam_ngay', label: 'Đi làm ngay', moTa: 'Doanh nghiệp đào tạo tại chỗ vài ngày đến vài tuần, có lương ngay.' },
-  {
-    value: 'hoc_nghe_ngan_han',
-    label: 'Học nghề ngắn hạn',
-    moTa: 'Học 3-12 tháng tại trường nghề, trung tâm để có tay nghề và chứng chỉ.',
-  },
-  {
-    value: 'tu_hoc_ky_nang',
-    label: 'Tự học kỹ năng',
-    moTa: 'Tự học qua khóa học online, dự án thực tế; phù hợp người chủ động, thích công nghệ.',
-  },
-]
-
-const NHOM_MUC_TIEU = [
-  { value: 'kiem_tien_ngay', label: 'Kiếm tiền ngay' },
-  { value: 'nghe_vung_chac', label: 'Nghề vững chắc' },
-  { value: 'thu_nhap_dot_pha', label: 'Thu nhập đột phá' },
-]
-
 const BO_LOC = [{ value: '', label: 'Tất cả' }, ...NHOM_MUC_TIEU]
 
-const { tienTo } = useTenRouteThpt()
+const { tienTo, tenRoute } = useTenRouteThpt()
 const route = useRoute()
 const router = useRouter()
 const currentDirection = computed(() => route.meta.dinhHuong || '')
@@ -216,31 +214,6 @@ const moRong = reactive({})
 const dsHienThi = computed(() =>
   mucTieu.value ? dsNhomNghe.value.filter((nhom) => nhom.nhom_muc_tieu === mucTieu.value) : dsNhomNghe.value,
 )
-
-function nhan(ds, value) {
-  return ds.find((item) => item.value === value)?.label || value
-}
-
-// Decimal từ API là chuỗi ("7.00"); bỏ phần thập phân thừa khi hiển thị.
-function soTrieu(value) {
-  return Number(value).toLocaleString('vi-VN')
-}
-
-function khoangLuong(nhom) {
-  const tu = nhom.luong_khoi_diem_min
-  const den = nhom.luong_khoi_diem_max
-  if (tu == null && den == null) return 'Đang cập nhật'
-  if (tu != null && den != null) return `${soTrieu(tu)} - ${soTrieu(den)} triệu/tháng`
-  return `${soTrieu(tu ?? den)} triệu/tháng`
-}
-
-function thoiGianDaoTao(nhom) {
-  const tu = nhom.thoi_gian_dao_tao_thang_min
-  const den = nhom.thoi_gian_dao_tao_thang_max
-  if (tu == null && den == null) return 'Đang cập nhật'
-  if (!den) return 'Không cần đào tạo dài'
-  return tu != null && tu !== den ? `${tu} - ${den} tháng` : `${den} tháng`
-}
 
 async function taiNhomNghe() {
   dangTai.value = true
@@ -499,9 +472,38 @@ onMounted(taiNhomNghe)
   line-height: 1.5;
 }
 
-.nhom-nghe-card__xem-them {
-  align-self: flex-start;
+.nhom-nghe-card__chan {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   margin-top: auto;
+}
+
+.nhom-nghe-card__chi-tiet-link {
+  margin-left: auto;
+  border-radius: var(--guest-radius);
+  padding: 7px 16px;
+  background: var(--guest-primary);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.nhom-nghe-card__chi-tiet-link:hover {
+  background: var(--guest-primary-hover);
+  color: #fff;
+}
+
+.nhom-nghe-card__chi-tiet-link:focus-visible {
+  outline: 2px solid var(--guest-primary);
+  outline-offset: 2px;
+}
+
+.nhom-nghe-card__xem-them {
   border: 0;
   padding: 0;
   background: none;
@@ -513,5 +515,60 @@ onMounted(taiNhomNghe)
 
 .nhom-nghe-card__xem-them:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 767.98px) {
+  .nhom-nghe__head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Nút lọc cuộn ngang thay vì xuống nhiều dòng. */
+  .loc-muc-tieu {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin: 0 -15px;
+    padding: 0 15px 4px;
+    scrollbar-width: none;
+  }
+
+  .loc-muc-tieu::-webkit-scrollbar {
+    display: none;
+  }
+
+  .loc-muc-tieu__nut {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .di-lam__title {
+    font-size: 1.4rem;
+  }
+
+  .di-lam__lead,
+  .loi-vao__text,
+  .can-nhac__list {
+    font-size: 0.9rem;
+  }
+
+  .di-lam .stages-heading {
+    font-size: 1.2rem;
+  }
+
+  .nhom-nghe-card {
+    padding: 14px;
+  }
+
+  .di-lam .nhom-nghe-card__ten {
+    font-size: 1.1rem;
+  }
+}
+
+/* Màn rất hẹp: bảng thông tin trong card còn 1 cột. */
+@media (max-width: 359.98px) {
+  .nhom-nghe-card__thong-tin {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 </style>

@@ -76,6 +76,9 @@ const muc = computed(() => {
       }
       return [...goc, thiDaiHoc, hienTai]
     }
+    if (route.meta.dinhHuong === 'di-lam') {
+      return [...goc, { label: 'Đi làm ngay sau khi tốt nghiệp', to: { name: ten('thpt-di-lam') } }, hienTai]
+    }
     return [...goc, hienTai]
   }
 

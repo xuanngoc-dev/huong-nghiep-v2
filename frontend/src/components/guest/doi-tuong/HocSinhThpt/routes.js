@@ -7,6 +7,12 @@ const cayDinhHuongThpt = [
     meta: { title: 'Đi làm ngay sau khi tốt nghiệp', public: true, dinhHuong: 'di-lam' },
   },
   {
+    path: 'di-lam/nhom-nghe/:maNhom',
+    name: 'di-lam-nhom-nghe',
+    component: () => import('./di-lam/ChiTietNhomNghe.vue'),
+    meta: { title: 'Nghề cụ thể', public: true, dinhHuong: 'di-lam' },
+  },
+  {
     path: 'du-hoc-nghe',
     name: 'du-hoc-nghe',
     component: () => import('./DuHocNghe.vue'),
