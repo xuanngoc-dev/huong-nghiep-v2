@@ -198,7 +198,7 @@ const JSON_SAMPLE = `[
   },
   {
     "ma_tieu_chi": "TAI_CHINH",
-    "ten_tieu_chi": "Khả năng tài chính gia đình",
+    "ten_tieu_chi": "Cần tiết kiệm chi phí học tập",
     "nhom_tieu_chi": "Hoàn cảnh",
     "thu_tu_hien_thi": 2
   }

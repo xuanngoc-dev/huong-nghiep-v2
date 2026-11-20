@@ -4,6 +4,7 @@ import { doiTuongList, laDoiTuongMo } from '@/data/doiTuong'
 import { dinhHuongThptRoutes } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
 import { laDinhHuongMo } from '@/components/guest/doi-tuong/HocSinhThpt/dinhHuong'
 import { giaiDoanConRoutes } from '@/components/guest/doi-tuong/PhuHuynh/routes'
+import { dinhHuongThcsRoutes } from '@/components/guest/doi-tuong/HocSinhThcs/routes'
 
 // Chờ trang đủ cao (dữ liệu tải bất đồng bộ) rồi mới cuộn về vị trí cũ.
 function choDuChieuCao(top, thoiGianToiDa = 1500) {
@@ -66,6 +67,7 @@ const router = createRouter({
           component: () => import('@/views/guest/DoiTuong.vue'),
           meta: { title: item.name, public: true, doiTuong: item.code },
         })),
+        ...dinhHuongThcsRoutes,
         ...dinhHuongThptRoutes,
         ...giaiDoanConRoutes,
         // Tạm bỏ trang chat đầy đủ: dùng khung chat nổi (khách) và trang Danh sách hội thoại (thành viên).
@@ -724,7 +726,8 @@ router.beforeEach(async (to) => {
   const title = to.meta?.title
   document.title = title ? `${title} | Định hướng nghề` : 'Định hướng nghề'
 
-  if (to.meta.doiTuong && !laDoiTuongMo(to.meta.doiTuong)) {
+  const doiTuong = to.meta.doiTuong || to.meta.doiTuongCha
+  if (doiTuong && !laDoiTuongMo(doiTuong)) {
     return { name: 'chon-doi-tuong' }
   }
 

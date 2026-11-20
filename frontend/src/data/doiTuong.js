@@ -5,9 +5,9 @@ export const doiTuongList = [
   {
     ma: 'THCS',
     code: 'hoc-sinh-thcs',
-    moTruyCap: false,
+    moTruyCap: true,
     name: 'Học sinh THCS',
-    description: 'Bạn đang học cấp trung học cơ sở và muốn hiểu sở thích, năng lực trước khi chọn hướng lên THPT.',
+    description: 'Bạn đang học cấp trung học cơ sở và muốn chọn hướng đi phù hợp sau lớp 9.',
   },
   {
     ma: 'THPT',

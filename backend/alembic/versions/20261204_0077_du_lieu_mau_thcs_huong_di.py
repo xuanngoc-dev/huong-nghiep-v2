@@ -114,12 +114,12 @@ TIEU_CHI = [
      "Sở thích", 4),
     ("MUC_TIEU_DAI_HOC", "Mục tiêu học đại học", "Gia đình và học sinh muốn hướng tới bằng đại học", "Định hướng", 5),
     ("DI_LAM_SOM", "Nhu cầu đi làm sớm", "Cần có thu nhập hoặc muốn tự lập sớm", "Định hướng", 6),
-    ("TAI_CHINH", "Khả năng tài chính gia đình", "Mức chi phí học tập gia đình có thể chi trả hằng tháng",
-     "Hoàn cảnh", 7),
+    ("TAI_CHINH", "Cần tiết kiệm chi phí học tập", "Gia đình cần chọn hướng học có chi phí thấp", "Hoàn cảnh", 7),
     ("TU_GIAC", "Tính tự giác, chịu áp lực", "Tự học, giữ kỷ luật và chịu được áp lực thi cử", "Tính cách", 8),
 ]
 
-# Điểm phù hợp 1-5 theo thứ tự cột TIEU_CHI.
+# Điểm phù hợp 1-5 theo thứ tự cột TIEU_CHI: hướng đi hợp với người có mức tiêu chí này cao đến đâu
+# (trang tự đánh giá so mức của học sinh với điểm này).
 _DIEM = {
     "THPT_CONG_LAP": (4, 3, 3, 2, 5, 2, 4, 4),
     "THPT_CHUYEN": (5, 5, 4, 2, 5, 1, 3, 5),
