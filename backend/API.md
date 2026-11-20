@@ -1,14 +1,14 @@
 # Danh sách API
 
-Tự sinh từ code lúc 20/11/2026 13:59 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 20/11/2026 15:10 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **493** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **494** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 315 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Quản trị (admin)](#quan_tri) | 316 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
 | [Thành viên (user)](#thanh_vien) | 104 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 74 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
@@ -456,6 +456,7 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/he-thong/lich-su-nap-tien` | Bắt buộc (admin) | Toàn bộ lịch sử nạp tiền, mới nhất trước. |
+| `GET` | `/api/v1/he-thong/lich-su-nap-tien/thong-ke` | Bắt buộc (admin) | Thống kê tài chính cho dashboard: doanh thu hôm nay/tuần/tháng/năm so với cùng kỳ trước, |
 | `POST` | `/api/v1/he-thong/lich-su-nap-tien/{item_id}/tu-choi` | Bắt buộc (admin) | Từ chối giao dịch đang chờ (không nhận được tiền): chuyển sang thất bại, không cộng số dư. |
 | `POST` | `/api/v1/he-thong/lich-su-nap-tien/{item_id}/xac-nhan` | Bắt buộc (admin) | Xác nhận đã nhận tiền: chuyển sang thành công và cộng Edu coin/lượt cho người nạp. |
 

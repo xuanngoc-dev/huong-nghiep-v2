@@ -181,6 +181,7 @@ declare module 'vue' {
     TheSoDuTongQuan: typeof import('./components/member/tong-quan/TheSoDuTongQuan.vue')['default']
     TheThongKe: typeof import('./components/admin/dashboard/TheThongKe.vue')['default']
     ThiDaiHoc: typeof import('./components/guest/doi-tuong/HocSinhThpt/ThiDaiHoc.vue')['default']
+    ThongKeTaiChinh: typeof import('./components/admin/dashboard/ThongKeTaiChinh.vue')['default']
     Thpt: typeof import('./components/guest/doi-tuong/PhuHuynh/Thpt.vue')['default']
     ThptLop1011: typeof import('./components/guest/doi-tuong/PhuHuynh/ThptLop1011.vue')['default']
     ThptLop12: typeof import('./components/guest/doi-tuong/PhuHuynh/ThptLop12.vue')['default']

@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { formatSoNhap, parseSoNhap } from '../src/utils/number.js'
+import { formatSoNhap, parseSoNhap, tienRutGon } from '../src/utils/number.js'
 
 test('formatSoNhap phân tách hàng nghìn, thập phân dùng dấu phẩy', () => {
   assert.equal(formatSoNhap('10000'), '10.000')
@@ -30,4 +30,12 @@ test('dấu chấm vừa gõ ở cuối được hiểu là dấu thập phân',
   assert.equal(formatSoNhap(parseSoNhap('8.')), '8,')
   assert.equal(parseSoNhap('0,25'), '0.25')
   assert.equal(parseSoNhap('1.234,'), '1234.')
+})
+
+test('tienRutGon dùng đ dưới 1 triệu, triệu/tỷ làm tròn 1 chữ số thập phân', () => {
+  assert.deepEqual(tienRutGon(85000), { so: '85.000', donVi: 'đ' })
+  assert.deepEqual(tienRutGon(0), { so: '0', donVi: 'đ' })
+  assert.deepEqual(tienRutGon(1250000), { so: '1,3', donVi: 'triệu' })
+  assert.deepEqual(tienRutGon(15000000), { so: '15', donVi: 'triệu' })
+  assert.deepEqual(tienRutGon(2100000000), { so: '2,1', donVi: 'tỷ' })
 })

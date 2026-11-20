@@ -42,3 +42,15 @@ export function parseSoNhap(text) {
   if (!phanSau.length) return am + so
   return `${am}${so}.${phanSau.join('').replace(/\D/g, '')}`
 }
+
+/**
+ * Rút gọn số tiền VNĐ cho thẻ thống kê: 85000 → { so: '85.000', donVi: 'đ' },
+ * 1250000 → { so: '1,3', donVi: 'triệu' }, 2100000000 → { so: '2,1', donVi: 'tỷ' }.
+ */
+export function tienRutGon(value) {
+  const so = Math.round(Number(value) || 0)
+  const muc = Math.abs(so) >= 1e9 ? [1e9, 'tỷ'] : Math.abs(so) >= 1e6 ? [1e6, 'triệu'] : null
+  if (!muc) return { so: formatInteger(so), donVi: 'đ' }
+  const gon = Math.round((so / muc[0]) * 10) / 10
+  return { so: String(gon).replace('.', ','), donVi: muc[1] }
+}

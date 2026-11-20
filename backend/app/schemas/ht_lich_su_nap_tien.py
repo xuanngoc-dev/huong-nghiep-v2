@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import date, datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -100,3 +101,38 @@ class NapTienQuanTriPage(BaseModel):
     total: int
     page: int
     page_size: int
+
+
+class ThongKeTien(BaseModel):
+    so_tien: int
+    so_giao_dich: int
+
+
+class ThongKeKy(ThongKeTien):
+    """Doanh thu một kỳ tính đến hiện tại và cùng kỳ trước (cùng khoảng thời gian đã trôi qua)."""
+
+    ma: Literal["hom_nay", "tuan_nay", "thang_nay", "nam_nay"]
+    so_tien_ky_truoc: int
+    so_giao_dich_ky_truoc: int
+
+
+class ThongKeNgay(ThongKeTien):
+    ngay: date
+
+
+class ThongKeThang(ThongKeTien):
+    thang: int = Field(..., ge=1, le=12)
+
+
+class ThongKeLoai(ThongKeTien):
+    loai_ap_dung: str
+
+
+class ThongKeNapTien(BaseModel):
+    """Số liệu tài chính cho dashboard quản trị (chỉ tính giao dịch thành công, trừ `cho_xac_nhan`)."""
+
+    ky: list[ThongKeKy]
+    theo_ngay: list[ThongKeNgay]
+    theo_thang: list[ThongKeThang]
+    theo_loai: list[ThongKeLoai]
+    cho_xac_nhan: ThongKeTien
