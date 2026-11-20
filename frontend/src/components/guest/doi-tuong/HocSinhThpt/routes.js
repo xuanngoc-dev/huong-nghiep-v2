@@ -169,6 +169,12 @@ const cayDinhHuongThpt = [
     component: () => import('./XuatKhauLaoDong.vue'),
     meta: { title: 'Xuất khẩu lao động', public: true, dinhHuong: 'xuat-khau-lao-dong' },
   },
+  {
+    path: 'xuat-khau-lao-dong/nhom-nghe/:maNhom',
+    name: 'xuat-khau-lao-dong-nhom-nghe',
+    component: () => import('./xuat-khau-lao-dong/ChiTietNhomNghe.vue'),
+    meta: { title: 'Nhóm nghề xuất khẩu lao động', public: true, dinhHuong: 'xuat-khau-lao-dong' },
+  },
 ]
 
 // Nhánh học sinh: /hoc-sinh-thpt/..., tên route `thpt-...`.
