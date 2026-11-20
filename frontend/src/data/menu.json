@@ -300,148 +300,232 @@
       "abbr": "DM",
       "items": [
         {
-          "index": "/admin/danh-muc/tinh-thanh",
-          "title": "Tỉnh thành",
-          "tooltip": "Quản lý danh mục tỉnh, thành phố",
-          "icon": "MapLocation"
+          "index": "danh-muc:dung-chung",
+          "title": "Dùng chung",
+          "tooltip": "Danh mục hành chính dùng chung cho mọi đối tượng",
+          "icon": "Collection",
+          "children": [
+            {
+              "index": "/admin/danh-muc/tinh-thanh",
+              "title": "Tỉnh thành",
+              "tooltip": "Quản lý danh mục tỉnh, thành phố",
+              "icon": "MapLocation"
+            },
+            {
+              "index": "/admin/danh-muc/dan-toc",
+              "title": "Dân tộc",
+              "tooltip": "Quản lý danh mục dân tộc",
+              "icon": "User"
+            },
+            {
+              "index": "/admin/danh-muc/ton-giao",
+              "title": "Tôn giáo",
+              "tooltip": "Quản lý danh mục tôn giáo",
+              "icon": "Sunrise"
+            }
+          ]
         },
         {
-          "index": "/admin/danh-muc/dan-toc",
-          "title": "Dân tộc",
-          "tooltip": "Quản lý danh mục dân tộc",
-          "icon": "User"
+          "index": "danh-muc:trac-nghiem",
+          "title": "Trắc nghiệm & Holland",
+          "tooltip": "Danh mục phục vụ bài trắc nghiệm của mọi định hướng",
+          "icon": "EditPen",
+          "children": [
+            {
+              "index": "/admin/danh-muc/loai-cau-hoi",
+              "title": "Loại câu hỏi",
+              "tooltip": "Quản lý các loại câu hỏi trắc nghiệm",
+              "icon": "QuestionFilled"
+            },
+            {
+              "index": "/admin/danh-muc/nhom-tinh-cach-holland",
+              "title": "Nhóm Holland",
+              "tooltip": "Quản lý nhóm tính cách Holland dùng để định hướng nghề",
+              "icon": "Compass"
+            }
+          ]
         },
         {
-          "index": "/admin/danh-muc/ton-giao",
-          "title": "Tôn giáo",
-          "tooltip": "Quản lý danh mục tôn giáo",
-          "icon": "Sunrise"
+          "index": "danh-muc:thi-dh-xet-tuyen",
+          "title": "Thi ĐH & CĐ: Xét tuyển",
+          "tooltip": "Học sinh THPT thi đại học & cao đẳng: ưu tiên, phương thức, môn thi, chứng chỉ",
+          "icon": "Tickets",
+          "children": [
+            {
+              "index": "/admin/danh-muc/khu-vuc-uu-tien",
+              "title": "Khu vực ưu tiên",
+              "tooltip": "Quản lý khu vực ưu tiên trong tuyển sinh",
+              "icon": "Place"
+            },
+            {
+              "index": "/admin/danh-muc/doi-tuong-uu-tien",
+              "title": "Đối tượng ưu tiên",
+              "tooltip": "Quản lý đối tượng được ưu tiên tuyển sinh",
+              "icon": "Medal"
+            },
+            {
+              "index": "/admin/danh-muc/muc-diem-uu-tien",
+              "title": "Điểm ưu tiên theo năm",
+              "tooltip": "Mức điểm cộng khu vực / đối tượng ưu tiên theo năm tuyển sinh",
+              "icon": "Calendar"
+            },
+            {
+              "index": "/admin/danh-muc/phuong-thuc-tuyen-sinh",
+              "title": "PT tuyển sinh",
+              "tooltip": "Quản lý các phương thức tuyển sinh",
+              "icon": "Reading"
+            },
+            {
+              "index": "/admin/danh-muc/mon-hoc",
+              "title": "Môn học",
+              "tooltip": "Quản lý danh mục môn học",
+              "icon": "Notebook"
+            },
+            {
+              "index": "/admin/danh-muc/to-hop-mon-hoc",
+              "title": "Tổ hợp môn học",
+              "tooltip": "Quản lý tổ hợp môn dùng để xét tuyển",
+              "icon": "Grid"
+            },
+            {
+              "index": "/admin/danh-muc/bang-cap-chung-chi",
+              "title": "Bằng cấp chứng chỉ",
+              "tooltip": "Quản lý danh mục bằng cấp, chứng chỉ",
+              "icon": "Stamp"
+            },
+            {
+              "index": "/admin/danh-muc/bai-thi-danh-gia-nang-luc",
+              "title": "Bài thi năng lực",
+              "tooltip": "Quản lý danh mục bài thi đánh giá năng lực",
+              "icon": "DataAnalysis"
+            },
+            {
+              "index": "/admin/danh-muc/thanh-tich-hoc-tap-nghien-cuu",
+              "title": "Thành tích học tập",
+              "tooltip": "Quản lý danh mục thành tích học tập, nghiên cứu",
+              "icon": "Trophy"
+            }
+          ]
         },
         {
-          "index": "/admin/danh-muc/khu-vuc-uu-tien",
-          "title": "Khu vực ưu tiên",
-          "tooltip": "Quản lý khu vực ưu tiên trong tuyển sinh",
-          "icon": "Place"
+          "index": "danh-muc:thi-dh-nganh-truong",
+          "title": "Thi ĐH & CĐ: Ngành & trường",
+          "tooltip": "Học sinh THPT thi đại học & cao đẳng: lĩnh vực, ngành, trường",
+          "icon": "School",
+          "children": [
+            {
+              "index": "/admin/danh-muc/linh-vuc-dao-tao",
+              "title": "Lĩnh vực đào tạo",
+              "tooltip": "Quản lý danh mục lĩnh vực đào tạo",
+              "icon": "Collection"
+            },
+            {
+              "index": "/admin/danh-muc/nhom-nganh-dao-tao",
+              "title": "Nhóm ngành",
+              "tooltip": "Quản lý nhóm ngành đào tạo",
+              "icon": "Files"
+            },
+            {
+              "index": "/admin/danh-muc/nganh-dao-tao",
+              "title": "Ngành đào tạo",
+              "tooltip": "Quản lý danh mục ngành đào tạo",
+              "icon": "Management"
+            },
+            {
+              "index": "/admin/danh-muc/chuyen-nganh",
+              "title": "Chuyên ngành",
+              "tooltip": "Quản lý chuyên ngành thuộc từng ngành đào tạo",
+              "icon": "Tickets"
+            },
+            {
+              "index": "/admin/danh-muc/truong-hoc",
+              "title": "Trường học",
+              "tooltip": "Quản lý danh mục trường đại học",
+              "icon": "School"
+            },
+            {
+              "index": "/admin/danh-muc/nganh-hoc-theo-truong",
+              "title": "Ngành theo trường",
+              "tooltip": "Quản lý ngành đào tạo của từng trường theo năm học",
+              "icon": "Notebook"
+            }
+          ]
         },
         {
-          "index": "/admin/danh-muc/doi-tuong-uu-tien",
-          "title": "Đối tượng ưu tiên",
-          "tooltip": "Quản lý đối tượng được ưu tiên tuyển sinh",
-          "icon": "Medal"
+          "index": "danh-muc:di-lam",
+          "title": "Đi làm ngay",
+          "tooltip": "Học sinh THPT đi làm ngay sau tốt nghiệp: nhóm nghề và tiêu chí gợi ý",
+          "icon": "Suitcase",
+          "children": [
+            {
+              "index": "/admin/danh-muc/nhom-nghe-di-lam",
+              "title": "Nhóm nghề đi làm",
+              "tooltip": "Nhóm nghề cho học sinh đi làm ngay sau THPT: đào tạo, lương, triển vọng",
+              "icon": "Suitcase"
+            },
+            {
+              "index": "/admin/danh-muc/nghe-cu-the-di-lam",
+              "title": "Nghề cụ thể",
+              "tooltip": "Các nghề cụ thể thuộc từng nhóm nghề đi làm",
+              "icon": "Briefcase"
+            },
+            {
+              "index": "/admin/danh-muc/tieu-chi-goi-y",
+              "title": "Tiêu chí gợi ý nghề",
+              "tooltip": "Tiêu chí sở thích, năng lực, hoàn cảnh, mục tiêu dùng để gợi ý nhóm nghề",
+              "icon": "Filter"
+            },
+            {
+              "index": "/admin/danh-muc/nhom-nghe-tieu-chi",
+              "title": "Tiêu chí - nhóm nghề",
+              "tooltip": "Điểm phù hợp (1-5) của từng tiêu chí với nhóm nghề đi làm",
+              "icon": "Connection"
+            }
+          ]
         },
         {
-          "index": "/admin/danh-muc/muc-diem-uu-tien",
-          "title": "Điểm ưu tiên theo năm",
-          "tooltip": "Mức điểm cộng khu vực / đối tượng ưu tiên theo năm tuyển sinh",
-          "icon": "Calendar"
-        },
-        {
-          "index": "/admin/danh-muc/phuong-thuc-tuyen-sinh",
-          "title": "PT tuyển sinh",
-          "tooltip": "Quản lý các phương thức tuyển sinh",
-          "icon": "Reading"
-        },
-        {
-          "index": "/admin/danh-muc/mon-hoc",
-          "title": "Môn học",
-          "tooltip": "Quản lý danh mục môn học",
-          "icon": "Notebook"
-        },
-        {
-          "index": "/admin/danh-muc/to-hop-mon-hoc",
-          "title": "Tổ hợp môn học",
-          "tooltip": "Quản lý tổ hợp môn dùng để xét tuyển",
-          "icon": "Grid"
-        },
-        {
-          "index": "/admin/danh-muc/loai-cau-hoi",
-          "title": "Loại câu hỏi",
-          "tooltip": "Quản lý các loại câu hỏi trắc nghiệm",
-          "icon": "QuestionFilled"
-        },
-        {
-          "index": "/admin/danh-muc/nhom-tinh-cach-holland",
-          "title": "Nhóm Holland",
-          "tooltip": "Quản lý nhóm tính cách Holland dùng để định hướng nghề",
-          "icon": "Compass"
-        },
-        {
-          "index": "/admin/danh-muc/nhom-nghe-di-lam",
-          "title": "Nhóm nghề đi làm",
-          "tooltip": "Nhóm nghề cho học sinh đi làm ngay sau THPT: đào tạo, lương, triển vọng",
-          "icon": "Suitcase"
-        },
-        {
-          "index": "/admin/danh-muc/nghe-cu-the-di-lam",
-          "title": "Nghề cụ thể",
-          "tooltip": "Các nghề cụ thể thuộc từng nhóm nghề đi làm",
-          "icon": "Briefcase"
-        },
-        {
-          "index": "/admin/danh-muc/tieu-chi-goi-y",
-          "title": "Tiêu chí gợi ý nghề",
-          "tooltip": "Tiêu chí sở thích, năng lực, hoàn cảnh, mục tiêu dùng để gợi ý nhóm nghề",
-          "icon": "Filter"
-        },
-        {
-          "index": "/admin/danh-muc/nhom-nghe-tieu-chi",
-          "title": "Tiêu chí - nhóm nghề",
-          "tooltip": "Điểm phù hợp (1-5) của từng tiêu chí với nhóm nghề đi làm",
-          "icon": "Connection"
-        },
-        {
-          "index": "/admin/danh-muc/linh-vuc-dao-tao",
-          "title": "Lĩnh vực đào tạo",
-          "tooltip": "Quản lý danh mục lĩnh vực đào tạo",
-          "icon": "Collection"
-        },
-        {
-          "index": "/admin/danh-muc/nhom-nganh-dao-tao",
-          "title": "Nhóm ngành",
-          "tooltip": "Quản lý nhóm ngành đào tạo",
-          "icon": "Files"
-        },
-        {
-          "index": "/admin/danh-muc/nganh-dao-tao",
-          "title": "Ngành đào tạo",
-          "tooltip": "Quản lý danh mục ngành đào tạo",
-          "icon": "Management"
-        },
-        {
-          "index": "/admin/danh-muc/chuyen-nganh",
-          "title": "Chuyên ngành",
-          "tooltip": "Quản lý chuyên ngành thuộc từng ngành đào tạo",
-          "icon": "Tickets"
-        },
-        {
-          "index": "/admin/danh-muc/bang-cap-chung-chi",
-          "title": "Bằng cấp chứng chỉ",
-          "tooltip": "Quản lý danh mục bằng cấp, chứng chỉ",
-          "icon": "Stamp"
-        },
-        {
-          "index": "/admin/danh-muc/bai-thi-danh-gia-nang-luc",
-          "title": "Bài thi năng lực",
-          "tooltip": "Quản lý danh mục bài thi đánh giá năng lực",
-          "icon": "DataAnalysis"
-        },
-        {
-          "index": "/admin/danh-muc/thanh-tich-hoc-tap-nghien-cuu",
-          "title": "Thành tích học tập",
-          "tooltip": "Quản lý danh mục thành tích học tập, nghiên cứu",
-          "icon": "Trophy"
-        },
-        {
-          "index": "/admin/danh-muc/truong-hoc",
-          "title": "Trường học",
-          "tooltip": "Quản lý danh mục trường đại học",
-          "icon": "School"
-        },
-        {
-          "index": "/admin/danh-muc/nganh-hoc-theo-truong",
-          "title": "Ngành theo trường",
-          "tooltip": "Quản lý ngành đào tạo của từng trường theo năm học",
-          "icon": "Notebook"
+          "index": "danh-muc:du-hoc",
+          "title": "Du học",
+          "tooltip": "Học sinh THPT du học: hướng đi, quốc gia, ngành, chi phí, thủ tục, kênh kết nối",
+          "icon": "Promotion",
+          "children": [
+            {
+              "index": "/admin/danh-muc/thpt-du-hoc/huong-di",
+              "title": "Hướng đi",
+              "tooltip": "Du học nghề, du học học thuật, chuyển tiếp",
+              "icon": "Guide"
+            },
+            {
+              "index": "/admin/danh-muc/thpt-du-hoc/quoc-gia",
+              "title": "Quốc gia",
+              "tooltip": "Quốc gia của từng hướng đi du học",
+              "icon": "MapLocation"
+            },
+            {
+              "index": "/admin/danh-muc/thpt-du-hoc/nganh",
+              "title": "Ngành",
+              "tooltip": "Ngành học gợi ý theo hướng đi và quốc gia",
+              "icon": "Reading"
+            },
+            {
+              "index": "/admin/danh-muc/thpt-du-hoc/chi-phi",
+              "title": "Chi phí",
+              "tooltip": "Các khoản chi phí du học theo hướng đi và quốc gia",
+              "icon": "Wallet"
+            },
+            {
+              "index": "/admin/danh-muc/thpt-du-hoc/thu-tuc",
+              "title": "Thủ tục",
+              "tooltip": "Các bước thủ tục, giấy tờ du học",
+              "icon": "DocumentChecked"
+            },
+            {
+              "index": "/admin/danh-muc/thpt-du-hoc/kenh-ket-noi",
+              "title": "Kênh kết nối",
+              "tooltip": "Kênh chính thống, trung tâm tư vấn, cộng đồng hỗ trợ du học",
+              "icon": "Connection"
+            }
+          ]
         }
       ]
     },

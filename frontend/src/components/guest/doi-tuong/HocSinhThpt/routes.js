@@ -33,12 +33,6 @@ const cayDinhHuongThpt = [
     meta: { title: 'Làm trắc nghiệm Holland', public: true, dinhHuong: 'di-lam' },
   },
   {
-    path: 'du-hoc-nghe',
-    name: 'du-hoc-nghe',
-    component: () => import('./DuHocNghe.vue'),
-    meta: { title: 'Du học nghề', public: true, dinhHuong: 'du-hoc-nghe' },
-  },
-  {
     path: 'du-hoc',
     name: 'du-hoc',
     component: () => import('./DuHoc.vue'),

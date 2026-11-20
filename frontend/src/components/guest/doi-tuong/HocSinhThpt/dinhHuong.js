@@ -1,5 +1,4 @@
 import diLamImage from '@/assets/guest/nha-tuyen-dung.jpg'
-import duHocNgheImage from '@/assets/guest/nha-truong.jpg'
 import duHocImage from '@/assets/guest/sinh-vien.jpg'
 import thiDaiHocImage from '@/assets/guest/thpt.jpg'
 import khoiNghiepImage from '@/assets/guest/thanh-nien.jpg'
@@ -23,18 +22,12 @@ export const dinhHuongThptList = [
     description: 'Bắt đầu làm việc sớm và tích lũy kinh nghiệm thay vì học tiếp.',
     image: diLamImage,
   },
-  {
-    code: 'du-hoc-nghe',
-    moTruyCap: false,
-    name: 'Du học nghề',
-    description: 'Học nghề ở nước ngoài, vừa đào tạo vừa thực hành.',
-    image: duHocNgheImage,
-  },
+  // Gộp du học nghề, du học học thuật và chuyển tiếp; chi tiết từng hướng lấy từ danh mục dm_thpt_duhoc_huong_di.
   {
     code: 'du-hoc',
-    moTruyCap: false,
+    moTruyCap: true,
     name: 'Du học',
-    description: 'Học đại học hoặc cao đẳng tại nước ngoài.',
+    description: 'Du học nghề, đại học/cao đẳng hoặc chuyển tiếp ở nước ngoài.',
     image: duHocImage,
   },
   {
