@@ -331,6 +331,30 @@ const router = createRouter({
           meta: { title: 'Nhóm Holland', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'danh-muc/nhom-nghe-di-lam',
+          name: 'nhom-nghe-di-lam',
+          component: () => import('@/views/admin/danh-muc/NhomNgheDiLam.vue'),
+          meta: { title: 'Nhóm nghề đi làm', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/nghe-cu-the-di-lam',
+          name: 'nghe-cu-the-di-lam',
+          component: () => import('@/views/admin/danh-muc/NgheCuTheDiLam.vue'),
+          meta: { title: 'Nghề cụ thể đi làm', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/tieu-chi-goi-y',
+          name: 'tieu-chi-goi-y',
+          component: () => import('@/views/admin/danh-muc/TieuChiGoiY.vue'),
+          meta: { title: 'Tiêu chí gợi ý nghề', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/nhom-nghe-tieu-chi',
+          name: 'nhom-nghe-tieu-chi',
+          component: () => import('@/views/admin/danh-muc/NhomNgheTieuChi.vue'),
+          meta: { title: 'Tiêu chí của nhóm nghề', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'danh-muc/linh-vuc-dao-tao',
           name: 'linh-vuc-dao-tao',
           component: () => import('@/views/admin/danh-muc/LinhVucDaoTao.vue'),

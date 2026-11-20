@@ -1,16 +1,16 @@
 # Danh sách API
 
-Tự sinh từ code lúc 19/11/2026 16:58 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 20/11/2026 08:41 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **335** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **366** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 202 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 83 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
-| [Khách vãng lai](#khach) | 50 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
+| [Quản trị (admin)](#quan_tri) | 224 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Thành viên (user)](#thanh_vien) | 87 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Khách vãng lai](#khach) | 55 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
 
@@ -142,6 +142,16 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `PUT` | `/api/v1/danh-muc/nganh-hoc-theo-truong/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một ngành đào tạo theo id. |
 | `DELETE` | `/api/v1/danh-muc/nganh-hoc-theo-truong/{item_id}` | Bắt buộc (admin) | Xóa một ngành đào tạo theo id. |
 
+### `danh-muc/nghe-cu-the-di-lam`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/nghe-cu-the-di-lam` | Bắt buộc (admin) | Thêm một nghề cụ thể vào nhóm nghề. |
+| `DELETE` | `/api/v1/danh-muc/nghe-cu-the-di-lam` | Bắt buộc (admin) | Xóa nhiều nghề cụ thể theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/nghe-cu-the-di-lam/bulk` | Bắt buộc (admin) | Thêm nhiều nghề cụ thể cùng lúc. Từ chối nếu có nhóm nghề không tồn tại. |
+| `PUT` | `/api/v1/danh-muc/nghe-cu-the-di-lam/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một nghề cụ thể theo id. |
+| `DELETE` | `/api/v1/danh-muc/nghe-cu-the-di-lam/{item_id}` | Bắt buộc (admin) | Xóa một nghề cụ thể theo id. |
+
 ### `danh-muc/nhom-nganh-dao-tao`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
@@ -151,6 +161,28 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `POST` | `/api/v1/danh-muc/nhom-nganh-dao-tao/bulk` | Bắt buộc (admin) | Thêm nhiều nhóm ngành cùng lúc. Từ chối nếu mã trùng hoặc lĩnh vực cha không tồn tại. |
 | `PUT` | `/api/v1/danh-muc/nhom-nganh-dao-tao/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một nhóm ngành đào tạo theo id. |
 | `DELETE` | `/api/v1/danh-muc/nhom-nganh-dao-tao/{item_id}` | Bắt buộc (admin) | Xóa một nhóm ngành đào tạo theo id. Từ chối nếu còn ngành thuộc nhóm đó. |
+
+### `danh-muc/nhom-nghe-di-lam`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/nhom-nghe-di-lam` | Bắt buộc (admin) | Thêm một nhóm nghề đi làm. Từ chối nếu mã nhóm đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/nhom-nghe-di-lam` | Bắt buộc (admin) | Xóa nhiều nhóm nghề theo danh sách id; nghề cụ thể và liên kết tiêu chí bị xóa theo (CASCADE). |
+| `POST` | `/api/v1/danh-muc/nhom-nghe-di-lam/bulk` | Bắt buộc (admin) | Thêm nhiều nhóm nghề cùng lúc. Từ chối nếu mã nhóm trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PATCH` | `/api/v1/danh-muc/nhom-nghe-di-lam/trang-thai` | Bắt buộc (admin) | Bật/tắt nhiều nhóm nghề cùng lúc. Id không tồn tại thì bỏ qua. |
+| `PUT` | `/api/v1/danh-muc/nhom-nghe-di-lam/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một nhóm nghề đi làm theo id. |
+| `DELETE` | `/api/v1/danh-muc/nhom-nghe-di-lam/{item_id}` | Bắt buộc (admin) | Xóa một nhóm nghề theo id; nghề cụ thể và liên kết tiêu chí bị xóa theo (CASCADE). |
+| `PATCH` | `/api/v1/danh-muc/nhom-nghe-di-lam/{item_id}/trang-thai` | Bắt buộc (admin) | Bật/tắt nhanh một nhóm nghề, giữ nguyên các thông tin khác. |
+
+### `danh-muc/nhom-nghe-tieu-chi`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/nhom-nghe-tieu-chi` | Bắt buộc (admin) | Gắn một tiêu chí cho nhóm nghề kèm điểm phù hợp. |
+| `DELETE` | `/api/v1/danh-muc/nhom-nghe-tieu-chi` | Bắt buộc (admin) | Xóa nhiều liên kết theo danh sách khóa ghép. Cặp không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/nhom-nghe-tieu-chi/bulk` | Bắt buộc (admin) | Gắn nhiều tiêu chí cho nhóm nghề cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/nhom-nghe-tieu-chi/{nhom_nghe_di_lam_id}/{tieu_chi_goi_y_id}` | Bắt buộc (admin) | Cập nhật điểm phù hợp và ghi chú của một liên kết (không đổi được nhóm nghề/tiêu chí). |
+| `DELETE` | `/api/v1/danh-muc/nhom-nghe-tieu-chi/{nhom_nghe_di_lam_id}/{tieu_chi_goi_y_id}` | Bắt buộc (admin) | Xóa một liên kết nhóm nghề - tiêu chí. |
 
 ### `danh-muc/nhom-tinh-cach-holland`
 
@@ -183,6 +215,16 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `POST` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/bulk` | Bắt buộc (admin) | Thêm nhiều thành tích học tập, nghiên cứu cùng lúc. |
 | `PUT` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một thành tích học tập, nghiên cứu theo id. |
 | `DELETE` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc (admin) | Xóa một thành tích học tập, nghiên cứu theo id. |
+
+### `danh-muc/tieu-chi-goi-y`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/tieu-chi-goi-y` | Bắt buộc (admin) | Thêm một tiêu chí gợi ý. Từ chối nếu mã tiêu chí đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/tieu-chi-goi-y` | Bắt buộc (admin) | Xóa nhiều tiêu chí theo danh sách id; liên kết với nhóm nghề bị xóa theo (CASCADE). |
+| `POST` | `/api/v1/danh-muc/tieu-chi-goi-y/bulk` | Bắt buộc (admin) | Thêm nhiều tiêu chí cùng lúc. Từ chối nếu mã tiêu chí trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/tieu-chi-goi-y/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một tiêu chí gợi ý theo id. |
+| `DELETE` | `/api/v1/danh-muc/tieu-chi-goi-y/{item_id}` | Bắt buộc (admin) | Xóa một tiêu chí theo id; liên kết với nhóm nghề bị xóa theo (CASCADE). |
 
 ### `danh-muc/tinh-thanh`
 
@@ -487,11 +529,29 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/nganh-dao-tao/{item_id}` | Bắt buộc | Lấy chi tiết một ngành đào tạo theo id, kèm tên nhóm ngành cha. |
 
+### `danh-muc/nghe-cu-the-di-lam`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/nghe-cu-the-di-lam/{item_id}` | Bắt buộc | Lấy chi tiết một nghề cụ thể theo id. |
+
 ### `danh-muc/nhom-nganh-dao-tao`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/nhom-nganh-dao-tao/{item_id}` | Bắt buộc | Lấy chi tiết một nhóm ngành đào tạo theo id, kèm tên lĩnh vực cha. |
+
+### `danh-muc/nhom-nghe-di-lam`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/nhom-nghe-di-lam/{item_id}` | Bắt buộc | Lấy chi tiết một nhóm nghề đi làm theo id. |
+
+### `danh-muc/nhom-nghe-tieu-chi`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/nhom-nghe-tieu-chi/{nhom_nghe_di_lam_id}/{tieu_chi_goi_y_id}` | Bắt buộc | Lấy chi tiết một liên kết nhóm nghề - tiêu chí. |
 
 ### `danh-muc/nhom-tinh-cach-holland`
 
@@ -510,6 +570,12 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc | Lấy chi tiết một thành tích học tập, nghiên cứu theo id. |
+
+### `danh-muc/tieu-chi-goi-y`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/tieu-chi-goi-y/{item_id}` | Bắt buộc | Lấy chi tiết một tiêu chí gợi ý theo id. |
 
 ### `danh-muc/tinh-thanh`
 
@@ -737,11 +803,29 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | `GET` | `/api/v1/danh-muc/nganh-hoc-theo-truong/nam-hoc` | Không | Các năm học đang có dữ liệu, mới nhất trước, dùng cho bộ lọc. Không cần đăng nhập. |
 | `GET` | `/api/v1/danh-muc/nganh-hoc-theo-truong/truong-dao-tao` | Không | Liệt kê trường đào tạo một ngành trong năm học, dựa trên dm_nganh_hoc_theo_truong. |
 
+### `danh-muc/nghe-cu-the-di-lam`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/nghe-cu-the-di-lam` | Không | Lấy danh sách nghề cụ thể có phân trang, lọc theo từ khóa và nhóm nghề. Không cần đăng nhập. |
+
 ### `danh-muc/nhom-nganh-dao-tao`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/nhom-nganh-dao-tao` | Không | Lấy danh sách nhóm ngành có phân trang, không cần đăng nhập. Lọc theo từ khóa, trạng thái và lĩnh vực cha. |
+
+### `danh-muc/nhom-nghe-di-lam`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/nhom-nghe-di-lam` | Không | Lấy danh sách nhóm nghề đi làm có phân trang, không cần đăng nhập. |
+
+### `danh-muc/nhom-nghe-tieu-chi`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/nhom-nghe-tieu-chi` | Không | Lấy danh sách liên kết nhóm nghề - tiêu chí có phân trang. Không cần đăng nhập. |
 
 ### `danh-muc/nhom-tinh-cach-holland`
 
@@ -760,6 +844,13 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu` | Không | Lấy danh sách thành tích học tập, nghiên cứu có phân trang, không cần đăng nhập. |
+
+### `danh-muc/tieu-chi-goi-y`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/tieu-chi-goi-y` | Không | Lấy danh sách tiêu chí gợi ý có phân trang, lọc theo từ khóa và nhóm tiêu chí. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/tieu-chi-goi-y/nhom` | Không | Danh sách các nhóm tiêu chí đang dùng (để chọn khi lọc/nhập). Không cần đăng nhập. |
 
 ### `danh-muc/tinh-thanh`
 

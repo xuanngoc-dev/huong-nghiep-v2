@@ -11,6 +11,7 @@ from app.models.dm_muc_diem_uu_tien import DmMucDiemUuTien
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.dm_nganh_hoc_theo_truong import DmNganhHocTheoTruong
 from app.models.dm_nhom_nganh_dao_tao import DmNhomNganhDaoTao
+from app.models.dm_nhom_nghe_di_lam import DmNgheCuTheDiLam, DmNhomNgheDiLam, DmNhomNgheTieuChi, DmTieuChiGoiY
 from app.models.dm_nhom_tinh_cach_holland import DmNhomTinhCachHolland
 from app.models.dm_phuong_thuc_tuyen_sinh import DmPhuongThucTuyenSinh
 from app.models.dm_thanh_tich_hoc_tap_nghien_cuu import DmThanhTichHocTapNghienCuu
@@ -93,6 +94,10 @@ __all__ = [
     "DmMucDiemUuTien",
     "DmNganhDaoTao",
     "DmNhomNganhDaoTao",
+    "DmNhomNgheDiLam",
+    "DmNgheCuTheDiLam",
+    "DmTieuChiGoiY",
+    "DmNhomNgheTieuChi",
     "DmNhomTinhCachHolland",
     "DmPhuongThucTuyenSinh",
     "DmThanhTichHocTapNghienCuu",

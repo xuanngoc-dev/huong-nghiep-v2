@@ -366,6 +366,30 @@
           "icon": "Compass"
         },
         {
+          "index": "/admin/danh-muc/nhom-nghe-di-lam",
+          "title": "Nhóm nghề đi làm",
+          "tooltip": "Nhóm nghề cho học sinh đi làm ngay sau THPT: đào tạo, lương, triển vọng",
+          "icon": "Suitcase"
+        },
+        {
+          "index": "/admin/danh-muc/nghe-cu-the-di-lam",
+          "title": "Nghề cụ thể",
+          "tooltip": "Các nghề cụ thể thuộc từng nhóm nghề đi làm",
+          "icon": "Briefcase"
+        },
+        {
+          "index": "/admin/danh-muc/tieu-chi-goi-y",
+          "title": "Tiêu chí gợi ý nghề",
+          "tooltip": "Tiêu chí sở thích, năng lực, hoàn cảnh, mục tiêu dùng để gợi ý nhóm nghề",
+          "icon": "Filter"
+        },
+        {
+          "index": "/admin/danh-muc/nhom-nghe-tieu-chi",
+          "title": "Tiêu chí - nhóm nghề",
+          "tooltip": "Điểm phù hợp (1-5) của từng tiêu chí với nhóm nghề đi làm",
+          "icon": "Connection"
+        },
+        {
           "index": "/admin/danh-muc/linh-vuc-dao-tao",
           "title": "Lĩnh vực đào tạo",
           "tooltip": "Quản lý danh mục lĩnh vực đào tạo",
