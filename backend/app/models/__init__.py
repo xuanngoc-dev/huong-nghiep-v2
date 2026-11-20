@@ -11,7 +11,31 @@ from app.models.dm_muc_diem_uu_tien import DmMucDiemUuTien
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.dm_nganh_hoc_theo_truong import DmNganhHocTheoTruong
 from app.models.dm_nhom_nganh_dao_tao import DmNhomNganhDaoTao
+from app.models.dm_nhom_nghe_di_lam import DmNgheCuTheDiLam, DmNhomNgheDiLam, DmNhomNgheTieuChi, DmTieuChiGoiY
 from app.models.dm_nhom_tinh_cach_holland import DmNhomTinhCachHolland
+from app.models.dm_thcs_huong_di import (
+    DmThcsHuongDi,
+    DmThcsHuongDiTieuChi,
+    DmThcsLoiKhuyenLuuY,
+    DmThcsTieuChi,
+    DmThcsUuNhuocDiem,
+)
+from app.models.dm_thpt_duhoc import (
+    DmThptDuhocChiPhi,
+    DmThptDuhocHuongDi,
+    DmThptDuhocKenhKetNoi,
+    DmThptDuhocNganh,
+    DmThptDuhocQuocGia,
+    DmThptDuhocThuTuc,
+)
+from app.models.dm_thpt_xkld import (
+    DmThptXkldChiPhi,
+    DmThptXkldKenhKetNoi,
+    DmThptXkldNgheCuThe,
+    DmThptXkldNhomNghe,
+    DmThptXkldThiTruong,
+    DmThptXkldThuTuc,
+)
 from app.models.dm_phuong_thuc_tuyen_sinh import DmPhuongThucTuyenSinh
 from app.models.dm_thanh_tich_hoc_tap_nghien_cuu import DmThanhTichHocTapNghienCuu
 from app.models.dm_tinh_thanh import DmTinhThanh
@@ -39,6 +63,7 @@ from app.models.dm_bai_thi_danh_gia import DmBaiThiDanhGia
 from app.models.dm_thanh_tich_hoc_tap import DmThanhTichHocTap
 from app.models.dm_to_hop_mon_hoc_chi_tiet import DmToHopMonHocChiTiet
 from app.models.dats_tuyen_sinh import DatsTuyenSinh
+from app.models.dats_thu_thap import DatsBanNhapThuThap, DatsNhatKyThuThap, DatsPhienThuThap
 from app.models.dats_tru_so import DatsTruSo
 from app.models.dats_website import DatsWebsite
 from app.models.dats_lien_he_tuyen_sinh import DatsLienHeTuyenSinh
@@ -92,7 +117,28 @@ __all__ = [
     "DmMucDiemUuTien",
     "DmNganhDaoTao",
     "DmNhomNganhDaoTao",
+    "DmNhomNgheDiLam",
+    "DmNgheCuTheDiLam",
+    "DmTieuChiGoiY",
+    "DmNhomNgheTieuChi",
     "DmNhomTinhCachHolland",
+    "DmThcsHuongDi",
+    "DmThcsUuNhuocDiem",
+    "DmThcsTieuChi",
+    "DmThcsHuongDiTieuChi",
+    "DmThcsLoiKhuyenLuuY",
+    "DmThptDuhocHuongDi",
+    "DmThptDuhocQuocGia",
+    "DmThptDuhocNganh",
+    "DmThptDuhocChiPhi",
+    "DmThptDuhocThuTuc",
+    "DmThptDuhocKenhKetNoi",
+    "DmThptXkldNhomNghe",
+    "DmThptXkldThiTruong",
+    "DmThptXkldNgheCuThe",
+    "DmThptXkldChiPhi",
+    "DmThptXkldThuTuc",
+    "DmThptXkldKenhKetNoi",
     "DmPhuongThucTuyenSinh",
     "DmThanhTichHocTapNghienCuu",
     "DmTinhThanh",
@@ -119,6 +165,9 @@ __all__ = [
     "DmThanhTichHocTap",
     "DmToHopMonHocChiTiet",
     "DatsTuyenSinh",
+    "DatsPhienThuThap",
+    "DatsBanNhapThuThap",
+    "DatsNhatKyThuThap",
     "DatsTruSo",
     "DatsWebsite",
     "DatsLienHeTuyenSinh",

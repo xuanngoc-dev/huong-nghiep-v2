@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-page">
     <CustomCard shadow="never" class="catalog-card">
-      <div class="scope">
+      <BoLoc>
         <CustomSelect
           v-model="filters.ma_truong"
           class="filter-school"
@@ -58,7 +58,7 @@
             :value="item.id"
           />
         </CustomSelect>
-      </div>
+      </BoLoc>
     </CustomCard>
 
     <CustomCard shadow="never" class="catalog-card">
@@ -278,34 +278,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.scope {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.filter-school,
-.filter-proposal {
-  width: 320px;
-}
-
-.filter-major {
-  width: 300px;
-}
-
 .scope-caption {
   margin: 0 0 12px;
   color: var(--el-text-color-secondary);
   line-height: 1.5;
 }
 
-@media (max-width: 640px) {
-  .filter-school,
-  .filter-year,
-  .filter-major,
-  .filter-proposal {
-    width: 100%;
-  }
-}
 </style>

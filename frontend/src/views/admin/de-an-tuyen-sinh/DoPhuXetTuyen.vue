@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-page">
     <CustomCard shadow="never" class="catalog-card">
-      <div class="filters">
+      <BoLoc>
         <CustomInputNumber
           v-model="filters.nam"
           class="filter-year"
@@ -26,8 +26,10 @@
         <CustomSelect v-model="filters.trang_thai" class="filter-status" placeholder="Chọn trạng thái" clearable @change="onSearch">
           <CustomOption v-for="(tt, ma) in TRANG_THAI" :key="ma" :label="tt.label" :value="Number(ma)" />
         </CustomSelect>
-        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-      </div>
+        <template #nut>
+          <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+        </template>
+      </BoLoc>
     </CustomCard>
 
     <section v-if="tong" class="do-phu__tong" aria-label="Tổng quan">

@@ -3,6 +3,7 @@
     <el-date-picker
       ref="pickerRef"
       v-model="model"
+      class="custom-date-picker"
       v-bind="pickerAttrs"
       :size="resolvedSize"
       :popper-class="mergedPopperClass"
@@ -19,7 +20,8 @@
 /**
  * CustomDatePicker — wrapper el-date-picker.
  * Locale tiếng Việt: "Năm 2026", "Tháng 5" (thay vì "2026 Năm", "Th.5").
- * Mobile (≤767px): size="small" trừ khi truyền size tường minh.
+ * Mobile (≤767px): size="small" trừ khi truyền size tường minh;
+ * bảng chọn khoảng ngày xếp 2 tháng theo chiều dọc cho vừa màn hình (style không scoped bên dưới).
  */
 import { computed, nextTick, onBeforeUnmount, ref, useAttrs, useSlots } from 'vue'
 import vi from 'element-plus/es/locale/lang/vi'
@@ -60,13 +62,12 @@ const instancePopperClass = `custom-date-picker-popper-${Math.random().toString(
 
 let yearLabelObserver = null
 
+// popper-class và @visible-change do wrapper tự xử lý (gộp class, theo dõi nhãn năm) nên không truyền thẳng xuống.
 const pickerAttrs = computed(() => {
-  const {
-    popperClass,
-    'popper-class': _popperClassKebab,
-    onVisibleChange: _onVisibleChange,
-    ...rest
-  } = attrs
+  const rest = { ...attrs }
+  delete rest.popperClass
+  delete rest['popper-class']
+  delete rest.onVisibleChange
   return rest
 })
 
@@ -77,9 +78,17 @@ const mergedPopperClass = computed(() => {
     .join(' ')
 })
 
+// Nhãn năm ở bảng chọn ngày, khoảng ngày (.el-date-range-picker__header-label)
+// và khoảng tháng (div trơn trong .el-date-range-picker__header).
+const YEAR_LABEL_SELECTOR = [
+  '.el-date-picker__header-label',
+  '.el-date-range-picker__header-label',
+  '.el-date-range-picker__header > div',
+].join(', ')
+
 function rewriteYearLabels(root) {
   if (!root) return
-  root.querySelectorAll('.el-date-picker__header-label').forEach((el) => {
+  root.querySelectorAll(YEAR_LABEL_SELECTOR).forEach((el) => {
     const text = (el.textContent || '').trim()
     if (!text) return
 
@@ -141,3 +150,34 @@ defineExpose({
   handleClose: (...args) => pickerRef.value?.handleClose?.(...args),
 })
 </script>
+
+<style>
+/* Ô khoảng ngày: tính cả padding vào bề rộng, để width: 100% (lưới bộ lọc, form-grid) không tràn khỏi cột. */
+.custom-date-picker.el-range-editor.el-input__wrapper {
+  box-sizing: border-box;
+}
+
+/* Bảng chọn khoảng ngày mặc định rộng 646px (2 tháng cạnh nhau) → tràn màn điện thoại, kéo giãn cả trang. */
+@media (max-width: 767px) {
+  .custom-date-picker-popper .el-date-range-picker {
+    width: min(360px, calc(100vw - 16px));
+  }
+
+  .custom-date-picker-popper .el-date-range-picker .el-picker-panel__body {
+    min-width: 0;
+  }
+
+  /* Mỗi tháng là table-cell nằm cạnh nhau: đổi sang block để xếp dọc. */
+  .custom-date-picker-popper .el-date-range-picker__content {
+    display: block;
+    float: none;
+    width: 100%;
+    padding: 12px;
+  }
+
+  .custom-date-picker-popper .el-date-range-picker__content.is-left {
+    border-right: 0;
+    border-bottom: 1px solid var(--el-datepicker-inner-border-color);
+  }
+}
+</style>

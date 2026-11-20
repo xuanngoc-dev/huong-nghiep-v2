@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-page">
   <CustomCard shadow="never" class="catalog-card">
-    <div class="filters">
+    <BoLoc>
       <CustomInput
         v-model="filters.q"
         class="filter-search"
@@ -41,8 +41,10 @@
       >
         <CustomOption v-for="nam in namHocOptions" :key="nam" :label="String(nam)" :value="nam" />
       </CustomSelect>
-      <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-    </div>
+      <template #nut>
+        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+      </template>
+    </BoLoc>
   </CustomCard>
 
   <CustomCard shadow="never" class="catalog-card">
@@ -858,14 +860,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.filter-truong {
-  width: 260px;
-}
-
-.filter-nam {
-  width: 130px;
-}
-
 .nganh-option {
   display: flex;
   align-items: baseline;
@@ -892,11 +886,4 @@ onMounted(() => {
   color: var(--el-color-danger);
 }
 
-@media (max-width: 640px) {
-  .filter-truong,
-  .filter-nam {
-    width: 100%;
-  }
-
-}
 </style>

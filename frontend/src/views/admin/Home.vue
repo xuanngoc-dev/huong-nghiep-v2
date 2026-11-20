@@ -14,13 +14,15 @@
           end-placeholder="Đến tháng"
           format="MM/YYYY"
         />
-        <el-button icon="Refresh">Làm mới</el-button>
+        <el-button icon="Refresh" @click="taiChinh?.taiLai()">Làm mới</el-button>
         <el-button type="primary" icon="Download">Xuất báo cáo</el-button>
       </div>
     </div>
 
-    <el-row :gutter="16" class="dashboard__row">
-      <el-col v-for="item in theThongKe" :key="item.key" :xs="24" :sm="12" :lg="6">
+    <ThongKeTaiChinh ref="taiChinh" />
+
+    <el-row :gutter="16" class="dashboard__row dashboard__row--the">
+      <el-col v-for="item in theThongKe" :key="item.key" :xs="12" :sm="12" :lg="6">
         <TheThongKe v-bind="item" />
       </el-col>
     </el-row>
@@ -40,7 +42,7 @@
               </el-radio-group>
             </div>
           </template>
-          <BieuDoDuong :type="kieuBieuDo" :series="luotTheoThang" :categories="THANG" :height="320" donVi="lượt" />
+          <BieuDoDuong :type="kieuBieuDo" :series="luotTheoThang" :categories="THANG" :height="240" donVi="lượt" />
         </el-card>
       </el-col>
       <el-col :xs="24" :lg="8">
@@ -57,7 +59,7 @@
             :labels="nhomHolland.labels"
             :values="nhomHolland.values"
             :colors="nhomHolland.colors"
-            :height="340"
+            :height="260"
             nhanTong="Lượt làm bài"
             donVi="lượt"
           />
@@ -76,7 +78,7 @@
               </div>
             </div>
           </template>
-          <BieuDoCot horizontal :series="topNganh.series" :categories="topNganh.categories" :height="320" donVi="lượt" />
+          <BieuDoCot horizontal :series="topNganh.series" :categories="topNganh.categories" :height="250" donVi="lượt" />
         </el-card>
       </el-col>
       <el-col :xs="24" :md="12" :xl="8">
@@ -94,7 +96,7 @@
             :series="theoDoiTuong.series"
             :categories="theoDoiTuong.categories"
             :colors="mauDoiTuong"
-            :height="320"
+            :height="250"
             donVi="lượt"
           />
         </el-card>
@@ -205,6 +207,7 @@ import BieuDoCot from '@/components/admin/charts/BieuDoCot.vue'
 import BieuDoDuong from '@/components/admin/charts/BieuDoDuong.vue'
 import BieuDoTron from '@/components/admin/charts/BieuDoTron.vue'
 import TheThongKe from '@/components/admin/dashboard/TheThongKe.vue'
+import ThongKeTaiChinh from '@/components/admin/dashboard/ThongKeTaiChinh.vue'
 import {
   THANG,
   hoatDong,
@@ -224,6 +227,7 @@ const TRANG_THAI = {
   'bo-do': { label: 'Bỏ dở', type: 'info' },
 }
 
+const taiChinh = ref(null)
 const khoangThoiGian = ref([])
 const kieuBieuDo = ref('area')
 const { isDark } = storeToRefs(useLayoutStore())
@@ -272,12 +276,21 @@ const luotToiDa = Math.max(...topTinhThanh.map((item) => item.luot))
 }
 
 .dashboard__row > .el-col {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .dashboard__card {
   height: 100%;
   border-radius: 12px;
+}
+
+/* Thẻ gọn để nhìn được nhiều số liệu hơn trên một màn hình. */
+.dashboard__card :deep(.el-card__header) {
+  padding: 10px 16px;
+}
+
+.dashboard__card :deep(.el-card__body) {
+  padding: 10px 14px;
 }
 
 .card-header {
@@ -289,7 +302,7 @@ const luotToiDa = Math.max(...topTinhThanh.map((item) => item.luot))
 
 .card-header__title {
   display: block;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 400;
   line-height: 1.4;
   color: var(--el-text-color-primary);
@@ -395,6 +408,18 @@ const luotToiDa = Math.max(...topTinhThanh.map((item) => item.luot))
 }
 
 @media (max-width: 640px) {
+  /* Thẻ thống kê 2 thẻ/hàng: khoảng cách hẹp hơn cho đỡ chật. */
+  .dashboard__row--the {
+    margin-right: -5px !important;
+    margin-left: -5px !important;
+  }
+
+  .dashboard__row--the > .el-col {
+    padding-right: 5px !important;
+    padding-left: 5px !important;
+    margin-bottom: 10px;
+  }
+
   .dashboard__filters,
   .dashboard__filters :deep(.el-date-editor) {
     width: 100%;

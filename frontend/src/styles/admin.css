@@ -24,7 +24,8 @@
   border-radius: 12px;
 }
 
-/* Bộ lọc và thanh công cụ */
+/* Bộ lọc và thanh công cụ (bộ lọc chuẩn của màn danh sách dùng components/admin/BoLoc.vue;
+   .filters và các class filter-* bên dưới còn cho thanh công cụ và bộ lọc đặc thù) */
 :where(.admin-layout) .filters,
 :where(.admin-layout) .toolbar__actions {
   display: flex;

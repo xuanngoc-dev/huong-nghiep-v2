@@ -1,10 +1,9 @@
 <template>
-  <div v-if="filterFields.length" class="filters">
+  <BoLoc v-if="filterFields.length">
     <CustomSelect
       v-for="field in filterFields"
       :key="field.key"
       v-model="filters[field.key]"
-      :class="field.width"
       :placeholder="field.placeholder"
       multiple
       collapse-tags
@@ -19,7 +18,7 @@
         :value="option.value"
       />
     </CustomSelect>
-  </div>
+  </BoLoc>
   <BangChiTiet :rows="filteredRows" :columns="columns" :empty-text="emptyText" />
 </template>
 
@@ -130,7 +129,6 @@ const filterFields = computed(() =>
     {
       key: 'chuongTrinh',
       placeholder: 'Chương trình',
-      width: 'filter-wide',
       options: rankedOptions(props.rows.map((row) => row.chuong_trinh), {}, [], 'Chưa xác định'),
       token: (row) => text(row.chuong_trinh) || NONE,
     },
@@ -149,7 +147,6 @@ const filterFields = computed(() =>
     {
       key: 'hinhThuc',
       placeholder: 'Hình thức',
-      width: 'filter-mid',
       options: rankedOptions(
         props.rows.map((row) => row.hinh_thuc_dao_tao),
         HINH_THUC_LABELS,
@@ -161,7 +158,6 @@ const filterFields = computed(() =>
     {
       key: 'thoiGian',
       placeholder: 'Thời gian đào tạo',
-      width: 'filter-mid',
       options: durationOptions(),
       token: (row) => durationToken(row.thoi_gian_dao_tao_nam) || NONE,
     },
@@ -192,19 +188,8 @@ const emptyText = computed(() => {
 </script>
 
 <style scoped>
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
+.bo-loc {
   margin-bottom: 12px;
 }
 
-.filter-wide {
-  width: 280px;
-}
-
-.filter-mid {
-  width: 180px;
-}
 </style>

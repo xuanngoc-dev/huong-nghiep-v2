@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-page">
   <CustomCard shadow="never" class="catalog-card">
-    <div class="filters">
+    <BoLoc>
       <CustomInput
         v-model="filters.nguoi_tham_gia"
         class="filter-search"
@@ -44,9 +44,18 @@
       >
         <CustomOption v-for="item in TRANG_THAI_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
       </CustomSelect>
+      <CustomSelect
+        v-model="filters.dinh_huong"
+        class="filter-select"
+        placeholder="Chọn định hướng"
+        clearable
+        @change="onSearch"
+      >
+        <CustomOption v-for="item in DOI_TUONG_AP_DUNG" :key="item.value" :label="item.nhanNgan" :value="item.value" />
+      </CustomSelect>
       <CustomDatePicker
         v-model="filters.khoang_ngay"
-        class="filter-date"
+        class="bo-loc__rong filter-date"
         type="daterange"
         value-format="YYYY-MM-DD"
         format="DD/MM/YYYY"
@@ -56,8 +65,10 @@
         clearable
         @change="onSearch"
       />
-      <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-    </div>
+      <template #nut>
+        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+      </template>
+    </BoLoc>
   </CustomCard>
 
   <CustomCard shadow="never" class="catalog-card">
@@ -116,6 +127,20 @@
           <CustomTag v-else type="info" effect="plain">Khách</CustomTag>
         </template>
       </CustomTableColumn>
+      <CustomTableColumn label="Định hướng" width="140" align="center">
+        <template #default="{ row }">
+          <CustomTooltip
+            v-if="row.dinh_huong"
+            :content="timDoiTuongApDung(row.dinh_huong)?.label || `Mã ${row.dinh_huong}`"
+            placement="top"
+          >
+            <CustomTag type="success" effect="light">
+              {{ timDoiTuongApDung(row.dinh_huong)?.nhanNgan || `Mã ${row.dinh_huong}` }}
+            </CustomTag>
+          </CustomTooltip>
+          <span v-else>—</span>
+        </template>
+      </CustomTableColumn>
       <CustomTableColumn label="Thời gian" width="150">
         <template #default="{ row }">{{ formatThoiGian(row.created_at) }}</template>
       </CustomTableColumn>
@@ -125,7 +150,7 @@
           <span class="cell-sub">{{ row.so_da_tra_loi }}/{{ row.so_cau_hoi }} câu</span>
         </template>
       </CustomTableColumn>
-      <CustomTableColumn label="Mã Holland" width="110" align="center">
+      <CustomTableColumn label="Mã Holland" width="150" align="center">
         <template #default="{ row }">
           <CustomTag v-if="row.ma_noi_bat" type="primary">{{ row.ma_noi_bat }}</CustomTag>
           <span v-else>—</span>
@@ -141,26 +166,19 @@
       <CustomTableColumn label="Thao tác" width="150" fixed="right" align="center">
         <template #default="{ row }">
           <div class="row-actions">
-            <CustomTooltip v-if="row.da_xong" content="Xem kết quả" placement="top">
-              <CustomButton
-                link
-                type="primary"
-                aria-label="Xem kết quả"
-                @click="moTab('thpt-thi-dai-hoc-ket-qua', row)"
+            <!-- Nút kết quả theo định hướng của phiên: thi đại học → kết quả, ngành; đi làm → nhóm nghề. -->
+            <template v-if="row.da_xong">
+              <CustomTooltip
+                v-for="buoc in layLuongTheoMaDinhHuong(row.dinh_huong).buocCuoi"
+                :key="buoc.id"
+                :content="buoc.nhanNut"
+                placement="top"
               >
-                <CustomIcon><DataAnalysis /></CustomIcon>
-              </CustomButton>
-            </CustomTooltip>
-            <CustomTooltip v-if="row.da_xong" content="Ngành phù hợp" placement="top">
-              <CustomButton
-                link
-                type="primary"
-                aria-label="Ngành phù hợp"
-                @click="moTab('thpt-thi-dai-hoc-nganh-phu-hop', row)"
-              >
-                <CustomIcon><School /></CustomIcon>
-              </CustomButton>
-            </CustomTooltip>
+                <CustomButton link type="primary" :aria-label="buoc.nhanNut" @click="moTab(buoc.route, row)">
+                  <CustomIcon><component :is="buoc.icon" /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
+            </template>
             <CustomTooltip content="Xóa" placement="top">
               <CustomButton link type="danger" aria-label="Xóa" @click="onDelete(row)">
                 <CustomIcon><Delete /></CustomIcon>
@@ -198,6 +216,8 @@ import {
   deletePhienKhaoSatQuanTriMany,
   fetchPhienKhaoSatQuanTri,
 } from '@/api/phienKhaoSat'
+import { DOI_TUONG_AP_DUNG, timDoiTuongApDung } from '@/constants/doiTuongApDung'
+import { layLuongTheoMaDinhHuong } from '@/components/guest/doi-tuong/HocSinhThpt/luongKhaoSat'
 
 const TRANG_THAI_OPTIONS = [
   { value: 'hoan-thanh', label: 'Hoàn thành' },
@@ -226,6 +246,7 @@ function emptyFilters() {
     nguoi_tham_gia: '',
     doi_tuong: '',
     trang_thai: '',
+    dinh_huong: '',
     khoang_ngay: null,
   }
 }
@@ -268,6 +289,7 @@ async function load() {
     if (filters.nguoi_tham_gia.trim()) params.nguoi_tham_gia = filters.nguoi_tham_gia.trim()
     if (filters.doi_tuong) params.doi_tuong = filters.doi_tuong
     if (filters.trang_thai) params.trang_thai = filters.trang_thai
+    if (filters.dinh_huong) params.dinh_huong = filters.dinh_huong
     if (filters.khoang_ngay?.length === 2) {
       ;[params.tu_ngay, params.den_ngay] = filters.khoang_ngay
     }
@@ -377,25 +399,6 @@ onMounted(load)
 </script>
 
 <style scoped>
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.filter-code {
-  width: 190px;
-}
-
-.filter-select {
-  width: 140px;
-}
-
-.filter-date {
-  max-width: 240px;
-}
-
 .toolbar__count {
   color: var(--el-text-color-secondary);
   font-size: 13px;
@@ -408,12 +411,4 @@ onMounted(load)
   font-family: ui-monospace, Consolas, monospace;
 }
 
-@media (max-width: 640px) {
-  .filter-code,
-  .filter-select,
-  .filter-date {
-    width: 100%;
-    max-width: none;
-  }
-}
 </style>

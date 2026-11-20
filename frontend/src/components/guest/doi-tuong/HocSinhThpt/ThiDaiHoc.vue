@@ -12,17 +12,14 @@
           <div class="stages-card">
             <h2 class="stages-heading">Bạn đang ở giai đoạn nào trong hành trình?</h2>
             <div class="row g-3">
-              <div v-for="stage in stages" :key="stage.code" class="col-md-6 col-xl-4">
-                <article class="stage-card h-100" :class="{ 'is-selected': selectedStage === stage.code }">
-                  <div class="stage-card__media">
-                    <img class="stage-card__image" :src="stage.image" :alt="stage.name" />
-                    <button type="button" class="stage-card__button" @click="chonGiaiDoan(stage)">
-                      Bắt đầu
-                    </button>
-                  </div>
-                  <h3 class="stage-card__title">{{ stage.name }}</h3>
-                  <p class="stage-card__text">{{ stage.description }}</p>
-                </article>
+              <div v-for="stage in stages" :key="stage.code" class="col-12 col-md-6">
+                <DoiTuongCard
+                  :image="stage.image"
+                  :name="stage.name"
+                  :description="stage.description"
+                  :selected="selectedStage === stage.code"
+                  @select="chonGiaiDoan(stage)"
+                />
               </div>
             </div>
           </div>
@@ -66,6 +63,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import DoiTuongCard from '@/components/guest/chung/DoiTuongCard.vue'
 import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
 import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
 import { DINH_HUONG_THPT_KEY, dinhHuongThptList } from './dinhHuong'
@@ -98,17 +96,3 @@ function chonHuong(direction) {
   if (name && name !== route.name) router.push({ name })
 }
 </script>
-
-<style scoped>
-.thi-dai-hoc :deep(.stage-card__image) {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1024 / 617;
-  object-fit: cover;
-  object-position: center;
-}
-
-.thi-dai-hoc :deep(.stage-card__title) {
-  margin-top: 8px;
-}
-</style>

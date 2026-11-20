@@ -18,16 +18,15 @@
           <div class="stages-card">
             <h2 class="stages-heading">Con của bạn đang học ở cấp nào?</h2>
             <div class="row g-3">
-              <div v-for="cap in capHocList" :key="cap.code" class="col-md-6 col-xl-4">
-                <article class="stage-card h-100" :class="{ 'is-selected': laCapDangChon(cap) }">
-                  <div class="stage-card__media">
-                    <img class="stage-card__image" :src="cap.image" :alt="cap.name" />
-                    <span class="ph-tag">{{ cap.nhan }}</span>
-                    <button type="button" class="stage-card__button" @click="chonGiaiDoan(cap.giaiDoan)">Bắt đầu</button>
-                  </div>
-                  <h3 class="stage-card__title">{{ cap.name }}</h3>
-                  <p class="stage-card__text">{{ cap.description }}</p>
-                </article>
+              <div v-for="cap in capHocList" :key="cap.code" class="col-12 col-md-6">
+                <DoiTuongCard
+                  :image="cap.image"
+                  :name="cap.name"
+                  :nhan="cap.nhan"
+                  :description="cap.description"
+                  :selected="laCapDangChon(cap)"
+                  @select="chonGiaiDoan(cap.giaiDoan)"
+                />
               </div>
             </div>
           </div>
@@ -72,6 +71,7 @@
 import { useDoiTuongAudiences } from '@/composables/useDoiTuongAudiences'
 import { capHocList } from '@/components/guest/doi-tuong/PhuHuynh/capHoc'
 import { useGiaiDoanCon } from '@/components/guest/doi-tuong/PhuHuynh/useGiaiDoanCon'
+import DoiTuongCard from '@/components/guest/chung/DoiTuongCard.vue'
 import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
 import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
 import phuHuynhImage from '@/assets/guest/phu-huynh.jpg'
@@ -141,18 +141,6 @@ const { chonGiaiDoan, laCapDangChon } = useGiaiDoanCon()
   font-size: 1.05rem;
   line-height: 1.55;
   opacity: 0.95;
-}
-
-.ph-tag {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  padding: 4px 10px;
-  border-radius: var(--guest-radius-sm);
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--guest-primary);
-  font-size: 0.85rem;
-  font-weight: 600;
 }
 
 @media (max-width: 767px) {

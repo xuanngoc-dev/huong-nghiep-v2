@@ -1,10 +1,9 @@
 <template>
-  <div v-if="filterFields.length" class="filters">
+  <BoLoc v-if="filterFields.length">
     <CustomSelect
       v-for="field in filterFields"
       :key="field.key"
       v-model="filters[field.key]"
-      :class="field.width"
       :placeholder="field.placeholder"
       multiple
       collapse-tags
@@ -19,7 +18,7 @@
         :value="option.value"
       />
     </CustomSelect>
-  </div>
+  </BoLoc>
   <BangChiTiet :rows="filteredRows" :columns="columns" :empty-text="emptyText" />
 </template>
 
@@ -169,10 +168,10 @@ function statusOptions() {
 
 const filterFields = computed(() =>
   [
-    { key: 'chuongTrinh', placeholder: 'Chương trình', width: 'filter-wide', options: scopeOptions('chuong_trinh'), token: (row) => text(row.chuong_trinh) || NONE },
-    { key: 'phuongThuc', placeholder: 'Phương thức', width: 'filter-wide', options: scopeOptions('phuong_thuc'), token: (row) => text(row.phuong_thuc) || NONE },
-    { key: 'doiTuong', placeholder: 'Đối tượng', width: 'filter-mid', options: scopeOptions('doi_tuong'), token: (row) => text(row.doi_tuong) || NONE },
-    { key: 'loai', placeholder: 'Loại điều kiện', width: 'filter-mid', options: loaiOptions(), token: (row) => text(row.loai_dieu_kien) || NONE },
+    { key: 'chuongTrinh', placeholder: 'Chương trình', options: scopeOptions('chuong_trinh'), token: (row) => text(row.chuong_trinh) || NONE },
+    { key: 'phuongThuc', placeholder: 'Phương thức', options: scopeOptions('phuong_thuc'), token: (row) => text(row.phuong_thuc) || NONE },
+    { key: 'doiTuong', placeholder: 'Đối tượng', options: scopeOptions('doi_tuong'), token: (row) => text(row.doi_tuong) || NONE },
+    { key: 'loai', placeholder: 'Loại điều kiện', options: loaiOptions(), token: (row) => text(row.loai_dieu_kien) || NONE },
     {
       key: 'batBuoc',
       placeholder: 'Bắt buộc',
@@ -202,19 +201,8 @@ const emptyText = computed(() => {
 </script>
 
 <style scoped>
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
+.bo-loc {
   margin-bottom: 12px;
 }
 
-.filter-wide {
-  width: 260px;
-}
-
-.filter-mid {
-  width: 200px;
-}
 </style>

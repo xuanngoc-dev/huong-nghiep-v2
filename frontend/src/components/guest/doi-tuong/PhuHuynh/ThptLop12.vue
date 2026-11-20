@@ -13,25 +13,16 @@
           <div class="directions-card">
             <h2 class="directions-heading">Sau khi tốt nghiệp THPT, con định hướng làm gì?</h2>
             <div class="row g-3">
-              <div v-for="direction in directions" :key="direction.code" class="col-md-6 col-xl-4">
-                <article
-                  class="stage-card h-100"
-                  :class="{ 'is-selected': selectedDirection === direction.code, 'is-locked': !direction.moTruyCap }"
-                >
-                  <div class="stage-card__media">
-                    <img class="stage-card__image" :src="direction.image" :alt="direction.name" />
-                    <button
-                      type="button"
-                      class="stage-card__button"
-                      :disabled="!direction.moTruyCap"
-                      @click="chonDinhHuong(direction)"
-                    >
-                      {{ direction.moTruyCap ? 'Bắt đầu' : 'Sắp ra mắt' }}
-                    </button>
-                  </div>
-                  <h3 class="stage-card__title">{{ direction.name }}</h3>
-                  <p class="stage-card__text">{{ direction.description }}</p>
-                </article>
+              <div v-for="direction in directions" :key="direction.code" class="col-12 col-xl-6">
+                <HuongDiCard
+                  :image="direction.image"
+                  :title="direction.name"
+                  :description="direction.moTaChiTiet || direction.description"
+                  cta="Bắt đầu"
+                  :selected="selectedDirection === direction.code"
+                  :locked="!direction.moTruyCap"
+                  @chon="chonDinhHuong(direction)"
+                />
               </div>
             </div>
           </div>
@@ -77,6 +68,7 @@ import { DINH_HUONG_THPT_KEY, dinhHuongThptList } from '@/components/guest/doi-t
 import DinhHuongTuongLai from '@/components/guest/chung/DinhHuongTuongLai.vue'
 import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
 import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
+import HuongDiCard from '@/components/guest/chung/HuongDiCard.vue'
 import { capHocList } from './capHoc'
 import { TIEN_TO_LOP_12 } from './routes'
 import { useGiaiDoanCon } from './useGiaiDoanCon'

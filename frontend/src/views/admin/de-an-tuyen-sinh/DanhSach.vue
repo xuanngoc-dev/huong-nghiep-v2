@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-page">
     <CustomCard shadow="never" class="catalog-card">
-      <div class="filters">
+      <BoLoc>
         <CustomInput
           v-model="filters.q"
           class="filter-search"
@@ -52,8 +52,10 @@
             :value="item.value"
           />
         </CustomSelect>
-        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-      </div>
+        <template #nut>
+          <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+        </template>
+      </BoLoc>
     </CustomCard>
 
     <CustomCard shadow="never" class="catalog-card">
@@ -299,6 +301,7 @@
         </CustomFormItem>
         <CustomFormItem label="Trạng thái" prop="trang_thai">
           <CustomSelect v-model="form.trang_thai" clearable placeholder="Chọn trạng thái">
+            <CustomOption v-if="form.trang_thai === 'cong_bo'" label="Đã công bố (trạng thái cũ)" value="cong_bo" />
             <CustomOption
               v-for="item in STATUS_OPTIONS"
               :key="item.value"
@@ -391,7 +394,7 @@ import ChiTietDeAnDialog from './ChiTietDeAnDialog.vue'
 
 const STATUS_OPTIONS = [
   { value: 'nhap', label: 'Nháp', tag: 'info' },
-  { value: 'cong_bo', label: 'Đã công bố', tag: 'success' },
+  { value: 'da_cong_bo', label: 'Đã công bố', tag: 'success' },
   { value: 'het_hieu_luc', label: 'Hết hiệu lực', tag: 'warning' },
 ]
 
@@ -559,7 +562,7 @@ function schoolLabel(school) {
 }
 
 function statusMeta(value) {
-  return STATUS_OPTIONS.find((item) => item.value === value) || null
+  return STATUS_OPTIONS.find((item) => item.value === (value === 'cong_bo' ? 'da_cong_bo' : value)) || null
 }
 
 function formatDate(value) {
@@ -999,10 +1002,6 @@ onMounted(async () => {
   line-height: 1.4;
 }
 
-.filter-school {
-  width: 280px;
-}
-
 .json-panel__actions {
   display: flex;
   flex-shrink: 0;
@@ -1031,9 +1030,6 @@ onMounted(async () => {
 }
 
 @media (max-width: 640px) {
-  .filter-school,
-  .filter-year,
-  .filter-status,
   .json-school,
   .json-year {
     width: 100%;

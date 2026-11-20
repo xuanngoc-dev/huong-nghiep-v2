@@ -92,10 +92,13 @@ def _nhom_chuc_nang(path: str) -> str:
 
 def thu_thap() -> dict[str, dict[str, list[dict]]]:
     ket_qua: dict[str, dict[str, list[dict]]] = {key: defaultdict(list) for key, _, _ in NHOM}
-    # Router được include theo kiểu lười nên phải đi qua iter_route_contexts (cách FastAPI dựng OpenAPI)
-    # để có đường dẫn đầy đủ và dependency khai báo ở router.
-    for ctx in routing.iter_route_contexts(app.routes):
-        route = ctx.original_route
+    # Một số phiên bản FastAPI giữ router lồng nhau đến khi dựng OpenAPI.
+    iter_contexts = getattr(routing, "iter_route_contexts", None)
+    cac_route = (
+        ((ctx.original_route, ctx) for ctx in iter_contexts(app.routes))
+        if iter_contexts else ((route, route) for route in app.routes)
+    )
+    for route, ctx in cac_route:
         if not isinstance(route, APIRoute) or not route.include_in_schema:
             continue
         nhom, dang_nhap = _phan_loai(ctx.dependant)

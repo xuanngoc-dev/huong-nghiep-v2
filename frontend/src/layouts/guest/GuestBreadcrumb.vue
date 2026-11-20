@@ -26,6 +26,7 @@ const route = useRoute()
 const trangChu = { label: 'Trang chủ', to: { name: 'home' } }
 const chonDoiTuong = { label: 'Chọn đối tượng', to: { name: 'chon-doi-tuong' } }
 const hocSinhThpt = { label: 'Học sinh THPT', to: { name: 'hoc-sinh-thpt' } }
+const hocSinhThcs = { label: 'Học sinh THCS', to: { name: 'hoc-sinh-thcs' } }
 const phuHuynh = { label: 'Phụ huynh', to: { name: 'phu-huynh' } }
 const phuHuynhThpt = { label: 'Con học Trung học phổ thông', to: { name: 'phu-huynh-thpt' } }
 const phuHuynhLop12 = { label: 'Con học lớp 12', to: { name: 'phu-huynh-thpt-lop-12' } }
@@ -41,6 +42,8 @@ const muc = computed(() => {
     const doiTuong = doiTuongList.find((item) => item.code === route.meta.doiTuong)
     return [trangChu, chonDoiTuong, { label: doiTuong?.name || hienTai.label }]
   }
+
+  if (route.meta.doiTuongCha === 'hoc-sinh-thcs') return [trangChu, chonDoiTuong, hocSinhThcs, hienTai]
 
   if (route.meta.giaiDoanCon) {
     const goc = [trangChu, chonDoiTuong, phuHuynh]
@@ -75,6 +78,9 @@ const muc = computed(() => {
         ]
       }
       return [...goc, thiDaiHoc, hienTai]
+    }
+    if (route.meta.dinhHuong === 'di-lam') {
+      return [...goc, { label: 'Đi làm ngay sau khi tốt nghiệp', to: { name: ten('thpt-di-lam') } }, hienTai]
     }
     return [...goc, hienTai]
   }

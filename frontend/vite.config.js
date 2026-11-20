@@ -1,3 +1,7 @@
+import { createHash } from 'node:crypto'
+import { realpathSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
 
 import vue from '@vitejs/plugin-vue'
@@ -37,7 +41,15 @@ function seoMeta(env) {
   }
 }
 
-export default defineConfig(({ mode }) => ({
+function thuMucCacheWindows() {
+  // Cache tối ưu của Vite có thể lớn. Đặt ở ổ tạm và giữ riêng theo workspace.
+  const thuMucFrontend = realpathSync.native(fileURLToPath(new URL('.', import.meta.url)))
+  const khoa = createHash('sha256').update(thuMucFrontend.toLowerCase()).digest('hex').slice(0, 16)
+  return join(tmpdir(), 'huong-nghiep-vite', khoa)
+}
+
+export default defineConfig(({ mode, command, isPreview }) => ({
+  cacheDir: process.platform === 'win32' && command === 'serve' && !isPreview ? thuMucCacheWindows() : undefined,
   plugins: [
     seoMeta(loadEnv(mode, process.cwd())),
     vue(),

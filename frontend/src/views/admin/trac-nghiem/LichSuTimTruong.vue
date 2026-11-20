@@ -1,7 +1,7 @@
 <template>
   <div class="catalog-page">
   <CustomCard shadow="never" class="catalog-card">
-    <div class="filters">
+  <BoLoc>
       <CustomInput
         v-model="filters.nguoi_dung"
         class="filter-search"
@@ -75,7 +75,7 @@
       </CustomSelect>
       <CustomDatePicker
         v-model="filters.khoang_ngay"
-        class="filter-date"
+        class="bo-loc__rong filter-date"
         type="daterange"
         value-format="YYYY-MM-DD"
         format="DD/MM/YYYY"
@@ -85,12 +85,14 @@
         clearable
         @change="onSearch"
       />
-      <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
-      <CustomButton @click="onResetFilters">
-        <CustomIcon><RefreshLeft /></CustomIcon>
-        <span>Đặt lại</span>
-      </CustomButton>
-    </div>
+      <template #nut>
+        <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
+        <CustomButton @click="onResetFilters">
+          <CustomIcon><RefreshLeft /></CustomIcon>
+          <span>Đặt lại</span>
+        </CustomButton>
+      </template>
+    </BoLoc>
   </CustomCard>
 
   <CustomCard shadow="never" class="catalog-card">
@@ -191,27 +193,43 @@
   </CustomCard>
   </div>
 
-  <CustomDialog v-model="chiTietMo" title="Chi tiết lượt tìm trường" width="min(860px, 94vw)" destroy-on-close>
+  <CustomDialog v-model="chiTietMo" title="Chi tiết lượt tìm trường" width="min(1200px, 96vw)" destroy-on-close>
     <div v-loading="dangTaiChiTiet" class="chi-tiet">
       <template v-if="chiTiet">
-        <dl class="chi-tiet__grid">
-          <div v-for="dong in thongTinChung" :key="dong.nhan" class="chi-tiet__row">
-            <dt>{{ dong.nhan }}</dt>
-            <dd>{{ dong.giaTri || '—' }}</dd>
-          </div>
-        </dl>
+        <CustomForm class="chi-tiet__form" :model="chiTiet" label-position="top" @submit.prevent>
+          <CustomRow :gutter="12">
+            <CustomCol v-for="dong in thongTinChung" :key="dong.nhan" v-bind="dong.rong ? COT_RONG : COT">
+              <CustomFormItem :label="dong.nhan">
+                <CustomInput :model-value="dong.giaTri || '—'" :title="dong.giaTri" readonly />
+              </CustomFormItem>
+            </CustomCol>
+          </CustomRow>
+        </CustomForm>
 
-        <h3 class="chi-tiet__title">Tiêu chí tìm kiếm</h3>
-        <div v-if="nhanTieuChi(chiTiet.tieu_chi_tim_kiem).length" class="tag-list">
-          <CustomTag v-for="nhan in nhanTieuChi(chiTiet.tieu_chi_tim_kiem)" :key="nhan" effect="plain">{{ nhan }}</CustomTag>
-        </div>
-        <p v-else class="cell-sub">Không lọc</p>
-
-        <h3 class="chi-tiet__title">Dữ liệu năng lực</h3>
-        <pre class="chi-tiet__json">{{ hienJson(chiTiet.du_lieu_nang_luc) }}</pre>
-
-        <h3 class="chi-tiet__title">Dữ liệu tài chính</h3>
-        <pre class="chi-tiet__json">{{ hienJson(chiTiet.du_lieu_tai_chinh) }}</pre>
+        <el-collapse v-model="moMuc" class="chi-tiet__collapse">
+          <el-collapse-item name="tieu-chi">
+            <template #title>
+              <span class="chi-tiet__title">Tiêu chí tìm kiếm</span>
+              <span class="cell-sub">&nbsp;({{ tieuChi.length ? `${tieuChi.length} tiêu chí` : 'không lọc' }})</span>
+            </template>
+            <div v-if="tieuChi.length" class="tag-list">
+              <CustomTag v-for="nhan in tieuChi" :key="nhan" effect="plain">{{ nhan }}</CustomTag>
+            </div>
+            <p v-else class="cell-sub">Không lọc</p>
+          </el-collapse-item>
+          <el-collapse-item name="du-lieu">
+            <template #title>
+              <span class="chi-tiet__title">Dữ liệu năng lực &amp; tài chính</span>
+            </template>
+            <CustomRadioGroup v-model="tabDuLieu" class="chi-tiet__tabs" size="small" aria-label="Dữ liệu người tìm">
+              <CustomRadioButton value="nang_luc">Dữ liệu năng lực</CustomRadioButton>
+              <CustomRadioButton value="tai_chinh">Dữ liệu tài chính</CustomRadioButton>
+            </CustomRadioGroup>
+            <pre class="chi-tiet__json">{{
+              hienJson(tabDuLieu === 'nang_luc' ? chiTiet.du_lieu_nang_luc : chiTiet.du_lieu_tai_chinh)
+            }}</pre>
+          </el-collapse-item>
+        </el-collapse>
 
         <h3 class="chi-tiet__title">
           Trường phù hợp sơ bộ
@@ -320,36 +338,48 @@ function hienJson(value) {
 
 const truongKetQua = computed(() => chiTiet.value?.du_lieu_ket_qua?.truong || [])
 
+// Lưới thông tin chung: 2 → 3 → 4 → 6 ô/hàng theo màn hình; ô nội dung dài (`rong`) chiếm gấp đôi.
+const COT = { xs: 12, sm: 8, md: 6, lg: 4 }
+const COT_RONG = { xs: 24, sm: 16, md: 12, lg: 8 }
+const tabDuLieu = ref('nang_luc')
+// Các mục thu gọn (tiêu chí tìm kiếm, dữ liệu năng lực & tài chính): mặc định đóng hết.
+const moMuc = ref([])
+const tieuChi = computed(() => nhanTieuChi(chiTiet.value?.tieu_chi_tim_kiem))
+
+// Sắp sao cho mỗi hàng lấp kín: 6 ô/hàng trên desktop, từng cặp ô trên mobile.
 const thongTinChung = computed(() => {
   const item = chiTiet.value
   if (!item) return []
   return [
-    { nhan: 'Mã yêu cầu', giaTri: item.ma_yeu_cau },
+    // { nhan: 'Mã yêu cầu', giaTri: item.ma_yeu_cau },
+    { nhan: 'Năm tuyển sinh', giaTri: String(item.nam_tuyen_sinh) },
     {
       nhan: 'Người tìm',
+      rong: false,
       giaTri:
         [item.la_khach ? 'Khách' : '', item.ho_ten, item.email, item.so_dien_thoai].filter(Boolean).join(' · ') ||
         `#${item.tai_khoan_id}`,
     },
-    { nhan: 'Mã thiết bị', giaTri: item.la_khach ? item.ma_thiet_bi : '' },
-    { nhan: 'Ngành', giaTri: `${item.ma_nganh}${item.ten_nganh ? ` · ${item.ten_nganh}` : ''}` },
-    { nhan: 'Năm tuyển sinh', giaTri: String(item.nam_tuyen_sinh) },
-    { nhan: 'Thời gian tạo', giaTri: formatThoiGian(item.ngay_tao) },
-    { nhan: 'Hoàn thành', giaTri: item.ngay_hoan_thanh ? formatThoiGian(item.ngay_hoan_thanh) : '' },
+    { nhan: 'Ngành', rong: false, giaTri: `${item.ma_nganh}${item.ten_nganh ? ` · ${item.ten_nganh}` : ''}` },
+    // { nhan: 'Thời gian tạo', giaTri: formatThoiGian(item.ngay_tao) },
+    // { nhan: 'Hoàn thành', giaTri: item.ngay_hoan_thanh ? formatThoiGian(item.ngay_hoan_thanh) : '' },
     { nhan: 'Trạng thái', giaTri: TRANG_THAI[item.trang_thai_xu_ly]?.nhan || item.trang_thai_xu_ly },
     {
       nhan: 'Loại lượt',
       giaTri: `${LOAI_LUOT[item.loai_luot]?.nhan || item.loai_luot}${item.da_tinh_luot ? '' : ' (không tính lượt)'}`,
     },
     { nhan: 'Kết quả', giaTri: `${item.so_truong_phu_hop_so_bo} phù hợp / ${item.so_truong_tim_thay} có ngành` },
-    {
-      nhan: 'Báo cáo chuyên sâu',
-      giaTri: item.da_mo_khoa_chuyen_sau
-        ? `Đã mở khóa${item.ngay_mo_khoa ? ` lúc ${formatThoiGian(item.ngay_mo_khoa)}` : ''}`
-        : 'Chưa mở khóa',
-    },
-    { nhan: 'Phiên bản thuật toán', giaTri: item.phien_ban_thuat_toan },
-  ]
+    // { nhan: 'Phiên bản thuật toán', giaTri: item.phien_ban_thuat_toan },
+    // {
+    //   nhan: 'Báo cáo chuyên sâu',
+    //   rong: true,
+    //   giaTri: item.da_mo_khoa_chuyen_sau
+    //     ? `Đã mở khóa${item.ngay_mo_khoa ? ` lúc ${formatThoiGian(item.ngay_mo_khoa)}` : ''}`
+    //     : 'Chưa mở khóa',
+    // },
+    // Mã thiết bị chỉ có ở lượt của khách.
+    // item.la_khach && { nhan: 'Mã thiết bị', rong: true, giaTri: item.ma_thiet_bi },
+  ].filter(Boolean)
 })
 
 function rowIndex(index) {
@@ -410,6 +440,8 @@ function onSizeChange() {
 
 async function moChiTiet(row) {
   chiTiet.value = null
+  tabDuLieu.value = 'nang_luc'
+  moMuc.value = []
   chiTietMo.value = true
   dangTaiChiTiet.value = true
   try {
@@ -426,18 +458,6 @@ onMounted(load)
 </script>
 
 <style scoped>
-.filter-code {
-  width: 210px;
-}
-
-.filter-select {
-  width: 160px;
-}
-
-.filter-date {
-  max-width: 240px;
-}
-
 .toolbar__count {
   color: var(--el-text-color-secondary);
   font-size: 13px;
@@ -469,27 +489,54 @@ onMounted(load)
   min-height: 120px;
 }
 
-.chi-tiet__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px 24px;
+/* Thông tin chung: ô chỉ đọc có nhãn phía trên, xếp sát nhau cho gọn. */
+.chi-tiet__form :deep(.el-form-item) {
+  margin-bottom: 10px;
+}
+
+.chi-tiet__form :deep(.el-form-item__label) {
+  margin-bottom: 2px;
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.chi-tiet__form :deep(.el-input__wrapper) {
+  background: var(--el-fill-color-lighter);
+}
+
+/* Các mục thu gọn, bỏ viền trên cho gọn. */
+.chi-tiet__collapse {
+  margin-top: 6px;
+  border-top: 0;
+}
+
+.chi-tiet__collapse :deep(.el-collapse-item__header) {
+  height: 40px;
+}
+
+.chi-tiet__collapse .chi-tiet__title {
+  margin: 0;
+}
+
+.chi-tiet__collapse :deep(.el-collapse-item__content) {
+  padding-bottom: 12px;
+}
+
+/* Tab dạng pills cho dữ liệu năng lực / tài chính. */
+.chi-tiet__tabs {
+  gap: 6px;
   margin: 0 0 8px;
 }
 
-.chi-tiet__row {
-  display: grid;
-  grid-template-columns: 140px minmax(0, 1fr);
-  gap: 8px;
+.chi-tiet__tabs :deep(.el-radio-button__inner) {
+  border: 1px solid var(--el-border-color);
+  border-radius: 999px !important;
+  box-shadow: none !important;
 }
 
-.chi-tiet__row dt {
-  color: var(--el-text-color-secondary);
-  font-weight: 400;
-}
-
-.chi-tiet__row dd {
-  margin: 0;
-  overflow-wrap: anywhere;
+.chi-tiet__tabs :deep(.el-radio-button.is-active .el-radio-button__inner) {
+  border-color: var(--el-color-primary);
 }
 
 .chi-tiet__title {
@@ -515,22 +562,5 @@ onMounted(load)
 .chi-tiet__loi {
   margin: 12px 0 0;
   color: var(--el-color-danger);
-}
-
-@media (max-width: 640px) {
-  .filter-code,
-  .filter-select,
-  .filter-date {
-    width: 100%;
-    max-width: none;
-  }
-
-  .chi-tiet__grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .chi-tiet__row {
-    grid-template-columns: 120px minmax(0, 1fr);
-  }
 }
 </style>

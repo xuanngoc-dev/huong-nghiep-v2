@@ -1,16 +1,16 @@
 # Danh sách API
 
-Tự sinh từ code lúc 18/11/2026 17:45 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 20/11/2026 15:10 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **319** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **494** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 186 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 83 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
-| [Khách vãng lai](#khach) | 50 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
+| [Quản trị (admin)](#quan_tri) | 316 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Thành viên (user)](#thanh_vien) | 104 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Khách vãng lai](#khach) | 74 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
 
@@ -92,10 +92,10 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/loai-cau-hoi` | Bắt buộc (admin) | Thêm một loại câu hỏi. Từ chối nếu thứ tự ưu tiên đã tồn tại. |
+| `POST` | `/api/v1/danh-muc/loai-cau-hoi` | Bắt buộc (admin) | Thêm một loại câu hỏi. Thứ tự ưu tiên được trùng với loại khác. |
 | `DELETE` | `/api/v1/danh-muc/loai-cau-hoi` | Bắt buộc (admin) | Xóa nhiều loại câu hỏi theo danh sách id. |
 | `POST` | `/api/v1/danh-muc/loai-cau-hoi/anh-huong-xoa` | Bắt buộc (admin) | Xem trước số câu hỏi, đáp án và phiên khảo sát sẽ bị xóa theo nếu xóa các loại câu hỏi này. |
-| `POST` | `/api/v1/danh-muc/loai-cau-hoi/bulk` | Bắt buộc (admin) | Thêm nhiều loại câu hỏi cùng lúc. Từ chối nếu thứ tự ưu tiên trùng trong dữ liệu hoặc đã có trong hệ thống. |
+| `POST` | `/api/v1/danh-muc/loai-cau-hoi/bulk` | Bắt buộc (admin) | Thêm nhiều loại câu hỏi cùng lúc. Thứ tự ưu tiên được trùng (trùng thì loại tạo trước đứng trước). |
 | `PATCH` | `/api/v1/danh-muc/loai-cau-hoi/trang-thai` | Bắt buộc (admin) | Bật/tắt nhiều loại câu hỏi cùng lúc. Id không tồn tại thì bỏ qua. |
 | `PUT` | `/api/v1/danh-muc/loai-cau-hoi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một loại câu hỏi theo id. |
 | `DELETE` | `/api/v1/danh-muc/loai-cau-hoi/{item_id}` | Bắt buộc (admin) | Xóa một loại câu hỏi theo id; `xoa_lien_quan=true` xóa kèm câu hỏi, đáp án và phiên khảo sát liên quan. |
@@ -142,6 +142,16 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `PUT` | `/api/v1/danh-muc/nganh-hoc-theo-truong/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một ngành đào tạo theo id. |
 | `DELETE` | `/api/v1/danh-muc/nganh-hoc-theo-truong/{item_id}` | Bắt buộc (admin) | Xóa một ngành đào tạo theo id. |
 
+### `danh-muc/nghe-cu-the-di-lam`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/nghe-cu-the-di-lam` | Bắt buộc (admin) | Thêm một nghề cụ thể vào nhóm nghề. |
+| `DELETE` | `/api/v1/danh-muc/nghe-cu-the-di-lam` | Bắt buộc (admin) | Xóa nhiều nghề cụ thể theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/nghe-cu-the-di-lam/bulk` | Bắt buộc (admin) | Thêm nhiều nghề cụ thể cùng lúc. Từ chối nếu có nhóm nghề không tồn tại. |
+| `PUT` | `/api/v1/danh-muc/nghe-cu-the-di-lam/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một nghề cụ thể theo id. |
+| `DELETE` | `/api/v1/danh-muc/nghe-cu-the-di-lam/{item_id}` | Bắt buộc (admin) | Xóa một nghề cụ thể theo id. |
+
 ### `danh-muc/nhom-nganh-dao-tao`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
@@ -151,6 +161,28 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `POST` | `/api/v1/danh-muc/nhom-nganh-dao-tao/bulk` | Bắt buộc (admin) | Thêm nhiều nhóm ngành cùng lúc. Từ chối nếu mã trùng hoặc lĩnh vực cha không tồn tại. |
 | `PUT` | `/api/v1/danh-muc/nhom-nganh-dao-tao/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một nhóm ngành đào tạo theo id. |
 | `DELETE` | `/api/v1/danh-muc/nhom-nganh-dao-tao/{item_id}` | Bắt buộc (admin) | Xóa một nhóm ngành đào tạo theo id. Từ chối nếu còn ngành thuộc nhóm đó. |
+
+### `danh-muc/nhom-nghe-di-lam`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/nhom-nghe-di-lam` | Bắt buộc (admin) | Thêm một nhóm nghề đi làm. Từ chối nếu mã nhóm đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/nhom-nghe-di-lam` | Bắt buộc (admin) | Xóa nhiều nhóm nghề theo danh sách id; nghề cụ thể và liên kết tiêu chí bị xóa theo (CASCADE). |
+| `POST` | `/api/v1/danh-muc/nhom-nghe-di-lam/bulk` | Bắt buộc (admin) | Thêm nhiều nhóm nghề cùng lúc. Từ chối nếu mã nhóm trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PATCH` | `/api/v1/danh-muc/nhom-nghe-di-lam/trang-thai` | Bắt buộc (admin) | Bật/tắt nhiều nhóm nghề cùng lúc. Id không tồn tại thì bỏ qua. |
+| `PUT` | `/api/v1/danh-muc/nhom-nghe-di-lam/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một nhóm nghề đi làm theo id. |
+| `DELETE` | `/api/v1/danh-muc/nhom-nghe-di-lam/{item_id}` | Bắt buộc (admin) | Xóa một nhóm nghề theo id; nghề cụ thể và liên kết tiêu chí bị xóa theo (CASCADE). |
+| `PATCH` | `/api/v1/danh-muc/nhom-nghe-di-lam/{item_id}/trang-thai` | Bắt buộc (admin) | Bật/tắt nhanh một nhóm nghề, giữ nguyên các thông tin khác. |
+
+### `danh-muc/nhom-nghe-tieu-chi`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/nhom-nghe-tieu-chi` | Bắt buộc (admin) | Gắn một tiêu chí cho nhóm nghề kèm điểm phù hợp. |
+| `DELETE` | `/api/v1/danh-muc/nhom-nghe-tieu-chi` | Bắt buộc (admin) | Xóa nhiều liên kết theo danh sách khóa ghép. Cặp không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/nhom-nghe-tieu-chi/bulk` | Bắt buộc (admin) | Gắn nhiều tiêu chí cho nhóm nghề cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/nhom-nghe-tieu-chi/{nhom_nghe_di_lam_id}/{tieu_chi_goi_y_id}` | Bắt buộc (admin) | Cập nhật điểm phù hợp và ghi chú của một liên kết (không đổi được nhóm nghề/tiêu chí). |
+| `DELETE` | `/api/v1/danh-muc/nhom-nghe-tieu-chi/{nhom_nghe_di_lam_id}/{tieu_chi_goi_y_id}` | Bắt buộc (admin) | Xóa một liên kết nhóm nghề - tiêu chí. |
 
 ### `danh-muc/nhom-tinh-cach-holland`
 
@@ -183,6 +215,122 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `POST` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/bulk` | Bắt buộc (admin) | Thêm nhiều thành tích học tập, nghiên cứu cùng lúc. |
 | `PUT` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một thành tích học tập, nghiên cứu theo id. |
 | `DELETE` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc (admin) | Xóa một thành tích học tập, nghiên cứu theo id. |
+
+### `danh-muc/thcs`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/thcs/huong-di` | Bắt buộc (admin) | Thêm một hướng đi THCS. Từ chối nếu mã đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/thcs/huong-di` | Bắt buộc (admin) | Xóa nhiều hướng đi theo danh sách id; ưu/nhược điểm, điểm tiêu chí, lời khuyên bị xóa theo. |
+| `POST` | `/api/v1/danh-muc/thcs/huong-di-tieu-chi` | Bắt buộc (admin) | Chấm điểm phù hợp của một hướng đi với một tiêu chí. |
+| `DELETE` | `/api/v1/danh-muc/thcs/huong-di-tieu-chi` | Bắt buộc (admin) | Xóa nhiều điểm phù hợp theo danh sách khóa ghép. Cặp không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thcs/huong-di-tieu-chi/bulk` | Bắt buộc (admin) | Chấm điểm nhiều cặp hướng đi - tiêu chí cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thcs/huong-di-tieu-chi/{thcs_huong_di_id}/{thcs_tieu_chi_id}` | Bắt buộc (admin) | Cập nhật điểm phù hợp và nhận định tư vấn (không đổi được hướng đi/tiêu chí). |
+| `DELETE` | `/api/v1/danh-muc/thcs/huong-di-tieu-chi/{thcs_huong_di_id}/{thcs_tieu_chi_id}` | Bắt buộc (admin) | Xóa điểm phù hợp của một hướng đi với một tiêu chí. |
+| `POST` | `/api/v1/danh-muc/thcs/huong-di/bulk` | Bắt buộc (admin) | Thêm nhiều hướng đi cùng lúc. Từ chối nếu mã trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PATCH` | `/api/v1/danh-muc/thcs/huong-di/trang-thai` | Bắt buộc (admin) | Bật/tắt nhiều hướng đi cùng lúc. Id không tồn tại thì bỏ qua. |
+| `PUT` | `/api/v1/danh-muc/thcs/huong-di/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một hướng đi THCS theo id. |
+| `DELETE` | `/api/v1/danh-muc/thcs/huong-di/{item_id}` | Bắt buộc (admin) | Xóa một hướng đi theo id; ưu/nhược điểm, điểm tiêu chí, lời khuyên bị xóa theo (CASCADE). |
+| `PATCH` | `/api/v1/danh-muc/thcs/huong-di/{item_id}/trang-thai` | Bắt buộc (admin) | Bật/tắt nhanh một hướng đi, giữ nguyên các thông tin khác. |
+| `POST` | `/api/v1/danh-muc/thcs/loi-khuyen-luu-y` | Bắt buộc (admin) | Thêm một lời khuyên, lưu ý cho hướng đi. |
+| `DELETE` | `/api/v1/danh-muc/thcs/loi-khuyen-luu-y` | Bắt buộc (admin) | Xóa nhiều lời khuyên, lưu ý theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thcs/loi-khuyen-luu-y/bulk` | Bắt buộc (admin) | Thêm nhiều lời khuyên, lưu ý cùng lúc. Từ chối nếu có hướng đi không tồn tại. |
+| `PUT` | `/api/v1/danh-muc/thcs/loi-khuyen-luu-y/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một lời khuyên, lưu ý. |
+| `DELETE` | `/api/v1/danh-muc/thcs/loi-khuyen-luu-y/{item_id}` | Bắt buộc (admin) | Xóa một lời khuyên, lưu ý theo id. |
+| `POST` | `/api/v1/danh-muc/thcs/tieu-chi` | Bắt buộc (admin) | Thêm một tiêu chí THCS. Từ chối nếu mã đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/thcs/tieu-chi` | Bắt buộc (admin) | Xóa nhiều tiêu chí theo danh sách id; điểm phù hợp của các hướng đi với tiêu chí bị xóa theo. |
+| `POST` | `/api/v1/danh-muc/thcs/tieu-chi/bulk` | Bắt buộc (admin) | Thêm nhiều tiêu chí cùng lúc. Từ chối nếu mã trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/thcs/tieu-chi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một tiêu chí THCS theo id. |
+| `DELETE` | `/api/v1/danh-muc/thcs/tieu-chi/{item_id}` | Bắt buộc (admin) | Xóa một tiêu chí theo id; điểm phù hợp của các hướng đi với tiêu chí bị xóa theo (CASCADE). |
+| `POST` | `/api/v1/danh-muc/thcs/uu-nhuoc-diem` | Bắt buộc (admin) | Thêm một ưu/nhược điểm cho hướng đi. |
+| `DELETE` | `/api/v1/danh-muc/thcs/uu-nhuoc-diem` | Bắt buộc (admin) | Xóa nhiều ưu/nhược điểm theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thcs/uu-nhuoc-diem/bulk` | Bắt buộc (admin) | Thêm nhiều ưu/nhược điểm cùng lúc. Từ chối nếu có hướng đi không tồn tại. |
+| `PUT` | `/api/v1/danh-muc/thcs/uu-nhuoc-diem/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một ưu/nhược điểm. |
+| `DELETE` | `/api/v1/danh-muc/thcs/uu-nhuoc-diem/{item_id}` | Bắt buộc (admin) | Xóa một ưu/nhược điểm theo id. |
+
+### `danh-muc/thpt-du-hoc`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/chi-phi` | Bắt buộc (admin) | Thêm một khoản chi phí du học. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/chi-phi` | Bắt buộc (admin) | Xóa nhiều khoản chi phí du học theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/chi-phi/bulk` | Bắt buộc (admin) | Thêm nhiều khoản chi phí du học cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-du-hoc/chi-phi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một khoản chi phí du học theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/chi-phi/{item_id}` | Bắt buộc (admin) | Xóa một khoản chi phí du học theo id. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/huong-di` | Bắt buộc (admin) | Thêm một hướng đi du học. Từ chối nếu mã đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/huong-di` | Bắt buộc (admin) | Xóa nhiều hướng đi theo danh sách id; quốc gia, ngành, chi phí, thủ tục, kênh kết nối bị xóa theo. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/huong-di/bulk` | Bắt buộc (admin) | Thêm nhiều hướng đi cùng lúc. Từ chối nếu mã trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PATCH` | `/api/v1/danh-muc/thpt-du-hoc/huong-di/trang-thai` | Bắt buộc (admin) | Bật/tắt nhiều hướng đi cùng lúc. Id không tồn tại thì bỏ qua. |
+| `PUT` | `/api/v1/danh-muc/thpt-du-hoc/huong-di/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một hướng đi du học theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/huong-di/{item_id}` | Bắt buộc (admin) | Xóa một hướng đi theo id; quốc gia, ngành, chi phí, thủ tục, kênh kết nối bị xóa theo (CASCADE). |
+| `PATCH` | `/api/v1/danh-muc/thpt-du-hoc/huong-di/{item_id}/trang-thai` | Bắt buộc (admin) | Bật/tắt nhanh một hướng đi, giữ nguyên các thông tin khác. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/kenh-ket-noi` | Bắt buộc (admin) | Thêm một kênh kết nối du học. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/kenh-ket-noi` | Bắt buộc (admin) | Xóa nhiều kênh kết nối du học theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/kenh-ket-noi/bulk` | Bắt buộc (admin) | Thêm nhiều kênh kết nối du học cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-du-hoc/kenh-ket-noi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một kênh kết nối du học theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/kenh-ket-noi/{item_id}` | Bắt buộc (admin) | Xóa một kênh kết nối du học theo id. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/nganh` | Bắt buộc (admin) | Thêm một ngành du học. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/nganh` | Bắt buộc (admin) | Xóa nhiều ngành du học theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/nganh/bulk` | Bắt buộc (admin) | Thêm nhiều ngành du học cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-du-hoc/nganh/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một ngành du học theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/nganh/{item_id}` | Bắt buộc (admin) | Xóa một ngành du học theo id. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia` | Bắt buộc (admin) | Thêm một quốc gia vào hướng đi du học. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia` | Bắt buộc (admin) | Xóa nhiều quốc gia theo danh sách id; dữ liệu con riêng của quốc gia bị xóa theo (CASCADE). |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia/bulk` | Bắt buộc (admin) | Thêm nhiều quốc gia cùng lúc. Từ chối nếu có hướng đi không tồn tại. |
+| `PUT` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một quốc gia. Không cho đổi hướng đi khi quốc gia đã có dữ liệu con. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia/{item_id}` | Bắt buộc (admin) | Xóa một quốc gia theo id; dữ liệu con riêng của quốc gia bị xóa theo (CASCADE). |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc` | Bắt buộc (admin) | Thêm một bước thủ tục du học. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc` | Bắt buộc (admin) | Xóa nhiều bước thủ tục du học theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc/bulk` | Bắt buộc (admin) | Thêm nhiều bước thủ tục du học cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một bước thủ tục du học theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc/{item_id}` | Bắt buộc (admin) | Xóa một bước thủ tục du học theo id. |
+
+### `danh-muc/thpt-xkld`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/thpt-xkld/chi-phi` | Bắt buộc (admin) | Thêm một khoản chi phí XKLĐ. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/chi-phi` | Bắt buộc (admin) | Xóa nhiều khoản chi phí XKLĐ theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/chi-phi/bulk` | Bắt buộc (admin) | Thêm nhiều khoản chi phí XKLĐ cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-xkld/chi-phi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một khoản chi phí XKLĐ theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/chi-phi/{item_id}` | Bắt buộc (admin) | Xóa một khoản chi phí XKLĐ theo id. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/kenh-ket-noi` | Bắt buộc (admin) | Thêm một kênh kết nối XKLĐ. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/kenh-ket-noi` | Bắt buộc (admin) | Xóa nhiều kênh kết nối XKLĐ theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/kenh-ket-noi/bulk` | Bắt buộc (admin) | Thêm nhiều kênh kết nối XKLĐ cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-xkld/kenh-ket-noi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một kênh kết nối XKLĐ theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/kenh-ket-noi/{item_id}` | Bắt buộc (admin) | Xóa một kênh kết nối XKLĐ theo id. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/nghe-cu-the` | Bắt buộc (admin) | Thêm một nghề cụ thể XKLĐ. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/nghe-cu-the` | Bắt buộc (admin) | Xóa nhiều nghề cụ thể XKLĐ theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/nghe-cu-the/bulk` | Bắt buộc (admin) | Thêm nhiều nghề cụ thể XKLĐ cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-xkld/nghe-cu-the/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một nghề cụ thể XKLĐ theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/nghe-cu-the/{item_id}` | Bắt buộc (admin) | Xóa một nghề cụ thể XKLĐ theo id. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe` | Bắt buộc (admin) | Thêm một nhóm nghề XKLĐ. Từ chối nếu mã đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe` | Bắt buộc (admin) | Xóa nhiều nhóm nghề theo danh sách id; thị trường, nghề cụ thể, chi phí, thủ tục, kênh kết nối bị xóa theo. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe/bulk` | Bắt buộc (admin) | Thêm nhiều nhóm nghề cùng lúc. Từ chối nếu mã trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PATCH` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe/trang-thai` | Bắt buộc (admin) | Bật/tắt nhiều nhóm nghề cùng lúc. Id không tồn tại thì bỏ qua. |
+| `PUT` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một nhóm nghề XKLĐ theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe/{item_id}` | Bắt buộc (admin) | Xóa một nhóm nghề theo id; thị trường, nghề cụ thể, chi phí, thủ tục, kênh kết nối bị xóa theo (CASCADE). |
+| `PATCH` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe/{item_id}/trang-thai` | Bắt buộc (admin) | Bật/tắt nhanh một nhóm nghề, giữ nguyên các thông tin khác. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/thi-truong` | Bắt buộc (admin) | Thêm một thị trường vào nhóm nghề XKLĐ. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/thi-truong` | Bắt buộc (admin) | Xóa nhiều thị trường theo danh sách id; dữ liệu con riêng của thị trường bị xóa theo (CASCADE). |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/thi-truong/bulk` | Bắt buộc (admin) | Thêm nhiều thị trường cùng lúc. Từ chối nếu có nhóm nghề không tồn tại. |
+| `PUT` | `/api/v1/danh-muc/thpt-xkld/thi-truong/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một thị trường. Không cho đổi nhóm nghề khi thị trường đã có dữ liệu con. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/thi-truong/{item_id}` | Bắt buộc (admin) | Xóa một thị trường theo id; dữ liệu con riêng của thị trường bị xóa theo (CASCADE). |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/thu-tuc` | Bắt buộc (admin) | Thêm một bước thủ tục XKLĐ. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/thu-tuc` | Bắt buộc (admin) | Xóa nhiều bước thủ tục XKLĐ theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/thu-tuc/bulk` | Bắt buộc (admin) | Thêm nhiều bước thủ tục XKLĐ cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-xkld/thu-tuc/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một bước thủ tục XKLĐ theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/thu-tuc/{item_id}` | Bắt buộc (admin) | Xóa một bước thủ tục XKLĐ theo id. |
+
+### `danh-muc/tieu-chi-goi-y`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/tieu-chi-goi-y` | Bắt buộc (admin) | Thêm một tiêu chí gợi ý. Từ chối nếu mã tiêu chí đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/tieu-chi-goi-y` | Bắt buộc (admin) | Xóa nhiều tiêu chí theo danh sách id; liên kết với nhóm nghề bị xóa theo (CASCADE). |
+| `POST` | `/api/v1/danh-muc/tieu-chi-goi-y/bulk` | Bắt buộc (admin) | Thêm nhiều tiêu chí cùng lúc. Từ chối nếu mã tiêu chí trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/tieu-chi-goi-y/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một tiêu chí gợi ý theo id. |
+| `DELETE` | `/api/v1/danh-muc/tieu-chi-goi-y/{item_id}` | Bắt buộc (admin) | Xóa một tiêu chí theo id; liên kết với nhóm nghề bị xóa theo (CASCADE). |
 
 ### `danh-muc/tinh-thanh`
 
@@ -228,6 +376,22 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
+| `GET` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien` | Bắt buộc (admin) | Liệt kê phiên thu thập và hàng đợi xét duyệt theo bộ lọc của CMS. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien` | Bắt buộc (admin) | Tạo phiên thu thập cho một trường và một năm. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/duyet-hang-loat` | Bắt buộc (admin) | Duyệt danh sách phiên đã xác nhận và trả kết quả riêng cho từng phiên bản. |
+| `GET` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}` | Bắt buộc (admin) | Mở phiên, nhật ký và một phiên bản nháp bất kỳ. |
+| `DELETE` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}` | Bắt buộc (admin) | Xóa phiên, bản nháp và nhật ký của phiên chưa được nhập vào hệ thống. |
+| `PATCH` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/ban-nhap` | Bắt buộc (admin) | Lưu giá trị, dẫn chứng và lý do sửa vào phiên bản mới, giữ nguyên lịch sử. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/dung-tao-ban-nhap` | Bắt buộc (admin) | Dừng lượt tạo đã chọn và trả phiên về bước trước khi tạo. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/duyet` | Bắt buộc (admin) | Duyệt đúng phiên bản và nhập đề án cùng quy tắc trong một giao dịch. |
+| `GET` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/json` | Bắt buộc (admin) | Tải JSON UTF-8 của phiên bản đã dùng để nhập. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/nguon` | Bắt buộc (admin) | Đọc URL do quản trị viên thêm và đối chiếu với trường, năm của phiên. |
+| `PATCH` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/nguon` | Bắt buộc (admin) | Chọn tất cả nguồn chính thức phù hợp đang chờ chọn. |
+| `PATCH` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/nguon/{nguon_id}` | Bắt buộc (admin) | Chọn tài liệu chính thức, loại nguồn hoặc bỏ lựa chọn. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/tao-ban-nhap` | Bắt buộc (admin) | Bắt đầu tạo nháp từ nguồn đã chọn. Theo dõi tiến độ qua API chi tiết phiên. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/tim-nguon` | Bắt buộc (admin) | Tìm tài liệu tuyển sinh với số lượng do AI xác định. |
+| `POST` | `/api/v1/de-an-tuyen-sinh/thu-thap/phien/{phien_id}/yeu-cau-bo-sung` | Bắt buộc (admin) | Trả bản nháp về bước thu thập cùng các mục và lý do cần bổ sung. |
+| `GET` | `/api/v1/de-an-tuyen-sinh/thu-thap/truong` | Bắt buộc (admin) | Nhận diện trường hoặc cơ sở theo mã tuyển sinh trước khi tìm nguồn. |
 | `GET` | `/api/v1/de-an-tuyen-sinh/{item_id}/quy-tac` | Bắt buộc (admin) | Quy tắc xét tuyển của đề án: công thức, phương án theo chương trình, điều kiện, điểm cộng, lịch sử import. |
 | `POST` | `/api/v1/de-an-tuyen-sinh/{item_id}/quy-tac/chay-thu` | Bắt buộc (admin) | Chạy bộ tính cho một hồ sơ với quy tắc của riêng đề án này, bất kể trạng thái (đối chiếu trước khi áp dụng). |
 | `POST` | `/api/v1/de-an-tuyen-sinh/{item_id}/quy-tac/import` | Bắt buộc (admin) | Import file JSON chuẩn quy tắc xét tuyển, thay toàn bộ quy tắc cũ của đề án trong một transaction. |
@@ -292,6 +456,7 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/he-thong/lich-su-nap-tien` | Bắt buộc (admin) | Toàn bộ lịch sử nạp tiền, mới nhất trước. |
+| `GET` | `/api/v1/he-thong/lich-su-nap-tien/thong-ke` | Bắt buộc (admin) | Thống kê tài chính cho dashboard: doanh thu hôm nay/tuần/tháng/năm so với cùng kỳ trước, |
 | `POST` | `/api/v1/he-thong/lich-su-nap-tien/{item_id}/tu-choi` | Bắt buộc (admin) | Từ chối giao dịch đang chờ (không nhận được tiền): chuyển sang thất bại, không cộng số dư. |
 | `POST` | `/api/v1/he-thong/lich-su-nap-tien/{item_id}/xac-nhan` | Bắt buộc (admin) | Xác nhận đã nhận tiền: chuyển sang thành công và cộng Edu coin/lượt cho người nạp. |
 
@@ -471,11 +636,29 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/nganh-dao-tao/{item_id}` | Bắt buộc | Lấy chi tiết một ngành đào tạo theo id, kèm tên nhóm ngành cha. |
 
+### `danh-muc/nghe-cu-the-di-lam`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/nghe-cu-the-di-lam/{item_id}` | Bắt buộc | Lấy chi tiết một nghề cụ thể theo id. |
+
 ### `danh-muc/nhom-nganh-dao-tao`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/nhom-nganh-dao-tao/{item_id}` | Bắt buộc | Lấy chi tiết một nhóm ngành đào tạo theo id, kèm tên lĩnh vực cha. |
+
+### `danh-muc/nhom-nghe-di-lam`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/nhom-nghe-di-lam/{item_id}` | Bắt buộc | Lấy chi tiết một nhóm nghề đi làm theo id. |
+
+### `danh-muc/nhom-nghe-tieu-chi`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/nhom-nghe-tieu-chi/{nhom_nghe_di_lam_id}/{tieu_chi_goi_y_id}` | Bắt buộc | Lấy chi tiết một liên kết nhóm nghề - tiêu chí. |
 
 ### `danh-muc/nhom-tinh-cach-holland`
 
@@ -494,6 +677,44 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc | Lấy chi tiết một thành tích học tập, nghiên cứu theo id. |
+
+### `danh-muc/thcs`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/thcs/huong-di-tieu-chi/{thcs_huong_di_id}/{thcs_tieu_chi_id}` | Bắt buộc | Lấy chi tiết điểm phù hợp của một hướng đi với một tiêu chí. |
+| `GET` | `/api/v1/danh-muc/thcs/huong-di/{item_id}` | Bắt buộc | Lấy chi tiết một hướng đi THCS theo id. |
+| `GET` | `/api/v1/danh-muc/thcs/loi-khuyen-luu-y/{item_id}` | Bắt buộc | Lấy chi tiết một lời khuyên, lưu ý theo id. |
+| `GET` | `/api/v1/danh-muc/thcs/tieu-chi/{item_id}` | Bắt buộc | Lấy chi tiết một tiêu chí THCS theo id. |
+| `GET` | `/api/v1/danh-muc/thcs/uu-nhuoc-diem/{item_id}` | Bắt buộc | Lấy chi tiết một ưu/nhược điểm theo id. |
+
+### `danh-muc/thpt-du-hoc`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/chi-phi/{item_id}` | Bắt buộc | Lấy chi tiết một khoản chi phí du học theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/huong-di/{item_id}` | Bắt buộc | Lấy chi tiết một hướng đi du học theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/kenh-ket-noi/{item_id}` | Bắt buộc | Lấy chi tiết một kênh kết nối du học theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/nganh/{item_id}` | Bắt buộc | Lấy chi tiết một ngành du học theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia/{item_id}` | Bắt buộc | Lấy chi tiết một quốc gia du học theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc/{item_id}` | Bắt buộc | Lấy chi tiết một bước thủ tục du học theo id. |
+
+### `danh-muc/thpt-xkld`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/thpt-xkld/chi-phi/{item_id}` | Bắt buộc | Lấy chi tiết một khoản chi phí XKLĐ theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/kenh-ket-noi/{item_id}` | Bắt buộc | Lấy chi tiết một kênh kết nối XKLĐ theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/nghe-cu-the/{item_id}` | Bắt buộc | Lấy chi tiết một nghề cụ thể XKLĐ theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe/{item_id}` | Bắt buộc | Lấy chi tiết một nhóm nghề XKLĐ theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/thi-truong/{item_id}` | Bắt buộc | Lấy chi tiết một thị trường XKLĐ theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/thu-tuc/{item_id}` | Bắt buộc | Lấy chi tiết một bước thủ tục XKLĐ theo id. |
+
+### `danh-muc/tieu-chi-goi-y`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/tieu-chi-goi-y/{item_id}` | Bắt buộc | Lấy chi tiết một tiêu chí gợi ý theo id. |
 
 ### `danh-muc/tinh-thanh`
 
@@ -597,7 +818,7 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 | `POST` | `/api/v1/trac-nghiem/cau-hoi/{item_id}/cau-tra-loi` | Bắt buộc | Thêm một đáp án cho câu hỏi. |
 | `PUT` | `/api/v1/trac-nghiem/cau-hoi/{item_id}/cau-tra-loi/{answer_id}` | Bắt buộc | Cập nhật nội dung và điểm của một đáp án. |
 | `DELETE` | `/api/v1/trac-nghiem/cau-hoi/{item_id}/cau-tra-loi/{answer_id}` | Bắt buộc | Xóa một đáp án của câu hỏi. |
-| `GET` | `/api/v1/trac-nghiem/phien/lich-su` | Bắt buộc | Lịch sử các phiên khảo sát của người dùng đang đăng nhập, mới nhất trước. |
+| `GET` | `/api/v1/trac-nghiem/phien/lich-su` | Bắt buộc | Lịch sử các phiên khảo sát của người dùng đang đăng nhập, mới nhất trước. Lọc được theo định hướng. |
 
 ### `tru-so`
 
@@ -640,7 +861,7 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/chat/hoi` | Không | Hỏi đáp dựa trên các file json/txt trong thư mục tài liệu; câu hỏi và câu trả lời được lưu vào phiên chat. |
+| `POST` | `/api/v1/chat/hoi` | Không | Hỏi đáp (không stream); câu hỏi và câu trả lời được lưu vào phiên chat, trừ token như bản stream. |
 | `POST` | `/api/v1/chat/hoi/stream` | Không | Hỏi đáp dạng stream (SSE). Sự kiện `meta` có `ma_phien` để frontend gửi lại ở câu hỏi sau. |
 | `GET` | `/api/v1/chat/model` | Không | Danh sách model hỏi đáp và trạng thái đã có API key. |
 | `GET` | `/api/v1/chat/nguon/{ten}` | Không | Nguồn dữ liệu công khai dùng để đối chiếu câu trả lời tuyển sinh. |
@@ -693,7 +914,7 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `GET` | `/api/v1/danh-muc/loai-cau-hoi` | Không | Lấy danh sách loại câu hỏi có phân trang, sắp theo thứ tự ưu tiên. Lọc theo tên và trạng thái. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/loai-cau-hoi` | Không | Lấy danh sách loại câu hỏi có phân trang, sắp theo thứ tự ưu tiên. |
 
 ### `danh-muc/mon-hoc`
 
@@ -721,11 +942,29 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | `GET` | `/api/v1/danh-muc/nganh-hoc-theo-truong/nam-hoc` | Không | Các năm học đang có dữ liệu, mới nhất trước, dùng cho bộ lọc. Không cần đăng nhập. |
 | `GET` | `/api/v1/danh-muc/nganh-hoc-theo-truong/truong-dao-tao` | Không | Liệt kê trường đào tạo một ngành trong năm học, dựa trên dm_nganh_hoc_theo_truong. |
 
+### `danh-muc/nghe-cu-the-di-lam`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/nghe-cu-the-di-lam` | Không | Lấy danh sách nghề cụ thể có phân trang, lọc theo từ khóa và nhóm nghề. Không cần đăng nhập. |
+
 ### `danh-muc/nhom-nganh-dao-tao`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/nhom-nganh-dao-tao` | Không | Lấy danh sách nhóm ngành có phân trang, không cần đăng nhập. Lọc theo từ khóa, trạng thái và lĩnh vực cha. |
+
+### `danh-muc/nhom-nghe-di-lam`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/nhom-nghe-di-lam` | Không | Lấy danh sách nhóm nghề đi làm có phân trang, không cần đăng nhập. |
+
+### `danh-muc/nhom-nghe-tieu-chi`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/nhom-nghe-tieu-chi` | Không | Lấy danh sách liên kết nhóm nghề - tiêu chí có phân trang. Không cần đăng nhập. |
 
 ### `danh-muc/nhom-tinh-cach-holland`
 
@@ -744,6 +983,46 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu` | Không | Lấy danh sách thành tích học tập, nghiên cứu có phân trang, không cần đăng nhập. |
+
+### `danh-muc/thcs`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/thcs/huong-di` | Không | Lấy danh sách hướng đi sau THCS có phân trang, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thcs/huong-di-tieu-chi` | Không | Lấy danh sách điểm phù hợp hướng đi - tiêu chí có phân trang. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thcs/loi-khuyen-luu-y` | Không | Lấy danh sách lời khuyên, lưu ý có phân trang, lọc theo từ khóa, hướng đi, đối tượng. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thcs/tieu-chi` | Không | Lấy danh sách tiêu chí THCS có phân trang, lọc theo từ khóa và nhóm tiêu chí. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thcs/tieu-chi/nhom` | Không | Các nhóm tiêu chí đang dùng (để gợi ý khi nhập và lọc). Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thcs/uu-nhuoc-diem` | Không | Lấy danh sách ưu/nhược điểm có phân trang, lọc theo từ khóa, hướng đi, loại. Không cần đăng nhập. |
+
+### `danh-muc/thpt-du-hoc`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/chi-phi` | Không | Lấy danh sách khoản chi phí du học có phân trang và bộ lọc, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/huong-di` | Không | Lấy danh sách hướng đi du học có phân trang, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/kenh-ket-noi` | Không | Lấy danh sách kênh kết nối du học có phân trang và bộ lọc, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/nganh` | Không | Lấy danh sách ngành du học có phân trang và bộ lọc, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia` | Không | Lấy danh sách quốc gia du học có phân trang, lọc theo từ khóa và hướng đi. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc` | Không | Lấy danh sách bước thủ tục du học có phân trang và bộ lọc, không cần đăng nhập. |
+
+### `danh-muc/thpt-xkld`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/thpt-xkld/chi-phi` | Không | Lấy danh sách khoản chi phí XKLĐ có phân trang và bộ lọc, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/kenh-ket-noi` | Không | Lấy danh sách kênh kết nối XKLĐ có phân trang và bộ lọc, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/nghe-cu-the` | Không | Lấy danh sách nghề cụ thể XKLĐ có phân trang và bộ lọc, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe` | Không | Lấy danh sách nhóm nghề XKLĐ có phân trang, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/thi-truong` | Không | Lấy danh sách thị trường XKLĐ có phân trang, lọc theo từ khóa và nhóm nghề. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/thu-tuc` | Không | Lấy danh sách bước thủ tục XKLĐ có phân trang và bộ lọc, không cần đăng nhập. |
+
+### `danh-muc/tieu-chi-goi-y`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/tieu-chi-goi-y` | Không | Lấy danh sách tiêu chí gợi ý có phân trang, lọc theo từ khóa và nhóm tiêu chí. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/tieu-chi-goi-y/nhom` | Không | Danh sách các nhóm tiêu chí đang dùng (để chọn khi lọc/nhập). Không cần đăng nhập. |
 
 ### `danh-muc/tinh-thanh`
 
@@ -818,6 +1097,7 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | `PUT` | `/api/v1/trac-nghiem/phien/{ssid}/chi-tiet/{chi_tiet_id}` | Không | Lưu đáp án của một câu trong phiên và điểm tương ứng. |
 | `GET` | `/api/v1/trac-nghiem/phien/{ssid}/ket-qua` | Không | Cộng điểm Holland của phiên theo đáp án đã lưu. |
 | `GET` | `/api/v1/trac-nghiem/phien/{ssid}/nganh-phu-hop` | Không | Ngành đào tạo khớp các mã Holland nổi bật của phiên. |
+| `GET` | `/api/v1/trac-nghiem/phien/{ssid}/nhom-nghe-phu-hop` | Không | Nhóm nghề đi làm (dm_nhom_nghe_di_lam đang hoạt động) khớp các mã Holland nổi bật của phiên. |
 
 ### `webhook`
 

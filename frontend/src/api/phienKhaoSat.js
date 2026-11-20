@@ -1,7 +1,9 @@
 import api from '@/api/axios'
 
-export function batDauPhienHolland() {
-  return api.post('/trac-nghiem/phien').then((res) => res.data)
+// doiTuongApDung: mã trong constants/doiTuongApDung.js — chỉ lấy loại câu hỏi áp dụng cho đối tượng đó.
+export function batDauPhienHolland(doiTuongApDung) {
+  const params = doiTuongApDung ? { doi_tuong_ap_dung: doiTuongApDung } : undefined
+  return api.post('/trac-nghiem/phien', null, { params }).then((res) => res.data)
 }
 
 export function fetchPhienLamBai(ssid) {
@@ -25,6 +27,12 @@ export function fetchKetQua(ssid) {
 export function fetchNganhPhuHop(ssid) {
   return api
     .get(`/trac-nghiem/phien/${encodeURIComponent(ssid)}/nganh-phu-hop`, { skipLoading: true })
+    .then((res) => res.data)
+}
+
+export function fetchNhomNghePhuHop(ssid) {
+  return api
+    .get(`/trac-nghiem/phien/${encodeURIComponent(ssid)}/nhom-nghe-phu-hop`, { skipLoading: true })
     .then((res) => res.data)
 }
 

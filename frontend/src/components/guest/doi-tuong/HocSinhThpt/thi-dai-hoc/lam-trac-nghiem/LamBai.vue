@@ -152,12 +152,15 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { fetchNganhPhuHop, fetchPhienLamBai, luuTraLoi } from '@/api/phienKhaoSat'
+import { fetchPhienLamBai, luuTraLoi } from '@/api/phienKhaoSat'
 import LoadingSuyNghi from '@/components/guest/LoadingSuyNghi.vue'
 import BuocLamBai from './BuocLamBai.vue'
 import { useTenRouteThpt } from '../../useTenRouteThpt'
+import { useLuongKhaoSat } from '../../luongKhaoSat'
 
 const { tenRoute } = useTenRouteThpt()
+// Route làm bài / bước kết quả theo hướng đi (thi đại học → ngành phù hợp, đi làm → nhóm nghề phù hợp).
+const { luong, laBuocCauHoi } = useLuongKhaoSat()
 
 defineOptions({ name: 'ThptLamTracNghiem' })
 
@@ -253,11 +256,7 @@ const buoc = computed(() => {
     const xong = items.length > 0 && items.every((item) => daChon.value[item.id])
     return { ...group, xong }
   })
-  return [
-    ...steps,
-    { id: 'nganh-phu-hop', ten: 'Ngành phù hợp', xong: false },
-    { id: 'ket-qua', ten: 'Kết quả', xong: false },
-  ]
+  return [...steps, ...luong.value.buocCuoi.map(({ id, ten }) => ({ id, ten, xong: false }))]
 })
 const viTriLoai = computed(() => nhom.value.findIndex((item) => item.id === loaiCauHoiId.value))
 const laBuocCuoi = computed(() => viTriLoai.value >= 0 && viTriLoai.value === nhom.value.length - 1)
@@ -373,7 +372,7 @@ function queryMaNganh() {
 
 function moLoai(id, thayThe = false) {
   const location = {
-    name: tenRoute('thpt-thi-dai-hoc-lam-trac-nghiem'),
+    name: tenRoute(luong.value.lamBai),
     params: { ssid: ssid.value, loaiCauHoiId: id },
     query: queryMaNganh(),
   }
@@ -417,11 +416,11 @@ async function moNganhPhuHop() {
   if (dangPhanTich.value) return
   dangPhanTich.value = true
   try {
-    await fetchNganhPhuHop(ssid.value)
+    await luong.value.phanTich(ssid.value)
     await doi(CHO_PHAN_TICH_MS)
     if (huyPhanTich) return
     await router.push({
-      name: tenRoute('thpt-thi-dai-hoc-nganh-phu-hop'),
+      name: tenRoute(luong.value.buocCuoi[0].route),
       params: { ssid: ssid.value },
       query: queryMaNganh(),
     })
@@ -459,9 +458,9 @@ function tiep() {
     chuyenPhan(next.id, 'tiep')
     return
   }
-  const chua = buoc.value.find((item) => item.id !== 'nganh-phu-hop' && item.id !== 'ket-qua' && !item.xong)
+  const chua = buoc.value.find((item) => laBuocCauHoi(item) && !item.xong)
   if (chua) {
-    ElMessage.error('Vui lòng hoàn thành các phần trước khi xem ngành phù hợp.')
+    ElMessage.error(`Vui lòng hoàn thành các phần trước khi xem ${luong.value.buocCuoi[0].ten.toLowerCase()}.`)
     chuyenPhan(chua.id, 'tiep')
     return
   }

@@ -7,10 +7,30 @@ const cayDinhHuongThpt = [
     meta: { title: 'Đi làm ngay sau khi tốt nghiệp', public: true, dinhHuong: 'di-lam' },
   },
   {
-    path: 'du-hoc-nghe',
-    name: 'du-hoc-nghe',
-    component: () => import('./DuHocNghe.vue'),
-    meta: { title: 'Du học nghề', public: true, dinhHuong: 'du-hoc-nghe' },
+    path: 'di-lam/nhom-nghe/:maNhom',
+    name: 'di-lam-nhom-nghe',
+    component: () => import('./di-lam/ChiTietNhomNghe.vue'),
+    meta: { title: 'Nghề cụ thể', public: true, dinhHuong: 'di-lam' },
+  },
+  // Khảo sát Holland của hướng đi làm: dùng chung trang hướng dẫn / làm bài với thi đại học (luongKhaoSat.js),
+  // chỉ lấy loại câu hỏi áp dụng cho đối tượng "đi làm"; kết thúc ở nhóm nghề đi làm phù hợp.
+  {
+    path: 'di-lam/huong-dan-khao-sat',
+    name: 'di-lam-huong-dan-khao-sat',
+    component: () => import('./thi-dai-hoc/HuongDanKhaoSat.vue'),
+    meta: { title: 'Hướng dẫn khảo sát', public: true, dinhHuong: 'di-lam' },
+  },
+  {
+    path: 'di-lam/lam-trac-nghiem/:ssid/nhom-nghe-phu-hop',
+    name: 'di-lam-nhom-nghe-phu-hop',
+    component: () => import('./di-lam/NhomNghePhuHop.vue'),
+    meta: { title: 'Nhóm nghề phù hợp', public: true, dinhHuong: 'di-lam' },
+  },
+  {
+    path: 'di-lam/lam-trac-nghiem/:ssid/:loaiCauHoiId(\\d+)',
+    name: 'di-lam-lam-trac-nghiem',
+    component: () => import('./thi-dai-hoc/lam-trac-nghiem/LamBai.vue'),
+    meta: { title: 'Làm trắc nghiệm Holland', public: true, dinhHuong: 'di-lam' },
   },
   {
     path: 'du-hoc',
@@ -148,6 +168,12 @@ const cayDinhHuongThpt = [
     name: 'xuat-khau-lao-dong',
     component: () => import('./XuatKhauLaoDong.vue'),
     meta: { title: 'Xuất khẩu lao động', public: true, dinhHuong: 'xuat-khau-lao-dong' },
+  },
+  {
+    path: 'xuat-khau-lao-dong/nhom-nghe/:maNhom',
+    name: 'xuat-khau-lao-dong-nhom-nghe',
+    component: () => import('./xuat-khau-lao-dong/ChiTietNhomNghe.vue'),
+    meta: { title: 'Nhóm nghề xuất khẩu lao động', public: true, dinhHuong: 'xuat-khau-lao-dong' },
   },
 ]
 

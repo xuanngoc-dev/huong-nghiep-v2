@@ -17,6 +17,7 @@ export const HINH_THUC_LABELS = {
 export const STATUS_LABELS = {
   nhap: 'Nháp',
   cong_bo: 'Đã công bố',
+  da_cong_bo: 'Đã công bố',
   het_hieu_luc: 'Hết hiệu lực',
 }
 

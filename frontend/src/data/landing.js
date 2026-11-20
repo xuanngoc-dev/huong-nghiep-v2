@@ -69,8 +69,25 @@ export const navLinks = [
 
 export const audiences = [
   {
+    id: 'hoc-sinh-thcs',
+    name: 'Học sinh THCS',
+    route: 'hoc-sinh-thcs',
+    image: thcsImage,
+    short: 'Chọn hướng đi phù hợp sau lớp 9: THPT, học nghề hay vừa học vừa làm.',
+    description:
+      'Giúp học sinh THCS so sánh các hướng đi sau lớp 9 và chọn con đường hợp với học lực, sở thích, hoàn cảnh.',
+    benefits: [
+      'So sánh các hướng đi sau lớp 9: THPT, GDTX, trung cấp nghề, học nghề…',
+      'Ưu nhược điểm, chi phí và mức áp lực của từng hướng đi',
+      'Tự đánh giá để nhận gợi ý hướng đi phù hợp với bản thân',
+      'Biết trước cơ hội học tiếp, đi làm sau lớp 12',
+      'Lời khuyên riêng cho học sinh và phụ huynh',
+    ],
+    cta: 'Bắt đầu với học sinh THCS',
+  },
+  {
     id: 'hoc-sinh',
-    name: 'Học sinh',
+    name: 'Học sinh THPT',
     route: 'hoc-sinh-thpt',
     image: thptImage,
     short: 'Khám phá sở thích, năng lực và lựa chọn ngành học phù hợp.',
@@ -78,10 +95,12 @@ export const audiences = [
       'Hỗ trợ học sinh THPT hiểu bản thân, làm rõ định hướng và chọn đường đi sau tốt nghiệp.',
     benefits: [
       'Trắc nghiệm Holland RIASEC chuẩn hóa',
-      'Gợi ý ngành học và trường phù hợp',
-      'Lộ trình chuẩn bị thi đại học / cao đẳng',
+      'Gợi ý ngành học và trường phù hợp với năng lực, điểm số',
+      'Tra cứu điểm chuẩn, phương thức và đề án tuyển sinh',
+      'Thông tin đi làm, du học, xuất khẩu lao động sau tốt nghiệp',
+      'Trợ lý AI giải đáp thắc mắc về ngành, trường, tuyển sinh',
     ],
-    cta: 'Bắt đầu với học sinh',
+    cta: 'Bắt đầu với học sinh THPT',
   },
   {
     id: 'phu-huynh',
@@ -93,7 +112,9 @@ export const audiences = [
       'Cung cấp góc nhìn rõ ràng về năng lực của con, giúp phụ huynh hỗ trợ quyết định giáo dục sáng suốt.',
     benefits: [
       'Hiểu nhóm tính cách và sở thích của con',
+      'Nội dung theo từng cấp học của con: THCS, THPT, đã tốt nghiệp',
       'Đối chiếu ngành học – trường – chi phí',
+      'Lời khuyên, lưu ý dành riêng cho phụ huynh',
       'Gợi ý cách đồng hành không áp đặt',
     ],
     cta: 'Đồng hành cùng con',
@@ -107,8 +128,10 @@ export const audiences = [
     description:
       'Giúp sinh viên đối chiếu ngành đang học, tìm cơ hội thực tập và xây dựng hồ sơ nghề nghiệp.',
     benefits: [
+      'Đối chiếu ngành đang học với sở thích, năng lực bản thân',
       'Đánh giá kỹ năng và xu hướng nghề',
       'Gợi ý thực tập và cơ hội việc làm',
+      'Hướng dẫn xây dựng CV và hồ sơ nghề nghiệp',
       'Lộ trình phát triển nghề trong 1–3 năm',
     ],
     cta: 'Khám phá cho sinh viên',
@@ -122,9 +145,11 @@ export const audiences = [
     description:
       'Đồng hành cùng người đi làm khi cần chuyển hướng, học thêm hoặc hoạch định sự nghiệp dài hạn.',
     benefits: [
-      'Đánh giá kỹ năng hiện tại',
+      'Đánh giá kỹ năng và sở thích nghề nghiệp hiện tại',
       'Khám phá hướng chuyển nghề khả thi',
-      'Gợi ý khóa học và lộ trình upskill',
+      'Gợi ý khóa học nghề, liên thông, văn bằng hai',
+      'Thông tin xuất khẩu lao động qua kênh chính thống',
+      'Lập kế hoạch sự nghiệp dài hạn',
     ],
     cta: 'Lập kế hoạch sự nghiệp',
   },
@@ -138,8 +163,10 @@ export const audiences = [
       'Giải pháp hỗ trợ nhà trường tổ chức hướng nghiệp, theo dõi xu hướng lựa chọn và tư vấn học sinh hiệu quả.',
     benefits: [
       'Bộ công cụ đánh giá hướng nghiệp',
-      'Báo cáo insight theo nhóm học sinh',
+      'Tổ chức trắc nghiệm Holland cho cả lớp, cả khối',
+      'Báo cáo insight và xu hướng chọn ngành theo nhóm học sinh',
       'Hỗ trợ tư vấn viên và giáo viên chủ nhiệm',
+      'Kết nối với trường đại học, cao đẳng và doanh nghiệp',
     ],
     cta: 'Giải pháp cho nhà trường',
   },
@@ -152,8 +179,10 @@ export const audiences = [
     description:
       'Giúp doanh nghiệp giới thiệu nghề nghiệp, chia sẻ yêu cầu kỹ năng và kết nối với thế hệ lao động tương lai.',
     benefits: [
-      'Giới thiệu cơ hội nghề nghiệp',
-      'Truyền thông nhu cầu kỹ năng',
+      'Giới thiệu cơ hội nghề nghiệp và nhu cầu kỹ năng',
+      'Hiểu nhóm tính cách, định hướng của ứng viên trẻ',
+      'Tiếp cận học sinh, sinh viên từ sớm',
+      'Đăng chương trình thực tập, học bổng, đặt hàng đào tạo',
       'Kết nối giáo dục – việc làm',
     ],
     cta: 'Kết nối nhân tài',
@@ -386,21 +415,12 @@ export const studyPaths = [
   {
     id: 'du-hoc',
     title: 'Du học',
-    text: 'Khám phá chương trình đào tạo quốc tế và chuẩn bị hồ sơ du học phù hợp.',
+    text: 'Du học nghề, đại học hay chuyển tiếp: so sánh quốc gia, chi phí và thủ tục để chọn hướng phù hợp.',
     tag: 'Quốc tế',
     image: unsplash('1541339907198-e08756dedf3f'),
     fallback: thptImage,
     alt: 'Nhóm tân cử nhân tung mũ tốt nghiệp',
     to: { name: 'thpt-du-hoc' },
-  },
-  {
-    id: 'du-hoc-nghe',
-    title: 'Du học nghề',
-    text: 'Tìm hiểu các chương trình học nghề kết hợp làm việc tại nước ngoài.',
-    tag: 'Học nghề',
-    image: thanhNienImage,
-    alt: 'Học viên thực hành lắp ráp thiết bị kỹ thuật',
-    to: { name: 'thpt-du-hoc-nghe' },
   },
   {
     id: 'di-lam',
