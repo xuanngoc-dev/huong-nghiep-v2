@@ -1,16 +1,16 @@
 # Danh sách API
 
-Tự sinh từ code lúc 20/11/2026 11:16 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 20/11/2026 11:58 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **411** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **455** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 256 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 93 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
-| [Khách vãng lai](#khach) | 62 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
+| [Quản trị (admin)](#quan_tri) | 288 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Thành viên (user)](#thanh_vien) | 99 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Khách vãng lai](#khach) | 68 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
 
@@ -252,6 +252,43 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `POST` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc/bulk` | Bắt buộc (admin) | Thêm nhiều bước thủ tục du học cùng lúc. |
 | `PUT` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một bước thủ tục du học theo id. |
 | `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc/{item_id}` | Bắt buộc (admin) | Xóa một bước thủ tục du học theo id. |
+
+### `danh-muc/thpt-xkld`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/thpt-xkld/chi-phi` | Bắt buộc (admin) | Thêm một khoản chi phí XKLĐ. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/chi-phi` | Bắt buộc (admin) | Xóa nhiều khoản chi phí XKLĐ theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/chi-phi/bulk` | Bắt buộc (admin) | Thêm nhiều khoản chi phí XKLĐ cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-xkld/chi-phi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một khoản chi phí XKLĐ theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/chi-phi/{item_id}` | Bắt buộc (admin) | Xóa một khoản chi phí XKLĐ theo id. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/kenh-ket-noi` | Bắt buộc (admin) | Thêm một kênh kết nối XKLĐ. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/kenh-ket-noi` | Bắt buộc (admin) | Xóa nhiều kênh kết nối XKLĐ theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/kenh-ket-noi/bulk` | Bắt buộc (admin) | Thêm nhiều kênh kết nối XKLĐ cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-xkld/kenh-ket-noi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một kênh kết nối XKLĐ theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/kenh-ket-noi/{item_id}` | Bắt buộc (admin) | Xóa một kênh kết nối XKLĐ theo id. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/nghe-cu-the` | Bắt buộc (admin) | Thêm một nghề cụ thể XKLĐ. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/nghe-cu-the` | Bắt buộc (admin) | Xóa nhiều nghề cụ thể XKLĐ theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/nghe-cu-the/bulk` | Bắt buộc (admin) | Thêm nhiều nghề cụ thể XKLĐ cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-xkld/nghe-cu-the/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một nghề cụ thể XKLĐ theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/nghe-cu-the/{item_id}` | Bắt buộc (admin) | Xóa một nghề cụ thể XKLĐ theo id. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe` | Bắt buộc (admin) | Thêm một nhóm nghề XKLĐ. Từ chối nếu mã đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe` | Bắt buộc (admin) | Xóa nhiều nhóm nghề theo danh sách id; thị trường, nghề cụ thể, chi phí, thủ tục, kênh kết nối bị xóa theo. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe/bulk` | Bắt buộc (admin) | Thêm nhiều nhóm nghề cùng lúc. Từ chối nếu mã trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PATCH` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe/trang-thai` | Bắt buộc (admin) | Bật/tắt nhiều nhóm nghề cùng lúc. Id không tồn tại thì bỏ qua. |
+| `PUT` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một nhóm nghề XKLĐ theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe/{item_id}` | Bắt buộc (admin) | Xóa một nhóm nghề theo id; thị trường, nghề cụ thể, chi phí, thủ tục, kênh kết nối bị xóa theo (CASCADE). |
+| `PATCH` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe/{item_id}/trang-thai` | Bắt buộc (admin) | Bật/tắt nhanh một nhóm nghề, giữ nguyên các thông tin khác. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/thi-truong` | Bắt buộc (admin) | Thêm một thị trường vào nhóm nghề XKLĐ. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/thi-truong` | Bắt buộc (admin) | Xóa nhiều thị trường theo danh sách id; dữ liệu con riêng của thị trường bị xóa theo (CASCADE). |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/thi-truong/bulk` | Bắt buộc (admin) | Thêm nhiều thị trường cùng lúc. Từ chối nếu có nhóm nghề không tồn tại. |
+| `PUT` | `/api/v1/danh-muc/thpt-xkld/thi-truong/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một thị trường. Không cho đổi nhóm nghề khi thị trường đã có dữ liệu con. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/thi-truong/{item_id}` | Bắt buộc (admin) | Xóa một thị trường theo id; dữ liệu con riêng của thị trường bị xóa theo (CASCADE). |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/thu-tuc` | Bắt buộc (admin) | Thêm một bước thủ tục XKLĐ. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/thu-tuc` | Bắt buộc (admin) | Xóa nhiều bước thủ tục XKLĐ theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-xkld/thu-tuc/bulk` | Bắt buộc (admin) | Thêm nhiều bước thủ tục XKLĐ cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-xkld/thu-tuc/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một bước thủ tục XKLĐ theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-xkld/thu-tuc/{item_id}` | Bắt buộc (admin) | Xóa một bước thủ tục XKLĐ theo id. |
 
 ### `danh-muc/tieu-chi-goi-y`
 
@@ -619,6 +656,17 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 | `GET` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia/{item_id}` | Bắt buộc | Lấy chi tiết một quốc gia du học theo id. |
 | `GET` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc/{item_id}` | Bắt buộc | Lấy chi tiết một bước thủ tục du học theo id. |
 
+### `danh-muc/thpt-xkld`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/thpt-xkld/chi-phi/{item_id}` | Bắt buộc | Lấy chi tiết một khoản chi phí XKLĐ theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/kenh-ket-noi/{item_id}` | Bắt buộc | Lấy chi tiết một kênh kết nối XKLĐ theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/nghe-cu-the/{item_id}` | Bắt buộc | Lấy chi tiết một nghề cụ thể XKLĐ theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe/{item_id}` | Bắt buộc | Lấy chi tiết một nhóm nghề XKLĐ theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/thi-truong/{item_id}` | Bắt buộc | Lấy chi tiết một thị trường XKLĐ theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/thu-tuc/{item_id}` | Bắt buộc | Lấy chi tiết một bước thủ tục XKLĐ theo id. |
+
 ### `danh-muc/tieu-chi-goi-y`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
@@ -903,6 +951,17 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | `GET` | `/api/v1/danh-muc/thpt-du-hoc/nganh` | Không | Lấy danh sách ngành du học có phân trang và bộ lọc, không cần đăng nhập. |
 | `GET` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia` | Không | Lấy danh sách quốc gia du học có phân trang, lọc theo từ khóa và hướng đi. Không cần đăng nhập. |
 | `GET` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc` | Không | Lấy danh sách bước thủ tục du học có phân trang và bộ lọc, không cần đăng nhập. |
+
+### `danh-muc/thpt-xkld`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/thpt-xkld/chi-phi` | Không | Lấy danh sách khoản chi phí XKLĐ có phân trang và bộ lọc, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/kenh-ket-noi` | Không | Lấy danh sách kênh kết nối XKLĐ có phân trang và bộ lọc, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/nghe-cu-the` | Không | Lấy danh sách nghề cụ thể XKLĐ có phân trang và bộ lọc, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/nhom-nghe` | Không | Lấy danh sách nhóm nghề XKLĐ có phân trang, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/thi-truong` | Không | Lấy danh sách thị trường XKLĐ có phân trang, lọc theo từ khóa và nhóm nghề. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-xkld/thu-tuc` | Không | Lấy danh sách bước thủ tục XKLĐ có phân trang và bộ lọc, không cần đăng nhập. |
 
 ### `danh-muc/tieu-chi-goi-y`
 

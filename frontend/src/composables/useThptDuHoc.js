@@ -32,7 +32,7 @@ export function docMangJson(text, nhan) {
   return data
 }
 
-async function loadAll(fetchFn) {
+export async function loadAll(fetchFn) {
   const size = 100
   const items = []
   for (let current = 1; current <= 20; current += 1) {

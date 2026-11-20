@@ -526,6 +526,50 @@
               "icon": "Connection"
             }
           ]
+        },
+        {
+          "index": "danh-muc:xuat-khau-lao-dong",
+          "title": "X.Khẩu L.Động",
+          "tooltip": "Học sinh THPT đi xuất khẩu lao động: nhóm nghề, thị trường, nghề cụ thể, chi phí, thủ tục, kênh kết nối",
+          "icon": "Van",
+          "children": [
+            {
+              "index": "/admin/danh-muc/thpt-xkld/nhom-nghe",
+              "title": "Nhóm nghề",
+              "tooltip": "Nhóm nghề xuất khẩu lao động: công việc, sức khỏe, thu nhập, triển vọng",
+              "icon": "Guide"
+            },
+            {
+              "index": "/admin/danh-muc/thpt-xkld/thi-truong",
+              "title": "Thị trường",
+              "tooltip": "Thị trường (quốc gia) tiếp nhận theo từng nhóm nghề",
+              "icon": "MapLocation"
+            },
+            {
+              "index": "/admin/danh-muc/thpt-xkld/nghe-cu-the",
+              "title": "Nghề cụ thể",
+              "tooltip": "Công việc cụ thể theo nhóm nghề và thị trường",
+              "icon": "Tools"
+            },
+            {
+              "index": "/admin/danh-muc/thpt-xkld/chi-phi",
+              "title": "Chi phí",
+              "tooltip": "Phí dịch vụ, đào tạo, khám sức khỏe, ký quỹ",
+              "icon": "Wallet"
+            },
+            {
+              "index": "/admin/danh-muc/thpt-xkld/thu-tuc",
+              "title": "Thủ tục",
+              "tooltip": "Các bước thủ tục, giấy tờ đi làm việc ở nước ngoài",
+              "icon": "DocumentChecked"
+            },
+            {
+              "index": "/admin/danh-muc/thpt-xkld/kenh-ket-noi",
+              "title": "Kênh kết nối",
+              "tooltip": "Cơ quan nhà nước, doanh nghiệp được cấp phép, trung tâm hỗ trợ",
+              "icon": "Connection"
+            }
+          ]
         }
       ]
     },

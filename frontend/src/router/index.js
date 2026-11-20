@@ -391,6 +391,42 @@ const router = createRouter({
           meta: { title: 'Kênh kết nối du học', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'danh-muc/thpt-xkld/nhom-nghe',
+          name: 'thpt-xkld-nhom-nghe',
+          component: () => import('@/views/admin/danh-muc/ThptXkldNhomNghe.vue'),
+          meta: { title: 'Nhóm nghề xuất khẩu lao động', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-xkld/thi-truong',
+          name: 'thpt-xkld-thi-truong',
+          component: () => import('@/views/admin/danh-muc/ThptXkldThiTruong.vue'),
+          meta: { title: 'Thị trường xuất khẩu lao động', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-xkld/nghe-cu-the',
+          name: 'thpt-xkld-nghe-cu-the',
+          component: () => import('@/views/admin/danh-muc/ThptXkldNgheCuThe.vue'),
+          meta: { title: 'Nghề cụ thể xuất khẩu lao động', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-xkld/chi-phi',
+          name: 'thpt-xkld-chi-phi',
+          component: () => import('@/views/admin/danh-muc/ThptXkldChiPhi.vue'),
+          meta: { title: 'Chi phí xuất khẩu lao động', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-xkld/thu-tuc',
+          name: 'thpt-xkld-thu-tuc',
+          component: () => import('@/views/admin/danh-muc/ThptXkldThuTuc.vue'),
+          meta: { title: 'Thủ tục xuất khẩu lao động', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-xkld/kenh-ket-noi',
+          name: 'thpt-xkld-kenh-ket-noi',
+          component: () => import('@/views/admin/danh-muc/ThptXkldKenhKetNoi.vue'),
+          meta: { title: 'Kênh kết nối xuất khẩu lao động', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'danh-muc/linh-vuc-dao-tao',
           name: 'linh-vuc-dao-tao',
           component: () => import('@/views/admin/danh-muc/LinhVucDaoTao.vue'),
