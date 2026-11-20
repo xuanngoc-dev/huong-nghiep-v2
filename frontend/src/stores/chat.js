@@ -2,6 +2,7 @@ import { computed, reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { hoiChatStream, ketThucPhienChat, layDanhSachModel, layTrangThaiPhien } from '@/api/chat'
 import { fetchHoSo } from '@/api/hoSo'
+import { DOI_TUONG_HUONG_DEN_MAC_DINH, laDoiTuongHuongDen } from '@/constants/doiTuongHuongDen'
 import { phanTichLenh, taoBoChayLenh } from '@/utils/chatLenh'
 import { createChatSession, fromServerMessages, newConversation } from '@/utils/chatSession'
 import { clearHoSoCache, loadHoSo, toChatProfile } from '@/utils/hoSoCache'
@@ -14,40 +15,59 @@ export const MODEL_MAC_DINH = 'gemini-3.8-flash'
 export const useChatStore = defineStore('chat', () => {
   const auth = useAuthStore()
   const state = reactive({ messages: newConversation(), draft: '', sending: false, models: [], modelId: '',
-    suggestions: [], error: '', loadingModels: false, storageWarning: '', context: null, maPhien: null, daKetThuc: false, hetToken: false })
+    suggestions: [], error: '', loadingModels: false, storageWarning: '', context: null, maPhien: null, daKetThuc: false, hetToken: false,
+    doiTuongHuongDen: DOI_TUONG_HUONG_DEN_MAC_DINH, daChonDoiTuong: false })
   const key = () => `huong-nghiep-chat-v2:${auth.user?.id || 'guest'}`
   function warmProfile() {
     const userId = auth.user?.id
     if (!auth.isAuthenticated || !userId) return
     loadHoSo(userId, fetchHoSo).catch(() => {})
   }
+  // Hồ sơ cá nhân chỉ gửi kèm khi đối tượng là học sinh THPT (backend chỉ dùng hồ sơ cho nhóm này).
   async function loadProfile() {
     const userId = auth.user?.id
-    if (!auth.isAuthenticated || !userId) return null
+    if (!auth.isAuthenticated || !userId || !String(state.doiTuongHuongDen || '').startsWith('thpt-')) return null
     try {
       return toChatProfile(await loadHoSo(userId, fetchHoSo))
     } catch {
       return null
     }
   }
+  // Đối tượng hướng đến theo trang đang xem (Chatbot.vue cập nhật khi đổi trang): mặc định cho hội thoại mới.
+  const doiTuongTrang = ref(DOI_TUONG_HUONG_DEN_MAC_DINH)
   const session = createChatSession(state, { stream: hoiChatStream, storage: localStorage, storageKey: key, loadProfile,
-    guestId: () => (auth.isAuthenticated ? null : maThietBi()) })
+    guestId: () => (auth.isAuthenticated ? null : maThietBi()), doiTuongMacDinh: () => doiTuongTrang.value })
+  // Đã hỏi câu đầu (server đã chốt đối tượng vào phiên) thì không đổi đối tượng nữa.
+  const daChotDoiTuong = computed(() => Boolean(state.maPhien) || state.messages.some(m => m.role === 'user' && !m.local))
+  function datDoiTuongTrang(ma) {
+    if (!laDoiTuongHuongDen(ma)) return
+    doiTuongTrang.value = ma
+    if (!daChotDoiTuong.value && !state.daChonDoiTuong && !state.sending) state.doiTuongHuongDen = ma
+  }
+  // Người dùng tự chọn đối tượng (thẻ chọn đầu khung chat / nút cài đặt): giữ lựa chọn này dù đổi trang.
+  function chonDoiTuong(ma) {
+    if (!laDoiTuongHuongDen(ma) || daChotDoiTuong.value || state.sending) return
+    state.doiTuongHuongDen = ma
+    state.daChonDoiTuong = true
+  }
   // Phiên đang mở có thể đã bị quản trị kết thúc: hỏi server để khóa ô nhập ngay, không chờ tới lúc gửi.
   async function kiemTraPhien() {
     const ma = state.maPhien
     if (!ma) return
     try {
       const data = await layTrangThaiPhien(ma, auth.isAuthenticated ? null : maThietBi())
-      if (state.maPhien === ma) state.daKetThuc = Boolean(data?.da_ket_thuc)
+      if (state.maPhien !== ma) return
+      state.daKetThuc = Boolean(data?.da_ket_thuc)
+      if (laDoiTuongHuongDen(data?.doi_tuong_huong_den)) state.doiTuongHuongDen = data.doi_tuong_huong_den
     } catch {
       // Không kiểm tra được thì để lần gửi sau server báo (409).
     }
   }
   session.restore()
   kiemTraPhien()
-  // tinNhan: tin nhắn của phiên lấy từ API hội thoại của thành viên.
-  function moHoiThoai(maPhien, tinNhan) {
-    session.open(maPhien, fromServerMessages(tinNhan))
+  // tinNhan: tin nhắn của phiên lấy từ API hội thoại của thành viên; doiTuong: đối tượng hướng đến đã chốt của phiên.
+  function moHoiThoai(maPhien, tinNhan, doiTuong) {
+    session.open(maPhien, fromServerMessages(tinNhan), laDoiTuongHuongDen(doiTuong) ? doiTuong : null)
   }
   // Khung chat nổi (Chatbot.vue) — các nút "Hỏi trợ lý AI" mở khung này (trang /demo-chat đã tạm bỏ).
   const khungMo = ref(false)
@@ -133,6 +153,6 @@ export const useChatStore = defineStore('chat', () => {
     loadModels()
     if (userId) warmProfile()
   })
-  watch(() => [state.draft, state.modelId], () => session.persist())
-  return { state, model, khungMo, moKhungChat, loadModels, kiemTraPhien, moHoiThoai, chayLenh, ketThucHoiThoai, send, stop: session.stop, clear: session.clear, retry: session.retry }
+  watch(() => [state.draft, state.modelId, state.doiTuongHuongDen, state.daChonDoiTuong], () => session.persist())
+  return { state, model, khungMo, moKhungChat, loadModels, kiemTraPhien, moHoiThoai, daChotDoiTuong, datDoiTuongTrang, chonDoiTuong, chayLenh, ketThucHoiThoai, send, stop: session.stop, clear: session.clear, retry: session.retry }
 })

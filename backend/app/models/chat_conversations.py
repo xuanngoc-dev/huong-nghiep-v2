@@ -5,6 +5,7 @@ from sqlalchemy import JSON, DateTime, Enum, ForeignKey, Index, Integer, String,
 from sqlalchemy.dialects.mysql import BIGINT
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.constants.doi_tuong_huong_den import DOI_TUONG_MAC_DINH
 from app.db.base import Base
 
 
@@ -40,6 +41,14 @@ class ChatConversation(Base):
         server_default="dang_hoat_dong",
     )
     model_ai: Mapped[str | None] = mapped_column(String(100), comment="Model AI dùng cho phiên")
+    # Mã theo app/constants/doi_tuong_huong_den.py; chốt khi tạo phiên, trợ lý trả lời theo ngữ cảnh đối tượng này.
+    doi_tuong_huong_den: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+        default=DOI_TUONG_MAC_DINH,
+        server_default=DOI_TUONG_MAC_DINH,
+        comment="Đối tượng hướng đến (học sinh THPT thi ĐH, phụ huynh, học sinh THCS...)",
+    )
     so_tin_nhan: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     tin_nhan_cuoi_luc: Mapped[datetime | None] = mapped_column(DateTime, comment="Thời điểm tin nhắn gần nhất")
     du_lieu_bo_sung: Mapped[Any | None] = mapped_column(JSON, comment="Thông tin thêm (nguồn, ngữ cảnh...)")

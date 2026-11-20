@@ -265,7 +265,9 @@ class StreamTests(CorpusFixture, unittest.IsolatedAsyncioTestCase):
         self.assertIn("IELTS", system)
         self.assertIn("7.5", system)
         guest = await chat_stream.prepare(HoiChatRequest(cau_hoi="Điểm SAT trường BKA", model_id="openai-test"))
-        self.assertNotIn("HỒ SƠ THÍ SINH:", guest.messages[0]["content"])
+        # Khách (học sinh THPT, chưa có hồ sơ): không có dữ liệu hồ sơ, chỉ báo chưa có để trợ lý hỏi lại.
+        self.assertNotIn("HỒ SƠ THÍ SINH:\n", guest.messages[0]["content"])
+        self.assertIn("HỒ SƠ THÍ SINH: chưa có", guest.messages[0]["content"])
 
     async def test_unknown_model_rejected_and_history_used(self):
         with self.assertRaises(HTTPException):

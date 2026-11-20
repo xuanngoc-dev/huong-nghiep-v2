@@ -14,6 +14,7 @@ class ChatPhienItem(BaseModel):
     email: str | None = None
     ma_khach_vang_lai: str | None = None
     model_ai: str | None = None
+    doi_tuong_huong_den: str | None = None
     so_tin_nhan: int = 0
     tin_nhan_cuoi_luc: datetime | None = None
     # Đoạn đầu của tin nhắn gần nhất (câu hỏi hoặc câu trả lời) để xem nhanh trong danh sách.

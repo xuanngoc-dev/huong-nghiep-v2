@@ -570,7 +570,7 @@ async function gui() {
   if (phanTichLenh(text)) return chayLenh(text, phien)
   tinCucBo.value = []
   await chat.loadModels()
-  chat.moHoiThoai(phien.ma_dinh_danh, tinNhan.value)
+  chat.moHoiThoai(phien.ma_dinh_danh, tinNhan.value, phien.doi_tuong_huong_den)
   // Đưa hội thoại lên đầu ngay khi gửi (xem trước là câu vừa hỏi); có câu trả lời thì lamMoiPhien cập nhật lại.
   const dong = phienList.value.find((item) => item.id === phien.id)
   if (dong) lenDauDanhSach({ ...dong, tin_nhan_cuoi: text, tin_nhan_cuoi_luc: new Date().toISOString() })

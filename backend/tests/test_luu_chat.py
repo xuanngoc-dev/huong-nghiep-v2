@@ -104,6 +104,32 @@ class LuuChatTests(unittest.TestCase):
         self.assertEqual([m.loai_nguoi_gui for m in tin_nhan], ["user", "bot", "user", "bot"])
         self.assertEqual(tin_nhan[1].noi_dung_phan_hoi, "Xin chào")
 
+    def test_doi_tuong_huong_den_chot_khi_tao_phien(self):
+        p1 = luu_chat.luu_cau_hoi(self.db, None, 1, None, "a", None, doi_tuong_huong_den="phu-huynh")
+        # Câu sau gửi đối tượng khác vẫn giữ đối tượng đã chốt của phiên.
+        p2 = luu_chat.luu_cau_hoi(self.db, p1.ma_dinh_danh, 1, None, "b", None, doi_tuong_huong_den="hoc-sinh-thcs")
+        self.assertEqual((p1.id, p2.doi_tuong_huong_den), (p2.id, "phu-huynh"))
+        # Không gửi đối tượng thì dùng mặc định (học sinh THPT thi đại học).
+        self.assertEqual(luu_chat.luu_cau_hoi(self.db, None, 1, None, "c", None).doi_tuong_huong_den, "thpt-thi-dai-hoc")
+
+    def test_api_hoi_tra_loi_theo_doi_tuong_da_chot_cua_phien(self):
+        p = luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "a", None, doi_tuong_huong_den="phu-huynh")
+        self.db.commit()
+        tra_loi = HoiChatResponse(tra_loi="Ok", model_id="m", model_ten="M", tai_lieu=[])
+        hoi = AsyncMock(return_value=(tra_loi, {}, {}))
+        payload = HoiChatRequest(cau_hoi="Tiếp", model_id="m", ma_khach_vang_lai="tb1", ma_phien=p.ma_dinh_danh,
+                                 doi_tuong_huong_den="thpt-du-hoc")
+        with patch.object(chat_api, "SessionLocal", self.Session), patch.object(chat_api, "hoi_kem_usage", hoi):
+            asyncio.run(chat_api.post_hoi(payload, None))
+        self.assertEqual(hoi.call_args.args[0].doi_tuong_huong_den, "phu-huynh")
+        trang_thai = chat_api.get_trang_thai_phien(p.ma_dinh_danh, "tb1", None, self.db)
+        self.assertEqual(trang_thai.doi_tuong_huong_den, "phu-huynh")
+
+    def test_ma_doi_tuong_khong_hop_le_bi_tu_choi(self):
+        with self.assertRaises(ValueError):
+            HoiChatRequest(cau_hoi="a", model_id="m", doi_tuong_huong_den="khong-co")
+        self.assertIsNone(HoiChatRequest(cau_hoi="a", model_id="m", doi_tuong_huong_den="").doi_tuong_huong_den)
+
     def test_phien_da_ket_thuc_khong_hoi_tiep_duoc(self):
         p = luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "a", None)
         p.trang_thai = "da_dong"

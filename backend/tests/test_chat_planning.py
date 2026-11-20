@@ -6,7 +6,7 @@ from unittest.mock import patch
 import httpx
 
 from app.core.config import settings
-from app.schemas.chat import HoiChatRequest, KeHoachTraCuu, ModelChat, NguCanhChat, TinNhan
+from app.schemas.chat import HoiChatRequest, HoSoChat, KeHoachTraCuu, ModelChat, NguCanhChat, TinNhan
 from app.services import chat_stream, tra_cuu_tuyen_sinh as lookup
 from test_chat import CorpusFixture, program
 
@@ -240,6 +240,36 @@ class PlannerFlowTests(CorpusFixture, unittest.IsolatedAsyncioTestCase):
         self.assertIn("Không lấy các thông tin này từ kiến thức sẵn có, Internet", system)
         self.assertIn("Marketing", system)
         self.assertIn("Hệ thống chưa có dữ liệu tuyển sinh của Đại học Zeta.", prepared.result.notes)
+
+    async def test_planner_and_answer_see_the_conversation_audience(self):
+        instructions = []
+        async def planner(request):
+            instructions.append(request.messages[0]["content"])
+            yield "delta", {"text": '{"khong_can_tra_cuu": true}'}
+        with patch.object(chat_stream, "_provider", planner):
+            prepared = await chat_stream.prepare(HoiChatRequest(cau_hoi="Con tôi nên học gì?", model_id="test",
+                                                                doi_tuong_huong_den="phu-huynh"))
+            default = await chat_stream.prepare(HoiChatRequest(cau_hoi="Chọn ngành gì?", model_id="test"))
+        self.assertIn("ĐỐI TƯỢNG NGƯỜI HỎI: Phụ huynh.", instructions[0])
+        self.assertIn("ĐỐI TƯỢNG NGƯỜI HỎI: Phụ huynh.", prepared.messages[0]["content"])
+        self.assertIn("ĐỐI TƯỢNG NGƯỜI HỎI: Học sinh THPT thi đại học & cao đẳng.", default.messages[0]["content"])
+
+    async def test_only_thpt_audience_uses_profile_and_is_told_to_ask_for_missing_info(self):
+        async def planner(_):
+            yield "delta", {"text": '{"khong_can_tra_cuu": true}'}
+        ho_so = HoSoChat(tinh_thanh_id=7)
+        with patch.object(chat_stream, "_provider", planner):
+            thpt = await chat_stream.prepare(HoiChatRequest(cau_hoi="Em nên học ngành gì?", model_id="test", ho_so=ho_so,
+                                                            doi_tuong_huong_den="thpt-du-hoc"))
+            khach = await chat_stream.prepare(HoiChatRequest(cau_hoi="Em nên học ngành gì?", model_id="test"))
+            phu_huynh = await chat_stream.prepare(HoiChatRequest(cau_hoi="Con tôi nên học gì?", model_id="test",
+                                                                 ho_so=ho_so, doi_tuong_huong_den="phu-huynh"))
+        system = thpt.messages[0]["content"]
+        self.assertIn('HỒ SƠ THÍ SINH:\n{"tinh_thanh_id": 7}', system)
+        self.assertIn("CÁ NHÂN HÓA THEO HỒ SƠ (học sinh THPT)", system)
+        self.assertIn("HỒ SƠ THÍ SINH: chưa có", khach.messages[0]["content"])
+        self.assertNotIn("HỒ SƠ THÍ SINH", phu_huynh.messages[0]["content"])
+        self.assertNotIn("CÁ NHÂN HÓA THEO HỒ SƠ", phu_huynh.messages[0]["content"])
 
     async def test_gemini_planning_and_answer_use_the_same_stream_protocol(self):
         self.model.provider = "gemini"

@@ -59,25 +59,30 @@ def _ghi(ham, *args, **kwargs):
         db.close()
 
 
-def _luu_cau_hoi(db, payload: HoiChatRequest, user_id: int | None) -> tuple[int, str]:
+def _luu_cau_hoi(db, payload: HoiChatRequest, user_id: int | None) -> tuple[int, str, str]:
     phien = luu_chat.luu_cau_hoi(
         db, payload.ma_phien, user_id, payload.ma_khach_vang_lai, payload.cau_hoi, payload.model_id,
-        yeu_cau_token=settings.chat_yeu_cau_token,
+        yeu_cau_token=settings.chat_yeu_cau_token, doi_tuong_huong_den=payload.doi_tuong_huong_den,
     )
-    return phien.id, phien.ma_dinh_danh
+    return phien.id, phien.ma_dinh_danh, phien.doi_tuong_huong_den
 
 
 async def _mo_phien(payload: HoiChatRequest, user_id: int | None) -> tuple[int, str] | None:
     """(id, mã) của phiên vừa ghi câu hỏi; None nếu không lưu được.
 
+    Đặt lại payload.doi_tuong_huong_den theo đối tượng đã chốt của phiên để trợ lý trả lời đúng ngữ cảnh.
     Phiên đã kết thúc thì 409, thành viên hết token (khi bật CHAT_YEU_CAU_TOKEN) thì 402; cả hai không hỏi AI.
     """
     try:
-        return await anyio.to_thread.run_sync(partial(_ghi, _luu_cau_hoi, payload, user_id))
+        phien = await anyio.to_thread.run_sync(partial(_ghi, _luu_cau_hoi, payload, user_id))
     except luu_chat.PhienDaKetThuc:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=PHIEN_DA_KET_THUC) from None
     except luu_chat.HetToken:
         raise HTTPException(status_code=status.HTTP_402_PAYMENT_REQUIRED, detail=HET_TOKEN) from None
+    if phien is None:
+        return None
+    payload.doi_tuong_huong_den = phien[2]
+    return phien[0], phien[1]
 
 
 async def _luu_tra_loi(phien, *, tra_loi, model_ai, nguon, usage, started, loi, usage_lap_ke_hoach=None) -> None:
@@ -122,6 +127,7 @@ def get_trang_thai_phien(
         ma_phien=ma_phien,
         trang_thai=trang_thai,
         da_ket_thuc=trang_thai is not None and trang_thai != luu_chat.DANG_HOAT_DONG,
+        doi_tuong_huong_den=phien.doi_tuong_huong_den if phien else None,
     )
 
 
@@ -140,7 +146,12 @@ def post_ket_thuc_phien(
             detail=f"Không tìm thấy phiên hội thoại có mã = {ma_phien}",
         )
     db.commit()
-    return TrangThaiPhienChat(ma_phien=phien.ma_dinh_danh, trang_thai=phien.trang_thai, da_ket_thuc=True)
+    return TrangThaiPhienChat(
+        ma_phien=phien.ma_dinh_danh,
+        trang_thai=phien.trang_thai,
+        da_ket_thuc=True,
+        doi_tuong_huong_den=phien.doi_tuong_huong_den,
+    )
 
 
 @router.post("/hoi", response_model=HoiChatResponse)

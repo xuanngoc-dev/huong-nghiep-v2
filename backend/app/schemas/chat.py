@@ -1,7 +1,9 @@
 from datetime import date, datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
+
+from app.constants.doi_tuong_huong_den import DOI_TUONG_HUONG_DEN
 
 from app.schemas.ho_so import KhaNangTaiChinh, SucKhoeTheChat, TrinhDoHocVan
 
@@ -97,6 +99,16 @@ class HoiChatRequest(BaseModel):
     ma_phien: str | None = Field(default=None, max_length=36)
     # Mã thiết bị của khách vãng lai (chưa đăng nhập).
     ma_khach_vang_lai: str | None = Field(default=None, max_length=64)
+    # Đối tượng hướng đến (app/constants/doi_tuong_huong_den.py), chỉ dùng khi tạo phiên mới; phiên đã có giữ đối tượng
+    # đã chốt. Trống thì dùng đối tượng mặc định.
+    doi_tuong_huong_den: str | None = Field(default=None, max_length=50)
+
+    @field_validator("doi_tuong_huong_den")
+    @classmethod
+    def check_doi_tuong(cls, value: str | None) -> str | None:
+        if value and value not in DOI_TUONG_HUONG_DEN:
+            raise ValueError(f"Không tìm thấy đối tượng hướng đến có mã = {value}")
+        return value or None
 
     @model_validator(mode="after")
     def check_history_budget(self):
@@ -143,3 +155,5 @@ class TrangThaiPhienChat(BaseModel):
     trang_thai: str | None = None
     # Phiên đã kết thúc: không hỏi tiếp được.
     da_ket_thuc: bool = False
+    # Đối tượng hướng đến đã chốt của phiên; null khi phiên chưa lưu / không thuộc người hỏi.
+    doi_tuong_huong_den: str | None = None

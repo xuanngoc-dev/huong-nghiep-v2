@@ -11,6 +11,7 @@ import uuid
 from sqlalchemy import case, select, update
 from sqlalchemy.orm import Session
 
+from app.constants.doi_tuong_huong_den import DOI_TUONG_MAC_DINH
 from app.core.thoi_gian import bay_gio
 from app.models.chat_conversations import ChatConversation
 from app.models.chat_messages import ChatMessage
@@ -66,10 +67,17 @@ def ket_thuc_phien(db: Session, ma_phien: str | None, user_id: int | None, ma_kh
 
 
 def mo_phien(
-    db: Session, ma_phien: str | None, user_id: int | None, ma_khach: str | None, cau_hoi: str, model_ai: str | None
+    db: Session,
+    ma_phien: str | None,
+    user_id: int | None,
+    ma_khach: str | None,
+    cau_hoi: str,
+    model_ai: str | None,
+    doi_tuong_huong_den: str | None = None,
 ) -> ChatConversation:
     """Lấy phiên theo mã; chưa có / mã không hợp lệ / không thuộc người hỏi thì tạo phiên mới (tiêu đề = câu hỏi đầu).
 
+    Đối tượng hướng đến chỉ ghi khi tạo phiên mới (trống thì mặc định); phiên đã có giữ đối tượng đã chốt.
     Phiên của người hỏi đã kết thúc thì raise `PhienDaKetThuc`.
     """
     ma = _uuid_hop_le(ma_phien)
@@ -85,6 +93,7 @@ def mo_phien(
             ma_khach_vang_lai=None if user_id else ma_khach,
             tieu_de=_tieu_de(cau_hoi),
             model_ai=model_ai,
+            doi_tuong_huong_den=doi_tuong_huong_den or DOI_TUONG_MAC_DINH,
             so_tin_nhan=0,
         )
         db.add(phien)
@@ -109,13 +118,14 @@ def luu_cau_hoi(
     cau_hoi: str,
     model_ai: str | None,
     yeu_cau_token: bool = False,
+    doi_tuong_huong_den: str | None = None,
 ) -> ChatConversation:
     """Mở (hoặc tạo) phiên và ghi câu hỏi của người dùng. Trả phiên để ghi câu trả lời sau.
 
     yeu_cau_token: thành viên hết token thì raise HetToken. Kiểm tra sau khi mở phiên để phiên đã kết thúc
     được báo trước (PhienDaKetThuc); nơi gọi rollback nên không lưu gì.
     """
-    phien = mo_phien(db, ma_phien, user_id, ma_khach, cau_hoi, model_ai)
+    phien = mo_phien(db, ma_phien, user_id, ma_khach, cau_hoi, model_ai, doi_tuong_huong_den)
     if yeu_cau_token:
         kiem_tra_token(db, user_id)
     if model_ai:

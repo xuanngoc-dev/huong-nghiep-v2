@@ -22,16 +22,22 @@ export function fromServerMessages(tinNhan) {
 // đầu và gửi lại ở các câu sau để cùng một phiên; hội thoại mới thì bỏ. guestId(): mã thiết bị khi là khách.
 // state.daKetThuc: phiên đã bị quản trị kết thúc (server trả 409) — không gửi tiếp, phải mở hội thoại mới.
 // Tin nhắn có local: true là lệnh "/..." và câu trả lời của lệnh (utils/chatLenh.js): chỉ hiện, không gửi kèm lịch sử.
-export function createChatSession(state, { stream, storage, storageKey, loadProfile, guestId }) {
+// state.doiTuongHuongDen: đối tượng hướng đến (constants/doiTuongHuongDen.js) gửi kèm câu hỏi; server chốt vào phiên ở câu
+// đầu. doiTuongMacDinh(): đối tượng cho hội thoại mới (theo trang đang xem). state.daChonDoiTuong: người dùng đã tự chọn
+// đối tượng trong hội thoại này (khung chat thôi hiện thẻ chọn đối tượng).
+export function createChatSession(state, { stream, storage, storageKey, loadProfile, guestId, doiTuongMacDinh }) {
   let controller = null
   let revision = 0
   let saveTimer = null
   const id = () => `${Date.now()}-${Math.random().toString(36).slice(2)}`
+  const macDinh = () => (typeof doiTuongMacDinh === 'function' ? doiTuongMacDinh() : '') || ''
   function persist() {
     clearTimeout(saveTimer)
     try {
       storage.setItem(storageKey(), JSON.stringify({ version: 2, modelId: state.modelId, draft: state.draft, context: state.context,
         ...(state.maPhien ? { maPhien: state.maPhien } : {}),
+        ...(state.doiTuongHuongDen ? { doiTuongHuongDen: state.doiTuongHuongDen } : {}),
+        ...(state.daChonDoiTuong ? { daChonDoiTuong: true } : {}),
         messages: state.messages.slice(-100).map(m => ({ ...m, status: m.status === 'streaming' ? 'cancelled' : m.status })) }))
       state.storageWarning = ''
     } catch {
@@ -46,6 +52,8 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
     state.context = null
     state.maPhien = null
     state.daKetThuc = false
+    state.doiTuongHuongDen = macDinh()
+    state.daChonDoiTuong = false
     state.suggestions = []
     state.error = ''
     try {
@@ -56,6 +64,8 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
         sources: Array.isArray(m.sources) ? m.sources : [], notes: Array.isArray(m.notes) ? m.notes : [] })) : newConversation()
       state.modelId = typeof saved.modelId === 'string' ? saved.modelId : ''
       if (typeof saved.maPhien === 'string' && saved.maPhien.length <= 36) state.maPhien = saved.maPhien
+      if (typeof saved.doiTuongHuongDen === 'string' && saved.doiTuongHuongDen.length <= 50) state.doiTuongHuongDen = saved.doiTuongHuongDen
+      state.daChonDoiTuong = saved.daChonDoiTuong === true
       state.draft = typeof saved.draft === 'string' ? saved.draft.slice(0, 4000) : ''
       if (saved.context && typeof saved.context === 'object' && !Array.isArray(saved.context)) {
         state.context = {
@@ -95,14 +105,18 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
     state.context = null
     state.maPhien = null
     state.daKetThuc = false
+    state.doiTuongHuongDen = macDinh()
+    state.daChonDoiTuong = false
     persist()
   }
   // Mở lại một phiên đã lưu trên server (trang Danh sách hội thoại) để hỏi tiếp trong cùng phiên.
-  function open(maPhien, messages) {
+  function open(maPhien, messages, doiTuongHuongDen) {
     stop(false)
     state.messages = messages.length ? messages : newConversation()
     state.maPhien = maPhien
     state.daKetThuc = false
+    state.doiTuongHuongDen = doiTuongHuongDen || macDinh()
+    state.daChonDoiTuong = true
     state.context = null
     state.suggestions = []
     state.draft = ''
@@ -160,7 +174,7 @@ export function createChatSession(state, { stream, storage, storageKey, loadProf
     }
     if (owner !== revision) return
     const payload = { cau_hoi: text, model_id: model.id, lich_su: history, ngu_canh: state.context || null,
-      ma_phien: state.maPhien || null }
+      ma_phien: state.maPhien || null, doi_tuong_huong_den: state.doiTuongHuongDen || null }
     const maKhach = typeof guestId === 'function' ? guestId() : null
     if (maKhach) payload.ma_khach_vang_lai = maKhach
     if (hoSo) payload.ho_so = hoSo

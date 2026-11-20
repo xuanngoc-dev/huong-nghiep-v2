@@ -5,6 +5,7 @@ import { h } from 'vue'
 import { createChatSession, fromServerMessages, newConversation } from '../src/utils/chatSession.js'
 import { createEventParser, readChatStream } from '../src/utils/chatStream.js'
 import { renderMarkdown } from '../src/utils/chatMarkdown.js'
+import { DOI_TUONG_HUONG_DEN, cauHoiMau, doiTuongTheoTrang } from '../src/constants/doiTuongHuongDen.js'
 
 function fixture(stream = async () => {}, saved = null, loadProfile) {
   const data = new Map(saved ? [['test', JSON.stringify(saved)]] : [])
@@ -311,4 +312,66 @@ test('gửi câu mới thì xóa cờ hết token của lượt trước', async
   state.hetToken = true
   await session.send('Hỏi')
   assert.equal(state.hetToken, false)
+})
+
+test('đối tượng hướng đến theo trang đang xem', () => {
+  assert.equal(doiTuongTheoTrang({ dinhHuong: 'du-hoc' }), 'thpt-du-hoc')
+  assert.equal(doiTuongTheoTrang({ dinhHuong: 'thi-dai-hoc', goc: 'phu-huynh-thpt-lop-12' }), 'phu-huynh')
+  assert.equal(doiTuongTheoTrang({ giaiDoanCon: 'thcs' }), 'phu-huynh')
+  assert.equal(doiTuongTheoTrang({ doiTuongCha: 'hoc-sinh-thcs' }), 'hoc-sinh-thcs')
+  assert.equal(doiTuongTheoTrang({ doiTuong: 'hoc-sinh-thpt' }), 'thpt-thi-dai-hoc')
+  assert.equal(doiTuongTheoTrang({}, 'phu-huynh'), 'phu-huynh')
+  assert.equal(doiTuongTheoTrang({}, 'nha-tuyen-dung'), 'thpt-thi-dai-hoc')
+})
+
+test('gửi kèm đối tượng hướng đến; hội thoại mới lấy lại đối tượng theo trang', async () => {
+  const payloads = []
+  let trang = 'phu-huynh'
+  const data = new Map()
+  const state = { messages: newConversation(), modelId: 'm', models: [{ id: 'm', ten: 'M', san_sang: true }],
+    draft: '', sending: false, error: '', suggestions: [], storageWarning: '' }
+  const session = createChatSession(state, {
+    stream: async (p) => { payloads.push(p) },
+    storage: { getItem: k => data.get(k), setItem: (k, v) => data.set(k, v) },
+    storageKey: () => 'test',
+    doiTuongMacDinh: () => trang,
+  })
+  session.restore()
+  assert.equal(state.doiTuongHuongDen, 'phu-huynh')
+  state.modelId = 'm'
+  state.doiTuongHuongDen = 'thpt-du-hoc'
+  await session.send('Câu 1')
+  assert.equal(payloads[0].doi_tuong_huong_den, 'thpt-du-hoc')
+  assert.equal(JSON.parse(data.get('test')).doiTuongHuongDen, 'thpt-du-hoc')
+  trang = 'hoc-sinh-thcs'
+  session.clear()
+  assert.equal(state.doiTuongHuongDen, 'hoc-sinh-thcs')
+  session.open('phien-2', [], 'sinh-vien')
+  assert.equal(state.doiTuongHuongDen, 'sinh-vien')
+})
+
+test('đã tự chọn đối tượng thì lưu lại; hội thoại mới thì hỏi chọn lại', () => {
+  const data = new Map()
+  const state = { messages: newConversation(), modelId: 'm', models: [], draft: '', sending: false, error: '', suggestions: [], storageWarning: '' }
+  const session = createChatSession(state, {
+    stream: async () => {},
+    storage: { getItem: k => data.get(k), setItem: (k, v) => data.set(k, v) },
+    storageKey: () => 'test',
+    doiTuongMacDinh: () => 'thpt-thi-dai-hoc',
+  })
+  session.restore()
+  assert.equal(state.daChonDoiTuong, false)
+  state.doiTuongHuongDen = 'phu-huynh'
+  state.daChonDoiTuong = true
+  session.persist()
+  session.restore()
+  assert.deepEqual([state.doiTuongHuongDen, state.daChonDoiTuong], ['phu-huynh', true])
+  session.clear()
+  assert.deepEqual([state.doiTuongHuongDen, state.daChonDoiTuong], ['thpt-thi-dai-hoc', false])
+})
+
+test('câu hỏi gợi ý theo đối tượng hướng đến', () => {
+  for (const { ma } of DOI_TUONG_HUONG_DEN) assert.equal(cauHoiMau(ma).length, 3)
+  assert.notDeepEqual(cauHoiMau('phu-huynh'), cauHoiMau('thpt-thi-dai-hoc'))
+  assert.deepEqual(cauHoiMau('khong-co'), cauHoiMau('thpt-thi-dai-hoc'))
 })

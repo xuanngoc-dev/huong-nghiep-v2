@@ -13,6 +13,16 @@
         :dau-nhom="!cungBen(chat.state.messages[index - 1], message)" :cuoi-nhom="!cungBen(chat.state.messages[index + 1], message)"
         :retryable="index === chat.state.messages.length - 1 && message.role === 'bot' && message.id !== 'welcome' && !message.local && !chat.state.sending && !chat.state.daKetThuc"
         @retry="chat.retry" />
+      <!-- Hội thoại mới: mời chọn đối tượng (đã chọn sẵn theo trang đang xem); chọn xong hoặc gửi câu hỏi đầu thì ẩn.
+           Đổi lại sau bằng nút cài đặt trên tiêu đề khung chat (tới khi gửi câu hỏi đầu). -->
+      <div v-if="hienChonDoiTuong" class="ai-chat__chon-doi-tuong" role="group" aria-label="Chọn đối tượng người hỏi">
+        <p>Bạn là ai? Chọn để trợ lý tư vấn đúng với hoàn cảnh của bạn:</p>
+        <div class="ai-chat__chon-doi-tuong-ds">
+          <button v-for="item in DOI_TUONG_HUONG_DEN" :key="item.ma" type="button"
+            :class="{ 'is-active': item.ma === chat.state.doiTuongHuongDen }" :aria-pressed="item.ma === chat.state.doiTuongHuongDen"
+            @click="chonDoiTuong(item.ma)">{{ item.label }}</button>
+        </div>
+      </div>
     </div>
     <div v-if="suggestions.length && !chat.state.daKetThuc" class="ai-chat__suggestions">
       <button v-for="question in suggestions" :key="question" type="button" :disabled="chat.state.sending" @click="submit(question)">{{ question }}</button>
@@ -62,6 +72,7 @@ import { useChatStore } from '@/stores/chat'
 import ChatMessage from './ChatMessage.vue'
 import GoiYLenh from './GoiYLenh.vue'
 import { cuPhap, goiYLenh } from '@/utils/chatLenh'
+import { DOI_TUONG_HUONG_DEN, cauHoiMau } from '@/constants/doiTuongHuongDen'
 
 const props = defineProps({ compact: Boolean })
 const chat = useChatStore()
@@ -69,8 +80,14 @@ const list = ref(null)
 const input = ref(null)
 const stickToBottom = ref(true)
 const hasUser = computed(() => chat.state.messages.some(m => m.role === 'user'))
-const examples = ['Phương thức xét tuyển ngành Marketing trường NEU 2026?', 'Bách khoa Hà Nội có những ngành nào?', 'Những trường nào có ngành Công nghệ thông tin hoặc Logistics?']
-const suggestions = computed(() => chat.state.suggestions.length ? chat.state.suggestions : !hasUser.value ? examples : [])
+// Câu hỏi gợi ý khi chưa hỏi gì: theo đối tượng hướng đến (constants/doiTuongHuongDen.js).
+const examples = computed(() => cauHoiMau(chat.state.doiTuongHuongDen))
+const hienChonDoiTuong = computed(() => !chat.daChotDoiTuong && !chat.state.daChonDoiTuong && !chat.state.daKetThuc)
+function chonDoiTuong(ma) {
+  chat.chonDoiTuong(ma)
+  input.value?.focus()
+}
+const suggestions = computed(() => chat.state.suggestions.length ? chat.state.suggestions : !hasUser.value ? examples.value : [])
 function onScroll() {
   const el = list.value
   if (el) stickToBottom.value = el.scrollHeight - el.scrollTop - el.clientHeight < 90
@@ -178,8 +195,14 @@ onMounted(() => { chat.loadModels(); chat.kiemTraPhien(); scroll(); if (props.co
   &__message-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; }
   &__message-actions small { flex:1; color:#607169; }
   &__message-actions button { font-size:12px; padding:3px 7px; }
-  &__suggestions { display:flex; flex-wrap:wrap; gap:8px; padding:10px 14px; max-height:130px; overflow-y:auto; }
-  &__suggestions button { text-align:left; font-size:13px; }
+  &__chon-doi-tuong { margin-top:8px; padding:12px; border:1px solid #d3e3d9; border-radius:8px; background:var(--el-bg-color, #fff); box-shadow:0 1px 2px rgba(0,0,0,.06); }
+  &__chon-doi-tuong p { margin:0 0 8px; }
+  /* Nút dạng viên thuốc, đồng nhất với nút chọn đối tượng ở khung cài đặt (Chatbot.vue). */
+  &__chon-doi-tuong-ds, &__suggestions { display:flex; flex-wrap:wrap; gap:6px; }
+  &__chon-doi-tuong-ds button, &__suggestions button { font-size:12px; padding:5px 10px; border-radius:999px; text-align:left; }
+  &__chon-doi-tuong-ds button:hover:not(:disabled), &__suggestions button:hover:not(:disabled) { border-color:#237b51; }
+  &__chon-doi-tuong-ds button.is-active { background:#237b51; border-color:#237b51; color:#fff; }
+  &__suggestions { padding:10px 14px; max-height:130px; overflow-y:auto; }
   &__composer { display:flex; flex-direction:column; gap:8px; align-items:stretch; padding:10px 14px 4px; border-top:1px solid #e2ece5; }
   &__composer-row { position:relative; display:flex; gap:10px; align-items:flex-end; }
   &__composer-row textarea { flex:1; min-width:0; resize:vertical; max-height:150px; padding:10px; border:1px solid #c9ddd1; border-radius:10px; }

@@ -50,6 +50,7 @@ def _item(phien: ChatConversation, nguoi: NguoiDung | None, cuoi: ChatMessage | 
         email=nguoi.email if nguoi else None,
         ma_khach_vang_lai=phien.ma_khach_vang_lai,
         model_ai=phien.model_ai,
+        doi_tuong_huong_den=phien.doi_tuong_huong_den,
         so_tin_nhan=phien.so_tin_nhan or 0,
         tin_nhan_cuoi_luc=phien.tin_nhan_cuoi_luc,
         tin_nhan_cuoi=_xem_truoc(cuoi),
