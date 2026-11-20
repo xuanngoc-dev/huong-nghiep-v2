@@ -132,7 +132,8 @@ def setup_logging() -> None:
         return
 
     # Giờ in trong log theo múi giờ hệ thống (TIMEZONE), không theo giờ máy chạy server.
-    logging.Formatter.converter = lambda timestamp: thoi_gian.tu_timestamp(timestamp).timetuple()
+    # staticmethod: gán hàm thẳng vào class thì Python truyền thêm self → TypeError khi format mọi dòng log.
+    logging.Formatter.converter = staticmethod(lambda timestamp: thoi_gian.tu_timestamp(timestamp).timetuple())
     config = deepcopy(LOGGING_CONFIG)
     config["formatters"]["default"]["fmt"] = "%(asctime)s %(levelprefix)s %(message)s"
     config["formatters"]["default"]["datefmt"] = "%Y-%m-%d %H:%M:%S"
