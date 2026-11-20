@@ -7,11 +7,8 @@
   background: #f6fbf7;
 }
 
+/* Các mục chảy liền như một dòng chữ: hết chỗ mới xuống dòng, được ngắt giữa các từ của một mục. */
 .guest-breadcrumb ol {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0;
   margin: 0;
   padding: 10px 0;
   list-style: none;
@@ -19,9 +16,13 @@
   line-height: 1.4;
 }
 
+.guest-breadcrumb li {
+  display: inline;
+}
+
 .guest-breadcrumb li:not(:last-child)::after {
   content: '/';
-  margin: 0 8px;
+  margin: 0 4px;
   color: #8aa394;
 }
 
@@ -36,8 +37,10 @@
 }
 
 .guest-breadcrumb [aria-current='page'] {
-  padding: 2px 8px;
+  padding: 2px 0px;
   border-radius: 0.375rem;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
   color: var(--guest-primary);
   font-weight: 400;
 }
