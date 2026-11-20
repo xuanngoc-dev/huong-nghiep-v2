@@ -28,6 +28,12 @@ from app.api.v1.endpoints import (
     dm_thpt_duhoc_nganh,
     dm_thpt_duhoc_quoc_gia,
     dm_thpt_duhoc_thu_tuc,
+    dm_thpt_xkld_chi_phi,
+    dm_thpt_xkld_kenh_ket_noi,
+    dm_thpt_xkld_nghe_cu_the,
+    dm_thpt_xkld_nhom_nghe,
+    dm_thpt_xkld_thi_truong,
+    dm_thpt_xkld_thu_tuc,
     dm_phuong_thuc_tuyen_sinh,
     dm_thanh_tich_hoc_tap_nghien_cuu,
     dm_tinh_thanh,
@@ -99,6 +105,12 @@ api_router.include_router(dm_thpt_duhoc_nganh.router)
 api_router.include_router(dm_thpt_duhoc_chi_phi.router)
 api_router.include_router(dm_thpt_duhoc_thu_tuc.router)
 api_router.include_router(dm_thpt_duhoc_kenh_ket_noi.router)
+api_router.include_router(dm_thpt_xkld_nhom_nghe.router)
+api_router.include_router(dm_thpt_xkld_thi_truong.router)
+api_router.include_router(dm_thpt_xkld_nghe_cu_the.router)
+api_router.include_router(dm_thpt_xkld_chi_phi.router)
+api_router.include_router(dm_thpt_xkld_thu_tuc.router)
+api_router.include_router(dm_thpt_xkld_kenh_ket_noi.router)
 api_router.include_router(dm_linh_vuc_dao_tao.router)
 api_router.include_router(dm_nhom_nganh_dao_tao.router)
 api_router.include_router(dm_nganh_dao_tao.router)
