@@ -12,6 +12,26 @@ const cayDinhHuongThpt = [
     component: () => import('./di-lam/ChiTietNhomNghe.vue'),
     meta: { title: 'Nghề cụ thể', public: true, dinhHuong: 'di-lam' },
   },
+  // Khảo sát Holland của hướng đi làm: dùng chung trang hướng dẫn / làm bài với thi đại học (luongKhaoSat.js),
+  // chỉ lấy loại câu hỏi áp dụng cho đối tượng "đi làm"; kết thúc ở nhóm nghề đi làm phù hợp.
+  {
+    path: 'di-lam/huong-dan-khao-sat',
+    name: 'di-lam-huong-dan-khao-sat',
+    component: () => import('./thi-dai-hoc/HuongDanKhaoSat.vue'),
+    meta: { title: 'Hướng dẫn khảo sát', public: true, dinhHuong: 'di-lam' },
+  },
+  {
+    path: 'di-lam/lam-trac-nghiem/:ssid/nhom-nghe-phu-hop',
+    name: 'di-lam-nhom-nghe-phu-hop',
+    component: () => import('./di-lam/NhomNghePhuHop.vue'),
+    meta: { title: 'Nhóm nghề phù hợp', public: true, dinhHuong: 'di-lam' },
+  },
+  {
+    path: 'di-lam/lam-trac-nghiem/:ssid/:loaiCauHoiId(\\d+)',
+    name: 'di-lam-lam-trac-nghiem',
+    component: () => import('./thi-dai-hoc/lam-trac-nghiem/LamBai.vue'),
+    meta: { title: 'Làm trắc nghiệm Holland', public: true, dinhHuong: 'di-lam' },
+  },
   {
     path: 'du-hoc-nghe',
     name: 'du-hoc-nghe',

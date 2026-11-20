@@ -13,3 +13,8 @@ export const DOI_TUONG_AP_DUNG = [
 export function timDoiTuongApDung(value) {
   return DOI_TUONG_AP_DUNG.find((item) => item.value === value)
 }
+
+// Mã đối tượng theo hướng đi THPT (route.meta.dinhHuong), vd. 'thi-dai-hoc' → 1, 'di-lam' → 2; không khớp → null.
+export function maDoiTuongTheoDinhHuong(dinhHuong) {
+  return DOI_TUONG_AP_DUNG.find((item) => item.ma === dinhHuong)?.value ?? null
+}

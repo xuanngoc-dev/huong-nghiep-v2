@@ -1,8 +1,8 @@
 # Danh sách API
 
-Tự sinh từ code lúc 20/11/2026 09:57 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 20/11/2026 10:11 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **366** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **367** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
@@ -10,7 +10,7 @@ Tiền tố chung: `/api/v1`. Tổng cộng **366** API.
 |---|---:|---|
 | [Quản trị (admin)](#quan_tri) | 224 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
 | [Thành viên (user)](#thanh_vien) | 87 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
-| [Khách vãng lai](#khach) | 55 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
+| [Khách vãng lai](#khach) | 56 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
 
@@ -925,6 +925,7 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | `PUT` | `/api/v1/trac-nghiem/phien/{ssid}/chi-tiet/{chi_tiet_id}` | Không | Lưu đáp án của một câu trong phiên và điểm tương ứng. |
 | `GET` | `/api/v1/trac-nghiem/phien/{ssid}/ket-qua` | Không | Cộng điểm Holland của phiên theo đáp án đã lưu. |
 | `GET` | `/api/v1/trac-nghiem/phien/{ssid}/nganh-phu-hop` | Không | Ngành đào tạo khớp các mã Holland nổi bật của phiên. |
+| `GET` | `/api/v1/trac-nghiem/phien/{ssid}/nhom-nghe-phu-hop` | Không | Nhóm nghề đi làm (dm_nhom_nghe_di_lam đang hoạt động) khớp các mã Holland nổi bật của phiên. |
 
 ### `webhook`
 

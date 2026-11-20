@@ -49,7 +49,7 @@ const { tenRoute } = useTenRouteThpt()
 const router = useRouter()
 
 function thamGia() {
-  router.push({ name: tenRoute('thpt-thi-dai-hoc-huong-dan-khao-sat') })
+  router.push({ name: tenRoute('thpt-di-lam-huong-dan-khao-sat') })
 }
 </script>
 

@@ -162,6 +162,7 @@ declare module 'vue' {
     NhacKhaoSat: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/NhacKhaoSat.vue')['default']
     NhaTruong: typeof import('./components/guest/doi-tuong/NhaTruong.vue')['default']
     NhaTuyenDung: typeof import('./components/guest/doi-tuong/NhaTuyenDung.vue')['default']
+    NhomNghePhuHop: typeof import('./components/guest/doi-tuong/HocSinhThpt/di-lam/NhomNghePhuHop.vue')['default']
     NoiDungPhuongThuc: typeof import('./components/guest/kiem-tra-du-lieu/NoiDungPhuongThuc.vue')['default']
     PageLoading: typeof import('./components/PageLoading.vue')['default']
     PhanVan: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/PhanVan.vue')['default']
