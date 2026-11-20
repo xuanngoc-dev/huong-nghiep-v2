@@ -68,7 +68,7 @@ export const navLinks = [
   { label: 'HS THPT', to: { name: 'hoc-sinh-thpt' } },
   // Chưa có trang tra cứu nghề riêng: dẫn tới mục "Khám phá nghề & trường" trên trang chủ.
   { label: 'Tra cứu', to: { name: 'home' }, hash: '#kham-pha' },
-  { label: 'Trợ lý tư vấn', moChat: true },
+  // { label: 'Trợ lý tư vấn', moChat: true },
   { label: 'Cẩm nang', to: { name: 'home' }, hash: '#cam-nang' },
 ]
 
