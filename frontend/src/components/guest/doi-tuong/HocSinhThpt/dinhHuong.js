@@ -38,15 +38,6 @@ export const dinhHuongThptList = [
     image: duHocImage,
   },
   {
-    code: 'khoi-nghiep',
-    moTruyCap: false,
-    name: 'Khởi nghiệp',
-    description: 'Tự xây dựng ý tưởng và bắt đầu công việc của riêng bạn.',
-    moTaChiTiet:
-      'Nuôi dưỡng ý tưởng, kỹ năng cần có, nguồn vốn và những bước đầu tiên để tự kinh doanh.',
-    image: khoiNghiepImage,
-  },
-  {
     code: 'xuat-khau-lao-dong',
     moTruyCap: true,
     name: 'Xuất khẩu lao động',
@@ -54,6 +45,15 @@ export const dinhHuongThptList = [
     moTaChiTiet:
       'Nhóm nghề, thị trường, chi phí, thủ tục và cách đi qua kênh chính thống để tránh rủi ro.',
     image: xuatKhauImage,
+  },
+  {
+    code: 'khoi-nghiep',
+    moTruyCap: false,
+    name: 'Khởi nghiệp',
+    description: 'Tự xây dựng ý tưởng và bắt đầu công việc của riêng bạn.',
+    moTaChiTiet:
+      'Nuôi dưỡng ý tưởng, kỹ năng cần có, nguồn vốn và những bước đầu tiên để tự kinh doanh.',
+    image: khoiNghiepImage,
   },
 ]
 
