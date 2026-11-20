@@ -13,12 +13,12 @@ Cách dùng (chạy trên bản sao CSDL trước):
 
 import sys
 from dataclasses import dataclass, field
-from datetime import datetime
 from pathlib import Path
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.thoi_gian import bay_gio
 from app.db.session import SessionLocal
 from app.models.hs_ho_so import HsHoSo
 from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
@@ -81,7 +81,7 @@ def chuan_bi(
 
 
 def chuyen(db: Session, *, ghi: bool, nam: int | None = None) -> list[KetQuaNguoi]:
-    nam = nam or datetime.now().year
+    nam = nam or bay_gio().year
     dm = DanhMucMa.tu_csdl(db)
     dm_ho_so = DanhMucHoSo.tu_csdl(db)
     da_co = set(db.scalars(select(HsHoSo.nguoi_dung_id).where(HsHoSo.nguoi_dung_id.is_not(None))))
@@ -112,7 +112,7 @@ def bao_cao(ket_qua: list[KetQuaNguoi], *, ghi: bool) -> str:
     dong = [
         "# Chuyển hồ sơ năng lực sang hồ sơ xét tuyển hs_*",
         "",
-        f"Thời điểm: {datetime.now():%d/%m/%Y %H:%M}. Chế độ: {'GHI THẬT' if ghi else 'chạy thử (không ghi)'}.",
+        f"Thời điểm: {bay_gio():%d/%m/%Y %H:%M}. Chế độ: {'GHI THẬT' if ghi else 'chạy thử (không ghi)'}.",
         "",
         "| Kết quả | Số người |",
         "|---|---|",

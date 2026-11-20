@@ -6,7 +6,6 @@ import shutil
 import socket
 import tarfile
 import zipfile
-from datetime import datetime
 from pathlib import Path
 from typing import BinaryIO
 from urllib.parse import quote, unquote, urljoin, urlparse
@@ -16,6 +15,7 @@ import httpx
 from fastapi import HTTPException, status
 
 from app.core.config import settings
+from app.core.thoi_gian import tu_timestamp
 from app.schemas.thu_vien import ThuVienItem
 
 IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
@@ -673,5 +673,5 @@ def _item(path: Path, root: Path) -> ThuVienItem:
         la_thu_muc=path.is_dir(),
         kich_thuoc=None if path.is_dir() else stat.st_size,
         duong_dan=public,
-        cap_nhat=datetime.fromtimestamp(stat.st_mtime),
+        cap_nhat=tu_timestamp(stat.st_mtime),
     )

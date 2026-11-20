@@ -101,7 +101,7 @@ class ChatHoiThoaiApiTests(unittest.TestCase):
         a2 = luu_chat.luu_cau_hoi(self.db, None, 1, None, "Điểm chuẩn BKA", "m")
         b = luu_chat.luu_cau_hoi(self.db, None, 2, None, "Của B", "m")
         luu_chat.luu_cau_hoi(self.db, None, None, "tb1", "Của khách", "m")
-        a2.trang_thai = "luu_tru"
+        a2.trang_thai = "da_dong"
         self.db.commit()
         nguoi_a = self.db.get(NguoiDung, 1)
 

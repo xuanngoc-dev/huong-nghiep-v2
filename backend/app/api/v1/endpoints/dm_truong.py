@@ -1,4 +1,3 @@
-from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, or_, select
@@ -6,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user, get_current_user
+from app.core.thoi_gian import bay_gio
 from app.db.session import get_db
 from app.models.dm_truong import DmTruong
 from app.models.nguoi_dung import NguoiDung
@@ -170,7 +170,7 @@ def create_truong_bulk(
                 detail="Trường trực thuộc không tồn tại",
             )
 
-    now = datetime.now()
+    now = bay_gio()
     items = [DmTruong(**item.model_dump(), tao_luc=now, cap_nhat_luc=now) for item in payload]
     db.add_all(items)
     try:
@@ -189,7 +189,7 @@ def create_truong(
 ) -> DmTruong:
     """Thêm một trường học. Từ chối nếu mã trường đã tồn tại."""
     _ensure_parent(db, payload.truong_cha_id)
-    now = datetime.now()
+    now = bay_gio()
     item = DmTruong(**payload.model_dump(), tao_luc=now, cap_nhat_luc=now)
     db.add(item)
     try:
@@ -213,7 +213,7 @@ def update_truong(
     _ensure_parent(db, payload.truong_cha_id, item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
-    item.cap_nhat_luc = datetime.now()
+    item.cap_nhat_luc = bay_gio()
     try:
         db.commit()
     except IntegrityError as exc:

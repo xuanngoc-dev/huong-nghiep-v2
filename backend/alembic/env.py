@@ -1,10 +1,11 @@
 from logging.config import fileConfig
 
-from sqlalchemy import create_engine, pool
+from sqlalchemy import create_engine, pool, text
 
 from alembic import context
 
 from app.core.config import settings
+from app.core.thoi_gian import offset_mysql
 from app.db.base import Base
 from app.models import (  # noqa: F401 — đăng ký model cho autogenerate
     DmChuyenNganh,
@@ -87,6 +88,9 @@ def run_migrations_online() -> None:
     connectable = create_engine(settings.database_url, poolclass=pool.NullPool)
 
     with connectable.connect() as connection:
+        # NOW() trong migration theo múi giờ hệ thống như ứng dụng.
+        connection.execute(text(f"SET time_zone = '{offset_mysql()}'"))
+        connection.commit()
         context.configure(
             connection=connection,
             target_metadata=target_metadata,

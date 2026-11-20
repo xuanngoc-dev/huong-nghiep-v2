@@ -346,6 +346,7 @@ import {
   truongHocExportRows,
   truongHocListParams,
 } from '@/utils/truongHocExport'
+import { dinhDangThoiGian } from '@/utils/thoiGian'
 
 const LOAI_CO_SO = ['Cao đẳng', 'Trường đại học', 'Đại học', 'Học viện']
 const LOAI_HINH = ['Công lập', 'Tư thục', 'Có vốn đầu tư nước ngoài']
@@ -730,15 +731,7 @@ function formatDate(value) {
 
 function formatDateTime(value) {
   if (!value) return '—'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return String(value)
-  return date.toLocaleString('vi-VN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  return dinhDangThoiGian(value, undefined, String(value))
 }
 
 function formatNumber(value) {

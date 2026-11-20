@@ -11,6 +11,7 @@ from datetime import date, datetime, timedelta
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.core.thoi_gian import bay_gio
 from app.models.ht_lich_su_nap_tien import HtLichSuNapTien
 from app.services.nap_tien import CHO_THANH_TOAN, THANH_CONG
 
@@ -87,7 +88,7 @@ def tong_hop(giao_dich: Iterable[tuple[datetime, int, str]], now: datetime) -> d
 
 def thong_ke(db: Session, now: datetime | None = None) -> dict:
     """Số liệu tài chính cho dashboard: doanh thu theo kỳ, 30 ngày, 12 tháng, theo loại và giao dịch chờ."""
-    now = now or datetime.now()
+    now = now or bay_gio()
     thoi_diem = func.coalesce(HtLichSuNapTien.thoi_gian_xac_nhan, HtLichSuNapTien.created_at)
     so_tien = func.coalesce(HtLichSuNapTien.so_tien_thuc_nhan, HtLichSuNapTien.so_tien_nap)
     # Kỳ trước xa nhất là đầu năm ngoái.

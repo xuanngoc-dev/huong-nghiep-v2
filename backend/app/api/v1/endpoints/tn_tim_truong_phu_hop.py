@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user, get_current_user, get_optional_user
 from app.core.config import settings
+from app.core.thoi_gian import bay_gio
 from app.db.session import get_db
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.ht_cau_hinh_tra_cuu import HtCauHinhTraCuu
@@ -362,7 +363,7 @@ def tim_truong_phu_hop(
             _cong_luot_tra_cuu(db, user, 1)
     if item.trang_thai_xu_ly == "thanh_cong":
         _danh_gia_xet_tuyen(db, item, payload, user)
-    item.ngay_hoan_thanh = datetime.now()
+    item.ngay_hoan_thanh = bay_gio()
     db.commit()
     db.refresh(item)
     if item.trang_thai_xu_ly == "that_bai":

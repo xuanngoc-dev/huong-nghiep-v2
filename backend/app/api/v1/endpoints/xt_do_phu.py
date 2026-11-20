@@ -4,13 +4,13 @@ Theo dõi tiến độ nhập liệu: số đề án theo trạng thái, tỷ l�
 (đúng cách bộ tính dùng các dữ liệu này) và các quy định chưa mô hình hóa ở lần import quy tắc gần nhất.
 """
 
-from datetime import datetime
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import and_, distinct, func, or_, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user
+from app.core.thoi_gian import bay_gio
 from app.db.session import get_db
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
 from app.models.dats_hoc_phi import DatsHocPhi
@@ -111,7 +111,7 @@ def get_do_phu(
 ) -> XtDoPhuPage:
     """Độ phủ dữ liệu xét tuyển của các đề án trong năm. `tong` tính trên mọi đề án của năm (không theo bộ lọc)."""
     if nam is None:
-        nam = db.scalar(select(func.max(DatsTuyenSinh.nam_tuyen_sinh))) or datetime.now().year
+        nam = db.scalar(select(func.max(DatsTuyenSinh.nam_tuyen_sinh))) or bay_gio().year
     de_an_nam = list(
         db.scalars(select(DatsTuyenSinh).where(DatsTuyenSinh.nam_tuyen_sinh == nam).order_by(DatsTuyenSinh.ma_truong))
     )

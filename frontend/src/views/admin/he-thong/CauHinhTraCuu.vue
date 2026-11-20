@@ -239,6 +239,7 @@ import {
   updateCauHinhTraCuu,
   updateTrangThaiCauHinhTraCuu,
 } from '@/api/cauHinhTraCuu'
+import { dinhDangThoiGian } from '@/utils/thoiGian'
 
 // Khớp giới hạn ở backend.
 const LUOT_TOI_DA = 10000
@@ -336,13 +337,7 @@ function hienGia(value) {
 
 function formatThoiGian(value) {
   if (!value) return '—'
-  return new Date(value).toLocaleString('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  return dinhDangThoiGian(value)
 }
 
 async function load() {

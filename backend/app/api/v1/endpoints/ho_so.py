@@ -1,5 +1,5 @@
 import logging
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, ValidationError
@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
 from app.core.security import hash_password, verify_password
+from app.core.thoi_gian import bay_gio, hom_nay
 from app.db.session import get_db
 from app.models.dm_doi_tuong_uu_tien import DmDoiTuongUuTien
 from app.models.dm_khu_vuc_uu_tien import DmKhuVucUuTien
@@ -43,7 +44,7 @@ def _dong_bo_ho_so_xet_tuyen(db: Session, profile: NguoiDungThongTin) -> None:
     db.flush()
     try:
         with db.begin_nested():
-            dong_bo_tu_json(db, profile, nam_tuyen_sinh=datetime.now().year)
+            dong_bo_tu_json(db, profile, nam_tuyen_sinh=bay_gio().year)
     except Exception:  # noqa: BLE001 - đồng bộ phụ không được làm hỏng việc lưu hồ sơ chính
         logger.exception("Không đồng bộ được hồ sơ xét tuyển của người dùng %s", getattr(profile, "nguoi_dung_id", None))
 
@@ -257,7 +258,7 @@ def thong_ke_su_dung(
     current_user: NguoiDung = Depends(get_current_user),
 ) -> ThongKeSuDung:
     """Số lượt tìm trường phù hợp (đã tính lượt) và phiên khảo sát theo ngày trong `so_ngay` ngày gần nhất."""
-    tu_ngay = date.today() - timedelta(days=so_ngay - 1)
+    tu_ngay = hom_nay() - timedelta(days=so_ngay - 1)
 
     ngay_tim = func.date(TnLichSuTimTruongPhuHop.ngay_tao)
     tim = db.execute(

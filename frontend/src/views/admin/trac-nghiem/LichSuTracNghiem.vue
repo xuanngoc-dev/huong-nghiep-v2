@@ -218,6 +218,7 @@ import {
 } from '@/api/phienKhaoSat'
 import { DOI_TUONG_AP_DUNG, timDoiTuongApDung } from '@/constants/doiTuongApDung'
 import { layLuongTheoMaDinhHuong } from '@/components/guest/doi-tuong/HocSinhThpt/luongKhaoSat'
+import { dinhDangThoiGian } from '@/utils/thoiGian'
 
 const TRANG_THAI_OPTIONS = [
   { value: 'hoan-thanh', label: 'Hoàn thành' },
@@ -260,13 +261,7 @@ function errorMessage(error, fallback) {
 
 function formatThoiGian(value) {
   if (!value) return '—'
-  return new Date(value).toLocaleString('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  return dinhDangThoiGian(value)
 }
 
 function tienDo(row) {

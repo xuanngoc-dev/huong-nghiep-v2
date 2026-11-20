@@ -2,7 +2,6 @@ import json
 import logging
 from contextlib import aclosing
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
 from time import perf_counter
 
 import anyio
@@ -12,6 +11,7 @@ from fastapi import HTTPException
 from starlette.concurrency import run_in_threadpool
 
 from app.core.config import settings
+from app.core.thoi_gian import hom_nay
 from app.core.json_utf8 import chuan_hoa_utf8
 from app.schemas.chat import HoSoChat, HoiChatRequest, HoiChatResponse, KeHoachTraCuu, ModelChat, NguCanhChat
 from app.services.hoi_dap import danh_sach_model
@@ -123,7 +123,7 @@ async def prepare(payload: HoiChatRequest) -> PreparedChat:
 async def _plan_lookup(prepared: PreparedChat) -> tuple[KeHoachTraCuu, dict]:
     catalog = await run_in_threadpool(lambda: lookup_catalog(documents()))
     scope = prepared.payload.ngu_canh or NguCanhChat()
-    instruction = (f"{PLANNER_SYSTEM}\nNgày UTC: {datetime.now(timezone.utc).date().isoformat()}"
+    instruction = (f"{PLANNER_SYSTEM}\nNgày hiện tại ({settings.timezone}): {hom_nay().isoformat()}"
                    f"\nSCHEMA:\n{json.dumps(KeHoachTraCuu.model_json_schema(), ensure_ascii=False)}"
                    f"\nNGỮ CẢNH ĐÃ LƯU:\n{scope.model_dump_json()}"
                    f"{_profile_note(prepared.payload.ho_so)}"

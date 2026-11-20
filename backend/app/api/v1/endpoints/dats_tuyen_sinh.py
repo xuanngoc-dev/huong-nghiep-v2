@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -9,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user, la_quan_tri
 from app.core.logging import luu_lan_import
+from app.core.thoi_gian import bay_gio
 from app.db.session import get_db
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
 from app.models.dats_trinh_do_nganh import DatsTrinhDoNganh
@@ -117,7 +117,7 @@ def _truong_by_code(db: Session, ma_truong: str) -> DmTruong:
 
 def _apply(item: DatsTuyenSinh, payload: DatsTuyenSinhWrite, *, creating: bool) -> None:
     """Gán dữ liệu form vào bản ghi và cập nhật mốc thời gian."""
-    now = datetime.now()
+    now = bay_gio()
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
     if creating:
@@ -220,7 +220,7 @@ def list_truong_dao_tao(
 
     `gan_toi` đưa trường cùng tỉnh `uu_tien_tinh`, rồi cùng khu vực `uu_tien_khu_vuc` lên đầu.
     """
-    year = nam_tuyen_sinh if nam_tuyen_sinh is not None else datetime.now().year
+    year = nam_tuyen_sinh if nam_tuyen_sinh is not None else bay_gio().year
     code = ma_nganh.strip()
     major = db.scalar(select(DmNganhDaoTao).where(DmNganhDaoTao.ma_nganh == code))
     if major is None:

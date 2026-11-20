@@ -1,6 +1,7 @@
 import json
 from typing import Annotated, Literal
 from urllib.parse import quote_plus
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import Field, computed_field, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
@@ -19,6 +20,8 @@ class Settings(BaseSettings):
     api_public_url: str = ""
     port: int = 3060
     log_retention_days: int = Field(default=14, ge=1)
+    # Múi giờ của hệ thống (tên IANA): giờ lưu vào CSDL, NOW() của MySQL, ngày hiện tại, log... Env: TIMEZONE.
+    timezone: str = "Asia/Ho_Chi_Minh"
 
     db_host: str = "127.0.0.1"
     db_port: int = 3306
@@ -86,6 +89,16 @@ class Settings(BaseSettings):
             if origin and origin not in origins:
                 origins.append(origin)
         return origins or list(_MOI_DOMAIN)
+
+    @field_validator("timezone")
+    @classmethod
+    def kiem_tra_mui_gio(cls, value: str) -> str:
+        value = value.strip() or "Asia/Ho_Chi_Minh"
+        try:
+            ZoneInfo(value)
+        except (ZoneInfoNotFoundError, ValueError) as exc:
+            raise ValueError(f"TIMEZONE không hợp lệ: {value} (dùng tên IANA, vd. Asia/Ho_Chi_Minh)") from exc
+        return value
 
     @field_validator("api_public_url")
     @classmethod

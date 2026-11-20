@@ -14,6 +14,7 @@ from datetime import date
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.core.thoi_gian import hom_nay as ngay_hien_tai
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
 from app.models.dats_hoc_phi import DatsHocPhi
 from app.models.dats_trinh_do_nganh import DatsTrinhDoNganh
@@ -457,7 +458,7 @@ def chay_danh_gia(
         qtn.quy_tac,
         hs,
         nam,
-        (hom_nay or date.today()).isoformat(),
+        (hom_nay or ngay_hien_tai()).isoformat(),
         qtn.diem_chuan,
         chuong_trinh_ids=chuong_trinh_theo_nganh(db, qtn, ma_nganh),
     )

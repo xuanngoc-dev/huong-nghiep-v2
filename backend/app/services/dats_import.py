@@ -20,6 +20,7 @@ from decimal import Decimal, InvalidOperation
 from sqlalchemy import String, Text, delete, or_, select
 from sqlalchemy.orm import Session
 
+from app.core.thoi_gian import bay_gio
 from app.models.dats_chinh_sach_uu_tien_xet_tuyen import DatsChinhSachUuTienXetTuyen
 from app.models.dats_chinh_sach_xet_tuyen_thang import DatsChinhSachXetTuyenThang
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
@@ -974,7 +975,7 @@ def _apply(
     maps: dict[str, dict[int, int]] = defaultdict(dict)
     counts: Counter[str] = Counter()
     de_an_id = None
-    now = datetime.now()
+    now = bay_gio()
     for row in rows:
         obj = _MODELS[row.table]()
         for key, value in row.values.items():

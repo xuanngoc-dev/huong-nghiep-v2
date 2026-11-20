@@ -5,13 +5,13 @@ Nguồn chính là dm_nganh_hoc_theo_truong (ngành theo trường, theo năm). 
 (chương trình đào tạo kèm phương thức tuyển sinh) của cùng năm.
 """
 
-from datetime import datetime
 from typing import Literal
 
 from sqlalchemy import case, func, or_, select
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
+from app.core.thoi_gian import bay_gio
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
 from app.models.dats_trinh_do_nganh import DatsTrinhDoNganh
 from app.models.dats_tuyen_sinh import DatsTuyenSinh
@@ -74,7 +74,7 @@ def truong_theo_nganh(
     """
     if ket_hop_phuong_thuc is None:
         ket_hop_phuong_thuc = settings.tim_truong_ket_hop_phuong_thuc
-    year = nam_tuyen_sinh if nam_tuyen_sinh is not None else datetime.now().year
+    year = nam_tuyen_sinh if nam_tuyen_sinh is not None else bay_gio().year
     code = ma_nganh.strip().upper()
     khu_vuc = khu_vuc_hien_thi()
     loai = loai_hien_thi()

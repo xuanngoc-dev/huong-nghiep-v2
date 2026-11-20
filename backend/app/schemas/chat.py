@@ -141,5 +141,5 @@ class TrangThaiPhienChat(BaseModel):
     ma_phien: str
     # Null: phiên chưa lưu hoặc không thuộc người hỏi.
     trang_thai: str | None = None
-    # Phiên đã kết thúc / lưu trữ: không hỏi tiếp được.
+    # Phiên đã kết thúc: không hỏi tiếp được.
     da_ket_thuc: bool = False

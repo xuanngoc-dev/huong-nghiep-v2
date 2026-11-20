@@ -2,16 +2,16 @@
 
 Mỗi lượt hỏi: tìm phiên theo mã phiên (UUID) do frontend gửi, chưa có hoặc không thuộc người hỏi thì tạo phiên mới;
 ghi một tin nhắn `user` (câu hỏi) và sau khi trả lời xong một tin nhắn `bot` (câu trả lời / lỗi).
-Phiên bị quản trị kết thúc (`da_dong`) hoặc lưu trữ (`luu_tru`) thì không nhận câu hỏi mới (`PhienDaKetThuc`).
+Phiên đã kết thúc (`da_dong`) thì không nhận câu hỏi mới (`PhienDaKetThuc`).
 Các hàm nhận Session để test được; nơi gọi tự commit. Lỗi khi lưu không được làm hỏng việc chat (nơi gọi bắt lỗi).
 """
 
 import uuid
-from datetime import datetime
 
 from sqlalchemy import case, select, update
 from sqlalchemy.orm import Session
 
+from app.core.thoi_gian import bay_gio
 from app.models.chat_conversations import ChatConversation
 from app.models.chat_messages import ChatMessage
 from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
@@ -21,7 +21,7 @@ DANG_HOAT_DONG = "dang_hoat_dong"
 
 
 class PhienDaKetThuc(Exception):
-    """Phiên của người hỏi đã kết thúc / lưu trữ: không ghi tiếp, nơi gọi báo người dùng mở hội thoại mới."""
+    """Phiên của người hỏi đã kết thúc: không ghi tiếp, nơi gọi báo người dùng mở hội thoại mới."""
 
 
 def _uuid_hop_le(value: str | None) -> str | None:
@@ -59,7 +59,7 @@ def ket_thuc_phien(db: Session, ma_phien: str | None, user_id: int | None, ma_kh
     phien.du_lieu_bo_sung = {
         **(phien.du_lieu_bo_sung or {}),
         "ket_thuc_boi": "nguoi_dung",
-        "ket_thuc_luc": datetime.now().isoformat(timespec="seconds"),
+        "ket_thuc_luc": bay_gio().isoformat(timespec="seconds"),
     }
     db.flush()
     return phien
@@ -96,7 +96,7 @@ def _them_tin_nhan(db: Session, phien: ChatConversation, **values) -> ChatMessag
     tin_nhan = ChatMessage(phien_chat_id=phien.id, ma_khach_vang_lai=phien.ma_khach_vang_lai, **values)
     db.add(tin_nhan)
     phien.so_tin_nhan = (phien.so_tin_nhan or 0) + 1
-    phien.tin_nhan_cuoi_luc = datetime.now()
+    phien.tin_nhan_cuoi_luc = bay_gio()
     db.flush()
     return tin_nhan
 

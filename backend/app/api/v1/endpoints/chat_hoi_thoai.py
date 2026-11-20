@@ -125,7 +125,7 @@ def _item_cua(db: Session, phien: ChatConversation) -> ChatPhienItem:
 @router.get("/phien", response_model=ChatPhienPage)
 def danh_sach_phien(
     q: str | None = Query(default=None, max_length=255),
-    trang_thai: Literal["dang_hoat_dong", "da_dong", "luu_tru"] | None = Query(default=None),
+    trang_thai: Literal["dang_hoat_dong", "da_dong"] | None = Query(default=None),
     doi_tuong: Literal["thanh-vien", "khach"] | None = Query(default=None),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1),
@@ -169,9 +169,9 @@ def chi_tiet_phien(ma_phien: str, db: Session = Depends(get_db)) -> ChatPhienChi
 def doi_trang_thai_phien(
     ma_phien: str, payload: ChatPhienTrangThai, db: Session = Depends(get_db)
 ) -> ChatPhienItem:
-    """Kết thúc (`da_dong`), lưu trữ (`luu_tru`) hoặc mở lại (`dang_hoat_dong`) một phiên.
+    """Kết thúc (`da_dong`) hoặc mở lại (`dang_hoat_dong`) một phiên.
 
-    Phiên không ở trạng thái `dang_hoat_dong` thì người dùng không hỏi tiếp được trong phiên đó (API chat trả 409).
+    Phiên đã kết thúc thì người dùng không hỏi tiếp được trong phiên đó (API chat trả 409).
     """
     phien = _phien_or_400(db, ma_phien)
     phien.trang_thai = payload.trang_thai
@@ -211,7 +211,7 @@ def danh_sach_hoi_thoai_cua_toi(
 ) -> ChatPhienPage:
     """Các cuộc hội thoại của thành viên đang đăng nhập, mới nhất trước.
 
-    Tìm theo tiêu đề; `da-ket-thuc` gồm cả phiên quản trị đã kết thúc (`da_dong`) và đã lưu trữ (`luu_tru`).
+    Tìm theo tiêu đề; `da-ket-thuc` là phiên đã kết thúc (`da_dong`).
     """
     dieu_kien = [ChatConversation.user_id == nguoi_dung.id]
     if q and q.strip():

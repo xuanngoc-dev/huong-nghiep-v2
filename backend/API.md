@@ -1,6 +1,6 @@
 # Danh sách API
 
-Tự sinh từ code lúc 20/11/2026 15:10 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 20/11/2026 17:32 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
 Tiền tố chung: `/api/v1`. Tổng cộng **494** API.
 
@@ -492,7 +492,7 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `GET` | `/api/v1/hoi-thoai/phien/{ma_phien}` | Bắt buộc (admin) | Thông tin một phiên hội thoại và toàn bộ tin nhắn theo thứ tự gửi. |
 | `DELETE` | `/api/v1/hoi-thoai/phien/{ma_phien}` | Bắt buộc (admin) | Xóa một phiên cùng toàn bộ tin nhắn của phiên. |
 | `PATCH` | `/api/v1/hoi-thoai/phien/{ma_phien}/tieu-de` | Bắt buộc (admin) | Quản trị đổi tiêu đề một phiên hội thoại (mặc định là câu hỏi đầu tiên của người dùng). |
-| `PATCH` | `/api/v1/hoi-thoai/phien/{ma_phien}/trang-thai` | Bắt buộc (admin) | Kết thúc (`da_dong`), lưu trữ (`luu_tru`) hoặc mở lại (`dang_hoat_dong`) một phiên. |
+| `PATCH` | `/api/v1/hoi-thoai/phien/{ma_phien}/trang-thai` | Bắt buộc (admin) | Kết thúc (`da_dong`) hoặc mở lại (`dang_hoat_dong`) một phiên. |
 
 ### `tai-lieu`
 

@@ -3,6 +3,8 @@ from datetime import date, datetime
 
 from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
+from app.core.thoi_gian import hom_nay
+
 MUC_TAI_CHINH = {"Thấp", "Trung bình", "Khá", "Tốt"}
 HANH_KIEM = {"Tốt", "Khá", "Trung bình", "Yếu"}
 _PHONE = re.compile(r"^[0-9+\-\s]{8,20}$")
@@ -153,7 +155,7 @@ class GhiNhanThanhTich(BaseModel):
     def check_thoi_gian_cap(cls, value: date | None) -> date | None:
         if value is None:
             return None
-        if value > date.today():
+        if value > hom_nay():
             raise ValueError("Thời gian cấp không được ở tương lai")
         if value.year < 1950:
             raise ValueError("Thời gian cấp không hợp lệ")
@@ -263,7 +265,7 @@ class ThongTinCaNhanWrite(BaseModel):
     def check_ngay_sinh(cls, value: date | None) -> date | None:
         if value is None:
             return None
-        today = date.today()
+        today = hom_nay()
         if value > today:
             raise ValueError("Ngày sinh không được ở tương lai")
         if value.year < 1900:

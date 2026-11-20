@@ -11,6 +11,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
+from app.core.thoi_gian import bay_gio
 from app.models.ht_lich_su_giao_dich_ngan_hang import HtLichSuGiaoDichNganHang
 from app.models.ht_lich_su_nap_tien import HtLichSuNapTien
 from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
@@ -62,7 +63,7 @@ def _he_32(so: int, do_dai: int) -> str:
 
 def tao_ma_giao_dich(db: Session, thoi_diem: datetime | None = None) -> str:
     """Sinh mã giao dịch chưa dùng, ví dụ DH4K9F7Q."""
-    phut = int(((thoi_diem or datetime.now()) - _MOC_THOI_GIAN).total_seconds() // 60)
+    phut = int(((thoi_diem or bay_gio()) - _MOC_THOI_GIAN).total_seconds() // 60)
     phan_thoi_gian = _he_32(max(phut, 0), _SO_KY_TU_THOI_GIAN)
     for _ in range(20):
         ngau_nhien = "".join(secrets.choice(_KY_TU_MA) for _ in range(_SO_KY_TU_NGAU_NHIEN))
@@ -134,7 +135,7 @@ def xac_nhan_thanh_cong(
     giao_dich.so_tien_thuc_nhan = so_tien_thuc_nhan if so_tien_thuc_nhan is not None else giao_dich.so_tien_nap
     if ma_tham_chieu:
         giao_dich.ma_tham_chieu_ngan_hang = ma_tham_chieu
-    giao_dich.thoi_gian_xac_nhan = datetime.now()
+    giao_dich.thoi_gian_xac_nhan = bay_gio()
     giao_dich.nguoi_xac_nhan_id = nguoi_xac_nhan_id
     if ghi_chu:
         giao_dich.ghi_chu = ghi_chu

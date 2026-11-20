@@ -10,6 +10,7 @@ from datetime import datetime
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
+from app.core.thoi_gian import bay_gio
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
 from app.models.dats_phuong_thuc import DatsPhuongThuc
 from app.models.dats_tuyen_sinh import DatsTuyenSinh
@@ -68,7 +69,7 @@ def sao_chep_de_an(
             f"Trường {goc.ma_truong} đã có đề án tuyển sinh năm {nam_tuyen_sinh} (id = {da_co})"
         )
 
-    now = datetime.now()
+    now = bay_gio()
     moi = _ban_sao(DatsTuyenSinh, goc, now)
     moi.nam_tuyen_sinh = nam_tuyen_sinh
     moi.ten_de_an = (ten_de_an or "").strip() or ten_de_an_nam_moi(goc.ten_de_an, goc.nam_tuyen_sinh, nam_tuyen_sinh)

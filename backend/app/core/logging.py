@@ -10,6 +10,7 @@ from fastapi import FastAPI, Request
 from starlette.responses import Response
 from uvicorn.config import LOGGING_CONFIG
 
+from app.core import thoi_gian
 from app.core.config import settings
 from app.core.security import decode_access_token
 from app.db.session import SessionLocal
@@ -64,7 +65,7 @@ class DailyFileHandler(logging.Handler):
             self.release()
 
     def _roll_if_needed(self) -> None:
-        today = date.today()
+        today = thoi_gian.hom_nay()
         if self._current_date == today and self._stream is not None:
             return
         if self._stream is not None:
@@ -75,7 +76,7 @@ class DailyFileHandler(logging.Handler):
         self._purge_old_files()
 
     def _purge_old_files(self) -> None:
-        cutoff = date.today() - timedelta(days=self.retention_days - 1)
+        cutoff = thoi_gian.hom_nay() - timedelta(days=self.retention_days - 1)
         for path in self.directory.glob("*.log"):
             try:
                 file_date = date.fromisoformat(path.stem)
@@ -94,7 +95,7 @@ def luu_lan_import(ten: str, du_lieu, *, ket_qua: dict) -> Path | None:
     Thư mục ngày cũ hơn `log_retention_days` bị xóa. Ghi không được thì chỉ ghi log, không làm hỏng API.
     """
     try:
-        hom_nay = date.today()
+        hom_nay = thoi_gian.hom_nay()
         thu_muc = IMPORT_LOG_DIR / hom_nay.isoformat()
         thu_muc.mkdir(parents=True, exist_ok=True)
         cutoff = hom_nay - timedelta(days=settings.log_retention_days - 1)
@@ -107,10 +108,11 @@ def luu_lan_import(ten: str, du_lieu, *, ket_qua: dict) -> Path | None:
             except (ValueError, OSError):
                 continue
         ten_file = "".join(c if c.isalnum() or c in "-_" else "_" for c in ten)
-        path = thu_muc / f"{time.strftime('%H%M%S')}_{ten_file}.json"
+        luc = thoi_gian.bay_gio()
+        path = thu_muc / f"{luc:%H%M%S}_{ten_file}.json"
         path.write_text(
             json.dumps(
-                {"thoi_gian": time.strftime("%Y-%m-%d %H:%M:%S"), **ket_qua, "du_lieu": _redact(du_lieu)},
+                {"thoi_gian": f"{luc:%Y-%m-%d %H:%M:%S}", **ket_qua, "du_lieu": _redact(du_lieu)},
                 ensure_ascii=False,
                 indent=2,
                 default=str,
@@ -129,6 +131,8 @@ def setup_logging() -> None:
     if _configured:
         return
 
+    # Giờ in trong log theo múi giờ hệ thống (TIMEZONE), không theo giờ máy chạy server.
+    logging.Formatter.converter = lambda timestamp: thoi_gian.tu_timestamp(timestamp).timetuple()
     config = deepcopy(LOGGING_CONFIG)
     config["formatters"]["default"]["fmt"] = "%(asctime)s %(levelprefix)s %(message)s"
     config["formatters"]["default"]["datefmt"] = "%Y-%m-%d %H:%M:%S"

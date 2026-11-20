@@ -41,6 +41,7 @@ import ChatMarkdown from './ChatMarkdown.vue'
 import DangSoanTraLoi from './DangSoanTraLoi.vue'
 import { apiAssetUrl } from '@/api/apiUrl'
 import { safeLink } from '@/utils/chatMarkdown'
+import { dinhDangNgay, dinhDangThoiGian } from '@/utils/thoiGian'
 
 // dauNhom / cuoiNhom: tin đầu / cuối của một nhóm tin liên tiếp cùng một bên.
 defineProps({
@@ -60,13 +61,9 @@ function dataLink(source) {
   return safeLink(apiAssetUrl(source.duong_dan))
 }
 function gio(value) {
-  const parsed = value ? new Date(value) : null
-  return parsed && !Number.isNaN(parsed.getTime())
-    ? parsed.toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
-    : ''
+  return dinhDangThoiGian(value, { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
 }
 function date(value) {
-  const parsed = new Date(value)
-  return Number.isNaN(parsed.getTime()) ? '' : parsed.toLocaleDateString('vi-VN')
+  return dinhDangNgay(value)
 }
 </script>

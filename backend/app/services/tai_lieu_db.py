@@ -20,6 +20,7 @@ from decimal import Decimal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.thoi_gian import bay_gio, gan_mui_gio
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
 from app.models.dats_diem_cong import DatsDiemCong
 from app.models.dats_dieu_kien_du_tuyen import DatsDieuKienDuTuyen
@@ -512,12 +513,13 @@ def tai_lieu_tu_csdl(db: Session) -> list[TaiLieuCsdl]:
         .where(DatsTuyenSinh.trang_thai == DA_CONG_BO)
         .order_by(DatsTuyenSinh.ma_truong, DatsTuyenSinh.nam_tuyen_sinh, DatsTuyenSinh.id)
     ):
-        cap_nhat = de_an.cap_nhat_luc or de_an.tao_luc or datetime.now()
+        cap_nhat = de_an.cap_nhat_luc or de_an.tao_luc or bay_gio()
         ds.append(
             TaiLieuCsdl(
                 ten=f"{de_an.ma_truong}_{de_an.nam_tuyen_sinh}_de_an_{de_an.id}.json",
-                # Cột thời gian lưu giờ máy chủ (không múi giờ): đổi sang UTC như ngày sửa file ở chế độ thư mục.
-                cap_nhat=cap_nhat.astimezone(timezone.utc),
+                # Cột thời gian lưu theo múi giờ hệ thống (không kèm offset): đổi sang UTC như ngày sửa file
+                # ở chế độ thư mục.
+                cap_nhat=gan_mui_gio(cap_nhat).astimezone(timezone.utc),
                 du_lieu=dung_tai_lieu(db, de_an),
             )
         )

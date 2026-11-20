@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import sys
 from collections import defaultdict
-from datetime import datetime
 from pathlib import Path
 
 from fastapi import routing
@@ -25,6 +24,7 @@ from fastapi.routing import APIRoute
 
 from app.api.deps import get_admin_user, get_current_user, get_optional_user
 from app.core.config import settings
+from app.core.thoi_gian import bay_gio
 from app.main import app
 
 FILE_MAC_DINH = Path(__file__).resolve().parents[2] / "API.md"
@@ -115,7 +115,7 @@ def tao_markdown(ket_qua: dict[str, dict[str, list[dict]]]) -> str:
     dong = [
         "# Danh sách API",
         "",
-        f"Tự sinh từ code lúc {datetime.now():%d/%m/%Y %H:%M} bằng `python -m app.scripts.xuat_danh_sach_api`. "
+        f"Tự sinh từ code lúc {bay_gio():%d/%m/%Y %H:%M} bằng `python -m app.scripts.xuat_danh_sach_api`. "
         "Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.",
         "",
         f"Tiền tố chung: `{settings.api_v1_prefix}`. Tổng cộng **{tong}** API.",

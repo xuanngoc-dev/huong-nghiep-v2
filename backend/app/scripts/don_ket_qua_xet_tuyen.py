@@ -19,6 +19,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
+from app.core import thoi_gian
 from app.db.session import SessionLocal
 from app.models.xt_ket_qua import XtKetQuaChuongTrinh, XtKetQuaPhuongAn, XtLanDanhGia
 
@@ -79,7 +80,7 @@ def don(
     lo: int = 500,
 ) -> KetQuaDon:
     khach, thanh_vien = chon_lan_can_xoa(
-        db, bay_gio=bay_gio or datetime.now(), khach_ngay=khach_ngay, thanh_vien_ngay=thanh_vien_ngay
+        db, bay_gio=bay_gio or thoi_gian.bay_gio(), khach_ngay=khach_ngay, thanh_vien_ngay=thanh_vien_ngay
     )
     ids = khach + thanh_vien
     so_dong = _dem_ket_qua(db, ids, lo)
@@ -118,7 +119,7 @@ def main(argv: list[str]) -> int:
         db.close()
     hanh_dong = "Đã xóa" if xoa else "Sẽ xóa (chạy thử, thêm --xoa để xóa thật)"
     print(
-        f"{datetime.now():%d/%m/%Y %H:%M} {hanh_dong}: {kq.so_lan} lần đánh giá "
+        f"{thoi_gian.bay_gio():%d/%m/%Y %H:%M} {hanh_dong}: {kq.so_lan} lần đánh giá "
         f"({kq.so_lan_khach} của khách, {kq.so_lan_thanh_vien} của thành viên), {kq.so_dong_ket_qua} dòng kết quả."
     )
     return 0

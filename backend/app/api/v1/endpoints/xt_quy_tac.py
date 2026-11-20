@@ -3,7 +3,6 @@ import json
 import logging
 from collections import defaultdict
 from dataclasses import asdict
-from datetime import date, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func, select
@@ -11,6 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user
+from app.core import thoi_gian
 from app.core.logging import luu_lan_import
 from app.db.session import get_db
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
@@ -270,7 +270,7 @@ def doi_trang_thai_quy_tac(item_id: int, payload: XtTrangThaiWrite, db: Session 
             detail="Đề án chưa có quy tắc xét tuyển, hãy import quy tắc trước khi chuyển sang đang áp dụng",
         )
     de_an.trang_thai_xet_tuyen = payload.trang_thai_xet_tuyen
-    de_an.cap_nhat_luc = datetime.now()
+    de_an.cap_nhat_luc = thoi_gian.bay_gio()
     db.commit()
     return XtTrangThaiResult(de_an_id=de_an.id, trang_thai_xet_tuyen=de_an.trang_thai_xet_tuyen)
 
@@ -288,7 +288,7 @@ def chay_thu_quy_tac(item_id: int, payload: XtChayThuRequest, db: Session = Depe
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Đề án chưa có quy tắc xét tuyển, hãy import quy tắc trước khi chạy thử",
         )
-    hom_nay = payload.hom_nay or date.today()
+    hom_nay = payload.hom_nay or thoi_gian.hom_nay()
     chuyen = tu_ho_so_hs(payload.ho_so, nam_tuyen_sinh=de_an.nam_tuyen_sinh)
     ket_qua = chay_thu_de_an(db, de_an.id, de_an.nam_tuyen_sinh, chuyen.ho_so, hom_nay=hom_nay)
     return XtChayThuResult(

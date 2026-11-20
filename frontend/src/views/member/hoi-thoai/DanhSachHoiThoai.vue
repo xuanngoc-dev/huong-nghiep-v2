@@ -268,6 +268,7 @@ import DangSoanTraLoi from '@/components/guest/chung/DangSoanTraLoi.vue'
 import GoiYLenh from '@/components/guest/chung/GoiYLenh.vue'
 import { cuPhap, goiYLenh, phanTichLenh } from '@/utils/chatLenh'
 import { WELCOME as LOI_CHAO } from '@/utils/chatSession'
+import { dinhDangNgay, dinhDangThoiGian, docThoiGian } from '@/utils/thoiGian'
 
 const PAGE_SIZE = 30
 const CAU_HOI_GOI_Y = [
@@ -355,16 +356,16 @@ function dangHoatDong(phien) {
 
 function thoiGianTuongDoi(value) {
   if (!value) return ''
-  const giay = (Date.now() - new Date(value).getTime()) / 1000
+  const giay = (Date.now() - (docThoiGian(value)?.getTime() ?? Date.now())) / 1000
   if (giay < 60) return 'Vừa xong'
   if (giay < 3600) return `${Math.floor(giay / 60)} phút`
   if (giay < 86400) return `${Math.floor(giay / 3600)} giờ`
   if (giay < 7 * 86400) return `${Math.floor(giay / 86400)} ngày`
-  return new Date(value).toLocaleDateString('vi-VN')
+  return dinhDangNgay(value)
 }
 
 function gioPhut(value) {
-  return value ? new Date(value).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }) : ''
+  return dinhDangThoiGian(value, { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
 }
 
 function tenNguon(tin) {

@@ -1,10 +1,10 @@
-from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
+from app.core.thoi_gian import bay_gio
 from app.db.session import get_db
 from app.models.nguoi_dung import NguoiDung
 from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
@@ -33,7 +33,7 @@ def get_ho_so_xet_tuyen(
     if hs is not None:
         return doc_ho_so(db, hs, dm)
     profile = db.scalar(select(NguoiDungThongTin).where(NguoiDungThongTin.nguoi_dung_id == user.id))
-    payload = tu_trinh_do_hoc_van(profile, nam_tuyen_sinh=datetime.now().year, danh_muc=DanhMucHoSo.tu_csdl(db))
+    payload = tu_trinh_do_hoc_van(profile, nam_tuyen_sinh=bay_gio().year, danh_muc=DanhMucHoSo.tu_csdl(db))
     # Bỏ mã ngoài danh mục để lưu lại được ngay.
     payload = payload.model_copy(
         update={

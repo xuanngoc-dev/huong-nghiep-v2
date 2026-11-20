@@ -2,7 +2,6 @@ import asyncio
 import json
 import logging
 from collections.abc import Callable
-from datetime import datetime, timezone
 from urllib.parse import quote
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Response
@@ -11,6 +10,7 @@ from sqlalchemy.exc import DBAPIError, IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session, aliased
 
 from app.api.deps import get_admin_user
+from app.core.thoi_gian import bay_gio, gan_mui_gio
 from app.db.session import get_db
 from app.models.dats_thu_thap import DatsBanNhapThuThap, DatsNhatKyThuThap, DatsPhienThuThap
 from app.models.dats_tuyen_sinh import DatsTuyenSinh
@@ -67,14 +67,6 @@ _DA_THAY_DOI = "Phiên đã thay đổi. Hãy mở lại phiên mới nhất tr�
 
 class _DaDungTaoBanNhap(Exception):
     """Lượt tạo đã bị dừng hoặc được thay thế."""
-
-
-def _bay_gio() -> datetime:
-    return datetime.now(timezone.utc).replace(tzinfo=None)
-
-
-def _utc(thoi_diem: datetime | None) -> datetime | None:
-    return thoi_diem.replace(tzinfo=timezone.utc) if thoi_diem else None
 
 
 def _tim_truong(db: Session, ma_truong: str) -> DmTruong:
@@ -159,7 +151,7 @@ def _tinh_trang_nguon(phien: DatsPhienThuThap, da_tim_nguon: bool) -> TinhTrangN
 
 
 def _ghi_nhat_ky(db: Session, phien: DatsPhienThuThap, nguoi_dung: tuple[int, str], hanh_dong: str, **chi_tiet):
-    phien.cap_nhat_luc = _bay_gio()
+    phien.cap_nhat_luc = bay_gio()
     phien.sua_lan += 1
     db.add(DatsNhatKyThuThap(
         phien_id=phien.id, phien_ban=phien.phien_ban, hanh_dong=hanh_dong, nguoi_dung_id=nguoi_dung[0],
@@ -189,20 +181,20 @@ def _tom_tat(
     dang_tao = _dang_tao_ban_nhap(phien)
     loi_tao_ban_nhap = None
     if phien.trang_thai in (THU_THAP, BO_SUNG) and loi_tao and loi_tao.get("sua_lan") == phien.sua_lan:
-        loi_tao_ban_nhap = LoiTaoBanNhapPublic(**loi_tao, xay_ra_luc=_utc(phien.cap_nhat_luc))
+        loi_tao_ban_nhap = LoiTaoBanNhapPublic(**loi_tao, xay_ra_luc=gan_mui_gio(phien.cap_nhat_luc))
     return PhienThuThapPublic(
         id=phien.id, ma_truong=phien.ma_truong, ten_truong=truong.ten_truong,
         co_so=_thong_tin_truong(truong).co_so, nam_tuyen_sinh=phien.nam_tuyen_sinh,
         trang_thai=_trang_thai_truoc_khi_tao(phien), tinh_trang_nguon=_tinh_trang_nguon(phien, da_tim_nguon),
         dang_tao_ban_nhap=dang_tao,
         luot_tao_ban_nhap=phien.sua_lan if dang_tao else None,
-        bat_dau_tao_ban_nhap_luc=_utc(phien.bat_dau_tao_ban_nhap_luc or phien.cap_nhat_luc) if dang_tao else None,
+        bat_dau_tao_ban_nhap_luc=gan_mui_gio(phien.bat_dau_tao_ban_nhap_luc or phien.cap_nhat_luc) if dang_tao else None,
         tien_do_tao_ban_nhap=phien.tien_do_tao_ban_nhap if dang_tao else None,
         loi_tao_ban_nhap=loi_tao_ban_nhap,
         tao_boi=phien.tao_boi, ten_nguoi_tao=ten_nguoi_tao,
-        tao_luc=_utc(phien.tao_luc), cap_nhat_luc=_utc(phien.cap_nhat_luc), phien_ban=phien.phien_ban,
+        tao_luc=gan_mui_gio(phien.tao_luc), cap_nhat_luc=gan_mui_gio(phien.cap_nhat_luc), phien_ban=phien.phien_ban,
         de_an_id=phien.de_an_id, duyet_boi=phien.duyet_boi, ten_nguoi_duyet=ten_nguoi_duyet,
-        duyet_luc=_utc(phien.duyet_luc),
+        duyet_luc=gan_mui_gio(phien.duyet_luc),
     )
 
 
@@ -236,7 +228,7 @@ def _chi_tiet(db: Session, phien_id: int, phien_ban: int | None = None) -> Phien
     if ban:
         loi, doi_chieu = _kiem_tra_ban_nhap(phien, ban)
         chi_tiet_ban = BanNhapThuThapPublic(
-            phien_ban=ban.phien_ban, ten_nguoi_tao=ban.ten_nguoi_tao, tao_luc=_utc(ban.tao_luc),
+            phien_ban=ban.phien_ban, ten_nguoi_tao=ban.ten_nguoi_tao, tao_luc=gan_mui_gio(ban.tao_luc),
             du_lieu=ban.du_lieu, muc=ban.muc, nguon=ban.nguon, ghi_chu=ban.ghi_chu, loi=loi, doi_chieu=doi_chieu,
         )
     lich_su = db.scalars(select(DatsNhatKyThuThap).where(
@@ -250,16 +242,16 @@ def _chi_tiet(db: Session, phien_id: int, phien_ban: int | None = None) -> Phien
         **_tom_tat(*dong).model_dump(),
         nguon=phien.nguon if phien_ban is None or ban is None else ban.nguon,
         canh_bao_nguon=phien.canh_bao_nguon, ban_nhap=chi_tiet_ban,
-        lich_su=[NhatKyThuThapPublic.model_validate(i).model_copy(update={"tao_luc": _utc(i.tao_luc)}) for i in lich_su],
+        lich_su=[NhatKyThuThapPublic.model_validate(i).model_copy(update={"tao_luc": gan_mui_gio(i.tao_luc)}) for i in lich_su],
         yeu_cau_bo_sung=phien.yeu_cau_bo_sung,
-        cac_phien_ban=[TomTatPhienBan(phien_ban=p, tao_luc=_utc(t), ten_nguoi_tao=n) for p, t, n in cac_ban],
+        cac_phien_ban=[TomTatPhienBan(phien_ban=p, tao_luc=gan_mui_gio(t), ten_nguoi_tao=n) for p, t, n in cac_ban],
     )
 
 
 def _them_ban(db: Session, phien: DatsPhienThuThap, ten: str, du_lieu, muc, ghi_chu, nguon, doi_chieu) -> None:
     phien.phien_ban = (phien.phien_ban or 0) + 1
     db.add(DatsBanNhapThuThap(
-        phien_id=phien.id, phien_ban=phien.phien_ban, tao_luc=_bay_gio(), ten_nguoi_tao=ten,
+        phien_id=phien.id, phien_ban=phien.phien_ban, tao_luc=bay_gio(), ten_nguoi_tao=ten,
         du_lieu=du_lieu, muc=muc, ghi_chu=ghi_chu, nguon=nguon, doi_chieu=doi_chieu,
     ))
 
@@ -274,7 +266,7 @@ def nhan_dien_truong(ma_truong: str = Query(min_length=1, max_length=20), db: Se
 def tao_phien(yeu_cau: PhienThuThapCreate, db: Session = Depends(get_db), user: NguoiDung = Depends(get_admin_user)):
     """Tạo phiên thu thập cho một trường và một năm."""
     truong = _tim_truong(db, yeu_cau.ma_truong)
-    luc = _bay_gio()
+    luc = bay_gio()
     phien = DatsPhienThuThap(
         ma_truong=truong.ma_truong, nam_tuyen_sinh=yeu_cau.nam_tuyen_sinh, trang_thai=THU_THAP,
         tao_boi=user.id, tao_luc=luc, cap_nhat_luc=luc,
@@ -593,7 +585,7 @@ def tao_ban_nhap(
     sua_lan = sua_lan_truoc + 1
     phien.trang_thai = _DANG_TAO_BAN_NHAP
     phien.sua_lan = sua_lan
-    luc_bat_dau = _bay_gio()
+    luc_bat_dau = bay_gio()
     phien.cap_nhat_luc = luc_bat_dau
     phien.bat_dau_tao_ban_nhap_luc = luc_bat_dau
     phien.tien_do_tao_ban_nhap = {"buoc": "doc_nguon", "da_xu_ly": 0, "tong": len(ds)}
@@ -713,7 +705,7 @@ def _duyet(db: Session, phien_id: int, phien_ban: int, actor: tuple[int, str]) -
         de_an_id, so_dong, quy_tac = import_approved_admission(db, ban.du_lieu, ma, nam, actor[0])
         phien.de_an_id = de_an_id
         phien.trang_thai = DA_DUYET
-        phien.duyet_boi, phien.duyet_luc = actor[0], _bay_gio()
+        phien.duyet_boi, phien.duyet_luc = actor[0], bay_gio()
         _ghi_nhat_ky(db, phien, actor, "duyet", de_an_id=de_an_id, so_dong=so_dong,
                      quy_tac=quy_tac.so_dong if quy_tac else {}, canh_bao=quy_tac.canh_bao if quy_tac else [])
         db.commit()

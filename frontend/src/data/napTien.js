@@ -1,4 +1,5 @@
 // Hằng số dùng chung cho nạp tiền (khớp backend app/services/nap_tien.py).
+import { dinhDangThoiGian } from '@/utils/thoiGian'
 
 export const LOAI_AP_DUNG = [
   { value: 'edu_coin', label: 'Edu coin', donVi: 'Edu coin', tag: 'danger' },
@@ -38,7 +39,5 @@ export function hienTien(value) {
 
 export function hienThoiGian(value) {
   if (!value) return '—'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return String(value)
-  return date.toLocaleString('vi-VN', { hour12: false })
+  return dinhDangThoiGian(value, { hour12: false }, String(value))
 }

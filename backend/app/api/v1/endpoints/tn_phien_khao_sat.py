@@ -4,13 +4,13 @@ import string
 from collections import defaultdict
 from datetime import date, datetime, time, timedelta
 from typing import Literal
-from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import case, delete, func, or_, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user, get_current_user, get_optional_user
+from app.core.thoi_gian import bay_gio
 from app.db.session import get_db
 from app.constants.doi_tuong_ap_dung import DOI_TUONG_AP_DUNG
 from app.models.dm_loai_cau_hoi import THU_TU_LOAI_CAU_HOI, DmLoaiCauHoi
@@ -51,7 +51,6 @@ router = APIRouter(prefix="/trac-nghiem/phien", tags=["trac-nghiem"])
 _SSID_ALPHABET = string.ascii_letters + string.digits
 _SSID_LENGTH = 20
 _SO_CAU_MOI_MA = 2
-_VN_TZ = ZoneInfo("Asia/Ho_Chi_Minh")
 _MA_CAU_HOI = re.compile(r"^[A-Z]\d+_\d+:\s*")
 
 
@@ -69,8 +68,8 @@ def _new_ssid(db: Session) -> str:
 
 
 def _ma_giao_dich(phien_id: int) -> str:
-    """Mã giao dịch dạng KS_dd/mm/yy_id theo giờ Việt Nam."""
-    now = datetime.now(_VN_TZ)
+    """Mã giao dịch dạng KS_dd/mm/yy_id theo múi giờ hệ thống (mặc định giờ Việt Nam)."""
+    now = bay_gio()
     return f"KS_{now:%d/%m/%y}_{phien_id}"
 
 

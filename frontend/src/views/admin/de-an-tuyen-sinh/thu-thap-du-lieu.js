@@ -1,3 +1,5 @@
+import { dinhDangThoiGian } from '@/utils/thoiGian'
+
 export const TUY_CHON_TRANG_THAI = [
   { giaTri: 'thu_thap', nhan: 'Đang thu thập', loai: 'info' },
   { giaTri: 'cho_duyet', nhan: 'Chờ duyệt', loai: 'warning' },
@@ -40,8 +42,7 @@ export function trangThaiThuThap(phien, dangTaoBanNhap = phien.dang_tao_ban_nhap
 
 export function ngayGio(giaTri) {
   if (!giaTri) return '—'
-  const ngay = new Date(giaTri)
-  return Number.isNaN(ngay.getTime()) ? giaTri : ngay.toLocaleString('vi-VN')
+  return dinhDangThoiGian(giaTri, {}, giaTri)
 }
 
 export function ngayVanBan(giaTri) {

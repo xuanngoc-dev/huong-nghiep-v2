@@ -165,6 +165,7 @@ import SideMenu from '@/components/SideMenu.vue'
 import menuData from '@/data/menu.json'
 import { useAuthStore } from '@/stores/auth'
 import { useLayoutStore } from '@/stores/layout'
+import { MUI_GIO, thuTrongTuan } from '@/utils/thoiGian'
 
 const props = defineProps({
   area: {
@@ -254,13 +255,14 @@ const userShortName = computed(() => {
 })
 const avatarLetter = computed(() => (userShortName.value || 'U').charAt(0).toUpperCase())
 
-const nowWeekday = computed(() => WEEKDAYS[now.value.getDay()])
+const nowWeekday = computed(() => WEEKDAYS[thuTrongTuan(now.value)])
 const nowTime = computed(() =>
   now.value.toLocaleTimeString('vi-VN', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
     hour12: false,
+    timeZone: MUI_GIO,
   }),
 )
 const nowDate = computed(() =>
@@ -268,6 +270,7 @@ const nowDate = computed(() =>
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
+    timeZone: MUI_GIO,
   }),
 )
 const nowFullLabel = computed(() => `${nowWeekday.value}, ${nowTime.value} — ${nowDate.value}`)

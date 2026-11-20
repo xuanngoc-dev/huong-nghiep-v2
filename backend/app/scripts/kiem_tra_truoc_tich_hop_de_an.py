@@ -24,6 +24,7 @@ from pathlib import Path
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
+from app.core.thoi_gian import bay_gio
 from app.db.session import SessionLocal
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
 from app.models.dats_tru_so import DatsTruSo
@@ -576,7 +577,7 @@ def _o(value) -> str:
 
 
 def xuat_markdown(muc: list[Muc], thoi_diem: datetime | None = None) -> str:
-    thoi_diem = thoi_diem or datetime.now()
+    thoi_diem = thoi_diem or bay_gio()
     dem = Counter(m.muc_do for m in muc)
     dong = [
         "# Báo cáo kiểm tra dữ liệu trước khi tích hợp đề án tuyển sinh",

@@ -1,4 +1,3 @@
-from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import String, and_, cast, func, or_, select
@@ -6,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user
+from app.core.thoi_gian import bay_gio
 from app.db.session import get_db
 from app.models.dm_phuong_thuc_tuyen_sinh import DmPhuongThucTuyenSinh
 from app.models.dm_to_hop_mon_hoc import DmToHopMonHoc
@@ -147,7 +147,7 @@ def _kiem_tra(db: Session, payload: list[XtDiemChuanWrite], bo_qua_id: int | Non
 
 
 def _apply(item: XtDiemChuan, payload: XtDiemChuanWrite, *, creating: bool) -> None:
-    now = datetime.now()
+    now = bay_gio()
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
     if creating:

@@ -34,7 +34,7 @@ class ChatConversation(Base):
     ma_khach_vang_lai: Mapped[str | None] = mapped_column(String(64), comment="Mã thiết bị / trình duyệt của khách")
     tieu_de: Mapped[str | None] = mapped_column(String(255))
     trang_thai: Mapped[str] = mapped_column(
-        Enum("dang_hoat_dong", "da_dong", "luu_tru", name="trang_thai_chat"),
+        Enum("dang_hoat_dong", "da_dong", name="trang_thai_chat"),
         nullable=False,
         default="dang_hoat_dong",
         server_default="dang_hoat_dong",

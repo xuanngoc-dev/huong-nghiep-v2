@@ -53,8 +53,8 @@ class ChatPhienChiTiet(BaseModel):
 
 
 class ChatPhienTrangThai(BaseModel):
-    # dang_hoat_dong: đang hỏi đáp; da_dong: đã kết thúc; luu_tru: lưu trữ. Hai trạng thái sau không hỏi tiếp được.
-    trang_thai: Literal["dang_hoat_dong", "da_dong", "luu_tru"]
+    # dang_hoat_dong: đang hỏi đáp; da_dong: đã kết thúc, không hỏi tiếp được.
+    trang_thai: Literal["dang_hoat_dong", "da_dong"]
 
 
 class ChatPhienDoiTieuDe(BaseModel):

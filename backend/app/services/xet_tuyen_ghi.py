@@ -15,12 +15,12 @@ Thứ tự ghi: đề án → cơ sở → tổ hợp riêng → bảng quy đ�
 
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
-from datetime import datetime
 from unicodedata import normalize
 
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
+from app.core.thoi_gian import bay_gio
 from app.models.dats_chuong_trinh_dao_tao import DatsChuongTrinhDaoTao
 from app.models.dats_hoc_phi import DatsHocPhi
 from app.models.dats_phuong_thuc import DatsPhuongThuc
@@ -82,7 +82,7 @@ class _Ghi:
         self.db = db
         self.kh = ke_hoach
         self.phuong_thuc_theo_phuong_an = phuong_thuc_theo_phuong_an
-        self.now = datetime.now()
+        self.now = bay_gio()
         self.dem: Counter[str] = Counter()
         self.canh_bao = list(ke_hoach.canh_bao)
 

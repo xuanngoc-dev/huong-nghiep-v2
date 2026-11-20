@@ -10,11 +10,11 @@ Lưu ở nơi nào cũng cập nhật nơi kia để hai nơi khớp nhau:
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime
 
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
+from app.core.thoi_gian import bay_gio
 from app.models.dm_bai_thi_danh_gia import DmBaiThiDanhGia
 from app.models.dm_bang_cap_chung_chi import DmBangCapChungChi
 from app.models.dm_doi_tuong_uu_tien import DmDoiTuongUuTien
@@ -207,7 +207,7 @@ def ghi_ho_so(db: Session, hs: HsHoSo, payload: HoSoXetTuyenWrite, dm: DanhMucMa
     hs.khu_vuc_uu_tien_id = dm.khu_vuc.get(payload.ma_khu_vuc_uu_tien) if payload.ma_khu_vuc_uu_tien else None
     hs.doi_tuong_uu_tien_id = dm.doi_tuong.get(payload.ma_doi_tuong_uu_tien) if payload.ma_doi_tuong_uu_tien else None
     hs.ngan_sach_hoc_phi_nam = payload.ngan_sach_hoc_phi_nam
-    hs.cap_nhat_luc = datetime.now()
+    hs.cap_nhat_luc = bay_gio()
     db.flush()
     for model in _CON:
         db.execute(delete(model).where(model.ho_so_id == hs.id).execution_options(synchronize_session=False))

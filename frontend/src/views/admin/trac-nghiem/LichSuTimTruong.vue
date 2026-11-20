@@ -256,6 +256,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { fetchChiTietLichSuTimTruong, fetchLichSuTimTruongQuanTri } from '@/api/timTruongPhuHop'
+import { dinhDangThoiGian } from '@/utils/thoiGian'
 
 const TRANG_THAI = {
   cho_xu_ly: { nhan: 'Chờ xử lý', mau: 'info' },
@@ -311,13 +312,7 @@ function errorMessage(error, fallback) {
 
 function formatThoiGian(value) {
   if (!value) return '—'
-  return new Date(value).toLocaleString('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  return dinhDangThoiGian(value)
 }
 
 function nhanTieuChi(tc) {

@@ -269,7 +269,7 @@ class ThuThapTuyenSinhTests(unittest.TestCase):
 
     def test_luot_tao_qua_30_phut_van_co_the_luu(self):
         phien_id = self._tao_phien()
-        luc_bat_dau = api._bay_gio()
+        luc_bat_dau = api.bay_gio()
         thoi_gian = luc_bat_dau
 
         def trich_xuat_lau(*args, bao_tien_do, danh_muc_phuong_thuc):
@@ -283,7 +283,7 @@ class ThuThapTuyenSinhTests(unittest.TestCase):
             return trich_xuat()
 
         with (
-            patch.object(api, "_bay_gio", side_effect=lambda: thoi_gian),
+            patch.object(api, "bay_gio", side_effect=lambda: thoi_gian),
             patch.object(api.ai, "extract_draft", side_effect=trich_xuat_lau),
         ):
             phien = api.tao_ban_nhap(phien_id, self.db, self.user)

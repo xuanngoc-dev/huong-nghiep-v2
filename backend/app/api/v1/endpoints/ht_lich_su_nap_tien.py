@@ -1,10 +1,11 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user, get_current_user
+from app.core.thoi_gian import bay_gio
 from app.db.session import get_db
 from app.models.ht_cau_hinh_goi_cuoc import HtCauHinhGoiCuoc
 from app.models.ht_lich_su_nap_tien import HtLichSuNapTien
@@ -152,7 +153,7 @@ def tao_nap_tien(
             HtLichSuNapTien.trang_thai == nap_tien.CHO_THANH_TOAN,
             HtLichSuNapTien.so_tien_nap == gia,
             HtLichSuNapTien.so_luot_nhan_duoc == so_luot,
-            HtLichSuNapTien.created_at >= datetime.now() - _DUNG_LAI_TRONG,
+            HtLichSuNapTien.created_at >= bay_gio() - _DUNG_LAI_TRONG,
         )
         .order_by(HtLichSuNapTien.id.desc())
         .limit(1)
@@ -192,7 +193,7 @@ def cap_nhat_nap_tien(
     if payload.ngan_hang_thanh_toan_id is not None:
         _gan_ngan_hang(giao_dich, _ngan_hang_dang_hoat_dong(db, payload.ngan_hang_thanh_toan_id))
     if payload.da_chuyen_khoan and giao_dich.thoi_gian_thanh_toan is None:
-        giao_dich.thoi_gian_thanh_toan = datetime.now()
+        giao_dich.thoi_gian_thanh_toan = bay_gio()
     db.commit()
     db.refresh(giao_dich)
     return giao_dich
@@ -352,7 +353,7 @@ def tu_choi_nap_tien(
     _chi_khi_cho(giao_dich)
     giao_dich.trang_thai = nap_tien.THAT_BAI
     giao_dich.ghi_chu = payload.ghi_chu
-    giao_dich.thoi_gian_xac_nhan = datetime.now()
+    giao_dich.thoi_gian_xac_nhan = bay_gio()
     giao_dich.nguoi_xac_nhan_id = admin.id
     db.commit()
     db.refresh(giao_dich)

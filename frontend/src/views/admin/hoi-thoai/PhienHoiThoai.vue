@@ -115,11 +115,6 @@
                 Mở lại
               </CustomButton>
             </CustomTooltip>
-            <CustomTooltip v-if="phienDangChon.trang_thai !== 'luu_tru'" content="Lưu trữ (cũng khóa hỏi đáp)">
-              <CustomButton size="small" :loading="dangLam(phienDangChon, 'luu_tru')" @click="doiTrangThai('luu_tru')">
-                <CustomIcon><FolderOpened /></CustomIcon>
-              </CustomButton>
-            </CustomTooltip>
             <CustomTooltip content="Xóa phiên và toàn bộ tin nhắn">
               <CustomButton size="small" type="danger" plain :loading="dangLam(phienDangChon, 'xoa')" @click="xoaPhien()">
                 <CustomIcon><Delete /></CustomIcon>
@@ -205,8 +200,7 @@
         </div>
 
         <p v-if="!dangHoatDong" class="hoi-thoai__da-ket-thuc">
-          {{ phienDangChon.trang_thai === 'luu_tru' ? 'Phiên đã lưu trữ' : 'Phiên đã kết thúc' }} — người dùng không thể hỏi
-          tiếp trong phiên này.
+          Phiên đã kết thúc — người dùng không thể hỏi tiếp trong phiên này.
         </p>
         <footer class="hoi-thoai__soan">
           <CustomInput disabled placeholder="Trợ lý đang trả lời tự động. Trả lời trực tiếp từ quản trị sẽ bổ sung sau." />
@@ -238,12 +232,12 @@ import {
   fetchPhienHoiThoai,
 } from '@/api/hoiThoai'
 import ChatMarkdown from '@/components/guest/chung/ChatMarkdown.vue'
+import { dinhDangNgay, dinhDangThoiGian, docThoiGian } from '@/utils/thoiGian'
 
 const PAGE_SIZE = 30
 const TRANG_THAI = {
   dang_hoat_dong: { nhan: 'Đang hoạt động', type: 'success' },
   da_dong: { nhan: 'Đã kết thúc', type: 'info' },
-  luu_tru: { nhan: 'Lưu trữ', type: 'warning' },
 }
 
 const route = useRoute()
@@ -290,16 +284,16 @@ function phuDe(phien) {
 
 function thoiGianTuongDoi(value) {
   if (!value) return ''
-  const giay = (Date.now() - new Date(value).getTime()) / 1000
+  const giay = (Date.now() - (docThoiGian(value)?.getTime() ?? Date.now())) / 1000
   if (giay < 60) return 'Vừa xong'
   if (giay < 3600) return `${Math.floor(giay / 60)} phút`
   if (giay < 86400) return `${Math.floor(giay / 3600)} giờ`
   if (giay < 7 * 86400) return `${Math.floor(giay / 86400)} ngày`
-  return new Date(value).toLocaleDateString('vi-VN')
+  return dinhDangNgay(value)
 }
 
 function gioPhut(value) {
-  return value ? new Date(value).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }) : ''
+  return dinhDangThoiGian(value, { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
 }
 
 function tenNguon(tin) {
@@ -402,7 +396,7 @@ function dangLam(phien, viec) {
   return dangXuLy.value === `${phien?.id}:${viec}`
 }
 
-// Kết thúc / mở lại / lưu trữ một phiên (mặc định phiên đang xem); cập nhật luôn dòng tương ứng trong danh sách.
+// Kết thúc / mở lại một phiên (mặc định phiên đang xem); cập nhật luôn dòng tương ứng trong danh sách.
 async function doiTrangThai(moi, phien = phienDangChon.value) {
   if (!phien || dangXuLy.value) return
   if (moi === 'da_dong') {
@@ -421,9 +415,7 @@ async function doiTrangThai(moi, phien = phienDangChon.value) {
     const data = await doiTrangThaiPhienHoiThoai(phien.ma_dinh_danh, moi)
     if (phienDangChon.value?.id === data.id) phienDangChon.value = data
     phienList.value = phienList.value.map((item) => (item.id === data.id ? data : item))
-    ElMessage.success(
-      { da_dong: 'Đã kết thúc phiên hội thoại', luu_tru: 'Đã lưu trữ phiên hội thoại' }[moi] || 'Đã mở lại phiên hội thoại',
-    )
+    ElMessage.success(moi === 'da_dong' ? 'Đã kết thúc phiên hội thoại' : 'Đã mở lại phiên hội thoại')
   } catch (error) {
     ElMessage.error(loiApi(error, 'Không cập nhật được trạng thái phiên hội thoại'))
   } finally {
@@ -534,7 +526,6 @@ function thaoTacPhien(phien) {
   } else {
     items.push({ command: 'dang_hoat_dong', label: 'Mở lại hội thoại', icon: 'RefreshRight', type: 'success' })
   }
-  if (phien.trang_thai !== 'luu_tru') items.push({ command: 'luu_tru', label: 'Lưu trữ', icon: 'FolderOpened' })
   items.push({ command: 'xoa', label: 'Xóa', icon: 'Delete', type: 'danger', divided: true })
   return items
 }

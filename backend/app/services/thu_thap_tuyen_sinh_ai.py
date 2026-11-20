@@ -14,7 +14,7 @@ from collections.abc import Callable, Iterator
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from contextvars import ContextVar
 from dataclasses import dataclass, field
-from datetime import date, datetime, timezone
+from datetime import date, datetime
 from functools import cached_property, lru_cache
 from hashlib import sha256
 from html.parser import HTMLParser
@@ -27,6 +27,7 @@ from urllib.parse import parse_qs
 import httpx
 
 from app.core.config import settings
+from app.core.thoi_gian import MUI_GIO
 from app.services.dats_ban_nhap_thu_thap import _giong_nhau, _ma_hoa, _muc_du_lieu
 from app.services.dats_dan_chung_chuong_trinh import bo_sung_dan_chung_chuong_trinh
 from app.services.dats_hop_dong_thu_thap import hop_dong_cau_truc_cms, mau_rut_gon_cms
@@ -832,7 +833,7 @@ def _nguon(school: dict, year: int, url: httpx.URL, thong_tin: dict, trang_cong_
         "loai": loai,
         "nam_ap_dung": nam,
         "ngay_cong_bo": _ngay(thong_tin.get("ngay_cong_bo")),
-        "truy_cap_luc": datetime.now(timezone.utc).isoformat(),
+        "truy_cap_luc": datetime.now(MUI_GIO).isoformat(timespec="seconds"),
         "ngay_hieu_luc": _ngay(thong_tin.get("ngay_hieu_luc")),
         "thay_the_url": lien_ket_sua[:2048] if lien_ket_sua else None,
         "pham_vi_dieu_chinh": _chuoi(thong_tin.get("pham_vi_dieu_chinh"), 1500),

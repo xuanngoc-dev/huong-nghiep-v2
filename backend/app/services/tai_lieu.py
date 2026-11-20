@@ -1,11 +1,11 @@
 import json
 import re
-from datetime import datetime
 from pathlib import Path
 
 from fastapi import HTTPException, status
 
 from app.core.config import settings
+from app.core.thoi_gian import tu_timestamp
 from app.schemas.chat import TaiLieuItem, TinNhan
 
 ALLOWED_SUFFIXES = {".json", ".txt"}
@@ -83,7 +83,7 @@ def list_tai_lieu() -> list[TaiLieuItem]:
             TaiLieuItem(
                 ten=path.name,
                 kich_thuoc=stat.st_size,
-                cap_nhat=datetime.fromtimestamp(stat.st_mtime),
+                cap_nhat=tu_timestamp(stat.st_mtime),
             )
         )
     items.sort(key=lambda item: item.ten.lower())
@@ -131,7 +131,7 @@ def save_tai_lieu(filename: str, data: bytes) -> TaiLieuItem:
     return TaiLieuItem(
         ten=path.name,
         kich_thuoc=stat.st_size,
-        cap_nhat=datetime.fromtimestamp(stat.st_mtime),
+        cap_nhat=tu_timestamp(stat.st_mtime),
     )
 
 

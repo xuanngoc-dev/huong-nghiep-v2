@@ -115,7 +115,7 @@ class LuuChatTests(unittest.TestCase):
 
     def test_api_hoi_phien_da_ket_thuc_tra_409_khong_goi_ai(self):
         p = luu_chat.luu_cau_hoi(self.db, None, 1, None, "a", None)
-        p.trang_thai = "luu_tru"
+        p.trang_thai = "da_dong"
         self.db.commit()
         hoi = AsyncMock()
         payload = HoiChatRequest(cau_hoi="Tiếp", model_id="m", ma_phien=p.ma_dinh_danh)

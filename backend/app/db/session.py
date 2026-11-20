@@ -1,15 +1,28 @@
 from collections.abc import Generator
 
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.config import settings
+from app.core.thoi_gian import offset_mysql
 
 engine = create_engine(
     settings.database_url,
     pool_pre_ping=True,
     pool_recycle=3600,
 )
+
+
+
+@event.listens_for(engine, "connect")
+def _dat_mui_gio(dbapi_connection, _connection_record) -> None:
+    """Mỗi kết nối MySQL dùng múi giờ hệ thống (TIMEZONE) cho NOW(), CURRENT_TIMESTAMP, server_default."""
+    cursor = dbapi_connection.cursor()
+    try:
+        cursor.execute(f"SET time_zone = '{offset_mysql()}'")
+    finally:
+        cursor.close()
+
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

@@ -3,13 +3,13 @@
 Bộ tính xét tuyển lấy dòng khớp năm tuyển sinh; mã không có dòng nào khớp dùng diem_cong của danh mục.
 """
 
-from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user, get_current_user
+from app.core.thoi_gian import bay_gio
 from app.db.session import get_db
 from app.models.dm_doi_tuong_uu_tien import DmDoiTuongUuTien
 from app.models.dm_khu_vuc_uu_tien import DmKhuVucUuTien
@@ -154,7 +154,7 @@ def update_muc_diem_uu_tien(
     _kiem_tra(db, payload, bo_qua_id=item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
-    item.cap_nhat_luc = datetime.now()
+    item.cap_nhat_luc = bay_gio()
     db.commit()
     db.refresh(item)
     return _cong_khai(item, _ten_theo_ma(db))
