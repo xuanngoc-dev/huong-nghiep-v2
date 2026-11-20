@@ -1,6 +1,6 @@
 # Danh sách API
 
-Tự sinh từ code lúc 20/11/2026 08:41 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 20/11/2026 09:57 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
 Tiền tố chung: `/api/v1`. Tổng cộng **366** API.
 
@@ -92,10 +92,10 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `POST` | `/api/v1/danh-muc/loai-cau-hoi` | Bắt buộc (admin) | Thêm một loại câu hỏi. Từ chối nếu thứ tự ưu tiên đã tồn tại. |
+| `POST` | `/api/v1/danh-muc/loai-cau-hoi` | Bắt buộc (admin) | Thêm một loại câu hỏi. Thứ tự ưu tiên được trùng với loại khác. |
 | `DELETE` | `/api/v1/danh-muc/loai-cau-hoi` | Bắt buộc (admin) | Xóa nhiều loại câu hỏi theo danh sách id. |
 | `POST` | `/api/v1/danh-muc/loai-cau-hoi/anh-huong-xoa` | Bắt buộc (admin) | Xem trước số câu hỏi, đáp án và phiên khảo sát sẽ bị xóa theo nếu xóa các loại câu hỏi này. |
-| `POST` | `/api/v1/danh-muc/loai-cau-hoi/bulk` | Bắt buộc (admin) | Thêm nhiều loại câu hỏi cùng lúc. Từ chối nếu thứ tự ưu tiên trùng trong dữ liệu hoặc đã có trong hệ thống. |
+| `POST` | `/api/v1/danh-muc/loai-cau-hoi/bulk` | Bắt buộc (admin) | Thêm nhiều loại câu hỏi cùng lúc. Thứ tự ưu tiên được trùng (trùng thì loại tạo trước đứng trước). |
 | `PATCH` | `/api/v1/danh-muc/loai-cau-hoi/trang-thai` | Bắt buộc (admin) | Bật/tắt nhiều loại câu hỏi cùng lúc. Id không tồn tại thì bỏ qua. |
 | `PUT` | `/api/v1/danh-muc/loai-cau-hoi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một loại câu hỏi theo id. |
 | `DELETE` | `/api/v1/danh-muc/loai-cau-hoi/{item_id}` | Bắt buộc (admin) | Xóa một loại câu hỏi theo id; `xoa_lien_quan=true` xóa kèm câu hỏi, đáp án và phiên khảo sát liên quan. |
@@ -775,7 +775,7 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `GET` | `/api/v1/danh-muc/loai-cau-hoi` | Không | Lấy danh sách loại câu hỏi có phân trang, sắp theo thứ tự ưu tiên. Lọc theo tên và trạng thái. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/loai-cau-hoi` | Không | Lấy danh sách loại câu hỏi có phân trang, sắp theo thứ tự ưu tiên. |
 
 ### `danh-muc/mon-hoc`
 

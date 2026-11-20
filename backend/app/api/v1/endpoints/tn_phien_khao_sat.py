@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user, get_current_user, get_optional_user
 from app.db.session import get_db
-from app.models.dm_loai_cau_hoi import DmLoaiCauHoi
+from app.models.dm_loai_cau_hoi import THU_TU_LOAI_CAU_HOI, DmLoaiCauHoi
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.dm_nhom_nganh_dao_tao import DmNhomNganhDaoTao
 from app.models.dm_nhom_tinh_cach_holland import DmNhomTinhCachHolland
@@ -80,7 +80,7 @@ def _chon_cau_hoi(db: Session) -> list[tuple[int, int]]:
     loai_list = db.scalars(
         select(DmLoaiCauHoi)
         .where(DmLoaiCauHoi.trang_thai == 1)
-        .order_by(DmLoaiCauHoi.thu_tu_uu_tien.asc())
+        .order_by(*THU_TU_LOAI_CAU_HOI)
     ).all()
     holland_list = db.scalars(
         select(DmNhomTinhCachHolland)
@@ -220,8 +220,10 @@ def _tom_tat_phien(db: Session, phien_list) -> dict[str, dict]:
             )
             .join(DmLoaiCauHoi, TnChiTietTraLoi.loai_cau_hoi_id == DmLoaiCauHoi.id)
             .where(TnChiTietTraLoi.ssid.in_(ssids))
-            .group_by(TnChiTietTraLoi.ssid, DmLoaiCauHoi.id, DmLoaiCauHoi.thu_tu_uu_tien)
-            .order_by(DmLoaiCauHoi.thu_tu_uu_tien.asc())
+            .group_by(
+                TnChiTietTraLoi.ssid, DmLoaiCauHoi.id, DmLoaiCauHoi.thu_tu_uu_tien, DmLoaiCauHoi.created_at
+            )
+            .order_by(*THU_TU_LOAI_CAU_HOI)
         ).all():
             tong, da_tra_loi = int(tong or 0), int(da_tra_loi or 0)
             dem[ssid][0] += tong
@@ -416,7 +418,7 @@ def lay_de_bai(ssid: str, db: Session = Depends(get_db)) -> TnPhienLamBaiPublic:
         .join(TnCauHoiTracNghiem, TnChiTietTraLoi.cau_hoi_id == TnCauHoiTracNghiem.id)
         .join(DmLoaiCauHoi, TnChiTietTraLoi.loai_cau_hoi_id == DmLoaiCauHoi.id)
         .where(TnChiTietTraLoi.ssid == ssid)
-        .order_by(DmLoaiCauHoi.thu_tu_uu_tien.asc(), TnChiTietTraLoi.id.asc())
+        .order_by(*THU_TU_LOAI_CAU_HOI, TnChiTietTraLoi.id.asc())
     ).all()
     question_ids = [cau_hoi.id for _chi_tiet, cau_hoi, _loai in rows]
     answers: dict[int, list[TnCauTraLoi]] = defaultdict(list)
@@ -545,8 +547,10 @@ def _thong_ke_phien(db: Session, ssid: str):
         select(DmLoaiCauHoi.id, DmLoaiCauHoi.ten_loai_cau_hoi)
         .join(TnChiTietTraLoi, TnChiTietTraLoi.loai_cau_hoi_id == DmLoaiCauHoi.id)
         .where(TnChiTietTraLoi.ssid == ssid)
-        .group_by(DmLoaiCauHoi.id, DmLoaiCauHoi.ten_loai_cau_hoi, DmLoaiCauHoi.thu_tu_uu_tien)
-        .order_by(DmLoaiCauHoi.thu_tu_uu_tien.asc())
+        .group_by(
+            DmLoaiCauHoi.id, DmLoaiCauHoi.ten_loai_cau_hoi, DmLoaiCauHoi.thu_tu_uu_tien, DmLoaiCauHoi.created_at
+        )
+        .order_by(*THU_TU_LOAI_CAU_HOI)
     ).all()
     buoc = [TnPhienBuocPublic(id=loai_id, ten=ten) for loai_id, ten in buoc_rows]
     return tong, da_tra_loi, nhom, buoc

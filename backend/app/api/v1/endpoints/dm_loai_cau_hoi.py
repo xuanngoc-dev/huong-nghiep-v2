@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, select
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user, get_current_user
 from app.db.session import get_db
-from app.models.dm_loai_cau_hoi import DmLoaiCauHoi
+from app.models.dm_loai_cau_hoi import THU_TU_LOAI_CAU_HOI, DmLoaiCauHoi
 from app.models.nguoi_dung import NguoiDung
 from app.schemas.dm_loai_cau_hoi import (
     DmLoaiCauHoiAnhHuongXoa,
@@ -45,17 +44,23 @@ def _get_or_400(db: Session, item_id: int) -> DmLoaiCauHoi:
 def list_loai_cau_hoi(
     q: str | None = Query(default=None, max_length=150),
     trang_thai: int | None = Query(default=None, ge=0, le=1),
+    doi_tuong_ap_dung: int | None = Query(default=None, ge=1),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> DmLoaiCauHoiPage:
-    """Lấy danh sách loại câu hỏi có phân trang, sắp theo thứ tự ưu tiên. Lọc theo tên và trạng thái. Không cần đăng nhập."""
+    """Lấy danh sách loại câu hỏi có phân trang, sắp theo thứ tự ưu tiên.
+
+    Lọc theo tên, trạng thái và đối tượng áp dụng (loại có chứa mã đó). Không cần đăng nhập.
+    """
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())
         filters.append(DmLoaiCauHoi.ten_loai_cau_hoi.like(pattern, escape="\\"))
     if trang_thai is not None:
         filters.append(DmLoaiCauHoi.trang_thai == trang_thai)
+    if doi_tuong_ap_dung is not None:
+        filters.append(func.json_contains(DmLoaiCauHoi.doi_tuong_ap_dung, str(doi_tuong_ap_dung)) == 1)
 
     count_stmt = select(func.count()).select_from(DmLoaiCauHoi)
     stmt = select(DmLoaiCauHoi)
@@ -65,7 +70,7 @@ def list_loai_cau_hoi(
 
     total = db.scalar(count_stmt) or 0
     items = db.scalars(
-        stmt.order_by(DmLoaiCauHoi.thu_tu_uu_tien.asc(), DmLoaiCauHoi.id.asc())
+        stmt.order_by(*THU_TU_LOAI_CAU_HOI)
         .offset((page - 1) * page_size)
         .limit(page_size)
     ).all()
@@ -88,7 +93,7 @@ def create_loai_cau_hoi_bulk(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_admin_user),
 ) -> DmLoaiCauHoiBulkResult:
-    """Thêm nhiều loại câu hỏi cùng lúc. Từ chối nếu thứ tự ưu tiên trùng trong dữ liệu hoặc đã có trong hệ thống."""
+    """Thêm nhiều loại câu hỏi cùng lúc. Thứ tự ưu tiên được trùng (trùng thì loại tạo trước đứng trước)."""
     if not payload:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Danh sách loại câu hỏi trống")
     if len(payload) > 500:
@@ -97,39 +102,9 @@ def create_loai_cau_hoi_bulk(
             detail="Chỉ thêm tối đa 500 loại câu hỏi mỗi lần",
         )
 
-    orders = [item.thu_tu_uu_tien for item in payload]
-    seen: set[int] = set()
-    duplicated: list[str] = []
-    for order in orders:
-        if order in seen and str(order) not in duplicated:
-            duplicated.append(str(order))
-        seen.add(order)
-    if duplicated:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Thứ tự ưu tiên bị trùng trong dữ liệu: {', '.join(duplicated)}",
-        )
-
-    existing = list(
-        db.scalars(select(DmLoaiCauHoi.thu_tu_uu_tien).where(DmLoaiCauHoi.thu_tu_uu_tien.in_(orders))).all()
-    )
-    if existing:
-        joined = ", ".join(str(item) for item in existing)
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Thứ tự ưu tiên đã tồn tại: {joined}",
-        )
-
     items = [DmLoaiCauHoi(**item.model_dump()) for item in payload]
     db.add_all(items)
-    try:
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Thứ tự ưu tiên đã tồn tại",
-        ) from None
+    db.commit()
     return DmLoaiCauHoiBulkResult(created=len(items))
 
 
@@ -139,17 +114,10 @@ def create_loai_cau_hoi(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_admin_user),
 ) -> DmLoaiCauHoi:
-    """Thêm một loại câu hỏi. Từ chối nếu thứ tự ưu tiên đã tồn tại."""
+    """Thêm một loại câu hỏi. Thứ tự ưu tiên được trùng với loại khác."""
     item = DmLoaiCauHoi(**payload.model_dump())
     db.add(item)
-    try:
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Thứ tự ưu tiên đã tồn tại",
-        ) from None
+    db.commit()
     db.refresh(item)
     return item
 
@@ -165,14 +133,7 @@ def update_loai_cau_hoi(
     item = _get_or_400(db, item_id)
     for key, value in payload.model_dump().items():
         setattr(item, key, value)
-    try:
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Thứ tự ưu tiên đã tồn tại",
-        ) from None
+    db.commit()
     db.refresh(item)
     return item
 
