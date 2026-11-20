@@ -104,7 +104,7 @@
       <CustomTableColumn label="STT" width="64" align="center">
         <template #default="{ $index }">{{ rowIndex($index) }}</template>
       </CustomTableColumn>
-      <CustomTableColumn label="Mã giao dịch" min-width="170">
+      <CustomTableColumn label="Mã giao dịch" min-width="190">
         <template #default="{ row }">
           <div class="cell-stack">
             <span>{{ row.ma_giao_dich || '—' }}</span>
