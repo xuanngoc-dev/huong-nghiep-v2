@@ -1,6 +1,7 @@
 """Đối tượng áp dụng của loại câu hỏi. Khớp frontend/src/constants/doiTuongApDung.js.
 
 Mỗi giá trị ứng với một hướng đi của học sinh THPT (`code` trong HocSinhThpt/dinhHuong.js).
+Dùng cho dm_loai_cau_hoi.doi_tuong_ap_dung (nhiều mã) và tn_phien_khao_sat.dinh_huong (một mã).
 Chỉ thêm giá trị mới, không đổi/xóa số đã dùng vì dữ liệu đã lưu theo số.
 """
 

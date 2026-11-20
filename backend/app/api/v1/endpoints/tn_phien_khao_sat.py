@@ -163,6 +163,8 @@ def bat_dau_holland(
     phien = TnPhienKhaoSat(
         ssid=_new_ssid(db),
         nguoi_khao_sat_id=current_user.id if current_user else None,
+        # Định hướng làm bài dùng chung mã với đối tượng áp dụng của loại câu hỏi.
+        dinh_huong=doi_tuong_ap_dung,
     )
     db.add(phien)
     db.flush()
@@ -182,6 +184,7 @@ def bat_dau_holland(
         ssid=phien.ssid,
         nguoi_khao_sat_id=phien.nguoi_khao_sat_id,
         ma_giao_dich=phien.ma_giao_dich,
+        dinh_huong=phien.dinh_huong,
         loai_cau_hoi_id=picked[0][0],
         so_cau_hoi=len(picked),
         created_at=phien.created_at,
@@ -196,9 +199,12 @@ def _dieu_kien_loc(
     trang_thai: TrangThaiPhien | None,
     tu_ngay: date | None,
     den_ngay: date | None,
+    dinh_huong: int | None = None,
 ) -> list:
     """Điều kiện lọc phiên dùng chung cho lịch sử thành viên và trang quản trị."""
     dieu_kien = []
+    if dinh_huong is not None:
+        dieu_kien.append(TnPhienKhaoSat.dinh_huong == dinh_huong)
     if q and q.strip():
         pattern = _like_pattern(q.strip())
         dieu_kien.append(
@@ -283,6 +289,7 @@ def _tom_tat_phien(db: Session, phien_list) -> dict[str, dict]:
             "da_xong": tong > 0 and da_tra_loi == tong,
             "loai_cau_hoi_id_tiep": buoc_tiep.get(phien.ssid),
             "ma_noi_bat": "".join(ma for ma in xep_hang[:3] if diem_phien.get(ma, 0) > 0),
+            "dinh_huong": phien.dinh_huong,
             "created_at": phien.created_at,
         }
     return tom_tat
@@ -292,6 +299,7 @@ def _tom_tat_phien(db: Session, phien_list) -> dict[str, dict]:
 def lich_su_khao_sat(
     q: str | None = Query(default=None, max_length=64),
     trang_thai: TrangThaiPhien | None = Query(default=None),
+    dinh_huong: int | None = Query(default=None, ge=1, description="Mã định hướng (app/constants/doi_tuong_ap_dung.py)"),
     tu_ngay: date | None = Query(default=None),
     den_ngay: date | None = Query(default=None),
     page: int = Query(default=1, ge=1),
@@ -299,10 +307,10 @@ def lich_su_khao_sat(
     db: Session = Depends(get_db),
     current_user: NguoiDung = Depends(get_current_user),
 ) -> TnPhienLichSuPage:
-    """Lịch sử các phiên khảo sát của người dùng đang đăng nhập, mới nhất trước."""
+    """Lịch sử các phiên khảo sát của người dùng đang đăng nhập, mới nhất trước. Lọc được theo định hướng."""
     dieu_kien = [
         TnPhienKhaoSat.nguoi_khao_sat_id == current_user.id,
-        *_dieu_kien_loc(q, trang_thai, tu_ngay, den_ngay),
+        *_dieu_kien_loc(q, trang_thai, tu_ngay, den_ngay, dinh_huong),
     ]
     total = db.scalar(select(func.count()).select_from(TnPhienKhaoSat).where(*dieu_kien)) or 0
     phien_list = db.scalars(
@@ -327,6 +335,7 @@ def danh_sach_phien_quan_tri(
     nguoi_tham_gia: str | None = Query(default=None, max_length=255),
     doi_tuong: Literal["thanh-vien", "khach"] | None = Query(default=None),
     trang_thai: TrangThaiPhien | None = Query(default=None),
+    dinh_huong: int | None = Query(default=None, ge=1, description="Mã định hướng (app/constants/doi_tuong_ap_dung.py)"),
     tu_ngay: date | None = Query(default=None),
     den_ngay: date | None = Query(default=None),
     page: int = Query(default=1, ge=1),
@@ -336,9 +345,9 @@ def danh_sach_phien_quan_tri(
     """Tất cả phiên khảo sát cho quản trị, mới nhất trước.
 
     Lọc theo mã giao dịch/ssid (`q`), người tham gia (họ tên, email, số điện thoại),
-    thành viên hay khách, tình trạng hoàn thành và khoảng ngày tạo phiên.
+    thành viên hay khách, định hướng khi làm bài, tình trạng hoàn thành và khoảng ngày tạo phiên.
     """
-    dieu_kien = _dieu_kien_loc(q, trang_thai, tu_ngay, den_ngay)
+    dieu_kien = _dieu_kien_loc(q, trang_thai, tu_ngay, den_ngay, dinh_huong)
     if nguoi_tham_gia and nguoi_tham_gia.strip():
         pattern = _like_pattern(nguoi_tham_gia.strip())
         dieu_kien.append(

@@ -1,6 +1,6 @@
 # Danh sách API
 
-Tự sinh từ code lúc 20/11/2026 10:11 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 20/11/2026 10:30 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
 Tiền tố chung: `/api/v1`. Tổng cộng **367** API.
 
@@ -679,7 +679,7 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 | `POST` | `/api/v1/trac-nghiem/cau-hoi/{item_id}/cau-tra-loi` | Bắt buộc | Thêm một đáp án cho câu hỏi. |
 | `PUT` | `/api/v1/trac-nghiem/cau-hoi/{item_id}/cau-tra-loi/{answer_id}` | Bắt buộc | Cập nhật nội dung và điểm của một đáp án. |
 | `DELETE` | `/api/v1/trac-nghiem/cau-hoi/{item_id}/cau-tra-loi/{answer_id}` | Bắt buộc | Xóa một đáp án của câu hỏi. |
-| `GET` | `/api/v1/trac-nghiem/phien/lich-su` | Bắt buộc | Lịch sử các phiên khảo sát của người dùng đang đăng nhập, mới nhất trước. |
+| `GET` | `/api/v1/trac-nghiem/phien/lich-su` | Bắt buộc | Lịch sử các phiên khảo sát của người dùng đang đăng nhập, mới nhất trước. Lọc được theo định hướng. |
 
 ### `tru-so`
 
