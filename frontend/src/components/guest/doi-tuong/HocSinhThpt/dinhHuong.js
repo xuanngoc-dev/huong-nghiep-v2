@@ -18,7 +18,7 @@ export const dinhHuongThptList = [
   },
   {
     code: 'di-lam',
-    moTruyCap: false,
+    moTruyCap: true,
     name: 'Đi làm ngay sau khi tốt nghiệp',
     description: 'Bắt đầu làm việc sớm và tích lũy kinh nghiệm thay vì học tiếp.',
     image: diLamImage,
