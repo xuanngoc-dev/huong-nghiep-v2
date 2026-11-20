@@ -38,14 +38,22 @@
               <div v-for="huong in dsHuong" :key="huong.id" class="col-12 col-sm-6 col-xl-4">
                 <RouterLink
                   class="huong-card h-100"
-                  :class="`huong-card--${huong.muc_do_ap_luc_hoc_tap}`"
                   :to="{ name: 'hs-thcs-huong-di', params: { maHuong: huong.ma_huong } }"
                 >
-                  <span class="huong-card__loai">
-                    Áp lực học tập: {{ nhanEnum(MUC_DO_AP_LUC_HOC_TAP, huong.muc_do_ap_luc_hoc_tap).toLowerCase() }}
-                  </span>
                   <span class="huong-card__ten">{{ huong.ten_huong }}</span>
                   <span class="huong-card__mo-ta">{{ huong.mo_ta_tong_quan }}</span>
+                  <ul v-if="uuNhuocCua(huong.id).length" class="uu-nhuoc">
+                    <li
+                      v-for="item in uuNhuocCua(huong.id)"
+                      :key="item.id"
+                      class="uu-nhuoc__muc"
+                      :class="`uu-nhuoc__muc--${item.loai}`"
+                    >
+                      <span class="uu-nhuoc__dau" aria-hidden="true">{{ item.loai === 'uu_diem' ? '+' : '−' }}</span>
+                      <span class="visually-hidden">{{ item.loai === 'uu_diem' ? 'Ưu điểm:' : 'Nhược điểm:' }}</span>
+                      {{ item.tieu_de }}
+                    </li>
+                  </ul>
                   <span v-if="chiPhi(huong)" class="huong-card__chi-phi">{{ chiPhi(huong) }}</span>
                   <span class="huong-card__xem">Xem chi tiết →</span>
                 </RouterLink>
@@ -90,10 +98,11 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { Compass } from '@element-plus/icons-vue'
 import { useDoiTuongAudiences } from '@/composables/useDoiTuongAudiences'
-import { MUC_DO_AP_LUC_HOC_TAP, nhanEnum } from '@/constants/thcsHuongDi'
+import { uuNhuocDiemApi } from '@/api/thcsHuongDi'
+import { loadAll } from '@/composables/useThcsHuongDi'
 import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
 import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
 import { chiPhi, useDsHuongDiThcs } from './HocSinhThcs/thcs'
@@ -107,7 +116,33 @@ defineProps({
 const { audiences, selectedCode, chonDoiTuong } = useDoiTuongAudiences()
 const { dsHuong, dangTai, loi, taiHuongDi } = useDsHuongDiThcs()
 
-onMounted(taiHuongDi)
+// Số ưu điểm, nhược điểm tối đa hiện trên mỗi thẻ; xem đủ ở trang chi tiết.
+const SO_MUC_MOI_LOAI = 2
+// { huongDiId: [ưu điểm..., nhược điểm...] }, API đã xếp ưu điểm trước và theo thứ tự hiển thị.
+const uuNhuocTheoHuong = ref({})
+
+function uuNhuocCua(huongId) {
+  return uuNhuocTheoHuong.value[huongId] || []
+}
+
+// Lỗi tải ưu/nhược điểm không chặn trang: thẻ chỉ ẩn phần này.
+async function taiUuNhuoc() {
+  try {
+    const theoHuong = {}
+    for (const item of await loadAll(uuNhuocDiemApi.fetch)) {
+      const ds = (theoHuong[item.thcs_huong_di_id] ??= [])
+      if (ds.filter((x) => x.loai === item.loai).length < SO_MUC_MOI_LOAI) ds.push(item)
+    }
+    uuNhuocTheoHuong.value = theoHuong
+  } catch {
+    uuNhuocTheoHuong.value = {}
+  }
+}
+
+onMounted(() => {
+  taiHuongDi()
+  taiUuNhuoc()
+})
 </script>
 
 <style scoped>
@@ -200,7 +235,6 @@ onMounted(taiHuongDi)
 }
 
 .huong-card {
-  --mau-loai: var(--guest-primary);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -208,7 +242,7 @@ onMounted(taiHuongDi)
   width: 100%;
   padding: 14px;
   border: 1px solid #d7eadf;
-  border-top: 4px solid var(--mau-loai);
+  border-top: 4px solid var(--guest-primary);
   border-radius: var(--guest-radius);
   background: #fff;
   color: inherit;
@@ -216,25 +250,8 @@ onMounted(taiHuongDi)
   transition: box-shadow 0.3s ease;
 }
 
-.huong-card--trung_binh {
-  --mau-loai: #d98a1c;
-}
-
-.huong-card--cao {
-  --mau-loai: #c2410c;
-}
-
 .huong-card:hover {
   box-shadow: 0 12px 24px rgba(31, 122, 77, 0.12);
-}
-
-.huong-card__loai {
-  border-radius: 999px;
-  padding: 3px 10px;
-  background: var(--mau-loai);
-  color: #fff;
-  font-size: 0.78rem;
-  line-height: 1.3;
 }
 
 .huong-card__ten {
@@ -253,6 +270,45 @@ onMounted(taiHuongDi)
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   line-clamp: 3;
+}
+
+.uu-nhuoc {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.uu-nhuoc__muc {
+  --mau: var(--guest-primary);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: #1c2b23;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.uu-nhuoc__muc--nhuoc_diem {
+  --mau: #c2410c;
+}
+
+.uu-nhuoc__dau {
+  display: inline-flex;
+  flex: 0 0 18px;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--mau);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .huong-card__chi-phi {
