@@ -150,7 +150,7 @@
           <span class="cell-sub">{{ row.so_da_tra_loi }}/{{ row.so_cau_hoi }} câu</span>
         </template>
       </CustomTableColumn>
-      <CustomTableColumn label="Mã Holland" width="110" align="center">
+      <CustomTableColumn label="Mã Holland" width="150" align="center">
         <template #default="{ row }">
           <CustomTag v-if="row.ma_noi_bat" type="primary">{{ row.ma_noi_bat }}</CustomTag>
           <span v-else>—</span>
