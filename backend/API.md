@@ -1,16 +1,16 @@
 # Danh sách API
 
-Tự sinh từ code lúc 20/11/2026 10:30 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 20/11/2026 11:16 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **367** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **411** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 224 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 87 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
-| [Khách vãng lai](#khach) | 56 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
+| [Quản trị (admin)](#quan_tri) | 256 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Thành viên (user)](#thanh_vien) | 93 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Khách vãng lai](#khach) | 62 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
 
@@ -215,6 +215,43 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `POST` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/bulk` | Bắt buộc (admin) | Thêm nhiều thành tích học tập, nghiên cứu cùng lúc. |
 | `PUT` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một thành tích học tập, nghiên cứu theo id. |
 | `DELETE` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc (admin) | Xóa một thành tích học tập, nghiên cứu theo id. |
+
+### `danh-muc/thpt-du-hoc`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/chi-phi` | Bắt buộc (admin) | Thêm một khoản chi phí du học. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/chi-phi` | Bắt buộc (admin) | Xóa nhiều khoản chi phí du học theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/chi-phi/bulk` | Bắt buộc (admin) | Thêm nhiều khoản chi phí du học cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-du-hoc/chi-phi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một khoản chi phí du học theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/chi-phi/{item_id}` | Bắt buộc (admin) | Xóa một khoản chi phí du học theo id. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/huong-di` | Bắt buộc (admin) | Thêm một hướng đi du học. Từ chối nếu mã đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/huong-di` | Bắt buộc (admin) | Xóa nhiều hướng đi theo danh sách id; quốc gia, ngành, chi phí, thủ tục, kênh kết nối bị xóa theo. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/huong-di/bulk` | Bắt buộc (admin) | Thêm nhiều hướng đi cùng lúc. Từ chối nếu mã trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PATCH` | `/api/v1/danh-muc/thpt-du-hoc/huong-di/trang-thai` | Bắt buộc (admin) | Bật/tắt nhiều hướng đi cùng lúc. Id không tồn tại thì bỏ qua. |
+| `PUT` | `/api/v1/danh-muc/thpt-du-hoc/huong-di/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một hướng đi du học theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/huong-di/{item_id}` | Bắt buộc (admin) | Xóa một hướng đi theo id; quốc gia, ngành, chi phí, thủ tục, kênh kết nối bị xóa theo (CASCADE). |
+| `PATCH` | `/api/v1/danh-muc/thpt-du-hoc/huong-di/{item_id}/trang-thai` | Bắt buộc (admin) | Bật/tắt nhanh một hướng đi, giữ nguyên các thông tin khác. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/kenh-ket-noi` | Bắt buộc (admin) | Thêm một kênh kết nối du học. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/kenh-ket-noi` | Bắt buộc (admin) | Xóa nhiều kênh kết nối du học theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/kenh-ket-noi/bulk` | Bắt buộc (admin) | Thêm nhiều kênh kết nối du học cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-du-hoc/kenh-ket-noi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một kênh kết nối du học theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/kenh-ket-noi/{item_id}` | Bắt buộc (admin) | Xóa một kênh kết nối du học theo id. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/nganh` | Bắt buộc (admin) | Thêm một ngành du học. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/nganh` | Bắt buộc (admin) | Xóa nhiều ngành du học theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/nganh/bulk` | Bắt buộc (admin) | Thêm nhiều ngành du học cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-du-hoc/nganh/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một ngành du học theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/nganh/{item_id}` | Bắt buộc (admin) | Xóa một ngành du học theo id. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia` | Bắt buộc (admin) | Thêm một quốc gia vào hướng đi du học. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia` | Bắt buộc (admin) | Xóa nhiều quốc gia theo danh sách id; dữ liệu con riêng của quốc gia bị xóa theo (CASCADE). |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia/bulk` | Bắt buộc (admin) | Thêm nhiều quốc gia cùng lúc. Từ chối nếu có hướng đi không tồn tại. |
+| `PUT` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một quốc gia. Không cho đổi hướng đi khi quốc gia đã có dữ liệu con. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia/{item_id}` | Bắt buộc (admin) | Xóa một quốc gia theo id; dữ liệu con riêng của quốc gia bị xóa theo (CASCADE). |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc` | Bắt buộc (admin) | Thêm một bước thủ tục du học. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc` | Bắt buộc (admin) | Xóa nhiều bước thủ tục du học theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc/bulk` | Bắt buộc (admin) | Thêm nhiều bước thủ tục du học cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một bước thủ tục du học theo id. |
+| `DELETE` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc/{item_id}` | Bắt buộc (admin) | Xóa một bước thủ tục du học theo id. |
 
 ### `danh-muc/tieu-chi-goi-y`
 
@@ -571,6 +608,17 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc | Lấy chi tiết một thành tích học tập, nghiên cứu theo id. |
 
+### `danh-muc/thpt-du-hoc`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/chi-phi/{item_id}` | Bắt buộc | Lấy chi tiết một khoản chi phí du học theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/huong-di/{item_id}` | Bắt buộc | Lấy chi tiết một hướng đi du học theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/kenh-ket-noi/{item_id}` | Bắt buộc | Lấy chi tiết một kênh kết nối du học theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/nganh/{item_id}` | Bắt buộc | Lấy chi tiết một ngành du học theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia/{item_id}` | Bắt buộc | Lấy chi tiết một quốc gia du học theo id. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc/{item_id}` | Bắt buộc | Lấy chi tiết một bước thủ tục du học theo id. |
+
 ### `danh-muc/tieu-chi-goi-y`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
@@ -844,6 +892,17 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu` | Không | Lấy danh sách thành tích học tập, nghiên cứu có phân trang, không cần đăng nhập. |
+
+### `danh-muc/thpt-du-hoc`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/chi-phi` | Không | Lấy danh sách khoản chi phí du học có phân trang và bộ lọc, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/huong-di` | Không | Lấy danh sách hướng đi du học có phân trang, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/kenh-ket-noi` | Không | Lấy danh sách kênh kết nối du học có phân trang và bộ lọc, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/nganh` | Không | Lấy danh sách ngành du học có phân trang và bộ lọc, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/quoc-gia` | Không | Lấy danh sách quốc gia du học có phân trang, lọc theo từ khóa và hướng đi. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thpt-du-hoc/thu-tuc` | Không | Lấy danh sách bước thủ tục du học có phân trang và bộ lọc, không cần đăng nhập. |
 
 ### `danh-muc/tieu-chi-goi-y`
 

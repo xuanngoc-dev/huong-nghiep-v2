@@ -355,6 +355,42 @@ const router = createRouter({
           meta: { title: 'Tiêu chí của nhóm nghề', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'danh-muc/thpt-du-hoc/huong-di',
+          name: 'thpt-du-hoc-huong-di',
+          component: () => import('@/views/admin/danh-muc/ThptDuHocHuongDi.vue'),
+          meta: { title: 'Hướng đi du học', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-du-hoc/quoc-gia',
+          name: 'thpt-du-hoc-quoc-gia',
+          component: () => import('@/views/admin/danh-muc/ThptDuHocQuocGia.vue'),
+          meta: { title: 'Quốc gia du học', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-du-hoc/nganh',
+          name: 'thpt-du-hoc-nganh',
+          component: () => import('@/views/admin/danh-muc/ThptDuHocNganh.vue'),
+          meta: { title: 'Ngành du học', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-du-hoc/chi-phi',
+          name: 'thpt-du-hoc-chi-phi',
+          component: () => import('@/views/admin/danh-muc/ThptDuHocChiPhi.vue'),
+          meta: { title: 'Chi phí du học', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-du-hoc/thu-tuc',
+          name: 'thpt-du-hoc-thu-tuc',
+          component: () => import('@/views/admin/danh-muc/ThptDuHocThuTuc.vue'),
+          meta: { title: 'Thủ tục du học', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-du-hoc/kenh-ket-noi',
+          name: 'thpt-du-hoc-kenh-ket-noi',
+          component: () => import('@/views/admin/danh-muc/ThptDuHocKenhKetNoi.vue'),
+          meta: { title: 'Kênh kết nối du học', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'danh-muc/linh-vuc-dao-tao',
           name: 'linh-vuc-dao-tao',
           component: () => import('@/views/admin/danh-muc/LinhVucDaoTao.vue'),
