@@ -15,7 +15,10 @@ for (const groups of Object.values(menuData)) {
   if (!Array.isArray(groups)) continue
   for (const group of groups) {
     for (const item of group.items || []) {
-      if (item?.index) loadingPaths.add(item.index)
+      // Mục có `children` là submenu: `index` của nó không phải route.
+      for (const muc of item?.children || [item]) {
+        if (muc?.index) loadingPaths.add(muc.index)
+      }
     }
   }
 }

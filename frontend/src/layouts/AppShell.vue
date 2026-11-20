@@ -193,12 +193,16 @@ const { navbarFixed, sidebarFixed, sidebarPushContent, isDark } = storeToRefs(la
 const brandName = 'Định hướng nghề'
 const menuGroups = computed(() => {
   const groups = menuData[props.area] || []
+  // `an: true` trong menu.json: ẩn tạm khỏi sidebar, route vẫn truy cập được.
+  const hienThi = (item) => !item.an && (!item.adminOnly || authStore.isAdmin)
+  const locMuc = (items) =>
+    (items || [])
+      .filter(hienThi)
+      .map((item) => (item.children ? { ...item, children: item.children.filter(hienThi) } : item))
+      // Submenu không còn mục con nào thì bỏ luôn.
+      .filter((item) => !item.children || item.children.length)
   return groups
-    .map((group) => ({
-      ...group,
-      // `an: true` trong menu.json: ẩn tạm khỏi sidebar, route vẫn truy cập được.
-      items: (group.items || []).filter((item) => !item.an && (!item.adminOnly || authStore.isAdmin)),
-    }))
+    .map((group) => ({ ...group, items: locMuc(group.items) }))
     .filter((group) => group.items.length)
 })
 const pinnedCollapsed = ref(false)
