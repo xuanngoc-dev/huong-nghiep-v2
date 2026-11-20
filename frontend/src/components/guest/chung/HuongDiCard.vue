@@ -22,6 +22,7 @@
   >
     <span class="huong-card__media">
       <img class="huong-card__anh" :src="image" alt="" loading="lazy" decoding="async" />
+      <span v-if="nhan" class="huong-card__nhan">{{ nhan }}</span>
     </span>
     <span class="huong-card__body">
       <span class="huong-card__ten">{{ title }}</span>
@@ -45,6 +46,8 @@ defineProps({
   description: { type: String, default: '' },
   // Dòng phụ dưới mô tả, ví dụ chi phí dự kiến.
   note: { type: String, default: '' },
+  // Nhãn nhỏ ở góc ảnh, ví dụ "Lớp 6 – 9".
+  nhan: { type: String, default: '' },
   to: { type: [Object, String], default: null },
   cta: { type: String, default: 'Xem chi tiết' },
   selected: { type: Boolean, default: false },
@@ -113,6 +116,19 @@ const emit = defineEmits(['chon'])
 
 .huong-card:not(.is-locked):hover .huong-card__anh {
   transform: scale(1.05);
+}
+
+.huong-card__nhan {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: var(--guest-radius-sm);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--guest-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
 .huong-card__body {
