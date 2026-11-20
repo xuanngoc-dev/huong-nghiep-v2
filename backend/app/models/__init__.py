@@ -13,6 +13,13 @@ from app.models.dm_nganh_hoc_theo_truong import DmNganhHocTheoTruong
 from app.models.dm_nhom_nganh_dao_tao import DmNhomNganhDaoTao
 from app.models.dm_nhom_nghe_di_lam import DmNgheCuTheDiLam, DmNhomNgheDiLam, DmNhomNgheTieuChi, DmTieuChiGoiY
 from app.models.dm_nhom_tinh_cach_holland import DmNhomTinhCachHolland
+from app.models.dm_thcs_huong_di import (
+    DmThcsHuongDi,
+    DmThcsHuongDiTieuChi,
+    DmThcsLoiKhuyenLuuY,
+    DmThcsTieuChi,
+    DmThcsUuNhuocDiem,
+)
 from app.models.dm_thpt_duhoc import (
     DmThptDuhocChiPhi,
     DmThptDuhocHuongDi,
@@ -115,6 +122,11 @@ __all__ = [
     "DmTieuChiGoiY",
     "DmNhomNgheTieuChi",
     "DmNhomTinhCachHolland",
+    "DmThcsHuongDi",
+    "DmThcsUuNhuocDiem",
+    "DmThcsTieuChi",
+    "DmThcsHuongDiTieuChi",
+    "DmThcsLoiKhuyenLuuY",
     "DmThptDuhocHuongDi",
     "DmThptDuhocQuocGia",
     "DmThptDuhocNganh",

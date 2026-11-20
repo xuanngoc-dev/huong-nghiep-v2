@@ -570,6 +570,44 @@
               "icon": "Connection"
             }
           ]
+        },
+        {
+          "index": "danh-muc:huong-di-thcs",
+          "title": "Hướng đi THCS",
+          "tooltip": "Học sinh sau THCS: hướng đi, ưu/nhược điểm, tiêu chí, điểm phù hợp, lời khuyên",
+          "icon": "School",
+          "children": [
+            {
+              "index": "/admin/danh-muc/thcs/huong-di",
+              "title": "Hướng đi",
+              "tooltip": "Hướng đi sau THCS: mô tả, chi phí, áp lực học tập, mức tự giác",
+              "icon": "Guide"
+            },
+            {
+              "index": "/admin/danh-muc/thcs/uu-nhuoc-diem",
+              "title": "Ưu/nhược điểm",
+              "tooltip": "Ưu điểm và nhược điểm của từng hướng đi",
+              "icon": "Switch"
+            },
+            {
+              "index": "/admin/danh-muc/thcs/tieu-chi",
+              "title": "Tiêu chí",
+              "tooltip": "Tiêu chí đánh giá mức phù hợp của hướng đi",
+              "icon": "List"
+            },
+            {
+              "index": "/admin/danh-muc/thcs/huong-di-tieu-chi",
+              "title": "Điểm phù hợp",
+              "tooltip": "Điểm phù hợp (1-5) của từng hướng đi theo tiêu chí",
+              "icon": "DataAnalysis"
+            },
+            {
+              "index": "/admin/danh-muc/thcs/loi-khuyen-luu-y",
+              "title": "Lời khuyên, lưu ý",
+              "tooltip": "Lời khuyên, lưu ý cho học sinh và phụ huynh theo hướng đi",
+              "icon": "ChatLineSquare"
+            }
+          ]
         }
       ]
     },

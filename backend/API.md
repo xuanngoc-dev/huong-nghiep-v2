@@ -1,16 +1,16 @@
 # Danh sách API
 
-Tự sinh từ code lúc 20/11/2026 11:58 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 20/11/2026 13:59 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **455** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **493** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 288 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
-| [Thành viên (user)](#thanh_vien) | 99 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
-| [Khách vãng lai](#khach) | 68 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
+| [Quản trị (admin)](#quan_tri) | 315 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Thành viên (user)](#thanh_vien) | 104 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
+| [Khách vãng lai](#khach) | 74 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
 
@@ -215,6 +215,38 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 | `POST` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/bulk` | Bắt buộc (admin) | Thêm nhiều thành tích học tập, nghiên cứu cùng lúc. |
 | `PUT` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một thành tích học tập, nghiên cứu theo id. |
 | `DELETE` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc (admin) | Xóa một thành tích học tập, nghiên cứu theo id. |
+
+### `danh-muc/thcs`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `POST` | `/api/v1/danh-muc/thcs/huong-di` | Bắt buộc (admin) | Thêm một hướng đi THCS. Từ chối nếu mã đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/thcs/huong-di` | Bắt buộc (admin) | Xóa nhiều hướng đi theo danh sách id; ưu/nhược điểm, điểm tiêu chí, lời khuyên bị xóa theo. |
+| `POST` | `/api/v1/danh-muc/thcs/huong-di-tieu-chi` | Bắt buộc (admin) | Chấm điểm phù hợp của một hướng đi với một tiêu chí. |
+| `DELETE` | `/api/v1/danh-muc/thcs/huong-di-tieu-chi` | Bắt buộc (admin) | Xóa nhiều điểm phù hợp theo danh sách khóa ghép. Cặp không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thcs/huong-di-tieu-chi/bulk` | Bắt buộc (admin) | Chấm điểm nhiều cặp hướng đi - tiêu chí cùng lúc. |
+| `PUT` | `/api/v1/danh-muc/thcs/huong-di-tieu-chi/{thcs_huong_di_id}/{thcs_tieu_chi_id}` | Bắt buộc (admin) | Cập nhật điểm phù hợp và nhận định tư vấn (không đổi được hướng đi/tiêu chí). |
+| `DELETE` | `/api/v1/danh-muc/thcs/huong-di-tieu-chi/{thcs_huong_di_id}/{thcs_tieu_chi_id}` | Bắt buộc (admin) | Xóa điểm phù hợp của một hướng đi với một tiêu chí. |
+| `POST` | `/api/v1/danh-muc/thcs/huong-di/bulk` | Bắt buộc (admin) | Thêm nhiều hướng đi cùng lúc. Từ chối nếu mã trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PATCH` | `/api/v1/danh-muc/thcs/huong-di/trang-thai` | Bắt buộc (admin) | Bật/tắt nhiều hướng đi cùng lúc. Id không tồn tại thì bỏ qua. |
+| `PUT` | `/api/v1/danh-muc/thcs/huong-di/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một hướng đi THCS theo id. |
+| `DELETE` | `/api/v1/danh-muc/thcs/huong-di/{item_id}` | Bắt buộc (admin) | Xóa một hướng đi theo id; ưu/nhược điểm, điểm tiêu chí, lời khuyên bị xóa theo (CASCADE). |
+| `PATCH` | `/api/v1/danh-muc/thcs/huong-di/{item_id}/trang-thai` | Bắt buộc (admin) | Bật/tắt nhanh một hướng đi, giữ nguyên các thông tin khác. |
+| `POST` | `/api/v1/danh-muc/thcs/loi-khuyen-luu-y` | Bắt buộc (admin) | Thêm một lời khuyên, lưu ý cho hướng đi. |
+| `DELETE` | `/api/v1/danh-muc/thcs/loi-khuyen-luu-y` | Bắt buộc (admin) | Xóa nhiều lời khuyên, lưu ý theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thcs/loi-khuyen-luu-y/bulk` | Bắt buộc (admin) | Thêm nhiều lời khuyên, lưu ý cùng lúc. Từ chối nếu có hướng đi không tồn tại. |
+| `PUT` | `/api/v1/danh-muc/thcs/loi-khuyen-luu-y/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một lời khuyên, lưu ý. |
+| `DELETE` | `/api/v1/danh-muc/thcs/loi-khuyen-luu-y/{item_id}` | Bắt buộc (admin) | Xóa một lời khuyên, lưu ý theo id. |
+| `POST` | `/api/v1/danh-muc/thcs/tieu-chi` | Bắt buộc (admin) | Thêm một tiêu chí THCS. Từ chối nếu mã đã tồn tại. |
+| `DELETE` | `/api/v1/danh-muc/thcs/tieu-chi` | Bắt buộc (admin) | Xóa nhiều tiêu chí theo danh sách id; điểm phù hợp của các hướng đi với tiêu chí bị xóa theo. |
+| `POST` | `/api/v1/danh-muc/thcs/tieu-chi/bulk` | Bắt buộc (admin) | Thêm nhiều tiêu chí cùng lúc. Từ chối nếu mã trùng trong dữ liệu gửi lên hoặc đã có trong hệ thống. |
+| `PUT` | `/api/v1/danh-muc/thcs/tieu-chi/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một tiêu chí THCS theo id. |
+| `DELETE` | `/api/v1/danh-muc/thcs/tieu-chi/{item_id}` | Bắt buộc (admin) | Xóa một tiêu chí theo id; điểm phù hợp của các hướng đi với tiêu chí bị xóa theo (CASCADE). |
+| `POST` | `/api/v1/danh-muc/thcs/uu-nhuoc-diem` | Bắt buộc (admin) | Thêm một ưu/nhược điểm cho hướng đi. |
+| `DELETE` | `/api/v1/danh-muc/thcs/uu-nhuoc-diem` | Bắt buộc (admin) | Xóa nhiều ưu/nhược điểm theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `POST` | `/api/v1/danh-muc/thcs/uu-nhuoc-diem/bulk` | Bắt buộc (admin) | Thêm nhiều ưu/nhược điểm cùng lúc. Từ chối nếu có hướng đi không tồn tại. |
+| `PUT` | `/api/v1/danh-muc/thcs/uu-nhuoc-diem/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một ưu/nhược điểm. |
+| `DELETE` | `/api/v1/danh-muc/thcs/uu-nhuoc-diem/{item_id}` | Bắt buộc (admin) | Xóa một ưu/nhược điểm theo id. |
 
 ### `danh-muc/thpt-du-hoc`
 
@@ -645,6 +677,16 @@ Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401.
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu/{item_id}` | Bắt buộc | Lấy chi tiết một thành tích học tập, nghiên cứu theo id. |
 
+### `danh-muc/thcs`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/thcs/huong-di-tieu-chi/{thcs_huong_di_id}/{thcs_tieu_chi_id}` | Bắt buộc | Lấy chi tiết điểm phù hợp của một hướng đi với một tiêu chí. |
+| `GET` | `/api/v1/danh-muc/thcs/huong-di/{item_id}` | Bắt buộc | Lấy chi tiết một hướng đi THCS theo id. |
+| `GET` | `/api/v1/danh-muc/thcs/loi-khuyen-luu-y/{item_id}` | Bắt buộc | Lấy chi tiết một lời khuyên, lưu ý theo id. |
+| `GET` | `/api/v1/danh-muc/thcs/tieu-chi/{item_id}` | Bắt buộc | Lấy chi tiết một tiêu chí THCS theo id. |
+| `GET` | `/api/v1/danh-muc/thcs/uu-nhuoc-diem/{item_id}` | Bắt buộc | Lấy chi tiết một ưu/nhược điểm theo id. |
+
 ### `danh-muc/thpt-du-hoc`
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
@@ -940,6 +982,17 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
 | `GET` | `/api/v1/danh-muc/thanh-tich-hoc-tap-nghien-cuu` | Không | Lấy danh sách thành tích học tập, nghiên cứu có phân trang, không cần đăng nhập. |
+
+### `danh-muc/thcs`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/danh-muc/thcs/huong-di` | Không | Lấy danh sách hướng đi sau THCS có phân trang, không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thcs/huong-di-tieu-chi` | Không | Lấy danh sách điểm phù hợp hướng đi - tiêu chí có phân trang. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thcs/loi-khuyen-luu-y` | Không | Lấy danh sách lời khuyên, lưu ý có phân trang, lọc theo từ khóa, hướng đi, đối tượng. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thcs/tieu-chi` | Không | Lấy danh sách tiêu chí THCS có phân trang, lọc theo từ khóa và nhóm tiêu chí. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thcs/tieu-chi/nhom` | Không | Các nhóm tiêu chí đang dùng (để gợi ý khi nhập và lọc). Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/thcs/uu-nhuoc-diem` | Không | Lấy danh sách ưu/nhược điểm có phân trang, lọc theo từ khóa, hướng đi, loại. Không cần đăng nhập. |
 
 ### `danh-muc/thpt-du-hoc`
 

@@ -427,6 +427,36 @@ const router = createRouter({
           meta: { title: 'Kênh kết nối xuất khẩu lao động', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'danh-muc/thcs/huong-di',
+          name: 'thcs-huong-di',
+          component: () => import('@/views/admin/danh-muc/ThcsHuongDi.vue'),
+          meta: { title: 'Hướng đi sau THCS', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thcs/uu-nhuoc-diem',
+          name: 'thcs-uu-nhuoc-diem',
+          component: () => import('@/views/admin/danh-muc/ThcsUuNhuocDiem.vue'),
+          meta: { title: 'Ưu/nhược điểm hướng đi THCS', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thcs/tieu-chi',
+          name: 'thcs-tieu-chi',
+          component: () => import('@/views/admin/danh-muc/ThcsTieuChi.vue'),
+          meta: { title: 'Tiêu chí hướng đi THCS', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thcs/huong-di-tieu-chi',
+          name: 'thcs-huong-di-tieu-chi',
+          component: () => import('@/views/admin/danh-muc/ThcsHuongDiTieuChi.vue'),
+          meta: { title: 'Điểm phù hợp hướng đi THCS', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thcs/loi-khuyen-luu-y',
+          name: 'thcs-loi-khuyen-luu-y',
+          component: () => import('@/views/admin/danh-muc/ThcsLoiKhuyenLuuY.vue'),
+          meta: { title: 'Lời khuyên, lưu ý hướng đi THCS', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'danh-muc/linh-vuc-dao-tao',
           name: 'linh-vuc-dao-tao',
           component: () => import('@/views/admin/danh-muc/LinhVucDaoTao.vue'),
