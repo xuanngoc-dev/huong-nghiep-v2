@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { GIAI_DOAN_CON_KEY } from './capHoc'
+import { GIAI_DOAN_CON_KEY, laGiaiDoanMo } from './capHoc'
 import { routeNameGiaiDoanCon } from './routes'
 
 // Giai đoạn của con phụ huynh đã chọn gần nhất (lưu sessionStorage) và chuyển sang màn tương ứng.
@@ -9,6 +9,7 @@ export function useGiaiDoanCon() {
   const giaiDoanDaChon = ref(sessionStorage.getItem(GIAI_DOAN_CON_KEY) || '')
 
   function chonGiaiDoan(giaiDoan) {
+    if (!laGiaiDoanMo(giaiDoan)) return
     giaiDoanDaChon.value = giaiDoan
     sessionStorage.setItem(GIAI_DOAN_CON_KEY, giaiDoan)
     const name = routeNameGiaiDoanCon(giaiDoan)

@@ -21,6 +21,10 @@ COPY backend/alembic ./alembic
 COPY backend/data ./data
 COPY backend/app ./app
 COPY data_dh_json /srv/data_dh_json
+COPY docs/de-an-tuyen-sinh/chuan_du_lieu/mau_import_day_du.json \
+     docs/de-an-tuyen-sinh/chuan_du_lieu/du_lieu_mau_da_sua.json \
+     docs/de-an-tuyen-sinh/chuan_du_lieu/de_an_xet_tuyen.schema.json \
+     /srv/docs/de-an-tuyen-sinh/chuan_du_lieu/
 RUN mkdir -p logs thu_vien tai_lieu
 
 EXPOSE 3060

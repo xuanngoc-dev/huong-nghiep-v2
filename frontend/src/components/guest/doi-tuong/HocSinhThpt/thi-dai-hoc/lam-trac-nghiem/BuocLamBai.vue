@@ -27,8 +27,10 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
 import { useTenRouteThpt } from '../../useTenRouteThpt'
+import { useLuongKhaoSat } from '../../luongKhaoSat'
 
 const { tenRoute } = useTenRouteThpt()
+const { luong, laBuocCauHoi, timBuocCuoi } = useLuongKhaoSat()
 
 const props = defineProps({
   ssid: { type: String, required: true },
@@ -46,18 +48,15 @@ function queryMaNganh() {
 
 function trangThai(step) {
   if (String(step.id) === String(props.hienTai)) return 'dang'
-  if (step.xong || String(props.hienTai) === 'ket-qua') return 'xong'
+  // Đang ở bước cuối của luồng (thi đại học: Kết quả; đi làm: Nhóm nghề phù hợp) thì mọi bước trước đã xong.
+  if (step.xong || String(props.hienTai) === String(luong.value.buocCuoi.at(-1).id)) return 'xong'
   return 'chua'
-}
-
-function laBuocCauHoi(step) {
-  return step.id !== 'nganh-phu-hop' && step.id !== 'ket-qua'
 }
 
 function biKhoa(index) {
   const step = props.buoc[index]
   if (!step || String(step.id) === String(props.hienTai)) return false
-  if (step.id === 'nganh-phu-hop' || step.id === 'ket-qua') {
+  if (!laBuocCauHoi(step)) {
     return props.buoc.some((item) => laBuocCauHoi(item) && !item.xong)
   }
   const hienTai = props.buoc.findIndex((item) => String(item.id) === String(props.hienTai))
@@ -67,16 +66,13 @@ function biKhoa(index) {
 
 function mo(step, index) {
   if (biKhoa(index) || String(step.id) === String(props.hienTai)) return
-  if (step.id === 'nganh-phu-hop') {
-    router.push({ name: tenRoute('thpt-thi-dai-hoc-nganh-phu-hop'), params: { ssid: props.ssid }, query: queryMaNganh() })
-    return
-  }
-  if (step.id === 'ket-qua') {
-    router.push({ name: tenRoute('thpt-thi-dai-hoc-ket-qua'), params: { ssid: props.ssid }, query: queryMaNganh() })
+  const buocCuoi = timBuocCuoi(step.id)
+  if (buocCuoi) {
+    router.push({ name: tenRoute(buocCuoi.route), params: { ssid: props.ssid }, query: queryMaNganh() })
     return
   }
   router.push({
-    name: tenRoute('thpt-thi-dai-hoc-lam-trac-nghiem'),
+    name: tenRoute(luong.value.lamBai),
     params: { ssid: props.ssid, loaiCauHoiId: step.id },
     query: queryMaNganh(),
   })

@@ -104,7 +104,16 @@
         </div>
 
         <div class="col-lg-3">
-          <div class="paths-card">
+          <div v-if="laDiLam" class="paths-card">
+            <h2 class="h4 mb-2">Đi làm ngay sau khi tốt nghiệp</h2>
+            <p class="holland-note__text mb-3">
+              Sau khi làm bài, hệ thống gợi ý các nhóm nghề đi làm hợp với nhóm tính cách nổi trội của bạn.
+            </p>
+            <RouterLink class="btn btn-outline-success w-100" :to="{ name: tenRoute('thpt-di-lam') }">
+              Xem tất cả nhóm nghề
+            </RouterLink>
+          </div>
+          <div v-else class="paths-card">
             <h2 id="chon-lai-giai-doan" class="h4 mb-3">Chọn lại giai đoạn</h2>
             <div class="d-flex flex-column gap-3" aria-labelledby="chon-lai-giai-doan">
               <button
@@ -136,9 +145,11 @@ import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { batDauPhienHolland } from '@/api/phienKhaoSat'
 import { fetchLoaiCauHoi } from '@/api/loaiCauHoi'
+import { maDoiTuongTheoDinhHuong } from '@/constants/doiTuongApDung'
 import { GIAI_DOAN_THI_DAI_HOC_KEY, giaiDoanThiDaiHocList } from './giaiDoan'
 import { routeNameGiaiDoanThiDaiHoc } from '../routes'
 import { useTenRouteThpt } from '../useTenRouteThpt'
+import { useLuongKhaoSat } from '../luongKhaoSat'
 
 const { tenRoute, tienTo } = useTenRouteThpt()
 
@@ -149,6 +160,11 @@ const auth = useAuthStore()
 const route = useRoute()
 const router = useRouter()
 const currentStage = computed(() => route.meta.giaiDoan || '')
+// Đối tượng theo hướng đi đang đứng (thi-dai-hoc → 1): chỉ hiện và làm loại câu hỏi áp dụng cho đối tượng này.
+const doiTuongApDung = computed(() => maDoiTuongTheoDinhHuong(route.meta.dinhHuong))
+// Dùng chung cho hướng thi đại học và đi làm: route làm bài, các bước cuối lấy theo luồng của hướng đi.
+const { luong } = useLuongKhaoSat()
+const laDiLam = computed(() => route.meta.dinhHuong === 'di-lam')
 const dangTaoPhien = ref(false)
 
 const loaiCauHoiSteps = ref([])
@@ -156,8 +172,7 @@ const loaiCauHoiSteps = ref([])
 const pathSteps = computed(() => [
   { key: 'bat-dau', label: 'Bắt đầu', current: true },
   ...loaiCauHoiSteps.value,
-  { key: 'nganh-phu-hop', label: 'Ngành phù hợp' },
-  { key: 'ket-qua', label: 'Kết quả' },
+  ...luong.value.buocCuoi.map((step) => ({ key: step.id, label: step.ten })),
 ])
 
 const beforeTips = [
@@ -178,7 +193,9 @@ const duringTips = [
 
 async function loadLoaiCauHoiSteps() {
   try {
-    const data = await fetchLoaiCauHoi({ trang_thai: 1, page: 1, page_size: 1000 })
+    const params = { trang_thai: 1, page: 1, page_size: 1000 }
+    if (doiTuongApDung.value) params.doi_tuong_ap_dung = doiTuongApDung.value
+    const data = await fetchLoaiCauHoi(params)
     loaiCauHoiSteps.value = (data.items || []).map((item) => ({
       key: `loai-${item.id}`,
       label: item.ten_loai_cau_hoi,
@@ -209,9 +226,9 @@ async function batDauHolland() {
   if (dangTaoPhien.value) return
   dangTaoPhien.value = true
   try {
-    const phien = await batDauPhienHolland()
+    const phien = await batDauPhienHolland(doiTuongApDung.value)
     router.push({
-      name: tenRoute('thpt-thi-dai-hoc-lam-trac-nghiem'),
+      name: tenRoute(luong.value.lamBai),
       params: { ssid: phien.ssid, loaiCauHoiId: phien.loai_cau_hoi_id },
       query: queryMaNganh(),
     })

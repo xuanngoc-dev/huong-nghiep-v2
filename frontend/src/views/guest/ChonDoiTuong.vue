@@ -2,7 +2,7 @@
   <section class="py-5">
     <div class="container-fluid">
       <div class="row g-4">
-        <div class="col-lg-9 col-xxl-10">
+        <div class="col-lg-9 col-xxl-9">
           <div class="mb-4">
             <h1 class="h2 mb-2">Bạn thuộc đối tượng nào?</h1>
             <p class="text-secondary mb-0">
@@ -11,7 +11,7 @@
           </div>
 
           <div class="row g-3">
-            <div v-for="audience in audiences" :key="audience.code" class="col-md-6 col-xl-4 col-xxl-4">
+            <div v-for="audience in audiences" :key="audience.code" class="col-12 col-md-6">
               <DoiTuongCard
                 :image="audience.image"
                 :ma="audience.ma"
@@ -25,7 +25,7 @@
           </div>
         </div>
 
-        <div class="col-lg-3 col-xxl-2">
+        <div class="col-lg-3 col-xxl-3">
           <TinTucMoi />
         </div>
       </div>

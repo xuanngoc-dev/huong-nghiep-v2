@@ -12,15 +12,18 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user, get_current_user, get_optional_user
 from app.db.session import get_db
-from app.models.dm_loai_cau_hoi import DmLoaiCauHoi
+from app.constants.doi_tuong_ap_dung import DOI_TUONG_AP_DUNG
+from app.models.dm_loai_cau_hoi import THU_TU_LOAI_CAU_HOI, DmLoaiCauHoi
 from app.models.dm_nganh_dao_tao import DmNganhDaoTao
 from app.models.dm_nhom_nganh_dao_tao import DmNhomNganhDaoTao
+from app.models.dm_nhom_nghe_di_lam import DmNhomNgheDiLam
 from app.models.dm_nhom_tinh_cach_holland import DmNhomTinhCachHolland
 from app.models.nguoi_dung import NguoiDung
 from app.models.tn_cau_hoi_trac_nghiem import TnCauHoiTracNghiem
 from app.models.tn_cau_tra_loi import TnCauTraLoi
 from app.models.tn_chi_tiet_tra_loi import TnChiTietTraLoi
 from app.models.tn_phien_khao_sat import TnPhienKhaoSat
+from app.schemas.dm_nhom_nghe_di_lam import DmNhomNgheDiLamPublic
 from app.schemas.tn_phien_khao_sat import (
     TnPhienBuocPublic,
     TnPhienCauHoiPublic,
@@ -36,6 +39,8 @@ from app.schemas.tn_phien_khao_sat import (
     TnPhienLoaiCauHoiPublic,
     TnPhienNganhPhuHopItem,
     TnPhienNganhPhuHopPublic,
+    TnPhienNhomNgheItem,
+    TnPhienNhomNghePhuHopPublic,
     TnPhienQuanTriItem,
     TnPhienQuanTriPage,
     TnPhienTraLoiWrite,
@@ -75,22 +80,29 @@ def _like_pattern(value: str) -> str:
     return f"%{escaped}%"
 
 
-def _chon_cau_hoi(db: Session) -> list[tuple[int, int]]:
-    """Mỗi loại câu hỏi đang hoạt động, mỗi mã Holland đang hoạt động, lấy ngẫu nhiên 2 câu."""
-    loai_list = db.scalars(
-        select(DmLoaiCauHoi)
-        .where(DmLoaiCauHoi.trang_thai == 1)
-        .order_by(DmLoaiCauHoi.thu_tu_uu_tien.asc())
-    ).all()
+def _chon_cau_hoi(db: Session, doi_tuong_ap_dung: int | None = None) -> list[tuple[int, int]]:
+    """Mỗi loại câu hỏi đang hoạt động, mỗi mã Holland đang hoạt động, lấy ngẫu nhiên 2 câu.
+
+    Có `doi_tuong_ap_dung` thì chỉ lấy loại câu hỏi áp dụng cho đối tượng đó (mảng doi_tuong_ap_dung chứa mã).
+    """
+    loc_loai = [DmLoaiCauHoi.trang_thai == 1]
+    if doi_tuong_ap_dung is not None:
+        loc_loai.append(func.json_contains(DmLoaiCauHoi.doi_tuong_ap_dung, str(doi_tuong_ap_dung)) == 1)
+    loai_list = db.scalars(select(DmLoaiCauHoi).where(*loc_loai).order_by(*THU_TU_LOAI_CAU_HOI)).all()
     holland_list = db.scalars(
         select(DmNhomTinhCachHolland)
         .where(DmNhomTinhCachHolland.trang_thai == 1)
         .order_by(DmNhomTinhCachHolland.ma_nhom.asc())
     ).all()
     if not loai_list:
+        doi_tuong = DOI_TUONG_AP_DUNG.get(doi_tuong_ap_dung)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Chưa có loại câu hỏi đang hoạt động",
+            detail=(
+                f"Chưa có loại câu hỏi đang hoạt động cho đối tượng: {doi_tuong['ten']}"
+                if doi_tuong
+                else "Chưa có loại câu hỏi đang hoạt động"
+            ),
         )
     if not holland_list:
         raise HTTPException(
@@ -132,14 +144,27 @@ def _chon_cau_hoi(db: Session) -> list[tuple[int, int]]:
 
 @router.post("", response_model=TnPhienKhaoSatPublic, status_code=status.HTTP_201_CREATED)
 def bat_dau_holland(
+    doi_tuong_ap_dung: int | None = Query(
+        default=None, ge=1, description="Mã đối tượng (app/constants/doi_tuong_ap_dung.py); bỏ trống = mọi loại"
+    ),
     db: Session = Depends(get_db),
     current_user: NguoiDung | None = Depends(get_optional_user),
 ) -> TnPhienKhaoSatPublic:
-    """Tạo phiên khảo sát Holland và gán danh sách câu hỏi cho phiên đó."""
-    picked = _chon_cau_hoi(db)
+    """Tạo phiên khảo sát Holland và gán danh sách câu hỏi cho phiên đó.
+
+    Truyền `doi_tuong_ap_dung` (vd. 1: thi ĐH & CĐ, 2: đi làm ngay) để chỉ lấy loại câu hỏi áp dụng cho đối tượng.
+    """
+    if doi_tuong_ap_dung is not None and doi_tuong_ap_dung not in DOI_TUONG_AP_DUNG:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy đối tượng áp dụng có mã = {doi_tuong_ap_dung}",
+        )
+    picked = _chon_cau_hoi(db, doi_tuong_ap_dung)
     phien = TnPhienKhaoSat(
         ssid=_new_ssid(db),
         nguoi_khao_sat_id=current_user.id if current_user else None,
+        # Định hướng làm bài dùng chung mã với đối tượng áp dụng của loại câu hỏi.
+        dinh_huong=doi_tuong_ap_dung,
     )
     db.add(phien)
     db.flush()
@@ -159,6 +184,7 @@ def bat_dau_holland(
         ssid=phien.ssid,
         nguoi_khao_sat_id=phien.nguoi_khao_sat_id,
         ma_giao_dich=phien.ma_giao_dich,
+        dinh_huong=phien.dinh_huong,
         loai_cau_hoi_id=picked[0][0],
         so_cau_hoi=len(picked),
         created_at=phien.created_at,
@@ -173,9 +199,12 @@ def _dieu_kien_loc(
     trang_thai: TrangThaiPhien | None,
     tu_ngay: date | None,
     den_ngay: date | None,
+    dinh_huong: int | None = None,
 ) -> list:
     """Điều kiện lọc phiên dùng chung cho lịch sử thành viên và trang quản trị."""
     dieu_kien = []
+    if dinh_huong is not None:
+        dieu_kien.append(TnPhienKhaoSat.dinh_huong == dinh_huong)
     if q and q.strip():
         pattern = _like_pattern(q.strip())
         dieu_kien.append(
@@ -220,8 +249,10 @@ def _tom_tat_phien(db: Session, phien_list) -> dict[str, dict]:
             )
             .join(DmLoaiCauHoi, TnChiTietTraLoi.loai_cau_hoi_id == DmLoaiCauHoi.id)
             .where(TnChiTietTraLoi.ssid.in_(ssids))
-            .group_by(TnChiTietTraLoi.ssid, DmLoaiCauHoi.id, DmLoaiCauHoi.thu_tu_uu_tien)
-            .order_by(DmLoaiCauHoi.thu_tu_uu_tien.asc())
+            .group_by(
+                TnChiTietTraLoi.ssid, DmLoaiCauHoi.id, DmLoaiCauHoi.thu_tu_uu_tien, DmLoaiCauHoi.created_at
+            )
+            .order_by(*THU_TU_LOAI_CAU_HOI)
         ).all():
             tong, da_tra_loi = int(tong or 0), int(da_tra_loi or 0)
             dem[ssid][0] += tong
@@ -258,6 +289,7 @@ def _tom_tat_phien(db: Session, phien_list) -> dict[str, dict]:
             "da_xong": tong > 0 and da_tra_loi == tong,
             "loai_cau_hoi_id_tiep": buoc_tiep.get(phien.ssid),
             "ma_noi_bat": "".join(ma for ma in xep_hang[:3] if diem_phien.get(ma, 0) > 0),
+            "dinh_huong": phien.dinh_huong,
             "created_at": phien.created_at,
         }
     return tom_tat
@@ -267,6 +299,7 @@ def _tom_tat_phien(db: Session, phien_list) -> dict[str, dict]:
 def lich_su_khao_sat(
     q: str | None = Query(default=None, max_length=64),
     trang_thai: TrangThaiPhien | None = Query(default=None),
+    dinh_huong: int | None = Query(default=None, ge=1, description="Mã định hướng (app/constants/doi_tuong_ap_dung.py)"),
     tu_ngay: date | None = Query(default=None),
     den_ngay: date | None = Query(default=None),
     page: int = Query(default=1, ge=1),
@@ -274,10 +307,10 @@ def lich_su_khao_sat(
     db: Session = Depends(get_db),
     current_user: NguoiDung = Depends(get_current_user),
 ) -> TnPhienLichSuPage:
-    """Lịch sử các phiên khảo sát của người dùng đang đăng nhập, mới nhất trước."""
+    """Lịch sử các phiên khảo sát của người dùng đang đăng nhập, mới nhất trước. Lọc được theo định hướng."""
     dieu_kien = [
         TnPhienKhaoSat.nguoi_khao_sat_id == current_user.id,
-        *_dieu_kien_loc(q, trang_thai, tu_ngay, den_ngay),
+        *_dieu_kien_loc(q, trang_thai, tu_ngay, den_ngay, dinh_huong),
     ]
     total = db.scalar(select(func.count()).select_from(TnPhienKhaoSat).where(*dieu_kien)) or 0
     phien_list = db.scalars(
@@ -302,6 +335,7 @@ def danh_sach_phien_quan_tri(
     nguoi_tham_gia: str | None = Query(default=None, max_length=255),
     doi_tuong: Literal["thanh-vien", "khach"] | None = Query(default=None),
     trang_thai: TrangThaiPhien | None = Query(default=None),
+    dinh_huong: int | None = Query(default=None, ge=1, description="Mã định hướng (app/constants/doi_tuong_ap_dung.py)"),
     tu_ngay: date | None = Query(default=None),
     den_ngay: date | None = Query(default=None),
     page: int = Query(default=1, ge=1),
@@ -311,9 +345,9 @@ def danh_sach_phien_quan_tri(
     """Tất cả phiên khảo sát cho quản trị, mới nhất trước.
 
     Lọc theo mã giao dịch/ssid (`q`), người tham gia (họ tên, email, số điện thoại),
-    thành viên hay khách, tình trạng hoàn thành và khoảng ngày tạo phiên.
+    thành viên hay khách, định hướng khi làm bài, tình trạng hoàn thành và khoảng ngày tạo phiên.
     """
-    dieu_kien = _dieu_kien_loc(q, trang_thai, tu_ngay, den_ngay)
+    dieu_kien = _dieu_kien_loc(q, trang_thai, tu_ngay, den_ngay, dinh_huong)
     if nguoi_tham_gia and nguoi_tham_gia.strip():
         pattern = _like_pattern(nguoi_tham_gia.strip())
         dieu_kien.append(
@@ -416,7 +450,7 @@ def lay_de_bai(ssid: str, db: Session = Depends(get_db)) -> TnPhienLamBaiPublic:
         .join(TnCauHoiTracNghiem, TnChiTietTraLoi.cau_hoi_id == TnCauHoiTracNghiem.id)
         .join(DmLoaiCauHoi, TnChiTietTraLoi.loai_cau_hoi_id == DmLoaiCauHoi.id)
         .where(TnChiTietTraLoi.ssid == ssid)
-        .order_by(DmLoaiCauHoi.thu_tu_uu_tien.asc(), TnChiTietTraLoi.id.asc())
+        .order_by(*THU_TU_LOAI_CAU_HOI, TnChiTietTraLoi.id.asc())
     ).all()
     question_ids = [cau_hoi.id for _chi_tiet, cau_hoi, _loai in rows]
     answers: dict[int, list[TnCauTraLoi]] = defaultdict(list)
@@ -545,8 +579,10 @@ def _thong_ke_phien(db: Session, ssid: str):
         select(DmLoaiCauHoi.id, DmLoaiCauHoi.ten_loai_cau_hoi)
         .join(TnChiTietTraLoi, TnChiTietTraLoi.loai_cau_hoi_id == DmLoaiCauHoi.id)
         .where(TnChiTietTraLoi.ssid == ssid)
-        .group_by(DmLoaiCauHoi.id, DmLoaiCauHoi.ten_loai_cau_hoi, DmLoaiCauHoi.thu_tu_uu_tien)
-        .order_by(DmLoaiCauHoi.thu_tu_uu_tien.asc())
+        .group_by(
+            DmLoaiCauHoi.id, DmLoaiCauHoi.ten_loai_cau_hoi, DmLoaiCauHoi.thu_tu_uu_tien, DmLoaiCauHoi.created_at
+        )
+        .order_by(*THU_TU_LOAI_CAU_HOI)
     ).all()
     buoc = [TnPhienBuocPublic(id=loai_id, ten=ten) for loai_id, ten in buoc_rows]
     return tong, da_tra_loi, nhom, buoc
@@ -572,13 +608,56 @@ def lay_ket_qua(ssid: str, db: Session = Depends(get_db)) -> TnPhienKetQuaPublic
     )
 
 
+def _trong_so_holland(nhom: list[TnPhienDiemHolland]) -> dict[str, int]:
+    """Trọng số từng mã Holland có điểm: mã đứng đầu (điểm cao nhất) nặng nhất."""
+    ma_co_diem = [item.ma_nhom for item in nhom if item.diem > 0]
+    return {ma: len(ma_co_diem) - index for index, ma in enumerate(ma_co_diem)}
+
+
+@router.get("/{ssid}/nhom-nghe-phu-hop", response_model=TnPhienNhomNghePhuHopPublic)
+def lay_nhom_nghe_phu_hop(ssid: str, db: Session = Depends(get_db)) -> TnPhienNhomNghePhuHopPublic:
+    """Nhóm nghề đi làm (dm_nhom_nghe_di_lam đang hoạt động) khớp các mã Holland nổi bật của phiên.
+
+    ma_holland của nhóm nghề là chuỗi các chữ RIASEC (vd. "RAS"). Chỉ xét 3 mã nổi bật (ma_noi_bat) với trọng số
+    3/2/1: điểm khớp = tổng trọng số các chữ trùng; nhóm không trùng mã nổi bật nào thì không gợi ý.
+    """
+    phien = _phien_or_400(db, ssid)
+    tong, da_tra_loi, nhom, buoc = _thong_ke_phien(db, ssid)
+    ma_noi_bat = _ma_noi_bat(nhom)
+    trong_so = {ma: len(ma_noi_bat) - index for index, ma in enumerate(ma_noi_bat)}
+    hang: list[TnPhienNhomNgheItem] = []
+    if trong_so:
+        for nhom_nghe in db.scalars(
+            select(DmNhomNgheDiLam).where(DmNhomNgheDiLam.trang_thai == 1).order_by(DmNhomNgheDiLam.ma_nhom.asc())
+        ).all():
+            ma_khop = [ma for ma in dict.fromkeys((nhom_nghe.ma_holland or "").upper()) if ma in trong_so]
+            diem = sum(trong_so[ma] for ma in ma_khop)
+            if diem > 0:
+                hang.append(
+                    TnPhienNhomNgheItem(
+                        **DmNhomNgheDiLamPublic.model_validate(nhom_nghe).model_dump(),
+                        diem_khop=diem,
+                        ma_khop=ma_khop,
+                    )
+                )
+        hang.sort(key=lambda item: (-item.diem_khop, item.ma_nhom))
+    return TnPhienNhomNghePhuHopPublic(
+        ssid=phien.ssid,
+        ma_giao_dich=phien.ma_giao_dich,
+        da_xong=tong > 0 and da_tra_loi == tong,
+        ma_noi_bat=ma_noi_bat,
+        buoc=buoc,
+        nhom=nhom,
+        nhom_nghe=hang,
+    )
+
+
 @router.get("/{ssid}/nganh-phu-hop", response_model=TnPhienNganhPhuHopPublic)
 def lay_nganh_phu_hop(ssid: str, db: Session = Depends(get_db)) -> TnPhienNganhPhuHopPublic:
     """Ngành đào tạo khớp các mã Holland nổi bật của phiên."""
     phien = _phien_or_400(db, ssid)
     tong, da_tra_loi, nhom, buoc = _thong_ke_phien(db, ssid)
-    ma_co_diem = [item.ma_nhom for item in nhom if item.diem > 0]
-    trong_so = {ma: len(ma_co_diem) - index for index, ma in enumerate(ma_co_diem)}
+    trong_so = _trong_so_holland(nhom)
     hang = []
     if trong_so:
         rows = db.execute(

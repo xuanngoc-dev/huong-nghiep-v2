@@ -1,6 +1,8 @@
 import { taoRoutesDinhHuongThpt } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
+import { taoRoutesThcs } from '@/components/guest/doi-tuong/HocSinhThcs/routes'
 
 export const TIEN_TO_LOP_12 = 'ph-lop-12'
+export const TIEN_TO_THCS = 'ph-thcs'
 
 // `meta.capHoc`: route con của màn cấp học nào (dùng cho breadcrumb và nút quay lại).
 export const giaiDoanConRoutes = [
@@ -34,6 +36,12 @@ export const giaiDoanConRoutes = [
     component: () => import('./DaTotNghiep.vue'),
     meta: { title: 'Con đã tốt nghiệp THPT', public: true, giaiDoanCon: 'da-tot-nghiep' },
   },
+  // Con học THCS: dùng lại trang chi tiết hướng đi, tự đánh giá của học sinh THCS.
+  ...taoRoutesThcs({
+    duongDan: 'phu-huynh/thcs',
+    tienTo: TIEN_TO_THCS,
+    goc: 'phu-huynh-thcs',
+  }),
   // Con lớp 12: dùng lại toàn bộ luồng chọn định hướng, trắc nghiệm của học sinh THPT.
   ...taoRoutesDinhHuongThpt({
     duongDan: 'phu-huynh/thpt/lop-12',

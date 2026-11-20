@@ -13,17 +13,15 @@
           <div class="stages-card">
             <h2 class="stages-heading">Con đang học lớp mấy?</h2>
             <div class="row g-3">
-              <div v-for="lop in thpt.lop" :key="lop.code" class="col-md-6">
-                <article class="stage-card h-100" :class="{ 'is-selected': giaiDoanDaChon === lop.giaiDoan }">
-                  <div class="stage-card__media">
-                    <img class="stage-card__image" :src="lop.image" :alt="lop.name" />
-                    <button type="button" class="stage-card__button" @click="chonGiaiDoan(lop.giaiDoan)">
-                      Bắt đầu
-                    </button>
-                  </div>
-                  <h3 class="stage-card__title">{{ lop.name }}</h3>
-                  <p class="stage-card__text">{{ lop.description }}</p>
-                </article>
+              <div v-for="lop in thpt.lop" :key="lop.code" class="col-12 col-md-6">
+                <DoiTuongCard
+                  :image="lop.image"
+                  :name="lop.name"
+                  :description="lop.description"
+                  :selected="giaiDoanDaChon === lop.giaiDoan"
+                  :khoa="!lop.moTruyCap"
+                  @select="chonGiaiDoan(lop.giaiDoan)"
+                />
               </div>
             </div>
           </div>
@@ -43,12 +41,16 @@
                 :key="cap.code"
                 type="button"
                 class="switch-card"
-                :class="{ 'is-selected': cap.code === thpt.code }"
+                :class="{ 'is-selected': cap.code === thpt.code, 'is-locked': !cap.moTruyCap }"
+                :disabled="!cap.moTruyCap"
                 @click="chonGiaiDoan(cap.giaiDoan)"
               >
                 <img class="switch-card__image" :src="cap.image" :alt="cap.name" />
                 <span class="switch-card__body">
-                  <span class="switch-card__name">{{ cap.name }}</span>
+                  <span class="switch-card__name">
+                    {{ cap.name }}
+                    <span v-if="!cap.moTruyCap" class="sap-ra-mat sap-ra-mat--inline">Đang phát triển...</span>
+                  </span>
                   <span class="switch-card__text">{{ cap.description }}</span>
                 </span>
               </button>
@@ -61,6 +63,7 @@
 </template>
 
 <script setup>
+import DoiTuongCard from '@/components/guest/chung/DoiTuongCard.vue'
 import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
 import CauHoiThuongGap from '@/components/guest/chung/CauHoiThuongGap.vue'
 import { capHocList } from './capHoc'

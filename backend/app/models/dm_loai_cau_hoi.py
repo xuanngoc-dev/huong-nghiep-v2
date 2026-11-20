@@ -20,7 +20,8 @@ class DmLoaiCauHoi(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     ten_loai_cau_hoi: Mapped[str] = mapped_column(String(150), nullable=False, index=True)
     ghi_chu: Mapped[str | None] = mapped_column(Text)
-    thu_tu_uu_tien: Mapped[int] = mapped_column(Integer, unique=True, nullable=False, index=True)
+    # Được trùng: cùng thứ tự thì loại tạo trước đứng trước (xem THU_TU_LOAI_CAU_HOI).
+    thu_tu_uu_tien: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
     # 0: ngừng sử dụng, 1: hoạt động
     trang_thai: Mapped[int] = mapped_column(SmallInteger, nullable=False, default=1, server_default="1")
     # diem_so: chọn mức điểm; tinh_huong: chọn phương án theo tình huống
@@ -32,9 +33,15 @@ class DmLoaiCauHoi(Base):
     )
     # Câu trả lời dùng chung cho loại: [{"tieu_de": "Rất không thích", "diem": 1}, ...]
     danh_sach_tieu_de_cau_tra_loi: Mapped[Any | None] = mapped_column(JSON)
+    # Đối tượng áp dụng (nhiều giá trị), mảng số theo app/constants/doi_tuong_ap_dung.py, vd. [1, 2]
+    doi_tuong_ap_dung: Mapped[Any | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, server_default=func.now()
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, server_default=func.now(), onupdate=func.now()
     )
+
+
+# Thứ tự hiển thị/làm bài: thu_tu_uu_tien tăng dần, trùng thì loại tạo trước đứng trước (id khi tạo cùng giây).
+THU_TU_LOAI_CAU_HOI = (DmLoaiCauHoi.thu_tu_uu_tien.asc(), DmLoaiCauHoi.created_at.asc(), DmLoaiCauHoi.id.asc())

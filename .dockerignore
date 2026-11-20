@@ -6,6 +6,9 @@
 !backend/app/
 !backend/data/
 !data_dh_json/
+!docs/de-an-tuyen-sinh/chuan_du_lieu/mau_import_day_du.json
+!docs/de-an-tuyen-sinh/chuan_du_lieu/du_lieu_mau_da_sua.json
+!docs/de-an-tuyen-sinh/chuan_du_lieu/de_an_xet_tuyen.schema.json
 
 **/__pycache__
 **/*.py[cod]

@@ -164,7 +164,11 @@ def list_de_an(
             )
         )
     if trang_thai and trang_thai.strip():
-        filters.append(DatsTuyenSinh.trang_thai == trang_thai.strip())
+        ma_trang_thai = trang_thai.strip()
+        if ma_trang_thai == "da_cong_bo":
+            filters.append(DatsTuyenSinh.trang_thai.in_(("da_cong_bo", "cong_bo")))
+        else:
+            filters.append(DatsTuyenSinh.trang_thai == ma_trang_thai)
     if nam_tuyen_sinh is not None:
         filters.append(DatsTuyenSinh.nam_tuyen_sinh == nam_tuyen_sinh)
     if ma_truong and ma_truong.strip():

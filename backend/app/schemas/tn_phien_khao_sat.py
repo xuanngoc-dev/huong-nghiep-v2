@@ -3,6 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 from app.schemas.dm_loai_cau_hoi import TieuDeCauTraLoi
+from app.schemas.dm_nhom_nghe_di_lam import DmNhomNgheDiLamPublic
 
 
 class TnPhienCauTraLoiPublic(BaseModel):
@@ -87,11 +88,29 @@ class TnPhienNganhPhuHopPublic(BaseModel):
     nganh: list[TnPhienNganhPhuHopItem]
 
 
+class TnPhienNhomNgheItem(DmNhomNgheDiLamPublic):
+    """Nhóm nghề đi làm khớp mã Holland nổi bật; `diem_khop` càng cao càng phù hợp."""
+
+    diem_khop: int
+    ma_khop: list[str]
+
+
+class TnPhienNhomNghePhuHopPublic(BaseModel):
+    ssid: str
+    ma_giao_dich: str | None
+    da_xong: bool
+    ma_noi_bat: str
+    buoc: list[TnPhienBuocPublic]
+    nhom: list[TnPhienDiemHolland]
+    nhom_nghe: list[TnPhienNhomNgheItem]
+
+
 class TnPhienKhaoSatPublic(BaseModel):
     id: int
     ssid: str
     nguoi_khao_sat_id: int | None
     ma_giao_dich: str
+    dinh_huong: int | None = None
     loai_cau_hoi_id: int
     so_cau_hoi: int
     created_at: datetime
@@ -108,6 +127,8 @@ class TnPhienLichSuItem(BaseModel):
     da_xong: bool
     loai_cau_hoi_id_tiep: int | None = None
     ma_noi_bat: str
+    # Mã định hướng khi làm bài (app/constants/doi_tuong_ap_dung.py); phiên cũ chưa lưu thì null.
+    dinh_huong: int | None = None
     created_at: datetime
 
 

@@ -73,7 +73,7 @@ const schoolLabel = computed(() => {
 const statusMeta = computed(() => {
   const value = props.deAn?.trang_thai
   if (!value) return null
-  const tag = value === 'cong_bo' ? 'success' : value === 'het_hieu_luc' ? 'warning' : 'info'
+  const tag = ['da_cong_bo', 'cong_bo'].includes(value) ? 'success' : value === 'het_hieu_luc' ? 'warning' : 'info'
   return { label: STATUS_LABELS[value] || value, tag }
 })
 

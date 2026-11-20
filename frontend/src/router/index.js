@@ -4,6 +4,8 @@ import { doiTuongList, laDoiTuongMo } from '@/data/doiTuong'
 import { dinhHuongThptRoutes } from '@/components/guest/doi-tuong/HocSinhThpt/routes'
 import { laDinhHuongMo } from '@/components/guest/doi-tuong/HocSinhThpt/dinhHuong'
 import { giaiDoanConRoutes } from '@/components/guest/doi-tuong/PhuHuynh/routes'
+import { laGiaiDoanMo } from '@/components/guest/doi-tuong/PhuHuynh/capHoc'
+import { dinhHuongThcsRoutes } from '@/components/guest/doi-tuong/HocSinhThcs/routes'
 
 // Chờ trang đủ cao (dữ liệu tải bất đồng bộ) rồi mới cuộn về vị trí cũ.
 function choDuChieuCao(top, thoiGianToiDa = 1500) {
@@ -66,6 +68,7 @@ const router = createRouter({
           component: () => import('@/views/guest/DoiTuong.vue'),
           meta: { title: item.name, public: true, doiTuong: item.code },
         })),
+        ...dinhHuongThcsRoutes,
         ...dinhHuongThptRoutes,
         ...giaiDoanConRoutes,
         // Tạm bỏ trang chat đầy đủ: dùng khung chat nổi (khách) và trang Danh sách hội thoại (thành viên).
@@ -331,6 +334,132 @@ const router = createRouter({
           meta: { title: 'Nhóm Holland', requiresAuth: true, requiresAdmin: true },
         },
         {
+          path: 'danh-muc/nhom-nghe-di-lam',
+          name: 'nhom-nghe-di-lam',
+          component: () => import('@/views/admin/danh-muc/NhomNgheDiLam.vue'),
+          meta: { title: 'Nhóm nghề đi làm', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/nghe-cu-the-di-lam',
+          name: 'nghe-cu-the-di-lam',
+          component: () => import('@/views/admin/danh-muc/NgheCuTheDiLam.vue'),
+          meta: { title: 'Nghề cụ thể đi làm', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/tieu-chi-goi-y',
+          name: 'tieu-chi-goi-y',
+          component: () => import('@/views/admin/danh-muc/TieuChiGoiY.vue'),
+          meta: { title: 'Tiêu chí gợi ý nghề', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/nhom-nghe-tieu-chi',
+          name: 'nhom-nghe-tieu-chi',
+          component: () => import('@/views/admin/danh-muc/NhomNgheTieuChi.vue'),
+          meta: { title: 'Tiêu chí của nhóm nghề', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-du-hoc/huong-di',
+          name: 'thpt-du-hoc-huong-di',
+          component: () => import('@/views/admin/danh-muc/ThptDuHocHuongDi.vue'),
+          meta: { title: 'Hướng đi du học', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-du-hoc/quoc-gia',
+          name: 'thpt-du-hoc-quoc-gia',
+          component: () => import('@/views/admin/danh-muc/ThptDuHocQuocGia.vue'),
+          meta: { title: 'Quốc gia du học', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-du-hoc/nganh',
+          name: 'thpt-du-hoc-nganh',
+          component: () => import('@/views/admin/danh-muc/ThptDuHocNganh.vue'),
+          meta: { title: 'Ngành du học', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-du-hoc/chi-phi',
+          name: 'thpt-du-hoc-chi-phi',
+          component: () => import('@/views/admin/danh-muc/ThptDuHocChiPhi.vue'),
+          meta: { title: 'Chi phí du học', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-du-hoc/thu-tuc',
+          name: 'thpt-du-hoc-thu-tuc',
+          component: () => import('@/views/admin/danh-muc/ThptDuHocThuTuc.vue'),
+          meta: { title: 'Thủ tục du học', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-du-hoc/kenh-ket-noi',
+          name: 'thpt-du-hoc-kenh-ket-noi',
+          component: () => import('@/views/admin/danh-muc/ThptDuHocKenhKetNoi.vue'),
+          meta: { title: 'Kênh kết nối du học', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-xkld/nhom-nghe',
+          name: 'thpt-xkld-nhom-nghe',
+          component: () => import('@/views/admin/danh-muc/ThptXkldNhomNghe.vue'),
+          meta: { title: 'Nhóm nghề xuất khẩu lao động', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-xkld/thi-truong',
+          name: 'thpt-xkld-thi-truong',
+          component: () => import('@/views/admin/danh-muc/ThptXkldThiTruong.vue'),
+          meta: { title: 'Thị trường xuất khẩu lao động', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-xkld/nghe-cu-the',
+          name: 'thpt-xkld-nghe-cu-the',
+          component: () => import('@/views/admin/danh-muc/ThptXkldNgheCuThe.vue'),
+          meta: { title: 'Nghề cụ thể xuất khẩu lao động', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-xkld/chi-phi',
+          name: 'thpt-xkld-chi-phi',
+          component: () => import('@/views/admin/danh-muc/ThptXkldChiPhi.vue'),
+          meta: { title: 'Chi phí xuất khẩu lao động', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-xkld/thu-tuc',
+          name: 'thpt-xkld-thu-tuc',
+          component: () => import('@/views/admin/danh-muc/ThptXkldThuTuc.vue'),
+          meta: { title: 'Thủ tục xuất khẩu lao động', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thpt-xkld/kenh-ket-noi',
+          name: 'thpt-xkld-kenh-ket-noi',
+          component: () => import('@/views/admin/danh-muc/ThptXkldKenhKetNoi.vue'),
+          meta: { title: 'Kênh kết nối xuất khẩu lao động', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thcs/huong-di',
+          name: 'thcs-huong-di',
+          component: () => import('@/views/admin/danh-muc/ThcsHuongDi.vue'),
+          meta: { title: 'Hướng đi sau THCS', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thcs/uu-nhuoc-diem',
+          name: 'thcs-uu-nhuoc-diem',
+          component: () => import('@/views/admin/danh-muc/ThcsUuNhuocDiem.vue'),
+          meta: { title: 'Ưu/nhược điểm hướng đi THCS', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thcs/tieu-chi',
+          name: 'thcs-tieu-chi',
+          component: () => import('@/views/admin/danh-muc/ThcsTieuChi.vue'),
+          meta: { title: 'Tiêu chí hướng đi THCS', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thcs/huong-di-tieu-chi',
+          name: 'thcs-huong-di-tieu-chi',
+          component: () => import('@/views/admin/danh-muc/ThcsHuongDiTieuChi.vue'),
+          meta: { title: 'Điểm phù hợp hướng đi THCS', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'danh-muc/thcs/loi-khuyen-luu-y',
+          name: 'thcs-loi-khuyen-luu-y',
+          component: () => import('@/views/admin/danh-muc/ThcsLoiKhuyenLuuY.vue'),
+          meta: { title: 'Lời khuyên, lưu ý hướng đi THCS', requiresAuth: true, requiresAdmin: true },
+        },
+        {
           path: 'danh-muc/linh-vuc-dao-tao',
           name: 'linh-vuc-dao-tao',
           component: () => import('@/views/admin/danh-muc/LinhVucDaoTao.vue'),
@@ -395,6 +524,12 @@ const router = createRouter({
           name: 'de-an-tuyen-sinh-thu-thap-du-lieu',
           component: () => import('@/views/admin/de-an-tuyen-sinh/ThuThapDuLieu.vue'),
           meta: { title: 'Thu thập dữ liệu', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'de-an-tuyen-sinh/xet-duyet-du-lieu',
+          name: 'de-an-tuyen-sinh-xet-duyet-du-lieu',
+          component: () => import('@/views/admin/de-an-tuyen-sinh/XetDuyetDuLieu.vue'),
+          meta: { title: 'Xét duyệt dữ liệu', requiresAuth: true, requiresAdmin: true },
         },
         {
           path: 'de-an-tuyen-sinh/danh-sach',
@@ -592,8 +727,13 @@ router.beforeEach(async (to) => {
   const title = to.meta?.title
   document.title = title ? `${title} | Định hướng nghề` : 'Định hướng nghề'
 
-  if (to.meta.doiTuong && !laDoiTuongMo(to.meta.doiTuong)) {
+  const doiTuong = to.meta.doiTuong || to.meta.doiTuongCha
+  if (doiTuong && !laDoiTuongMo(doiTuong)) {
     return { name: 'chon-doi-tuong' }
+  }
+
+  if (to.meta.giaiDoanCon && !laGiaiDoanMo(to.meta.giaiDoanCon)) {
+    return { name: 'phu-huynh' }
   }
 
   if (to.meta.dinhHuong && !laDinhHuongMo(to.meta.dinhHuong)) {

@@ -42,3 +42,8 @@ export function tuChoiNapTien(id, payload) {
 export function fetchGiaoDichNganHang(params) {
   return api.get('/he-thong/giao-dich-ngan-hang', { params }).then((res) => res.data)
 }
+
+// Thống kê tài chính cho dashboard: doanh thu theo kỳ, 30 ngày, 12 tháng, theo loại, giao dịch chờ.
+export function fetchThongKeNapTien() {
+  return api.get('/he-thong/lich-su-nap-tien/thong-ke').then((res) => res.data)
+}

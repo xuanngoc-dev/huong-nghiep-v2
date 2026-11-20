@@ -1,25 +1,21 @@
 <template>
-  <article class="audience-card h-100" :class="{ 'is-selected': selected, 'is-locked': khoa }">
-    <div class="audience-card__media">
-      <img class="audience-card__image" :src="image" :alt="name" />
-      <span v-if="khoa" class="sap-ra-mat">Sắp ra mắt</span>
-      <button
-        type="button"
-        class="audience-card__button"
-        :aria-label="khoa ? `${name}: sắp ra mắt` : 'Bắt đầu'"
-        :disabled="khoa"
-        @click="emit('select')"
-      >
-        <ArrowRight />
-      </button>
-    </div>
-    <!-- <p v-if="ma" class="audience-card__code">{{ ma }}</p> -->
-    <h2 class="audience-card__title">{{ name }}</h2>
-    <p class="audience-card__text">{{ description }}</p>
-  </article>
+  <!-- Dùng chung giao diện thẻ hướng đi: ảnh trái - nội dung phải. -->
+  <HuongDiCard
+    :image="image"
+    :title="name"
+    :description="description"
+    :nhan="nhan"
+    :selected="selected"
+    :locked="khoa"
+    cta="Bắt đầu"
+    cta-khoa="Đang phát triển..."
+    @chon="emit('select')"
+  />
 </template>
 
 <script setup>
+import HuongDiCard from '@/components/guest/chung/HuongDiCard.vue'
+
 defineOptions({ name: 'DoiTuongCard' })
 
 defineProps({
@@ -27,6 +23,7 @@ defineProps({
   name: { type: String, required: true },
   description: { type: String, default: '' },
   ma: { type: String, default: '' },
+  nhan: { type: String, default: '' },
   selected: { type: Boolean, default: false },
   khoa: { type: Boolean, default: false },
 })

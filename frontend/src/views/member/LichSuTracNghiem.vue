@@ -34,6 +34,15 @@
           :value="item.value"
         />
       </CustomSelect>
+      <CustomSelect
+        v-model="filters.dinh_huong"
+        class="filter-status"
+        placeholder="Chọn định hướng"
+        clearable
+        @change="onSearch"
+      >
+        <CustomOption v-for="item in DOI_TUONG_AP_DUNG" :key="item.value" :label="item.nhanNgan" :value="item.value" />
+      </CustomSelect>
       <CustomDatePicker
         v-model="filters.khoang_ngay"
         class="filter-date"
@@ -57,6 +66,14 @@
       <CustomTableColumn type="index" label="STT" width="64" :index="(i) => (page - 1) * pageSize + i + 1" />
       <CustomTableColumn label="Mã giao dịch" min-width="160">
         <template #default="{ row }">{{ row.ma_giao_dich || '—' }}</template>
+      </CustomTableColumn>
+      <CustomTableColumn label="Định hướng" min-width="130">
+        <template #default="{ row }">
+          <CustomTag v-if="row.dinh_huong" type="success" effect="light">
+            {{ timDoiTuongApDung(row.dinh_huong)?.nhanNgan || `Mã ${row.dinh_huong}` }}
+          </CustomTag>
+          <span v-else>—</span>
+        </template>
       </CustomTableColumn>
       <CustomTableColumn label="Thời gian" min-width="150">
         <template #default="{ row }">{{ formatThoiGian(row.created_at) }}</template>
@@ -84,14 +101,15 @@
         <template #default="{ row }">
           <div class="row-actions">
             <template v-if="row.da_xong">
-              <CustomTooltip content="Xem kết quả" placement="top">
-                <CustomButton link type="primary" aria-label="Xem kết quả" @click="xemKetQua(row)">
-                  <CustomIcon><DataAnalysis /></CustomIcon>
-                </CustomButton>
-              </CustomTooltip>
-              <CustomTooltip content="Ngành phù hợp" placement="top">
-                <CustomButton link type="primary" aria-label="Ngành phù hợp" @click="xemNganhPhuHop(row)">
-                  <CustomIcon><School /></CustomIcon>
+              <!-- Nút kết quả theo định hướng của phiên: thi đại học → kết quả, ngành; đi làm → nhóm nghề. -->
+              <CustomTooltip
+                v-for="buoc in layLuongTheoMaDinhHuong(row.dinh_huong).buocCuoi"
+                :key="buoc.id"
+                :content="buoc.nhanNut"
+                placement="top"
+              >
+                <CustomButton link type="primary" :aria-label="buoc.nhanNut" @click="moBuoc(buoc, row)">
+                  <CustomIcon><component :is="buoc.icon" /></CustomIcon>
                 </CustomButton>
               </CustomTooltip>
             </template>
@@ -127,6 +145,8 @@ import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { fetchLichSuKhaoSat } from '@/api/phienKhaoSat'
+import { DOI_TUONG_AP_DUNG, timDoiTuongApDung } from '@/constants/doiTuongApDung'
+import { layLuongTheoMaDinhHuong } from '@/components/guest/doi-tuong/HocSinhThpt/luongKhaoSat'
 
 const TRANG_THAI_OPTIONS = [
   { value: 'hoan-thanh', label: 'Hoàn thành' },
@@ -146,6 +166,7 @@ function emptyFilters() {
   return {
     q: '',
     trang_thai: '',
+    dinh_huong: '',
     khoang_ngay: null,
   }
 }
@@ -182,6 +203,7 @@ async function load() {
     }
     if (filters.q.trim()) params.q = filters.q.trim()
     if (filters.trang_thai) params.trang_thai = filters.trang_thai
+    if (filters.dinh_huong) params.dinh_huong = filters.dinh_huong
     if (filters.khoang_ngay?.length === 2) {
       ;[params.tu_ngay, params.den_ngay] = filters.khoang_ngay
     }
@@ -217,17 +239,13 @@ function onResetFilters() {
   onSearch()
 }
 
-function xemKetQua(row) {
-  router.push({ name: 'thpt-thi-dai-hoc-ket-qua', params: { ssid: row.ssid } })
-}
-
-function xemNganhPhuHop(row) {
-  router.push({ name: 'thpt-thi-dai-hoc-nganh-phu-hop', params: { ssid: row.ssid } })
+function moBuoc(buoc, row) {
+  router.push({ name: buoc.route, params: { ssid: row.ssid } })
 }
 
 function lamTiep(row) {
   router.push({
-    name: 'thpt-thi-dai-hoc-lam-trac-nghiem',
+    name: layLuongTheoMaDinhHuong(row.dinh_huong).lamBai,
     params: { ssid: row.ssid, loaiCauHoiId: row.loai_cau_hoi_id_tiep },
   })
 }

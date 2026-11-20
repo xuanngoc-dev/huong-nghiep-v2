@@ -17,3 +17,6 @@ backend/thu_vien/*
 !backend/thu_vien/.gitkeep
 **/__pycache__/
 *.py[cod]
+
+# File tạm của Playwright MCP (snapshot trang, log console khi kiểm tra giao diện)
+.playwright-mcp/

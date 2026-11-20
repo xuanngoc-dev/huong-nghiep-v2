@@ -288,6 +288,7 @@
             "required": ["ma_cong_thuc"],
             "properties": {
               "ma_cong_thuc": { "type": "string" },
+              "ma_phuong_thuc_cua_truong": { "type": ["string", "null"], "minLength": 1, "maxLength": 20, "description": "Tham chiếu mã phương thức của trường trong chương trình tương ứng khi cần xác định rõ dòng phương thức." },
               "to_hop": {
                 "description": "Bắt buộc và khác rỗng với công thức TO_HOP_MON; bỏ qua với các kiểu khác. Nếu công thức có thay_ngoai_ngu = BAT_BUOC thì chỉ khai tổ hợp có môn ngoại ngữ.",
                 "type": "array",

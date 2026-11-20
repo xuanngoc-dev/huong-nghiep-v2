@@ -20,8 +20,9 @@ from app.schemas.ht_lich_su_nap_tien import (
     NapTienTao,
     NapTienTuChoi,
     NapTienXacNhan,
+    ThongKeNapTien,
 )
-from app.services import nap_tien
+from app.services import nap_tien, thong_ke_nap_tien
 
 # Thành viên: tạo và xem giao dịch nạp tiền của chính mình.
 member_router = APIRouter(
@@ -249,6 +250,13 @@ def _quan_tri(giao_dich: HtLichSuNapTien, nguoi_dung: NguoiDung | None) -> NapTi
         data.ho_ten = nguoi_dung.ho_ten
         data.email = nguoi_dung.email
     return data
+
+
+@router.get("/thong-ke", response_model=ThongKeNapTien)
+def thong_ke_nap_tien_quan_tri(db: Session = Depends(get_db)) -> dict:
+    """Thống kê tài chính cho dashboard: doanh thu hôm nay/tuần/tháng/năm so với cùng kỳ trước,
+    theo 30 ngày gần nhất, theo tháng năm nay, theo loại gói và giao dịch đang chờ xác nhận."""
+    return thong_ke_nap_tien.thong_ke(db)
 
 
 @router.get("", response_model=NapTienQuanTriPage)

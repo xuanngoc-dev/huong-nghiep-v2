@@ -13,9 +13,10 @@ Thứ tự ghi: đề án → cơ sở → tổ hợp riêng → bảng quy đ�
 - Chương trình đang có trong đề án mà file không nhắc tới được giữ nguyên, chỉ báo trong cảnh báo.
 """
 
-from collections import Counter
+from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
+from unicodedata import normalize
 
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
@@ -33,7 +34,7 @@ from app.models.xt_diem_chuan import XtDiemChuan
 from app.models.xt_dieu_kien import XtDiemCong, XtDieuKien, XtNhomDieuKien
 from app.models.xt_lich_su_import import XtLichSuImport
 from app.models.xt_phuong_an import XtPhuongAn
-from app.services.xet_tuyen_import import DanhMucXetTuyen, KeHoachNhap, chuan_bi_nhap
+from app.services.xet_tuyen_import import DanhMucXetTuyen, KeHoachNhap, XetTuyenImportError, chuan_bi_nhap
 from app.services.xt_quy_tac import delete_quy_tac_xet_tuyen
 
 # trang_thai_xet_tuyen của đề án
@@ -58,16 +59,29 @@ def nhap_quy_tac(
     ma_bam: str | None = None,
     nguoi_import_id: int | None = None,
     danh_muc: DanhMucXetTuyen | None = None,
+    tu_dong_chuan_hoa: bool = True,
+    giu_diem_chuan_ngoai_file: bool = False,
+    phuong_thuc_theo_phuong_an: dict[tuple[str, str], tuple[int, int]] | None = None,
 ) -> KetQuaNhap:
-    """Kiểm tra rồi ghi toàn bộ quy tắc xét tuyển của một trường, một năm. Ném XetTuyenImportError nếu file lỗi."""
-    ke_hoach = chuan_bi_nhap(du_lieu, danh_muc or DanhMucXetTuyen.tu_csdl(db))
-    return _Ghi(db, ke_hoach).chay(ten_file=ten_file, ma_bam=ma_bam, nguoi_import_id=nguoi_import_id)
+    """Ghi quy tắc xét tuyển, dùng cặp ID phương thức và chương trình đã đối chiếu khi được cung cấp."""
+    ke_hoach = chuan_bi_nhap(
+        du_lieu, danh_muc or DanhMucXetTuyen.tu_csdl(db), tu_dong_chuan_hoa=tu_dong_chuan_hoa
+    )
+    return _Ghi(db, ke_hoach, phuong_thuc_theo_phuong_an).chay(
+        ten_file=ten_file,
+        ma_bam=ma_bam,
+        nguoi_import_id=nguoi_import_id,
+        giu_diem_chuan_ngoai_file=giu_diem_chuan_ngoai_file,
+    )
 
 
 class _Ghi:
-    def __init__(self, db: Session, ke_hoach: KeHoachNhap):
+    def __init__(
+        self, db: Session, ke_hoach: KeHoachNhap, phuong_thuc_theo_phuong_an: dict[tuple[str, str], tuple[int, int]] | None
+    ):
         self.db = db
         self.kh = ke_hoach
+        self.phuong_thuc_theo_phuong_an = phuong_thuc_theo_phuong_an
         self.now = datetime.now()
         self.dem: Counter[str] = Counter()
         self.canh_bao = list(ke_hoach.canh_bao)
@@ -77,7 +91,7 @@ class _Ghi:
         self.dem[obj.__tablename__] += 1
         return obj
 
-    def chay(self, *, ten_file, ma_bam, nguoi_import_id) -> KetQuaNhap:
+    def chay(self, *, ten_file, ma_bam, nguoi_import_id, giu_diem_chuan_ngoai_file: bool) -> KetQuaNhap:
         de_an, tao_moi = self._de_an()
         delete_quy_tac_xet_tuyen(self.db, [de_an.id], giu_lich_su=True)
         co_so = self._co_so(de_an)
@@ -89,7 +103,7 @@ class _Ghi:
         self._nhom_dieu_kien(de_an, cong_thuc, chuong_trinh)
         self._diem_cong(de_an, cong_thuc)
         self._hoc_phi(de_an, chuong_trinh)
-        self._diem_chuan(to_hop)
+        self._diem_chuan(to_hop, giu_diem_chuan_ngoai_file)
         self.db.flush()
         so_dong = dict(sorted(self.dem.items()))
         lich_su = XtLichSuImport(
@@ -148,11 +162,19 @@ class _Ghi:
 
     def _co_so(self, de_an: DatsTuyenSinh) -> dict[str | None, int]:
         """Mã cơ sở trong file → id dats_tru_so; khóa None = trụ sở chính."""
-        hien_co = {cs.ten_co_so: cs for cs in self.db.scalars(select(DatsTruSo).where(DatsTruSo.de_an_id == de_an.id))}
+        def khoa_ten(ten: str) -> str:
+            return " ".join(normalize("NFC", ten).split()) if self.phuong_thuc_theo_phuong_an is not None else ten
+
+        hien_co = {
+            khoa_ten(cs.ten_co_so): cs for cs in self.db.scalars(select(DatsTruSo).where(DatsTruSo.de_an_id == de_an.id))
+        }
         theo_ma: dict[str | None, int] = {}
         for dong in self.kh.co_so:
-            cs = hien_co.get(dong["ten_co_so"])
+            khoa = khoa_ten(dong["ten_co_so"])
+            cs = hien_co.get(khoa)
             if cs is None:
+                if self.phuong_thuc_theo_phuong_an is not None:
+                    raise XetTuyenImportError([f"co_so {dong['ma_co_so']}: không tìm được cơ sở đã đối chiếu"])
                 cs = self._them(DatsTruSo(de_an_id=de_an.id, ten_co_so=dong["ten_co_so"]))
                 cs.loai_co_so = "tru_so" if dong["vai_tro"] == "chinh" else "co_so"
             cs.vai_tro = dong["vai_tro"]
@@ -161,7 +183,7 @@ class _Ghi:
             if dong["dia_chi"]:
                 cs.dia_chi = dong["dia_chi"]
             self.db.flush()
-            hien_co[cs.ten_co_so] = cs
+            hien_co[khoa] = cs
             theo_ma[dong["ma_co_so"]] = cs.id
         chinh = [cs.id for cs in hien_co.values() if cs.vai_tro == "chinh"]
         theo_ma[None] = chinh[0] if len(chinh) == 1 else None
@@ -237,14 +259,25 @@ class _Ghi:
         theo_cap = {(ct.ma_xet_tuyen, ct.ten_chuong_trinh): ct for ct in hien_co}
         dem_ma = Counter(ct.ma_xet_tuyen for ct in hien_co)
         theo_ma_xt = {ct.ma_xet_tuyen: ct for ct in hien_co if dem_ma[ct.ma_xet_tuyen] == 1}
+        theo_id = {ct.id: ct for ct in hien_co}
+        chuong_trinh_da_doi_chieu = (
+            {ma: ct_id for (ma, _), (_, ct_id) in self.phuong_thuc_theo_phuong_an.items()}
+            if self.phuong_thuc_theo_phuong_an is not None else None
+        )
         da_dung: set[int] = set()
         theo_ma: dict[str, int] = {}
         for dong in self.kh.chuong_trinh:
-            ct = theo_cap.get((dong["ma_xet_tuyen"], dong["ten_chuong_trinh"]))
-            if ct is None or ct.id in da_dung:
-                ct = theo_ma_xt.get(dong["ma_xet_tuyen"])
-            if ct is not None and ct.id in da_dung:
-                ct = None
+            ma = dong["ma_chuong_trinh"]
+            if chuong_trinh_da_doi_chieu is not None:
+                ct = theo_id.get(chuong_trinh_da_doi_chieu.get(ma))
+                if ct is None or ct.id in da_dung:
+                    raise XetTuyenImportError([f"chuong_trinh {ma}: không tìm được chương trình đã đối chiếu"])
+            else:
+                ct = theo_cap.get((dong["ma_xet_tuyen"], dong["ten_chuong_trinh"]))
+                if ct is None or ct.id in da_dung:
+                    ct = theo_ma_xt.get(dong["ma_xet_tuyen"])
+                if ct is not None and ct.id in da_dung:
+                    ct = None
             if ct is None:
                 ct = self._them(
                     DatsChuongTrinhDaoTao(
@@ -260,7 +293,7 @@ class _Ghi:
                 ct.chi_tieu_tuyen_sinh = dong["chi_tieu_tuyen_sinh"]
             self.db.flush()
             da_dung.add(ct.id)
-            theo_ma[dong["ma_chuong_trinh"]] = ct.id
+            theo_ma[ma] = ct.id
         ngoai_file = [ct for ct in hien_co if ct.id not in da_dung]
         if ngoai_file:
             ds = ", ".join(ct.ma_xet_tuyen or ct.ten_chuong_trinh for ct in ngoai_file[:10])
@@ -271,22 +304,56 @@ class _Ghi:
         return theo_ma
 
     def _phuong_an(self, de_an, cong_thuc: dict[str, XtCongThuc], chuong_trinh: dict[str, int], to_hop: dict) -> None:
-        # Dòng mô tả phương thức (dats_phuong_thuc) của chương trình, theo mã phương thức của Bộ.
+        # Các phương thức riêng (như TSA và SPT) có thể dùng chung một mã Bộ.
         phuong_thuc: dict[tuple[int, str], int] = {}
-        for pt_id, ct_id, ma_pt in self.db.execute(
-            select(DatsPhuongThuc.id, DatsPhuongThuc.de_an_chuong_trinh_id, DatsPhuongThuc.ma_phuong_thuc_cua_bo)
-            .where(DatsPhuongThuc.de_an_chuong_trinh_id.in_(set(chuong_trinh.values())))
-            .order_by(DatsPhuongThuc.id)
-        ):
-            phuong_thuc.setdefault((ct_id, ma_pt), pt_id)
+        pt_theo_cong_thuc: dict[tuple[int, str, str], int] = {}
+        pt_theo_ma_truong: dict[tuple[int, str, str], list[int]] = defaultdict(list)
+        if self.phuong_thuc_theo_phuong_an is None:
+            for pt_id, ct_id, ma_pt, ma_cong_thuc, ma_pt_truong in self.db.execute(
+                select(
+                    DatsPhuongThuc.id,
+                    DatsPhuongThuc.de_an_chuong_trinh_id,
+                    DatsPhuongThuc.ma_phuong_thuc_cua_bo,
+                    DatsPhuongThuc.cong_thuc_tinh_diem,
+                    DatsPhuongThuc.ma_phuong_thuc_cua_truong,
+                )
+                .where(DatsPhuongThuc.de_an_chuong_trinh_id.in_(set(chuong_trinh.values())))
+                .order_by(DatsPhuongThuc.id)
+            ):
+                phuong_thuc.setdefault((ct_id, ma_pt), pt_id)
+                if ma_cong_thuc:
+                    pt_theo_cong_thuc.setdefault((ct_id, ma_pt, ma_cong_thuc), pt_id)
+                if ma_pt_truong:
+                    pt_theo_ma_truong[(ct_id, ma_pt, ma_pt_truong)].append(pt_id)
         for dong in self.kh.phuong_an:
             ct = cong_thuc[dong["ma_cong_thuc"]]
-            ct_id = chuong_trinh[dong["ma_chuong_trinh"]]
+            ma_chuong_trinh = dong["ma_chuong_trinh"]
+            ct_id = chuong_trinh[ma_chuong_trinh]
+            ma_pt_truong = dong.get("ma_phuong_thuc_cua_truong")
+            if self.phuong_thuc_theo_phuong_an is not None:
+                da_doi_chieu = self.phuong_thuc_theo_phuong_an.get((ma_chuong_trinh, ct.ma_cong_thuc))
+                if da_doi_chieu is None or da_doi_chieu[1] != ct_id:
+                    raise XetTuyenImportError([
+                        f"chuong_trinh {ma_chuong_trinh}: chưa đối chiếu phương thức của {ct.ma_cong_thuc}"
+                    ])
+                pt_id = da_doi_chieu[0]
+            elif ma_pt_truong is not None:
+                cac_pt = pt_theo_ma_truong[(ct_id, ct.ma_phuong_thuc_cua_bo, ma_pt_truong)]
+                if len(cac_pt) != 1:
+                    raise XetTuyenImportError([
+                        f"chuong_trinh {ma_chuong_trinh}: cần đúng một dòng cho mã phương thức của trường {ma_pt_truong}"
+                    ])
+                pt_id = cac_pt[0]
+            else:
+                pt_id = pt_theo_cong_thuc.get(
+                    (ct_id, ct.ma_phuong_thuc_cua_bo, ct.ma_cong_thuc),
+                    phuong_thuc.get((ct_id, ct.ma_phuong_thuc_cua_bo)),
+                )
             self._them(
                 XtPhuongAn(
                     de_an_id=de_an.id,
                     de_an_chuong_trinh_id=ct_id,
-                    de_an_phuong_thuc_id=phuong_thuc.get((ct_id, ct.ma_phuong_thuc_cua_bo)),
+                    de_an_phuong_thuc_id=pt_id,
                     cong_thuc_id=ct.id,
                     to_hop_id=dong["to_hop_id"] or to_hop.get(dong["ma_to_hop"]),
                 )
@@ -322,24 +389,34 @@ class _Ghi:
                     DatsHocPhi(de_an_id=de_an.id, de_an_chuong_trinh_id=chuong_trinh[dong["ma_chuong_trinh"]], **dong["hoc_phi"])
                 )
 
-    def _diem_chuan(self, to_hop: dict[str, int]) -> None:
-        """Thay điểm chuẩn của trường ở các năm có trong file; năm không có trong file giữ nguyên."""
+    def _diem_chuan(self, to_hop: dict[str, int], giu_diem_chuan_ngoai_file: bool) -> None:
+        """Thay điểm chuẩn theo khóa hoặc theo cả năm, tùy chế độ nhập."""
         if not self.kh.diem_chuan:
             return
         nam = {d["nam_tuyen_sinh"] for d in self.kh.diem_chuan}
-        self.db.execute(
-            delete(XtDiemChuan)
-            .where(XtDiemChuan.ma_truong == self.kh.ma_truong, XtDiemChuan.nam_tuyen_sinh.in_(nam))
-            .execution_options(synchronize_session=False)
-        )
-        for dong in self.kh.diem_chuan:
-            gia_tri = {k: v for k, v in dong.items() if k not in ("ma_to_hop", "to_hop_id")}
-            self._them(
-                XtDiemChuan(
-                    ma_truong=self.kh.ma_truong,
-                    to_hop_id=dong["to_hop_id"] or to_hop.get(dong["ma_to_hop"]),
-                    tao_luc=self.now,
-                    cap_nhat_luc=self.now,
-                    **gia_tri,
-                )
+        pham_vi = (XtDiemChuan.ma_truong == self.kh.ma_truong, XtDiemChuan.nam_tuyen_sinh.in_(nam))
+        moi = [
+            XtDiemChuan(
+                ma_truong=self.kh.ma_truong,
+                to_hop_id=dong["to_hop_id"] or to_hop.get(dong["ma_to_hop"]),
+                tao_luc=self.now,
+                cap_nhat_luc=self.now,
+                **{k: v for k, v in dong.items() if k not in ("ma_to_hop", "to_hop_id")},
             )
+            for dong in self.kh.diem_chuan
+        ]
+        xoa = delete(XtDiemChuan).where(*pham_vi)
+        if giu_diem_chuan_ngoai_file:
+            def khoa(dong: XtDiemChuan) -> tuple:
+                return dong.nam_tuyen_sinh, dong.ma_xet_tuyen, dong.ma_phuong_thuc_cua_bo, dong.to_hop_id
+
+            khoa_moi = {khoa(dong) for dong in moi}
+            id_thay = [
+                dong.id
+                for dong in self.db.scalars(select(XtDiemChuan).where(*pham_vi).with_for_update())
+                if khoa(dong) in khoa_moi
+            ]
+            xoa = xoa.where(XtDiemChuan.id.in_(id_thay))
+        self.db.execute(xoa.execution_options(synchronize_session=False))
+        for dong in moi:
+            self._them(dong)

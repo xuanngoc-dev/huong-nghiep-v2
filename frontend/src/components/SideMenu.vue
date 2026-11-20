@@ -61,7 +61,32 @@
         class="menu-group__items"
       >
         <template v-for="item in group.items" :key="item.index">
+          <!-- Mục có `children` trong menu.json: submenu một cấp, `index` của mục cha chỉ là khóa, không phải route. -->
+          <el-sub-menu v-if="item.children" :index="item.index" class="menu-sub">
+            <template #title>
+              <el-icon>
+                <component :is="resolveIcon(item.icon)" />
+              </el-icon>
+              <span class="menu-label" :class="{ 'is-hidden': collapsed }" :title="item.tooltip">{{ item.title }}</span>
+            </template>
+            <CustomTooltip
+              v-for="child in item.children"
+              :key="child.index"
+              :content="child.tooltip || child.title"
+              placement="right"
+              :disabled="!child.tooltip"
+              :show-after="280"
+            >
+              <el-menu-item :index="child.index">
+                <el-icon>
+                  <component :is="resolveIcon(child.icon)" />
+                </el-icon>
+                <span class="menu-label">{{ child.title }}</span>
+              </el-menu-item>
+            </CustomTooltip>
+          </el-sub-menu>
           <CustomTooltip
+            v-else
             :content="item.tooltip || item.title"
             placement="right"
             :disabled="!collapsed && !item.tooltip"
@@ -110,7 +135,7 @@ function initOpenGroups() {
   const next = new Set()
   menuGroups.value.forEach((group, index) => {
     if (!group.header) return
-    const hasActive = group.items?.some((item) => item.index === route.path)
+    const hasActive = groupHasPath(group, route.path)
     if (hasActive || !layoutStore.menuGroupCollapsible) {
       next.add(index)
     }
@@ -141,9 +166,7 @@ watch(
   () => route.path,
   () => {
     if (!layoutStore.menuGroupCollapsible) return
-    const activeIndex = menuGroups.value.findIndex((group) =>
-      group.items?.some((item) => item.index === route.path),
-    )
+    const activeIndex = menuGroups.value.findIndex((group) => groupHasPath(group, route.path))
     if (activeIndex < 0) return
     if (layoutStore.menuUniqueOpened) {
       openGroups.value = new Set([activeIndex])
@@ -154,6 +177,12 @@ watch(
     }
   },
 )
+
+function groupHasPath(group, path) {
+  return !!group.items?.some(
+    (item) => item.index === path || item.children?.some((child) => child.index === path),
+  )
+}
 
 function isGroupCollapsible(group) {
   return !!(

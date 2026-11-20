@@ -231,6 +231,7 @@ class HocPhiChuan(_Khoi):
 class PhuongAnChuan(_Khoi):
     ma_cong_thuc: str
     to_hop: list[str] = []
+    ma_phuong_thuc_cua_truong: str | None = Field(default=None, min_length=1, max_length=20)
 
     @model_validator(mode="after")
     def _to_hop_khong_lap(self):

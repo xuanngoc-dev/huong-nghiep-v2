@@ -3,6 +3,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+from app.constants.doi_tuong_ap_dung import DOI_TUONG_AP_DUNG
+
 
 class TieuDeCauTraLoi(BaseModel):
     """Một câu trả lời dùng chung của loại câu hỏi: tiêu đề và số điểm (có thể để trống)."""
@@ -29,6 +31,18 @@ class DmLoaiCauHoiWrite(BaseModel):
     trang_thai: int = Field(default=1, ge=0, le=1)
     loai_tra_loi: Literal["diem_so", "tinh_huong"] = "diem_so"
     danh_sach_tieu_de_cau_tra_loi: list[TieuDeCauTraLoi] | None = Field(default=None, max_length=50)
+    doi_tuong_ap_dung: list[int] | None = Field(default=None, max_length=len(DOI_TUONG_AP_DUNG))
+
+    @field_validator("doi_tuong_ap_dung")
+    @classmethod
+    def kiem_tra_doi_tuong(cls, value: list[int] | None) -> list[int] | None:
+        """Chỉ nhận mã có trong bộ định nghĩa; bỏ trùng, sắp tăng dần; rỗng thì lưu null."""
+        if value is None:
+            return None
+        sai = [str(ma) for ma in value if ma not in DOI_TUONG_AP_DUNG]
+        if sai:
+            raise ValueError(f"Đối tượng áp dụng không hợp lệ: {', '.join(sai)}")
+        return sorted(set(value)) or None
 
     @field_validator("danh_sach_tieu_de_cau_tra_loi")
     @classmethod
@@ -63,6 +77,7 @@ class DmLoaiCauHoiPublic(BaseModel):
     trang_thai: int
     loai_tra_loi: str = "diem_so"
     danh_sach_tieu_de_cau_tra_loi: list[TieuDeCauTraLoi] | None = None
+    doi_tuong_ap_dung: list[int] | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None
 

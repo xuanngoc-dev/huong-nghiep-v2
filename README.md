@@ -34,13 +34,13 @@ Frontend và backend chạy trên hai domain, giao tiếp qua REST. Prefix API l
 | Frontend | http://localhost:5173 | https://dinhhuong.example.com |
 | Backend | http://127.0.0.1:3060 | https://api.example.com |
 
-Khi dev, trình duyệt gọi thẳng `http://127.0.0.1:3060/api/v1`. Proxy Vite chỉ còn tác dụng nếu đặt `VITE_API_BASE_URL` thành đường dẫn tương đối `/api/v1`.
+Trên Windows, `start-dev.bat` dùng Vite proxy để trình duyệt gọi backend local qua `/api/v1`. Khi chạy frontend riêng, đặt `VITE_API_BASE_URL=/api/v1` để dùng cùng proxy.
 
 ## Khởi động nhanh trên Windows (1-Click)
 
 Chỉ cần double-click file:
-- `start-dev.bat`: Tự động khởi động cả Backend (FastAPI :3060) và Frontend (Vite :5173), sau đó mở trình duyệt.
-- `stop-dev.bat`: Tắt nhanh các tiến trình đang chạy trên cổng 3060 và 5173.
+- `start-dev.bat`: Chạy backend (:3060) và frontend (:5173) ở chế độ nền. Script ưu tiên `backend/.env` và mở trình duyệt khi frontend gọi được API. Xem log ở `backend/logs/dev/`.
+- `stop-dev.bat`: Dừng các tiến trình do `start-dev.bat` khởi động.
 
 ## Lệnh tiện lợi (Makefile / Linux / WSL)
 

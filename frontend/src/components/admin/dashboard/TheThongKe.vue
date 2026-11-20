@@ -1,32 +1,33 @@
 <template>
   <el-card shadow="never" class="the-thong-ke" :style="{ '--mau': color }">
-    <div class="the-thong-ke__head">
-      <span class="the-thong-ke__icon" aria-hidden="true">
-        <el-icon><component :is="icon" /></el-icon>
-      </span>
+    <span class="the-thong-ke__media" aria-hidden="true">
+      <el-icon><component :is="icon" /></el-icon>
+    </span>
+
+    <div class="the-thong-ke__body">
       <span class="the-thong-ke__title" :title="title">{{ title }}</span>
-    </div>
 
-    <div class="the-thong-ke__value">
-      {{ giaTri }}<small v-if="donVi">{{ donVi }}</small>
-    </div>
+      <div class="the-thong-ke__value">
+        {{ giaTri }}<small v-if="donVi">{{ donVi }}</small>
+      </div>
 
-    <div v-if="trend !== null" class="the-thong-ke__trend">
-      <span :class="tang ? 'is-up' : 'is-down'">
-        <el-icon><component :is="tang ? 'Top' : 'Bottom'" /></el-icon>
-        {{ Math.abs(trend).toLocaleString('vi-VN') }}%
-      </span>
-      <span class="the-thong-ke__trend-label">{{ trendLabel }}</span>
-    </div>
+      <div v-if="trend !== null" class="the-thong-ke__trend">
+        <span :class="tang ? 'is-up' : 'is-down'">
+          <el-icon><component :is="tang ? 'Top' : 'Bottom'" /></el-icon>
+          {{ Math.abs(trend).toLocaleString('vi-VN') }}%
+        </span>
+        <span class="the-thong-ke__trend-label">{{ trendLabel }}</span>
+      </div>
 
-    <BieuDoDuong
-      v-if="xuHuong.length"
-      class="the-thong-ke__spark"
-      sparkline
-      :height="36"
-      :series="sparkSeries"
-      :colors="[color]"
-    />
+      <BieuDoDuong
+        v-if="xuHuong.length"
+        class="the-thong-ke__spark"
+        sparkline
+        :height="28"
+        :series="sparkSeries"
+        :colors="[color]"
+      />
+    </div>
   </el-card>
 </template>
 
@@ -58,38 +59,50 @@ const sparkSeries = computed(() => [{ name: props.title, data: props.xuHuong }])
 </script>
 
 <style scoped>
-/* Thẻ là container: khi thẻ hẹp (2 thẻ/hàng trên điện thoại) nội dung bên trong tự thu gọn. */
+/* Giống thẻ hướng đi (HuongDiCard): khối màu có icon bên trái, nội dung bên phải, cao theo nội dung.
+   Thẻ là container: khi thẻ hẹp (2 thẻ/hàng trên điện thoại) nội dung bên trong tự thu gọn. */
 .the-thong-ke {
   container-type: inline-size;
   height: 100%;
+  overflow: hidden;
   border-radius: 12px;
+  transition: box-shadow 0.3s ease;
+}
+
+.the-thong-ke:hover {
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--mau) 14%, transparent);
 }
 
 .the-thong-ke :deep(.el-card__body) {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 14px 16px 8px;
+  height: 100%;
+  padding: 0;
 }
 
-.the-thong-ke__head {
+.the-thong-ke__media {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-
-.the-thong-ke__icon {
-  display: inline-flex;
+  flex: 0 0 30%;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  font-size: 15px;
+  max-width: 96px;
+  min-height: 96px;
+  font-size: 30px;
   color: var(--mau);
-  background: color-mix(in srgb, var(--mau) 12%, transparent);
+  background: color-mix(in srgb, var(--mau) 13%, transparent);
+  transition: font-size 0.3s ease;
+}
+
+.the-thong-ke:hover .the-thong-ke__media {
+  font-size: 33px;
+}
+
+.the-thong-ke__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding: 10px 14px 4px;
 }
 
 .the-thong-ke__title {
@@ -102,7 +115,7 @@ const sparkSeries = computed(() => [{ name: props.title, data: props.xuHuong }])
 }
 
 .the-thong-ke__value {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.01em;
@@ -151,19 +164,24 @@ const sparkSeries = computed(() => [{ name: props.title, data: props.xuHuong }])
 }
 
 .the-thong-ke__spark {
-  margin: 0 -4px;
+  margin: auto -4px 0;
   opacity: 0.85;
 }
 
 @container (max-width: 220px) {
-  .the-thong-ke :deep(.el-card__body) {
-    gap: 4px;
-    padding: 12px 12px 6px;
+  /* Thẻ hẹp: khối icon thành dải màu mảnh bên trái, nhường chỗ cho số liệu. */
+  .the-thong-ke__media {
+    flex-basis: 6px;
+    min-height: 0;
+    font-size: 0;
   }
 
-  /* Nhường chỗ cho tiêu đề; màu sparkline vẫn phân biệt được từng thẻ. */
-  .the-thong-ke__icon {
-    display: none;
+  .the-thong-ke:hover .the-thong-ke__media {
+    font-size: 0;
+  }
+
+  .the-thong-ke__body {
+    padding: 10px 10px 4px;
   }
 
   .the-thong-ke__title {
@@ -171,14 +189,14 @@ const sparkSeries = computed(() => [{ name: props.title, data: props.xuHuong }])
   }
 
   .the-thong-ke__value {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .the-thong-ke__value small {
     font-size: 12px;
   }
 
-  /* Thẻ hẹp: chỉ giữ mức tăng/giảm, bỏ nhãn so sánh. */
+  /* Chỉ giữ mức tăng/giảm, bỏ nhãn so sánh. */
   .the-thong-ke__trend-label {
     display: none;
   }

@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     gemini_api_key: str = ""
     gemini_model: str = "gemini-3.8-flash"
     openai_api_key: str = ""
-    openai_model: str = "gpt-6-luna"
+    openai_model: str = "gpt-6.2-sol"
     chat_timeout_seconds: int = Field(default=75, ge=10, le=300)
     chat_context_max_chars: int = Field(default=60_000, ge=4_000, le=200_000)
     chat_detail_context_max_chars: int = Field(default=100_000, ge=4_000, le=300_000)

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import JSON, DateTime, ForeignKey, Integer, String, func
+from sqlalchemy import JSON, DateTime, ForeignKey, Integer, SmallInteger, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -24,6 +24,8 @@ class TnPhienKhaoSat(Base):
         index=True,
     )
     ma_giao_dich: Mapped[str | None] = mapped_column(String(64), unique=True)
+    # Định hướng người dùng chọn khi làm bài, mã theo app/constants/doi_tuong_ap_dung.py (1: thi ĐH & CĐ, 2: đi làm...).
+    dinh_huong: Mapped[int | None] = mapped_column(SmallInteger, index=True)
     chi_tiet_ket_qua: Mapped[Any | None] = mapped_column(JSON)
     thong_tin_thanh_toan: Mapped[Any | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(

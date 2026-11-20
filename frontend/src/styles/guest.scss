@@ -121,77 +121,6 @@
   font-weight: 500;
 }
 
-.guest-layout .stage-card {
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-  border: 1px solid #d7eadf;
-  border-radius: var(--guest-radius);
-  background: #fff;
-  transition: box-shadow 0.3s ease;
-}
-
-.guest-layout .stage-card:hover {
-  box-shadow: 0 16px 32px rgba(31, 122, 77, 0.14);
-}
-
-.guest-layout .stage-card.is-selected {
-  border-color: var(--guest-primary);
-  box-shadow: 0 0 0 1px var(--guest-primary);
-}
-
-.guest-layout .stage-card.is-selected:hover {
-  box-shadow:
-    0 0 0 1px var(--guest-primary),
-    0 16px 32px rgba(31, 122, 77, 0.14);
-}
-
-.guest-layout .stage-card__media {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--guest-radius-sm);
-}
-
-.guest-layout .stage-card__image {
-  display: block;
-  width: 100%;
-  height: 190px;
-  object-fit: cover;
-}
-
-.guest-layout .stage-card__title {
-  margin: 16px 0 8px;
-  color: var(--guest-primary);
-  font-size: 1.35rem;
-  line-height: 1.35;
-}
-
-.guest-layout .stage-card__text {
-  flex: 1;
-  margin: 0;
-  color: #3a4742;
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.guest-layout .stage-card__button {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  border: 0;
-  border-radius: var(--guest-radius);
-  padding: 10px 22px;
-  background: var(--guest-primary);
-  color: #fff;
-  font-weight: 500;
-  line-height: 1.2;
-  cursor: pointer;
-}
-
-.guest-layout .stage-card__button:hover {
-  background: var(--guest-primary-hover);
-}
-
 .guest-layout .switch-card {
   display: flex;
   align-items: flex-start;
@@ -240,93 +169,6 @@
   color: #8d97a2;
   font-size: 0.85rem;
   line-height: 1.45;
-}
-
-.guest-layout .audience-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-  border: 1px solid #d7eadf;
-  border-radius: var(--guest-radius);
-  background: #fff;
-  transition: box-shadow 0.3s ease;
-}
-
-.guest-layout .audience-card:hover {
-  box-shadow: 0 16px 32px rgba(31, 122, 77, 0.14);
-  cursor: pointer;
-}
-
-.guest-layout .audience-card.is-selected {
-  border-color: var(--guest-primary);
-  box-shadow: 0 0 0 1px var(--guest-primary);
-}
-
-.guest-layout .audience-card.is-selected:hover {
-  box-shadow:
-    0 0 0 1px var(--guest-primary),
-    0 16px 32px rgba(31, 122, 77, 0.14);
-}
-
-.guest-layout .audience-card__media {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--guest-radius-sm);
-}
-
-.guest-layout .audience-card__image {
-  display: block;
-  width: 100%;
-  height: 190px;
-  object-fit: cover;
-}
-
-.guest-layout .audience-card__code {
-  margin: 14px 0 0;
-  color: var(--guest-primary);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-}
-
-.guest-layout .audience-card__title {
-  margin: 4px 0 8px;
-  color: var(--guest-primary);
-  font-size: 1.35rem;
-  font-weight: 700;
-  line-height: 1.35;
-}
-
-.guest-layout .audience-card__text {
-  flex: 1;
-  margin: 0;
-  color: #8d97a2;
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.guest-layout .audience-card__button {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: var(--guest-primary);
-  color: #fff;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.guest-layout .audience-card__button:hover {
-  background: var(--guest-primary-hover);
 }
 
 .guest-layout .news-panel {
@@ -546,22 +388,16 @@
   margin-bottom: 12px;
 }
 
-/* Đối tượng / định hướng chưa mở (`moTruyCap: false`): vẫn hiển thị nhưng mờ, không bấm được. */
-.guest-layout .audience-card.is-locked,
-.guest-layout .stage-card.is-locked,
+/* Định hướng chưa mở (`moTruyCap: false`): vẫn hiển thị nhưng mờ, không bấm được. */
 .guest-layout .switch-card.is-locked {
   cursor: not-allowed;
 }
 
-.guest-layout .audience-card.is-locked:hover,
-.guest-layout .stage-card.is-locked:hover,
 .guest-layout .switch-card.is-locked:hover {
   box-shadow: none;
   cursor: not-allowed;
 }
 
-.guest-layout .audience-card.is-locked :is(.audience-card__image, .audience-card__title, .audience-card__text),
-.guest-layout .stage-card.is-locked :is(.stage-card__image, .stage-card__title, .stage-card__text),
 .guest-layout .switch-card.is-locked :is(.switch-card__image, .switch-card__text) {
   opacity: 0.55;
   filter: grayscale(0.6);
@@ -569,12 +405,6 @@
 
 .guest-layout .switch-card.is-locked .switch-card__name {
   color: #6b7680;
-}
-
-.guest-layout .audience-card__button:disabled,
-.guest-layout .stage-card__button:disabled {
-  background: #b8c2bd;
-  cursor: not-allowed;
 }
 
 .guest-layout .sap-ra-mat {
@@ -682,8 +512,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .guest-layout .audience-card,
-  .guest-layout .audience-card__button,
   .guest-layout .faq-item__panel,
   .guest-layout .future-card .carousel-item {
     transition: none;

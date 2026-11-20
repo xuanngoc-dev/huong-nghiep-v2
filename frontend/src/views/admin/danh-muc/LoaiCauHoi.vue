@@ -15,6 +15,15 @@
           </template>
         </CustomInput>
         <CustomSelect
+          v-model="filters.doi_tuong_ap_dung"
+          class="filter-parent"
+          placeholder="Chọn đối tượng áp dụng"
+          clearable
+          @change="onSearch"
+        >
+          <CustomOption v-for="item in DOI_TUONG_AP_DUNG" :key="item.value" :label="item.label" :value="item.value" />
+        </CustomSelect>
+        <CustomSelect
           v-model="filters.trang_thai"
           class="filter-status"
           placeholder="Trạng thái"
@@ -99,6 +108,23 @@
             <CustomTag :type="row.loai_tra_loi === 'tinh_huong' ? 'warning' : 'primary'" effect="light">
               {{ nhanLoaiTraLoi(row.loai_tra_loi) }}
             </CustomTag>
+          </template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Đối tượng áp dụng" min-width="200">
+          <template #default="{ row }">
+            <span v-if="row.doi_tuong_ap_dung?.length" class="tieu-de-list">
+              <CustomTooltip
+                v-for="ma in row.doi_tuong_ap_dung"
+                :key="ma"
+                :content="timDoiTuongApDung(ma)?.label || `Mã ${ma}`"
+                placement="top"
+              >
+                <CustomTag type="success" effect="light" size="small">
+                  {{ timDoiTuongApDung(ma)?.nhanNgan || `Mã ${ma}` }}
+                </CustomTag>
+              </CustomTooltip>
+            </span>
+            <span v-else>—</span>
           </template>
         </CustomTableColumn>
         <CustomTableColumn label="Tiêu đề câu trả lời" min-width="240">
@@ -216,6 +242,7 @@
             :precision="0"
             controls-position="right"
           />
+          <!-- <p class="field-hint">Được trùng; cùng thứ tự thì loại tạo trước đứng trước.</p> -->
         </CustomFormItem>
         <CustomFormItem label="Trạng thái" prop="trang_thai">
           <CustomSelect v-model="form.trang_thai" placeholder="Chọn trạng thái" :clearable="false">
@@ -226,6 +253,16 @@
         <CustomFormItem label="Loại trả lời" prop="loai_tra_loi">
           <CustomSelect v-model="form.loai_tra_loi" placeholder="Chọn loại trả lời" :clearable="false">
             <CustomOption v-for="item in LOAI_TRA_LOI" :key="item.value" :label="item.label" :value="item.value" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Đối tượng áp dụng" prop="doi_tuong_ap_dung">
+          <CustomSelect
+            v-model="form.doi_tuong_ap_dung"
+            multiple
+            clearable
+            placeholder="Chọn đối tượng áp dụng (chọn được nhiều)"
+          >
+            <CustomOption v-for="item in DOI_TUONG_AP_DUNG" :key="item.value" :label="item.label" :value="item.value" />
           </CustomSelect>
         </CustomFormItem>
         <CustomFormItem class="form-grid__full" label="Danh sách tiêu đề câu trả lời">
@@ -316,6 +353,7 @@ import {
   updateTrangThaiLoaiCauHoi,
   updateTrangThaiLoaiCauHoiMany,
 } from '@/api/loaiCauHoi'
+import { DOI_TUONG_AP_DUNG, timDoiTuongApDung } from '@/constants/doiTuongApDung'
 
 const LOAI_TRA_LOI = [
   { value: 'diem_so', label: 'Điểm số' },
@@ -362,6 +400,7 @@ const JSON_SAMPLE = `[
     "thu_tu_uu_tien": 1,
     "trang_thai": 1,
     "loai_tra_loi": "diem_so",
+    "doi_tuong_ap_dung": [1, 2],
     "danh_sach_tieu_de_cau_tra_loi": [
       { "tieu_de": "Rất không thích", "diem": 1 },
       { "tieu_de": "Không thích", "diem": 2 },
@@ -374,6 +413,7 @@ const JSON_SAMPLE = `[
     "ten_loai_cau_hoi": "Trắc nghiệm nhiều đáp án",
     "thu_tu_uu_tien": 2,
     "loai_tra_loi": "tinh_huong",
+    "doi_tuong_ap_dung": [1],
     "ghi_chu": "Chọn một hoặc nhiều phương án"
   }
 ]`
@@ -401,6 +441,7 @@ const dangDoiTrangThai = ref({})
 
 const filters = reactive({
   q: '',
+  doi_tuong_ap_dung: '',
   trang_thai: '',
 })
 
@@ -411,6 +452,9 @@ const rules = {
   thu_tu_uu_tien: [{ required: true, message: 'Vui lòng nhập thứ tự ưu tiên', trigger: 'change' }],
   trang_thai: [{ required: true, message: 'Vui lòng chọn trạng thái', trigger: 'change' }],
   loai_tra_loi: [{ required: true, message: 'Vui lòng chọn loại trả lời', trigger: 'change' }],
+  doi_tuong_ap_dung: [
+    { type: 'array', required: true, min: 1, message: 'Vui lòng chọn ít nhất một đối tượng áp dụng', trigger: 'change' },
+  ],
 }
 
 function emptyForm() {
@@ -420,6 +464,7 @@ function emptyForm() {
     thu_tu_uu_tien: 1,
     trang_thai: 1,
     loai_tra_loi: 'diem_so',
+    doi_tuong_ap_dung: [],
     tieu_de_cau_tra_loi: [],
   }
 }
@@ -466,8 +511,18 @@ function parseJsonItems(text) {
       danh_sach_tieu_de_cau_tra_loi: Array.isArray(item.danh_sach_tieu_de_cau_tra_loi)
         ? item.danh_sach_tieu_de_cau_tra_loi
         : null,
+      doi_tuong_ap_dung: docDoiTuongJson(item.doi_tuong_ap_dung, line),
     }
   })
+}
+
+// JSON nhập vào: mảng mã số trong DOI_TUONG_AP_DUNG; không có thì null.
+function docDoiTuongJson(value, line) {
+  if (value == null) return null
+  if (!Array.isArray(value)) throw new Error(`Phần tử thứ ${line}: doi_tuong_ap_dung phải là mảng, ví dụ [1, 2]`)
+  const sai = value.filter((ma) => !timDoiTuongApDung(ma))
+  if (sai.length) throw new Error(`Phần tử thứ ${line}: đối tượng áp dụng không hợp lệ: ${sai.join(', ')}`)
+  return value.length ? value : null
 }
 
 function errorMessage(error, fallback) {
@@ -488,6 +543,7 @@ async function load() {
     if (filters.trang_thai !== '' && filters.trang_thai !== null) {
       params.trang_thai = filters.trang_thai
     }
+    if (filters.doi_tuong_ap_dung) params.doi_tuong_ap_dung = filters.doi_tuong_ap_dung
     const data = await fetchLoaiCauHoi(params)
     rows.value = data.items
     total.value = data.total
@@ -545,6 +601,7 @@ function openEdit(row) {
     thu_tu_uu_tien: row.thu_tu_uu_tien,
     trang_thai: row.trang_thai,
     loai_tra_loi: row.loai_tra_loi || 'diem_so',
+    doi_tuong_ap_dung: [...(row.doi_tuong_ap_dung || [])],
     tieu_de_cau_tra_loi: docTieuDe(row.danh_sach_tieu_de_cau_tra_loi),
   })
   dialogVisible.value = true
@@ -558,6 +615,7 @@ function payloadFromForm() {
     ghi_chu: form.ghi_chu?.trim() || null,
     loai_tra_loi: form.loai_tra_loi,
     danh_sach_tieu_de_cau_tra_loi: guiTieuDe(form.tieu_de_cau_tra_loi),
+    doi_tuong_ap_dung: [...form.doi_tuong_ap_dung],
   }
 }
 
