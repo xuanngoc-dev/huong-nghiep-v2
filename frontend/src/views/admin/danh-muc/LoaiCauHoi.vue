@@ -242,7 +242,7 @@
             :precision="0"
             controls-position="right"
           />
-          <p class="field-hint">Được trùng; cùng thứ tự thì loại tạo trước đứng trước.</p>
+          <!-- <p class="field-hint">Được trùng; cùng thứ tự thì loại tạo trước đứng trước.</p> -->
         </CustomFormItem>
         <CustomFormItem label="Trạng thái" prop="trang_thai">
           <CustomSelect v-model="form.trang_thai" placeholder="Chọn trạng thái" :clearable="false">
