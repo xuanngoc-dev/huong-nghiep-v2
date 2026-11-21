@@ -78,10 +78,26 @@
               </div>
             </article>
 
+            <!-- Các mục giới thiệu (chỉ hiện mục có nội dung); kết luận chiếm cả hàng, nổi bật. -->
+            <div v-if="mucGioiThieu.length" class="stages-card mt-3">
+              <h2 class="stages-heading">Tìm hiểu nhóm nghề</h2>
+              <div class="gioi-thieu-nghe">
+                <section
+                  v-for="muc in mucGioiThieu"
+                  :key="muc.key"
+                  class="gioi-thieu-nghe__muc"
+                  :class="{ 'gioi-thieu-nghe__muc--ket-luan': muc.key === 'ket_luan' }"
+                >
+                  <h3 class="gioi-thieu-nghe__tieu-de">{{ muc.tieuDe }}</h3>
+                  <p class="gioi-thieu-nghe__noi-dung">{{ muc.noiDung }}</p>
+                </section>
+              </div>
+            </div>
+
             <div class="stages-card mt-3">
               <h2 class="stages-heading">
                 Các nghề cụ thể trong nhóm
-                <span v-if="dsNghe.length" class="chi-tiet-nhom__so-luong">{{ dsNghe.length }} nghề</span>
+                <span v-if="dsNgheHienThi.length" class="chi-tiet-nhom__so-luong">{{ dsNgheHienThi.length }} nghề</span>
               </h2>
 
               <div v-if="dangTaiNghe" class="chi-tiet-nhom__trang-thai" role="status">Đang tải danh sách nghề…</div>
@@ -89,16 +105,24 @@
                 {{ loiNghe }}
                 <button type="button" class="chi-tiet-nhom__thu-lai" @click="taiNghe">Thử lại</button>
               </div>
-              <div v-else-if="!dsNghe.length" class="chi-tiet-nhom__trang-thai">
-                Nhóm nghề này chưa có nghề cụ thể.
+              <!-- Hướng đi làm ngay (không học tiếp): không hiện nghề bắt buộc đào tạo chính quy. -->
+              <div v-else-if="!dsNgheHienThi.length" class="chi-tiet-nhom__trang-thai">
+                {{
+                  dsNghe.length
+                    ? 'Các nghề trong nhóm này đều cần học chính quy, chưa có nghề đi làm được ngay.'
+                    : 'Nhóm nghề này chưa có nghề cụ thể.'
+                }}
               </div>
               <div v-else class="row g-3">
-                <div v-for="(nghe, index) in dsNghe" :key="nghe.id" class="col-12 col-md-6">
+                <div v-for="(nghe, index) in dsNgheHienThi" :key="nghe.id" class="col-12 col-md-6">
                   <article class="nghe-card h-100">
                     <span class="nghe-card__so" aria-hidden="true">{{ index + 1 }}</span>
                     <div class="nghe-card__noi-dung">
                       <h3 class="nghe-card__ten">{{ nghe.ten_nghe }}</h3>
                       <p v-if="nghe.mo_ta_ngan" class="nghe-card__mo-ta">{{ nghe.mo_ta_ngan }}</p>
+                      <p v-if="nghe.yeu_cau_bang_cap" class="nghe-card__yeu-cau nghe-card__yeu-cau--bang-cap">
+                        <strong>Cần có:</strong> {{ nghe.yeu_cau_bang_cap }}
+                      </p>
                       <p v-if="nghe.yeu_cau_them" class="nghe-card__yeu-cau">
                         <strong>Yêu cầu thêm:</strong> {{ nghe.yeu_cau_them }}
                       </p>
@@ -145,7 +169,15 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { fetchNgheCuTheDiLam, fetchNhomNgheDiLam } from '@/api/nhomNgheDiLam'
 import GoiYKhaoSat from './GoiYKhaoSat.vue'
-import { LOAI_HINH_DAU_VAO, NHOM_MUC_TIEU, khoangLuong, nhan, soTrieu, thoiGianDaoTao } from './nhomNghe'
+import {
+  LOAI_HINH_DAU_VAO,
+  NHOM_MUC_TIEU,
+  laNgheDiLamNgay,
+  khoangLuong,
+  nhan,
+  soTrieu,
+  thoiGianDaoTao,
+} from './nhomNghe'
 import { useTenRouteThpt } from '../useTenRouteThpt'
 
 defineOptions({ name: 'ThptDiLamChiTietNhomNghe' })
@@ -163,6 +195,24 @@ const loiNghe = ref('')
 const maNhom = computed(() => String(route.params.maNhom || '').toUpperCase())
 const nhom = computed(() => dsNhom.value.find((item) => item.ma_nhom === maNhom.value) || null)
 
+const dsNgheHienThi = computed(() => dsNghe.value.filter(laNgheDiLamNgay))
+
+// Mục giới thiệu nhóm nghề theo thứ tự hiển thị; bỏ mục trống.
+const MUC_GIOI_THIEU = [
+  ['nganh_nay_la_gi', 'Ngành này là gì?'],
+  ['noi_lam_viec_o_dau', 'Làm việc ở đâu?'],
+  ['cong_viec_hang_ngay_nhu_the_nao', 'Công việc hằng ngày'],
+  ['ap_luc_va_rui_ro', 'Áp lực và rủi ro'],
+  ['xu_huong_tuong_lai', 'Xu hướng tương lai'],
+  ['ket_luan', 'Kết luận'],
+]
+const mucGioiThieu = computed(() =>
+  MUC_GIOI_THIEU.filter(([key]) => nhom.value?.[key]?.trim()).map(([key, tieuDe]) => ({
+    key,
+    tieuDe,
+    noiDung: nhom.value[key],
+  })),
+)
 // Lộ trình nhập dạng "Bước 1 → Bước 2 → ..." thì tách thành từng bước.
 const cacBuoc = computed(() =>
   (nhom.value?.lo_trinh_phat_trien || '')
@@ -439,6 +489,48 @@ onMounted(taiNhomNghe)
   color: #3a4742;
   font-size: 0.95rem;
   line-height: 1.5;
+}
+
+.gioi-thieu-nghe {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.gioi-thieu-nghe__muc {
+  padding: 14px;
+  border: 1px solid #d7eadf;
+  border-radius: var(--guest-radius);
+  background: #fff;
+}
+
+.gioi-thieu-nghe__muc--ket-luan {
+  grid-column: 1 / -1;
+  border-color: rgba(var(--guest-primary-rgb), 0.45);
+  background: #f3faf4;
+}
+
+.gioi-thieu-nghe__tieu-de {
+  margin: 0 0 6px;
+  color: #1c2b23;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.gioi-thieu-nghe__noi-dung {
+  margin: 0;
+  color: #3a4742;
+  line-height: 1.6;
+}
+
+@media (max-width: 767.98px) {
+  .gioi-thieu-nghe {
+    grid-template-columns: 1fr;
+  }
+}
+
+.nghe-card__yeu-cau--bang-cap {
+  background: #fffaf2;
 }
 
 .nghe-card__yeu-cau {

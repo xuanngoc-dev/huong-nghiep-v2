@@ -24,6 +24,24 @@
         >
           <CustomOption v-for="item in nhomOptions" :key="item.id" :label="nhanNhom(item)" :value="item.id" />
         </CustomSelect>
+        <CustomSelect
+          v-model="filters.co_bang_cap"
+          placeholder="Bằng cấp bắt buộc"
+          clearable
+          @change="onSearch"
+        >
+          <CustomOption label="Có yêu cầu bằng cấp" :value="1" />
+          <CustomOption label="Không yêu cầu bằng cấp" :value="0" />
+        </CustomSelect>
+        <CustomSelect
+          v-model="filters.chinh_quy"
+          placeholder="Đào tạo chính quy"
+          clearable
+          @change="onSearch"
+        >
+          <CustomOption label="Bắt buộc chính quy" :value="1" />
+          <CustomOption label="Không bắt buộc" :value="0" />
+        </CustomSelect>
         <template #nut>
           <CustomButton type="primary" @click="onSearch">Tìm kiếm</CustomButton>
         </template>
@@ -75,6 +93,15 @@
         </CustomTableColumn>
         <CustomTableColumn label="Yêu cầu thêm" min-width="200">
           <template #default="{ row }">{{ row.yeu_cau_them || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Bằng cấp bắt buộc" min-width="220">
+          <template #default="{ row }">{{ row.yeu_cau_bang_cap || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Đào tạo chính quy" width="170" align="center">
+          <template #default="{ row }">
+            <CustomTag v-if="row.bat_buoc_dao_tao_chinh_quy" type="warning" size="small">Bắt buộc</CustomTag>
+            <span v-else>—</span>
+          </template>
         </CustomTableColumn>
         <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
           <template #default="{ row }">
@@ -152,6 +179,16 @@
         <CustomFormItem class="form-grid__full" label="Yêu cầu thêm" prop="yeu_cau_them">
           <CustomInput v-model="form.yeu_cau_them" maxlength="500" placeholder="Nhập yêu cầu thêm (nếu có)" />
         </CustomFormItem>
+        <CustomFormItem class="form-grid__span-2" label="Bằng cấp / chứng chỉ bắt buộc" prop="yeu_cau_bang_cap">
+          <CustomInput
+            v-model="form.yeu_cau_bang_cap"
+            maxlength="255"
+            placeholder="Bỏ trống nếu không yêu cầu (vd. Giấy phép lái xe hạng C)"
+          />
+        </CustomFormItem>
+        <CustomFormItem label="Bắt buộc đào tạo chính quy" prop="bat_buoc_dao_tao_chinh_quy">
+          <CustomSwitch v-model="form.bat_buoc_dao_tao_chinh_quy" />
+        </CustomFormItem>
         <CustomFormItem class="form-grid__full" label="Mô tả ngắn" prop="mo_ta_ngan">
           <CustomInput
             v-model="form.mo_ta_ngan"
@@ -196,8 +233,20 @@ const JSON_SAMPLE = `[
     "ten_nghe": "Thợ trang điểm",
     "mo_ta_ngan": "Trang điểm cô dâu, sự kiện, chụp ảnh.",
     "yeu_cau_them": "Có bộ dụng cụ cá nhân"
+  },
+  {
+    "ma_nhom": "Y_TE_CHAM_SOC",
+    "ten_nghe": "Điều dưỡng",
+    "mo_ta_ngan": "Theo dõi người bệnh, tiêm truyền, thực hiện y lệnh của bác sĩ.",
+    "yeu_cau_bang_cap": "Bằng cao đẳng điều dưỡng trở lên và giấy phép hành nghề",
+    "bat_buoc_dao_tao_chinh_quy": 1
   }
 ]`
+
+// bat_buoc_dao_tao_chinh_quy: API lưu 1 hoặc null (bỏ trống = không bắt buộc); form dùng công tắc true/false.
+function laChinhQuy(value) {
+  return value === true || Number(value) === 1
+}
 
 const loading = ref(false)
 const saving = ref(false)
@@ -219,6 +268,9 @@ const nhomOptions = ref([])
 const filters = reactive({
   q: '',
   nhom_nghe_di_lam_id: '',
+  // 1 / 0; '' hoặc null (bấm xóa) = không lọc.
+  co_bang_cap: '',
+  chinh_quy: '',
 })
 
 const form = reactive(emptyForm())
@@ -234,6 +286,8 @@ function emptyForm() {
     ten_nghe: '',
     mo_ta_ngan: '',
     yeu_cau_them: '',
+    yeu_cau_bang_cap: '',
+    bat_buoc_dao_tao_chinh_quy: false,
   }
 }
 
@@ -283,6 +337,8 @@ function parseJsonItems(text) {
       ten_nghe: ten,
       mo_ta_ngan: item.mo_ta_ngan == null ? null : String(item.mo_ta_ngan).trim() || null,
       yeu_cau_them: item.yeu_cau_them == null ? null : String(item.yeu_cau_them).trim() || null,
+      yeu_cau_bang_cap: item.yeu_cau_bang_cap == null ? null : String(item.yeu_cau_bang_cap).trim() || null,
+      bat_buoc_dao_tao_chinh_quy: laChinhQuy(item.bat_buoc_dao_tao_chinh_quy) ? 1 : null,
     }
   })
 }
@@ -321,6 +377,8 @@ async function load() {
     const params = { page: page.value, page_size: pageSize.value }
     if (filters.q.trim()) params.q = filters.q.trim()
     if (filters.nhom_nghe_di_lam_id) params.nhom_nghe_di_lam_id = filters.nhom_nghe_di_lam_id
+    if (filters.co_bang_cap === 0 || filters.co_bang_cap === 1) params.co_bang_cap = filters.co_bang_cap
+    if (filters.chinh_quy === 0 || filters.chinh_quy === 1) params.chinh_quy = filters.chinh_quy
     const data = await fetchNgheCuTheDiLam(params)
     rows.value = data.items
     total.value = data.total
@@ -379,6 +437,8 @@ function openEdit(row) {
     ten_nghe: row.ten_nghe,
     mo_ta_ngan: row.mo_ta_ngan || '',
     yeu_cau_them: row.yeu_cau_them || '',
+    yeu_cau_bang_cap: row.yeu_cau_bang_cap || '',
+    bat_buoc_dao_tao_chinh_quy: laChinhQuy(row.bat_buoc_dao_tao_chinh_quy),
   })
   dialogVisible.value = true
 }
@@ -389,6 +449,8 @@ function payloadFromForm() {
     ten_nghe: form.ten_nghe.trim(),
     mo_ta_ngan: form.mo_ta_ngan?.trim() || null,
     yeu_cau_them: form.yeu_cau_them?.trim() || null,
+    yeu_cau_bang_cap: form.yeu_cau_bang_cap?.trim() || null,
+    bat_buoc_dao_tao_chinh_quy: form.bat_buoc_dao_tao_chinh_quy ? 1 : null,
   }
 }
 

@@ -509,14 +509,14 @@
         },
         {
           "index": "danh-muc:di-lam",
-          "title": "Đi làm ngay",
-          "tooltip": "Học sinh THPT đi làm ngay sau tốt nghiệp: nhóm nghề và tiêu chí gợi ý",
+          "title": "Đi làm",
+          "tooltip": "Học sinh THPT đi làm sau tốt nghiệp: nhóm nghề và tiêu chí gợi ý",
           "icon": "Suitcase",
           "children": [
             {
               "index": "/admin/danh-muc/nhom-nghe-di-lam",
               "title": "Nhóm nghề đi làm",
-              "tooltip": "Nhóm nghề cho học sinh đi làm ngay sau THPT: đào tạo, lương, triển vọng",
+              "tooltip": "Nhóm nghề cho học sinh đi làm sau THPT: đào tạo, lương, triển vọng",
               "icon": "Suitcase"
             },
             {

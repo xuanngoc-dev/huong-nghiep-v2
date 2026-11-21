@@ -339,6 +339,16 @@
             placeholder="Nhập lộ trình phát triển"
           />
         </CustomFormItem>
+        <!-- Các mục giới thiệu hiển thị ở trang chi tiết nhóm nghề của học sinh. -->
+        <CustomFormItem
+          v-for="muc in MUC_GIOI_THIEU"
+          :key="muc.key"
+          class="form-grid__full"
+          :label="muc.label"
+          :prop="muc.key"
+        >
+          <CustomInput v-model="form[muc.key]" type="textarea" :rows="3" maxlength="10000" :placeholder="muc.placeholder" />
+        </CustomFormItem>
       </div>
     </CustomForm>
     <template #footer>
@@ -380,6 +390,20 @@ const NHOM_MUC_TIEU = [
   { value: 'thu_nhap_dot_pha', label: 'Thu nhập đột phá', mau: 'danger' },
 ]
 
+// Mục giới thiệu nhóm nghề (văn bản dài, tùy chọn).
+const MUC_GIOI_THIEU = [
+  { key: 'nganh_nay_la_gi', label: 'Ngành này là gì?', placeholder: 'Giới thiệu ngắn gọn nhóm nghề' },
+  { key: 'noi_lam_viec_o_dau', label: 'Nơi làm việc ở đâu?', placeholder: 'Nhà máy, cửa hàng, công trường…' },
+  {
+    key: 'cong_viec_hang_ngay_nhu_the_nao',
+    label: 'Công việc hằng ngày như thế nào?',
+    placeholder: 'Một ngày làm việc điển hình',
+  },
+  { key: 'ap_luc_va_rui_ro', label: 'Áp lực và rủi ro', placeholder: 'Khó khăn, rủi ro cần biết trước' },
+  { key: 'xu_huong_tuong_lai', label: 'Xu hướng tương lai', placeholder: 'Nhu cầu, thay đổi của nghề trong vài năm tới' },
+  { key: 'ket_luan', label: 'Kết luận', placeholder: 'Nghề này phù hợp với ai, nên chuẩn bị gì' },
+]
+
 // Các trường số/chọn: chuỗi rỗng hoặc undefined đều gửi null.
 const TRUONG_TUY_CHON = [
   'loai_hinh_dau_vao',
@@ -395,6 +419,7 @@ const TRUONG_TUY_CHON = [
   'lo_trinh_phat_trien',
   'nhom_muc_tieu',
   'ma_holland',
+  ...MUC_GIOI_THIEU.map((muc) => muc.key),
 ]
 
 function nhan(ds, value) {
@@ -427,7 +452,9 @@ const JSON_SAMPLE = `[
     "luong_khoi_diem_max": 10,
     "luong_kinh_nghiem_max": 30,
     "nhom_muc_tieu": "nghe_vung_chac",
-    "ma_holland": "AS"
+    "ma_holland": "AS",
+    "nganh_nay_la_gi": "Cắt tóc, làm móng, chăm sóc da, trang điểm cho khách.",
+    "ket_luan": "Hợp với người khéo tay, có gu thẩm mỹ; có thể mở tiệm với vốn nhỏ."
   }
 ]`
 
@@ -500,6 +527,7 @@ function emptyForm() {
     lo_trinh_phat_trien: '',
     nhom_muc_tieu: '',
     ma_holland: '',
+    ...Object.fromEntries(MUC_GIOI_THIEU.map((muc) => [muc.key, ''])),
     trang_thai: 1,
   }
 }

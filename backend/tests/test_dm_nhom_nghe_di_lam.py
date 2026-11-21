@@ -42,8 +42,9 @@ def _ds_nhom(db, **kw):
 
 
 def _ds_nghe(db, **kw):
-    return nghe.list_nghe_cu_the_di_lam(**{"q": None, "nhom_nghe_di_lam_id": None, "page": 1, "page_size": 10,
-                                            **kw}, db=db)
+    params = {"q": None, "nhom_nghe_di_lam_id": None, "co_bang_cap": None, "chinh_quy": None, "page": 1,
+              "page_size": 10}
+    return nghe.list_nghe_cu_the_di_lam(**{**params, **kw}, db=db)
 
 
 def _ds_lien_ket(db, **kw):
@@ -126,6 +127,29 @@ class TestDmNhomNgheDiLam(unittest.TestCase):
 
         nhom.delete_nhom_nghe_di_lam_many(DmNhomNgheDiLamDeleteMany(ids=[n.id, 999]), db=self.db, _=None)
         self.assertEqual((_ds_nghe(self.db).total, _ds_lien_ket(self.db).total), (0, 0))
+
+    def test_loc_theo_bang_cap_va_chinh_quy(self):
+        n, _ = self._tao_du_lieu()
+        for ten, bang_cap, chinh_quy in [
+            ("Hộ lý", None, None),
+            ("Lái xe tải", "Giấy phép lái xe hạng C", None),
+            ("Bác sĩ", "Bằng bác sĩ", 1),
+            ("Thợ phụ", "  ", 0),  # Chuỗi rỗng / 0 được lưu thành null: coi như không yêu cầu.
+        ]:
+            nghe.create_nghe_cu_the_di_lam(
+                DmNgheCuTheDiLamWrite(nhom_nghe_di_lam_id=n.id, ten_nghe=ten, yeu_cau_bang_cap=bang_cap,
+                                      bat_buoc_dao_tao_chinh_quy=chinh_quy),
+                db=self.db, _=None,
+            )
+
+        def ten(**kw):
+            return sorted(item.ten_nghe for item in _ds_nghe(self.db, **kw).items)
+
+        self.assertEqual(ten(co_bang_cap=1), ["Bác sĩ", "Lái xe tải"])
+        self.assertEqual(ten(co_bang_cap=0), ["Hộ lý", "Thợ phụ"])
+        self.assertEqual(ten(chinh_quy=1), ["Bác sĩ"])
+        self.assertEqual(ten(chinh_quy=0), ["Hộ lý", "Lái xe tải", "Thợ phụ"])
+        self.assertEqual(ten(co_bang_cap=1, chinh_quy=0), ["Lái xe tải"])
 
     def test_xoa_nhieu_lien_ket_khong_ton_tai_tra_0(self):
         kq = lien_ket.delete_nhom_nghe_tieu_chi_many(
