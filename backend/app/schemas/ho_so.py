@@ -282,6 +282,17 @@ class ThongTinCaNhanWrite(BaseModel):
         return value
 
 
+class DoiTuongTaiKhoan(BaseModel):
+    """Đối tượng của tài khoản (nguoi_dung.doi_tuong), đổi từ khung chat; null = bỏ chọn."""
+
+    doi_tuong: str | None = Field(default=None, max_length=50)
+
+    @field_validator("doi_tuong")
+    @classmethod
+    def check_doi_tuong(cls, value: str | None) -> str | None:
+        return chuan_hoa_doi_tuong(value)
+
+
 class HoSoWrite(ThongTinCaNhanWrite):
     """Toàn bộ hồ sơ: thông tin cá nhân kèm hồ sơ năng lực (học vấn, sức khỏe, tài chính)."""
 

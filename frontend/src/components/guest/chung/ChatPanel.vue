@@ -80,7 +80,9 @@ const stickToBottom = ref(true)
 const hasUser = computed(() => chat.state.messages.some(m => m.role === 'user'))
 // Câu hỏi gợi ý khi chưa hỏi gì: theo đối tượng hướng đến (constants/doiTuongHuongDen.js).
 const examples = computed(() => cauHoiMau(chat.state.doiTuongHuongDen))
-const hienChonDoiTuong = computed(() => !chat.daChotDoiTuong && !chat.state.daChonDoiTuong && !chat.state.daKetThuc)
+// Thành viên đã có đối tượng trong tài khoản thì không hỏi lại ở đầu khung chat (đổi trong nút Cài đặt).
+const hienChonDoiTuong = computed(() => !chat.daChotDoiTuong && !chat.state.daChonDoiTuong && !chat.doiTuongTaiKhoan
+  && !chat.state.daKetThuc)
 function chonDoiTuong(ma) {
   chat.chonDoiTuong(ma)
   input.value?.focus()

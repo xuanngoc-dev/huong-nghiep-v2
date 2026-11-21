@@ -12,90 +12,89 @@
 
     <el-form
       ref="formRef"
+      class="form-grid"
       :model="form"
       :rules="rules"
       label-position="top"
       size="large"
       @submit.prevent="onSubmit"
     >
-      <el-form-item label="Họ tên" prop="ho_ten">
-        <el-input v-model="form.ho_ten" placeholder="Nguyễn Văn A" clearable>
-          <template #prefix>
-            <el-icon><User /></el-icon>
-          </template>
-        </el-input>
-      </el-form-item>
+      <!-- Lưới form-grid: khung form hẹp (< 720px) nên mỗi ô một nửa hàng, 2 ô trên một hàng. -->
+      <div class="form-grid__body">
+        <el-form-item label="Họ tên" prop="ho_ten">
+          <el-input v-model="form.ho_ten" placeholder="Nguyễn Văn A" clearable>
+            <template #prefix>
+              <el-icon><User /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
 
-      <el-form-item label="Email" prop="email">
-        <el-input v-model="form.email" placeholder="you@example.com" clearable>
-          <template #prefix>
-            <el-icon><Message /></el-icon>
-          </template>
-        </el-input>
-      </el-form-item>
+        <el-form-item label="Email" prop="email">
+          <el-input v-model="form.email" placeholder="you@example.com" clearable>
+            <template #prefix>
+              <el-icon><Message /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
 
-      <el-form-item label="Số điện thoại" prop="so_dien_thoai">
-        <el-input v-model="form.so_dien_thoai" placeholder="Tùy chọn" clearable>
-          <template #prefix>
-            <el-icon><Iphone /></el-icon>
-          </template>
-        </el-input>
-      </el-form-item>
+        <el-form-item label="Số điện thoại" prop="so_dien_thoai">
+          <el-input v-model="form.so_dien_thoai" placeholder="Tùy chọn" clearable>
+            <template #prefix>
+              <el-icon><Iphone /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
 
-      <div class="row gx-3">
-        <div class="col-sm-6">
-          <el-form-item label="Bạn là" prop="doi_tuong">
-            <CustomSelect v-model="form.doi_tuong" placeholder="Chọn đối tượng" class="w-100">
-              <CustomOption v-for="item in DOI_TUONG_HUONG_DEN" :key="item.ma" :label="item.label" :value="item.ma" />
-            </CustomSelect>
-          </el-form-item>
-        </div>
-        <div class="col-sm-6">
-          <el-form-item label="Tỉnh thành đang ở" prop="tinh_thanh_id">
-            <CustomSelect
-              v-model="form.tinh_thanh_id"
-              placeholder="Chọn tỉnh thành"
-              class="w-100"
-              filterable
-              :loading="dangTaiTinh"
-              no-data-text="Không tải được danh sách tỉnh thành"
-            >
-              <CustomOption v-for="item in dsTinhThanh" :key="item.id" :label="item.ten_tinh" :value="item.id" />
-            </CustomSelect>
-          </el-form-item>
-        </div>
-      </div>
+        <el-form-item label="Tỉnh thành đang ở" prop="tinh_thanh_id">
+          <CustomSelect
+            v-model="form.tinh_thanh_id"
+            placeholder="Chọn tỉnh thành"
+            filterable
+            :loading="dangTaiTinh"
+            no-data-text="Không tải được danh sách tỉnh thành"
+          >
+            <CustomOption v-for="item in dsTinhThanh" :key="item.id" :label="item.ten_tinh" :value="item.id" />
+          </CustomSelect>
+        </el-form-item>
 
-      <div class="row gx-3">
-        <div class="col-sm-6">
-          <el-form-item label="Mật khẩu" prop="mat_khau">
-            <el-input
-              v-model="form.mat_khau"
-              type="password"
-              placeholder="Ít nhất 6 ký tự"
-              show-password
-            >
-              <template #prefix>
-                <el-icon><Lock /></el-icon>
-              </template>
-            </el-input>
-          </el-form-item>
-        </div>
-        <div class="col-sm-6">
-          <el-form-item label="Xác nhận mật khẩu" prop="xac_nhan_mat_khau">
-            <el-input
-              v-model="form.xac_nhan_mat_khau"
-              type="password"
-              placeholder="Nhập lại"
-              show-password
-              @keyup.enter="onSubmit"
-            >
-              <template #prefix>
-                <el-icon><Lock /></el-icon>
-              </template>
-            </el-input>
-          </el-form-item>
-        </div>
+        <!-- Tên đối tượng dài (vd. "Học sinh THPT xuất khẩu lao động") nên ô này chiếm cả hàng. -->
+        <el-form-item class="form-grid__full" label="Bạn là" prop="doi_tuong">
+          <CustomSelect v-model="form.doi_tuong" placeholder="Chọn đối tượng">
+            <CustomOption v-for="item in DOI_TUONG_HUONG_DEN" :key="item.ma" :label="item.label" :value="item.ma" />
+          </CustomSelect>
+        </el-form-item>
+
+        <el-form-item label="Mật khẩu" prop="mat_khau">
+          <el-input v-model="form.mat_khau" type="password" placeholder="Ít nhất 6 ký tự" show-password>
+            <template #prefix>
+              <el-icon><Lock /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
+
+        <el-form-item label="Xác nhận mật khẩu" prop="xac_nhan_mat_khau">
+          <el-input
+            v-model="form.xac_nhan_mat_khau"
+            type="password"
+            placeholder="Nhập lại"
+            show-password
+            @keyup.enter="onSubmit"
+          >
+            <template #prefix>
+              <el-icon><Lock /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
+
+        <!-- Bấm tên văn bản mở hộp thoại xem nội dung (không đánh dấu ô); "Tôi đồng ý" trong hộp thoại thì đánh dấu. -->
+        <el-form-item class="form-grid__full auth-dong-y" prop="dong_y">
+          <el-checkbox v-model="form.dong_y">
+            Tôi đã đọc và đồng ý với
+            <a href="#" @click.prevent.stop="moVanBan(CHINH_SACH_BAO_MAT)">Chính sách bảo mật</a>
+            và
+            <a href="#" @click.prevent.stop="moVanBan(DIEU_KHOAN_SU_DUNG)">Điều khoản sử dụng</a>
+          </el-checkbox>
+        </el-form-item>
       </div>
 
       <el-button type="primary" class="submit-btn" :loading="submitting" @click="onSubmit">
@@ -103,6 +102,8 @@
         <el-icon aria-hidden="true"><Right /></el-icon>
       </el-button>
     </el-form>
+
+    <DialogVanBan v-model="vanBanMo" :van-ban="vanBanDangXem" @dong-y="form.dong_y = true" />
 
     <p class="auth-footer">
       Đã có tài khoản?
@@ -123,6 +124,8 @@ import { fetchTinhThanh } from '@/api/tinhThanh'
 import { DOI_TUONG_HUONG_DEN } from '@/constants/doiTuongHuongDen'
 import { mountGuestBootstrap, unmountGuestBootstrap } from '@/layouts/guest/bootstrap'
 import AuthShell from '@/components/guest/auth/AuthShell.vue'
+import DialogVanBan from '@/components/guest/van-ban/DialogVanBan.vue'
+import { CHINH_SACH_BAO_MAT, DIEU_KHOAN_SU_DUNG } from '@/data/vanBanPhapLy'
 import bannerImage from '@/assets/guest/thcs.jpg'
 
 const router = useRouter()
@@ -151,7 +154,16 @@ const form = reactive({
   tinh_thanh_id: null,
   mat_khau: '',
   xac_nhan_mat_khau: '',
+  dong_y: false,
 })
+
+// Hộp thoại xem Chính sách bảo mật / Điều khoản sử dụng.
+const vanBanMo = ref(false)
+const vanBanDangXem = ref(null)
+function moVanBan(vanBan) {
+  vanBanDangXem.value = vanBan
+  vanBanMo.value = true
+}
 
 // Danh sách tỉnh thành đang hoạt động cho ô "Tỉnh thành đang ở" (API danh mục không cần đăng nhập).
 const dsTinhThanh = ref([])
@@ -190,6 +202,13 @@ const rules = {
     },
   ],
   doi_tuong: [{ required: true, message: 'Vui lòng chọn bạn là ai', trigger: 'change' }],
+  dong_y: [
+    {
+      validator: (_rule, value, callback) =>
+        value ? callback() : callback(new Error('Bạn cần đồng ý với Chính sách bảo mật và Điều khoản sử dụng')),
+      trigger: 'change',
+    },
+  ],
   tinh_thanh_id: [{ required: true, message: 'Vui lòng chọn tỉnh thành', trigger: 'change' }],
   mat_khau: [
     { required: true, message: 'Vui lòng nhập mật khẩu', trigger: 'blur' },

@@ -12,34 +12,38 @@
 
     <el-form
       ref="formRef"
+      class="form-grid"
       :model="form"
       :rules="rules"
       label-position="top"
       size="large"
       @submit.prevent="onSubmit"
     >
-      <el-form-item label="Email" prop="email">
-        <el-input v-model="form.email" placeholder="you@example.com" clearable>
-          <template #prefix>
-            <el-icon><Message /></el-icon>
-          </template>
-        </el-input>
-      </el-form-item>
+      <!-- Lưới form-grid: email và mật khẩu trên một hàng. -->
+      <div class="form-grid__body">
+        <el-form-item label="Email" prop="email">
+          <el-input v-model="form.email" placeholder="you@example.com" clearable>
+            <template #prefix>
+              <el-icon><Message /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
 
-      <el-form-item label="Mật khẩu" prop="mat_khau">
-        <el-input
-          v-model="form.mat_khau"
-          type="password"
-          placeholder="Nhập mật khẩu"
-          show-password
-          clearable
-          @keyup.enter="onSubmit"
-        >
-          <template #prefix>
-            <el-icon><Lock /></el-icon>
-          </template>
-        </el-input>
-      </el-form-item>
+        <el-form-item label="Mật khẩu" prop="mat_khau">
+          <el-input
+            v-model="form.mat_khau"
+            type="password"
+            placeholder="Nhập mật khẩu"
+            show-password
+            clearable
+            @keyup.enter="onSubmit"
+          >
+            <template #prefix>
+              <el-icon><Lock /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
+      </div>
 
       <el-button type="primary" class="submit-btn" :loading="submitting" @click="onSubmit">
         Đăng nhập

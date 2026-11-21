@@ -1,7 +1,7 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { hoiChatStream, ketThucPhienChat, layDanhSachModel, layTrangThaiPhien } from '@/api/chat'
-import { fetchHoSo } from '@/api/hoSo'
+import { capNhatDoiTuong, fetchHoSo } from '@/api/hoSo'
 import { DOI_TUONG_HUONG_DEN_MAC_DINH, laDoiTuongHuongDen } from '@/constants/doiTuongHuongDen'
 import { phanTichLenh, taoBoChayLenh } from '@/utils/chatLenh'
 import { createChatSession, fromServerMessages, newConversation } from '@/utils/chatSession'
@@ -35,20 +35,22 @@ export const useChatStore = defineStore('chat', () => {
   }
   // Đối tượng hướng đến theo trang đang xem (Chatbot.vue cập nhật khi đổi trang): mặc định cho hội thoại mới.
   const doiTuongTrang = ref(DOI_TUONG_HUONG_DEN_MAC_DINH)
-  // Thành viên đã chọn đối tượng khi đăng ký (nguoi_dung.doi_tuong): mọi hội thoại mới dùng cố định đối tượng này
-  // (server cũng áp dụng khi tạo phiên), không theo trang đang xem và không đổi được trong khung chat.
+  // Thành viên đã có đối tượng (nguoi_dung.doi_tuong, chọn khi đăng ký / thông tin cá nhân / khung chat): hội thoại mới
+  // dùng đối tượng này thay vì theo trang đang xem (server cũng áp dụng khi tạo phiên). Vẫn đổi được trong khung chat
+  // khi hội thoại chưa chốt; đổi thì lưu luôn vào tài khoản (chonDoiTuong).
   const doiTuongTaiKhoan = computed(() => (auth.isAuthenticated && laDoiTuongHuongDen(auth.user?.doi_tuong)
     ? auth.user.doi_tuong : ''))
   const session = createChatSession(state, { stream: hoiChatStream, storage: localStorage, storageKey: key, loadProfile,
     guestId: () => (auth.isAuthenticated ? null : maThietBi()),
     doiTuongMacDinh: () => doiTuongTaiKhoan.value || doiTuongTrang.value })
-  // Đã hỏi câu đầu (server đã chốt đối tượng vào phiên) hoặc tài khoản đã có đối tượng thì không đổi đối tượng nữa.
-  const daChotDoiTuong = computed(() => Boolean(doiTuongTaiKhoan.value) || Boolean(state.maPhien)
-    || state.messages.some(m => m.role === 'user' && !m.local))
+  // Đã hỏi câu đầu (server đã chốt đối tượng vào phiên) thì không đổi đối tượng nữa.
+  const daChotDoiTuong = computed(() => Boolean(state.maPhien) || state.messages.some(m => m.role === 'user' && !m.local))
   function datDoiTuongTrang(ma) {
     if (!laDoiTuongHuongDen(ma)) return
     doiTuongTrang.value = ma
-    if (!daChotDoiTuong.value && !state.daChonDoiTuong && !state.sending) state.doiTuongHuongDen = ma
+    if (!daChotDoiTuong.value && !state.daChonDoiTuong && !doiTuongTaiKhoan.value && !state.sending) {
+      state.doiTuongHuongDen = ma
+    }
   }
   // Hội thoại chưa có phiên trên server dùng đối tượng của tài khoản (gọi khi tải xong tài khoản và sau mỗi lần
   // khôi phục hội thoại đã lưu ở trình duyệt). Phiên đã mở giữ đối tượng server đã chốt (kiemTraPhien cập nhật lại).
@@ -57,10 +59,27 @@ export const useChatStore = defineStore('chat', () => {
   }
   watch(doiTuongTaiKhoan, apDoiTuongTaiKhoan)
   // Người dùng tự chọn đối tượng (thẻ chọn đầu khung chat / nút cài đặt): giữ lựa chọn này dù đổi trang.
+  // Thành viên: lưu luôn vào tài khoản (PATCH /tai-khoan/doi-tuong); lưu lỗi thì trả lại đối tượng cũ.
+  // Câu hỏi gửi ngay sau khi chọn chờ lưu xong (send), vì server tạo phiên theo đối tượng của tài khoản.
+  let dangLuuDoiTuong = null
   function chonDoiTuong(ma) {
     if (!laDoiTuongHuongDen(ma) || daChotDoiTuong.value || state.sending) return
+    const cu = state.doiTuongHuongDen
     state.doiTuongHuongDen = ma
     state.daChonDoiTuong = true
+    if (!auth.isAuthenticated || ma === doiTuongTaiKhoan.value) return
+    state.error = ''
+    dangLuuDoiTuong = capNhatDoiTuong(ma)
+      .then((data) => {
+        if (auth.user) auth.setUser({ ...auth.user, doi_tuong: data?.doi_tuong ?? ma })
+      })
+      .catch(() => {
+        if (state.doiTuongHuongDen === ma) state.doiTuongHuongDen = cu
+        state.error = 'Không lưu được đối tượng vào tài khoản. Vui lòng thử lại.'
+      })
+      .finally(() => {
+        dangLuuDoiTuong = null
+      })
   }
   // Phiên đang mở có thể đã bị quản trị kết thúc: hỏi server để khóa ô nhập ngay, không chờ tới lúc gửi.
   async function kiemTraPhien() {
@@ -136,6 +155,7 @@ export const useChatStore = defineStore('chat', () => {
   })
   // Gửi từ khung chat nổi: tin bắt đầu bằng "/" là lệnh, chạy tại chỗ và hiện câu trả lời như tin nhắn cục bộ.
   async function send(input, retry = false) {
+    if (dangLuuDoiTuong) await dangLuuDoiTuong
     const text = (typeof input === 'string' ? input : state.draft).trim()
     if (retry || state.sending || !phanTichLenh(text)) return session.send(input, retry)
     state.draft = ''

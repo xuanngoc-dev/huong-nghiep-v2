@@ -197,7 +197,8 @@ defineProps({
 
 .auth-form {
   width: 100%;
-  max-width: 440px;
+  /* Đủ rộng cho 2 ô nhập trên một hàng (form-grid). */
+  max-width: 640px;
   padding: 32px 28px 28px;
   border: 1px solid var(--auth-line);
   border-radius: 16px;
@@ -290,6 +291,34 @@ defineProps({
 
 .auth-form :deep(.el-form-item__error) {
   padding-top: 4px;
+}
+
+/* Ô đồng ý chính sách & điều khoản: nhãn dài được xuống dòng, link màu chủ đạo. */
+.auth-form :deep(.auth-dong-y) {
+  margin-bottom: 20px;
+}
+
+.auth-form :deep(.auth-dong-y .el-checkbox) {
+  align-items: flex-start;
+  height: auto;
+  white-space: normal;
+}
+
+.auth-form :deep(.auth-dong-y .el-checkbox__input) {
+  margin-top: 3px;
+}
+
+.auth-form :deep(.auth-dong-y .el-checkbox__label) {
+  color: var(--auth-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.auth-form :deep(.auth-dong-y a) {
+  color: var(--auth-primary-strong);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .auth-form :deep(.submit-btn) {

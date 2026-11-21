@@ -23,14 +23,7 @@
 
           <article class="col-lg-9">
             <div class="van-ban__noi-dung">
-              <section v-for="(muc, index) in vanBan.muc" :id="muc.id" :key="muc.id" class="van-ban__muc">
-                <h2>{{ index + 1 }}. {{ muc.tieuDe }}</h2>
-                <p v-for="(doan, i) in muc.doan || []" :key="`d${i}`">{{ doan }}</p>
-                <ul v-if="muc.ds">
-                  <li v-for="(dong, i) in muc.ds" :key="i">{{ dong }}</li>
-                </ul>
-                <p v-for="(doan, i) in muc.sau || []" :key="`s${i}`">{{ doan }}</p>
-              </section>
+              <NoiDungVanBan :van-ban="vanBan" neo />
 
               <p class="van-ban__lien-quan">
                 Xem thêm:
@@ -46,6 +39,7 @@
 
 <script setup>
 import { dinhDangNgay } from '@/utils/thoiGian'
+import NoiDungVanBan from './NoiDungVanBan.vue'
 import '@/components/guest/landing/landing.css'
 
 // Trang văn bản dài (chính sách, điều khoản): mục lục + các mục có neo #id. Nội dung ở data/vanBanPhapLy.js.
@@ -99,40 +93,6 @@ defineProps({
   border: 1px solid var(--lp-line);
   border-radius: var(--lp-radius);
   background: #fff;
-}
-
-.van-ban__muc {
-  /* Chừa chỗ cho header dính khi bấm mục lục. */
-  scroll-margin-top: 90px;
-}
-
-.van-ban__muc + .van-ban__muc {
-  margin-top: 32px;
-}
-
-.landing .van-ban__muc h2 {
-  margin: 0 0 12px;
-  font-size: 1.2rem;
-  font-weight: 500;
-}
-
-.van-ban__muc p,
-.van-ban__muc li {
-  color: #334155;
-  line-height: 1.7;
-}
-
-.van-ban__muc p {
-  margin: 0 0 12px;
-  max-width: 72ch;
-}
-
-.van-ban__muc ul {
-  display: grid;
-  gap: 6px;
-  max-width: 72ch;
-  margin: 0 0 12px;
-  padding-left: 1.25rem;
 }
 
 .van-ban__lien-quan {

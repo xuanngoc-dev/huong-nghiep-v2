@@ -3,8 +3,8 @@ from contextlib import nullcontext
 from unittest.mock import patch
 from types import SimpleNamespace
 
-from app.api.v1.endpoints.ho_so import get_ho_so, update_thong_tin_ca_nhan
-from app.schemas.ho_so import ThongTinCaNhanWrite
+from app.api.v1.endpoints.ho_so import get_ho_so, update_doi_tuong, update_thong_tin_ca_nhan
+from app.schemas.ho_so import DoiTuongTaiKhoan, ThongTinCaNhanWrite
 
 
 def _ho_so(**kwargs):
@@ -118,6 +118,27 @@ class TestThongTinCaNhan(unittest.TestCase):
 
     def test_schema_thong_tin_ca_nhan_khong_nhan_ho_so_nang_luc(self, _dong_bo):
         self.assertNotIn("trinh_do_hoc_van", ThongTinCaNhanWrite.model_fields)
+
+
+class TestDoiTuongTaiKhoan(unittest.TestCase):
+    def test_doi_doi_tuong_tu_khung_chat(self):
+        user = _tai_khoan()
+        user.doi_tuong = "phu-huynh"
+        db = _DbGia(None)
+        result = update_doi_tuong(DoiTuongTaiKhoan(doi_tuong="sinh-vien"), db, user)
+        self.assertTrue(db.committed)
+        self.assertEqual(user.doi_tuong, "sinh-vien")
+        self.assertEqual(result.doi_tuong, "sinh-vien")
+
+    def test_bo_chon_doi_tuong(self):
+        user = _tai_khoan()
+        user.doi_tuong = "phu-huynh"
+        update_doi_tuong(DoiTuongTaiKhoan(doi_tuong=None), _DbGia(None), user)
+        self.assertIsNone(user.doi_tuong)
+
+    def test_ma_khong_hop_le(self):
+        with self.assertRaises(ValueError):
+            DoiTuongTaiKhoan(doi_tuong="ca-si")
 
 
 class TestLayHoSo(unittest.TestCase):

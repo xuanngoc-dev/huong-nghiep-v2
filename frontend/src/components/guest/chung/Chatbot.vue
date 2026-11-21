@@ -49,11 +49,12 @@
               <el-icon :size="14"><Close /></el-icon>
             </button>
           </div>
-          <p v-if="chat.doiTuongTaiKhoan" class="chatbot__cai-dat-ghi-chu">
-            Theo đối tượng bạn chọn khi đăng ký tài khoản.
-          </p>
-          <p v-else-if="chat.daChotDoiTuong" class="chatbot__cai-dat-ghi-chu">
+          <!-- Hội thoại đã chốt đối tượng thì báo trước (nút chọn bị khóa); thành viên đổi ở đây được lưu vào tài khoản. -->
+          <p v-if="chat.daChotDoiTuong" class="chatbot__cai-dat-ghi-chu">
             Đã chốt cho cuộc hội thoại này. Bấm <b>Kết thúc</b> để bắt đầu hội thoại mới với đối tượng khác.
+          </p>
+          <p v-else-if="chat.doiTuongTaiKhoan" class="chatbot__cai-dat-ghi-chu">
+            Hãy cho trợ lý của chúng tôi biết bạn đang đóng vai là ai để nhận được các gợi ý phù hợp hơn.
           </p>
           <p v-else class="chatbot__cai-dat-ghi-chu">Trợ lý trả lời theo hoàn cảnh của đối tượng bạn chọn.</p>
           <div class="chatbot__cai-dat-ds" role="group" aria-label="Chọn đối tượng người hỏi">

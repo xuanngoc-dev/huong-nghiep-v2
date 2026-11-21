@@ -22,3 +22,8 @@ export function doiMatKhau(payload) {
 export function updateThongTinCaNhan(payload) {
   return api.put('/tai-khoan/thong-tin-ca-nhan', payload).then((res) => res.data)
 }
+
+// Chỉ đổi đối tượng của tài khoản (nguoi_dung.doi_tuong), dùng khi chọn "Bạn là" trong khung chat.
+export function capNhatDoiTuong(doiTuong) {
+  return api.patch('/tai-khoan/doi-tuong', { doi_tuong: doiTuong || null }, { skipLoading: true }).then((res) => res.data)
+}
