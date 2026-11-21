@@ -21,8 +21,8 @@ export const heroSlides = [
   {
     id: 'dinh-huong',
     eyebrow: 'Nền tảng định hướng nghề nghiệp',
-    title: 'Khám phá bản thân – Định hướng tương lai – Kiến tạo sự nghiệp',
-    text: 'Đồng hành cùng bạn trên hành trình thấu hiểu bản thân, lựa chọn ngành học, khám phá nghề nghiệp và phát triển sự nghiệp phù hợp.',
+    title: 'Chọn hướng đi sau lớp 9, lớp 12 hợp với học lực và sở thích của bạn',
+    text: 'So sánh các hướng đi, làm trắc nghiệm Holland, tra cứu trường – ngành và hỏi trợ lý AI ở cùng một nơi.',
     image: thcsImage,
     alt: 'Học sinh mặc đồng phục cùng học tập trong lớp',
     primary: { label: 'Bắt đầu định hướng', to: { name: 'chon-doi-tuong' } },
@@ -63,12 +63,22 @@ export const heroSlides = [
 
 // Menu chính ở header khách. hash: cuộn tới mục trên trang chủ; moChat: mở khung chat nổi (trợ lý AI).
 export const navLinks = [
+<<<<<<< HEAD
   { label: 'Khám phá', to: { name: 'chon-doi-tuong' } },
   // { label: 'HS THCS', to: { name: 'hoc-sinh-thcs' } },
   // { label: 'HS THPT', to: { name: 'hoc-sinh-thpt' } },
   // Chưa có trang tra cứu nghề riêng: dẫn tới mục "Khám phá nghề & trường" trên trang chủ.
+=======
+  { label: 'Giới thiệu', to: { name: 'home' }, hash: '#gioi-thieu' },
+  { label: 'Khám phá', to: { name: 'home' }, hash: '#doi-tuong' },
+  { label: 'Tính năng', to: { name: 'home' }, hash: '#tinh-nang' },
+  // Trang chủ chưa có mục riêng cho THCS/THPT: giữ link tới trang đối tượng.
+  // { label: 'HS THCS', to: { name: 'hoc-sinh-thcs' } },
+  // { label: 'HS THPT', to: { name: 'hoc-sinh-thpt' } },
+>>>>>>> xuanngoc-dev
   { label: 'Tra cứu', to: { name: 'home' }, hash: '#kham-pha' },
   // { label: 'Trợ lý tư vấn', moChat: true },
+  { label: 'Tư vấn', to: { name: 'home' }, hash: '#tu-van-ai' },
   { label: 'Cẩm nang', to: { name: 'home' }, hash: '#cam-nang' },
 ]
 
@@ -198,56 +208,44 @@ export const features = [
   {
     id: 'holland',
     image: phanVanImage,
-    alt: 'Bạn trẻ đang suy nghĩ về định hướng của bản thân',
     title: 'Trắc nghiệm Holland RIASEC',
     description: 'Khám phá sở thích nghề nghiệp và nhóm tính cách phù hợp với môi trường làm việc.',
-    icon: 'Compass',
     to: { name: 'thpt-thi-dai-hoc-chua-co' },
   },
   {
     id: 'nghe',
     image: thanhNienImage,
-    alt: 'Nhóm bạn trẻ thực hành kỹ thuật',
     title: 'Khám phá ngành nghề',
     description: 'Tìm hiểu mô tả công việc, kỹ năng cần có, môi trường làm việc và cơ hội phát triển.',
-    icon: 'Briefcase',
     to: { name: 'chon-doi-tuong' },
   },
   {
     id: 'truong',
     image: thptImage,
-    alt: 'Giảng đường đại học',
-    title: 'Tra cứu trường đại học',
-    description: 'Tìm kiếm trường, ngành đào tạo và thông tin tuyển sinh theo nhu cầu của bạn.',
-    icon: 'School',
-    to: { name: 'thpt-thi-dai-hoc' },
+    title: 'Tra cứu thông tin',
+    description: 'Tìm kiếm trường, ngành đào tạo, điểm chuẩn, phương thức xét tuyển và thông tin tuyển sinh theo nhu cầu của bạn.',
+    to: { name: 'tra-cuu' },
   },
   {
     id: 'ai',
     image: sinhVienImage,
-    alt: 'Sinh viên học tập cùng máy tính xách tay',
     title: 'Tư vấn hướng nghiệp bằng AI',
     description: 'Trò chuyện với trợ lý AI để nhận gợi ý định hướng mang tính cá nhân hóa.',
-    icon: 'ChatDotRound',
     // Mở khung chat nổi (trang /demo-chat đã tạm bỏ; trước đây: to: { name: 'demo-chat' }).
     moChat: true,
   },
   {
     id: 'lo-trinh',
     image: nhaTuyenDungImage,
-    alt: 'Trao đổi về kế hoạch phát triển sự nghiệp',
     title: 'Xây dựng lộ trình nghề nghiệp',
     description: 'Lập kế hoạch học tập và phát triển sự nghiệp theo từng giai đoạn rõ ràng.',
-    icon: 'MapLocation',
     to: { name: 'chon-doi-tuong' },
   },
   {
     id: 'hoc-tap',
     image: thcsImage,
-    alt: 'Học sinh cùng học trong lớp',
     title: 'Khám phá cơ hội học tập',
     description: 'Tìm hiểu đại học, giáo dục nghề nghiệp và các hướng du học phù hợp.',
-    icon: 'Reading',
     to: { name: 'thpt-du-hoc' },
   },
 ]
@@ -448,27 +446,6 @@ export const studyPaths = [
   },
 ]
 
-export const exploreTabs = [
-  { id: 'nghe', label: 'Ngành nghề phổ biến' },
-  { id: 'nganh', label: 'Ngành đào tạo' },
-  { id: 'truong', label: 'Trường đại học' },
-  { id: 'ky-nang', label: 'Kỹ năng nghề' },
-  { id: 'lo-trinh', label: 'Lộ trình học tập' },
-]
-
-export const explorePreview = {
-  nghe: [
-    'Kỹ sư phần mềm',
-    'Chuyên viên phân tích dữ liệu',
-    'Điều dưỡng viên',
-    'Chuyên viên marketing số',
-  ],
-  nganh: ['Công nghệ thông tin', 'Quản trị kinh doanh', 'Y khoa', 'Thiết kế đồ họa'],
-  truong: ['Đại học Bách khoa', 'Đại học Kinh tế', 'Đại học Y Dược', 'Đại học Sư phạm'],
-  'ky-nang': ['Tư duy phản biện', 'Giao tiếp', 'Phân tích dữ liệu', 'Làm việc nhóm'],
-  'lo-trinh': ['Đại học chính quy', 'Cao đẳng nghề', 'Du học', 'Vừa học vừa làm'],
-}
-
 export const aiPrompts = [
   'Em thiên về nhóm Social và Artistic, nên chọn ngành nào?',
   'So sánh ngành Công nghệ thông tin và Kinh tế số giúp em.',
@@ -637,7 +614,7 @@ export const footerColumns = [
   {
     title: 'Hỗ trợ',
     links: [
-      { label: 'Cẩm nang', to: { name: 'home' }, hash: '#cam-nang' },
+      { label: 'Cẩm nang', to: { name: 'cam-nang' } },
       { label: 'Câu hỏi thường gặp', to: { name: 'home' }, hash: '#hoi-dap' },
       { label: 'Đăng nhập', to: { name: 'login' } },
       { label: 'Đăng ký', to: { name: 'register' } },

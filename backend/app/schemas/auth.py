@@ -2,12 +2,18 @@ from datetime import datetime
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
+from app.constants.doi_tuong_huong_den import chuan_hoa_doi_tuong
+
 
 class RegisterRequest(BaseModel):
     ho_ten: str = Field(..., min_length=2, max_length=150)
     email: EmailStr
     so_dien_thoai: str | None = Field(default=None, max_length=20)
     mat_khau: str = Field(..., min_length=6, max_length=128)
+    # Mã đối tượng hướng đến (app/constants/doi_tuong_huong_den.py): trợ lý chat dùng cố định đối tượng này cho
+    # tài khoản. Tỉnh thành đang ở lưu vào nguoi_dung_thong_tin.
+    doi_tuong: str | None = Field(default=None, max_length=50)
+    tinh_thanh_id: int | None = Field(default=None, ge=1)
 
     @field_validator("ho_ten")
     @classmethod
@@ -25,6 +31,11 @@ class RegisterRequest(BaseModel):
         cleaned = value.strip()
         return cleaned or None
 
+    @field_validator("doi_tuong")
+    @classmethod
+    def check_doi_tuong(cls, value: str | None) -> str | None:
+        return chuan_hoa_doi_tuong(value)
+
 
 class LoginRequest(BaseModel):
     email: EmailStr
@@ -36,6 +47,7 @@ class NguoiDungPublic(BaseModel):
     ho_ten: str
     email: EmailStr
     so_dien_thoai: str | None = None
+    doi_tuong: str | None = None
     vai_tro: int
     trang_thai: int
     created_at: datetime | None = None

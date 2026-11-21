@@ -4,30 +4,22 @@
       <div class="landing__head row g-lp align-items-end" data-reveal>
         <div class="col-lg-7">
           <p class="landing__eyebrow">Tính năng cốt lõi</p>
-          <h2 id="features-title" class="landing__title">Công cụ đồng hành trên mọi bước định hướng</h2>
+          <h2 id="features-title" class="landing__title">Không có định hướng tốt nhất, chỉ có định hướng phù hợp nhất</h2>
         </div>
       </div>
 
+      <!-- Cùng kiểu thẻ với trang chọn đối tượng (HuongDiCard): ảnh trái, nội dung phải. -->
       <div class="row g-lp" data-stagger>
-        <div v-for="(item, index) in features" :key="item.id" :class="colClass(index)">
+        <div v-for="item in features" :key="item.id" class="col-12 col-md-6 col-xl-4">
           <!-- moChat: mở khung chat nổi thay cho trang /demo-chat (đã tạm bỏ). -->
-          <component
-            :is="item.moChat ? 'button' : 'RouterLink'"
-            :to="item.moChat ? undefined : item.to"
-            :type="item.moChat ? 'button' : undefined"
-            class="lp-media-card landing-features__card"
-            @click="item.moChat && chat.moKhungChat()"
-          >
-            <LandingImage :src="item.image" :alt="item.alt" ratio="auto" class="landing-features__bg" />
-            <div class="landing-features__content">
-              <span class="landing-features__icon" aria-hidden="true">
-                <el-icon><component :is="item.icon" /></el-icon>
-              </span>
-              <h3>{{ item.title }}</h3>
-              <p>{{ item.description }}</p>
-              <span class="lp-link">Tìm hiểu thêm <el-icon aria-hidden="true"><Right /></el-icon></span>
-            </div>
-          </component>
+          <HuongDiCard
+            :image="item.image"
+            :title="item.title"
+            :description="item.description"
+            :to="item.moChat ? null : item.to"
+            cta="Tìm hiểu thêm"
+            @chon="item.moChat && chat.moKhungChat()"
+          />
         </div>
       </div>
     </div>
@@ -37,15 +29,7 @@
 <script setup>
 import { features } from '@/data/landing'
 import { useChatStore } from '@/stores/chat'
-import LandingImage from './LandingImage.vue'
+import HuongDiCard from '@/components/guest/chung/HuongDiCard.vue'
 
 const chat = useChatStore()
-
-// Bố cục so le trên desktop: thẻ 1, 4, 5 rộng gấp đôi.
-const WIDE = [0, 3, 4]
-
-function colClass(index) {
-  if (index === 0) return 'col-12 col-lg-8'
-  return WIDE.includes(index) ? 'col-md-6 col-lg-8' : 'col-md-6 col-lg-4'
-}
 </script>

@@ -369,9 +369,7 @@ function matTiepGiap(hash) {
   color: var(--guest-primary);
   font-size: 0.78rem;
   font-weight: 400;
-  letter-spacing: 0.02em;
   line-height: 1.35;
-  text-transform: uppercase;
 }
 
 .card-dao-tao__name {

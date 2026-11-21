@@ -242,7 +242,7 @@ onMounted(taiNhomNghe)
 .di-lam__title {
   margin: 0 0 8px;
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -263,7 +263,7 @@ onMounted(taiNhomNghe)
 .can-nhac__title {
   margin: 0 0 6px;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -413,7 +413,7 @@ onMounted(taiNhomNghe)
   margin: 0;
   color: var(--guest-primary);
   font-size: 1.2rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -443,8 +443,6 @@ onMounted(taiNhomNghe)
   color: #6b7780;
   font-size: 0.75rem;
   font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
 }
 
 .nhom-nghe-card__thong-tin dd {

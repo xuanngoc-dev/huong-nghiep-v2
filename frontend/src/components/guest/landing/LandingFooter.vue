@@ -5,8 +5,7 @@
         <div class="col-lg-4">
           <RouterLink class="landing-footer__brand" :to="{ name: 'home' }">Định hướng nghề</RouterLink>
           <p class="landing-footer__desc">
-            Nền tảng EdTech hỗ trợ khám phá bản thân, lựa chọn ngành học và kiến tạo lộ trình sự nghiệp
-            phù hợp.
+            Định hướng chọn ngành, chọn trường cho học sinh, phụ huynh và người trẻ.
           </p>
           <div class="landing-footer__social" aria-label="Mạng xã hội">
             <a href="#" aria-label="Facebook"><el-icon><ChatDotRound /></el-icon></a>
@@ -16,8 +15,8 @@
             </a>
           </div>
           <p class="mt-3 mb-0 small">
-            Liên hệ: hotro@dinhhuongnghe.vn<br />
-            Hotline: 1900 0000 (giả lập)
+            Liên hệ: hotro@dinhhuongnghe.vn
+            <!-- Ẩn đến khi có số hotline thật: Hotline: 1900 0000 -->
           </p>
         </div>
 
@@ -41,8 +40,8 @@
       <div class="landing-footer__bottom">
         <span>© {{ year }} Định hướng nghề. All rights reserved.</span>
         <div class="landing-footer__legal">
-          <a href="#">Chính sách bảo mật</a>
-          <a href="#">Điều khoản sử dụng</a>
+          <RouterLink :to="{ name: 'chinh-sach-bao-mat' }">Chính sách bảo mật</RouterLink>
+          <RouterLink :to="{ name: 'dieu-khoan-su-dung' }">Điều khoản sử dụng</RouterLink>
         </div>
       </div>
     </div>

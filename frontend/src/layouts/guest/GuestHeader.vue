@@ -5,7 +5,7 @@
     aria-label="Điều hướng chính"
   >
     <div class="container-fluid landing-nav__inner">
-      <RouterLink class="landing-nav__brand" to="/">
+      <RouterLink class="landing-nav__brand" to="/" @click="scrollToTop">
         <span class="landing-nav__mark" aria-hidden="true">ĐH</span>
         <span>Định hướng nghề</span>
       </RouterLink>
@@ -179,12 +179,17 @@ function linkTo(item) {
   return item.to
 }
 
-// Trang con (vd. hướng đi THPT → du học) vẫn sáng mục cha nhờ meta.doiTuong / doiTuongCha / goc.
+// Trang con (vd. hướng đi THPT → du học) vẫn sáng mục cha nhờ meta.doiTuong / doiTuongCha / goc;
+// trang riêng của một mục trên trang chủ (vd. /tra-cuu) khai báo meta.mucMenu = hash của mục đó.
 function isActive(item) {
-  if (item.hash) return route.name === 'home' && route.hash === item.hash
+  if (item.hash) return (route.name === 'home' && route.hash === item.hash) || route.meta.mucMenu === item.hash
   if (item.to?.name === 'home') return route.name === 'home' && !route.hash
   const ten = item.to?.name
   return route.name === ten || [route.meta.doiTuong, route.meta.doiTuongCha, route.meta.goc].includes(ten)
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 </script>
 
@@ -202,8 +207,7 @@ function isActive(item) {
 
 .landing-nav.is-scrolled {
   background: rgba(255, 255, 255, 0.94);
-  border-bottom-color: rgba(15, 23, 42, 0.06);
-  box-shadow: 0 10px 30px rgba(11, 33, 18, 0.08);
+  border-bottom-color: rgba(15, 23, 42, 0.08);
 }
 
 .landing-nav__inner {
@@ -226,10 +230,9 @@ function isActive(item) {
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #3f9643, #2f7a33);
+  background: #2f7a33;
   color: #fff;
   font-size: 0.78rem;
-  letter-spacing: 0.02em;
 }
 
 .landing-nav__toggler {
@@ -260,7 +263,7 @@ function isActive(item) {
   text-align: left;
 }
 
-/* 6 mục menu: thu gọn khoảng cách ở màn hình laptop nhỏ để không xuống dòng. */
+/* 7 mục menu: thu gọn khoảng cách ở màn hình laptop nhỏ để không xuống dòng. */
 @media (min-width: 992px) and (max-width: 1279.98px) {
   .landing-nav__link {
     padding-inline: 0.5rem !important;
@@ -277,7 +280,7 @@ function isActive(item) {
   width: 18px;
   height: 3px;
   border-radius: 3px;
-  background: linear-gradient(90deg, #3f9643, #2f7a33);
+  background: #2f7a33;
   transform: translateX(-50%) scaleX(0);
   transition: transform 0.25s ease;
 }
@@ -311,23 +314,21 @@ function isActive(item) {
   border-radius: 8px;
   padding-inline: 1.1rem;
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .landing-nav__solid {
   border: 0;
   color: #fff;
-  background: linear-gradient(135deg, #3f9643, #2f7a33);
+  background: #2f7a33;
   font-weight: 400;
-  box-shadow: 0 10px 22px rgba(63, 150, 67, 0.22);
 }
 
 .landing-nav__solid:hover {
   color: #fff;
-  transform: translateY(-1px);
-  box-shadow: 0 14px 28px rgba(63, 150, 67, 0.3);
+  background: #276a2b;
 }
 
 /* Nút tài khoản (đã đăng nhập) */
@@ -369,7 +370,7 @@ function isActive(item) {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3f9643, #2f7a33);
+  background: #2f7a33;
   color: #fff;
   font-size: 0.85rem;
   font-weight: 600;

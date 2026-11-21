@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import bearer_scheme, get_current_user
 from app.core.config import settings
 from app.db.session import SessionLocal, get_db
+from app.models.nguoi_dung import NguoiDung
 from app.schemas.chat import HoiChatRequest, HoiChatResponse, KetThucPhienChat, ModelChat, TrangThaiPhienChat
 from app.services import luu_chat
 from app.services.chat_stream import encode_event, events, prepare
@@ -64,10 +65,20 @@ def _ghi(ham, *args, **kwargs):
         db.close()
 
 
+def doi_tuong_cho_phien(db, user_id: int | None, yeu_cau: str | None) -> str | None:
+    """Đối tượng hướng đến cho phiên mới: thành viên đã chọn đối tượng khi đăng ký (nguoi_dung.doi_tuong) thì luôn
+    dùng đối tượng đó, bỏ qua giá trị client gửi; còn lại dùng giá trị client gửi."""
+    if user_id is None:
+        return yeu_cau
+    nguoi_dung = db.get(NguoiDung, user_id)
+    return (nguoi_dung.doi_tuong if nguoi_dung else None) or yeu_cau
+
+
 def _luu_cau_hoi(db, payload: HoiChatRequest, user_id: int | None) -> tuple[int, str, str]:
     phien = luu_chat.luu_cau_hoi(
         db, payload.ma_phien, user_id, payload.ma_khach_vang_lai, payload.cau_hoi, payload.model_id,
-        yeu_cau_token=settings.chat_yeu_cau_token, doi_tuong_huong_den=payload.doi_tuong_huong_den,
+        yeu_cau_token=settings.chat_yeu_cau_token,
+        doi_tuong_huong_den=doi_tuong_cho_phien(db, user_id, payload.doi_tuong_huong_den),
     )
     return phien.id, phien.ma_dinh_danh, phien.doi_tuong_huong_den
 

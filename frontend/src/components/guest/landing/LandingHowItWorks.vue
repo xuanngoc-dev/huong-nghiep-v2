@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="landing__head landing__head--center" data-reveal>
         <p class="landing__eyebrow">Quy trình rõ ràng</p>
-        <h2 id="steps-title" class="landing__title">4 bước kiến tạo tương lai của bạn</h2>
+        <h2 id="steps-title" class="landing__title">4 bước từ hiểu bản thân đến chốt hướng đi</h2>
         <p class="landing__lead">
           Một lộ trình đơn giản giúp bạn chuyển từ băn khoăn sang quyết định có căn cứ.
         </p>

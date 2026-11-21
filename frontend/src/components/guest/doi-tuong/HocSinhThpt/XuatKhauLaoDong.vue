@@ -118,7 +118,7 @@ onMounted(taiNhomNghe)
 .xkld__title {
   margin: 0 0 8px;
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -181,7 +181,7 @@ onMounted(taiNhomNghe)
 .huong-card__ten {
   color: #1c2b23;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 

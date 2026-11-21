@@ -123,9 +123,7 @@ const { chonGiaiDoan, laCapDangChon } = useGiaiDoanCon()
 .ph-banner__kicker {
   margin: 0 0 8px;
   font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-weight: 600;
   opacity: 0.9;
 }
 
@@ -133,7 +131,7 @@ const { chonGiaiDoan, laCapDangChon } = useGiaiDoanCon()
   margin: 0 0 12px;
   color: #fff;
   font-size: clamp(26px, 3.4vw, 40px);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.2;
 }
 

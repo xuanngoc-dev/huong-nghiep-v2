@@ -282,7 +282,7 @@ onMounted(taiNhomNghe)
 .chi-tiet-nhom .nhom-tong-quan__ten {
   margin: 0;
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.3;
 }
 
@@ -307,8 +307,6 @@ onMounted(taiNhomNghe)
   color: #6b7780;
   font-size: 0.75rem;
   font-weight: 400;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
 }
 
 .nhom-tong-quan__thong-tin dd {
@@ -339,7 +337,7 @@ onMounted(taiNhomNghe)
 .chi-tiet-nhom .nhom-tong-quan__khoi-tieu-de {
   margin: 0 0 8px;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .lo-trinh {
@@ -372,7 +370,7 @@ onMounted(taiNhomNghe)
   background: var(--guest-primary);
   color: #fff;
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 /* Đường nối giữa các bước. */
@@ -419,7 +417,7 @@ onMounted(taiNhomNghe)
   border-radius: 10px;
   background: rgba(var(--guest-primary-rgb), 0.12);
   color: var(--guest-primary);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .nghe-card__noi-dung {
@@ -432,7 +430,7 @@ onMounted(taiNhomNghe)
 .chi-tiet-nhom .nghe-card__ten {
   margin: 0;
   font-size: 1.1rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -497,7 +495,7 @@ onMounted(taiNhomNghe)
 
 .menu-nhom__ten {
   color: var(--guest-primary);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 

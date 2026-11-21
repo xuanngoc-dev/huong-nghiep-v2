@@ -1,6 +1,6 @@
 <template>
   <!-- Trang /demo-chat đã tạm bỏ: <div v-if="route.name !== 'demo-chat'" class="chatbot"> -->
-  <div class="chatbot">
+  <div ref="rootEl" class="chatbot">
     <section v-if="chat.khungMo" id="chatbot-panel" ref="panelEl" class="chatbot__panel" aria-label="Trợ lý tuyển sinh">
       <header class="chatbot__header">
         <div class="chatbot__tieu-de">
@@ -49,8 +49,12 @@
               <el-icon :size="14"><Close /></el-icon>
             </button>
           </div>
+          <!-- Hội thoại đã chốt đối tượng thì báo trước (nút chọn bị khóa); thành viên đổi ở đây được lưu vào tài khoản. -->
           <p v-if="chat.daChotDoiTuong" class="chatbot__cai-dat-ghi-chu">
             Đã chốt cho cuộc hội thoại này. Bấm <b>Kết thúc</b> để bắt đầu hội thoại mới với đối tượng khác.
+          </p>
+          <p v-else-if="chat.doiTuongTaiKhoan" class="chatbot__cai-dat-ghi-chu">
+            Hãy cho trợ lý của chúng tôi biết bạn đang đóng vai là ai để nhận được các gợi ý phù hợp hơn.
           </p>
           <p v-else class="chatbot__cai-dat-ghi-chu">Trợ lý trả lời theo hoàn cảnh của đối tượng bạn chọn.</p>
           <div class="chatbot__cai-dat-ds" role="group" aria-label="Chọn đối tượng người hỏi">
@@ -122,6 +126,16 @@ watch(() => route.meta, (meta) => {
 // Mobile toàn màn hình: khung bám theo vùng đang nhìn thấy (visualViewport) để khi bàn phím bật lên,
 // trình duyệt cuộn trang không đẩy tiêu đề ra khỏi màn hình. Chỉ dùng trong media query mobile.
 const panelEl = ref(null)
+// Bấm ra ngoài khung chat (và nút mở) thì đóng khung. Dùng pointerdown thay cho click để nút "Hỏi trợ lý AI"
+// ở nơi khác (mở khung bằng click) không bị đóng lại ngay trong cùng cú bấm. Bỏ qua hộp xác nhận / popup
+// của Element Plus vì chúng được teleport ra body nhưng vẫn thuộc khung chat (vd. xác nhận Kết thúc).
+const rootEl = ref(null)
+function dongKhiBamRaNgoai(event) {
+  if (!chat.khungMo || rootEl.value?.contains(event.target)) return
+  if (event.target.closest?.('.el-overlay, .el-popper, .el-message')) return
+  caiDatMo.value = false
+  chat.khungMo = false
+}
 function capNhatKhungNhin() {
   const vv = window.visualViewport
   if (!vv || !panelEl.value) return
@@ -130,10 +144,12 @@ function capNhatKhungNhin() {
 }
 watch(panelEl, capNhatKhungNhin)
 onMounted(() => {
+  document.addEventListener('pointerdown', dongKhiBamRaNgoai)
   window.visualViewport?.addEventListener('resize', capNhatKhungNhin)
   window.visualViewport?.addEventListener('scroll', capNhatKhungNhin)
 })
 onUnmounted(() => {
+  document.removeEventListener('pointerdown', dongKhiBamRaNgoai)
   window.visualViewport?.removeEventListener('resize', capNhatKhungNhin)
   window.visualViewport?.removeEventListener('scroll', capNhatKhungNhin)
 })

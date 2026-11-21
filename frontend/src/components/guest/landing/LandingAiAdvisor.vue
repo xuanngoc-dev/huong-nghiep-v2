@@ -3,9 +3,8 @@
     <div class="container-fluid">
       <div class="row g-lp align-items-center">
         <div class="col-lg-6" data-reveal="left">
-          <span class="landing-ai__badge">Xem trước tính năng</span>
           <p class="landing__eyebrow">Trợ lý hướng nghiệp AI</p>
-          <h2 id="ai-title" class="landing__title">Tư vấn nghề nghiệp thông minh, gần gũi và tức thì</h2>
+          <h2 id="ai-title" class="landing__title">Hỏi trợ lý AI về ngành học, trường và lộ trình nghề nghiệp</h2>
           <p class="landing__lead">
             Đặt câu hỏi về ngành học, kỹ năng, lộ trình nghề nghiệp và nhận gợi ý định hướng mang tính
             cá nhân hóa.
@@ -51,6 +50,7 @@
             </div>
             <div class="landing-ai__typing" aria-hidden="true"><span></span><span></span><span></span></div>
           </div>
+          <p class="landing-ai__caption">Hội thoại minh họa</p>
         </div>
       </div>
     </div>

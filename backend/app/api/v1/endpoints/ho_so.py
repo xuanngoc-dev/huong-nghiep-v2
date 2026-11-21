@@ -20,6 +20,7 @@ from app.models.tn_lich_su_tim_truong_phu_hop import TnLichSuTimTruongPhuHop
 from app.models.tn_phien_khao_sat import TnPhienKhaoSat
 from app.schemas.auth import DoiMatKhauKetQua, DoiMatKhauRequest
 from app.schemas.ho_so import (
+    DoiTuongTaiKhoan,
     HoSoPublic,
     HoSoWrite,
     KhaNangTaiChinh,
@@ -79,6 +80,7 @@ def _to_public(user: NguoiDung, profile: NguoiDungThongTin | None) -> HoSoPublic
         "ho_ten": user.ho_ten,
         "email": user.email,
         "so_dien_thoai": user.so_dien_thoai,
+        "doi_tuong": user.doi_tuong,
         "gioi_tinh": None,
         "ngay_sinh": None,
         "dan_toc": None,
@@ -166,6 +168,8 @@ def _gan_thong_tin_ca_nhan(db: Session, current_user: NguoiDung, payload: ThongT
 
     current_user.ho_ten = payload.ho_ten
     current_user.so_dien_thoai = payload.so_dien_thoai
+    if "doi_tuong" in payload.model_fields_set:
+        current_user.doi_tuong = payload.doi_tuong
     profile.gioi_tinh = payload.gioi_tinh
     profile.ngay_sinh = payload.ngay_sinh
     profile.dan_toc = payload.dan_toc
@@ -218,6 +222,21 @@ def update_thong_tin_ca_nhan(
     profile = _gan_thong_tin_ca_nhan(db, current_user, payload)
     _dong_bo_ho_so_xet_tuyen(db, profile)
     return _luu(db, current_user, profile)
+
+
+@router.patch("/doi-tuong", response_model=DoiTuongTaiKhoan)
+def update_doi_tuong(
+    payload: DoiTuongTaiKhoan,
+    db: Session = Depends(get_db),
+    current_user: NguoiDung = Depends(get_current_user),
+) -> DoiTuongTaiKhoan:
+    """Chỉ đổi đối tượng của tài khoản (nguoi_dung.doi_tuong), dùng khi chọn "Bạn là" trong khung chat.
+
+    Phiên chat đã tạo giữ đối tượng đã chốt; đối tượng mới áp dụng cho các phiên tạo sau.
+    """
+    current_user.doi_tuong = payload.doi_tuong
+    db.commit()
+    return DoiTuongTaiKhoan(doi_tuong=current_user.doi_tuong)
 
 
 @router.post("/doi-mat-khau", response_model=DoiMatKhauKetQua)

@@ -76,7 +76,7 @@ const buoc = computed(() => {
   background: #0c5c34;
   color: #fff;
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 24px;
   text-align: center;
 }
@@ -85,7 +85,7 @@ const buoc = computed(() => {
   margin: 0;
   color: #0c5c34;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 24px;
 }
 

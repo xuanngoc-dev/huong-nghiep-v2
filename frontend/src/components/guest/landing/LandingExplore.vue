@@ -13,41 +13,33 @@
       </div>
 
       <div class="landing-explore__panel" data-reveal>
-        <div class="landing-explore__filters flex-nowrap flex-md-wrap overflow-x-auto" role="tablist" aria-label="Bộ lọc khám phá">
+        <div class="landing-explore__filters flex-nowrap flex-md-wrap overflow-x-auto" role="group" aria-label="Loại tra cứu">
           <button
-            v-for="tab in exploreTabs"
+            v-for="tab in LOAI_TRA_CUU"
             :key="tab.id"
             type="button"
             class="landing-explore__chip"
             :class="{ 'is-active': tab.id === activeTab }"
-            role="tab"
-            :aria-selected="tab.id === activeTab"
-            aria-controls="explore-preview"
+            :aria-pressed="tab.id === activeTab"
             @click="activeTab = tab.id"
           >
             {{ tab.label }}
           </button>
         </div>
 
-        <div class="landing-explore__search" role="search">
-          <el-icon aria-hidden="true"><Search /></el-icon>
-          <input
-            v-model="query"
-            type="search"
-            placeholder="Tìm ngành nghề, trường học hoặc kỹ năng..."
-            aria-label="Tìm kiếm khám phá"
-          />
-          <RouterLink class="landing__btn landing__btn--soft" :to="{ name: 'thpt-thi-dai-hoc' }">
-            Tra cứu
-          </RouterLink>
-        </div>
-
-        <div id="explore-preview" class="landing-explore__preview" role="tabpanel" aria-live="polite">
-          <template v-if="previewItems.length">
-            <span v-for="item in previewItems" :key="item" class="landing-explore__pill">{{ item }}</span>
-          </template>
-          <p v-else class="mb-0 text-secondary">Không có kết quả phù hợp với từ khóa hiện tại.</p>
-        </div>
+        <form class="landing-explore__search mb-0" role="search" @submit.prevent="traCuu()">
+          <label class="landing-explore__o-nhap">
+            <el-icon aria-hidden="true"><Search /></el-icon>
+            <!-- Placeholder tự gõ / xóa lần lượt các từ khóa mẫu của loại đang chọn (goiY trong loaiTraCuu.js). -->
+            <input
+              v-model="query"
+              type="search"
+              :placeholder="`Thử tìm: ${goiYDangGo}`"
+              :aria-label="`Tìm ${loai.label}`"
+            />
+          </label>
+          <button type="submit" class="landing__btn landing__btn--soft">Tra cứu</button>
+        </form>
       </div>
 
       <div class="landing-explore__cats" data-reveal>
@@ -77,17 +69,26 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { careerCategories, explorePreview, exploreTabs } from '@/data/landing'
+import { useRouter } from 'vue-router'
+import { careerCategories } from '@/data/landing'
+import { LOAI_TRA_CUU, timLoaiTraCuu } from '@/components/guest/tra-cuu/loaiTraCuu'
+import { useGoChuGoiY } from '@/composables/useGoChuGoiY'
 import LandingCarousel from './LandingCarousel.vue'
 import LandingImage from './LandingImage.vue'
 
-const activeTab = ref(exploreTabs[0].id)
+const router = useRouter()
+const activeTab = ref(LOAI_TRA_CUU[0].id)
 const query = ref('')
+const loai = computed(() => timLoaiTraCuu(activeTab.value))
+// Ô đã có chữ thì placeholder không hiện: dừng hiệu ứng gõ.
+const goiYDangGo = useGoChuGoiY(
+  computed(() => loai.value.goiY),
+  computed(() => query.value !== ''),
+)
 
-const previewItems = computed(() => {
-  const items = explorePreview[activeTab.value] || []
-  const q = query.value.trim().toLowerCase()
-  if (!q) return items
-  return items.filter((item) => item.toLowerCase().includes(q))
-})
+// Trang chủ chỉ chọn loại + nhập từ khóa; kết quả hiện ở trang /tra-cuu.
+function traCuu() {
+  const q = query.value.trim()
+  router.push({ name: 'tra-cuu', query: { loai: activeTab.value, ...(q ? { q } : {}) } })
+}
 </script>

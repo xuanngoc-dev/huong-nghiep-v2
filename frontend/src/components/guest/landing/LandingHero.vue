@@ -1,5 +1,5 @@
 <template>
-  <section class="landing-hero" aria-labelledby="landing-hero-title">
+  <section class="landing-hero landing__section" id="gioi-thieu" aria-labelledby="landing-hero-title">
     <h1 id="landing-hero-title" class="visually-hidden">
       Định hướng nghề – Nền tảng định hướng nghề nghiệp cho học sinh, sinh viên, phụ huynh và tổ chức
     </h1>

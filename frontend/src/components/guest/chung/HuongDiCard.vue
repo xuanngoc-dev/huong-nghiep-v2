@@ -1,6 +1,6 @@
 <template>
   <!-- Hướng đi chưa mở: hiển thị mờ, không bấm được. Có `ctaKhoa` thì thay lời mời bấm bằng dòng chữ đó. -->
-  <div v-if="locked" class="huong-card is-locked h-100" aria-disabled="true">
+  <div v-if="locked" class="huong-card is-locked h-100" :class="{ 'is-ro': !lamMo }" aria-disabled="true">
     <span class="huong-card__media">
       <img class="huong-card__anh" :src="image" alt="" loading="lazy" decoding="async" />
       <span v-if="ctaKhoa && nhan" class="huong-card__nhan">{{ nhan }}</span>
@@ -56,6 +56,8 @@ defineProps({
   locked: { type: Boolean, default: false },
   // Dòng chữ thay lời mời bấm khi `locked`, ví dụ "Đang phát triển..."; bỏ trống thì hiện nhãn "Sắp ra mắt" trên ảnh.
   ctaKhoa: { type: String, default: '' },
+  // `locked` mà vẫn hiện rõ ảnh và chữ (không làm mờ), vd. bài viết chưa có nội dung nhưng vẫn cần đọc được.
+  lamMo: { type: Boolean, default: true },
 })
 
 const emit = defineEmits(['chon'])
@@ -96,7 +98,11 @@ const emit = defineEmits(['chon'])
   box-shadow: none;
 }
 
-.huong-card.is-locked :is(.huong-card__anh, .huong-card__ten, .huong-card__mo-ta, .huong-card__ghi-chu) {
+.huong-card.is-locked.is-ro {
+  cursor: default;
+}
+
+.huong-card.is-locked:not(.is-ro) :is(.huong-card__anh, .huong-card__ten, .huong-card__mo-ta, .huong-card__ghi-chu) {
   opacity: 0.55;
   filter: grayscale(0.6);
 }
@@ -118,9 +124,6 @@ const emit = defineEmits(['chon'])
   transition: transform 0.6s ease;
 }
 
-.huong-card:not(.is-locked):hover .huong-card__anh {
-  transform: scale(1.05);
-}
 
 .huong-card__nhan {
   position: absolute;
@@ -148,7 +151,7 @@ const emit = defineEmits(['chon'])
 .huong-card__ten {
   color: #1c2b23;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -177,7 +180,6 @@ const emit = defineEmits(['chon'])
 
 .huong-card__xem--khoa {
   color: #6b7780;
-  font-style: italic;
 }
 
 .huong-card:focus-visible {

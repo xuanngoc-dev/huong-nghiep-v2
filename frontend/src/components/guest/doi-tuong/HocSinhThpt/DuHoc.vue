@@ -398,7 +398,7 @@ onMounted(taiHuongDi)
 .du-hoc__title {
   margin: 0 0 8px;
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -482,7 +482,7 @@ onMounted(taiHuongDi)
 .huong-card__ten {
   color: #1c2b23;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -515,8 +515,6 @@ onMounted(taiHuongDi)
   color: #6b7780;
   font-size: 0.75rem;
   font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
 }
 
 .thong-tin-luoi dd {
@@ -553,7 +551,7 @@ onMounted(taiHuongDi)
 .chi-phi-nhom__title {
   margin: 0 0 8px;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -661,7 +659,7 @@ onMounted(taiHuongDi)
   margin: 0;
   color: var(--guest-primary);
   font-size: 1.1rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -789,7 +787,7 @@ onMounted(taiHuongDi)
   border-radius: 50%;
   background: var(--guest-primary);
   color: #fff;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .thu-tuc__noi-dung {
@@ -800,7 +798,7 @@ onMounted(taiHuongDi)
 .du-hoc .thu-tuc__ten {
   margin: 5px 0 6px;
   font-size: 1.02rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 

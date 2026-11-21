@@ -305,7 +305,7 @@ onMounted(taiHuongDi)
 .thcs__title {
   margin: 0 0 8px;
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -332,8 +332,6 @@ onMounted(taiHuongDi)
   color: #6b7780;
   font-size: 0.75rem;
   font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
 }
 
 .thong-tin-luoi dd {
@@ -383,7 +381,7 @@ onMounted(taiHuongDi)
 .phan__title {
   margin: 0 0 8px;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -437,14 +435,14 @@ onMounted(taiHuongDi)
   border-radius: 50%;
   background: var(--mau);
   color: #fff;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1;
 }
 
 .thcs .uu-nhuoc__ten {
   margin: 1px 0 4px;
   font-size: 0.98rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -477,7 +475,7 @@ onMounted(taiHuongDi)
 
 .diem-ds__so {
   color: var(--guest-primary);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .diem-ds__thanh {
@@ -592,7 +590,7 @@ onMounted(taiHuongDi)
 
 .menu-huong__ten {
   color: var(--guest-primary);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 

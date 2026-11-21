@@ -53,7 +53,7 @@ const coDuLieu = computed(() => luong.value.length > 0 || kyNang.value.length > 
   margin: 0;
   color: #0c5c34;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .luong__cards {
@@ -76,15 +76,13 @@ const coDuLieu = computed(() => luong.value.length > 0 || kyNang.value.length > 
   color: #31483d;
   font-size: 0.82rem;
   font-weight: 400;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
 }
 
 .luong__gia {
   margin: 6px 0 0;
   color: #0c5c34;
   font-size: 1.15rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
   white-space: pre-line;
 }

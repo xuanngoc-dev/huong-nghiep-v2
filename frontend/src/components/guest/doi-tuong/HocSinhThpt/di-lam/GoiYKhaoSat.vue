@@ -82,7 +82,7 @@ function thamGia() {
   margin: 0;
   color: var(--guest-primary);
   font-size: 1.35rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -122,7 +122,7 @@ function thamGia() {
   border-radius: 8px;
   background: rgba(var(--guest-primary-rgb), 0.12);
   color: var(--guest-primary);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .goi-y-khao-sat__action {

@@ -28,7 +28,12 @@ const router = createRouter({
       await choDuChieuCao(savedPosition.top)
       return savedPosition
     }
-    if (to.hash) return { el: to.hash, behavior: 'smooth' }
+    if (to.hash) {
+      // vue-router cuộn bằng window.scrollTo, bỏ qua scroll-margin-top của CSS: tự trừ để header dính không che đầu mục.
+      const el = document.querySelector(to.hash)
+      const top = el ? parseFloat(getComputedStyle(el).scrollMarginTop) || 0 : 0
+      return { el: to.hash, top, behavior: 'smooth' }
+    }
     // Chỉ đổi query trên cùng trang (lọc, phân trang…): không cuộn.
     if (to.path === from.path) return false
     return { top: 0 }
@@ -55,6 +60,32 @@ const router = createRouter({
           name: 'home',
           component: () => import('@/views/guest/Home.vue'),
           meta: { title: 'Trang chủ', public: true },
+        },
+        {
+          path: 'tra-cuu',
+          name: 'tra-cuu',
+          component: () => import('@/views/guest/TraCuu.vue'),
+          // mucMenu: sáng mục "Tra cứu" (#kham-pha) trên header khách.
+          meta: { title: 'Tra cứu', public: true, mucMenu: '#kham-pha' },
+        },
+        {
+          path: 'cam-nang',
+          name: 'cam-nang',
+          component: () => import('@/views/guest/CamNang.vue'),
+          // mucMenu: sáng mục "Cẩm nang" (#cam-nang) trên header khách.
+          meta: { title: 'Cẩm nang', public: true, mucMenu: '#cam-nang' },
+        },
+        {
+          path: 'chinh-sach-bao-mat',
+          name: 'chinh-sach-bao-mat',
+          component: () => import('@/views/guest/ChinhSachBaoMat.vue'),
+          meta: { title: 'Chính sách bảo mật', public: true },
+        },
+        {
+          path: 'dieu-khoan-su-dung',
+          name: 'dieu-khoan-su-dung',
+          component: () => import('@/views/guest/DieuKhoanSuDung.vue'),
+          meta: { title: 'Điều khoản sử dụng', public: true },
         },
         {
           path: 'chon-doi-tuong',

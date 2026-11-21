@@ -73,6 +73,15 @@ DOI_TUONG_HUONG_DEN = {
 DOI_TUONG_MAC_DINH = "thpt-thi-dai-hoc"
 
 
+def chuan_hoa_doi_tuong(ma: str | None) -> str | None:
+    """Kiểm tra mã đối tượng người dùng gửi lên (đăng ký, thông tin cá nhân): rỗng → None, mã lạ → ValueError."""
+    if ma is None or not ma.strip():
+        return None
+    if ma.strip() not in DOI_TUONG_HUONG_DEN:
+        raise ValueError(f"Không tìm thấy đối tượng có mã = {ma.strip()}")
+    return ma.strip()
+
+
 def la_hoc_sinh_thpt(ma: str | None) -> bool:
     """Đối tượng thuộc nhóm học sinh THPT (mọi hướng đi): trợ lý dùng hồ sơ cá nhân kèm dữ liệu tuyển sinh."""
     return (ma or DOI_TUONG_MAC_DINH).startswith("thpt-")

@@ -50,7 +50,7 @@ const muc = computed(() => {
   margin: 0;
   color: #0c5c34;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .tong-quan__muc p,

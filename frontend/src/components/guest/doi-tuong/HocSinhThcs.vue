@@ -72,7 +72,7 @@ const { audiences, selectedCode, chonDoiTuong } = useDoiTuongAudiences()
 .thcs__title {
   margin: 0 0 8px;
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
