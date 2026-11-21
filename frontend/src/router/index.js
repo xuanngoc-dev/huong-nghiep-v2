@@ -28,7 +28,12 @@ const router = createRouter({
       await choDuChieuCao(savedPosition.top)
       return savedPosition
     }
-    if (to.hash) return { el: to.hash, behavior: 'smooth' }
+    if (to.hash) {
+      // vue-router cuộn bằng window.scrollTo, bỏ qua scroll-margin-top của CSS: tự trừ để header dính không che đầu mục.
+      const el = document.querySelector(to.hash)
+      const top = el ? parseFloat(getComputedStyle(el).scrollMarginTop) || 0 : 0
+      return { el: to.hash, top, behavior: 'smooth' }
+    }
     // Chỉ đổi query trên cùng trang (lọc, phân trang…): không cuộn.
     if (to.path === from.path) return false
     return { top: 0 }

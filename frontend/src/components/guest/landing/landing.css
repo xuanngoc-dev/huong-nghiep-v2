@@ -114,7 +114,8 @@
 
 .landing__section {
   padding: calc(var(--lp-gap) * 1) 0;
-  scroll-margin-top: 80px;
+  /* Chừa chỗ cho header dính cộng khoảng thở khi cuộn tới mục từ menu. */
+  scroll-margin-top: 90px;
 }
 
 .landing__section--alt {

@@ -260,7 +260,7 @@ function isActive(item) {
   text-align: left;
 }
 
-/* 6 mục menu: thu gọn khoảng cách ở màn hình laptop nhỏ để không xuống dòng. */
+/* 7 mục menu: thu gọn khoảng cách ở màn hình laptop nhỏ để không xuống dòng. */
 @media (min-width: 992px) and (max-width: 1279.98px) {
   .landing-nav__link {
     padding-inline: 0.5rem !important;
