@@ -1,9 +1,11 @@
 <template>
   <nav
     class="navbar navbar-expand-lg landing-nav sticky-top"
-    :class="{ 'is-scrolled': scrolled }"
+    :class="{ 'is-scrolled': scrolled, 'is-menu-mo': menuMo }"
     aria-label="Điều hướng chính"
   >
+    <!-- Nền mờ sau sidebar mobile: chạm vào chỉ đóng menu, không bấm nhầm nội dung bên dưới. -->
+    <div v-if="menuMo" class="landing-nav__nen d-lg-none" aria-hidden="true" @click="dongMenu" />
     <div class="container-fluid landing-nav__inner">
       <RouterLink class="landing-nav__brand" to="/" @click="scrollToTop">
         <span class="landing-nav__mark" aria-hidden="true">ĐH</span>
@@ -13,16 +15,25 @@
       <button
         class="navbar-toggler landing-nav__toggler"
         type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#guestNav"
         aria-controls="guestNav"
-        aria-expanded="false"
+        :aria-expanded="menuMo"
         aria-label="Mở menu"
+        @click="menuMo = true"
       >
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div id="guestNav" class="collapse navbar-collapse">
+      <!-- Mobile (< lg): menu là sidebar trượt ra từ bên trái (CSS .landing-nav__menu); desktop: hàng ngang. -->
+      <div id="guestNav" class="navbar-collapse landing-nav__menu" :class="{ 'is-open': menuMo }">
+        <div class="landing-nav__menu-dau d-lg-none">
+          <RouterLink class="landing-nav__brand" to="/" @click="scrollToTop">
+            <span class="landing-nav__mark" aria-hidden="true">ĐH</span>
+            <span>Định hướng nghề</span>
+          </RouterLink>
+          <button type="button" class="landing-nav__dong" aria-label="Đóng menu" @click="dongMenu">
+            <CustomIcon><Close /></CustomIcon>
+          </button>
+        </div>
         <ul class="navbar-nav landing-nav__links mx-lg-auto my-3 my-lg-0">
           <li v-for="item in navLinks" :key="item.label" class="nav-item">
             <!-- moChat: mở khung chat nổi (trợ lý AI) thay vì chuyển trang. -->
@@ -46,7 +57,7 @@
           </li>
         </ul>
 
-        <div class="d-grid gap-2 d-lg-flex align-items-lg-center">
+        <div class="landing-nav__hanh-dong">
           <!-- Đã đăng nhập: tên tài khoản, rê chuột (desktop) hoặc chạm (mobile) để mở menu tài khoản. -->
           <div v-if="auth.isAuthenticated" class="tai-khoan-nhom">
             <SoDuTaiKhoan v-if="!auth.isAdmin" />
@@ -93,11 +104,12 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import {
   ArrowDown,
+  Close,
   Clock,
   Lock,
   Postcard,
@@ -114,13 +126,14 @@ import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
 import { useIsMobile } from '@/composables/useResponsiveSize'
 import { navLinks } from '@/data/landing'
-import 'bootstrap/js/dist/collapse'
 
 const auth = useAuthStore()
 const chat = useChatStore()
 const route = useRoute()
 const router = useRouter()
 const scrolled = ref(false)
+const menuMo = ref(false)
+const laMobile = useIsMobile('(max-width: 991.98px)')
 const doiMatKhauMo = ref(false)
 // Navbar thu gọn (< lg) hoặc thiết bị không có hover: mở menu tài khoản bằng chạm/bấm.
 const moBangCham = useIsMobile('(max-width: 991.98px), (hover: none)')
@@ -167,12 +180,35 @@ function onScroll() {
   scrolled.value = window.scrollY > 8
 }
 
+// Sidebar mobile đóng khi: chuyển trang / cuộn tới mục, chạm nền mờ, nút đóng, phím Esc, hoặc màn hình rộng ra (>= lg).
+function dongMenu() {
+  menuMo.value = false
+}
+
+function dongMenuKhiEsc(event) {
+  if (event.key === 'Escape') dongMenu()
+}
+
+watch(() => route.fullPath, dongMenu)
+watch(laMobile, (mobile) => {
+  if (!mobile) dongMenu()
+})
+// Khóa cuộn trang phía sau khi sidebar mở.
+watch(menuMo, (mo) => {
+  document.body.style.overflow = mo ? 'hidden' : ''
+})
+
 onMounted(() => {
   onScroll()
   window.addEventListener('scroll', onScroll, { passive: true })
+  document.addEventListener('keydown', dongMenuKhiEsc)
 })
 
-onUnmounted(() => window.removeEventListener('scroll', onScroll))
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScroll)
+  document.removeEventListener('keydown', dongMenuKhiEsc)
+  document.body.style.overflow = ''
+})
 
 function linkTo(item) {
   if (item.hash) return { ...item.to, hash: item.hash }
@@ -394,21 +430,124 @@ function scrollToTop() {
   .landing-nav__link,
   .landing-nav__link::after,
   .landing-nav__outline,
-  .landing-nav__solid {
+  .landing-nav__solid,
+  .landing-nav__menu,
+  .landing-nav__menu.is-open {
     transition: none;
   }
 }
 
+/* Nút Đăng nhập / Đăng ký (hoặc tài khoản): luôn trên một hàng. */
+.landing-nav__hanh-dong {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 @media (max-width: 991.98px) {
+  /* backdrop-filter làm position: fixed của sidebar bị giới hạn trong header: mobile dùng nền trắng đặc. */
+  .landing-nav,
+  .landing-nav.is-scrolled {
+    background: #fff;
+    backdrop-filter: none;
+  }
+
+  /* Sidebar mở: header (chứa sidebar) nổi trên nút hỗ trợ / chat nổi (z-index 1040). */
+  .landing-nav.is-menu-mo {
+    z-index: 1045;
+  }
+
+  .landing-nav__nen {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: rgba(15, 23, 42, 0.35);
+  }
+
+  /* Sidebar trượt ra từ bên trái, cao hết màn hình. */
+  .landing-nav__menu {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: min(300px, 85vw);
+    padding: 12px 16px 16px;
+    overflow-y: auto;
+    /* Nền trắng hơi trong suốt + làm mờ: thấy mờ mờ nội dung phía sau, chữ menu vẫn rõ. */
+    background: rgba(255, 255, 255, 0.62);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    box-shadow: 8px 0 24px rgba(15, 23, 42, 0.12);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 0.25s;
+  }
+
+  .landing-nav__menu.is-open {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .landing-nav__menu-dau {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  }
+
+  .landing-nav__dong {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #475569;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  .landing-nav__dong:hover {
+    background: rgba(63, 150, 67, 0.08);
+    color: #2f7a33;
+  }
+
   .landing-nav__links {
     padding-bottom: 0.5rem;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  }
+
+  /* Nút tài khoản / đăng nhập nằm cuối sidebar. */
+  .landing-nav__hanh-dong {
+    margin-top: auto;
+    padding-top: 16px;
+  }
+
+  /* Mục đang chọn đã có nền nhạt; gạch dưới căn giữa cả hàng trông lệch nên ẩn. */
+  .landing-nav__link::after {
+    display: none;
+  }
+
+  /* Hai nút chia đều một hàng. */
+  .landing-nav__hanh-dong > .btn {
+    flex: 1 1 0;
   }
 }
 </style>
 
 <!-- Menu tài khoản teleport ra body nên không dùng scoped. -->
 <style>
+
 .tai-khoan-menu .el-dropdown-menu {
   min-width: 220px;
 }
