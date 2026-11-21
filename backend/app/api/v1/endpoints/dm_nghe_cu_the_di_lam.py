@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import func, or_, select
+from sqlalchemy import and_, func, not_, or_, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_admin_user, get_current_user
@@ -60,6 +60,8 @@ def _to_public(item: DmNgheCuTheDiLam, nhom: DmNhomNgheDiLam | None) -> DmNgheCu
         ten_nghe=item.ten_nghe,
         mo_ta_ngan=item.mo_ta_ngan,
         yeu_cau_them=item.yeu_cau_them,
+        yeu_cau_bang_cap=item.yeu_cau_bang_cap,
+        bat_buoc_dao_tao_chinh_quy=item.bat_buoc_dao_tao_chinh_quy,
     )
 
 
@@ -67,11 +69,16 @@ def _to_public(item: DmNgheCuTheDiLam, nhom: DmNhomNgheDiLam | None) -> DmNgheCu
 def list_nghe_cu_the_di_lam(
     q: str | None = Query(default=None, max_length=255),
     nhom_nghe_di_lam_id: int | None = Query(default=None, ge=1),
+    co_bang_cap: int | None = Query(default=None, ge=0, le=1),
+    chinh_quy: int | None = Query(default=None, ge=0, le=1),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> DmNgheCuTheDiLamPage:
-    """Lấy danh sách nghề cụ thể có phân trang, lọc theo từ khóa và nhóm nghề. Không cần đăng nhập."""
+    """Lấy danh sách nghề cụ thể có phân trang, lọc theo từ khóa và nhóm nghề. Không cần đăng nhập.
+
+    `co_bang_cap`: 1 = có yêu cầu bằng cấp bắt buộc, 0 = không. `chinh_quy`: 1 = bắt buộc đào tạo chính quy, 0 = không.
+    """
     filters = []
     if q and q.strip():
         pattern = _like_pattern(q.strip())
@@ -84,6 +91,12 @@ def list_nghe_cu_the_di_lam(
         )
     if nhom_nghe_di_lam_id is not None:
         filters.append(DmNgheCuTheDiLam.nhom_nghe_di_lam_id == nhom_nghe_di_lam_id)
+    if co_bang_cap is not None:
+        co = and_(DmNgheCuTheDiLam.yeu_cau_bang_cap.is_not(None), DmNgheCuTheDiLam.yeu_cau_bang_cap != "")
+        filters.append(co if co_bang_cap else not_(co))
+    if chinh_quy is not None:
+        bat_buoc = DmNgheCuTheDiLam.bat_buoc_dao_tao_chinh_quy == 1
+        filters.append(bat_buoc if chinh_quy else or_(DmNgheCuTheDiLam.bat_buoc_dao_tao_chinh_quy.is_(None), not_(bat_buoc)))
 
     base = select(DmNgheCuTheDiLam, DmNhomNgheDiLam).join(
         DmNhomNgheDiLam, DmNgheCuTheDiLam.nhom_nghe_di_lam_id == DmNhomNgheDiLam.id

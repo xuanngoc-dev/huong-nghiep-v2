@@ -72,6 +72,12 @@ class DmNhomNgheDiLamWrite(BaseModel):
     lo_trinh_phat_trien: str | None = Field(default=None, max_length=5000)
     nhom_muc_tieu: NhomMucTieu | None = None
     ma_holland: str | None = Field(default=None, max_length=20)
+    nganh_nay_la_gi: str | None = Field(default=None, max_length=10000)
+    noi_lam_viec_o_dau: str | None = Field(default=None, max_length=10000)
+    cong_viec_hang_ngay_nhu_the_nao: str | None = Field(default=None, max_length=10000)
+    ap_luc_va_rui_ro: str | None = Field(default=None, max_length=10000)
+    xu_huong_tuong_lai: str | None = Field(default=None, max_length=10000)
+    ket_luan: str | None = Field(default=None, max_length=10000)
     trang_thai: int = Field(default=1, ge=0, le=1)
 
     @field_validator("ma_nhom")
@@ -96,7 +102,9 @@ class DmNhomNgheDiLamWrite(BaseModel):
         return cleaned.upper() if cleaned else None
 
     @field_validator(
-        "thoi_gian_dao_tao_text", "dieu_kien_dau_vao", "muc_luong_text", "danh_gia_trien_vong", "lo_trinh_phat_trien"
+        "thoi_gian_dao_tao_text", "dieu_kien_dau_vao", "muc_luong_text", "danh_gia_trien_vong", "lo_trinh_phat_trien",
+        "nganh_nay_la_gi", "noi_lam_viec_o_dau", "cong_viec_hang_ngay_nhu_the_nao", "ap_luc_va_rui_ro",
+        "xu_huong_tuong_lai", "ket_luan",
     )
     @classmethod
     def empty_to_none(cls, value: str | None) -> str | None:
@@ -131,6 +139,12 @@ class DmNhomNgheDiLamPublic(BaseModel):
     lo_trinh_phat_trien: str | None = None
     nhom_muc_tieu: str | None = None
     ma_holland: str | None = None
+    nganh_nay_la_gi: str | None = None
+    noi_lam_viec_o_dau: str | None = None
+    cong_viec_hang_ngay_nhu_the_nao: str | None = None
+    ap_luc_va_rui_ro: str | None = None
+    xu_huong_tuong_lai: str | None = None
+    ket_luan: str | None = None
     trang_thai: int
     ngay_tao: datetime | None = None
     ngay_cap_nhat: datetime | None = None
@@ -167,16 +181,25 @@ class DmNgheCuTheDiLamWrite(BaseModel):
     ten_nghe: str = Field(..., min_length=1, max_length=255)
     mo_ta_ngan: str | None = Field(default=None, max_length=5000)
     yeu_cau_them: str | None = Field(default=None, max_length=500)
+    # Bằng cấp / chứng chỉ bắt buộc; bỏ trống nếu không yêu cầu.
+    yeu_cau_bang_cap: str | None = Field(default=None, max_length=255)
+    # 1: bắt buộc đào tạo chính quy; bỏ trống (null) nếu không. Gửi 0 cũng được lưu thành null.
+    bat_buoc_dao_tao_chinh_quy: int | None = Field(default=None, ge=0, le=1)
 
     @field_validator("ten_nghe")
     @classmethod
     def strip_ten_nghe(cls, value: str) -> str:
         return _bat_buoc(value, "Tên nghề")
 
-    @field_validator("mo_ta_ngan", "yeu_cau_them")
+    @field_validator("mo_ta_ngan", "yeu_cau_them", "yeu_cau_bang_cap")
     @classmethod
     def empty_to_none(cls, value: str | None) -> str | None:
         return _rong_thanh_none(value)
+
+    @field_validator("bat_buoc_dao_tao_chinh_quy")
+    @classmethod
+    def khong_bat_buoc_thanh_none(cls, value: int | None) -> int | None:
+        return value or None
 
 
 class DmNgheCuTheDiLamPublic(BaseModel):
@@ -187,6 +210,8 @@ class DmNgheCuTheDiLamPublic(BaseModel):
     ten_nghe: str
     mo_ta_ngan: str | None = None
     yeu_cau_them: str | None = None
+    yeu_cau_bang_cap: str | None = None
+    bat_buoc_dao_tao_chinh_quy: int | None = None
 
 
 class DmNgheCuTheDiLamPage(BaseModel):

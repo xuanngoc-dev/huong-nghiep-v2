@@ -48,6 +48,13 @@ class DmNhomNgheDiLam(Base):
     nhom_muc_tieu: Mapped[str | None] = mapped_column(Enum(*NHOM_MUC_TIEU, name="nhom_muc_tieu"))
     # Mã Holland ghép, ví dụ "RC", "ES".
     ma_holland: Mapped[str | None] = mapped_column(String(20))
+    # Các mục giới thiệu nhóm nghề cho học sinh (hiển thị ở trang chi tiết nhóm nghề).
+    nganh_nay_la_gi: Mapped[str | None] = mapped_column(Text)
+    noi_lam_viec_o_dau: Mapped[str | None] = mapped_column(Text)
+    cong_viec_hang_ngay_nhu_the_nao: Mapped[str | None] = mapped_column(Text)
+    ap_luc_va_rui_ro: Mapped[str | None] = mapped_column(Text)
+    xu_huong_tuong_lai: Mapped[str | None] = mapped_column(Text)
+    ket_luan: Mapped[str | None] = mapped_column(Text)
     # 0: ngừng sử dụng, 1: hoạt động
     trang_thai: Mapped[int] = mapped_column(TINYINT, nullable=False, default=1, server_default="1")
     ngay_tao: Mapped[datetime] = mapped_column(DateTime, nullable=False, server_default=func.now())
@@ -72,6 +79,10 @@ class DmNgheCuTheDiLam(Base):
     ten_nghe: Mapped[str] = mapped_column(String(255), nullable=False)
     mo_ta_ngan: Mapped[str | None] = mapped_column(Text)
     yeu_cau_them: Mapped[str | None] = mapped_column(String(500))
+    # Bằng cấp / chứng chỉ bắt buộc để hành nghề (vd. "Bằng tốt nghiệp trường Công an nhân dân"); null: không yêu cầu.
+    yeu_cau_bang_cap: Mapped[str | None] = mapped_column(String(255))
+    # 1: phải qua đào tạo chính quy (trường công an, quân đội, y...), không đi làm ngay được; null: không bắt buộc.
+    bat_buoc_dao_tao_chinh_quy: Mapped[int | None] = mapped_column(TINYINT)
 
 
 class DmTieuChiGoiY(Base):
