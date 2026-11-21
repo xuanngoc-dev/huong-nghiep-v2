@@ -76,6 +76,18 @@ const router = createRouter({
           meta: { title: 'Cẩm nang', public: true, mucMenu: '#cam-nang' },
         },
         {
+          path: 'chinh-sach-bao-mat',
+          name: 'chinh-sach-bao-mat',
+          component: () => import('@/views/guest/ChinhSachBaoMat.vue'),
+          meta: { title: 'Chính sách bảo mật', public: true },
+        },
+        {
+          path: 'dieu-khoan-su-dung',
+          name: 'dieu-khoan-su-dung',
+          component: () => import('@/views/guest/DieuKhoanSuDung.vue'),
+          meta: { title: 'Điều khoản sử dụng', public: true },
+        },
+        {
           path: 'chon-doi-tuong',
           name: 'chon-doi-tuong',
           component: () => import('@/views/guest/ChonDoiTuong.vue'),

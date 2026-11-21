@@ -196,6 +196,7 @@ declare module 'vue' {
     ToiLamGiTiep: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/ket-qua/ToiLamGiTiep.vue')['default']
     ToiPhuHop: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/ket-qua/ToiPhuHop.vue')['default']
     TongQuan: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/TongQuan.vue')['default']
+    TrangVanBan: typeof import('./components/guest/van-ban/TrangVanBan.vue')['default']
     TruongDaoTao: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/chi-tiet/TruongDaoTao.vue')['default']
     TruongPhuHop: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/TruongPhuHop.vue')['default']
     TuDanhGia: typeof import('./components/guest/doi-tuong/HocSinhThcs/TuDanhGia.vue')['default']

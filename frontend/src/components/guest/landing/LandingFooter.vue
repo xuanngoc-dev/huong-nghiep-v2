@@ -40,8 +40,8 @@
       <div class="landing-footer__bottom">
         <span>© {{ year }} Định hướng nghề. All rights reserved.</span>
         <div class="landing-footer__legal">
-          <a href="#">Chính sách bảo mật</a>
-          <a href="#">Điều khoản sử dụng</a>
+          <RouterLink :to="{ name: 'chinh-sach-bao-mat' }">Chính sách bảo mật</RouterLink>
+          <RouterLink :to="{ name: 'dieu-khoan-su-dung' }">Điều khoản sử dụng</RouterLink>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@
       <div class="landing__head row g-lp align-items-end" data-reveal>
         <div class="col-lg-7">
           <p class="landing__eyebrow">Tính năng cốt lõi</p>
-          <h2 id="features-title" class="landing__title">Công cụ đồng hành trên mọi bước định hướng</h2>
+          <h2 id="features-title" class="landing__title">Không có định hướng tốt nhất, chỉ có định hướng phù hợp nhất</h2>
         </div>
       </div>
 
