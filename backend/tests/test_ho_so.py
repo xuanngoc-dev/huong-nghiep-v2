@@ -36,7 +36,7 @@ def _ho_so(**kwargs):
 
 
 def _tai_khoan():
-    return SimpleNamespace(id=1, ho_ten="Nguyễn Văn An", email="a@example.com", so_dien_thoai=None)
+    return SimpleNamespace(id=1, ho_ten="Nguyễn Văn An", email="a@example.com", so_dien_thoai=None, doi_tuong=None)
 
 
 class _DbGia:
@@ -75,7 +75,7 @@ class TestThongTinCaNhan(unittest.TestCase):
         nang_luc = {"hoc_luc_trung_binh": {"12": 8.5}}
         suc_khoe = {"chieu_cao": 165}
         profile = _ho_so(trinh_do_hoc_van=nang_luc, suc_khoe_the_chat=suc_khoe)
-        user = SimpleNamespace(id=1, ho_ten="Cũ", email="a@example.com", so_dien_thoai=None)
+        user = SimpleNamespace(id=1, ho_ten="Cũ", email="a@example.com", so_dien_thoai=None, doi_tuong=None)
         db = _DbGia(profile)
 
         result = update_thong_tin_ca_nhan(
@@ -89,6 +89,32 @@ class TestThongTinCaNhan(unittest.TestCase):
         self.assertIs(profile.trinh_do_hoc_van, nang_luc)
         self.assertIs(profile.suc_khoe_the_chat, suc_khoe)
         self.assertEqual(result.ho_ten, "Nguyễn Văn An")
+
+    def _cap_nhat_doi_tuong(self, user, **kw):
+        return update_thong_tin_ca_nhan(ThongTinCaNhanWrite(ho_ten="Nguyễn Văn An", **kw), _DbGia(_ho_so()), user)
+
+    def test_cap_nhat_doi_tuong(self, _dong_bo):
+        user = _tai_khoan()
+        result = self._cap_nhat_doi_tuong(user, doi_tuong="sinh-vien")
+        self.assertEqual(user.doi_tuong, "sinh-vien")
+        self.assertEqual(result.doi_tuong, "sinh-vien")
+
+    def test_khong_gui_doi_tuong_thi_giu_nguyen(self, _dong_bo):
+        # Trang Hồ sơ năng lực lưu thông tin cá nhân nhưng không gửi doi_tuong: không được xóa đối tượng đã chọn.
+        user = _tai_khoan()
+        user.doi_tuong = "phu-huynh"
+        self._cap_nhat_doi_tuong(user)
+        self.assertEqual(user.doi_tuong, "phu-huynh")
+
+    def test_gui_null_thi_bo_doi_tuong(self, _dong_bo):
+        user = _tai_khoan()
+        user.doi_tuong = "phu-huynh"
+        self._cap_nhat_doi_tuong(user, doi_tuong=None)
+        self.assertIsNone(user.doi_tuong)
+
+    def test_doi_tuong_khong_hop_le(self, _dong_bo):
+        with self.assertRaises(ValueError):
+            ThongTinCaNhanWrite(ho_ten="Nguyễn Văn An", doi_tuong="ca-si")
 
     def test_schema_thong_tin_ca_nhan_khong_nhan_ho_so_nang_luc(self, _dong_bo):
         self.assertNotIn("trinh_do_hoc_van", ThongTinCaNhanWrite.model_fields)

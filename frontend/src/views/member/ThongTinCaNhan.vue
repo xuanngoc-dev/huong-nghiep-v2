@@ -32,6 +32,12 @@
               <CustomOption v-for="item in GIOI_TINH" :key="item.value" :label="item.label" :value="item.value" />
             </CustomSelect>
           </CustomFormItem>
+          <CustomFormItem class="form-grid__span-2" label="Bạn là">
+            <CustomSelect v-model="form.doi_tuong" placeholder="Chọn đối tượng" clearable filterable>
+              <CustomOption v-for="item in DOI_TUONG_HUONG_DEN" :key="item.ma" :label="item.label" :value="item.ma" />
+            </CustomSelect>
+            <!-- <p class="profile-hint">Trợ lý AI tư vấn theo đối tượng này. Hội thoại đang dở giữ đối tượng cũ.</p> -->
+          </CustomFormItem>
           <CustomFormItem label="Ngày sinh">
             <CustomDatePicker
               v-model="form.ngay_sinh"
@@ -91,6 +97,7 @@ import { fetchHoSo, updateThongTinCaNhan } from '@/api/hoSo'
 import { fetchKhuVucUuTien } from '@/api/khuVucUuTien'
 import { fetchTinhThanh } from '@/api/tinhThanh'
 import { fetchTonGiao } from '@/api/tonGiao'
+import { DOI_TUONG_HUONG_DEN } from '@/constants/doiTuongHuongDen'
 import { useAuthStore } from '@/stores/auth'
 import { storeHoSo } from '@/utils/hoSoCache'
 
@@ -115,6 +122,7 @@ const doiTuongRows = ref([])
 const form = reactive({
   ho_ten: '',
   so_dien_thoai: '',
+  doi_tuong: null,
   gioi_tinh: null,
   ngay_sinh: '',
   dan_toc: null,
@@ -200,6 +208,7 @@ function applyProfile(data) {
   email.value = data.email || ''
   form.ho_ten = data.ho_ten || ''
   form.so_dien_thoai = data.so_dien_thoai || ''
+  form.doi_tuong = data.doi_tuong || null
   form.gioi_tinh = data.gioi_tinh ?? null
   form.ngay_sinh = data.ngay_sinh || ''
   form.dan_toc = data.dan_toc || null
@@ -251,6 +260,7 @@ async function onSubmit() {
     const data = await updateThongTinCaNhan({
       ho_ten: form.ho_ten.trim(),
       so_dien_thoai: blank(form.so_dien_thoai),
+      doi_tuong: form.doi_tuong || null,
       gioi_tinh: form.gioi_tinh ?? null,
       ngay_sinh: form.ngay_sinh || null,
       dan_toc: blank(form.dan_toc),
@@ -261,7 +271,8 @@ async function onSubmit() {
     })
     applyProfile(data)
     if (auth.user) {
-      auth.setUser({ ...auth.user, ho_ten: data.ho_ten, so_dien_thoai: data.so_dien_thoai })
+      // doi_tuong cập nhật ngay vào tài khoản để khung chat đổi đối tượng cho hội thoại mới (stores/chat.js).
+      auth.setUser({ ...auth.user, ho_ten: data.ho_ten, so_dien_thoai: data.so_dien_thoai, doi_tuong: data.doi_tuong })
       storeHoSo(auth.user.id, data)
     }
     ElMessage.success('Đã cập nhật thông tin cá nhân')
@@ -303,6 +314,13 @@ onMounted(load)
   margin: 0;
   color: var(--el-text-color-secondary);
   font-size: 13px;
+  line-height: 1.4;
+}
+
+.profile-hint {
+  margin: 4px 0 0;
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
   line-height: 1.4;
 }
 

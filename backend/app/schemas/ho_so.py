@@ -3,6 +3,7 @@ from datetime import date, datetime
 
 from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
+from app.constants.doi_tuong_huong_den import chuan_hoa_doi_tuong
 from app.core.thoi_gian import hom_nay
 
 MUC_TAI_CHINH = {"Thấp", "Trung bình", "Khá", "Tốt"}
@@ -236,6 +237,14 @@ class ThongTinCaNhanWrite(BaseModel):
     tinh_thanh_id: int | None = Field(default=None, ge=1)
     khu_vuc_uu_tien_id: int | None = Field(default=None, ge=1)
     doi_tuong_uu_tien_id: int | None = Field(default=None, ge=1)
+    # Đối tượng của tài khoản (nguoi_dung.doi_tuong, mã trong app/constants/doi_tuong_huong_den.py): trợ lý chat dùng
+    # cố định đối tượng này. Chỉ cập nhật khi request có gửi trường này (trang Hồ sơ năng lực không gửi).
+    doi_tuong: str | None = Field(default=None, max_length=50)
+
+    @field_validator("doi_tuong")
+    @classmethod
+    def check_doi_tuong(cls, value: str | None) -> str | None:
+        return chuan_hoa_doi_tuong(value)
 
     @field_validator("ho_ten")
     @classmethod

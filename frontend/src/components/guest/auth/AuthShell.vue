@@ -281,7 +281,8 @@ defineProps({
   line-height: 1.4;
 }
 
-.auth-form :deep(.el-input__wrapper) {
+.auth-form :deep(.el-input__wrapper),
+.auth-form :deep(.el-select__wrapper) {
   min-height: 44px;
   padding: 0 12px;
   border-radius: 8px;

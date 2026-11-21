@@ -49,7 +49,10 @@
               <el-icon :size="14"><Close /></el-icon>
             </button>
           </div>
-          <p v-if="chat.daChotDoiTuong" class="chatbot__cai-dat-ghi-chu">
+          <p v-if="chat.doiTuongTaiKhoan" class="chatbot__cai-dat-ghi-chu">
+            Theo đối tượng bạn chọn khi đăng ký tài khoản.
+          </p>
+          <p v-else-if="chat.daChotDoiTuong" class="chatbot__cai-dat-ghi-chu">
             Đã chốt cho cuộc hội thoại này. Bấm <b>Kết thúc</b> để bắt đầu hội thoại mới với đối tượng khác.
           </p>
           <p v-else class="chatbot__cai-dat-ghi-chu">Trợ lý trả lời theo hoàn cảnh của đối tượng bạn chọn.</p>

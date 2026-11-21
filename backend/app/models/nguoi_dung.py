@@ -20,6 +20,9 @@ class NguoiDung(Base):
     so_dien_thoai: Mapped[str | None] = mapped_column(String(20), unique=True, index=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
     mat_khau: Mapped[str] = mapped_column(String(255), nullable=False)
+    # Đối tượng chọn khi đăng ký, mã trong app/constants/doi_tuong_huong_den.py (cùng mã với
+    # chat_conversations.doi_tuong_huong_den): trợ lý chat dùng cố định đối tượng này. Null: tài khoản cũ.
+    doi_tuong: Mapped[str | None] = mapped_column(String(50))
     # 0: người dùng, 1: admin
     vai_tro: Mapped[int] = mapped_column(SmallInteger, nullable=False, default=0, server_default="0")
     # 0: khóa, 1: hoạt động

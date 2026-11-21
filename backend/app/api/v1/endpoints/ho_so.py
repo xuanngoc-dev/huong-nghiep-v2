@@ -79,6 +79,7 @@ def _to_public(user: NguoiDung, profile: NguoiDungThongTin | None) -> HoSoPublic
         "ho_ten": user.ho_ten,
         "email": user.email,
         "so_dien_thoai": user.so_dien_thoai,
+        "doi_tuong": user.doi_tuong,
         "gioi_tinh": None,
         "ngay_sinh": None,
         "dan_toc": None,
@@ -166,6 +167,8 @@ def _gan_thong_tin_ca_nhan(db: Session, current_user: NguoiDung, payload: ThongT
 
     current_user.ho_ten = payload.ho_ten
     current_user.so_dien_thoai = payload.so_dien_thoai
+    if "doi_tuong" in payload.model_fields_set:
+        current_user.doi_tuong = payload.doi_tuong
     profile.gioi_tinh = payload.gioi_tinh
     profile.ngay_sinh = payload.ngay_sinh
     profile.dan_toc = payload.dan_toc

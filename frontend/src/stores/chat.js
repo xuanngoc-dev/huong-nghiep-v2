@@ -35,15 +35,27 @@ export const useChatStore = defineStore('chat', () => {
   }
   // Đối tượng hướng đến theo trang đang xem (Chatbot.vue cập nhật khi đổi trang): mặc định cho hội thoại mới.
   const doiTuongTrang = ref(DOI_TUONG_HUONG_DEN_MAC_DINH)
+  // Thành viên đã chọn đối tượng khi đăng ký (nguoi_dung.doi_tuong): mọi hội thoại mới dùng cố định đối tượng này
+  // (server cũng áp dụng khi tạo phiên), không theo trang đang xem và không đổi được trong khung chat.
+  const doiTuongTaiKhoan = computed(() => (auth.isAuthenticated && laDoiTuongHuongDen(auth.user?.doi_tuong)
+    ? auth.user.doi_tuong : ''))
   const session = createChatSession(state, { stream: hoiChatStream, storage: localStorage, storageKey: key, loadProfile,
-    guestId: () => (auth.isAuthenticated ? null : maThietBi()), doiTuongMacDinh: () => doiTuongTrang.value })
-  // Đã hỏi câu đầu (server đã chốt đối tượng vào phiên) thì không đổi đối tượng nữa.
-  const daChotDoiTuong = computed(() => Boolean(state.maPhien) || state.messages.some(m => m.role === 'user' && !m.local))
+    guestId: () => (auth.isAuthenticated ? null : maThietBi()),
+    doiTuongMacDinh: () => doiTuongTaiKhoan.value || doiTuongTrang.value })
+  // Đã hỏi câu đầu (server đã chốt đối tượng vào phiên) hoặc tài khoản đã có đối tượng thì không đổi đối tượng nữa.
+  const daChotDoiTuong = computed(() => Boolean(doiTuongTaiKhoan.value) || Boolean(state.maPhien)
+    || state.messages.some(m => m.role === 'user' && !m.local))
   function datDoiTuongTrang(ma) {
     if (!laDoiTuongHuongDen(ma)) return
     doiTuongTrang.value = ma
     if (!daChotDoiTuong.value && !state.daChonDoiTuong && !state.sending) state.doiTuongHuongDen = ma
   }
+  // Hội thoại chưa có phiên trên server dùng đối tượng của tài khoản (gọi khi tải xong tài khoản và sau mỗi lần
+  // khôi phục hội thoại đã lưu ở trình duyệt). Phiên đã mở giữ đối tượng server đã chốt (kiemTraPhien cập nhật lại).
+  function apDoiTuongTaiKhoan() {
+    if (doiTuongTaiKhoan.value && !state.maPhien && !state.sending) state.doiTuongHuongDen = doiTuongTaiKhoan.value
+  }
+  watch(doiTuongTaiKhoan, apDoiTuongTaiKhoan)
   // Người dùng tự chọn đối tượng (thẻ chọn đầu khung chat / nút cài đặt): giữ lựa chọn này dù đổi trang.
   function chonDoiTuong(ma) {
     if (!laDoiTuongHuongDen(ma) || daChotDoiTuong.value || state.sending) return
@@ -64,6 +76,7 @@ export const useChatStore = defineStore('chat', () => {
     }
   }
   session.restore()
+  apDoiTuongTaiKhoan()
   kiemTraPhien()
   // tinNhan: tin nhắn của phiên lấy từ API hội thoại của thành viên; doiTuong: đối tượng hướng đến đã chốt của phiên.
   function moHoiThoai(maPhien, tinNhan, doiTuong) {
@@ -149,10 +162,11 @@ export const useChatStore = defineStore('chat', () => {
   watch(() => auth.user?.id, (userId, previousId) => {
     if (previousId && previousId !== userId) clearHoSoCache(previousId)
     session.restore()
+    apDoiTuongTaiKhoan()
     kiemTraPhien()
     loadModels()
     if (userId) warmProfile()
   })
   watch(() => [state.draft, state.modelId, state.doiTuongHuongDen, state.daChonDoiTuong], () => session.persist())
-  return { state, model, khungMo, moKhungChat, loadModels, kiemTraPhien, moHoiThoai, daChotDoiTuong, datDoiTuongTrang, chonDoiTuong, chayLenh, ketThucHoiThoai, send, stop: session.stop, clear: session.clear, retry: session.retry }
+  return { state, model, khungMo, moKhungChat, loadModels, kiemTraPhien, moHoiThoai, daChotDoiTuong, doiTuongTaiKhoan, datDoiTuongTrang, chonDoiTuong, chayLenh, ketThucHoiThoai, send, stop: session.stop, clear: session.clear, retry: session.retry }
 })

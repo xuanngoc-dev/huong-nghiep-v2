@@ -5,7 +5,9 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_current_user
 from app.core.security import create_access_token, hash_password, verify_password
 from app.db.session import get_db
+from app.models.dm_tinh_thanh import DmTinhThanh
 from app.models.nguoi_dung import NguoiDung
+from app.models.nguoi_dung_thong_tin import NguoiDungThongTin
 from app.schemas.auth import AuthResponse, LoginRequest, NguoiDungPublic, RegisterRequest
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -13,7 +15,10 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
 def register(payload: RegisterRequest, db: Session = Depends(get_db)) -> AuthResponse:
-    """Đăng ký tài khoản mới và cấp token đăng nhập. Từ chối nếu email hoặc số điện thoại đã được dùng."""
+    """Đăng ký tài khoản mới và cấp token đăng nhập. Từ chối nếu email hoặc số điện thoại đã được dùng.
+
+    Lưu đối tượng người dùng chọn vào nguoi_dung.doi_tuong, tỉnh thành đang ở vào nguoi_dung_thong_tin.tinh_thanh_id.
+    """
     email = payload.email.lower().strip()
 
     filters = [NguoiDung.email == email]
@@ -32,15 +37,25 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)) -> AuthRes
             detail="Số điện thoại đã được sử dụng",
         )
 
+    if payload.tinh_thanh_id is not None and db.get(DmTinhThanh, payload.tinh_thanh_id) is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không tìm thấy tỉnh thành có id {payload.tinh_thanh_id}",
+        )
+
     user = NguoiDung(
         ho_ten=payload.ho_ten,
         email=email,
         so_dien_thoai=payload.so_dien_thoai,
         mat_khau=hash_password(payload.mat_khau),
+        doi_tuong=payload.doi_tuong,
         vai_tro=0,
         trang_thai=1,
     )
     db.add(user)
+    if payload.tinh_thanh_id is not None:
+        db.flush()
+        db.add(NguoiDungThongTin(nguoi_dung_id=user.id, tinh_thanh_id=payload.tinh_thanh_id))
     db.commit()
     db.refresh(user)
 

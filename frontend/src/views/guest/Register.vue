@@ -44,6 +44,30 @@
 
       <div class="row gx-3">
         <div class="col-sm-6">
+          <el-form-item label="Bạn là" prop="doi_tuong">
+            <CustomSelect v-model="form.doi_tuong" placeholder="Chọn đối tượng" class="w-100">
+              <CustomOption v-for="item in DOI_TUONG_HUONG_DEN" :key="item.ma" :label="item.label" :value="item.ma" />
+            </CustomSelect>
+          </el-form-item>
+        </div>
+        <div class="col-sm-6">
+          <el-form-item label="Tỉnh thành đang ở" prop="tinh_thanh_id">
+            <CustomSelect
+              v-model="form.tinh_thanh_id"
+              placeholder="Chọn tỉnh thành"
+              class="w-100"
+              filterable
+              :loading="dangTaiTinh"
+              no-data-text="Không tải được danh sách tỉnh thành"
+            >
+              <CustomOption v-for="item in dsTinhThanh" :key="item.id" :label="item.ten_tinh" :value="item.id" />
+            </CustomSelect>
+          </el-form-item>
+        </div>
+      </div>
+
+      <div class="row gx-3">
+        <div class="col-sm-6">
           <el-form-item label="Mật khẩu" prop="mat_khau">
             <el-input
               v-model="form.mat_khau"
@@ -90,10 +114,13 @@
 </template>
 
 <script setup>
-import { onUnmounted, reactive, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
+import { fetchTinhThanh } from '@/api/tinhThanh'
+// Cùng danh sách đối tượng của trợ lý chat: đăng nhập rồi thì trợ lý dùng cố định đối tượng này.
+import { DOI_TUONG_HUONG_DEN } from '@/constants/doiTuongHuongDen'
 import { mountGuestBootstrap, unmountGuestBootstrap } from '@/layouts/guest/bootstrap'
 import AuthShell from '@/components/guest/auth/AuthShell.vue'
 import bannerImage from '@/assets/guest/thcs.jpg'
@@ -120,8 +147,25 @@ const form = reactive({
   ho_ten: '',
   email: '',
   so_dien_thoai: '',
+  doi_tuong: '',
+  tinh_thanh_id: null,
   mat_khau: '',
   xac_nhan_mat_khau: '',
+})
+
+// Danh sách tỉnh thành đang hoạt động cho ô "Tỉnh thành đang ở" (API danh mục không cần đăng nhập).
+const dsTinhThanh = ref([])
+const dangTaiTinh = ref(false)
+onMounted(async () => {
+  dangTaiTinh.value = true
+  try {
+    const data = await fetchTinhThanh({ page: 1, page_size: 200, trang_thai: 1 }, { skipLoading: true })
+    dsTinhThanh.value = data.items || []
+  } catch {
+    dsTinhThanh.value = []
+  } finally {
+    dangTaiTinh.value = false
+  }
 })
 
 const rules = {
@@ -145,6 +189,8 @@ const rules = {
       trigger: 'blur',
     },
   ],
+  doi_tuong: [{ required: true, message: 'Vui lòng chọn bạn là ai', trigger: 'change' }],
+  tinh_thanh_id: [{ required: true, message: 'Vui lòng chọn tỉnh thành', trigger: 'change' }],
   mat_khau: [
     { required: true, message: 'Vui lòng nhập mật khẩu', trigger: 'blur' },
     { min: 6, message: 'Mật khẩu tối thiểu 6 ký tự', trigger: 'blur' },
@@ -174,6 +220,8 @@ async function onSubmit() {
       ho_ten: form.ho_ten.trim(),
       email: form.email.trim(),
       so_dien_thoai: form.so_dien_thoai.trim() || null,
+      doi_tuong: form.doi_tuong || null,
+      tinh_thanh_id: form.tinh_thanh_id || null,
       mat_khau: form.mat_khau,
     })
     ElMessage.success('Đăng ký thành công')

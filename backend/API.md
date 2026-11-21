@@ -1,6 +1,6 @@
 # Danh sách API
 
-Tự sinh từ code lúc 20/11/2026 19:42 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 21/11/2026 13:57 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
 Tiền tố chung: `/api/v1`. Tổng cộng **494** API.
 
