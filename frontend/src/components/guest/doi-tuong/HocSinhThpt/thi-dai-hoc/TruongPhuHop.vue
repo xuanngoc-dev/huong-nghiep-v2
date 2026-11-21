@@ -1408,7 +1408,7 @@ onMounted(async () => {
   background: none;
   color: #0c5c34;
   font: inherit;
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: underline;
   cursor: pointer;
 }
@@ -1495,7 +1495,7 @@ onMounted(async () => {
   margin: 0;
   color: #1f2d26;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
 }
 

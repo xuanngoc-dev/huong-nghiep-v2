@@ -78,7 +78,7 @@
 .guest-layout .stages-heading {
   margin: 0 0 16px;
   font-size: 1.35rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -87,7 +87,7 @@
 .guest-layout .future-card__title {
   margin: 0 0 12px;
   font-size: 1.35rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -110,7 +110,7 @@
 .guest-layout .placeholder-card__title {
   margin: 0 0 8px;
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -132,11 +132,11 @@
   background: #fff;
   text-align: left;
   cursor: pointer;
-  transition: box-shadow 0.3s ease;
+  transition: border-color 0.15s ease;
 }
 
 .guest-layout .switch-card:hover {
-  box-shadow: 0 16px 32px rgba(31, 122, 77, 0.14);
+  border-color: rgba(var(--guest-primary-rgb), 0.5);
 }
 
 .guest-layout .switch-card.is-selected {
@@ -161,7 +161,7 @@
 
 .guest-layout .switch-card__name {
   color: var(--guest-primary);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -182,7 +182,7 @@
   margin: 0 0 16px;
   color: var(--guest-primary);
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .guest-layout .news-panel__list {
@@ -210,7 +210,7 @@
   margin: 0 0 6px;
   color: #1c2b23;
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
 }
 
@@ -259,7 +259,7 @@
 .guest-layout .support-item h3 {
   margin: 0;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -297,7 +297,7 @@
   border-radius: var(--guest-radius);
   background: transparent;
   color: #1c2b23;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
   text-align: left;
   cursor: pointer;
@@ -358,7 +358,7 @@
   margin: 0 0 6px;
   color: #fff;
   font-size: 1.35rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .guest-layout .future-slide__caption p {
@@ -448,9 +448,7 @@
 .guest-layout .guest-banner__kicker {
   margin-bottom: 12px;
   font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .guest-layout .guest-banner__panel {
@@ -476,9 +474,7 @@
 .guest-layout .guest-slide__kicker {
   margin-bottom: 8px;
   font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .guest-layout .guest-step,
@@ -490,7 +486,7 @@
   border-radius: var(--guest-radius-sm);
   background: #e7f5ee;
   color: var(--guest-primary);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 @media (max-width: 767px) {
@@ -528,7 +524,7 @@
   border-radius: 50%;
   background: var(--guest-primary);
   color: #fff;
-  box-shadow: 0 8px 20px rgba(63, 150, 67, 0.28);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
   cursor: pointer;
 }
 
@@ -543,55 +539,12 @@
   bottom: 20px;
 }
 
-.guest-layout .quick-support__fab {
-  position: relative;
-  isolation: isolate;
-  overflow: visible;
-}
-
-.guest-layout .quick-support__waves {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  pointer-events: none;
-}
-
-.guest-layout .quick-support__waves span {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: rgba(var(--guest-primary-rgb), 0.38);
-  animation: quick-support-wave 2.8s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
-}
-
-.guest-layout .quick-support__waves span:nth-child(2) {
-  animation-delay: 1.4s;
-}
-
-@keyframes quick-support-wave {
-  0% {
-    transform: scale(1);
-    opacity: 0.55;
-  }
-
-  100% {
-    transform: scale(2.05);
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .guest-layout .quick-support__waves span {
-    animation: none;
-  }
-}
-
 .guest-layout .quick-support__panel,
 .guest-layout .chatbot__panel {
-  border: 1px solid rgba(var(--guest-primary-rgb), 0.28);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: var(--guest-radius);
   background: #fff;
-  box-shadow: 0 16px 32px rgba(31, 122, 77, 0.14);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 }
 
 .guest-layout .quick-support__panel {
@@ -659,7 +612,7 @@
 .guest-layout .quick-support__title {
   margin: 0 0 8px;
   color: var(--guest-primary);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .guest-layout .quick-support__link {
@@ -952,7 +905,7 @@
   margin: 0 0 6px;
   color: #1c2b23;
   font-size: 1.85rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.3;
 }
 
@@ -965,12 +918,10 @@
 .guest-layout .holland-kicker {
   display: block;
   margin: 0 0 8px;
-  color: #8d97a2;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  color: #6b7280;
+  font-size: 0.8125rem;
+  font-weight: 500;
   line-height: 1.3;
-  text-transform: uppercase;
 }
 
 .guest-layout .holland-intro {
@@ -995,11 +946,9 @@
   border-radius: 0.375rem;
   background: var(--guest-primary);
   color: #fff;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-size: 0.75rem;
+  font-weight: 500;
   line-height: 1.3;
-  text-transform: uppercase;
 }
 
 .guest-layout .holland-intro__title,
@@ -1012,7 +961,7 @@
 .guest-layout .holland-intro__title {
   margin: 0 0 8px;
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -1060,7 +1009,7 @@
 .guest-layout .holland-note__title {
   margin: 0 0 10px;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
 }
 
@@ -1111,7 +1060,7 @@
   background: #fff;
   color: #8d97a2;
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .guest-layout .holland-path__item.is-current .holland-path__index {
@@ -1128,7 +1077,7 @@
 
 .guest-layout .holland-path__item.is-current .holland-path__label {
   color: #1c2b23;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .guest-layout .holland-list {
@@ -1186,7 +1135,7 @@
   border-radius: 8px;
   color: #fff;
   font-size: 1.15rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .guest-layout .holland-score__point {
@@ -1245,7 +1194,7 @@
   margin: 0 0 8px;
   color: var(--guest-primary);
   font-size: 4rem;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -1414,7 +1363,6 @@
   border-radius: 4px;
   font-size: 0.6875rem;
   font-weight: 400;
-  text-transform: uppercase;
   background: rgba(0, 0, 0, 0.06);
   color: inherit;
 }

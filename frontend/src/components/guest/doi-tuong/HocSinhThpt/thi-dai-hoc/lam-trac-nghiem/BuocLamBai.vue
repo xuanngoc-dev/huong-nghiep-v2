@@ -11,11 +11,6 @@
     >
       <button type="button" class="holland-path__link" :disabled="biKhoa(index)" @click="mo(step, index)">
         <span class="holland-path__index">
-          <template v-if="trangThai(step) === 'dang'">
-            <span class="quiz-ripple" aria-hidden="true" />
-            <span class="quiz-ripple quiz-ripple--mid" aria-hidden="true" />
-            <span class="quiz-ripple quiz-ripple--late" aria-hidden="true" />
-          </template>
           {{ index + 1 }}
         </span>
         <span class="holland-path__label">{{ step.ten }}</span>
@@ -127,7 +122,6 @@ ol.quiz-steps .holland-path__index {
 }
 
 ol.quiz-steps .holland-path__item.is-current .holland-path__index {
-  transform: scale(1.18);
   box-shadow: 0 0 0 7px rgba(var(--guest-primary-rgb), 0.14);
 }
 
@@ -150,35 +144,6 @@ ol.quiz-steps .holland-path__item.is-done .holland-path__label {
   font-weight: 500;
 }
 
-.quiz-ripple {
-  position: absolute;
-  inset: -2px;
-  border: 2px solid rgba(var(--guest-primary-rgb), 0.45);
-  border-radius: 50%;
-  pointer-events: none;
-  animation: quiz-ripple 2.8s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
-}
-
-.quiz-ripple--mid {
-  animation-delay: 0.9s;
-}
-
-.quiz-ripple--late {
-  animation-delay: 1.8s;
-}
-
-@keyframes quiz-ripple {
-  0% {
-    transform: scale(0.92);
-    opacity: 0.55;
-  }
-
-  100% {
-    transform: scale(2.45);
-    opacity: 0;
-  }
-}
-
 @media (max-width: 767px) {
   ol.quiz-steps.holland-path {
     display: flex;
@@ -191,11 +156,6 @@ ol.quiz-steps .holland-path__item.is-done .holland-path__label {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .quiz-ripple {
-    animation: none;
-    opacity: 0;
-  }
-
   ol.quiz-steps .holland-path__index,
   ol.quiz-steps .holland-path__item,
   ol.quiz-steps .holland-path__label {

@@ -212,7 +212,7 @@ watch(() => props.chon, () => nextTick(dongBoChon))
   left: 0;
   z-index: 2;
   width: 4px;
-  background: linear-gradient(180deg, var(--cm-primary), var(--cm-primary-deep));
+  background: var(--cm-primary-deep);
   transform: scaleY(0);
   transform-origin: top;
   transition: transform 0.3s ease;
@@ -222,7 +222,6 @@ watch(() => props.chon, () => nextTick(dongBoChon))
 .card-major:focus-within {
   border-color: color-mix(in srgb, var(--cm-primary) 45%, var(--cm-border));
   box-shadow: 0 12px 28px var(--cm-shadow-hover);
-  transform: translateY(-4px);
 }
 
 .card-major:hover::before,
@@ -264,7 +263,6 @@ watch(() => props.chon, () => nextTick(dongBoChon))
 
 .card-major:hover .card-major__image {
   opacity: 1;
-  transform: scale(1.05);
 }
 
 .card-major__shade {
@@ -367,7 +365,7 @@ watch(() => props.chon, () => nextTick(dongBoChon))
   margin: 0;
   color: var(--cm-primary-deep);
   font-size: 1.15rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
   transition: color 0.2s ease;
 }

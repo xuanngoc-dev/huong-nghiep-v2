@@ -69,6 +69,13 @@ const router = createRouter({
           meta: { title: 'Tra cứu', public: true, mucMenu: '#kham-pha' },
         },
         {
+          path: 'cam-nang',
+          name: 'cam-nang',
+          component: () => import('@/views/guest/CamNang.vue'),
+          // mucMenu: sáng mục "Cẩm nang" (#cam-nang) trên header khách.
+          meta: { title: 'Cẩm nang', public: true, mucMenu: '#cam-nang' },
+        },
+        {
           path: 'chon-doi-tuong',
           name: 'chon-doi-tuong',
           component: () => import('@/views/guest/ChonDoiTuong.vue'),

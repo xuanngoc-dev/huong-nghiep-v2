@@ -302,7 +302,7 @@
   width: 180px;
   background: #e5f2ea;
   color: #3f9643;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .so-sanh--nganh td {
@@ -397,7 +397,7 @@
   border: 2px solid #7eae8c;
   border-radius: 12px;
   background: #fff;
-  box-shadow: 0 10px 24px rgba(31, 122, 77, 0.16);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
 }
 
 .loi-the {
@@ -502,7 +502,7 @@
   border: 2px solid #7eae8c;
   border-radius: 12px;
   background: #fff;
-  box-shadow: 0 10px 24px rgba(31, 122, 77, 0.16);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
   cursor: pointer;
 }
 
@@ -668,11 +668,9 @@
   margin: 0;
   padding-right: 48px;
   color: var(--guest-primary);
-  font-size: 0.78rem;
-  font-weight: 400;
-  letter-spacing: 0.02em;
+  font-size: 0.8125rem;
+  font-weight: 500;
   line-height: 1.35;
-  text-transform: uppercase;
 }
 
 .nhom-card__name {

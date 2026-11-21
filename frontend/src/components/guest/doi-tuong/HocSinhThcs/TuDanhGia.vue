@@ -267,7 +267,7 @@ onMounted(taiDuLieu)
 .thcs__title {
   margin: 0 0 8px;
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -286,7 +286,7 @@ onMounted(taiDuLieu)
   margin: 0 0 12px;
   color: var(--guest-primary);
   font-size: 1.1rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .cau-hoi {
@@ -342,7 +342,7 @@ onMounted(taiDuLieu)
 
 .thang-diem__so {
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.2;
 }
 
@@ -397,7 +397,7 @@ onMounted(taiDuLieu)
 .ket-qua__title {
   margin: 0 0 12px;
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .ket-qua {
@@ -438,7 +438,7 @@ onMounted(taiDuLieu)
   border-radius: 50%;
   background: rgba(var(--guest-primary-rgb), 0.12);
   color: var(--guest-primary);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .is-top .ket-qua__hang {
@@ -457,7 +457,7 @@ onMounted(taiDuLieu)
 
 .ket-qua__ten {
   color: #1c2b23;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -472,7 +472,7 @@ onMounted(taiDuLieu)
 .ket-qua__phan-tram {
   color: var(--guest-primary);
   font-size: 1.15rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .ket-qua__thanh {
@@ -532,7 +532,7 @@ onMounted(taiDuLieu)
 
 .menu-huong__ten {
   color: var(--guest-primary);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 

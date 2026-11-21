@@ -655,9 +655,7 @@ onBeforeUnmount(() => {
   color: #5c6b7a;
   font-size: 0.72rem;
   font-weight: 500;
-  letter-spacing: 0.04em;
   line-height: 1.3;
-  text-transform: uppercase;
 }
 
 .top-group__heading {
@@ -740,7 +738,7 @@ onBeforeUnmount(() => {
   margin: 0;
   color: var(--pf-text);
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
 }
 
@@ -801,7 +799,7 @@ onBeforeUnmount(() => {
   background: #eef2f0;
   color: var(--pf-muted);
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .rank-item--1 .rank-item__no {
@@ -836,7 +834,7 @@ onBeforeUnmount(() => {
   background: var(--pf-soft);
   color: var(--pf-primary-deep);
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
 }
 
@@ -861,7 +859,7 @@ onBeforeUnmount(() => {
   flex: 0 0 auto;
   color: var(--pf-primary-deep);
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -877,7 +875,7 @@ onBeforeUnmount(() => {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #4fa877, var(--pf-primary));
+  background: var(--pf-primary);
   transition: width 0.5s ease;
 }
 
@@ -1048,14 +1046,14 @@ onBeforeUnmount(() => {
   margin: 0;
   color: #0c5c34;
   font-size: 1.35rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.3;
 }
 
 .major-card__count {
   margin-left: 6px;
   cursor: help;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .major-card__tools {
@@ -1122,7 +1120,7 @@ onBeforeUnmount(() => {
   width: 180px;
   background: #e5f2ea;
   color: #0c5c34;
-  font-weight: 700;
+  font-weight: 600;
   text-align: left;
 }
 

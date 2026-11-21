@@ -28,13 +28,16 @@
         </div>
 
         <form class="landing-explore__search mb-0" role="search" @submit.prevent="traCuu()">
-          <el-icon aria-hidden="true"><Search /></el-icon>
-          <input
-            v-model="query"
-            type="search"
-            :placeholder="loai.placeholder"
-            :aria-label="`Tìm ${loai.label}`"
-          />
+          <label class="landing-explore__o-nhap">
+            <el-icon aria-hidden="true"><Search /></el-icon>
+            <!-- Placeholder tự gõ / xóa lần lượt các từ khóa mẫu của loại đang chọn (goiY trong loaiTraCuu.js). -->
+            <input
+              v-model="query"
+              type="search"
+              :placeholder="`Thử tìm: ${goiYDangGo}`"
+              :aria-label="`Tìm ${loai.label}`"
+            />
+          </label>
           <button type="submit" class="landing__btn landing__btn--soft">Tra cứu</button>
         </form>
       </div>
@@ -69,6 +72,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { careerCategories } from '@/data/landing'
 import { LOAI_TRA_CUU, timLoaiTraCuu } from '@/components/guest/tra-cuu/loaiTraCuu'
+import { useGoChuGoiY } from '@/composables/useGoChuGoiY'
 import LandingCarousel from './LandingCarousel.vue'
 import LandingImage from './LandingImage.vue'
 
@@ -76,6 +80,11 @@ const router = useRouter()
 const activeTab = ref(LOAI_TRA_CUU[0].id)
 const query = ref('')
 const loai = computed(() => timLoaiTraCuu(activeTab.value))
+// Ô đã có chữ thì placeholder không hiện: dừng hiệu ứng gõ.
+const goiYDangGo = useGoChuGoiY(
+  computed(() => loai.value.goiY),
+  computed(() => query.value !== ''),
+)
 
 // Trang chủ chỉ chọn loại + nhập từ khóa; kết quả hiện ở trang /tra-cuu.
 function traCuu() {

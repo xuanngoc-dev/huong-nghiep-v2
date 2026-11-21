@@ -464,7 +464,7 @@ onMounted(() => {
   margin: 0;
   color: #0c5c34;
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.2;
 }
 
@@ -497,7 +497,7 @@ onMounted(() => {
   background: none;
   color: #0c5c34;
   font: inherit;
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 2px;
   cursor: pointer;
@@ -602,7 +602,7 @@ onMounted(() => {
   margin: 0;
   color: #0c5c34;
   font-size: 1.08rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
 }
 

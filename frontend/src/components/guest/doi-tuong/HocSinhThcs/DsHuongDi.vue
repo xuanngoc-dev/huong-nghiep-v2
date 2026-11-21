@@ -118,7 +118,7 @@ onMounted(taiHuongDi)
 .goi-y-card__ten {
   color: #1c2b23;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .goi-y-card__mo-ta {

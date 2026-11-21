@@ -79,7 +79,7 @@ defineProps({
   background: #fff;
   color: var(--guest-primary, #3f9643);
   font-size: 1.55rem;
-  font-weight: 800;
+  font-weight: 600;
   box-shadow: 0 8px 18px rgba(63, 150, 67, 0.16);
   animation: think-pop 1.6s ease-in-out infinite;
   animation-delay: 0.4s;
@@ -157,7 +157,7 @@ defineProps({
   margin: 22px 0 0;
   color: #1c2b23;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .think-loading-enter-active,

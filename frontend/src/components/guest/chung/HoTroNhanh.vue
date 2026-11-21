@@ -29,10 +29,6 @@
       :aria-expanded="open"
       @click="toggle"
     >
-      <span class="quick-support__waves" aria-hidden="true">
-        <span></span>
-        <span></span>
-      </span>
       <el-icon :size="22"><Service /></el-icon>
     </button>
   </div>

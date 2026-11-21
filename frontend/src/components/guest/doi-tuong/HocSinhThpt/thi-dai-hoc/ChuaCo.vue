@@ -553,8 +553,6 @@ onMounted(() => {
   color: var(--guest-primary, #3f9643);
   font-size: 0.8rem;
   font-weight: 400;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
 
 .intro-card__title {

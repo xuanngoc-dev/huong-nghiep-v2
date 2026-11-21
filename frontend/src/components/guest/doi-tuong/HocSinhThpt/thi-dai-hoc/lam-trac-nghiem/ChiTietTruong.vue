@@ -273,7 +273,7 @@ watch(maNganh, taiNganh, { immediate: true })
   margin: 0;
   color: #0c5c34;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .nganh-mo-ta p {

@@ -4,7 +4,7 @@
       <div class="landing__head row g-lp align-items-end" data-reveal>
         <div class="col-lg-7">
           <p class="landing__eyebrow">Giải pháp theo đối tượng</p>
-          <h3 id="audiences-title" class="landing__title">Dù bạn là ai, chúng tôi cũng có giải pháp phù hợp cho bạn</h3>
+          <h3 id="audiences-title" class="landing__title">Nội dung riêng cho học sinh, phụ huynh, người đi làm và tổ chức</h3>
         </div>
         <!-- <p class="landing__lead col-lg-5">
           Chọn đối tượng của bạn để xem lợi ích và dịch vụ phù hợp nhất.

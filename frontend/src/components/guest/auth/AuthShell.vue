@@ -53,27 +53,24 @@ defineProps({
 </script>
 
 <style scoped>
-/* Phong cách "kính tối": nền tối có lưới chấm và luồng sáng, thẻ form kính mờ viền phát sáng,
-   ô nhập là khung tối gọn, nhãn nằm phía trên. Màu theo tông xanh lá của các trang khách.
+/* Banner ảnh bên trái (desktop), form trên nền sáng bên phải. Màu chủ đạo xanh #3f9643; nút và chữ
+   xanh trên nền sáng dùng #2f7a33 để đạt tương phản 4.5:1.
    Biến --el-color-primary chỉ áp dụng trong khung auth, không đổi theme của khu quản trị. */
 .auth-page {
-  /* Màu chủ đạo #3f9643 cho cả banner và khu vực form. Thẻ form là lớp kính xanh đậm hơn nền
-     để chữ trắng đạt tương phản ≥ 6:1 (chữ trắng trực tiếp trên #3f9643 chỉ đạt 3.7:1). */
   --auth-primary: #3f9643;
   --auth-primary-strong: #2f7a33;
-  --auth-accent: #d9f6dc;
-  --auth-bg: #3f9643;
-  --auth-line: rgba(255, 255, 255, 0.2);
-  --auth-field: rgba(6, 30, 12, 0.35);
-  --auth-text: #fff;
-  --auth-muted: rgba(255, 255, 255, 0.85);
-  --el-color-primary: #3f9643;
-  --el-color-primary-light-3: #79b67b;
-  --el-color-primary-light-5: #9fcba1;
-  --el-color-primary-light-7: #c5e0c7;
-  --el-color-primary-light-8: #d9ead9;
-  --el-color-primary-light-9: #ecf5ec;
-  --el-color-primary-dark-2: #327836;
+  --auth-primary-hover: #276a2b;
+  --auth-bg: #f8fbf8;
+  --auth-line: rgba(15, 23, 42, 0.08);
+  --auth-text: #0f172a;
+  --auth-muted: #475569;
+  --el-color-primary: #2f7a33;
+  --el-color-primary-light-3: #6da270;
+  --el-color-primary-light-5: #97bd99;
+  --el-color-primary-light-7: #c1d7c2;
+  --el-color-primary-light-8: #d5e4d6;
+  --el-color-primary-light-9: #eaf2eb;
+  --el-color-primary-dark-2: #276a2b;
   background: var(--auth-bg);
 }
 
@@ -94,13 +91,12 @@ defineProps({
   object-fit: cover;
 }
 
+/* Lớp tối phía dưới để chữ trắng đọc được trên ảnh. */
 .auth-banner__inner::after {
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgba(63, 150, 67, 0.35) 0%, rgba(63, 150, 67, 0.2) 35%, rgba(24, 74, 30, 0.92) 100%),
-    linear-gradient(90deg, rgba(47, 122, 51, 0.45), transparent 70%);
+  background: linear-gradient(180deg, rgba(11, 33, 18, 0.2) 0%, rgba(11, 33, 18, 0.15) 40%, rgba(11, 33, 18, 0.88) 100%);
 }
 
 .auth-banner .auth-brand-link,
@@ -122,11 +118,9 @@ defineProps({
 
 .auth-banner__eyebrow {
   margin: 0 0 12px;
-  color: var(--auth-accent);
-  font-size: 0.82rem;
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9375rem;
+  font-weight: 500;
 }
 
 .auth-banner__title {
@@ -159,7 +153,7 @@ defineProps({
 }
 
 .auth-banner__list .el-icon {
-  color: var(--auth-accent);
+  color: #b9e3bb;
 }
 
 /* Brand (logo trên banner) */
@@ -180,24 +174,16 @@ defineProps({
   place-items: center;
   width: 36px;
   height: 36px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  background: var(--auth-primary-strong);
   color: #fff;
   font-size: 0.78rem;
-  backdrop-filter: blur(6px);
 }
 
-/* Khu vực form: nền tối, lưới chấm, luồng sáng rọi từ trên xuống. */
+/* Khu vực form */
 .auth-panel {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
   padding: 20px;
-  background:
-    radial-gradient(ellipse 60% 45% at 50% -5%, rgba(255, 255, 255, 0.22), transparent 70%),
-    radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1.5px) 0 0 / 24px 24px,
-    linear-gradient(180deg, var(--auth-primary) 0%, #37883b 55%, var(--auth-primary-strong) 100%);
+  background: var(--auth-bg);
   color: var(--auth-text);
 }
 
@@ -209,67 +195,41 @@ defineProps({
   padding-block: 32px;
 }
 
-/* Thẻ form kính tối */
 .auth-form {
-  position: relative;
   width: 100%;
   max-width: 440px;
-  padding: 36px 28px 28px;
+  padding: 32px 28px 28px;
   border: 1px solid var(--auth-line);
-  border-radius: 24px;
-  background:
-    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255, 255, 255, 0.08), transparent 70%),
-    linear-gradient(180deg, rgba(20, 70, 28, 0.5), rgba(12, 48, 18, 0.62));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    0 30px 80px rgba(10, 40, 16, 0.4);
-  backdrop-filter: blur(18px);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
   text-align: center;
-  animation: auth-rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
-
-/* Điểm sáng trên viền trên của thẻ */
-.auth-form::before {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: 50%;
-  width: 45%;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, transparent, var(--auth-accent), transparent);
-  box-shadow: 0 0 18px 2px rgba(255, 255, 255, 0.45);
-  transform: translateX(-50%);
+  animation: auth-rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes auth-rise {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(8px);
   }
 }
 
 .auth-form__logo {
   display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   margin: 0 auto 20px;
-  border: 1px solid var(--auth-line);
-  border-radius: 16px;
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    0 10px 24px rgba(10, 40, 16, 0.3);
+  border-radius: 12px;
+  background: var(--auth-primary-strong);
   color: #fff;
   font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-weight: 500;
   text-decoration: none;
 }
 
 .auth-form__logo:focus-visible {
-  outline: 2px solid var(--auth-accent);
+  outline: 2px solid var(--auth-primary-strong);
   outline-offset: 3px;
 }
 
@@ -284,7 +244,7 @@ defineProps({
 }
 
 .auth-panel__home:hover {
-  color: #fff;
+  color: var(--auth-primary-strong);
 }
 
 /* Nội dung trong slot (thuộc Login/Register) */
@@ -294,11 +254,8 @@ defineProps({
 
 .auth-form :deep(.auth-brand h1) {
   margin: 0 0 6px;
-  background: linear-gradient(180deg, #fff, #dff3e1);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-size: 1.9rem;
+  color: var(--auth-text);
+  font-size: 1.75rem;
   font-weight: 400;
 }
 
@@ -307,7 +264,7 @@ defineProps({
   color: var(--auth-muted);
 }
 
-/* Ô nhập: nhãn nằm phía trên, chỉ ô nhập là khung tối gọn 44px. */
+/* Ô nhập: nhãn nằm phía trên, ô nhập cao 44px. */
 .auth-form :deep(.el-form-item) {
   /* Chừa chỗ cho dòng báo lỗi (đặt tuyệt đối dưới ô) để không dính vào nhãn của trường kế tiếp. */
   margin-bottom: 24px;
@@ -318,94 +275,39 @@ defineProps({
   height: auto;
   margin: 0 0 6px;
   padding: 0;
-  color: var(--auth-muted);
-  font-size: 0.85rem;
+  color: var(--auth-text);
+  font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.4;
 }
 
-.auth-form :deep(.el-form-item__label::before) {
-  color: #ffd0d0 !important;
-}
-
 .auth-form :deep(.el-input__wrapper) {
   min-height: 44px;
-  padding: 0 14px;
-  border-radius: 12px;
-  background: var(--auth-field);
-  box-shadow: 0 0 0 1px var(--auth-line) inset;
-  transition:
-    box-shadow 0.2s ease,
-    background 0.2s ease;
-}
-
-.auth-form :deep(.el-input__wrapper:hover) {
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35) inset;
-}
-
-.auth-form :deep(.el-input__wrapper.is-focus) {
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.75) inset,
-    0 0 0 4px rgba(255, 255, 255, 0.16);
-}
-
-.auth-form :deep(.el-form-item.is-error .el-input__wrapper) {
-  box-shadow:
-    0 0 0 1px #ffb4b4 inset,
-    0 0 0 3px rgba(255, 120, 120, 0.22);
-}
-
-.auth-form :deep(.el-input__inner) {
-  color: #fff;
-  font-size: 0.95rem;
-}
-
-.auth-form :deep(.el-input__inner::placeholder) {
-  color: rgba(255, 255, 255, 0.55);
-}
-
-/* Giữ nền tối khi trình duyệt tự điền */
-.auth-form :deep(.el-input__inner:-webkit-autofill) {
-  -webkit-text-fill-color: #fff;
-  transition: background-color 9999s ease-out;
-}
-
-.auth-form :deep(.el-input__prefix),
-.auth-form :deep(.el-input__suffix),
-.auth-form :deep(.el-input__icon) {
-  color: rgba(255, 255, 255, 0.6);
+  padding: 0 12px;
+  border-radius: 8px;
 }
 
 .auth-form :deep(.el-form-item__error) {
   padding-top: 4px;
-  color: #ffd0d0;
-  font-weight: 500;
 }
 
-/* Nút chính: sáng trên nền tối, chữ tối, có mũi tên. */
 .auth-form :deep(.submit-btn) {
   width: 100%;
-  height: 50px;
+  height: 48px;
   margin-top: 8px;
   border: 0;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 12px 28px rgba(10, 40, 16, 0.3);
-  color: var(--auth-primary-strong);
+  border-radius: 8px;
+  background: var(--auth-primary-strong);
+  color: #fff;
   font-size: 1rem;
-  font-weight: 400;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    filter 0.2s ease;
+  font-weight: 500;
+  transition: background 0.15s ease;
 }
 
 .auth-form :deep(.submit-btn:hover),
 .auth-form :deep(.submit-btn:focus-visible) {
-  background: #f1faf2;
-  color: var(--auth-primary-strong);
-  transform: translateY(-1px);
-  box-shadow: 0 16px 34px rgba(10, 40, 16, 0.38);
+  background: var(--auth-primary-hover);
+  color: #fff;
 }
 
 .auth-form :deep(.submit-btn .el-icon) {
@@ -419,8 +321,8 @@ defineProps({
 
 .auth-form :deep(.auth-footer a) {
   margin-left: 4px;
-  color: #fff;
-  font-weight: 400;
+  color: var(--auth-primary-strong);
+  font-weight: 500;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -437,16 +339,13 @@ defineProps({
 
 @media (max-width: 575.98px) {
   .auth-form {
-    padding: 32px 20px 24px;
-    border-radius: 20px;
+    padding: 28px 20px 24px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .auth-form,
-  .auth-form :deep(.submit-btn) {
+  .auth-form {
     animation: none;
-    transition: none;
   }
 }
 </style>

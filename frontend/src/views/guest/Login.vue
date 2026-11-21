@@ -7,7 +7,7 @@
   >
     <div class="auth-brand">
       <h1>Đăng nhập</h1>
-      <p>Chào mừng trở lại Định hướng nghề</p>
+      <p>Dùng email bạn đã đăng ký</p>
     </div>
 
     <el-form

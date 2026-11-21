@@ -34,8 +34,10 @@
 
           <form class="tra-cuu__tim" role="search" @submit.prevent="timNgay">
             <div class="landing-explore__search tra-cuu__o-tim">
-              <el-icon aria-hidden="true"><Search /></el-icon>
-              <input v-model="tuKhoa" type="search" :placeholder="loai.placeholder" :aria-label="`Tìm ${loai.label}`" />
+              <label class="landing-explore__o-nhap">
+                <el-icon aria-hidden="true"><Search /></el-icon>
+                <input v-model="tuKhoa" type="search" :placeholder="loai.placeholder" :aria-label="`Tìm ${loai.label}`" />
+              </label>
               <button type="submit" class="landing__btn landing__btn--soft">Tìm kiếm</button>
             </div>
             <CustomSelect
@@ -52,13 +54,31 @@
           </form>
 
           <div id="tra-cuu-ket-qua" role="tabpanel" aria-live="polite">
-            <p v-if="!dangTai && !loi && tong" class="tra-cuu__dem">
-              Tìm thấy <strong>{{ tong.toLocaleString('vi-VN') }}</strong> kết quả
-            </p>
+            <div class="tra-cuu__thanh-cong-cu">
+              <p class="tra-cuu__dem">
+                <template v-if="!dangTai && !loi && tong">
+                  Tìm thấy <strong>{{ tong.toLocaleString('vi-VN') }}</strong> kết quả
+                </template>
+              </p>
+              <div class="tra-cuu__kieu-xem" role="group" aria-label="Kiểu xem">
+                <button
+                  v-for="kieu in KIEU_XEM"
+                  :key="kieu.id"
+                  type="button"
+                  :class="{ 'is-active': kieuXem === kieu.id }"
+                  :aria-pressed="kieuXem === kieu.id"
+                  :title="kieu.label"
+                  @click="doiKieuXem(kieu.id)"
+                >
+                  <el-icon aria-hidden="true"><component :is="kieu.icon" /></el-icon>
+                  <span>{{ kieu.label }}</span>
+                </button>
+              </div>
+            </div>
 
             <div v-if="dangTai" class="row g-3" aria-busy="true">
-              <div v-for="n in 6" :key="n" class="col-12 col-md-6 col-xl-4">
-                <el-skeleton class="tra-cuu__the" animated :rows="3" />
+              <div v-for="n in 4" :key="n" class="col-12 col-lg-6">
+                <el-skeleton class="tra-cuu__khung-cho" animated :rows="3" />
               </div>
             </div>
 
@@ -71,21 +91,42 @@
               :text="route.query.q ? `Không tìm thấy kết quả cho “${route.query.q}”.` : 'Chưa có dữ liệu.'"
             />
 
-            <div v-else class="row g-3">
-              <div v-for="item in danhSach" :key="item.id" class="col-12 col-md-6 col-xl-4">
-                <button type="button" class="tra-cuu__the" @click="moChiTiet(item)">
-                  <span class="tra-cuu__the-dau">
-                    <strong class="tra-cuu__the-ten">{{ item.the.tieuDe }}</strong>
-                    <span v-if="item.the.ma" class="tra-cuu__the-ma">{{ item.the.ma }}</span>
-                  </span>
-                  <span v-if="item.the.tags.length" class="tra-cuu__the-tags">
-                    <span v-for="tag in item.the.tags" :key="tag" class="landing-explore__pill">{{ tag }}</span>
-                  </span>
-                  <span v-if="item.the.moTa" class="tra-cuu__the-mo-ta">{{ item.the.moTa }}</span>
-                  <span class="lp-link">Xem chi tiết <el-icon aria-hidden="true"><Right /></el-icon></span>
-                </button>
+            <div v-else-if="kieuXem === 'luoi'" class="row g-3">
+              <div v-for="item in danhSach" :key="item.id" class="col-12 col-lg-6">
+                <TheTraCuu :the="item.the" :icon="loai.icon" @xem="moChiTiet(item)" />
               </div>
             </div>
+
+            <CustomTable
+              v-else
+              :data="danhSach"
+              row-key="id"
+              stripe
+              class="tra-cuu__bang"
+              @row-click="moChiTiet"
+            >
+              <el-table-column label="Mã" width="120">
+                <template #default="{ row }">
+                  <span class="tra-cuu__bang-ma">{{ row.the.ma || '—' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column :label="loai.label" min-width="240">
+                <template #default="{ row }">
+                  <span class="tra-cuu__bang-ten">{{ row.the.tieuDe }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column v-if="coCotPhanLoai" label="Phân loại" min-width="200">
+                <template #default="{ row }">{{ row.the.tags.join(' · ') }}</template>
+              </el-table-column>
+              <el-table-column v-if="coCotMoTa" label="Mô tả" min-width="280" show-overflow-tooltip>
+                <template #default="{ row }">{{ row.the.moTa || '' }}</template>
+              </el-table-column>
+              <el-table-column label="" width="120" align="right">
+                <template #default="{ row }">
+                  <button type="button" class="tra-cuu__bang-xem" @click.stop="moChiTiet(row)">Xem chi tiết</button>
+                </template>
+              </el-table-column>
+            </CustomTable>
 
             <div v-if="!dangTai && tong > PAGE_SIZE" class="tra-cuu__phan-trang">
               <CustomPagination
@@ -99,6 +140,8 @@
             </div>
           </div>
         </div>
+
+        <HoTroDinhHuong class="tra-cuu__ho-tro" />
       </div>
     </section>
 
@@ -119,8 +162,10 @@
 <script setup>
 import { computed, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Right, Search } from '@element-plus/icons-vue'
+import { Search } from '@element-plus/icons-vue'
+import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
 import KhongCoDuLieu from '@/components/guest/chung/KhongCoDuLieu.vue'
+import TheTraCuu from '@/components/guest/tra-cuu/TheTraCuu.vue'
 import { LOAI_TRA_CUU, timLoaiTraCuu } from '@/components/guest/tra-cuu/loaiTraCuu'
 import { traCuuDanhMuc } from '@/components/guest/tra-cuu/apiTraCuu'
 import '@/components/guest/landing/landing.css'
@@ -129,6 +174,12 @@ defineOptions({ name: 'TraCuu' })
 
 const PAGE_SIZE = 12
 
+// Kiểu xem kết quả, lưu trên query ?xem=bang (mặc định lưới) như các bộ lọc khác.
+const KIEU_XEM = [
+  { id: 'luoi', label: 'Lưới', icon: 'Grid' },
+  { id: 'bang', label: 'Bảng', icon: 'List' },
+]
+
 const route = useRoute()
 const router = useRouter()
 
@@ -136,6 +187,10 @@ const router = useRouter()
 const loai = computed(() => timLoaiTraCuu(route.query.loai))
 const trang = computed(() => Math.max(1, Number.parseInt(route.query.page, 10) || 1))
 const giaTriLoc = computed(() => (loai.value.boLoc ? route.query[loai.value.boLoc.key] || '' : ''))
+const kieuXem = computed(() => (route.query.xem === 'bang' ? 'bang' : 'luoi'))
+// Cột "Phân loại" / "Mô tả" chỉ hiện khi trang kết quả có dữ liệu cho cột đó (vd. trường chưa có mô tả).
+const coCotPhanLoai = computed(() => danhSach.value.some((item) => item.the.tags.length))
+const coCotMoTa = computed(() => danhSach.value.some((item) => item.the.moTa))
 
 const tuKhoa = ref(route.query.q || '')
 const danhSach = ref([])
@@ -169,6 +224,10 @@ function timNgay() {
 
 function doiLoc(value) {
   capNhatQuery({ [loai.value.boLoc.key]: value, page: undefined })
+}
+
+function doiKieuXem(kieu) {
+  capNhatQuery({ xem: kieu === 'bang' ? 'bang' : undefined })
 }
 
 function doiTrang(page) {
@@ -247,81 +306,98 @@ onUnmounted(() => clearTimeout(henGioTim))
   align-self: center;
 }
 
-.tra-cuu__dem {
+.tra-cuu__thanh-cong-cu {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lp-gap-sm);
   margin-bottom: var(--lp-gap-sm);
+}
+
+.tra-cuu__dem {
+  margin: 0;
   color: var(--lp-muted);
 }
 
-.tra-cuu__the {
-  display: flex;
-  flex-direction: column;
-  gap: var(--lp-gap-sm);
-  width: 100%;
-  height: 100%;
+/* Chọn kiểu xem: hai nút liền nhau, nút đang chọn có nền nhạt. */
+.tra-cuu__kieu-xem {
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  border-radius: var(--lp-radius);
+  background: #fff;
+}
+
+.tra-cuu__kieu-xem button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  color: var(--lp-muted);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.tra-cuu__kieu-xem button + button {
+  border-left: 1px solid rgba(15, 23, 42, 0.18);
+}
+
+.tra-cuu__kieu-xem button:hover {
+  color: var(--lp-primary-strong);
+}
+
+.tra-cuu__kieu-xem button.is-active {
+  background: var(--lp-primary-soft);
+  color: var(--lp-primary-strong);
+  font-weight: 500;
+}
+
+.tra-cuu__khung-cho {
   padding: var(--lp-gap);
   border: 1px solid var(--lp-line);
   border-radius: var(--lp-radius);
   background: #fff;
-  color: var(--lp-ink);
-  font: inherit;
-  text-align: left;
+}
+
+.tra-cuu__bang :deep(.el-table__row) {
   cursor: pointer;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
 }
 
-button.tra-cuu__the:hover,
-button.tra-cuu__the:focus-visible {
-  border-color: rgba(var(--lp-primary-rgb), 0.4);
-  box-shadow: var(--lp-shadow-sm);
-}
-
-.tra-cuu__the-dau {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--lp-gap-sm);
-}
-
-.tra-cuu__the-ten {
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.tra-cuu__the-ma {
-  flex-shrink: 0;
-  padding: 0.1rem 0.5rem;
-  border-radius: 6px;
-  background: var(--lp-soft);
+.tra-cuu__bang-ma {
   color: var(--lp-primary-strong);
-  font-size: 0.85rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.tra-cuu__bang-ten {
+  color: var(--lp-ink);
   font-weight: 500;
 }
 
-.tra-cuu__the-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--lp-gap-xs);
+.tra-cuu__bang-xem {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--lp-primary-strong);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
 }
 
-.tra-cuu__the-tags .landing-explore__pill {
-  padding: 0.25rem 0.6rem;
-  font-size: 0.82rem;
+.tra-cuu__bang-xem:hover {
+  text-decoration: underline;
 }
 
-.tra-cuu__the-mo-ta {
-  display: -webkit-box;
-  overflow: hidden;
-  color: var(--lp-muted);
-  font-size: 0.92rem;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-}
-
-.tra-cuu__the .lp-link {
-  margin-top: auto;
+.tra-cuu__ho-tro {
+  margin-top: calc(var(--lp-gap) * 2);
 }
 
 .tra-cuu__phan-trang {

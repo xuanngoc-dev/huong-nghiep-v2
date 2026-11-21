@@ -1,6 +1,7 @@
 // Các loại tra cứu danh mục cho khách: dùng ở trang /tra-cuu và mục "Khám phá" trên trang chủ.
-// Mỗi loại: params gửi kèm API danh sách, boLoc (lọc thêm, tùy chọn),
-// the(item) → nội dung thẻ kết quả, chiTiet(item) → các dòng trong hộp chi tiết (bỏ dòng rỗng).
+// Mỗi loại: icon (Element Plus, hiện ở khối trái thẻ kết quả khi không có ảnh), placeholder (cố định), goiY (từ khóa mẫu cho placeholder tự gõ ở trang chủ — đều có kết quả thật),
+// params gửi kèm API danh sách, boLoc (lọc thêm, tùy chọn),
+// the(item) → nội dung thẻ / dòng bảng kết quả { tieuDe, ma, tags, moTa, anh }, chiTiet(item) → các dòng trong hộp chi tiết (bỏ dòng rỗng).
 // Hàm gọi API gắn theo id ở TraCuu.vue / LandingExplore.vue để file này không phụ thuộc axios (test được).
 
 function noiDanhSach(value) {
@@ -36,8 +37,10 @@ export function loaiCoSo(item) {
 export const LOAI_TRA_CUU = [
   {
     id: 'truong',
+    icon: 'School',
     label: 'Trường ĐH, CĐ',
     placeholder: 'Tên trường, mã trường hoặc tên viết tắt...',
+    goiY: ['Đại học Thái Nguyên', 'Kiến trúc', 'Học viện', 'TNU'],
     params: {},
     boLoc: {
       key: 'loai_co_so',
@@ -49,6 +52,7 @@ export const LOAI_TRA_CUU = [
       ma: item.ma_truong,
       tags: locTags([loaiCoSo(item), item.loai_hinh, item.ten_tinh_thanh]),
       moTa: item.gioi_thieu_ngan,
+      anh: item.logo_url || item.anh_dai_dien_url || null,
     }),
     chiTiet: (item) =>
       locDong([
@@ -72,14 +76,17 @@ export const LOAI_TRA_CUU = [
   },
   {
     id: 'nganh',
+    icon: 'Reading',
     label: 'Ngành đào tạo',
     placeholder: 'Tên ngành hoặc mã ngành...',
+    goiY: ['Công nghệ thông tin', 'Y khoa', '7480201'],
     params: { trang_thai: 1 },
     the: (item) => ({
       tieuDe: item.ten_nganh,
       ma: item.ma_nganh,
       tags: locTags([item.ten_nhom_nganh, item.trinh_do, item.thoi_gian_dao_tao]),
       moTa: item.mo_ta,
+      anh: item.hinh_anh_mo_ta || null,
     }),
     chiTiet: (item) =>
       locDong([
@@ -94,8 +101,10 @@ export const LOAI_TRA_CUU = [
   },
   {
     id: 'phuong-thuc',
+    icon: 'Tickets',
     label: 'Phương thức tuyển sinh',
     placeholder: 'Tên hoặc mã phương thức...',
+    goiY: ['Học bạ', 'Tuyển thẳng', 'Đánh giá năng lực'],
     params: { trang_thai: 1 },
     the: (item) => ({
       tieuDe: item.ten_phuong_thuc,
@@ -113,8 +122,10 @@ export const LOAI_TRA_CUU = [
   },
   {
     id: 'to-hop',
+    icon: 'Collection',
     label: 'Tổ hợp môn',
     placeholder: 'Mã tổ hợp (A00, D01...) hoặc tên môn...',
+    goiY: ['A00', 'D01', 'Ngữ văn'],
     params: { trang_thai: 1 },
     the: (item) => ({
       tieuDe: item.ten_to_hop,
@@ -132,8 +143,10 @@ export const LOAI_TRA_CUU = [
   },
   {
     id: 'bai-thi',
+    icon: 'EditPen',
     label: 'Bài thi đánh giá năng lực',
     placeholder: 'Tên bài thi, tên viết tắt hoặc đơn vị tổ chức...',
+    goiY: ['Đánh giá tư duy', 'H-SCA', 'SAT'],
     params: {},
     the: (item) => ({
       tieuDe: item.ten_bai_thi,
@@ -156,8 +169,10 @@ export const LOAI_TRA_CUU = [
   },
   {
     id: 'chung-chi',
+    icon: 'Medal',
     label: 'Chứng chỉ ngoại ngữ',
     placeholder: 'Tên chứng chỉ (IELTS, TOEIC...) hoặc ngôn ngữ...',
+    goiY: ['IELTS', 'TOEIC', 'HSK', 'JLPT'],
     params: {},
     the: (item) => ({
       tieuDe: item.ten_chung_chi,

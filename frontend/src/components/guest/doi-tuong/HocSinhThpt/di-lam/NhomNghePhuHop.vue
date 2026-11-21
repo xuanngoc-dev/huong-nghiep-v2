@@ -217,7 +217,7 @@ watch(ssid, taiKetQua, { immediate: true })
   background: var(--guest-primary);
   color: #fff;
   font-size: 1.4rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .tinh-cach__ds {
@@ -284,7 +284,7 @@ watch(ssid, taiKetQua, { immediate: true })
   border-radius: 10px;
   background: rgba(var(--guest-primary-rgb), 0.12);
   color: var(--guest-primary);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .goi-y-card--top .goi-y-card__hang {
@@ -329,7 +329,7 @@ watch(ssid, taiKetQua, { immediate: true })
   margin: 0;
   color: var(--guest-primary);
   font-size: 1.15rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.35;
 }
 
@@ -356,8 +356,6 @@ watch(ssid, taiKetQua, { immediate: true })
   color: #6b7780;
   font-size: 0.72rem;
   font-weight: 400;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
 }
 
 .goi-y-card__thong-tin dd {
@@ -381,7 +379,7 @@ watch(ssid, taiKetQua, { immediate: true })
   background: #eef2ef;
   color: #6b7780;
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .goi-y-card__holland span.is-khop {

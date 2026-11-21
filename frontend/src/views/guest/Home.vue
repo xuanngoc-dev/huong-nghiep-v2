@@ -9,7 +9,8 @@
     <LandingAiAdvisor />
     <LandingInstitutions />
     <LandingHowItWorks />
-    <LandingTestimonials />
+    <!-- Ẩn đến khi có lời chứng thực thật (hiện là ví dụ minh họa). -->
+    <!-- <LandingTestimonials /> -->
     <LandingResources />
     <LandingFaq />
     <LandingFinalCta />
@@ -28,7 +29,7 @@ import LandingHolland from '@/components/guest/landing/LandingHolland.vue'
 import LandingExplore from '@/components/guest/landing/LandingExplore.vue'
 import LandingAiAdvisor from '@/components/guest/landing/LandingAiAdvisor.vue'
 import LandingInstitutions from '@/components/guest/landing/LandingInstitutions.vue'
-import LandingTestimonials from '@/components/guest/landing/LandingTestimonials.vue'
+// import LandingTestimonials from '@/components/guest/landing/LandingTestimonials.vue'
 import LandingStudyPaths from '@/components/guest/landing/LandingStudyPaths.vue'
 import LandingFaq from '@/components/guest/landing/LandingFaq.vue'
 import LandingResources from '@/components/guest/landing/LandingResources.vue'

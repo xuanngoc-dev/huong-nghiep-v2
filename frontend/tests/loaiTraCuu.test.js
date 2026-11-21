@@ -23,6 +23,7 @@ test('thẻ trường: bỏ tag rỗng', () => {
     ma: 'BKA',
     tags: ['Đại học', 'Hà Nội'],
     moTa: undefined,
+    anh: null,
   })
 })
 

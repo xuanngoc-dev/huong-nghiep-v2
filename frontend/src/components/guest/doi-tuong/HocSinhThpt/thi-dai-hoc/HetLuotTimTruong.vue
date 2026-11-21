@@ -3,8 +3,7 @@
     <img class="het-luot__image" :src="anhTruong" alt="" aria-hidden="true" />
     <div class="het-luot__body">
       <h3 id="het-luot-title" class="het-luot__title">
-        Ngôi trường phù hợp với bạn đang chờ được khám phá!
-        <span aria-hidden="true">🎓</span>
+        Ngôi trường phù hợp với bạn đang chờ được khám phá
       </h3>
       <p class="het-luot__lead">
         Mỗi lựa chọn hôm nay đều có thể mở ra một cơ hội mới cho tương lai. Hãy tiếp tục khám phá những ngôi trường
@@ -13,7 +12,7 @@
       <div class="het-luot__note">
         <p class="het-luot__note-title">
           <el-icon class="het-luot__note-icon" aria-hidden="true"><MagicStick /></el-icon>
-          Hành trình của bạn vẫn tiếp tục!
+          Hành trình của bạn vẫn tiếp tục
         </p>
         <p v-if="laThanhVien" class="het-luot__note-text">
           Bạn đã dùng hết lượt tìm kiếm miễn phí hôm nay và lượt tra cứu đã mua. Nạp thêm lượt tra cứu để tìm tiếp
@@ -113,7 +112,7 @@ defineEmits(['kham-pha', 'dang-ky', 'dang-nhap'])
   margin: 0;
   color: #0c5c34;
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
 }
 
