@@ -450,27 +450,6 @@ export const studyPaths = [
   },
 ]
 
-export const exploreTabs = [
-  { id: 'nghe', label: 'Ngành nghề phổ biến' },
-  { id: 'nganh', label: 'Ngành đào tạo' },
-  { id: 'truong', label: 'Trường đại học' },
-  { id: 'ky-nang', label: 'Kỹ năng nghề' },
-  { id: 'lo-trinh', label: 'Lộ trình học tập' },
-]
-
-export const explorePreview = {
-  nghe: [
-    'Kỹ sư phần mềm',
-    'Chuyên viên phân tích dữ liệu',
-    'Điều dưỡng viên',
-    'Chuyên viên marketing số',
-  ],
-  nganh: ['Công nghệ thông tin', 'Quản trị kinh doanh', 'Y khoa', 'Thiết kế đồ họa'],
-  truong: ['Đại học Bách khoa', 'Đại học Kinh tế', 'Đại học Y Dược', 'Đại học Sư phạm'],
-  'ky-nang': ['Tư duy phản biện', 'Giao tiếp', 'Phân tích dữ liệu', 'Làm việc nhóm'],
-  'lo-trinh': ['Đại học chính quy', 'Cao đẳng nghề', 'Du học', 'Vừa học vừa làm'],
-}
-
 export const aiPrompts = [
   'Em thiên về nhóm Social và Artistic, nên chọn ngành nào?',
   'So sánh ngành Công nghệ thông tin và Kinh tế số giúp em.',

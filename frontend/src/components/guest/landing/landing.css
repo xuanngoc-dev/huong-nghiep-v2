@@ -1016,12 +1016,6 @@ a.lp-media-card:hover,
   font: inherit;
 }
 
-.landing-explore__preview {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--lp-gap-xs);
-}
-
 .landing-explore__pill {
   padding: 0.5rem 0.9rem;
   border-radius: var(--lp-radius);

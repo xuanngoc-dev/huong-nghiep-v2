@@ -179,9 +179,10 @@ function linkTo(item) {
   return item.to
 }
 
-// Trang con (vd. hướng đi THPT → du học) vẫn sáng mục cha nhờ meta.doiTuong / doiTuongCha / goc.
+// Trang con (vd. hướng đi THPT → du học) vẫn sáng mục cha nhờ meta.doiTuong / doiTuongCha / goc;
+// trang riêng của một mục trên trang chủ (vd. /tra-cuu) khai báo meta.mucMenu = hash của mục đó.
 function isActive(item) {
-  if (item.hash) return route.name === 'home' && route.hash === item.hash
+  if (item.hash) return (route.name === 'home' && route.hash === item.hash) || route.meta.mucMenu === item.hash
   if (item.to?.name === 'home') return route.name === 'home' && !route.hash
   const ten = item.to?.name
   return route.name === ten || [route.meta.doiTuong, route.meta.doiTuongCha, route.meta.goc].includes(ten)
