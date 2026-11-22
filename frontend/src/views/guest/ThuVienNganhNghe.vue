@@ -53,39 +53,18 @@
 
             <template v-else>
               <p class="thu-vien__dem">{{ dsLoc.length }} nghề</p>
+              <!-- Card nghề dùng chung giao diện thẻ hướng đi (như DoiTuongCard): chỉ tên, mô tả ngắn, dải lương;
+                   bấm "Xem chi tiết" mở modal đủ thông tin. 3 card/hàng (desktop) → 2 (tablet) → 1 (mobile). -->
               <div class="row g-3">
-                <div v-for="nghe in dsTrang" :key="nghe.id" class="col-12 col-md-6 col-xl-4">
-                  <article
-                    class="nghe-item h-100"
-                    :class="`nghe-item--${nhomTheoId[nghe.nhom_nghe_di_lam_id]?.nhom_muc_tieu || 'khac'}`"
-                  >
-                    <!-- Ảnh của nghề; nghề chưa có ảnh thì dùng ảnh của nhóm. -->
-                    <img
-                      v-if="anhNghe(nghe)"
-                      class="nghe-item__anh"
-                      :src="anhNghe(nghe)"
-                      :alt="nghe.ten_nghe"
-                      loading="lazy"
-                    />
-                    <h2 class="nghe-item__ten">{{ nghe.ten_nghe }}</h2>
-                    <p class="nghe-item__nhom">{{ nghe.ten_nhom }}</p>
-                    <span v-if="loaiNghe(nghe) === 'chinh_quy'" class="nghe-item__nhan">Cần đào tạo chính quy</span>
-                    <p v-if="nghe.mo_ta_ngan" class="nghe-item__mo-ta">{{ nghe.mo_ta_ngan }}</p>
-                    <dl class="nghe-item__thong-tin">
-                      <div>
-                        <dt>Lương khởi điểm (nhóm)</dt>
-                        <dd>{{ luongNhom(nghe) }}</dd>
-                      </div>
-                      <div v-if="nghe.yeu_cau_bang_cap">
-                        <dt>Cần có</dt>
-                        <dd>{{ nghe.yeu_cau_bang_cap }}</dd>
-                      </div>
-                      <div v-if="nghe.yeu_cau_them">
-                        <dt>Yêu cầu thêm</dt>
-                        <dd>{{ nghe.yeu_cau_them }}</dd>
-                      </div>
-                    </dl>
-                  </article>
+                <div v-for="nghe in dsTrang" :key="nghe.id" class="col-12 col-md-6 col-lg-4">
+                  <HuongDiCard
+                    :image="anhNghe(nghe)"
+                    :title="nghe.ten_nghe"
+                    :description="nghe.mo_ta_ngan || ''"
+                    :note="`Lương: ${daiLuong(nghe, nhomTheoId[nghe.nhom_nghe_di_lam_id])}`"
+                    cta="Xem chi tiết"
+                    @chon="moChiTiet(nghe)"
+                  />
                 </div>
               </div>
               <div v-if="dsLoc.length > SO_NGHE_MOI_TRANG" class="thu-vien__phan-trang">
@@ -101,6 +80,13 @@
           </div>
         </div>
 
+        <ChiTietNgheModal
+          v-model="chiTietMo"
+          :nghe="ngheDangXem"
+          :nhom="ngheDangXem ? nhomTheoId[ngheDangXem.nhom_nghe_di_lam_id] : null"
+          :anh="ngheDangXem ? anhNghe(ngheDangXem) : ''"
+        />
+
         <HoTroDinhHuong class="thu-vien__ho-tro" />
       </div>
     </section>
@@ -111,11 +97,15 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
+import anhMacDinh from '@/assets/guest/nha-tuyen-dung.jpg'
 import { apiAssetUrl } from '@/api/apiUrl'
 import { fetchNgheCuTheDiLam, fetchNhomNgheDiLam } from '@/api/nhomNgheDiLam'
 import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
+import HuongDiCard from '@/components/guest/chung/HuongDiCard.vue'
 import KhongCoDuLieu from '@/components/guest/chung/KhongCoDuLieu.vue'
-import { boDau, khoangLuong, loaiNghe } from '@/components/guest/doi-tuong/HocSinhThpt/di-lam/nhomNghe'
+import { boDau } from '@/components/guest/doi-tuong/HocSinhThpt/di-lam/nhomNghe'
+import ChiTietNgheModal from '@/components/guest/thu-vien/ChiTietNgheModal.vue'
+import { daiLuong } from '@/components/guest/thu-vien/nghe'
 import '@/components/guest/landing/landing.css'
 
 defineOptions({ name: 'ThuVienNganhNghe' })
@@ -180,14 +170,24 @@ function chonNhom(ma) {
   router.replace({ name: 'thu-vien-nganh-nghe', query: { ...route.query, nhom: ma || undefined } })
 }
 
+// Ảnh của nghề → ảnh của nhóm → ảnh mặc định hướng đi làm. Ảnh tải lên Thư viện lưu đường dẫn tương đối:
+// ghép origin API qua apiAssetUrl.
 function anhNghe(nghe) {
-  // Ảnh tải lên Thư viện lưu đường dẫn tương đối: ghép origin API qua apiAssetUrl.
-  return apiAssetUrl(nghe.hinh_anh_mo_ta || nhomTheoId.value[nghe.nhom_nghe_di_lam_id]?.hinh_anh_mo_ta || '')
+  const anh = nghe.hinh_anh_mo_ta || nhomTheoId.value[nghe.nhom_nghe_di_lam_id]?.hinh_anh_mo_ta
+  return anh ? apiAssetUrl(anh) : anhMacDinh
 }
 
-function luongNhom(nghe) {
-  const nhom = nhomTheoId.value[nghe.nhom_nghe_di_lam_id]
-  return nhom?.muc_luong_text || (nhom ? khoangLuong(nhom) : '—')
+// Nghề đang xem lưu trên query ?nghe=<id> để chia sẻ link được; đóng modal thì bỏ query.
+const ngheDangXem = computed(() => dsNgheHopLe.value.find((nghe) => String(nghe.id) === String(route.query.nghe)) || null)
+const chiTietMo = computed({
+  get: () => !!ngheDangXem.value,
+  set: (mo) => {
+    if (!mo) router.replace({ name: 'thu-vien-nganh-nghe', query: { ...route.query, nghe: undefined } })
+  },
+})
+
+function moChiTiet(nghe) {
+  router.replace({ name: 'thu-vien-nganh-nghe', query: { ...route.query, nghe: nghe.id } })
 }
 
 async function taiDuLieu() {
@@ -239,96 +239,5 @@ onMounted(taiDuLieu)
 
 .thu-vien__ho-tro {
   margin-top: calc(var(--lp-gap) * 2);
-}
-
-/* Card nghề: cùng kiểu với danh sách nghề ở hướng "Đi làm" (HocSinhThpt/DiLam.vue); viền trái theo mục tiêu nhóm. */
-.nghe-item {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 14px 16px;
-  border: 1px solid #d7eadf;
-  border-left: 4px solid var(--lp-primary);
-  border-radius: var(--lp-radius);
-  background: #fff;
-}
-
-.nghe-item--kiem_tien_ngay {
-  border-left-color: #e08a00;
-}
-
-.nghe-item--thu_nhap_dot_pha {
-  border-left-color: #2563eb;
-}
-
-.nghe-item__anh {
-  display: block;
-  width: calc(100% + 32px);
-  max-width: none;
-  margin: -14px -16px 4px;
-  aspect-ratio: 8 / 5;
-  object-fit: cover;
-  border-radius: calc(var(--lp-radius) - 1px) calc(var(--lp-radius) - 1px) 0 0;
-  background: var(--lp-soft);
-}
-
-.nghe-item__ten {
-  margin: 0;
-  color: var(--lp-ink);
-  font-size: 1.05rem;
-  font-weight: 600;
-  line-height: 1.35;
-}
-
-.nghe-item__nhom {
-  margin: 0;
-  color: var(--lp-primary-strong);
-  font-size: 0.85rem;
-}
-
-.nghe-item__nhan {
-  align-self: flex-start;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: #fff4e5;
-  color: #9a5b00;
-  font-size: 0.78rem;
-}
-
-.nghe-item__mo-ta {
-  margin: 0;
-  color: #3a4742;
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-.nghe-item__thong-tin {
-  display: grid;
-  gap: 4px;
-  margin: auto 0 0;
-  padding: 8px 10px;
-  border-radius: 8px;
-  background: #f6fbf7;
-  font-size: 0.85rem;
-}
-
-.nghe-item__thong-tin div {
-  display: flex;
-  gap: 6px;
-}
-
-.nghe-item__thong-tin dt {
-  flex-shrink: 0;
-  color: #5b6770;
-  font-weight: 400;
-}
-
-.nghe-item__thong-tin dt::after {
-  content: ':';
-}
-
-.nghe-item__thong-tin dd {
-  margin: 0;
-  color: var(--lp-ink);
 }
 </style>

@@ -30,6 +30,7 @@ declare module 'vue' {
     ChiTietHuongDi: typeof import('./components/guest/doi-tuong/HocSinhThcs/ChiTietHuongDi.vue')['default']
     ChiTietNganh: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/ChiTietNganh.vue')['default']
     ChiTietNgheCuThe: typeof import('./components/admin/nghe-cu-the/ChiTietNgheCuThe.vue')['default']
+    ChiTietNgheModal: typeof import('./components/guest/thu-vien/ChiTietNgheModal.vue')['default']
     ChiTietNhomNghe: typeof import('./components/guest/doi-tuong/HocSinhThpt/di-lam/ChiTietNhomNghe.vue')['default']
     ChiTietNhomNgheDiLam: typeof import('./components/admin/nhom-nghe/ChiTietNhomNgheDiLam.vue')['default']
     ChiTietTruong: typeof import('./components/guest/doi-tuong/HocSinhThpt/thi-dai-hoc/lam-trac-nghiem/ChiTietTruong.vue')['default']
