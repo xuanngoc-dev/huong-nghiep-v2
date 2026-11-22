@@ -50,18 +50,16 @@ def _ensure_nhom(db: Session, ids: list[int]) -> dict[int, DmNhomNgheDiLam]:
     return found
 
 
+_COT_NHOM = ("ma_nhom", "ten_nhom")
+
+
 def _to_public(item: DmNgheCuTheDiLam, nhom: DmNhomNgheDiLam | None) -> DmNgheCuTheDiLamPublic:
-    """Ghép nghề cụ thể với mã và tên nhóm nghề cha."""
+    """Ghép nghề cụ thể (mọi cột của bảng) với mã và tên nhóm nghề cha."""
+    cot = {ten: getattr(item, ten) for ten in DmNgheCuTheDiLamPublic.model_fields if ten not in _COT_NHOM}
     return DmNgheCuTheDiLamPublic(
-        id=item.id,
-        nhom_nghe_di_lam_id=item.nhom_nghe_di_lam_id,
+        **cot,
         ma_nhom=nhom.ma_nhom if nhom else None,
         ten_nhom=nhom.ten_nhom if nhom else None,
-        ten_nghe=item.ten_nghe,
-        mo_ta_ngan=item.mo_ta_ngan,
-        yeu_cau_them=item.yeu_cau_them,
-        yeu_cau_bang_cap=item.yeu_cau_bang_cap,
-        bat_buoc_dao_tao_chinh_quy=item.bat_buoc_dao_tao_chinh_quy,
     )
 
 
@@ -75,7 +73,8 @@ def list_nghe_cu_the_di_lam(
     page_size: int = Query(default=10, ge=1),
     db: Session = Depends(get_db),
 ) -> DmNgheCuTheDiLamPage:
-    """Lấy danh sách nghề cụ thể có phân trang, lọc theo từ khóa và nhóm nghề. Không cần đăng nhập.
+    """Lấy danh sách nghề cụ thể có phân trang, lọc theo từ khóa (tên nghề, từ khóa tìm kiếm, tên/mã nhóm) và nhóm nghề.
+    Không cần đăng nhập.
 
     `co_bang_cap`: 1 = có yêu cầu bằng cấp bắt buộc, 0 = không. `chinh_quy`: 1 = bắt buộc đào tạo chính quy, 0 = không.
     """
@@ -85,6 +84,7 @@ def list_nghe_cu_the_di_lam(
         filters.append(
             or_(
                 DmNgheCuTheDiLam.ten_nghe.like(pattern, escape="\\"),
+                DmNgheCuTheDiLam.tu_khoa_tim_kiem.like(pattern, escape="\\"),
                 DmNhomNgheDiLam.ten_nhom.like(pattern, escape="\\"),
                 DmNhomNgheDiLam.ma_nhom.like(pattern, escape="\\"),
             )

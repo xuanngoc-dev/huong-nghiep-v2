@@ -62,11 +62,22 @@ const router = createRouter({
           meta: { title: 'Trang chủ', public: true },
         },
         {
+          path: 'thu-vien-nganh-nghe',
+          name: 'thu-vien-nganh-nghe',
+          component: () => import('@/views/guest/ThuVienNganhNghe.vue'),
+          meta: { title: 'Thư viện ngành nghề', public: true },
+        },
+        {
           path: 'tra-cuu',
           name: 'tra-cuu',
           component: () => import('@/views/guest/TraCuu.vue'),
-          // mucMenu: sáng mục "Tra cứu" (#kham-pha) trên header khách.
-          meta: { title: 'Tra cứu', public: true, mucMenu: '#kham-pha' },
+          meta: { title: 'Tra cứu', public: true },
+        },
+        {
+          path: 'tin-tuc',
+          name: 'tin-tuc',
+          component: () => import('@/views/guest/TinTuc.vue'),
+          meta: { title: 'Tin tức', public: true },
         },
         {
           path: 'cam-nang',

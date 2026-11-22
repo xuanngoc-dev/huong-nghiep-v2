@@ -73,7 +73,7 @@ Thêm resource `$ARGUMENTS` theo đúng các bước dưới. Mẫu tham khảo:
         </div>
       </CustomForm>
       ```
-    - Ô ngắn (mã, số, select, ngày, trạng thái) để 1 cột; ô tên/tiêu đề dài dùng `form-grid__span-2`; textarea, JSON, upload dùng `form-grid__full`. Không dùng span lớn hơn 2 (mobile chỉ có 2 cột).
+    - Ô ngắn (mã, số, select, ngày, trạng thái) để 1 cột; ô tên/tiêu đề dài dùng `form-grid__span-2`; textarea dùng `form-grid__half` (2 ô/hàng; lưới 3 cột thì cả hàng) hoặc `form-grid__full` khi cần rộng; JSON, upload dùng `form-grid__full`. Ô hình ảnh dùng `<ChonHinhAnh>` (`components/admin/ChonHinhAnh.vue`: dán URL hoặc tải ảnh lên Thư viện). Không dùng span lớn hơn 2 (mobile chỉ có 2 cột).
     - Chọn `width` dialog theo số ô (đã trừ padding dialog ~32px): ≤ 6 ô → `800px` (3 ô/hàng); 7–12 ô → `1040px` (4 ô/hàng); nhiều hơn → mặc định `90%` (6 ô/hàng trên màn ≥ 1400px). Form 1–4 ô có thể dùng `560px` (2 ô/hàng). Màn nhỏ hoặc người dùng kéo hẹp dialog thì lưới tự giảm cột.
     - `CustomInputNumber`/`CustomSelect`/`CustomDatePicker` trong `form-grid` đã tự rộng 100%, không cần `style="width: 100%"`.
     - Thanh lọc màn admin dùng `<BoLoc>` (`components/admin/BoLoc.vue`, dựng bằng `CustomRow`/`CustomCol`): ô lọc đặt trực tiếp trong slot mặc định, BoLoc tự bọc mỗi ô vào `CustomCol` với span theo prop `cot` (mặc định `{ xs: 12, sm: 8, md: 6, lg: 4 }` = 2 → 3 → 4 → 6 ô/hàng); nút Tìm kiếm/Đặt lại để trong `<template #nut>` (cùng hàng nếu còn chỗ, xuống hàng thì căn giữa). Ô khoảng ngày/khoảng giá thêm class `bo-loc__rong` (dùng prop `cotRong`, gấp đôi); ô cần span riêng thì tự bọc `<CustomCol :xs=".." :lg="..">`. Không đặt `width` riêng cho ô lọc.

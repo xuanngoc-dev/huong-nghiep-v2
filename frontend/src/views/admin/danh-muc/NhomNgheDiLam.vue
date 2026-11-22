@@ -109,6 +109,12 @@
         <CustomTableColumn label="STT" width="72" align="center">
           <template #default="{ $index }">{{ rowIndex($index) }}</template>
         </CustomTableColumn>
+        <CustomTableColumn label="Hình ảnh" width="100" align="center">
+          <template #default="{ row }">
+            <img v-if="row.hinh_anh_mo_ta" class="thumb" :src="apiAssetUrl(row.hinh_anh_mo_ta)" :alt="row.ten_nhom" />
+            <span v-else>—</span>
+          </template>
+        </CustomTableColumn>
         <CustomTableColumn prop="ma_nhom" label="Mã nhóm" width="190" />
         <CustomTableColumn prop="ten_nhom" label="Tên nhóm" min-width="240" />
         <CustomTableColumn label="Loại hình đầu vào" width="170" align="center">
@@ -150,9 +156,14 @@
             />
           </template>
         </CustomTableColumn>
-        <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
+        <CustomTableColumn label="Thao tác" width="130" fixed="right" align="center">
           <template #default="{ row }">
             <div class="row-actions">
+              <CustomTooltip content="Xem chi tiết" placement="top">
+                <CustomButton link type="primary" aria-label="Xem chi tiết" @click="openChiTiet(row)">
+                  <CustomIcon><View /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
               <CustomTooltip content="Sửa" placement="top">
                 <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
                   <CustomIcon><Edit /></CustomIcon>
@@ -185,10 +196,12 @@
     </CustomCard>
   </div>
 
+  <ChiTietNhomNgheDiLam v-model="chiTietMo" :nhom="nhomDangXem" @sua="suaTuChiTiet" />
+
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật nhóm nghề đi làm' : 'Thêm nhóm nghề đi làm'"
-    width="90%"
+    width="95%"
     destroy-on-close
     @closed="resetForm"
   >
@@ -213,12 +226,12 @@
       />
     </div>
 
-    <CustomForm v-else ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top">
+    <CustomForm v-else ref="formRef" class="form-grid form-grid--toi-da-4" :model="form" :rules="rules" label-position="top">
       <div class="form-grid__body">
         <CustomFormItem label="Mã nhóm" prop="ma_nhom">
           <CustomInput v-model="form.ma_nhom" maxlength="50" placeholder="Nhập mã nhóm (ví dụ: LAM_DEP)" />
         </CustomFormItem>
-        <CustomFormItem class="form-grid__span-2" label="Tên nhóm" prop="ten_nhom">
+        <CustomFormItem label="Tên nhóm" prop="ten_nhom">
           <CustomInput v-model="form.ten_nhom" maxlength="255" placeholder="Nhập tên nhóm" />
         </CustomFormItem>
         <CustomFormItem label="Loại hình đầu vào" prop="loai_hinh_dau_vao">
@@ -240,7 +253,7 @@
           <CustomInput v-model="form.ma_holland" maxlength="20" placeholder="Nhập mã Holland (ví dụ: RC)" />
         </CustomFormItem>
 
-        <CustomFormItem class="form-grid__span-2" label="Thời gian đào tạo (mô tả)" prop="thoi_gian_dao_tao_text">
+        <CustomFormItem label="Thời gian đào tạo (mô tả)" prop="thoi_gian_dao_tao_text">
           <CustomInput
             v-model="form.thoi_gian_dao_tao_text"
             maxlength="100"
@@ -274,7 +287,7 @@
           </CustomSelect>
         </CustomFormItem>
 
-        <CustomFormItem class="form-grid__span-2" label="Mức lương (mô tả)" prop="muc_luong_text">
+        <CustomFormItem label="Mức lương (mô tả)" prop="muc_luong_text">
           <CustomInput v-model="form.muc_luong_text" maxlength="100" placeholder="Nhập mức lương (ví dụ: 7 - 9 triệu/tháng)" />
         </CustomFormItem>
         <CustomFormItem label="Lương khởi điểm từ (triệu)" prop="luong_khoi_diem_min">
@@ -297,7 +310,7 @@
             controls-position="right"
           />
         </CustomFormItem>
-        <CustomFormItem label="Lương tối đa khi có kinh nghiệm (triệu)" prop="luong_kinh_nghiem_max">
+        <CustomFormItem label="Lương tối đa (triệu)" prop="luong_kinh_nghiem_max">
           <CustomInputNumber
             v-model="form.luong_kinh_nghiem_max"
             placeholder="Nhập lương tối đa"
@@ -311,30 +324,34 @@
           <CustomInput v-model="form.danh_gia_trien_vong" maxlength="255" placeholder="Nhập đánh giá triển vọng" />
         </CustomFormItem>
 
-        <CustomFormItem class="form-grid__full" label="Mô tả đặc điểm" prop="mo_ta_dac_diem">
+        <CustomFormItem class="form-grid__full" label="Hình ảnh mô tả" prop="hinh_anh_mo_ta">
+          <ChonHinhAnh v-model="form.hinh_anh_mo_ta" thu-muc="nhom-nghe-di-lam" :alt="form.ten_nhom || 'Hình ảnh nhóm nghề'" />
+        </CustomFormItem>
+
+        <CustomFormItem class="form-grid__half" label="Mô tả đặc điểm" prop="mo_ta_dac_diem">
           <CustomInput
             v-model="form.mo_ta_dac_diem"
             type="textarea"
-            :rows="3"
+            :rows="4"
             maxlength="5000"
             show-word-limit
             placeholder="Nhập mô tả đặc điểm công việc"
           />
         </CustomFormItem>
-        <CustomFormItem class="form-grid__full" label="Điều kiện đầu vào" prop="dieu_kien_dau_vao">
+        <CustomFormItem class="form-grid__half" label="Điều kiện đầu vào" prop="dieu_kien_dau_vao">
           <CustomInput
             v-model="form.dieu_kien_dau_vao"
             type="textarea"
-            :rows="2"
+            :rows="4"
             maxlength="5000"
             placeholder="Nhập điều kiện đầu vào"
           />
         </CustomFormItem>
-        <CustomFormItem class="form-grid__full" label="Lộ trình phát triển" prop="lo_trinh_phat_trien">
+        <CustomFormItem class="form-grid__half" label="Lộ trình phát triển" prop="lo_trinh_phat_trien">
           <CustomInput
             v-model="form.lo_trinh_phat_trien"
             type="textarea"
-            :rows="2"
+            :rows="4"
             maxlength="5000"
             placeholder="Nhập lộ trình phát triển"
           />
@@ -343,11 +360,11 @@
         <CustomFormItem
           v-for="muc in MUC_GIOI_THIEU"
           :key="muc.key"
-          class="form-grid__full"
+          class="form-grid__half"
           :label="muc.label"
           :prop="muc.key"
         >
-          <CustomInput v-model="form[muc.key]" type="textarea" :rows="3" maxlength="10000" :placeholder="muc.placeholder" />
+          <CustomInput v-model="form[muc.key]" type="textarea" :rows="4" maxlength="10000" :placeholder="muc.placeholder" />
         </CustomFormItem>
       </div>
     </CustomForm>
@@ -365,6 +382,8 @@
 
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
+import { apiAssetUrl } from '@/api/apiUrl'
+import { LOAI_HINH_DAU_VAO, MUC_GIOI_THIEU, NHOM_MUC_TIEU } from '@/components/admin/nhom-nghe/truongNhomNghe'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
@@ -377,32 +396,6 @@ import {
   updateTrangThaiNhomNgheDiLam,
   updateTrangThaiNhomNgheDiLamMany,
 } from '@/api/nhomNgheDiLam'
-
-const LOAI_HINH_DAU_VAO = [
-  { value: 'di_lam_ngay', label: 'Đi làm ngay' },
-  { value: 'hoc_nghe_ngan_han', label: 'Học nghề ngắn hạn' },
-  { value: 'tu_hoc_ky_nang', label: 'Tự học kỹ năng' },
-]
-
-const NHOM_MUC_TIEU = [
-  { value: 'kiem_tien_ngay', label: 'Kiếm tiền ngay', mau: 'warning' },
-  { value: 'nghe_vung_chac', label: 'Nghề vững chắc', mau: 'success' },
-  { value: 'thu_nhap_dot_pha', label: 'Thu nhập đột phá', mau: 'danger' },
-]
-
-// Mục giới thiệu nhóm nghề (văn bản dài, tùy chọn).
-const MUC_GIOI_THIEU = [
-  { key: 'nganh_nay_la_gi', label: 'Ngành này là gì?', placeholder: 'Giới thiệu ngắn gọn nhóm nghề' },
-  { key: 'noi_lam_viec_o_dau', label: 'Nơi làm việc ở đâu?', placeholder: 'Nhà máy, cửa hàng, công trường…' },
-  {
-    key: 'cong_viec_hang_ngay_nhu_the_nao',
-    label: 'Công việc hằng ngày như thế nào?',
-    placeholder: 'Một ngày làm việc điển hình',
-  },
-  { key: 'ap_luc_va_rui_ro', label: 'Áp lực và rủi ro', placeholder: 'Khó khăn, rủi ro cần biết trước' },
-  { key: 'xu_huong_tuong_lai', label: 'Xu hướng tương lai', placeholder: 'Nhu cầu, thay đổi của nghề trong vài năm tới' },
-  { key: 'ket_luan', label: 'Kết luận', placeholder: 'Nghề này phù hợp với ai, nên chuẩn bị gì' },
-]
 
 // Các trường số/chọn: chuỗi rỗng hoặc undefined đều gửi null.
 const TRUONG_TUY_CHON = [
@@ -419,6 +412,7 @@ const TRUONG_TUY_CHON = [
   'lo_trinh_phat_trien',
   'nhom_muc_tieu',
   'ma_holland',
+  'hinh_anh_mo_ta',
   ...MUC_GIOI_THIEU.map((muc) => muc.key),
 ]
 
@@ -453,6 +447,7 @@ const JSON_SAMPLE = `[
     "luong_kinh_nghiem_max": 30,
     "nhom_muc_tieu": "nghe_vung_chac",
     "ma_holland": "AS",
+    "hinh_anh_mo_ta": "https://example.com/lam-dep.jpg",
     "nganh_nay_la_gi": "Cắt tóc, làm móng, chăm sóc da, trang điểm cho khách.",
     "ket_luan": "Hợp với người khéo tay, có gu thẩm mỹ; có thể mở tiệm với vốn nhỏ."
   }
@@ -478,6 +473,8 @@ const jsonText = ref('')
 const jsonImport = useJsonBatchImport({ label: 'nhóm nghề' })
 const formRef = ref()
 const dangDoiTrangThai = ref({})
+const chiTietMo = ref(false)
+const nhomDangXem = ref(null)
 
 const filters = reactive({
   q: '',
@@ -527,6 +524,7 @@ function emptyForm() {
     lo_trinh_phat_trien: '',
     nhom_muc_tieu: '',
     ma_holland: '',
+    hinh_anh_mo_ta: '',
     ...Object.fromEntries(MUC_GIOI_THIEU.map((muc) => [muc.key, ''])),
     trang_thai: 1,
   }
@@ -643,6 +641,16 @@ function onSizeChange() {
 function openCreate() {
   resetForm()
   dialogVisible.value = true
+}
+
+function openChiTiet(row) {
+  nhomDangXem.value = row
+  chiTietMo.value = true
+}
+
+function suaTuChiTiet(row) {
+  chiTietMo.value = false
+  openEdit(row)
 }
 
 function openEdit(row) {
@@ -808,3 +816,14 @@ async function onDeleteSelected() {
 
 onMounted(load)
 </script>
+
+<style scoped>
+.thumb {
+  width: 72px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--el-fill-color-light);
+  vertical-align: middle;
+}
+</style>

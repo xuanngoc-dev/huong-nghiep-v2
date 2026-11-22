@@ -3,7 +3,9 @@
  * cùng một form đặt trong trang hay trong dialog (kể cả khi kéo đổi cỡ) đều tự đổi số cột.
  *   >= 1200px: 6 cột | >= 960px: 4 | >= 720px: 3 | nhỏ hơn: 2.
  * Dùng: <CustomForm class="form-grid"><div class="form-grid__body">...các CustomFormItem...</div></CustomForm>
- * Ô rộng hơn: .form-grid__span-2 (2 cột), .form-grid__full (cả hàng, dùng cho textarea/JSON).
+ * Ô rộng hơn: .form-grid__span-2 (2 cột), .form-grid__half (nửa hàng: 2 textarea/hàng; lưới 3 cột thì cả hàng),
+ * .form-grid__full (cả hàng, dùng cho JSON, upload, textarea dài).
+ * Giới hạn tối đa 4 cột (khung rộng vẫn 4 ô/hàng): thêm .form-grid--toi-da-4 cạnh .form-grid.
  * Import toàn cục ở main.js: dùng được ở cả khu quản trị, thành viên và trong dialog (gắn ra ngoài body).
  */
 .form-grid {
@@ -29,6 +31,11 @@
   grid-column: 1 / -1;
 }
 
+/* Nửa hàng: 2 cột → 1, 3 cột → cả hàng (không chia đôi được), 4 → 2, 6 → 3. */
+.form-grid__half {
+  grid-column: span 1;
+}
+
 .form-grid__body .el-input-number,
 .form-grid__body .el-select,
 .form-grid__body .el-date-editor {
@@ -39,16 +46,39 @@
   .form-grid__body {
     --form-grid-cols: 3;
   }
+
+  .form-grid__half {
+    grid-column: 1 / -1;
+  }
 }
 
 @container (min-width: 960px) {
   .form-grid__body {
     --form-grid-cols: 4;
   }
+
+  .form-grid__half {
+    grid-column: span 2;
+  }
 }
 
 @container (min-width: 1200px) {
   .form-grid__body {
     --form-grid-cols: 6;
+  }
+
+  .form-grid__half {
+    grid-column: span 3;
+  }
+}
+
+/* Tối đa 4 cột: giữ 4 ô/hàng (nửa hàng = 2 cột) cả khi khung rộng ≥ 1200px. */
+@container (min-width: 1200px) {
+  .form-grid--toi-da-4 .form-grid__body {
+    --form-grid-cols: 4;
+  }
+
+  .form-grid--toi-da-4 .form-grid__half {
+    grid-column: span 2;
   }
 }

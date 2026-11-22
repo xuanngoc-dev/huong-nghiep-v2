@@ -151,6 +151,28 @@ class TestDmNhomNgheDiLam(unittest.TestCase):
         self.assertEqual(ten(chinh_quy=0), ["Hộ lý", "Lái xe tải", "Thợ phụ"])
         self.assertEqual(ten(co_bang_cap=1, chinh_quy=0), ["Lái xe tải"])
 
+    def test_thong_tin_chi_tiet_nghe(self):
+        n, _ = self._tao_du_lieu()
+        tao = nghe.create_nghe_cu_the_di_lam(
+            DmNgheCuTheDiLamWrite(
+                nhom_nghe_di_lam_id=n.id, ten_nghe="Thợ hàn", ky_nang_mem="  ", don_vi_tien_te="vnd",
+                nhom_holland="rc", muc_do_ap_luc="cao", luong_khoi_diem_min=8_000_000, luong_khoi_diem_max=10_000_000,
+                tu_khoa_tim_kiem="hàn TIG; cơ khí",
+            ),
+            db=self.db, _=None,
+        )
+        self.assertEqual(
+            (tao.ky_nang_mem, tao.don_vi_tien_te, tao.chu_ky_luong, tao.nhom_holland, tao.muc_do_ap_luc),
+            (None, "VND", "thang", "RC", "cao"),
+        )
+        self.assertEqual(int(tao.luong_khoi_diem_max), 10_000_000)
+        # Tìm theo từ khóa tìm kiếm của nghề.
+        self.assertEqual([item.ten_nghe for item in _ds_nghe(self.db, q="TIG").items], ["Thợ hàn"])
+        with self.assertRaises(ValueError):
+            DmNgheCuTheDiLamWrite(nhom_nghe_di_lam_id=n.id, ten_nghe="X", luong_cao_min=30, luong_cao_max=20)
+        with self.assertRaises(ValueError):
+            DmNgheCuTheDiLamWrite(nhom_nghe_di_lam_id=n.id, ten_nghe="X", chu_ky_luong="tuan")
+
     def test_xoa_nhieu_lien_ket_khong_ton_tai_tra_0(self):
         kq = lien_ket.delete_nhom_nghe_tieu_chi_many(
             DmNhomNgheTieuChiDeleteMany(items=[{"nhom_nghe_di_lam_id": 1, "tieu_chi_goi_y_id": 1}]),

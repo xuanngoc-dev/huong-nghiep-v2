@@ -81,7 +81,7 @@ export const MUC_LUONG_THEO_NHOM = [...new Set(MUC_LUONG_LOC.map((item) => item.
   ds: MUC_LUONG_LOC.filter((item) => item.nhom === nhom),
 }))
 
-function boDau(value) {
+export function boDau(value) {
   return String(value || '')
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')

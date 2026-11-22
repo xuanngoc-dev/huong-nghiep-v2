@@ -21,6 +21,8 @@ _BANG = {"mysql_charset": "utf8mb4", "mysql_collate": "utf8mb4_unicode_ci", "mys
 
 LOAI_HINH_DAU_VAO = ("di_lam_ngay", "hoc_nghe_ngan_han", "tu_hoc_ky_nang")
 NHOM_MUC_TIEU = ("kiem_tien_ngay", "nghe_vung_chac", "thu_nhap_dot_pha")
+CHU_KY_LUONG = ("gio", "ngay", "thang", "nam")
+MUC_DO_AP_LUC = ("thap", "trung_binh", "cao")
 
 
 class DmNhomNgheDiLam(Base):
@@ -55,6 +57,8 @@ class DmNhomNgheDiLam(Base):
     ap_luc_va_rui_ro: Mapped[str | None] = mapped_column(Text)
     xu_huong_tuong_lai: Mapped[str | None] = mapped_column(Text)
     ket_luan: Mapped[str | None] = mapped_column(Text)
+    # URL hình ảnh mô tả nhóm nghề.
+    hinh_anh_mo_ta: Mapped[str | None] = mapped_column(String(500))
     # 0: ngừng sử dụng, 1: hoạt động
     trang_thai: Mapped[int] = mapped_column(TINYINT, nullable=False, default=1, server_default="1")
     ngay_tao: Mapped[datetime] = mapped_column(DateTime, nullable=False, server_default=func.now())
@@ -83,6 +87,39 @@ class DmNgheCuTheDiLam(Base):
     yeu_cau_bang_cap: Mapped[str | None] = mapped_column(String(255))
     # 1: phải qua đào tạo chính quy (trường công an, quân đội, y...), không đi làm ngay được; null: không bắt buộc.
     bat_buoc_dao_tao_chinh_quy: Mapped[int | None] = mapped_column(TINYINT)
+    # URL hình ảnh mô tả nghề.
+    hinh_anh_mo_ta: Mapped[str | None] = mapped_column(String(500))
+    # Thông tin chi tiết nghề. Các mục dạng danh sách (vị trí, kỹ năng, chứng chỉ, từ khóa) ngăn cách bằng "; ".
+    mo_ta_cong_viec: Mapped[str | None] = mapped_column(Text)
+    trach_nhiem_chinh: Mapped[str | None] = mapped_column(Text)
+    vi_tri_tuyen_dung_mau: Mapped[str | None] = mapped_column(Text)
+    hinh_thuc_dao_tao: Mapped[str | None] = mapped_column(String(255))
+    trinh_do_toi_thieu: Mapped[str | None] = mapped_column(String(100))
+    chuyen_nganh_phu_hop: Mapped[str | None] = mapped_column(Text)
+    ky_nang_chuyen_mon: Mapped[str | None] = mapped_column(Text)
+    ky_nang_mem: Mapped[str | None] = mapped_column(Text)
+    chung_chi_giay_phep: Mapped[str | None] = mapped_column(Text)
+    # Lương tính theo đơn vị don_vi_tien_te (mặc định VND, số tiền đầy đủ) cho mỗi chu_ky_luong.
+    luong_khoi_diem_min: Mapped[Decimal | None] = mapped_column(Numeric(15, 2))
+    luong_khoi_diem_max: Mapped[Decimal | None] = mapped_column(Numeric(15, 2))
+    luong_trung_binh_min: Mapped[Decimal | None] = mapped_column(Numeric(15, 2))
+    luong_trung_binh_max: Mapped[Decimal | None] = mapped_column(Numeric(15, 2))
+    luong_cao_min: Mapped[Decimal | None] = mapped_column(Numeric(15, 2))
+    luong_cao_max: Mapped[Decimal | None] = mapped_column(Numeric(15, 2))
+    don_vi_tien_te: Mapped[str] = mapped_column(String(10), nullable=False, default="VND", server_default="VND")
+    chu_ky_luong: Mapped[str] = mapped_column(
+        Enum(*CHU_KY_LUONG, name="chu_ky_luong"), nullable=False, default="thang", server_default="thang"
+    )
+    ghi_chu_luong: Mapped[str | None] = mapped_column(String(500))
+    moi_truong_lam_viec: Mapped[str | None] = mapped_column(Text)
+    dac_thu_thoi_gian: Mapped[str | None] = mapped_column(String(500))
+    muc_do_ap_luc: Mapped[str | None] = mapped_column(Enum(*MUC_DO_AP_LUC, name="muc_do_ap_luc"))
+    yeu_cau_suc_khoe: Mapped[str | None] = mapped_column(String(500))
+    trien_vong_nghe_nghiep: Mapped[str | None] = mapped_column(Text)
+    lo_trinh_phat_trien: Mapped[str | None] = mapped_column(Text)
+    # Mã Holland ghép, ví dụ "RC".
+    nhom_holland: Mapped[str | None] = mapped_column(String(20))
+    tu_khoa_tim_kiem: Mapped[str | None] = mapped_column(String(500))
 
 
 class DmTieuChiGoiY(Base):

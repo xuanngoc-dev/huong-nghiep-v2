@@ -515,7 +515,7 @@
           "children": [
             {
               "index": "/admin/danh-muc/nhom-nghe-di-lam",
-              "title": "Nhóm nghề đi làm",
+              "title": "Nhóm nghề",
               "tooltip": "Nhóm nghề cho học sinh đi làm sau THPT: đào tạo, lương, triển vọng",
               "icon": "Suitcase"
             },

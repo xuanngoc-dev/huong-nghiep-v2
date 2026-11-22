@@ -1,6 +1,6 @@
 # Danh sách API
 
-Tự sinh từ code lúc 21/11/2026 23:23 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 22/11/2026 15:42 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
 Tiền tố chung: `/api/v1`. Tổng cộng **495** API.
 
@@ -947,7 +947,7 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 
 | Method | Đường dẫn | Đăng nhập | Mô tả |
 |---|---|---|---|
-| `GET` | `/api/v1/danh-muc/nghe-cu-the-di-lam` | Không | Lấy danh sách nghề cụ thể có phân trang, lọc theo từ khóa và nhóm nghề. Không cần đăng nhập. |
+| `GET` | `/api/v1/danh-muc/nghe-cu-the-di-lam` | Không | Lấy danh sách nghề cụ thể có phân trang, lọc theo từ khóa (tên nghề, từ khóa tìm kiếm, tên/mã nhóm) và nhóm nghề. |
 
 ### `danh-muc/nhom-nganh-dao-tao`
 

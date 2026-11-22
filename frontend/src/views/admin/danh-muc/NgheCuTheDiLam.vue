@@ -84,6 +84,12 @@
         <CustomTableColumn label="STT" width="72" align="center">
           <template #default="{ $index }">{{ rowIndex($index) }}</template>
         </CustomTableColumn>
+        <CustomTableColumn label="Hình ảnh" width="100" align="center">
+          <template #default="{ row }">
+            <img v-if="row.hinh_anh_mo_ta" class="thumb" :src="apiAssetUrl(row.hinh_anh_mo_ta)" :alt="row.ten_nghe" />
+            <span v-else>—</span>
+          </template>
+        </CustomTableColumn>
         <CustomTableColumn prop="ten_nghe" label="Tên nghề" min-width="220" />
         <CustomTableColumn label="Nhóm nghề" min-width="240">
           <template #default="{ row }">{{ row.ten_nhom }} ({{ row.ma_nhom }})</template>
@@ -103,9 +109,43 @@
             <span v-else>—</span>
           </template>
         </CustomTableColumn>
-        <CustomTableColumn label="Thao tác" width="100" fixed="right" align="center">
+        <CustomTableColumn label="Holland" width="100" align="center">
+          <template #default="{ row }">{{ row.nhom_holland || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Mức độ áp lực" width="150" align="center">
+          <template #default="{ row }">
+            <CustomTag v-if="nhanMucDoApLuc(row.muc_do_ap_luc)" :type="nhanMucDoApLuc(row.muc_do_ap_luc).mau" size="small">
+              {{ nhanMucDoApLuc(row.muc_do_ap_luc).label }}
+            </CustomTag>
+            <span v-else>—</span>
+          </template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Trình độ tối thiểu" min-width="160" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.trinh_do_toi_thieu || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Hình thức đào tạo" min-width="220" show-overflow-tooltip>
+          <template #default="{ row }">{{ row.hinh_thuc_dao_tao || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn v-for="muc in KHOANG_LUONG" :key="muc.key" :label="muc.label" min-width="230">
+          <template #default="{ row }">{{ khoangLuong(row, muc.key) || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn
+          v-for="cot in COT_CHU_BANG"
+          :key="cot.key"
+          :label="cot.label"
+          :min-width="cot.rong"
+          show-overflow-tooltip
+        >
+          <template #default="{ row }">{{ row[cot.key] || '—' }}</template>
+        </CustomTableColumn>
+        <CustomTableColumn label="Thao tác" width="150" fixed="right" align="center">
           <template #default="{ row }">
             <div class="row-actions">
+              <CustomTooltip content="Xem chi tiết" placement="top">
+                <CustomButton link type="primary" aria-label="Xem chi tiết" @click="openChiTiet(row)">
+                  <CustomIcon><View /></CustomIcon>
+                </CustomButton>
+              </CustomTooltip>
               <CustomTooltip content="Sửa" placement="top">
                 <CustomButton link type="primary" aria-label="Sửa" @click="openEdit(row)">
                   <CustomIcon><Edit /></CustomIcon>
@@ -138,10 +178,12 @@
     </CustomCard>
   </div>
 
+  <ChiTietNgheCuThe v-model="chiTietMo" :nghe="ngheDangXem" @sua="suaTuChiTiet" />
+
   <CustomDialog
     v-model="dialogVisible"
     :title="editingId ? 'Cập nhật nghề cụ thể' : 'Thêm nghề cụ thể'"
-    width="800px"
+    width="80%"
     destroy-on-close
     @closed="resetForm"
   >
@@ -166,37 +208,130 @@
       />
     </div>
 
-    <CustomForm v-else ref="formRef" class="form-grid" :model="form" :rules="rules" label-position="top">
+    <!-- Bố cục giống modal Chi tiết (ChiTietNgheCuThe): 4 ô/hàng trên desktop, 2 ô/hàng trên mobile, ô nhiều dòng cả hàng. -->
+    <CustomForm v-else ref="formRef" class="form-grid form-grid--toi-da-4" :model="form" :rules="rules" label-position="top">
       <div class="form-grid__body">
-        <CustomFormItem class="form-grid__span-2" label="Nhóm nghề" prop="nhom_nghe_di_lam_id">
+        <h3 class="form-grid__full nhom-truong">Thông tin chung</h3>
+        <CustomFormItem label="Tên nghề" prop="ten_nghe">
+          <CustomInput v-model="form.ten_nghe" maxlength="255" placeholder="Nhập tên nghề" />
+        </CustomFormItem>
+        <CustomFormItem label="Nhóm nghề" prop="nhom_nghe_di_lam_id">
           <CustomSelect v-model="form.nhom_nghe_di_lam_id" placeholder="Chọn nhóm nghề" filterable>
             <CustomOption v-for="item in nhomOptions" :key="item.id" :label="nhanNhom(item)" :value="item.id" />
           </CustomSelect>
         </CustomFormItem>
-        <CustomFormItem class="form-grid__span-2" label="Tên nghề" prop="ten_nghe">
-          <CustomInput v-model="form.ten_nghe" maxlength="255" placeholder="Nhập tên nghề" />
-        </CustomFormItem>
-        <CustomFormItem class="form-grid__full" label="Yêu cầu thêm" prop="yeu_cau_them">
+        <CustomFormItem label="Yêu cầu thêm" prop="yeu_cau_them">
           <CustomInput v-model="form.yeu_cau_them" maxlength="500" placeholder="Nhập yêu cầu thêm (nếu có)" />
         </CustomFormItem>
-        <CustomFormItem class="form-grid__span-2" label="Bằng cấp / chứng chỉ bắt buộc" prop="yeu_cau_bang_cap">
+        <CustomFormItem label="Bằng cấp / chứng chỉ bắt buộc" prop="yeu_cau_bang_cap">
           <CustomInput
             v-model="form.yeu_cau_bang_cap"
             maxlength="255"
             placeholder="Bỏ trống nếu không yêu cầu (vd. Giấy phép lái xe hạng C)"
           />
         </CustomFormItem>
+        <CustomFormItem label="Nhóm Holland" prop="nhom_holland">
+          <CustomInput v-model="form.nhom_holland" maxlength="20" placeholder="Nhập mã Holland (ví dụ: RC)" />
+        </CustomFormItem>
+        <CustomFormItem label="Mức độ áp lực" prop="muc_do_ap_luc">
+          <CustomSelect v-model="form.muc_do_ap_luc" placeholder="Chọn mức độ áp lực" clearable>
+            <CustomOption v-for="item in MUC_DO_AP_LUC" :key="item.value" :label="item.label" :value="item.value" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem label="Từ khóa tìm kiếm" prop="tu_khoa_tim_kiem">
+          <CustomInput v-model="form.tu_khoa_tim_kiem" maxlength="500" placeholder="Ngăn cách bằng dấu ; (vd. hàn; cơ khí)" />
+        </CustomFormItem>
         <CustomFormItem label="Bắt buộc đào tạo chính quy" prop="bat_buoc_dao_tao_chinh_quy">
           <CustomSwitch v-model="form.bat_buoc_dao_tao_chinh_quy" />
+        </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Hình ảnh mô tả" prop="hinh_anh_mo_ta">
+          <ChonHinhAnh v-model="form.hinh_anh_mo_ta" thu-muc="nghe-cu-the-di-lam" :alt="form.ten_nghe || 'Hình ảnh nghề'" />
         </CustomFormItem>
         <CustomFormItem class="form-grid__full" label="Mô tả ngắn" prop="mo_ta_ngan">
           <CustomInput
             v-model="form.mo_ta_ngan"
             type="textarea"
-            :rows="3"
+            :rows="4"
             maxlength="5000"
             show-word-limit
             placeholder="Nhập mô tả ngắn"
+          />
+        </CustomFormItem>
+        <CustomFormItem
+          v-for="truong in VAN_BAN_CHUNG"
+          :key="truong.key"
+          class="form-grid__full"
+          :label="truong.label"
+          :prop="truong.key"
+        >
+          <CustomInput
+            v-model="form[truong.key]"
+            type="textarea"
+            :rows="4"
+            :maxlength="truong.toiDa"
+            :placeholder="truong.placeholder"
+          />
+        </CustomFormItem>
+
+        <h3 class="form-grid__full nhom-truong">Đào tạo và kỹ năng</h3>
+        <CustomFormItem label="Hình thức đào tạo" prop="hinh_thuc_dao_tao">
+          <CustomInput v-model="form.hinh_thuc_dao_tao" maxlength="255" placeholder="Nhập hình thức đào tạo (vd. Đào tạo tại chỗ 1-2 tuần)" />
+        </CustomFormItem>
+        <CustomFormItem label="Trình độ tối thiểu" prop="trinh_do_toi_thieu">
+          <CustomInput v-model="form.trinh_do_toi_thieu" maxlength="100" placeholder="Nhập trình độ tối thiểu (vd. Tốt nghiệp THCS)" />
+        </CustomFormItem>
+        <CustomFormItem
+          v-for="truong in VAN_BAN_DAO_TAO"
+          :key="truong.key"
+          class="form-grid__full"
+          :label="truong.label"
+          :prop="truong.key"
+        >
+          <CustomInput
+            v-model="form[truong.key]"
+            type="textarea"
+            :rows="4"
+            :maxlength="truong.toiDa"
+            :placeholder="truong.placeholder"
+          />
+        </CustomFormItem>
+
+        <h3 class="form-grid__full nhom-truong">Lương tham khảo</h3>
+        <CustomFormItem v-for="truong in TRUONG_LUONG" :key="truong.key" :label="truong.label" :prop="truong.key">
+          <MoneyInput v-model="form[truong.key]" :placeholder="`Nhập ${truong.label.toLowerCase()}`" />
+        </CustomFormItem>
+        <CustomFormItem label="Đơn vị tiền tệ" prop="don_vi_tien_te">
+          <CustomInput v-model="form.don_vi_tien_te" maxlength="10" placeholder="Nhập đơn vị tiền tệ (vd. VND)" />
+        </CustomFormItem>
+        <CustomFormItem label="Chu kỳ lương" prop="chu_ky_luong">
+          <CustomSelect v-model="form.chu_ky_luong" placeholder="Chọn chu kỳ lương" :clearable="false">
+            <CustomOption v-for="item in CHU_KY_LUONG" :key="item.value" :label="item.label" :value="item.value" />
+          </CustomSelect>
+        </CustomFormItem>
+        <CustomFormItem label="Ghi chú lương" prop="ghi_chu_luong">
+          <CustomInput v-model="form.ghi_chu_luong" maxlength="500" placeholder="Nhập ghi chú lương (vd. Lương cứng + hoa hồng)" />
+        </CustomFormItem>
+
+        <h3 class="form-grid__full nhom-truong">Môi trường và triển vọng</h3>
+        <CustomFormItem label="Đặc thù thời gian" prop="dac_thu_thoi_gian">
+          <CustomInput v-model="form.dac_thu_thoi_gian" maxlength="500" placeholder="Nhập đặc thù thời gian (vd. Làm ca, có ca đêm)" />
+        </CustomFormItem>
+        <CustomFormItem label="Yêu cầu sức khỏe" prop="yeu_cau_suc_khoe">
+          <CustomInput v-model="form.yeu_cau_suc_khoe" maxlength="500" placeholder="Nhập yêu cầu sức khỏe" />
+        </CustomFormItem>
+        <CustomFormItem
+          v-for="truong in VAN_BAN_MOI_TRUONG"
+          :key="truong.key"
+          class="form-grid__full"
+          :label="truong.label"
+          :prop="truong.key"
+        >
+          <CustomInput
+            v-model="form[truong.key]"
+            type="textarea"
+            :rows="4"
+            :maxlength="truong.toiDa"
+            :placeholder="truong.placeholder"
           />
         </CustomFormItem>
       </div>
@@ -215,6 +350,19 @@
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
+import { apiAssetUrl } from '@/api/apiUrl'
+import {
+  CHU_KY_LUONG,
+  KHOANG_LUONG,
+  MUC_DO_AP_LUC,
+  TRUONG_LUONG,
+  VAN_BAN_CHUNG,
+  VAN_BAN_DAO_TAO,
+  VAN_BAN_MOI_TRUONG,
+  khoangLuong,
+  nhanMucDoApLuc,
+  soHoacNull,
+} from '@/components/admin/nghe-cu-the/truongNghe'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
@@ -239,9 +387,68 @@ const JSON_SAMPLE = `[
     "ten_nghe": "Điều dưỡng",
     "mo_ta_ngan": "Theo dõi người bệnh, tiêm truyền, thực hiện y lệnh của bác sĩ.",
     "yeu_cau_bang_cap": "Bằng cao đẳng điều dưỡng trở lên và giấy phép hành nghề",
-    "bat_buoc_dao_tao_chinh_quy": 1
+    "bat_buoc_dao_tao_chinh_quy": 1,
+    "hinh_anh_mo_ta": "https://example.com/dieu-duong.jpg"
+  },
+  {
+    "ma_nhom": "CONG_NHAN_SAN_XUAT",
+    "ten_nghe": "Thợ hàn",
+    "mo_ta_cong_viec": "Hàn nối kim loại cho kết cấu thép, đường ống, sản phẩm cơ khí.",
+    "hinh_thuc_dao_tao": "Sơ cấp nghề hàn 3-6 tháng",
+    "trinh_do_toi_thieu": "Tốt nghiệp THCS",
+    "ky_nang_chuyen_mon": "Hàn các tư thế; đọc bản vẽ kỹ thuật",
+    "luong_khoi_diem_min": 8000000,
+    "luong_khoi_diem_max": 10000000,
+    "chu_ky_luong": "thang",
+    "muc_do_ap_luc": "trung_binh",
+    "nhom_holland": "R",
+    "tu_khoa_tim_kiem": "hàn; thợ hàn; cơ khí"
   }
 ]`
+
+// Cột chữ thông tin chi tiết trên bảng (nội dung dài rút gọn một dòng, rê chuột xem đủ).
+const COT_CHU_BANG = [
+  { key: 'ghi_chu_luong', label: 'Ghi chú lương', rong: 220 },
+  { key: 'dac_thu_thoi_gian', label: 'Đặc thù thời gian', rong: 220 },
+  { key: 'yeu_cau_suc_khoe', label: 'Yêu cầu sức khỏe', rong: 220 },
+  ...[...VAN_BAN_CHUNG, ...VAN_BAN_DAO_TAO, ...VAN_BAN_MOI_TRUONG].map(({ key, label }) => ({ key, label, rong: 260 })),
+  { key: 'tu_khoa_tim_kiem', label: 'Từ khóa tìm kiếm', rong: 220 },
+]
+
+// Ô chữ tùy chọn: chuỗi rỗng gửi null.
+const TRUONG_CHU = [
+  'mo_ta_ngan',
+  'yeu_cau_them',
+  'yeu_cau_bang_cap',
+  'hinh_anh_mo_ta',
+  'hinh_thuc_dao_tao',
+  'trinh_do_toi_thieu',
+  'ghi_chu_luong',
+  'dac_thu_thoi_gian',
+  'yeu_cau_suc_khoe',
+  'nhom_holland',
+  'tu_khoa_tim_kiem',
+  'muc_do_ap_luc',
+  ...[...VAN_BAN_CHUNG, ...VAN_BAN_DAO_TAO, ...VAN_BAN_MOI_TRUONG].map((truong) => truong.key),
+]
+
+function chuHoacNull(value) {
+  if (value == null) return null
+  return String(value).trim() || null
+}
+
+/** Chuẩn hóa một nghề (từ form hoặc JSON) thành payload gửi API. */
+function chuanHoa(item, nhomId) {
+  return {
+    nhom_nghe_di_lam_id: nhomId,
+    ten_nghe: String(item.ten_nghe ?? '').trim(),
+    bat_buoc_dao_tao_chinh_quy: laChinhQuy(item.bat_buoc_dao_tao_chinh_quy) ? 1 : null,
+    don_vi_tien_te: chuHoacNull(item.don_vi_tien_te)?.toUpperCase() || 'VND',
+    chu_ky_luong: item.chu_ky_luong || 'thang',
+    ...Object.fromEntries(TRUONG_CHU.map((key) => [key, chuHoacNull(item[key])])),
+    ...Object.fromEntries(TRUONG_LUONG.map(({ key }) => [key, soHoacNull(item[key])])),
+  }
+}
 
 // bat_buoc_dao_tao_chinh_quy: API lưu 1 hoặc null (bỏ trống = không bắt buộc); form dùng công tắc true/false.
 function laChinhQuy(value) {
@@ -264,6 +471,8 @@ const jsonText = ref('')
 const jsonImport = useJsonBatchImport({ label: 'nghề cụ thể' })
 const formRef = ref()
 const nhomOptions = ref([])
+const chiTietMo = ref(false)
+const ngheDangXem = ref(null)
 
 const filters = reactive({
   q: '',
@@ -278,16 +487,32 @@ const form = reactive(emptyForm())
 const rules = {
   nhom_nghe_di_lam_id: [{ required: true, message: 'Vui lòng chọn nhóm nghề', trigger: 'change' }],
   ten_nghe: [{ required: true, message: 'Vui lòng nhập tên nghề', trigger: 'blur' }],
+  ...Object.fromEntries(
+    TRUONG_LUONG.filter(({ key }) => key.endsWith('_max')).map(({ key, label }) => [
+      key,
+      [{ validator: kiemTraKhoangLuong(key.replace(/_max$/, '_min'), `${label} phải ≥ mức từ`), trigger: 'change' }],
+    ]),
+  ),
+}
+
+function kiemTraKhoangLuong(minKey, nhanLoi) {
+  return (_rule, value, callback) => {
+    const min = form[minKey]
+    if (value != null && min != null && min > value) callback(new Error(nhanLoi))
+    else callback()
+  }
 }
 
 function emptyForm() {
   return {
     nhom_nghe_di_lam_id: null,
     ten_nghe: '',
-    mo_ta_ngan: '',
-    yeu_cau_them: '',
-    yeu_cau_bang_cap: '',
     bat_buoc_dao_tao_chinh_quy: false,
+    ...Object.fromEntries(TRUONG_CHU.map((key) => [key, ''])),
+    muc_do_ap_luc: null,
+    ...Object.fromEntries(TRUONG_LUONG.map(({ key }) => [key, null])),
+    don_vi_tien_te: 'VND',
+    chu_ky_luong: 'thang',
   }
 }
 
@@ -332,14 +557,7 @@ function parseJsonItems(text) {
       if (!nhomId) throw new Error(`Phần tử thứ ${line}: không tìm thấy nhóm nghề có mã ${ma}`)
     }
     if (!nhomId) throw new Error(`Phần tử thứ ${line} thiếu ma_nhom hoặc nhom_nghe_di_lam_id`)
-    return {
-      nhom_nghe_di_lam_id: nhomId,
-      ten_nghe: ten,
-      mo_ta_ngan: item.mo_ta_ngan == null ? null : String(item.mo_ta_ngan).trim() || null,
-      yeu_cau_them: item.yeu_cau_them == null ? null : String(item.yeu_cau_them).trim() || null,
-      yeu_cau_bang_cap: item.yeu_cau_bang_cap == null ? null : String(item.yeu_cau_bang_cap).trim() || null,
-      bat_buoc_dao_tao_chinh_quy: laChinhQuy(item.bat_buoc_dao_tao_chinh_quy) ? 1 : null,
-    }
+    return chuanHoa(item, nhomId)
   })
 }
 
@@ -430,28 +648,33 @@ function openCreate() {
   dialogVisible.value = true
 }
 
+function openChiTiet(row) {
+  ngheDangXem.value = row
+  chiTietMo.value = true
+}
+
+function suaTuChiTiet(row) {
+  chiTietMo.value = false
+  openEdit(row)
+}
+
 function openEdit(row) {
   editingId.value = row.id
   Object.assign(form, {
     nhom_nghe_di_lam_id: row.nhom_nghe_di_lam_id,
     ten_nghe: row.ten_nghe,
-    mo_ta_ngan: row.mo_ta_ngan || '',
-    yeu_cau_them: row.yeu_cau_them || '',
-    yeu_cau_bang_cap: row.yeu_cau_bang_cap || '',
     bat_buoc_dao_tao_chinh_quy: laChinhQuy(row.bat_buoc_dao_tao_chinh_quy),
+    ...Object.fromEntries(TRUONG_CHU.map((key) => [key, row[key] || ''])),
+    muc_do_ap_luc: row.muc_do_ap_luc || null,
+    ...Object.fromEntries(TRUONG_LUONG.map(({ key }) => [key, soHoacNull(row[key])])),
+    don_vi_tien_te: row.don_vi_tien_te || 'VND',
+    chu_ky_luong: row.chu_ky_luong || 'thang',
   })
   dialogVisible.value = true
 }
 
 function payloadFromForm() {
-  return {
-    nhom_nghe_di_lam_id: form.nhom_nghe_di_lam_id,
-    ten_nghe: form.ten_nghe.trim(),
-    mo_ta_ngan: form.mo_ta_ngan?.trim() || null,
-    yeu_cau_them: form.yeu_cau_them?.trim() || null,
-    yeu_cau_bang_cap: form.yeu_cau_bang_cap?.trim() || null,
-    bat_buoc_dao_tao_chinh_quy: form.bat_buoc_dao_tao_chinh_quy ? 1 : null,
-  }
+  return chuanHoa(form, form.nhom_nghe_di_lam_id)
 }
 
 function fillJsonSample() {
@@ -561,3 +784,27 @@ onMounted(() => {
   load()
 })
 </script>
+
+<style scoped>
+.nhom-truong {
+  margin: 8px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+  color: var(--el-text-color-primary);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.nhom-truong:first-child {
+  margin-top: 0;
+}
+
+.thumb {
+  width: 72px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--el-fill-color-light);
+  vertical-align: middle;
+}
+</style>

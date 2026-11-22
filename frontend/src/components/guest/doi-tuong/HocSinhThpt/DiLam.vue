@@ -75,6 +75,7 @@
               <CustomInput
                 v-model="tuKhoaNhap"
                 class="loc-nhom__tu-khoa"
+                size="default"
                 placeholder="Tìm nghề: bán hàng, thợ điện…"
                 aria-label="Tìm nghề theo từ khóa"
                 clearable
@@ -87,6 +88,7 @@
               <CustomSelect
                 v-model="nhomId"
                 class="loc-nhom__chon"
+                size="default"
                 placeholder="Tất cả nhóm nghề"
                 clearable
                 filterable
@@ -99,6 +101,7 @@
               <CustomSelect
                 v-model="mucLuong"
                 class="loc-nhom__chon"
+                size="default"
                 placeholder="Mức lương tham khảo"
                 clearable
                 aria-label="Lọc theo mức lương tham khảo"
@@ -107,7 +110,7 @@
                   <CustomOption v-for="item in nhom.ds" :key="item.value" :label="item.label" :value="item.value" />
                 </el-option-group>
               </CustomSelect>
-              <CustomButton type="primary" native-type="submit" class="loc-nhom__nut">
+              <CustomButton type="primary" native-type="submit" size="default" class="loc-nhom__nut">
                 <CustomIcon><Search /></CustomIcon>
                 <span>Tìm kiếm</span>
               </CustomButton>
@@ -394,11 +397,23 @@ onMounted(taiDuLieu)
   min-width: 180px;
 }
 
-/* Điện thoại: mỗi ô lọc và nút Tìm kiếm chiếm cả hàng. */
-@media (max-width: 575.98px) {
+/* Tablet: 2 ô/hàng, bề rộng đồng nhất (trừ nửa gap 8px).
+   Control giữ size="default", không bị wrapper thu về small. */
+@media (max-width: 991.98px) {
+  .loc-nhom__tu-khoa,
   .loc-nhom__chon,
   .loc-nhom__nut {
-    flex: 1 1 100%;
+    flex: 1 1 calc(50% - 4px);
+    min-width: 0;
+  }
+}
+
+/* Điện thoại: mỗi ô lọc và nút Tìm kiếm chiếm cả hàng. */
+@media (max-width: 575.98px) {
+  .loc-nhom__tu-khoa,
+  .loc-nhom__chon,
+  .loc-nhom__nut {
+    flex-basis: 100%;
   }
 }
 
