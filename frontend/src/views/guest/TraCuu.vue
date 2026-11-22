@@ -5,10 +5,10 @@
         <div class="landing__head">
           <p class="landing__eyebrow">Tra cứu</p>
           <h1 id="tra-cuu-title" class="landing__title">Tra cứu trường, ngành và thông tin tuyển sinh</h1>
-          <p class="landing__lead">
+          <!-- <p class="landing__lead">
             Tìm nhanh trường đại học, cao đẳng, ngành đào tạo, phương thức tuyển sinh, tổ hợp môn, bài thi
             đánh giá năng lực và chứng chỉ ngoại ngữ.
-          </p>
+          </p> -->
         </div>
 
         <div class="landing-explore__panel">
@@ -77,7 +77,7 @@
             </div>
 
             <div v-if="dangTai" class="row g-3" aria-busy="true">
-              <div v-for="n in 4" :key="n" class="col-12 col-lg-6">
+              <div v-for="n in 8" :key="n" class="col-12 col-md-6 col-xl-3">
                 <el-skeleton class="tra-cuu__khung-cho" animated :rows="3" />
               </div>
             </div>
@@ -91,8 +91,9 @@
               :text="route.query.q ? `Không tìm thấy kết quả cho “${route.query.q}”.` : 'Chưa có dữ liệu.'"
             />
 
+            <!-- Lưới: 4 thẻ/hàng (desktop) → 2 (tablet) → 1 (mobile). -->
             <div v-else-if="kieuXem === 'luoi'" class="row g-3">
-              <div v-for="item in danhSach" :key="item.id" class="col-12 col-lg-6">
+              <div v-for="item in danhSach" :key="item.id" class="col-12 col-md-6 col-xl-3">
                 <TheTraCuu :the="item.the" :icon="loai.icon" @xem="moChiTiet(item)" />
               </div>
             </div>

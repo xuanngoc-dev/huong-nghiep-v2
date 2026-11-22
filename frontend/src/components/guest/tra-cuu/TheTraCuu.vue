@@ -61,13 +61,13 @@ const emit = defineEmits(['xem'])
 .the-tra-cuu__media {
   position: relative;
   display: flex;
-  flex: 0 0 30%;
+  flex: 0 0 88px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-height: 150px;
-  padding: 12px;
+  gap: 6px;
+  min-height: 112px;
+  padding: 10px;
   overflow: hidden;
   background: #eaf5eb;
   color: #2f7a33;
@@ -104,16 +104,21 @@ const emit = defineEmits(['xem'])
   flex: 1;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
-  padding: 14px 16px;
+  padding: 10px 12px;
 }
 
 .the-tra-cuu__ten {
+  display: -webkit-box;
+  overflow: hidden;
   color: #1c2b23;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   font-weight: 600;
   line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .the-tra-cuu__tags {
@@ -135,11 +140,11 @@ const emit = defineEmits(['xem'])
   display: -webkit-box;
   overflow: hidden;
   color: #3a4742;
-  font-size: 0.9rem;
-  line-height: 1.5;
+  font-size: 0.82rem;
+  line-height: 1.45;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .the-tra-cuu__xem {
@@ -151,17 +156,8 @@ const emit = defineEmits(['xem'])
 
 @media (max-width: 575.98px) {
   .the-tra-cuu__media {
-    flex-basis: 28%;
-    min-height: 120px;
-  }
-
-  .the-tra-cuu__body {
-    padding: 12px;
-  }
-
-  .the-tra-cuu__mo-ta {
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
+    flex-basis: 76px;
+    min-height: 100px;
   }
 }
 </style>
