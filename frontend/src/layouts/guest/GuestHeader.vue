@@ -478,7 +478,7 @@ function scrollToTop() {
     padding: 12px 16px 16px;
     overflow-y: auto;
     /* Nền trắng hơi trong suốt + làm mờ: thấy mờ mờ nội dung phía sau, chữ menu vẫn rõ. */
-    background: rgba(255, 255, 255, 0.62);
+    background: rgba(255, 255, 255, 0.82);
     backdrop-filter: blur(16px) saturate(1.4);
     -webkit-backdrop-filter: blur(16px) saturate(1.4);
     box-shadow: 8px 0 24px rgba(15, 23, 42, 0.12);

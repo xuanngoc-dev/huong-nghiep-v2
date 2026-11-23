@@ -227,6 +227,7 @@ class DmTruongPage(BaseModel):
 
 class DmTruongBulkResult(BaseModel):
     created: int
+    updated: int = 0
 
 
 class DmTruongDeleteMany(BaseModel):

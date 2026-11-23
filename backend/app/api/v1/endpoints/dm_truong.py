@@ -132,7 +132,7 @@ def create_truong_bulk(
     db: Session = Depends(get_db),
     _: NguoiDung = Depends(get_admin_user),
 ) -> DmTruongBulkResult:
-    """Thêm nhiều trường học cùng lúc. Từ chối nếu mã trường trùng trong dữ liệu hoặc đã có trong hệ thống."""
+    """Thêm nhiều trường học cùng lúc. Mã đã có trong hệ thống thì ghi đè; trùng mã trong dữ liệu thì từ chối."""
     if not payload:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Danh sách trường học trống")
     if len(payload) > 500:
@@ -154,12 +154,8 @@ def create_truong_bulk(
             detail=f"Mã trường bị trùng trong dữ liệu: {', '.join(duplicated)}",
         )
 
-    existing = list(db.scalars(select(DmTruong.ma_truong).where(DmTruong.ma_truong.in_(codes))).all())
-    if existing:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Mã trường đã tồn tại: {', '.join(existing)}",
-        )
+    existing_rows = db.scalars(select(DmTruong).where(DmTruong.ma_truong.in_(codes))).all()
+    existing_by_ma = {row.ma_truong: row for row in existing_rows}
 
     parent_ids = {item.truong_cha_id for item in payload if item.truong_cha_id}
     if parent_ids:
@@ -171,14 +167,31 @@ def create_truong_bulk(
             )
 
     now = bay_gio()
-    items = [DmTruong(**item.model_dump(), tao_luc=now, cap_nhat_luc=now) for item in payload]
-    db.add_all(items)
+    created_items: list[DmTruong] = []
+    updated = 0
+    for data in payload:
+        row = existing_by_ma.get(data.ma_truong)
+        if row is None:
+            created_items.append(DmTruong(**data.model_dump(), tao_luc=now, cap_nhat_luc=now))
+            continue
+        if data.truong_cha_id is not None and data.truong_cha_id == row.id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Trường không thể trực thuộc chính nó",
+            )
+        for key, value in data.model_dump().items():
+            setattr(row, key, value)
+        row.cap_nhat_luc = now
+        updated += 1
+
+    if created_items:
+        db.add_all(created_items)
     try:
         db.commit()
     except IntegrityError as exc:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=_integrity_detail(exc)) from None
-    return DmTruongBulkResult(created=len(items))
+    return DmTruongBulkResult(created=len(created_items), updated=updated)
 
 
 @router.post("", response_model=DmTruongPublic, status_code=status.HTTP_201_CREATED)

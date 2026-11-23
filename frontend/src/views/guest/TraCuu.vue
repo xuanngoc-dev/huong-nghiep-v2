@@ -38,19 +38,14 @@
                 <el-icon aria-hidden="true"><Search /></el-icon>
                 <input v-model="tuKhoa" type="search" :placeholder="loai.placeholder" :aria-label="`Tìm ${loai.label}`" />
               </label>
+              <CustomSelect v-if="loai.boLoc" :model-value="giaTriLoc" class="tra-cuu__loc" clearable
+                :placeholder="`Tất cả ${loai.boLoc.label.toLowerCase()}`" :aria-label="loai.boLoc.label"
+                @update:model-value="doiLoc">
+                <CustomOption v-for="item in loai.boLoc.options" :key="item" :label="item" :value="item" />
+              </CustomSelect>
               <button type="submit" class="landing__btn landing__btn--soft">Tìm kiếm</button>
             </div>
-            <CustomSelect
-              v-if="loai.boLoc"
-              :model-value="giaTriLoc"
-              class="tra-cuu__loc"
-              clearable
-              :placeholder="`Tất cả ${loai.boLoc.label.toLowerCase()}`"
-              :aria-label="loai.boLoc.label"
-              @update:model-value="doiLoc"
-            >
-              <CustomOption v-for="item in loai.boLoc.options" :key="item" :label="item" :value="item" />
-            </CustomSelect>
+            
           </form>
 
           <div id="tra-cuu-ket-qua" role="tabpanel" aria-live="polite">
@@ -146,7 +141,7 @@
       </div>
     </section>
 
-    <CustomDialog v-model="chiTietMo" :title="chiTiet?.the.tieuDe || ''" :width="720">
+    <CustomDialog v-model="chiTietMo" :title="chiTiet?.the.tieuDe || ''" :width="960">
       <dl v-if="chiTiet" class="tra-cuu__chi-tiet">
         <template v-for="row in chiTiet.dong" :key="row.label">
           <dt>{{ row.label }}</dt>
@@ -290,8 +285,10 @@ onUnmounted(() => clearTimeout(henGioTim))
 
 <style scoped>
 .tra-cuu__tim {
+  --tra-cuu-tim-h: 40px;
   display: flex;
   flex-wrap: wrap;
+  align-items: stretch;
   gap: var(--lp-gap-sm);
   margin-bottom: var(--lp-gap);
 }
@@ -301,10 +298,23 @@ onUnmounted(() => clearTimeout(henGioTim))
   margin-bottom: 0;
 }
 
+/* Đồng bộ chiều cao nhỏ hơn mặc định landing (48px) cho ô tìm / nút / select. */
+.tra-cuu__tim :deep(.landing-explore__o-nhap),
+.tra-cuu__tim :deep(.landing__btn) {
+  min-height: var(--tra-cuu-tim-h);
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .tra-cuu__loc {
   flex: 0 1 240px;
   min-width: 200px;
-  align-self: center;
+  align-self: stretch;
+}
+
+.tra-cuu__loc :deep(.el-select__wrapper) {
+  min-height: var(--tra-cuu-tim-h);
+  height: var(--tra-cuu-tim-h);
 }
 
 .tra-cuu__thanh-cong-cu {
@@ -409,8 +419,8 @@ onUnmounted(() => clearTimeout(henGioTim))
 
 .tra-cuu__chi-tiet {
   display: grid;
-  grid-template-columns: minmax(140px, 200px) 1fr;
-  gap: 0.6rem 1rem;
+  grid-template-columns: minmax(160px, 220px) 1fr;
+  gap: 0.75rem 1.25rem;
   margin: 0;
 }
 

@@ -1,6 +1,6 @@
 # Danh sách API
 
-Tự sinh từ code lúc 22/11/2026 15:42 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 23/11/2026 12:06 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
 Tiền tố chung: `/api/v1`. Tổng cộng **495** API.
 
@@ -368,7 +368,7 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 |---|---|---|---|
 | `POST` | `/api/v1/danh-muc/truong-hoc` | Bắt buộc (admin) | Thêm một trường học. Từ chối nếu mã trường đã tồn tại. |
 | `DELETE` | `/api/v1/danh-muc/truong-hoc` | Bắt buộc (admin) | Xóa nhiều trường học theo danh sách id. |
-| `POST` | `/api/v1/danh-muc/truong-hoc/bulk` | Bắt buộc (admin) | Thêm nhiều trường học cùng lúc. Từ chối nếu mã trường trùng trong dữ liệu hoặc đã có trong hệ thống. |
+| `POST` | `/api/v1/danh-muc/truong-hoc/bulk` | Bắt buộc (admin) | Thêm nhiều trường học cùng lúc. Mã đã có trong hệ thống thì ghi đè; trùng mã trong dữ liệu thì từ chối. |
 | `PUT` | `/api/v1/danh-muc/truong-hoc/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một trường học theo id. |
 | `DELETE` | `/api/v1/danh-muc/truong-hoc/{item_id}` | Bắt buộc (admin) | Xóa một trường học theo id. |
 

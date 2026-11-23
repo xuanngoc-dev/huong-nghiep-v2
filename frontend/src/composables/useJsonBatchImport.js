@@ -41,7 +41,9 @@ export function useJsonBatchImport({ label }) {
     progress.done = 0
     progress.active = items.length > 1
     progress.failed = false
+    let saved = 0
     let created = 0
+    let updated = 0
     try {
       for (let index = 0; index < items.length; index += JSON_BATCH_SIZE) {
         const batch = items.slice(index, index + JSON_BATCH_SIZE)
@@ -49,29 +51,33 @@ export function useJsonBatchImport({ label }) {
           skipLoading: true,
           timeout: JSON_BATCH_TIMEOUT,
         })
-        created += Number(result?.created ?? batch.length)
-        progress.done = created
+        const batchCreated = Number(result?.created ?? batch.length)
+        const batchUpdated = Number(result?.updated ?? 0)
+        created += batchCreated
+        updated += batchUpdated
+        saved += (batchCreated + batchUpdated) || batch.length
+        progress.done = saved
       }
     } catch (error) {
       progress.failed = true
-      if (created > 0) {
-        jsonText.value = JSON.stringify(items.slice(created), null, 2)
+      if (saved > 0) {
+        jsonText.value = JSON.stringify(items.slice(saved), null, 2)
       }
       const detail = errorDetail(error, `Không thêm được danh sách ${label}`)
       if (isRequestTimeout(error)) {
         ElMessage.error(
-          created > 0
-            ? `Đã xác nhận lưu ${created}/${items.length} ${label}. Lô đang gửi có thể đã được lưu dù hết thời gian chờ. Hãy kiểm tra danh sách trước khi lưu tiếp phần còn lại trong ô JSON.`
+          saved > 0
+            ? `Đã xác nhận lưu ${saved}/${items.length} ${label}. Lô đang gửi có thể đã được lưu dù hết thời gian chờ. Hãy kiểm tra danh sách trước khi lưu tiếp phần còn lại trong ô JSON.`
             : `Hết thời gian chờ. ${capitalize(label)} có thể đã được lưu — hãy kiểm tra danh sách trước khi gửi lại.`,
         )
-      } else if (created > 0) {
+      } else if (saved > 0) {
         ElMessage.error(
-          `Đã lưu ${created}/${items.length} ${label}. ${detail} Phần chưa lưu vẫn nằm trong ô JSON.`,
+          `Đã lưu ${saved}/${items.length} ${label}. ${detail} Phần chưa lưu vẫn nằm trong ô JSON.`,
         )
       } else {
         ElMessage.error(detail)
       }
-      if (created > 0 || isRequestTimeout(error)) {
+      if (saved > 0 || isRequestTimeout(error)) {
         await reload().catch(() => {})
       }
       return
@@ -80,7 +86,16 @@ export function useJsonBatchImport({ label }) {
       progress.active = false
     }
 
-    ElMessage.success(`Đã thêm ${created} ${label}`)
+    const parts = []
+    if (created > 0) parts.push(`thêm ${created}`)
+    if (updated > 0) parts.push(`cập nhật ${updated}`)
+    ElMessage.success(
+      parts.length > 1
+        ? `Đã ${parts.join(', ')} ${label}`
+        : parts.length === 1 && updated > 0
+          ? `Đã cập nhật ${updated} ${label}`
+          : `Đã thêm ${created || saved} ${label}`,
+    )
     dialogVisible.value = false
     try {
       await reload()
