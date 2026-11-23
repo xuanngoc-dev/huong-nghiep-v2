@@ -58,9 +58,32 @@ class ImportDayDuTests(unittest.TestCase):
             .distinct()
         ).all())
         self.assertEqual(theo_cong_thuc, {"HUCE_TSA_2026": "402_TSA", "HUCE_SPT_2026": "402_SPT"})
-        mau["quy_tac_xet_tuyen"]["chuong_trinh"].pop()
-        with self.assertRaisesRegex(DatsImportError, "chưa đồng bộ"):
+        mau["dats_tuyen_sinh"]["dats_chuong_trinh_dao_tao"].pop()
+        with self.assertRaisesRegex(DatsImportError, "Thiếu chương trình trong đề án"):
             validate_admission_payload(mau, "XDA", 2026)
+
+    def test_luu_diem_chi_tieu_va_chuong_trinh_doc_lap_nguoi_duyet_da_chot(self):
+        mau = json.loads((MAU.parent / "du_lieu_mau_da_sua.json").read_text(encoding="utf-8"))
+        mau["dats_tuyen_sinh"]["chi_tieu"] = 1
+        quy_tac = mau["quy_tac_xet_tuyen"]
+        quy_tac["chuong_trinh"].pop()
+        quy_tac["chuong_trinh"][0]["hoc_phi"].update(hoc_phi_tu=21000000, hoc_phi_den=20000000)
+        quy_tac["cong_thuc"][0]["thang_diem"] = 45
+        quy_tac["diem_chuan"] = [{
+            "ma_xet_tuyen": "MA-CU", "nam_tuyen_sinh": 2025, "diem_chuan": 31.5, "thang_diem": 30,
+        }]
+        with self.assertRaisesRegex(DatsImportError, "diem_chuan lớn hơn thang_diem"):
+            import_day_du(self.db, "XDA", 2026, mau)
+        self.db.rollback()
+        _, counts, ket_qua = import_approved_admission(self.db, mau, "XDA", 2026, 1)
+        self.db.commit()
+        self.assertEqual(counts["dats_chuong_trinh_dao_tao"], 44)
+        diem = self.db.scalars(select(M.XtDiemChuan).where(M.XtDiemChuan.ma_xet_tuyen == "MA-CU")).one()
+        self.assertEqual((float(diem.diem_chuan), float(diem.thang_diem), diem.nguon_du_lieu_url), (31.5, 30, None))
+        self.assertTrue(any("diem_chuan lớn hơn thang_diem" in msg for msg in ket_qua.canh_bao))
+        self.assertTrue(any("hoc_phi_den nhỏ hơn hoc_phi_tu" in msg for msg in ket_qua.canh_bao))
+        cong_thuc = self.db.scalars(select(M.XtCongThuc).where(M.XtCongThuc.ma_cong_thuc == "HUCE_THPT_2026")).one()
+        self.assertEqual(cong_thuc.thang_diem, 45)
 
     def test_cms_nhap_to_hop_rieng_giu_diem_chuan_ngoai_file(self):
         de_an = self.mau["dats_tuyen_sinh"]

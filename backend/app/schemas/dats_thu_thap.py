@@ -55,7 +55,7 @@ class SuaMucBanNhap(BaseModel):
 
 class CanCuDoiChieu(BaseModel):
     nguon_id: int = Field(ge=1)
-    ly_do: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=2000)]
+    ly_do: VanBan = ""
 
 
 class XacNhanDoiChieu(BaseModel):
@@ -100,9 +100,30 @@ class NguonThuThap(BaseModel):
     lua_chon: LuaChonNguon = "chua_chon"
 
 
+class VaiTroCanCu(BaseModel):
+    thanh_phan: str
+    vai_tro: str
+    trich_dan: str
+    don_vi_to_chuc: Literal["co_so_tuyen_sinh", "don_vi_khac"] | None = None
+
+
+class CanCuNamDiem(BaseModel):
+    nam_tuyen_sinh: int
+    vi_tri: str
+    trich_dan: str
+
+
 class DanChungThuThap(DanChungMoi):
     id: str
+    ai_chon_khi_mau_thuan: bool | None = None
     url_tai_lieu: str | None = None
+    phan_loai_ma_bo: Literal["cong_bo", "suy_luan"] | None = None
+    ly_do_suy_luan_ma_bo: str | None = None
+    vi_tri_cot: int | None = Field(default=None, ge=1)
+    tieu_de_cot: str | None = None
+    nam_o_diem: int | None = None
+    can_cu_nam: CanCuNamDiem | None = None
+    vai_tro_can_cu: list[VaiTroCanCu] | None = None
 
 
 class MucBanNhap(BaseModel):
@@ -123,10 +144,66 @@ class TomTatPhienBan(BaseModel):
     ten_nguoi_tao: str
 
 
+class DoiChieuDiemChuan(BaseModel):
+    mode_ai: bool = False
+    da_ra_soat: bool | None = None
+    so_o_nhan_dien: int
+    so_o_da_khop: int
+    so_vi_tri_chua_ro: int
+    can_doi_chieu: list[str]
+
+
+class DanChungKiemKe(BaseModel):
+    nguon_id: int
+    vi_tri: str
+    trich_dan: str
+    url_tai_lieu: str | None = None
+
+
+class CongThucDaKiemKe(BaseModel):
+    ten: str
+    pham_vi: str
+    ma_xet_tuyen: list[str] = Field(default_factory=list)
+    bieu_thuc: str
+    dieu_kien: str | None = None
+    thang_diem: str | None = None
+    dan_chung: list[DanChungKiemKe]
+    trang_thai: Literal["da_cau_truc", "da_ghi_mo_ta", "chua_ghi"]
+    duong_dan: list[str]
+    ly_do: str | None = None
+
+
+class DoiChieuCongThuc(BaseModel):
+    cong_thuc: list[CongThucDaKiemKe]
+    can_lam_ro: list[str] = Field(default_factory=list)
+
+
+class MucThieuTrongMaTran(BaseModel):
+    ma_xet_tuyen: str
+    noi_dung: str
+    dan_chung: list[DanChungKiemKe] = Field(default_factory=list)
+
+
+class DoiChieuMaTran(BaseModel):
+    da_kiem_ke: bool
+    so_ma_nhan_dien: int
+    so_ma_da_ghi: int
+    so_lien_ket_nhan_dien: int
+    so_lien_ket_da_ghi: int
+    chua_ghi: list[MucThieuTrongMaTran]
+    can_lam_ro: list[str] = Field(default_factory=list)
+
+
 class DoiChieuBanNhapPublic(BaseModel):
+    canh_bao_dan_chung: list[str] = Field(default_factory=list)
     nguon: list[dict] = Field(default_factory=list)
     xac_nhan: XacNhanDoiChieu = Field(default_factory=XacNhanDoiChieu)
     can_xac_nhan: dict[str, str] = Field(default_factory=dict)
+    muc_con_thieu: list[str] | None = None
+    trang_thai_ra_soat_ai: Literal["da_ra_soat", "chua_hoan_tat", "da_chinh_sua"] | None = None
+    diem_chuan: DoiChieuDiemChuan | None = None
+    cong_thuc: DoiChieuCongThuc | None = None
+    ma_tran: DoiChieuMaTran | None = None
 
 
 class BanNhapThuThapPublic(TomTatPhienBan):

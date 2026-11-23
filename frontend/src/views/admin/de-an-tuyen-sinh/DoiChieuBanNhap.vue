@@ -56,10 +56,26 @@
             </div>
             <p class="chu-thich">
               {{ danChung.vi_tri || 'Vị trí chưa xác định' }}
+              <span v-if="danChung.ai_chon_khi_mau_thuan"> · AI viện dẫn khi đối chiếu mâu thuẫn</span>
               <span v-if="nguonTheoId.get(danChung.nguon_id)?.ngay_hieu_luc"> · Hiệu lực {{ ngayVanBan(nguonTheoId.get(danChung.nguon_id).ngay_hieu_luc) }}</span>
             </p>
-            <p class="dan-chung__gia-tri">Giá trị theo nguồn · <strong>{{ hienGiaTri(danChung.gia_tri) }}</strong></p>
+            <p class="dan-chung__gia-tri">
+              <template v-if="danChung.phan_loai_ma_bo === 'suy_luan' || danChung.ly_do_suy_luan_ma_bo">Mã Bộ do AI suy luận</template>
+              <template v-else-if="danChung.phan_loai_ma_bo === 'cong_bo'">Mã Bộ được công bố</template>
+              <template v-else>Giá trị theo nguồn</template>
+              · <strong>{{ hienGiaTri(danChung.gia_tri) }}</strong>
+            </p>
             <blockquote v-if="danChung.trich_dan">{{ danChung.trich_dan }}</blockquote>
+            <p v-if="danChung.can_cu_nam" class="chu-thich">
+              Căn cứ cho năm {{ danChung.can_cu_nam.nam_tuyen_sinh }} · {{ danChung.can_cu_nam.vi_tri }}
+              <q>{{ danChung.can_cu_nam.trich_dan }}</q>
+            </p>
+            <p v-if="danChung.tieu_de_cot" class="chu-thich">Cột {{ danChung.vi_tri_cot }} · {{ danChung.tieu_de_cot }}</p>
+            <ul v-if="danChung.vai_tro_can_cu?.length">
+              <li v-for="(canCu, index) in danChung.vai_tro_can_cu" :key="index">
+                <strong>{{ tenVaiTro[canCu.vai_tro] || canCu.vai_tro }}</strong> · {{ canCu.trich_dan }}
+              </li>
+            </ul>
             <div v-if="danChung.lienKet.url" class="dan-chung__lien-ket">
               <a class="cell-link" :href="danChung.lienKet.url" target="_blank" rel="noopener noreferrer">{{ danChung.lienKet.nhan }}</a>
               <a v-if="danChung.lienKet.trangNguon" class="cell-link" :href="danChung.lienKet.trangNguon" target="_blank" rel="noopener noreferrer">Mở trang nguồn</a>
@@ -72,11 +88,8 @@
             <CustomFormItem class="form-grid__full" label="Giá trị chỉnh sửa (JSON)">
               <CustomInput v-model="bieuMau.giaTriJson" class="json-input" type="textarea" :autosize="{ minRows: 2, maxRows: 10 }" placeholder='Nhập giá trị JSON, ví dụ 95, "A00", null hoặc []' />
             </CustomFormItem>
-            <CustomFormItem class="form-grid__full" label="Ghi chú đối chiếu hoặc lý do sửa">
-              <CustomInput v-model="bieuMau.ghi_chu" type="textarea" :autosize="{ minRows: 2, maxRows: 6 }" placeholder="Nhập lý do sửa hoặc ghi chú nếu dữ liệu chưa công bố" maxlength="2000" show-word-limit />
-            </CustomFormItem>
-            <CustomFormItem class="form-grid__full">
-              <el-checkbox v-model="bieuMau.da_kiem_tra">Đã kiểm tra mục này</el-checkbox>
+            <CustomFormItem class="form-grid__full" label="Ghi chú đối chiếu (tùy chọn)">
+              <CustomInput v-model="bieuMau.ghi_chu" type="textarea" :autosize="{ minRows: 2, maxRows: 6 }" maxlength="2000" show-word-limit />
             </CustomFormItem>
             <div v-for="(danChung, index) in bieuMau.dan_chung_moi" :key="index" class="form-grid__full dan-chung__them">
               <div class="dan-chung__dau">
@@ -135,7 +148,7 @@ const kichThuoc = 12
 const duongDanChon = ref('')
 const khungNoiDung = ref(null)
 const loi = ref('')
-const bieuMau = reactive({ giaTriJson: '', ghi_chu: '', da_kiem_tra: false, dan_chung_ids: [], dan_chung_moi: [] })
+const bieuMau = reactive({ giaTriJson: '', ghi_chu: '', dan_chung_ids: [], dan_chung_moi: [] })
 
 const nguonTheoId = computed(() => new Map(props.nguon.map((nguon) => [nguon.id, nguon])))
 const nguonApDung = computed(() => props.nguon.filter((nguon) => nguon.chinh_thuc && nguon.phu_hop && nguon.lua_chon === 'su_dung'))
@@ -150,6 +163,7 @@ const mucLoc = computed(() => {
 })
 const mucTheoTrang = computed(() => mucLoc.value.slice((trang.value - 1) * kichThuoc, trang.value * kichThuoc))
 const mucChon = computed(() => props.cacMuc.find((muc) => muc.duong_dan === duongDanChon.value))
+const tenVaiTro = { xep_hang: 'Căn cứ xếp hạng', dieu_kien: 'Điều kiện dự tuyển', diem_cong: 'Điểm cộng', thay_mon: 'Thay điểm môn' }
 const cacDanChung = computed(() => (mucChon.value?.dan_chung || []).map((danChung) => ({
   ...danChung,
   lienKet: lienKetDanChung(danChung, nguonTheoId.value.get(danChung.nguon_id)),
@@ -158,7 +172,6 @@ const choSuaMuc = computed(() => props.coTheSua && mucChon.value && !mucChon.val
 const daNhapSua = computed(() => Boolean(choSuaMuc.value && (
   bieuMau.giaTriJson !== JSON.stringify(mucChon.value.giaTri, null, 2)
   || bieuMau.ghi_chu !== (mucChon.value.ghi_chu || '')
-  || bieuMau.da_kiem_tra !== Boolean(mucChon.value.da_kiem_tra)
   || !bangNhau(bieuMau.dan_chung_ids, mucChon.value.dan_chung_ids || [])
   || bieuMau.dan_chung_moi.length
 )))
@@ -181,7 +194,6 @@ function napBieuMau() {
   const sua = suaTheoDuongDan.value.get(muc.duong_dan)
   bieuMau.giaTriJson = JSON.stringify(Object.hasOwn(sua || {}, 'gia_tri') ? sua.gia_tri : muc.giaTri, null, 2) ?? ''
   bieuMau.ghi_chu = sua?.ghi_chu ?? muc.ghi_chu ?? ''
-  bieuMau.da_kiem_tra = sua?.da_kiem_tra ?? Boolean(muc.da_kiem_tra)
   bieuMau.dan_chung_ids = [...(sua?.dan_chung_ids || muc.dan_chung_ids || [])]
   bieuMau.dan_chung_moi = (sua?.dan_chung_moi || []).map((item) => ({ ...item }))
   loi.value = ''
@@ -192,8 +204,9 @@ function trangThaiMuc(muc) {
   if (suaTheoDuongDan.value.has(muc.duong_dan) || (muc === mucChon.value && daNhapSua.value)) return { nhan: 'Chưa lưu', loai: 'warning' }
   if (muc.mau_thuan) return { nhan: 'Mâu thuẫn', loai: 'danger' }
   if (muc.da_kiem_tra) return { nhan: 'Đã kiểm tra', loai: 'success' }
-  if (!muc.dan_chung_ids?.length && !muc.ghi_chu) return { nhan: 'Cần đối chiếu', loai: 'warning' }
-  return { nhan: 'Chưa kiểm tra', loai: 'info' }
+  return muc.dan_chung_ids?.length
+    ? { nhan: 'Có căn cứ đã chọn', loai: 'info' }
+    : { nhan: 'Chưa chọn căn cứ', loai: 'info' }
 }
 
 function giaTriHienTai(muc) {
@@ -251,10 +264,6 @@ function chuanBiLuu() {
   const voiGiaTriMoi = !bangNhau(giaTri, muc.giaTri)
   const doiCanCu = !bangNhau(bieuMau.dan_chung_ids, muc.dan_chung_ids || []) || bieuMau.dan_chung_moi.length > 0
   const ghiChu = bieuMau.ghi_chu.trim()
-  if ((voiGiaTriMoi || doiCanCu) && !ghiChu) {
-    loi.value = 'Nhập lý do khi thay đổi giá trị hoặc căn cứ.'
-    return false
-  }
   if (bieuMau.dan_chung_moi.some((item) => !item.nguon_id || !item.vi_tri.trim() || !item.trich_dan.trim())) {
     loi.value = 'Điền đủ tài liệu, vị trí và đoạn trích cho dẫn chứng bổ sung.'
     return false
@@ -268,10 +277,9 @@ function chuanBiLuu() {
       nguon_id: item.nguon_id, vi_tri: item.vi_tri.trim(), trich_dan: item.trich_dan.trim(), gia_tri: giaTri,
     })),
     ghi_chu: ghiChu,
-    da_kiem_tra: bieuMau.da_kiem_tra,
   }
   loi.value = ''
-  thayDoi.value = voiGiaTriMoi || doiCanCu || ghiChu !== (muc.ghi_chu || '') || bieuMau.da_kiem_tra !== Boolean(muc.da_kiem_tra)
+  thayDoi.value = voiGiaTriMoi || doiCanCu || ghiChu !== (muc.ghi_chu || '')
     ? [...phanConLai, duLieu]
     : phanConLai
   return true

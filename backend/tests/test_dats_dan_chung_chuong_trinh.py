@@ -1,62 +1,45 @@
-from app.services.dats_dan_chung_chuong_trinh import bo_sung_dan_chung_chuong_trinh
-from app.services.thu_thap_tuyen_sinh_ai import _TaiLieu
+from unittest.mock import patch
+
+from app.services import thu_thap_tuyen_sinh_ai as ai
 
 
-def _ban_nhap(ma="IT1", ten="Khoa học máy tính"):
-    return {
-        "dats_tuyen_sinh": {"dats_chuong_trinh_dao_tao": [{"ma_xet_tuyen": ma, "ten_chuong_trinh": ten}]},
-        "quy_tac_xet_tuyen": {"chuong_trinh": [{"ma_xet_tuyen": ma, "ma_chuong_trinh": ma, "ten_chuong_trinh": ten}]},
-    }
+def test_dinh_dang_bang_truong_tu_dat_duoc_chuyen_cho_ai():
+    parser = ai._TrangWeb()
+    parser.feed("<article><h2>Hướng tiếp cận Omega</h2><table><tr><td rowspan='2'>Ngả</td>"
+                "<td colspan='2'>Chặng</td></tr><tr><td>α</td><td>β</td></tr>"
+                "<tr><td>M1</td><td>ở ngưỡng</td><td>ưu tiên</td></tr></table></article>")
+    parser.close()
+    (muc, bang), = [(m, b) for m, b in parser.doan if " · Bảng " in m]
+    assert "Omega" in muc and "| M1 | ở ngưỡng | ưu tiên |" in bang
+    assert "rowspan=2" in bang and "colspan=2" in bang
 
 
-def test_ocr_gan_dan_chung_cung_dong_va_doi_chieu_ma_con_thieu():
-    url_anh = "https://example.edu.vn/bang-tuyen-sinh.png"
-    doc = _TaiLieu("https://example.edu.vn/tuyen-sinh", "Tuyển sinh đại học", [
-        ("Nội dung", "Theo đó, Đại học tuyển sinh 14.668 chỉ tiêu cho 85 ngành/chương trình đào tạo với 05 phương thức xét tuyển."),
-        ("Bảng ảnh 1", "STT | Tên chương trình | Mã xét tuyển\n1 | Khoa học máy tính | IT1\n2 | Kỹ thuật dữ liệu | IT2"),
-    ], [], url_dan_chung={"Bảng ảnh 1": url_anh})
-
-    muc, doi_chieu = bo_sung_dan_chung_chuong_trinh(_ban_nhap(), 3, doc)
-
-    assert [item["duong_dan"] for item in muc] == [
-        "/dats_tuyen_sinh/dats_chuong_trinh_dao_tao/0/ma_xet_tuyen",
-        "/dats_tuyen_sinh/dats_chuong_trinh_dao_tao/0/ten_chuong_trinh",
-        "/quy_tac_xet_tuyen/chuong_trinh/0/ma_xet_tuyen",
-        "/quy_tac_xet_tuyen/chuong_trinh/0/ten_chuong_trinh",
-        "/quy_tac_xet_tuyen/chuong_trinh/0/ma_chuong_trinh",
-    ]
-    assert all(item["dan_chung"][0]["trich_dan"] == "1 | Khoa học máy tính | IT1" for item in muc)
-    assert [item["tong_cong_bo"] for item in doi_chieu] == [85, None, None]
-    assert {ma for item in doi_chieu for ma in item["cac_ma"]} == {"IT1", "IT2"}
+def test_bang_khong_tu_tao_chuong_trinh_va_dan_chung_khi_ai_de_trong():
+    url = "https://example.edu.vn/cam-nang"
+    title = "Trường Mẫu tuyển sinh năm 2026."
+    doc = ai._TaiLieu(url, title, [("Bài", title), ("Bảng", "Tên chương trình | Mã xét tuyển\nOmega | M1")], [])
+    nguon = {"id": 1, "url": url, "chinh_thuc": True, "phu_hop": True, "nam_ap_dung": 2026}
+    data = {"du_lieu": {"thong_tin_import": {}, "dats_tuyen_sinh": {"nguon_du_lieu_url": url}, "quy_tac_xet_tuyen": {}},
+            "muc": [], "doi_chieu_chuong_trinh": [], "ghi_chu": ["Bảng chỉ dùng cho đợt tương lai."],
+            "nguon_xac_minh": [{"nguon_id": 1, "dung_truong_co_so": True, "nam_ap_dung": 2026,
+                                "vi_tri": "Bài", "trich_dan": title}]}
+    with patch.object(ai, "_doc_tai_lieu", return_value=doc), patch.object(ai, "_openai", return_value=(data, [])):
+        result = ai.extract_draft({"ten_truong": "Trường Mẫu"}, 2026, [nguon])
+    assert result["doi_chieu_chuong_trinh"] == [] and not result["muc"]
+    assert not result["du_lieu"]["dats_tuyen_sinh"].get("dats_chuong_trinh_dao_tao")
 
 
-def test_khong_ghep_tien_to_ma_hoac_ten_khac_dong():
-    doc = _TaiLieu("https://example.edu.vn/tuyen-sinh", "Tuyển sinh", [
-        ("Nội dung", "1 | Khoa học máy tính | IT10\n2 | Khoa học máy tính nâng cao | IT1\n3 | IT1\nKhoa học máy tính\n4 IT1 Khoa học máy tính nâng cao"),
-        ("Bảng", "Tên chương trình | Mã xét tuyển | Mã ngành\nKhoa học máy tính | IT10 | IT1"),
-        ("Phụ lục đợt 2", "1 | Khoa học máy tính | IT1"),
-    ], [])
-
-    assert bo_sung_dan_chung_chuong_trinh(_ban_nhap(), 3, doc) == ([], [])
-
-
-def test_chi_lay_tong_toan_truong_tu_noi_dung_goc_ro_rang():
-    doc = _TaiLieu("https://example.edu.vn/tuyen-sinh", "Tuyển sinh", [
-        ("Nội dung", "Năm 2026, trường tuyển sinh 95 chỉ tiêu.\n1 Khoa học máy tính IT1"),
-        ("Bảng ảnh 1", "Tổng số 25 chương trình."),
-    ], [], url_dan_chung={"Bảng ảnh 1": "https://example.edu.vn/bang.png"})
-
-    muc, doi_chieu = bo_sung_dan_chung_chuong_trinh(_ban_nhap(), 3, doc)
-
-    assert len(muc) == 5
-    assert not doi_chieu
-
-
-def test_ma_o_dung_cot_giu_duoc_khi_ten_chua_khop():
-    doc = _TaiLieu("https://example.edu.vn/tuyen-sinh", "Tuyển sinh", [
-        ("Bảng", "Tên chương trình | Mã xét tuyển\nKhoa học máy tính nâng cao | IT1"),
-    ], [])
-
-    muc, _ = bo_sung_dan_chung_chuong_trinh(_ban_nhap(), 3, doc)
-
-    assert [item["duong_dan"].rsplit("/", 1)[-1] for item in muc] == ["ma_xet_tuyen", "ma_xet_tuyen", "ma_chuong_trinh"]
+def test_ai_doc_cong_thuc_chu_la_o_cuoi_nguon():
+    path = "/quy_tac_xet_tuyen/cong_thuc/0/he_so_nhan"
+    text = "Đại lượng Ω được xác lập bằng hai lần Z."
+    doc = ai._TaiLieu("https://example.edu.vn/the-le", "", [("I", "x" * 110000), ("II", text)], [])
+    du_lieu = {"quy_tac_xet_tuyen": {"cong_thuc": [{"ma_cong_thuc": "Ω", "he_so_nhan": 2}]}}
+    def doc_lai(_prompt, payload, _tokens):
+        assert payload["pham_vi_cong_thuc"][0]["ma_cong_thuc"] == "Ω"
+        if any(("II", text) in n["noi_dung"] for n in payload["tai_lieu"]):
+            return {"dan_chung": [{"duong_dan": path, "nguon_id": 1, "vi_tri": "II", "trich_dan": text}]}, []
+        return {"dan_chung": []}, []
+    with patch.object(ai, "_openai", side_effect=doc_lai) as model:
+        muc = ai._bo_sung_dan_chung_cong_thuc(du_lieu, [], {1: doc}, [])
+    assert model.call_count > 1
+    assert muc[0]["dan_chung"][0]["gia_tri"] == 2

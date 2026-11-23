@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 from collections.abc import Callable
+from dataclasses import dataclass
 from urllib.parse import quote
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Response
@@ -45,9 +46,15 @@ from app.schemas.dats_thu_thap import (
     TruongThuThapPublic,
 )
 from app.services import thu_thap_tuyen_sinh_ai as ai
-from app.services.dats_ban_nhap_thu_thap import lap_muc_ban_nhap, loi_dan_chung, sua_muc_ban_nhap
-from app.services.dats_doi_chieu_chuong_trinh import ghi_chu_doi_chieu_chuong_trinh, kiem_tra_doi_chieu, nguon_doi_chieu
+from app.services.dats_ban_nhap_thu_thap import canh_bao_dan_chung, lap_muc_ban_nhap, sua_muc_ban_nhap
+from app.services.dats_danh_muc_phuong_thuc import MA_PHUONG_THUC_BO_THEO_NAM
+from app.services.dats_doi_chieu_diem_chuan import bao_cao_diem_ai, gop_ra_soat_diem
+from app.services.dats_do_phu_thu_thap import muc_can_tim_bo_sung
 from app.services.dats_hop_dong_thu_thap import hoan_thien_cau_truc_cms, kiem_tra_cau_truc_cms
+from app.services.dats_lien_ket_chuong_trinh import doi_chieu_lien_ket_ai
+from app.services.dats_kiem_ke_cong_thuc import gop_kiem_ke_cong_thuc
+from app.services.dats_ma_tran_thu_thap import bao_cao_ma_tran, chieu_danh_muc, gop_ma_tran
+from app.services.dats_projection_cong_thuc import chieu_cong_thuc_vao_ban_nhap, doi_chieu_sau_khi_noi_cong_thuc
 from app.services.dats_import import DatsImportError
 from app.services.thu_thap_tuyen_sinh_import import import_approved_admission, validate_admission_payload
 
@@ -198,22 +205,22 @@ def _tom_tat(
     )
 
 
+def _loi_du_lieu(du_lieu: dict, ma_truong: str, nam: int) -> list[str]:
+    loi = kiem_tra_cau_truc_cms(du_lieu)
+    try:
+        validate_admission_payload(du_lieu, ma_truong, nam)
+    except DatsImportError as exc:
+        loi.extend(exc.loi)
+    return list(dict.fromkeys(loi))
+
+
 def _kiem_tra_ban_nhap(phien: DatsPhienThuThap, ban: DatsBanNhapThuThap) -> tuple[list[str], DoiChieuBanNhapPublic]:
     doi_chieu = ban.doi_chieu or {}
     if phien.trang_thai == DA_DUYET and phien.phien_ban == ban.phien_ban:
-        return [], DoiChieuBanNhapPublic(**doi_chieu)
-    loi = kiem_tra_cau_truc_cms(ban.du_lieu)
-    try:
-        validate_admission_payload(ban.du_lieu, phien.ma_truong, phien.nam_tuyen_sinh)
-    except DatsImportError as exc:
-        loi.extend(exc.loi)
-    if not loi:
-        loi.extend(loi_dan_chung(ban.du_lieu, ban.muc, ban.nguon, phien.nam_tuyen_sinh))
-    loi_doi_chieu, can_xac_nhan = kiem_tra_doi_chieu(ban.du_lieu, ban.nguon, phien.nam_tuyen_sinh, doi_chieu)
-    ly_do = doi_chieu.get("xac_nhan", {})
-    loi.extend(loi_doi_chieu)
-    loi.extend(yeu_cau for khoa, yeu_cau in can_xac_nhan.items() if not ly_do.get(khoa))
-    return list(dict.fromkeys(loi)), DoiChieuBanNhapPublic(**doi_chieu, can_xac_nhan=can_xac_nhan)
+        return [], DoiChieuBanNhapPublic(**{**doi_chieu, "canh_bao_dan_chung": canh_bao_dan_chung(ban.du_lieu, ban.muc)})
+    loi = _loi_du_lieu(ban.du_lieu, phien.ma_truong, phien.nam_tuyen_sinh)
+    doi_chieu = {**doi_chieu, "canh_bao_dan_chung": canh_bao_dan_chung(ban.du_lieu, ban.muc) if not loi else []}
+    return loi, DoiChieuBanNhapPublic(**doi_chieu)
 
 
 def _chi_tiet(db: Session, phien_id: int, phien_ban: int | None = None) -> PhienThuThapDetail:
@@ -263,7 +270,10 @@ def nhan_dien_truong(ma_truong: str = Query(min_length=1, max_length=20), db: Se
 
 
 @router.post("/phien", response_model=PhienThuThapDetail, status_code=201)
-def tao_phien(yeu_cau: PhienThuThapCreate, db: Session = Depends(get_db), user: NguoiDung = Depends(get_admin_user)):
+def tao_phien(
+    yeu_cau: PhienThuThapCreate, db: Session = Depends(get_db), user: NguoiDung = Depends(get_admin_user),
+    tac_vu: BackgroundTasks = None, tu_dong: bool = False,
+):
     """Tạo phiên thu thập cho một trường và một năm."""
     truong = _tim_truong(db, yeu_cau.ma_truong)
     luc = bay_gio()
@@ -275,6 +285,9 @@ def tao_phien(yeu_cau: PhienThuThapCreate, db: Session = Depends(get_db), user: 
     db.flush()
     phien_id = phien.id
     _ghi_nhat_ky(db, phien, (user.id, user.ho_ten), "tao_phien")
+    if tu_dong:
+        db.flush()
+        return tao_ban_nhap(phien_id, db, user, tac_vu, tu_dong=True)
     db.commit()
     return _chi_tiet(db, phien_id)
 
@@ -327,19 +340,29 @@ def xoa_phien(phien_id: int, db: Session = Depends(get_db)) -> PhienThuThapDelet
     return PhienThuThapDeleteResult(deleted=1)
 
 
-def _cap_nhat_nguon(ds: list[dict], ket_qua: list[dict]) -> list[dict]:
-    theo_url = {i["url"]: i for i in ds}
+def _cap_nhat_nguon(ds: list[dict], ket_qua: list[dict], nam: int, *, tu_tim_kiem: bool = False) -> list[dict]:
+    danh_sach = list(ds)
+    vi_tri_theo_url = {}
+    for vi_tri, nguon in enumerate(ds):
+        url = nguon["url"]
+        vi_tri_theo_url.setdefault(ai._url_so_sanh(url) or url, vi_tri)
     id_moi = max((n["id"] for n in ds), default=0) + 1
     for n in ket_qua:
-        cu = theo_url.get(n["url"])
-        if cu is None:
-            cu = {"id": id_moi, "lua_chon": "chua_chon"}
+        url = n["url"]
+        vi_tri = vi_tri_theo_url.setdefault(ai._url_so_sanh(url) or url, len(danh_sach))
+        if vi_tri == len(danh_sach):
+            danh_sach.append(NguonThuThap.model_validate({**n, "id": id_moi}).model_dump())
             id_moi += 1
-        moi = {**cu, **n}
-        if moi["lua_chon"] == "su_dung" and not (moi.get("phu_hop") and moi.get("chinh_thuc")):
+            continue
+        cu = danh_sach[vi_tri]
+        # Kết quả tìm kiếm có thể thiếu thông tin đã xác minh khi quản trị viên thêm nguồn.
+        if tu_tim_kiem and _nguon_hop_le(cu, nam):
+            continue
+        moi = NguonThuThap.model_validate({**cu, **n, "url": cu["url"]}).model_dump()
+        if moi["lua_chon"] == "su_dung" and not _nguon_hop_le(moi, nam):
             moi["lua_chon"] = "chua_chon"
-        theo_url[n["url"]] = NguonThuThap.model_validate(moi).model_dump()
-    return list(theo_url.values())
+        danh_sach[vi_tri] = moi
+    return danh_sach
 
 
 def _chuan_bi_ai(db: Session, phien_id: int, user: NguoiDung, *, khoa: bool = False):
@@ -370,7 +393,7 @@ def tim_nguon(
     except ai.AdmissionAIError as exc:
         raise HTTPException(502, str(exc)) from exc
     phien = _sau_khi_goi_ai(db, phien_id, sua_lan)
-    phien.nguon = _cap_nhat_nguon(phien.nguon, ds)
+    phien.nguon = _cap_nhat_nguon(phien.nguon, ds, nam, tu_tim_kiem=True)
     phien.canh_bao_nguon = ghi_chu
     _ghi_nhat_ky(db, phien, actor, "tim_nguon", urls=[n["url"] for n in ds])
     db.commit()
@@ -388,7 +411,7 @@ def them_nguon(phien_id: int, yeu_cau: ThemNguon, db: Session = Depends(get_db),
     except ai.AdmissionAIError as exc:
         raise HTTPException(400, str(exc)) from exc
     phien = _sau_khi_goi_ai(db, phien_id, sua_lan)
-    phien.nguon = _cap_nhat_nguon(phien.nguon, [nguon])
+    phien.nguon = _cap_nhat_nguon(phien.nguon, [nguon], nam)
     _ghi_nhat_ky(db, phien, actor, "them_nguon", url=nguon["url"])
     db.commit()
     return _chi_tiet(db, phien_id)
@@ -442,32 +465,75 @@ def chon_nhieu_nguon(
 
 
 def _danh_muc_phuong_thuc(db: Session, nam: int) -> list[dict]:
+    if nam in MA_PHUONG_THUC_BO_THEO_NAM:
+        return [
+            {"ma_phuong_thuc": ma, "ten_phuong_thuc": ten}
+            for ma, ten in MA_PHUONG_THUC_BO_THEO_NAM[nam].items()
+        ]
     bang = DmPhuongThucTuyenSinh
     cau_lenh = select(
         bang.ma_phuong_thuc, bang.ten_phuong_thuc, bang.giai_thich, bang.truong_hop_cu_the, bang.luu_y,
     ).where(
         bang.trang_thai == 1,
+        or_(bang.pham_vi_ap_dung.is_(None), func.lower(func.trim(bang.pham_vi_ap_dung)).in_((
+            "", "chung", "danh_muc_chung", "toan_quoc", "toàn quốc", "bo", "bộ", "bo_gddt", "bộ gd&đt",
+        ))),
+        or_(bang.nam_ap_dung_tu.is_not(None), bang.nam_ap_dung_den.is_not(None)),
         or_(bang.nam_ap_dung_tu.is_(None), bang.nam_ap_dung_tu <= nam),
         or_(bang.nam_ap_dung_den.is_(None), bang.nam_ap_dung_den >= nam),
     ).order_by(bang.ma_phuong_thuc)
     return [dict(dong) for dong in db.execute(cau_lenh).mappings()]
 
 
-def _trich_xuat_ban_nhap(
-    truong: dict, nam: int, ds: list[dict], previous: dict | None, danh_muc_phuong_thuc: list[dict],
-    bao_tien_do: Callable[[str, int | None, int | None], None],
-):
-    try:
-        trich_xuat = ai.extract_draft(
-            truong, nam, ds, previous, bao_tien_do=bao_tien_do, danh_muc_phuong_thuc=danh_muc_phuong_thuc,
-        )
-    except ai.LoiDocNguon as exc:
-        raise HTTPException(502, {"message": str(exc), "loi": exc.loi, "nguon_ids": exc.nguon_ids}) from exc
-    except ai.AdmissionAIError as exc:
-        raise HTTPException(502, str(exc)) from exc
+@dataclass
+class _NoiDungBanNhap:
+    du_lieu: dict
+    muc: list[dict]
+    ghi_chu: list[str]
+    doi_chieu: dict
+    nguon_ids: list[int]
+    loi_nguon: dict[int, str]
+
+    def ra_soat(self, truong, nam, nguon, muc_cu, bao_tien_do):
+        da_dung = [n for n in nguon if n["id"] in self.nguon_ids]
+        loi = []
+        for thong_bao in _loi_du_lieu(self.du_lieu, truong["ma_truong"], nam):
+            path = thong_bao.partition(":")[0]
+            scope = ai._pham_vi_muc(self.du_lieu, path) if path.startswith("/") and path != "/" else {}
+            ma = scope.get("ma_xet_tuyen") or scope.get("ma_cong_thuc")
+            loi.append(f"{ma} — {thong_bao}" if ma else thong_bao)
+        quan_sat = {
+            "ghi_chu": self.ghi_chu,
+            "bang_chuong_trinh": self.doi_chieu.get("nguon", []),
+            "diem_chuan": self.doi_chieu.get("diem_chuan"),
+            "loi_cau_truc": loi,
+            "nguon_chua_doc_duoc": [{"id": n["id"], "url": n["url"], "loi": self.loi_nguon[n["id"]]}
+                                    for n in nguon if n["id"] in self.loi_nguon],
+        }
+        ma_tran = self.doi_chieu.get("ma_tran") or {}
+        cong_thuc = self.doi_chieu.get("cong_thuc") or {}
+        chua_ghi = [f"{r['ma_xet_tuyen']} — {r['noi_dung']}" for r in ma_tran.get("chua_ghi", [])]
+        chua_ghi.extend(f"{r['pham_vi']} · {r['ten']} — {r.get('ly_do') or 'Chưa ghi được công thức vào bản nháp'}"
+                        for r in cong_thuc.get("cong_thuc", []) if r["trang_thai"] == "chua_ghi")
+        chua_ghi.extend(ma_tran.get("can_lam_ro", []))
+        chua_ghi.extend(cong_thuc.get("can_lam_ro", []))
+        quan_sat["du_kien_nguon_chua_ghi"] = chua_ghi
+        try:
+            muc_moi = muc_can_tim_bo_sung(truong, nam, self.muc, da_dung, quan_sat, muc_cu, bao_tien_do)
+        except ai.AdmissionAIError as exc:
+            self.ghi_chu.append(f"AI chưa hoàn tất rà soát bản nháp. {exc}")
+            con_thieu = list(dict.fromkeys([*muc_cu, *chua_ghi, *loi]))
+            self.doi_chieu.update(muc_con_thieu=con_thieu or None, trang_thai_ra_soat_ai="chua_hoan_tat")
+            return con_thieu
+        muc_moi = list(dict.fromkeys([*muc_moi, *chua_ghi, *loi]))
+        self.doi_chieu.update(muc_con_thieu=muc_moi, trang_thai_ra_soat_ai="da_ra_soat")
+        return muc_moi
+
+
+def _lap_ban_nhap(trich_xuat: dict, truong: dict, nam: int, ds: list[dict]) -> _NoiDungBanNhap:
     ket_qua = trich_xuat["du_lieu"]
     if not isinstance(ket_qua.get("dats_tuyen_sinh"), dict) or not isinstance(ket_qua.get("quy_tac_xet_tuyen"), dict):
-        raise HTTPException(502, "AI chưa trả đủ hai khối dữ liệu đề án và quy tắc xét tuyển.")
+        raise ai.AdmissionAIError("AI chưa trả đủ hai khối dữ liệu đề án và quy tắc xét tuyển.")
     du_lieu = hoan_thien_cau_truc_cms({
         "thong_tin_import": {"ma_truong": truong["ma_truong"], "nam_tuyen_sinh": nam, "xu_ly_khi_da_ton_tai": "tu_choi"},
         "dats_tuyen_sinh": {**ket_qua["dats_tuyen_sinh"], "trang_thai": "nhap", "trang_thai_xet_tuyen": 1},
@@ -478,8 +544,120 @@ def _trich_xuat_ban_nhap(
     da_dung = [n for n in ds if n["id"] in id_da_dung]
     muc = lap_muc_ban_nhap(du_lieu, trich_xuat["muc"], da_dung, nam)
     doi_chieu = {"nguon": trich_xuat.get("doi_chieu_chuong_trinh", []), "xac_nhan": {}}
-    ghi_chu = [*ghi_chu_doi_chieu_chuong_trinh(du_lieu, doi_chieu, da_dung, nam), *trich_xuat["ghi_chu"]]
-    return du_lieu, muc, ghi_chu, doi_chieu, nguon_ids, trich_xuat.get("loi_nguon", {})
+    if "ma_tran_goc" in trich_xuat:
+        doi_chieu["ma_tran"] = bao_cao_ma_tran(trich_xuat)
+        doi_chieu["ma_tran_goc"] = trich_xuat["ma_tran_goc"]
+    if "cong_thuc_da_doi_chieu" in trich_xuat:
+        doi_chieu["cong_thuc"] = trich_xuat["cong_thuc_da_doi_chieu"]
+    if ra_soat := trich_xuat.get("ra_soat_diem_chuan"):
+        doi_chieu["ra_soat_diem_chuan"] = ra_soat
+        doi_chieu["diem_chuan"] = bao_cao_diem_ai(ra_soat, du_lieu, muc)
+    ghi_chu = list(trich_xuat["ghi_chu"])
+    return _NoiDungBanNhap(du_lieu, muc, ghi_chu, doi_chieu, nguon_ids, trich_xuat.get("loi_nguon", {}))
+
+
+def _nguon_html(nguon: dict) -> bool:
+    url = ai._url_cong_khai(nguon["url"])
+    return not ai._la_tep_tim_nguon(url)
+
+
+def _chon_nguon_tu_dong(nguon: list[dict], ket_qua: list[dict], nam: int, giu_chua_chon: set[int]) -> list[dict]:
+    danh_sach = _cap_nhat_nguon(nguon, ket_qua, nam, tu_tim_kiem=True)
+    return [
+        {**n, "lua_chon": "su_dung"}
+        if n["lua_chon"] == "chua_chon" and n["id"] not in giu_chua_chon and _nguon_hop_le(n, nam) and _nguon_html(n)
+        else n for n in danh_sach
+    ]
+
+
+def _tim_bo_sung_ban_nhap(
+    truong: dict, nam: int, nguon: list[dict], ban: _NoiDungBanNhap, ket_qua_cu: dict, phan_thieu: list[str],
+    trich_xuat: Callable, bao_tien_do: Callable, luu_nguon: Callable, giu_chua_chon: set[int], *, doc_lai=False,
+):
+    bao_tien_do("doc_lai_nguon" if doc_lai else "tim_bo_sung")
+    canh_bao = []
+    try:
+        if doc_lai:
+            chon = [n for n in nguon if n["lua_chon"] == "su_dung" and _nguon_hop_le(n, nam) and _nguon_html(n)]
+            da_doc = [n for n in chon if n["id"] in ban.nguon_ids]
+            ids = set(ban.loi_nguon)
+            for row in (ban.doi_chieu.get("ma_tran") or {}).get("chua_ghi", []):
+                ids.update(dc["nguon_id"] for dc in row["dan_chung"])
+            for row in (ban.doi_chieu.get("cong_thuc") or {}).get("cong_thuc", []):
+                if row["trang_thai"] == "chua_ghi":
+                    ids.update(dc["nguon_id"] for dc in row["dan_chung"])
+            ids.update(r["nguon_id"] for r in (ket_qua_cu.get("kiem_ke_cong_thuc") or {}).get("phan_nguon", [])
+                       if not r["da_kiem_ke"] or r["can_lam_ro"])
+            ids.update(int(i) for i in (ket_qua_cu.get("ma_tran_goc") or {}).get("loi_theo_nguon", {}))
+            if phan_thieu and da_doc:
+                try:
+                    ids.update(ai.chon_nguon_doc_lai(truong, nam, phan_thieu, da_doc, ban.ghi_chu))
+                except ai.AdmissionAIError as exc:
+                    canh_bao.append(f"AI chưa chọn được trang cần đọc lại. {exc}")
+            bo_sung = [n for n in chon if n["id"] in ids]
+        else:
+            tim_duoc, canh_bao = ai.search_missing_sources(truong, nam, phan_thieu, [n["url"] for n in nguon])
+            so_nguon_cu = len(nguon)
+            nguon = _chon_nguon_tu_dong(nguon, tim_duoc, nam, giu_chua_chon)
+            luu_nguon(nguon, canh_bao)
+            bo_sung = [n for n in nguon[so_nguon_cu:] if n["lua_chon"] == "su_dung"]
+            if not bo_sung:
+                canh_bao.append("Chưa tìm thấy trang HTML chính thức mới cho các mục còn thiếu.")
+        if not bo_sung:
+            return None, nguon, canh_bao
+        if not any(_nguon_nam_hien_tai(n, nam) for n in bo_sung):
+            goc = next((n for n in nguon if n["id"] in ban.nguon_ids and _nguon_nam_hien_tai(n, nam)), None)
+            if not goc:
+                return None, nguon, [*canh_bao, "Thiếu nguồn đã xác minh đúng năm để đối chiếu điểm chuẩn lịch sử."]
+            bo_sung = [goc, *bo_sung]
+        def tham_chieu(khoi, ten, *khoa):
+            dong = khoi.get(ten)
+            if not isinstance(dong, list):
+                return []
+            return [{k: item.get(k) for k in khoa} for item in dong if isinstance(item, dict)]
+
+        quy_tac = ban.du_lieu["quy_tac_xet_tuyen"]
+        goi_y = {
+            "muc_can_bo_sung": phan_thieu,
+            "muc_diem_can_lam_ro": [
+                {**q, "stt": i} for i, q in enumerate(ket_qua_cu.get("ra_soat_diem_chuan", {}).get("can_lam_ro", []), 1)
+            ],
+            "chuong_trinh_da_doc": tham_chieu(quy_tac, "chuong_trinh", "ma_xet_tuyen", "ma_chuong_trinh", "ten_chuong_trinh", "ma_co_so"),
+            "cong_thuc_da_doc": tham_chieu(quy_tac, "cong_thuc", "ma_cong_thuc", "ten_cong_thuc", "ma_phuong_thuc_cua_bo"),
+            "co_so_da_doc": tham_chieu(quy_tac, "co_so", "ma_co_so", "ten_co_so", "dia_chi"),
+            "tru_so_da_doc": tham_chieu(ban.du_lieu["dats_tuyen_sinh"], "dats_tru_so", "id", "ten_co_so", "dia_chi"),
+        }
+        them = trich_xuat(bo_sung, goi_y)
+        du_lieu, muc, doi_chieu = ai._gop_ket_qua([ket_qua_cu, them], [])
+        # Hai kết quả đã được kiểm tra khi trích và mỗi kết quả có thể gồm nhiều phần tài liệu.
+        ghi_chu = list(dict.fromkeys([*ket_qua_cu.get("ghi_chu", []), *them.get("ghi_chu", [])]))
+        ids = list(dict.fromkeys([*ban.nguon_ids, *them.get("nguon_ids", [n["id"] for n in bo_sung])]))
+        # Trang đọc lại có thể trả nguyên văn cùng hàng và cùng dẫn chứng.
+        def duy_nhat(dong):
+            da_gap = {}
+            for item in dong:
+                da_gap.setdefault(json.dumps(item, ensure_ascii=False, sort_keys=True), item)
+            return list(da_gap.values())
+
+        muc = duy_nhat(muc)
+        ai.doi_chieu_mau_thuan_ai(truong, nam, du_lieu, muc, [n for n in nguon if n["id"] in ids], bao_tien_do)
+        loi = {**ban.loi_nguon, **them.get("loi_nguon", {})}
+        tong_hop = {
+            "du_lieu": du_lieu, "muc": muc, "doi_chieu_chuong_trinh": duy_nhat(doi_chieu),
+            "nguon_ids": ids, "loi_nguon": {i: v for i, v in loi.items() if i not in ids}, "ghi_chu": ghi_chu,
+        }
+        tong_hop["ra_soat_diem_chuan"] = gop_ra_soat_diem(
+            ket_qua_cu.get("ra_soat_diem_chuan"), them.get("ra_soat_diem_chuan"),
+        )
+        if "ma_tran_goc" in ket_qua_cu or "ma_tran_goc" in them:
+            tong_hop["ma_tran_goc"] = gop_ma_tran(ket_qua_cu.get("ma_tran_goc"), them.get("ma_tran_goc"))
+        if "kiem_ke_cong_thuc" in ket_qua_cu or "kiem_ke_cong_thuc" in them:
+            tong_hop["kiem_ke_cong_thuc"] = gop_kiem_ke_cong_thuc(ket_qua_cu.get("kiem_ke_cong_thuc"), them.get("kiem_ke_cong_thuc"))
+        return tong_hop, nguon, canh_bao
+    except ai.AdmissionAIError as exc:
+        nhan = "đọc lại nguồn" if doc_lai else "tìm bù"
+        canh_bao.append(f"Chưa hoàn tất lượt {nhan}. {exc}")
+        return None, nguon, canh_bao
 
 
 def _cung_luot_tao(phien: DatsPhienThuThap | None, sua_lan: int) -> bool:
@@ -520,34 +698,164 @@ def _mo_khoa_tao_nhap_sau_loi(
 def _xu_ly_tao_ban_nhap(
     db: Session, phien_id: int, sua_lan: int, actor: tuple[int, str], truong: dict, nam: int,
     ds: list[dict], previous: dict | None, nguon_luu: list[dict], danh_muc_phuong_thuc: list[dict],
+    tu_dong: bool, giu_chua_chon: set[int],
 ) -> bool:
+    bo_nho = ai.BoNhoNguonThuThap() if tu_dong else None
+
     def bao_tien_do(buoc: str, da_xu_ly: int | None = None, tong: int | None = None) -> None:
         phien = _phien_cua_luot_tao(db, phien_id, sua_lan)
         phien.tien_do_tao_ban_nhap = {"buoc": buoc, "da_xu_ly": da_xu_ly, "tong": tong}
         db.commit()
 
-    try:
-        bao_tien_do("doc_nguon", 0, len(ds))
-        du_lieu, muc, ghi_chu, doi_chieu, nguon_ids, loi_nguon = _trich_xuat_ban_nhap(
-            truong, nam, ds, previous, danh_muc_phuong_thuc, bao_tien_do,
+    def trich_xuat(cac_nguon, goi_y):
+        nam_lich_su = {
+            n["nam_ap_dung"] for n in cac_nguon
+            if n.get("chi_diem_lich_su") and type(n.get("nam_ap_dung")) is int and n["nam_ap_dung"] < nam
+        }
+        # Trang đề án có thể đăng lại điểm của hai mùa trước ngay trong cùng bảng.
+        nam_lich_su.update(range(max(1990, nam - 2), nam))
+        with Session(db.get_bind()) as db_danh_muc:
+            danh_muc_lich_su = {nam_cu: _danh_muc_phuong_thuc(db_danh_muc, nam_cu) for nam_cu in sorted(nam_lich_su)}
+        return ai.extract_draft(
+            truong, nam, cac_nguon, goi_y, bao_tien_do=bao_tien_do, danh_muc_phuong_thuc=danh_muc_phuong_thuc,
+            danh_muc_lich_su=danh_muc_lich_su,
+            **({"chi_html": True, "bo_nho": bo_nho, "nghien_cuu_truoc": True} if tu_dong else {}),
         )
+
+    def luu_nguon(nguon: list[dict], ghi_chu_moi: list[str]) -> None:
+        if bo_nho is not None:
+            bo_nho.bo_qua_url(n["url"] for n in nguon if n["lua_chon"] == "loai"
+                              or (n["id"] in giu_chua_chon and n["lua_chon"] == "chua_chon"))
+        phien = _phien_cua_luot_tao(db, phien_id, sua_lan)
+        phien.nguon = nguon
+        phien.canh_bao_nguon = list(dict.fromkeys([*canh_bao_nguon, *ghi_chu_moi]))
+        db.commit()
+
+    def lap_ban(ket_qua, nguon):
+        if tu_dong:
+            ids = set(ket_qua.get("nguon_ids", [n["id"] for n in nguon]))
+            if "ma_tran_goc" in ket_qua:
+                chieu_danh_muc(ket_qua)
+            if "kiem_ke_cong_thuc" in ket_qua:
+                ket_qua["cong_thuc_da_doi_chieu"] = chieu_cong_thuc_vao_ban_nhap(
+                    truong, nam, ket_qua, ket_qua["kiem_ke_cong_thuc"], bao_tien_do)
+            doi_chieu_lien_ket_ai(truong, nam, ket_qua, [n for n in nguon if n["id"] in ids],
+                                  danh_muc_phuong_thuc, bao_tien_do)
+            if "cong_thuc_da_doi_chieu" in ket_qua:
+                doi_chieu_sau_khi_noi_cong_thuc(ket_qua, ket_qua["cong_thuc_da_doi_chieu"])
+        return _lap_ban_nhap(ket_qua, truong, nam, nguon)
+
+    def tim_nguon_thay_the(nguon):
+        bao_tien_do("tim_bo_sung")
+        try:
+            moi, ghi_chu = ai.search_missing_sources(truong, nam, [
+                f"Trang HTML chính thức công bố thông tin tuyển sinh {nam}, danh sách mã xét tuyển và phương thức của trường."
+            ], [n["url"] for n in nguon])
+            nguon = _chon_nguon_tu_dong(nguon, moi, nam, giu_chua_chon)
+            canh_bao_nguon.extend(ghi_chu)
+        except ai.AdmissionAIError as exc:
+            canh_bao_nguon.append(str(exc))
+        luu_nguon(nguon, [])
+        return nguon
+
+    def nguon_da_chon(nguon):
+        return [n for n in nguon if n["lua_chon"] == "su_dung" and _nguon_hop_le(n, nam) and _nguon_html(n)]
+
+    canh_bao_nguon = []
+    loi_sau_khi_doc_lai = {}
+    try:
+        if tu_dong:
+            bao_tien_do("tim_nguon")
+            try:
+                moi, canh_bao_nguon = ai.search_sources(truong, nam)
+            except ai.AdmissionAIError as exc:
+                moi, canh_bao_nguon = [], [str(exc)]
+            nguon_luu = _chon_nguon_tu_dong(nguon_luu, moi, nam, giu_chua_chon)
+            ds = nguon_da_chon(nguon_luu)
+            luu_nguon(nguon_luu, [])
+            if not any(_nguon_nam_hien_tai(n, nam) for n in ds):
+                nguon_luu = tim_nguon_thay_the(nguon_luu)
+                ds = nguon_da_chon(nguon_luu)
+            if not any(_nguon_nam_hien_tai(n, nam) for n in ds):
+                raise HTTPException(502, {
+                    "message": "Chưa tìm được nguồn HTML chính thức đúng trường và năm để tạo bản nháp.",
+                    "loi": canh_bao_nguon,
+                })
+        bao_tien_do("doc_nguon", 0, len(ds))
+        try:
+            da_trich = trich_xuat(ds, previous)
+        except ai.LoiDocNguon:
+            if not tu_dong:
+                raise
+            bao_tien_do("doc_lai_nguon")
+            try:
+                da_trich = trich_xuat(ds, previous)
+            except ai.LoiDocNguon as exc:
+                da_thu = {n["id"] for n in ds}
+                nguon_luu = tim_nguon_thay_the(nguon_luu)
+                ds = [n for n in nguon_da_chon(nguon_luu) if n["id"] not in da_thu]
+                if not any(_nguon_nam_hien_tai(n, nam) for n in ds):
+                    raise
+                da_trich = trich_xuat(ds, previous)
+                loi_sau_khi_doc_lai = dict(zip(exc.nguon_ids, exc.loi, strict=True))
+        ban = lap_ban(da_trich, ds)
+        muc_cu = (previous or {}).get("muc_con_thieu") or []
+        thieu = ban.ra_soat(truong, nam, ds, muc_cu, bao_tien_do)
+        if tu_dong:
+            # Một lần đọc lại nguồn cũ, sau đó tối đa ba lượt khám phá HTML mới theo kết quả rà soát.
+            for luot in range(4):
+                doc_lai = luot == 0
+                if not thieu and not (doc_lai and ban.loi_nguon):
+                    break
+                them, nguon_luu, canh_bao_bo_sung = _tim_bo_sung_ban_nhap(
+                    truong, nam, nguon_luu, ban, da_trich, thieu, trich_xuat, bao_tien_do, luu_nguon, giu_chua_chon,
+                    doc_lai=doc_lai,
+                )
+                canh_bao_nguon.extend(canh_bao_bo_sung)
+                if them is None:
+                    if doc_lai:
+                        continue
+                    ban.ghi_chu.extend(canh_bao_bo_sung)
+                    break
+                ban_cu = ban
+                da_trich = them
+                ban = lap_ban(da_trich, nguon_luu)
+                thieu = ban.ra_soat(truong, nam, nguon_luu, thieu, bao_tien_do)
+                if not doc_lai and thieu and ban.du_lieu == ban_cu.du_lieu and ban.muc == ban_cu.muc and not set(ban.nguon_ids).difference(ban_cu.nguon_ids):
+                    ban.ghi_chu.append("Lượt tìm bù chưa bổ sung được dữ liệu, dẫn chứng hoặc nguồn đã đọc.")
+                    break
+            else:
+                if thieu:
+                    ban.ghi_chu.append("Đã thực hiện đủ ba lượt tìm nguồn bổ sung. Các mục còn thiếu được giữ để người duyệt đối chiếu.")
+            ban.loi_nguon.update(loi_sau_khi_doc_lai)
+            for n in nguon_luu:
+                if n["lua_chon"] == "su_dung" and n["id"] not in ban.nguon_ids:
+                    ban.loi_nguon.setdefault(n["id"], "Nguồn chưa được sử dụng trong lượt thu thập HTML này.")
         bao_tien_do("luu_ban_nhap")
         phien = _phien_cua_luot_tao(db, phien_id, sua_lan)
         so_ban_cu, ly_do_cu = phien.phien_ban, phien.yeu_cau_bo_sung
         nguon_cua_ban = [
-            {**n, "lua_chon": "loai", "ly_do_loai": loi_nguon[n["id"]]} if n["id"] in loi_nguon else n
+            {**n, "lua_chon": "loai", "ly_do_loai": ban.loi_nguon[n["id"]]} if n["id"] in ban.loi_nguon else n
             for n in nguon_luu
         ]
-        _them_ban(db, phien, actor[1], du_lieu, muc, ghi_chu, nguon_cua_ban, doi_chieu)
+        if tu_dong:
+            phien.nguon = nguon_luu
+            phien.canh_bao_nguon = list(dict.fromkeys(canh_bao_nguon))
+        _them_ban(db, phien, actor[1], ban.du_lieu, ban.muc, ban.ghi_chu, nguon_cua_ban, ban.doi_chieu)
         _ket_thuc_tao_ban_nhap(phien, CHO_DUYET)
         phien.yeu_cau_bo_sung = None
-        _ghi_nhat_ky(db, phien, actor, "tao_ban_nhap", nguon_ids=nguon_ids, loi_nguon=loi_nguon,
+        _ghi_nhat_ky(db, phien, actor, "tao_ban_nhap", nguon_ids=ban.nguon_ids, loi_nguon=ban.loi_nguon,
                      phien_ban_truoc=so_ban_cu, yeu_cau_bo_sung=ly_do_cu)
         db.commit()
         return True
     except _DaDungTaoBanNhap:
         db.rollback()
         return False
+    except ai.AdmissionAIError as exc:
+        detail = {"message": str(exc), "loi": exc.loi, "nguon_ids": exc.nguon_ids} if isinstance(exc, ai.LoiDocNguon) else str(exc)
+        loi = HTTPException(502, detail)
+        _mo_khoa_tao_nhap_sau_loi(db, phien_id, sua_lan, actor, loi)
+        raise loi from exc
     except Exception as exc:
         _mo_khoa_tao_nhap_sau_loi(db, phien_id, sua_lan, actor, exc)
         raise
@@ -569,29 +877,36 @@ async def _tao_ban_nhap_nen(bind, phien_id: int, *tham_so) -> None:
 @router.post("/phien/{phien_id}/tao-ban-nhap", response_model=PhienThuThapDetail, status_code=202)
 def tao_ban_nhap(
     phien_id: int, db: Session = Depends(get_db), user: NguoiDung = Depends(get_admin_user),
-    tac_vu: BackgroundTasks = None,
+    tac_vu: BackgroundTasks = None, tu_dong: bool = False,
 ):
-    """Bắt đầu tạo nháp từ nguồn đã chọn. Theo dõi tiến độ qua API chi tiết phiên."""
+    """Tạo nháp từ nguồn đã chọn hoặc tự tìm, đối chiếu và tìm bù các mục còn thiếu."""
     phien, truong, actor, sua_lan_truoc = _chuan_bi_ai(db, phien_id, user, khoa=True)
     nam = phien.nam_tuyen_sinh
     ds = [n for n in phien.nguon if n["lua_chon"] == "su_dung" and _nguon_hop_le(n, nam)]
-    if not any(_nguon_nam_hien_tai(n, nam) for n in ds):
+    if not tu_dong and not any(_nguon_nam_hien_tai(n, nam) for n in ds):
         raise HTTPException(422, "Hãy chọn ít nhất một nguồn tuyển sinh chính thức đúng trường và năm trước khi tạo bản nháp.")
     danh_muc_phuong_thuc = _danh_muc_phuong_thuc(db, nam)
     so_ban_cu, ly_do_cu = phien.phien_ban, phien.yeu_cau_bo_sung
     cu = _ban_nhap(db, phien_id, so_ban_cu) if so_ban_cu else None
-    previous = {"du_lieu": cu.du_lieu, "ghi_chu": cu.ghi_chu, "yeu_cau_bo_sung": ly_do_cu} if cu else None
+    previous = {"du_lieu": cu.du_lieu, "ghi_chu": cu.ghi_chu, "yeu_cau_bo_sung": ly_do_cu,
+                "muc_con_thieu": (cu.doi_chieu or {}).get("muc_con_thieu")} if cu else None
     nguon_luu = phien.nguon
+    giu_chua_chon = set()
+    if tu_dong:
+        lua_chon_cu = db.scalars(select(DatsNhatKyThuThap.chi_tiet).where(
+            DatsNhatKyThuThap.phien_id == phien_id, DatsNhatKyThuThap.hanh_dong == "chon_nguon",
+        ))
+        giu_chua_chon = {item["nguon_id"] for item in lua_chon_cu if item.get("sau") == "chua_chon"}
     sua_lan = sua_lan_truoc + 1
     phien.trang_thai = _DANG_TAO_BAN_NHAP
     phien.sua_lan = sua_lan
     luc_bat_dau = bay_gio()
     phien.cap_nhat_luc = luc_bat_dau
     phien.bat_dau_tao_ban_nhap_luc = luc_bat_dau
-    phien.tien_do_tao_ban_nhap = {"buoc": "doc_nguon", "da_xu_ly": 0, "tong": len(ds)}
+    phien.tien_do_tao_ban_nhap = {"buoc": "tim_nguon" if tu_dong else "doc_nguon", "da_xu_ly": 0, "tong": None if tu_dong else len(ds)}
     db.commit()  # Công khai trạng thái và trả kết nối trước khi đọc nguồn, gọi AI.
 
-    tham_so = (sua_lan, actor, truong, nam, ds, previous, nguon_luu, danh_muc_phuong_thuc)
+    tham_so = (sua_lan, actor, truong, nam, ds, previous, nguon_luu, danh_muc_phuong_thuc, tu_dong, giu_chua_chon)
     if tac_vu is not None:
         try:
             ket_qua = _chi_tiet(db, phien_id)
@@ -636,9 +951,9 @@ def sua_ban_nhap(phien_id: int, yeu_cau: SuaBanNhap, db: Session = Depends(get_d
     truoc = ban.doi_chieu or {}
     ly_do_cu = truoc.get("xac_nhan", {})
     ly_do_moi = yeu_cau.xac_nhan_doi_chieu.model_dump(exclude_unset=True) if yeu_cau.xac_nhan_doi_chieu else {}
-    nguon_hop_le = nguon_doi_chieu(ban.nguon, phien.nam_tuyen_sinh)
-    if any(can_cu and can_cu["nguon_id"] not in nguon_hop_le for can_cu in ly_do_moi.values()):
-        raise HTTPException(422, "Xác nhận đối chiếu cần căn cứ từ nguồn chính thức đúng năm của phiên bản.")
+    nguon_cua_ban = {n["id"] for n in ban.nguon}
+    if any(can_cu and can_cu["nguon_id"] not in nguon_cua_ban for can_cu in ly_do_moi.values()):
+        raise HTTPException(422, "Nguồn đối chiếu không thuộc phiên bản đang xét duyệt.")
     xac_nhan = {} if du_lieu != ban.du_lieu else ly_do_cu.copy()
     for khoa, ly_do in ly_do_moi.items():
         if ly_do:
@@ -646,7 +961,20 @@ def sua_ban_nhap(phien_id: int, yeu_cau: SuaBanNhap, db: Session = Depends(get_d
         else:
             xac_nhan.pop(khoa, None)
     if thay_doi or du_lieu != ban.du_lieu or xac_nhan != ly_do_cu:
-        doi_chieu = {"nguon": truoc.get("nguon", []), "xac_nhan": xac_nhan}
+        doi_chieu = {**truoc, "xac_nhan": xac_nhan}
+        if ra_soat := doi_chieu.get("ra_soat_diem_chuan"):
+            doi_chieu["diem_chuan"] = bao_cao_diem_ai(ra_soat, du_lieu, muc)
+        elif doi_chieu.get("diem_chuan") and any(
+            t["duong_dan"].startswith("/quy_tac_xet_tuyen/diem_chuan") for t in thay_doi
+        ):
+            # Bản trước giữ nguyên số liệu kiểm kê cũ; bản vừa sửa chưa được AI rà soát.
+            doi_chieu.pop("diem_chuan", None)
+            doi_chieu.pop("kiem_ke_diem_chuan", None)
+        if (thay_doi or du_lieu != ban.du_lieu) and (
+            "trang_thai_ra_soat_ai" in truoc or truoc.get("muc_con_thieu") is not None
+            or "ma_tran" in truoc or "cong_thuc" in truoc
+        ):
+            doi_chieu["trang_thai_ra_soat_ai"] = "da_chinh_sua"
         _them_ban(db, phien, user.ho_ten, du_lieu, muc, ban.ghi_chu, ban.nguon, doi_chieu)
         _ghi_nhat_ky(
             db, phien, (user.id, user.ho_ten), "sua_ban_nhap", phien_ban_truoc=ban.phien_ban, thay_doi=thay_doi,

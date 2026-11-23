@@ -6,7 +6,6 @@ import json
 import re
 from collections import Counter, defaultdict
 from unicodedata import normalize
-from urllib.parse import urlsplit
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -92,31 +91,18 @@ def _cau_truc_dats(bang: str, dong: dict, vi_tri: str, ma_truong: str, nam: int,
             loi.append(f"{duong_dan}: phải là {nam}")
 
 
-def _kiem_diem(dong: dict, thang: str, cac_diem: tuple[str, ...], vi_tri: str, loi: list[str]) -> None:
-    thang_diem = dong.get(thang)
-    if thang_diem is not None and thang_diem <= 0:
-        loi.append(f"{vi_tri}/{thang}: thang điểm phải lớn hơn 0")
-    for ten in cac_diem:
-        if (diem := dong.get(ten)) is not None and (thang_diem is None or not 0 <= diem <= thang_diem):
-            loi.append(f"{vi_tri}/{ten}: điểm phải nằm trong thang điểm đã khai")
-
-
 def _ten_doi_chieu(ten: str) -> str:
     return " ".join(normalize("NFC", ten).split())
 
 
 def _trung_doi_chieu(
-    de_an: dict, quy_tac: DeAnXetTuyenChuan, phang: dict, loi: list[str],
+    quy_tac: DeAnXetTuyenChuan, phang: dict, loi: list[str],
 ) -> dict[tuple[str, str], int]:
     cac_ct = phang.get("dats_chuong_trinh_dao_tao", [])
     dem_dats = Counter(ct["ma_xet_tuyen"] for ct in cac_ct)
     dem_quy_tac = Counter(ct.ma_xet_tuyen for ct in quy_tac.chuong_trinh)
-    if dem_dats != dem_quy_tac:
-        loi.append(
-            "Mã xét tuyển giữa dats_tuyen_sinh và quy_tac_xet_tuyen chưa đồng bộ. "
-            f"Thiếu trong quy tắc: {', '.join(sorted((dem_dats - dem_quy_tac).keys())) or '—'}. "
-            f"Thiếu trong đề án: {', '.join(sorted((dem_quy_tac - dem_dats).keys())) or '—'}."
-        )
+    if thieu := dem_quy_tac - dem_dats:
+        loi.append(f"Thiếu chương trình trong đề án để gắn quy tắc: {', '.join(sorted(thieu))}.")
 
     co_so = phang.get("dats_tru_so", [])
     co_so_theo_id = {r["id"]: _ten_doi_chieu(r["ten_co_so"]) for r in co_so}
@@ -130,7 +116,7 @@ def _trung_doi_chieu(
             tru_so_chinh.add(ten)
     if len(theo_ten) != len(co_so) or len(set(ten_theo_ma.values())) != len(quy_tac.co_so):
         loi.append("Tên cơ sở phải duy nhất trong mỗi khối dữ liệu")
-    if set(ten_theo_ma.values()) != theo_ten.keys():
+    if not set(ten_theo_ma.values()) <= theo_ten.keys():
         loi.append("quy_tac_xet_tuyen/co_so: tên cơ sở phải khớp dats_tuyen_sinh/dats_tru_so")
     for cs in quy_tac.co_so:
         if (tinh := theo_ten.get(ten_theo_ma[cs.ma_co_so], {}).get("ma_tinh")) and cs.ma_tinh and tinh != cs.ma_tinh:
@@ -146,22 +132,23 @@ def _trung_doi_chieu(
         quy_tac_theo_ma[ct.ma_xet_tuyen].append(ct)
     ct_quy_tac_theo_id: dict[int, ChuongTrinhChuan] = {}
     da_khop: set[str] = set()
-    tong = de_an.get("chi_tieu")
     for ct in cac_ct:
         ma = ct["ma_xet_tuyen"]
         vi_tri = f"dats_chuong_trinh_dao_tao/{ma}"
         gioi_han = ct.get("chi_tieu_tuyen_sinh")
-        if gioi_han is not None and tong is not None and gioi_han > tong:
-            loi.append(f"{vi_tri}: chỉ tiêu chương trình vượt tổng chỉ tiêu đề án")
         ten_ct = _ten_doi_chieu(ct["ten_chuong_trinh"])
         ten_co_so = co_so_theo_id.get(ct.get("co_so_id"))
         ket_qua = quy_tac_theo_ma[ma]
+        if not ket_qua:
+            continue
         if dem_dats[ma] == dem_quy_tac[ma] == 1:
             doi_chieu = ket_qua[0]
         else:
             theo_ten_ct = [q for q in ket_qua if _ten_doi_chieu(q.ten_chuong_trinh) == ten_ct]
             if len(theo_ten_ct) > 1 and ten_co_so is not None:
                 theo_ten_ct = [q for q in theo_ten_ct if co_so_quy_tac(q) == ten_co_so]
+            if not theo_ten_ct:
+                continue
             if len(theo_ten_ct) != 1 or theo_ten_ct[0].ma_chuong_trinh in da_khop:
                 loi.append(f"{vi_tri}: cần tên và cơ sở để định danh mã xét tuyển có nhiều dòng")
                 continue
@@ -178,6 +165,9 @@ def _trung_doi_chieu(
         if ten_co_so and ten_co_so_quy_tac and ten_co_so_quy_tac != ten_co_so:
             loi.append(f"{vi_tri}: mã cơ sở của quy tắc không khớp cơ sở trong đề án")
 
+    for ct in quy_tac.chuong_trinh:
+        if ct.ma_chuong_trinh not in da_khop:
+            loi.append(f"quy_tac_xet_tuyen/chuong_trinh/{ct.ma_chuong_trinh}: chưa xác định được dòng chương trình trong đề án")
     return _kiem_phuong_thuc(phang, quy_tac, ct_quy_tac_theo_id, loi)
 
 
@@ -213,7 +203,6 @@ def _kiem_phuong_thuc(
     phang: dict, quy_tac: DeAnXetTuyenChuan, ct_quy_tac_theo_id: dict[int, ChuongTrinhChuan], loi: list[str]
 ) -> dict[tuple[str, str], int]:
     cong_thuc = {c.ma_cong_thuc: c for c in quy_tac.cong_thuc}
-    theo_id = {ct["id"]: ct for ct in phang.get("dats_chuong_trinh_dao_tao", [])}
     to_hop_theo_pt = defaultdict(list)
     for so, row in enumerate(phang.get("dats_phuong_thuc_to_hop", [])):
         if row.get("to_hop_id") is not None:
@@ -225,11 +214,6 @@ def _kiem_phuong_thuc(
     for so, pt in enumerate(phang.get("dats_phuong_thuc", [])):
         vi_tri = f"dats_phuong_thuc/{so}"
         ct_id = pt.get("de_an_chuong_trinh_id")
-        chi_tieu = pt.get("chi_tieu_phuong_thuc")
-        gioi_han = theo_id.get(ct_id, {}).get("chi_tieu_tuyen_sinh")
-        if chi_tieu is not None and gioi_han is not None and chi_tieu > gioi_han:
-            loi.append(f"{vi_tri}: chỉ tiêu phương thức vượt chỉ tiêu chương trình")
-        _kiem_diem(pt, "thang_diem", ("diem_san", "diem_chuan"), vi_tri, loi)
         to_hop = _to_hop_phuong_thuc(pt, to_hop_theo_pt[pt["id"]], ma_rieng, vi_tri, loi)
         ma_ct = (pt.get("cong_thuc_tinh_diem") or "").strip()
         ma_ct = ma_ct if ma_ct in cong_thuc or _MA_CONG_THUC.fullmatch(ma_ct) else None
@@ -281,21 +265,11 @@ def _kiem_phuong_thuc(
 
         for vi_tri, pt, ma_ct, to_hop in cac_pt:
             id_pt = pt["id"]
-            if id_pt not in da_noi:
-                loi.append(f"{vi_tri}: phương thức không có phương án tương ứng trong quy tắc của chương trình")
-            elif ma_ct is not None and ma_ct not in da_noi[id_pt]:
+            if id_pt in da_noi and ma_ct is not None and ma_ct not in da_noi[id_pt]:
                 loi.append(f"{vi_tri}: công thức {ma_ct} không khớp phương án của phương thức này")
-            if id_pt in to_hop_theo_phuong_an and to_hop != to_hop_theo_phuong_an[id_pt]:
+            if to_hop and not to_hop_theo_phuong_an[id_pt].issubset(to_hop):
                 loi.append(f"{vi_tri}: mã tổ hợp không khớp phạm vi của các công thức đã đối chiếu")
     return ket_qua
-
-
-def _duong_dan_http(gia_tri: str | None) -> bool:
-    try:
-        url = urlsplit(gia_tri or "")
-    except ValueError:
-        return False
-    return url.scheme in {"http", "https"} and bool(url.hostname)
 
 
 def validate_admission_payload(payload: dict, ma_truong: str, nam_tuyen_sinh: int) -> dict[tuple[str, str], int]:
@@ -351,21 +325,8 @@ def validate_admission_payload(payload: dict, ma_truong: str, nam_tuyen_sinh: in
         raise DatsImportError(loi[0], loi) from None
 
     phang = flatten_nested_document({**payload, "dats_tuyen_sinh": de_an})
-    phuong_thuc = _trung_doi_chieu(de_an, doc, phang, loi)
-    for bang in ("dats_quy_doi_nguong_dau_vao", "dats_quy_doi_diem_trung_tuyen"):
-        for so, dong in enumerate(phang.get(bang, [])):
-            for loai in ("nguon", "dich"):
-                _kiem_diem(dong, f"thang_diem_{loai}", (f"diem_moc_{loai}",), f"{bang}/{so}", loi)
-    for cong_thuc in doc.cong_thuc:
-        vi_tri = f"{KHOA_QUY_TAC}/cong_thuc/{cong_thuc.ma_cong_thuc}"
-        if cong_thuc.diem_san is not None and not 0 <= cong_thuc.diem_san <= cong_thuc.thang_diem:
-            loi.append(f"{vi_tri}/diem_san: điểm phải nằm trong thang điểm của công thức")
-    for bang in doc.bang_quy_doi:
-        for so, muc in enumerate(bang.muc):
-            if not 0 <= muc.diem_quy_doi <= bang.thang_diem_dich:
-                loi.append(f"{KHOA_QUY_TAC}/bang_quy_doi/{bang.ma_bang}/muc/{so}: điểm quy đổi ngoài thang điểm đích")
+    phuong_thuc = _trung_doi_chieu(doc, phang, loi)
     diem_chuan_da_gap = set()
-    ma_xet_tuyen_hien_tai = {ct.ma_xet_tuyen for ct in doc.chuong_trinh}
     ma_to_hop_rieng = {f"{ma_truong}-{th.ma_to_hop}": th.ma_to_hop for th in doc.to_hop_rieng}
     for so, dong in enumerate(doc.diem_chuan):
         vi_tri = f"{KHOA_QUY_TAC}/diem_chuan/{so}"
@@ -374,16 +335,10 @@ def validate_admission_payload(payload: dict, ma_truong: str, nam_tuyen_sinh: in
         if khoa in diem_chuan_da_gap:
             loi.append(f"{vi_tri}: điểm chuẩn lặp trường dữ liệu năm, mã xét tuyển, phương thức và tổ hợp")
         diem_chuan_da_gap.add(khoa)
-        if not dong.ma_xet_tuyen.strip() or (
-            dong.nam_tuyen_sinh == nam_tuyen_sinh and dong.ma_xet_tuyen not in ma_xet_tuyen_hien_tai
-        ):
+        if not dong.ma_xet_tuyen.strip():
             loi.append(f"{vi_tri}: mã xét tuyển không hợp lệ")
-        if not 0 <= dong.diem_chuan <= dong.thang_diem:
-            loi.append(f"{vi_tri}: điểm chuẩn phải nằm trong thang điểm")
-        if not 1900 <= dong.nam_tuyen_sinh <= nam_tuyen_sinh:
+        if not 0 <= dong.nam_tuyen_sinh <= 65535:  # xt_diem_chuan.nam_tuyen_sinh là SMALLINT UNSIGNED.
             loi.append(f"{vi_tri}: năm điểm chuẩn không hợp lệ")
-        if dong.nam_tuyen_sinh < nam_tuyen_sinh and not _duong_dan_http(dong.nguon_du_lieu_url):
-            loi.append(f"{vi_tri}: điểm chuẩn lịch sử cần URL thông báo của đúng năm")
     if loi:
         raise DatsImportError(loi[0], loi)
     return phuong_thuc
@@ -414,6 +369,7 @@ def import_approved_admission(
         document,
         nguoi_import_id=nguoi_duyet_id,
         chuan_hoa_quy_tac=False,
+        noi_dung_da_duyet=True,
         giu_diem_chuan_ngoai_file=True,
         phuong_thuc_theo_phuong_an=phuong_thuc_theo_phuong_an,
     )

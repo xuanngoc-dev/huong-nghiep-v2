@@ -6,7 +6,7 @@
           <h2 class="toolbar__title">Thu thập dữ liệu</h2>
           <router-link class="cell-link" :to="{ name: TRANG_XET_DUYET }">Xét duyệt dữ liệu</router-link>
         </div>
-        <CustomForm :model="form" class="form-grid" @submit.prevent="batDau">
+        <CustomForm :model="form" class="form-grid" @submit.prevent="batDau(true)">
           <div class="form-grid__body">
             <CustomFormItem label="Mã trường" required>
               <CustomInput v-model="form.ma_truong" placeholder="Nhập mã trường" maxlength="20" :disabled="dangTao" />
@@ -21,9 +21,15 @@
             <strong>{{ truong.ten_truong }}</strong>
             <span v-if="truong.co_so">{{ truong.co_so }}</span>
           </p>
-          <CustomButton type="primary" native-type="submit" :disabled="!truong || !form.nam_tuyen_sinh" :loading="dangTao">
-            <CustomIcon><Search /></CustomIcon> Tìm nguồn
-          </CustomButton>
+          <div class="toolbar__actions">
+            <CustomButton type="primary" native-type="submit" :disabled="!truong || !form.nam_tuyen_sinh || dangTao">
+              Thu thập toàn bộ
+            </CustomButton>
+            <CustomButton native-type="button" :disabled="!truong || !form.nam_tuyen_sinh || dangTao" @click="batDau(false)">
+              <CustomIcon><Search /></CustomIcon> Tìm nguồn để chọn
+            </CustomButton>
+          </div>
+          <p v-if="dangTao" class="chu-thich" role="status">Đang tạo phiên thu thập…</p>
         </CustomForm>
         <el-alert v-if="loiTao" :title="loiTao" type="error" show-icon :closable="false" class="canh-bao" />
       </CustomCard>
@@ -72,8 +78,11 @@
               <CustomButton v-if="coNguonChuaChon || thaoTac === 'chon-tat-ca'" type="primary" plain :disabled="khoaNguon" :loading="thaoTac === 'chon-tat-ca'" @click="thucHien('chon-tat-ca', () => chonTatCaNguonTuyenSinh(id))">
                 Dùng tất cả nguồn phù hợp
               </CustomButton>
-              <CustomButton type="primary" :disabled="khoaNguon || !coNguonDungNam" :loading="dangTaoBanNhap || dangKiemTraBanNhap" @click="taoBanNhap">
-                {{ nhanNutTaoBanNhap }}
+              <CustomButton :disabled="khoaNguon || !coNguonDungNam" @click="taoBanNhap(false)">
+                Tạo nháp từ nguồn đã chọn
+              </CustomButton>
+              <CustomButton type="primary" :disabled="khoaNguon" :loading="dangTaoBanNhap || dangKiemTraBanNhap" @click="taoBanNhap(true)">
+                Thu thập toàn bộ
               </CustomButton>
             </div>
           </div>
@@ -83,7 +92,7 @@
             </CustomButton>
           </div>
           <p v-if="choPhepSuaNguon" class="chu-thich">Mở tài liệu để đối chiếu trường, cơ sở và năm trước khi chọn dùng. Đã chọn {{ nguonDaChon }} nguồn áp dụng.</p>
-          <p v-if="choPhepSuaNguon && nguonDaChon && !coNguonDungNam" class="chu-thich">Chọn ít nhất một nguồn tuyển sinh đúng năm để tạo bản nháp.</p>
+          <p v-if="choPhepSuaNguon && nguonDaChon && !coNguonDungNam" class="chu-thich">Chọn ít nhất một nguồn tuyển sinh đúng năm để tạo nháp từ nguồn đã chọn.</p>
           <div v-if="dangTaoBanNhap || dangDung" class="tien-do-nhap">
             <div class="tien-do-nhap__dau">
               <div>
@@ -96,7 +105,7 @@
             <progress v-else aria-label="Đang xử lý bước hiện tại" />
           </div>
           <p v-else-if="dangKiemTraBanNhap" class="chu-thich" role="status">Đang kiểm tra trạng thái phiên với máy chủ…</p>
-          <p v-else-if="dangTimNguon" class="chu-thich" role="status">Đang tìm và xác minh nguồn chính thức…</p>
+          <p v-else-if="dangTimNguon" class="chu-thich" role="status">Đang tìm nguồn web theo từng nhóm thông tin tuyển sinh…</p>
           <el-alert v-if="thongBaoDung" :title="thongBaoDung" type="info" show-icon :closable="false" class="canh-bao" />
           <el-alert v-if="loiHienThi" :title="loiHienThi.noiDung" type="error" show-icon :closable="false" class="canh-bao">
             <p v-if="loiHienThi.xayRaLuc" class="noi-dung-bao">Lần tạo bản nháp gần nhất · {{ ngayGio(loiHienThi.xayRaLuc) }}</p>
@@ -234,8 +243,18 @@ const nhanLoaiNguon = {
   diem_lich_su: 'Điểm chuẩn lịch sử', khac: 'Khác',
 }
 const nhanBuoc = {
+  tim_nguon: 'Đang tìm nguồn tuyển sinh',
+  tim_bo_sung: 'Đang tìm nguồn cho các mục còn thiếu',
+  ra_soat_do_phu: 'AI đang rà soát dữ liệu và đề xuất nguồn cần tìm thêm',
   doc_nguon: 'Đang đọc nguồn đã chọn',
+  doc_lai_nguon: 'Đang đọc lại nguồn cho các mục còn thiếu',
   doc_bo_sung: 'Đang đọc phụ lục và bảng ảnh',
+  lap_ma_tran: 'Đang đối chiếu danh mục chương trình, diện và tổ hợp',
+  kiem_ke_cong_thuc: 'Đang kiểm kê công thức trong nguồn',
+  chieu_cong_thuc: 'Đang đối chiếu công thức với trường dữ liệu trong bản nháp',
+  doi_chieu_cong_thuc: 'Đang đối chiếu dẫn chứng của từng công thức',
+  doi_chieu_lien_ket: 'Đang đối chiếu phương thức và công thức theo mã xét tuyển',
+  phan_tich_mau_thuan: 'AI đang đọc các nguồn có số liệu khác nhau',
   xac_minh_nguon: 'Đang xác minh nguồn',
   trich_xuat: 'Đang trích xuất dữ liệu tuyển sinh',
   luu_ban_nhap: 'Đang lưu bản nháp',
@@ -261,12 +280,6 @@ const loiHienThi = computed(() => {
     && (trucTiep.noiDung === daLuu.message || !trucTiep.trangThai || trucTiep.dangTaoBanNhap)
   if (trucTiep && !thayThePhanHoi) return trucTiep
   return { ...chiTietLoiPhien(daLuu), xayRaLuc: daLuu.xay_ra_luc }
-})
-const nhanNutTaoBanNhap = computed(() => {
-  if (dangTaoBanNhap.value) return 'Đang tạo bản nháp'
-  if (dangKiemTraBanNhap.value) return 'Đang kiểm tra bản nháp'
-  if (chiTietLoiTao.value) return 'Thử tạo lại'
-  return chiTiet.value?.trang_thai === 'yeu_cau_bo_sung' ? 'Tạo và gửi lại bản nháp' : 'Tạo bản nháp'
 })
 const tienDo = computed(() => chiTiet.value?.tien_do_tao_ban_nhap)
 const coTienDoDem = computed(() => tienDo.value?.tong > 0 && Number.isInteger(tienDo.value?.da_xu_ly))
@@ -356,14 +369,19 @@ function theoDoiPhienHienTai() {
   return () => phienId === id.value && lucMo === lanMoPhien && router.currentRoute.value.name === TRANG_THU_THAP
 }
 
-async function batDau() {
+async function batDau(tuDong) {
   if (!truong.value || !form.nam_tuyen_sinh || dangTao.value) return
   dangTao.value = true
   loiTao.value = ''
   try {
-    const phien = await taoPhienTuyenSinh({ ma_truong: truong.value.ma_truong, nam_tuyen_sinh: form.nam_tuyen_sinh })
+    const phien = await taoPhienTuyenSinh({ ma_truong: truong.value.ma_truong, nam_tuyen_sinh: form.nam_tuyen_sinh }, tuDong)
     await router.push({ name: TRANG_THU_THAP, query: { phien: phien.id } })
-    if (apDung(phien)) await timNguon()
+    if (!apDung(phien)) return
+    if (tuDong) {
+      banChoMo.value = { luot: phien.luot_tao_ban_nhap, phienBanTruoc: 0 }
+    } else {
+      await timNguon()
+    }
   } catch (error) {
     loiTao.value = loiPhien(error).noiDung
   } finally {
@@ -427,8 +445,8 @@ function xacNhanLoaiNguon() {
   chonNguon(loaiNguon.nguon, 'loai', loaiNguon.lyDo.trim() || undefined)
 }
 
-async function taoBanNhap() {
-  if (!choPhepSuaNguon.value || khoaNguon.value || !coNguonDungNam.value) return
+async function taoBanNhap(tuDong) {
+  if (!choPhepSuaNguon.value || khoaNguon.value || (!tuDong && !coNguonDungNam.value)) return
   const phienId = id.value
   const lanKhoiDong = { batDau: Date.now() }
   const conMoPhien = theoDoiPhienHienTai()
@@ -438,7 +456,7 @@ async function taoBanNhap() {
   loiThaoTac.value = null
   thongBaoDung.value = ''
   try {
-    const phien = await taoBanNhapTuyenSinh(phienId)
+    const phien = await taoBanNhapTuyenSinh(phienId, tuDong)
     if (conMoPhien() && conKhoiDong() && !dangDung.value) {
       banChoMo.value = { luot: phien.luot_tao_ban_nhap, phienBanTruoc }
       await kiemTraLaiBanNhap()

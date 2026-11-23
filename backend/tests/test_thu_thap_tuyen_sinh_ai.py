@@ -8,6 +8,8 @@ from unittest.mock import patch
 
 import httpx
 
+from app.schemas.dats_thu_thap import SuaMucBanNhap
+from app.services.dats_ban_nhap_thu_thap import canh_bao_dan_chung, lap_muc_ban_nhap, sua_muc_ban_nhap
 from app.services import thu_thap_tuyen_sinh_ai as ai
 
 _TRUONG = {"ma_truong": "XDA", "ten_truong": "Trường Đại học Xây dựng Hà Nội", "website": "https://huce.edu.vn"}
@@ -32,6 +34,129 @@ def _thong_tin(url=_URL, **gia_tri):
 
 
 class TestThuThapTuyenSinhAI(unittest.TestCase):
+    def test_diem_va_cho_can_lam_ro_do_ai_quyet_dinh_tu_bang(self):
+        html = f"""<title>Điểm chuẩn 2026</title><h2>Điểm trúng tuyển năm 2026</h2><p>{_XAC_MINH}</p>
+        <table><tr><th>Mã xét tuyển</th><th>Mã phương thức của Bộ</th><th>Tổ hợp</th>
+        <th>Điểm trúng tuyển (thang điểm 30)</th><th>Điểm tương đương TSA</th></tr>
+        <tr><td rowspan="2">IT1</td><td>100</td><td>A00</td><td>27,5</td><td>80</td></tr>
+        <tr><td>200</td><td>D01</td><td>28</td><td>85</td></tr></table>"""
+        nhanh = {"thong_tin_import": {}, "dats_tuyen_sinh": {}, "quy_tac_xet_tuyen": {"diem_chuan": [{
+            "nam_tuyen_sinh": 2026, "ma_xet_tuyen": "IT1", "ma_phuong_thuc_cua_bo": "100", "ma_to_hop": "A00",
+            "diem_chuan": 27.5, "thang_diem": 30, "nguon_du_lieu_url": _URL,
+        }]}}
+        vi_tri = "Mục: Điểm trúng tuyển năm 2026 · Bảng 1"
+        dau = "| IT1 | 100 | A00 | 27,5 | 80 |"
+        duong_dan = "/quy_tac_xet_tuyen/diem_chuan/0/"
+        cau_hoi = {"pham_vi": "IT1 D01", "ly_do": "Cần đối chiếu phạm vi cột.",
+                   "vi_tri": vi_tri, "trich_dan": "D01"}
+        data = {"du_lieu": nhanh, "ra_soat_diem_chuan": [
+            {"nguon_id": 1, "da_doc_het": True, "can_lam_ro": [cau_hoi]},
+        ], "muc": [
+            {"duong_dan": duong_dan + khoa, "phan_loai_ma_bo": "cong_bo",
+             "dan_chung": [{"nguon_id": 1, "vi_tri": vi_tri, "trich_dan": dau, "gia_tri": value}]}
+            for khoa, value in (("diem_chuan", 27.5), ("ma_phuong_thuc_cua_bo", "100"))
+        ], "nguon_xac_minh": [{"nguon_id": 1, "dung_truong_co_so": True, "nam_ap_dung": 2026,
+                                "vi_tri": "Mục: Điểm trúng tuyển năm 2026", "trich_dan": _XAC_MINH}]}
+        nguon = {**_thong_tin(), "id": 1, "phu_hop": True, "lua_chon": "su_dung"}
+        with (patch.object(ai, "_tai_tai_lieu", return_value=(httpx.URL(_URL), html.encode(), "text/html")) as tai,
+              patch.object(ai, "_openai", return_value=(data, [])) as model):
+            kq = ai.extract_draft(_TRUONG, 2026, [nguon], chi_html=True)
+        self.assertEqual((tai.call_count, model.call_count), (1, 1))
+        ds_diem = kq["du_lieu"]["quy_tac_xet_tuyen"]["diem_chuan"]
+        self.assertEqual([(r["ma_xet_tuyen"], r["ma_to_hop"], r["diem_chuan"]) for r in ds_diem],
+                         [("IT1", "A00", 27.5)])
+        self.assertEqual(kq["ra_soat_diem_chuan"]["can_lam_ro"], [{"nguon_id": 1, **cau_hoi}])
+        muc = lap_muc_ban_nhap(kq["du_lieu"], kq["muc"], [nguon], 2026)
+        o = next(m for m in muc if m["duong_dan"] == "/quy_tac_xet_tuyen/diem_chuan/0/diem_chuan")
+        self.assertTrue(o["dan_chung_ids"])
+
+    def test_ma_bo_diem_chuan_dung_nam_va_url_cua_tung_dong(self):
+        khoa = "ma_phuong_thuc_cua_bo"
+        nam_cu, nam_moi = 2026, 2027
+        urls = {nam: f"https://huce.edu.vn/diem-chuan-{nam}" for nam in (nam_cu, nam_moi)}
+        sources = [
+            {"id": nam, "url": url, "nam_ap_dung": nam, "chi_diem_lich_su": nam == nam_cu}
+            for nam, url in urls.items()
+        ]
+        tieu_de = {nam: f"Trường Đại học Xây dựng Hà Nội (XDA) công bố điểm chuẩn {nam}" for nam in urls}
+        trich_dan = "IT1 xét theo kết quả SAT. Điểm chuẩn 1500 trên thang 1600."
+        muc_hoi_cuu = "Mục: Điểm chuẩn trúng tuyển năm 2026"
+        docs = {
+            url: ai._TaiLieu(url, tieu_de[nam], [(_MUC, tieu_de[nam] + "\n" + trich_dan)], [])
+            for nam, url in urls.items()
+        }
+        docs[urls[2027]].doan.append((muc_hoi_cuu, trich_dan))
+        # Năm của điểm, mã đề xuất, năm của URL khai báo, nguồn và mục dẫn chứng, mã được giữ.
+        cac_ca = [
+            (2026, "415", 2026, 2026, _MUC, "415"),
+            (2027, "500", 2027, 2027, _MUC, "500"),
+            (2026, "500", 2026, 2026, _MUC, None),
+            (2027, "415", 2027, 2027, _MUC, None),
+            (2026, "415", 2027, 2026, _MUC, None),
+            (2026, "415", 2026, 2027, _MUC, None),
+            (None, "415", 2026, 2026, _MUC, None),
+            (2026, "415", 2027, 2027, muc_hoi_cuu, "415"),
+            (2027, "500", 2027, 2027, muc_hoi_cuu, None),
+        ]
+        dong, muc = [], []
+        for i, (nam, ma, nam_url, nguon_id, vi_tri, _) in enumerate(cac_ca):
+            dong.append({"nam_tuyen_sinh": nam, "ma_xet_tuyen": "IT1", "diem_chuan": 1500, "thang_diem": 1600,
+                         "nguon_du_lieu_url": urls[nam_url], khoa: ma})
+            muc.append({
+                "duong_dan": f"/quy_tac_xet_tuyen/diem_chuan/{i}/{khoa}", "phan_loai_ma_bo": "suy_luan",
+                "ghi_chu": "Trường dùng điểm SAT để xếp hạng diện này.",
+                "dan_chung": [{"nguon_id": nguon_id, "vi_tri": vi_tri, "trich_dan": trich_dan, "gia_tri": ma}],
+            })
+        data = {
+            "du_lieu": {"thong_tin_import": {}, "dats_tuyen_sinh": {}, "quy_tac_xet_tuyen": {"diem_chuan": dong}},
+            "muc": muc,
+            "nguon_xac_minh": [{"nguon_id": nam, "dung_truong_co_so": True, "nam_ap_dung": nam,
+                                "vi_tri": _MUC, "trich_dan": tieu_de[nam]} for nam in urls],
+        }
+        # Mã khai là công bố phải xuất hiện trong đoạn dẫn. Bảng hồi cứu có phần dẫn riêng về năm.
+        muc[2]["phan_loai_ma_bo"] = "cong_bo"
+        for i, (nam, ma, nam_url, nguon_id, vi_tri, _) in enumerate(cac_ca):
+            if vi_tri == muc_hoi_cuu:
+                muc[i]["dan_chung"][0]["can_cu_nam"] = {
+                    "nam_tuyen_sinh": 2026, "vi_tri": muc_hoi_cuu, "trich_dan": trich_dan,
+                }
+        danh_muc_cu = {2026: [{"ma_phuong_thuc": ma} for ma in ("415", "500")]}
+        with (
+            patch.object(ai, "_doc_tai_lieu", side_effect=docs.__getitem__),
+            patch.object(ai, "_openai", return_value=(data, [])) as openai,
+        ):
+            ban_nhap = ai.extract_draft(_TRUONG, 2027, sources, danh_muc_lich_su=danh_muc_cu)
+
+        payload = openai.call_args.args[1]
+        self.assertEqual(payload["danh_muc_lich_su"], danh_muc_cu)
+        self.assertIn("415", payload["bang_ma_bo_2026"])
+        de_xuat_dung_danh_muc = ["415", "500", "500", None, "415", "415", None, "415", "500"]
+        self.assertEqual([r[khoa] for r in ban_nhap["du_lieu"]["quy_tac_xet_tuyen"]["diem_chuan"]], de_xuat_dung_danh_muc)
+        for i, item in enumerate(ban_nhap["muc"]):
+            if cac_ca[i][-1] is not None:
+                self.assertEqual(item["dan_chung"][0]["phan_loai_ma_bo"], "suy_luan")
+                self.assertIn("ly_do_suy_luan_ma_bo", item["dan_chung"][0])
+            else:
+                self.assertTrue(item["ghi_chu"])
+                self.assertFalse(item["dan_chung"])
+
+    def test_huong_dan_ma_bo_2026_chi_ap_dung_cho_dung_nam(self):
+        danh_muc_nam_truoc = [{"ma_phuong_thuc": "101", "ten_phuong_thuc": "Phương thức năm trước"}]
+        with patch.object(ai, "_openai", return_value=({}, [])) as openai:
+            ai._trich_xuat_nhom(_TRUONG, 2026, [], None)
+            ai._trich_xuat_nhom(_TRUONG, 2025, [], None, danh_muc_phuong_thuc=danh_muc_nam_truoc)
+
+        huong_dan, du_lieu, _ = openai.call_args_list[0].args
+        self.assertEqual(
+            set(du_lieu["bang_ma_bo_2026"]),
+            set("100 200 301 401 402 403 404 405 406 407 409 410 411 413 414 415 416 417 500".split()),
+        )
+        for noi_dung in ("phan_loai_ma_bo", "suy_luan", "1.1, 1.2, 1.3", "TO_HOP_MON", "PT100"):
+            self.assertIn(noi_dung, huong_dan)
+        du_lieu_nam_truoc = openai.call_args_list[1].args[1]
+        self.assertNotIn("bang_ma_bo_2026", du_lieu_nam_truoc)
+        self.assertEqual(du_lieu_nam_truoc["danh_muc_phuong_thuc"], danh_muc_nam_truoc)
+
     def test_openai_dung_model_cau_hinh_va_bat_buoc_tim_kiem(self):
         yeu_cau = []
         client = httpx.Client
@@ -142,36 +267,112 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
         self.assertIn("code=unsupported_value param=tools[0].type request_id=req_abc123", nhat_ky.output[0])
         self.assertNotIn("token-gia", nhat_ky.output[0] + str(loi.exception))
 
-    def test_tim_nguon_xac_minh_link_chinh_thuc_va_tep_dinh_kem(self):
+    def test_tim_nguon_giu_trang_web_va_tam_bo_pdf(self):
         drive = "https://drive.google.com/file/d/ma_file/view"
+        trang_lien_ket = "https://tuyensinh.example.com/thong-tin-tuyen-sinh"
+        bai_bao = "https://bao.example.com/tin-tuyen-sinh"
+        pdf = f"{_URL}/PHU-LUC.PDF?nam=2026"
+        tai_pdf = f"{_URL}/tai-tep?id=42"
         data = {
             "nguon": [
                 _thong_tin(),
+                _thong_tin(trang_lien_ket, url_trang_cong_bo=_URL, loai="thong_bao"),
                 _thong_tin(drive, url_trang_cong_bo=_URL, loai="phu_luc"),
+                _thong_tin(pdf, loai="phu_luc"),
+                _thong_tin(tai_pdf, loai="phu_luc", dinh_dang="pdf"),
                 _thong_tin("https://tuyensinh.huce.edu.vn/khong-co-trong-ket-qua"),
-                _thong_tin("https://bao.example.com/tin-tuyen-sinh"),
+                _thong_tin(bai_bao),
             ],
         }
         output = [
             {
                 "type": "web_search_call",
                 "action": {
-                    "sources": [{"url": _URL}, {"url": "https://bao.example.com/tin-tuyen-sinh"}],
+                    "sources": [{"url": url} for url in (_URL, drive, pdf, tai_pdf, bai_bao)],
                 },
             }
         ]
-        tai_lieu = ai._TaiLieu(_URL, "Đề án 2026", [(_MUC, _XAC_MINH)], [drive])
+        tai_lieu = ai._TaiLieu(_URL, "Đề án 2026", [(_MUC, _XAC_MINH)], [drive, trang_lien_ket])
         with (
             patch.object(ai, "_openai", return_value=(data, output)),
             patch.object(ai, "_doc_tai_lieu", return_value=tai_lieu),
         ):
             nguon, ghi_chu = ai.search_sources(_TRUONG, 2026)
-        self.assertEqual([n["url"] for n in nguon], [_URL, drive, "https://bao.example.com/tin-tuyen-sinh"])
-        self.assertEqual([n["phu_hop"] for n in nguon], [True, True, False])
-        self.assertEqual(nguon[1]["url_trang_cong_bo"], _URL)
+        theo_url = {n["url"]: n for n in nguon}
+        self.assertEqual(set(theo_url), {_URL, trang_lien_ket, bai_bao})
+        self.assertTrue(theo_url[_URL]["phu_hop"])
+        self.assertTrue(theo_url[trang_lien_ket]["phu_hop"])
+        self.assertFalse(theo_url[bai_bao]["phu_hop"])
+        self.assertEqual(theo_url[trang_lien_ket]["url_trang_cong_bo"], _URL)
         self.assertTrue(any("khong-co-trong-ket-qua" in note for note in ghi_chu))
 
-    def test_gioi_han_tim_nguon_ap_dung_sau_khi_xac_minh_va_loai_trung(self):
+    def test_ai_tu_dat_huong_tim_tu_web_va_hop_dong_cua_truong(self):
+        huong = ["Quy định ban nghệ thuật biển của phân hiệu X", "Danh mục học bổng riêng kỳ mùa thu"]
+        khoa = {huong[0]: _URL + "/bien", huong[1]: _URL + "/thu"}
+
+        def tra_loi(_chi_dan, payload, _gioi_han, *, tim_kiem):
+            self.assertTrue(tim_kiem)
+            if "hop_dong_cms" in payload:
+                self.assertIn("/quy_tac_xet_tuyen/cong_thuc", payload["hop_dong_cms"])
+                url = _URL
+                data = {"nguon": [_thong_tin(url)], "huong_tim_tiep": huong}
+            else:
+                self.assertIn(_URL, payload["url_da_co"])
+                url = khoa[payload["noi_dung_can_tim"]]
+                data = {"nguon": [_thong_tin(url)]}
+            return data, [{"type": "web_search_call", "action": {"sources": [{"url": url}]}}]
+
+        with patch.object(ai, "_openai", side_effect=tra_loi) as model:
+            nguon, _ = ai.search_sources(_TRUONG, 2026)
+        self.assertEqual(model.call_count, 3)
+        self.assertCountEqual([n["url"] for n in nguon], [_URL, *khoa.values()])
+
+    def test_ai_co_the_dung_tim_va_giu_nguon_da_xac_minh_khi_huong_sau_loi(self):
+        output = [{"type": "web_search_call", "action": {"sources": [{"url": _URL}]}}]
+        for huong in ([], ["Tài liệu bổ sung riêng của khoa"]):
+            with self.subTest(huong=huong), patch.object(ai, "_openai", side_effect=[
+                ({"nguon": [_thong_tin()], "huong_tim_tiep": huong}, output), ai.AdmissionAIError("Hết thời gian"),
+            ]) as model:
+                nguon, ghi_chu = ai.search_sources(_TRUONG, 2026)
+                self.assertEqual(model.call_count, 1 + len(huong))
+                self.assertEqual([n["url"] for n in nguon], [_URL])
+                self.assertEqual(bool(ghi_chu), bool(huong))
+
+    def test_tim_bo_sung_dung_khoang_trong_va_chi_tra_trang_html_moi_dung_pham_vi(self):
+        gaps = ["IT1 thiếu tổ hợp", "Học phí chương trình IT2", "Tỷ lệ việc làm"]
+        cu, moi, sai_nam, lich_su, pdf = _URL, f"{_URL}/viec-lam", f"{_URL}/2024", f"{_URL}/diem-2024", _URL_SUA
+        data = {"nguon": [
+            _thong_tin(cu), _thong_tin(moi), _thong_tin(sai_nam, nam_ap_dung=2024),
+            _thong_tin(lich_su, nam_ap_dung=2024, loai="diem_lich_su"), _thong_tin(pdf),
+        ]}
+        output = [{"type": "web_search_call", "action": {"sources": [{"url": n["url"]} for n in data["nguon"]]}}]
+        with patch.object(ai, "_openai", return_value=(data, output)) as model:
+            self.assertEqual(ai.search_missing_sources(_TRUONG, 2026, [], [cu]), ([], []))
+            model.assert_not_called()
+            rows, _ = ai.search_missing_sources(_TRUONG, 2026, gaps, [cu + "?utm_source=test"])
+        self.assertCountEqual([row["url"] for row in rows], [moi, lich_su])
+        self.assertEqual(model.call_count, 1)
+        inputs = [call.args[1] for call in model.call_args_list]
+        for gap in gaps:
+            self.assertTrue(any(gap in arg["noi_dung_can_tim"] for arg in inputs))
+        self.assertTrue(all(cu in arg["url_da_co"] for arg in inputs))
+
+    def test_tim_nguon_bo_tham_so_theo_doi_khi_so_sanh_url(self):
+        url = f"{_URL}?bai=42"
+        url_khac = f"{_URL}?bai=43"
+        data = {"nguon": [_thong_tin(url), _thong_tin(f"{url}&utm_campaign=trung#hoc-phi"), _thong_tin(url_khac)]}
+        output = [{
+            "type": "web_search_call",
+            "action": {"sources": [{"url": f"{url}&utm_source=tim-kiem"}, {"url": url_khac}]},
+        }]
+
+        with patch.object(ai, "_openai", return_value=(data, output)):
+            nguon, ghi_chu = ai.search_sources(_TRUONG, 2026)
+
+        self.assertCountEqual([n["url"] for n in nguon], [url, url_khac])
+        self.assertEqual(ghi_chu, [])
+
+    def test_tim_nguon_giu_day_du_ket_qua_sau_khi_xac_minh_va_loai_trung(self):
         urls = [f"{_URL}/tai-lieu-{so}" for so in range(12)]
         data = {
             "nguon": [
@@ -183,31 +384,32 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
         }
         output = [{"type": "web_search_call", "action": {"sources": [{"url": url} for url in urls]}}]
 
-        with patch.object(ai, "_openai", return_value=(data, output)) as mo_hinh:
+        with patch.object(ai, "_openai", return_value=(data, output)):
             nguon, _ = ai.search_sources(_TRUONG, 2026)
 
-        self.assertEqual([n["url"] for n in nguon], urls)
-        self.assertIn("Tự quyết định số tài liệu cần tìm", mo_hinh.call_args.args[0])
+        self.assertCountEqual([n["url"] for n in nguon], urls)
 
-    def test_tim_nguon_giu_de_an_chinh_thuc_khi_trung_url(self):
+    def test_trung_url_uu_tien_nguon_hop_le_va_giu_phan_loai_ai_khi_cung_pham_vi(self):
         nguon_kem_uu_tien = (
             _thong_tin(f"{_URL}#diem-chuan", loai="diem_lich_su", nam_ap_dung=2025),
             _thong_tin(f"{_URL}#thong-tin-tom-tat", chinh_thuc=False),
             _thong_tin(f"{_URL}#phu-luc", loai="phu_luc"),
         )
         de_an = _thong_tin(f"{_URL}#de-an", tieu_de="Đề án chính thức năm 2026")
-        output = [{"type": "web_search_call", "action": {"sources": [{"url": _URL}, {"url": _URL_SUA}]}}]
+        trang_phu_luc = f"{_URL}/phu-luc"
+        output = [{"type": "web_search_call", "action": {"sources": [{"url": _URL}, {"url": trang_phu_luc}]}}]
 
         for nguon_dau in nguon_kem_uu_tien:
-            data = {"nguon": [nguon_dau, _thong_tin(_URL_SUA), de_an, nguon_kem_uu_tien[0]]}
+            data = {"nguon": [nguon_dau, _thong_tin(trang_phu_luc, loai="phu_luc"), de_an, nguon_kem_uu_tien[0]]}
             with (
                 self.subTest(nguon_dau=nguon_dau["url"]),
                 patch.object(ai, "_openai", return_value=(data, output)),
             ):
                 nguon, ghi_chu = ai.search_sources(_TRUONG, 2026)
                 self.assertEqual(len(nguon), 2)
-                self.assertEqual(nguon[0]["tieu_de"], de_an["tieu_de"])
-                self.assertEqual(nguon[0]["loai"], "de_an")
+                ket_luan_ai = nguon_dau if nguon_dau["loai"] == "phu_luc" else de_an
+                self.assertEqual(nguon[0]["tieu_de"], ket_luan_ai["tieu_de"])
+                self.assertEqual(nguon[0]["loai"], ket_luan_ai["loai"])
                 self.assertEqual(nguon[0]["nam_ap_dung"], 2026)
                 self.assertTrue(nguon[0]["phu_hop"])
                 self.assertFalse(nguon[0]["chi_diem_lich_su"])
@@ -332,6 +534,103 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
         self.assertIn(("doc_nguon", 23, 23), tien_do)
 
 
+    def test_gop_nhieu_nhom_giu_chuong_trinh_cung_ma_khac_ten_hoac_co_so(self):
+        def nhom(ten_chuong_trinh, co_so_id=None, ma_co_so=None, **them):
+            chuong_trinh = {"ma_xet_tuyen": "101A", "ten_chuong_trinh": ten_chuong_trinh, **them}
+            return {
+                "du_lieu": {
+                    "thong_tin_import": {},
+                    "dats_tuyen_sinh": {"dats_chuong_trinh_dao_tao": [{**chuong_trinh, "co_so_id": co_so_id}]},
+                    "quy_tac_xet_tuyen": {"chuong_trinh": [{**chuong_trinh, "ma_co_so": ma_co_so}]},
+                },
+                "muc": [{"duong_dan": "/dats_tuyen_sinh/dats_chuong_trinh_dao_tao/0/ten_chuong_trinh"}],
+            }
+
+        du_lieu, muc, _ = ai._gop_ket_qua([
+            nhom("Công nghệ thông tin", 1, "HN"),
+            nhom("Công nghệ thông tin", 2, "DN"),
+            nhom("Khoa học máy tính", 2, "DN"),
+            nhom("Khoa học máy tính", ma_nganh="7480101"),
+        ], [])
+
+        chuong_trinh = du_lieu["dats_tuyen_sinh"]["dats_chuong_trinh_dao_tao"]
+        self.assertEqual([(ct["ten_chuong_trinh"], ct["co_so_id"]) for ct in chuong_trinh], [
+            ("Công nghệ thông tin", 1), ("Công nghệ thông tin", 2), ("Khoa học máy tính", 2),
+        ])
+        quy_tac = du_lieu["quy_tac_xet_tuyen"]["chuong_trinh"]
+        self.assertEqual([(ct["ten_chuong_trinh"], ct["ma_co_so"]) for ct in quy_tac], [
+            ("Công nghệ thông tin", "HN"), ("Công nghệ thông tin", "DN"), ("Khoa học máy tính", "DN"),
+        ])
+        self.assertEqual(chuong_trinh[2]["ma_nganh"], "7480101")
+        self.assertEqual(quy_tac[2]["ma_nganh"], "7480101")
+        self.assertEqual([m["duong_dan"].split("/")[-2] for m in muc], ["0", "1", "2", "2"])
+
+    def test_gop_nguon_bo_sung_giu_lien_ket_khi_id_co_so_cuc_bo_trung(self):
+        path = "/dats_tuyen_sinh/dats_chuong_trinh_dao_tao/0/co_so_id"
+
+        def phan(ten, ma):
+            return {
+                "du_lieu": {
+                    "thong_tin_import": {}, "quy_tac_xet_tuyen": {},
+                    "dats_tuyen_sinh": {
+                        "dats_tru_so": [{"ten_co_so": ten, "id": ma}],
+                        "dats_chuong_trinh_dao_tao": [{"ma_xet_tuyen": "IT1", "ten_chuong_trinh": "CNTT", "co_so_id": ma}],
+                        "dats_co_so_vat_chat": [{"ten_hang_muc": "Phòng máy", "co_so_id": ma}],
+                    },
+                },
+                "muc": [{"duong_dan": path, "dan_chung": [{"gia_tri": ma, "trich_dan": ten}]}],
+            }
+
+        them = phan("Phân hiệu B", 1)
+        du_lieu, muc, _ = ai._gop_ket_qua([phan("Trụ sở A", 1), them, phan("Phân hiệu B", 4)], [])
+        dats = du_lieu["dats_tuyen_sinh"]
+        self.assertEqual([row["id"] for row in dats["dats_tru_so"]], [1, 2])
+        self.assertEqual([row["co_so_id"] for row in dats["dats_chuong_trinh_dao_tao"]], [1, 2])
+        self.assertEqual([row["co_so_id"] for row in dats["dats_co_so_vat_chat"]], [1, 2])
+        self.assertEqual([item["dan_chung"][0]["gia_tri"] for item in muc], [1, 2, 2])
+        self.assertEqual(muc[1]["duong_dan"], path.replace("/0/", "/1/"))
+        self.assertEqual(them["muc"][0]["dan_chung"][0]["gia_tri"], 1)
+
+    def test_gop_nhieu_nhom_giu_cong_thuc_khac_nhau_cua_cung_phuong_thuc(self):
+        def nhom(ma_cong_thuc, ma_phuong_thuc, to_hop):
+            de_an = {
+                "ma_xet_tuyen": "IT1",
+                "dats_phuong_thuc": [{
+                    "ma_phuong_thuc_cua_truong": ma_phuong_thuc,
+                    "cong_thuc_tinh_diem": ma_cong_thuc,
+                    "to_hop_mon_hoc": to_hop,
+                }],
+            }
+            quy_tac = {
+                "ma_xet_tuyen": "IT1",
+                "phuong_an": [{
+                    "ma_phuong_thuc_cua_truong": ma_phuong_thuc,
+                    "ma_cong_thuc": ma_cong_thuc,
+                    "to_hop": to_hop,
+                }],
+            }
+            return {
+                "du_lieu": {
+                    "thong_tin_import": {},
+                    "dats_tuyen_sinh": {"dats_chuong_trinh_dao_tao": [de_an]},
+                    "quy_tac_xet_tuyen": {"chuong_trinh": [quy_tac]},
+                },
+                "muc": [],
+            }
+
+        du_lieu, _, _ = ai._gop_ket_qua([
+            nhom("THPT_30", "PT1", ["A00"]),
+            nhom("THPT_40", "PT1", []),
+            nhom("THPT_40", None, ["D01"]),
+        ], [])
+
+        phuong_thuc = du_lieu["dats_tuyen_sinh"]["dats_chuong_trinh_dao_tao"][0]["dats_phuong_thuc"]
+        self.assertEqual([(pt["cong_thuc_tinh_diem"], pt["to_hop_mon_hoc"]) for pt in phuong_thuc],
+                         [("THPT_30", ["A00"]), ("THPT_40", ["D01"])])
+        phuong_an = du_lieu["quy_tac_xet_tuyen"]["chuong_trinh"][0]["phuong_an"]
+        self.assertEqual([(pa["ma_cong_thuc"], pa["to_hop"]) for pa in phuong_an],
+                         [("THPT_30", ["A00"]), ("THPT_40", ["D01"])])
+
     def test_trich_xuat_chia_nhom_lai_khi_model_bao_het_ngu_canh(self):
         sources = [{"id": 1, "url": _URL}, {"id": 2, "url": _URL_SUA}]
         tai_lieu = ai._TaiLieu(_URL, "", [(_MUC, _XAC_MINH)], [])
@@ -391,7 +690,20 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
             "/dats_tuyen_sinh/dats_chuong_trinh_dao_tao/0/dats_phuong_thuc/2/ma_phuong_thuc_cua_bo",
             "/quy_tac_xet_tuyen/cong_thuc/2/ma_phuong_thuc_cua_bo",
         }
-        tai_lieu = ai._TaiLieu(_URL, "Đề án 2026", [(_MUC, _XAC_MINH)], [])
+        trich_dan = [
+            f"Diện {dien}: Mã phương thức của Bộ GD&ĐT: {ma_bo}"
+            for dien, ma_bo in cac_dien if ma_bo is not None
+        ]
+        tai_lieu = ai._TaiLieu(_URL, "Đề án 2026", [(_MUC, _XAC_MINH + "\n" + "\n".join(trich_dan))], [])
+        muc_da_ro = [
+            {
+                "duong_dan": f"{duong_dan}/{vi_tri}/ma_phuong_thuc_cua_bo",
+                "phan_loai_ma_bo": "cong_bo",
+                "dan_chung": [{"nguon_id": 1, "vi_tri": _MUC, "trich_dan": noi_dung, "gia_tri": "401"}],
+            }
+            for duong_dan in ("/dats_tuyen_sinh/dats_chuong_trinh_dao_tao/0/dats_phuong_thuc", "/quy_tac_xet_tuyen/cong_thuc")
+            for vi_tri, noi_dung in enumerate(trich_dan)
+        ]
         data = {
             "du_lieu": {
                 "thong_tin_import": {},
@@ -404,7 +716,9 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
                 "nguon_id": 1, "dung_truong_co_so": True, "nam_ap_dung": 2026,
                 "vi_tri": _MUC, "trich_dan": _XAC_MINH,
             }],
-            "muc": [{"duong_dan": p, "dan_chung": [], "ghi_chu": ly_do} for p in sorted(muc_chua_ro)],
+            "muc": [*muc_da_ro, *[
+                {"duong_dan": p, "dan_chung": [], "ghi_chu": ly_do} for p in sorted(muc_chua_ro)
+            ]],
             "ghi_chu": [ly_do],
         }
         with (
@@ -425,14 +739,63 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
         self.assertIn(ly_do, ket_qua["ghi_chu"])
         self.assertTrue(muc_chua_ro.issubset({dong["duong_dan"] for dong in ket_qua["muc"] if dong["ghi_chu"] == ly_do}))
 
-    def test_ban_nhap_chi_giu_500_khi_nguon_neu_ro_ma_phuong_thuc(self):
+    def test_ma_bo_suy_luan_can_can_cu_va_quan_tri_xac_nhan(self):
+        khoa = "ma_phuong_thuc_cua_bo"
+        duong_dan = f"/quy_tac_xet_tuyen/cong_thuc/0/{khoa}"
+        trich_dan = "Diện TSA xét kết quả kỳ thi đánh giá tư duy do chính trường tổ chức."
+        ly_do = "Điểm kỳ thi do trường tổ chức là căn cứ độc lập để xét nên thuộc nhóm 401."
+        nguon = {"id": 1, "url": _URL, "chinh_thuc": True, "phu_hop": True, "nam_ap_dung": 2026, "lua_chon": "su_dung"}
+        tai_lieu = {1: ai._TaiLieu(_URL, "Đề án 2026", [(_MUC, trich_dan)], [])}
+        for phan_loai, ghi_chu, cau_trich, ma, mong_doi in (
+            ("suy_luan", ly_do, trich_dan, "401", "401"),
+            ("cong_bo", ly_do, trich_dan, "401", None),
+            ("suy_luan", None, trich_dan, "401", None),
+            ("suy_luan", ly_do, "Không có đoạn này trong nguồn.", "401", None),
+            ("suy_luan", ly_do, trich_dan, "PT401", None),
+        ):
+            with self.subTest(phan_loai=phan_loai, ghi_chu=ghi_chu, cau_trich=cau_trich, ma=ma):
+                du_lieu = {"quy_tac_xet_tuyen": {"cong_thuc": [{khoa: ma}]}}
+                data = {
+                    "du_lieu": du_lieu,
+                    "muc": [{
+                        "duong_dan": duong_dan,
+                        "phan_loai_ma_bo": phan_loai,
+                        "ghi_chu": ghi_chu,
+                        "dan_chung": [{"nguon_id": 1, "vi_tri": _MUC, "trich_dan": cau_trich, "gia_tri": ma}],
+                    }],
+                }
+
+                ai._chuan_hoa_ma_phuong_thuc(data, 2026, {2026: {"401"}}, tai_lieu, {})
+                muc_ai = ai._chuan_hoa_dan_chung(data["muc"], tai_lieu, [])
+                muc = lap_muc_ban_nhap(du_lieu, muc_ai, [nguon], 2026)
+                self.assertEqual(du_lieu["quy_tac_xet_tuyen"]["cong_thuc"][0][khoa], "401" if ma == "401" else None)
+                self.assertFalse(muc[0]["dan_chung_ids"])
+                if mong_doi is None:
+                    self.assertTrue(muc[0]["ghi_chu"])
+                    continue
+
+                self.assertIn("Mã Bộ suy luận (401).", muc[0]["ghi_chu"])
+                self.assertIn(ly_do, muc[0]["ghi_chu"])
+                self.assertEqual(muc[0]["dan_chung"][0]["trich_dan"], trich_dan)
+                self.assertTrue(any(loi.startswith(duong_dan) for loi in canh_bao_dan_chung(du_lieu, muc)))
+                da_xac_nhan, muc_da_xac_nhan, _ = sua_muc_ban_nhap(du_lieu, muc, [
+                    SuaMucBanNhap(duong_dan=duong_dan, dan_chung_ids=["1"], ghi_chu=ly_do, da_kiem_tra=True),
+                ], [nguon])
+                self.assertFalse(
+                    any(loi.startswith(duong_dan) for loi in canh_bao_dan_chung(da_xac_nhan, muc_da_xac_nhan))
+                )
+
+    def test_ban_nhap_giu_ket_luan_ai_ve_ma_500_va_gia_tri_chua_ro(self):
         danh_muc = [{"ma_phuong_thuc": "500", "ten_phuong_thuc": "Phương thức khác"}]
         khoa = "ma_phuong_thuc_cua_bo"
         muc_phuong_thuc = f"/dats_tuyen_sinh/dats_chuong_trinh_dao_tao/0/dats_phuong_thuc/0/{khoa}"
         muc_cong_thuc = f"/quy_tac_xet_tuyen/cong_thuc/0/{khoa}"
         truong_hop = [
-            ({khoa: "500"}, "Mã phương thức: 500", "500"),
-            ({khoa: "500"}, "500 chỉ tiêu", None),
+            ({khoa: "500"}, "Mã phương thức của Bộ GD&ĐT: 500", "500"),
+            ({khoa: "500"}, "Mã tham chiếu cổng đăng ký chung: 500", "500"),
+            ({khoa: None}, "Mã phương thức: 500 (mã riêng của trường).", None),
+            ({khoa: None}, "500 - Phương thức khác (mã nội bộ).", None),
+            ({khoa: None}, "500 chỉ tiêu", None),
             ({khoa: "699"}, "Mã phương thức: 699", None),
             ({}, "", None),
         ]
@@ -454,7 +817,8 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
                         "vi_tri": _MUC, "trich_dan": _XAC_MINH,
                     }],
                     "muc": [
-                        {"duong_dan": duong_dan, "dan_chung": [{
+                        {"duong_dan": duong_dan, "phan_loai_ma_bo": "cong_bo" if bo.get(khoa) else None,
+                         "ghi_chu": None if bo.get(khoa) else "AI chưa xác định được mã Bộ từ nguồn này.", "dan_chung": [{
                             "nguon_id": 1, "vi_tri": _MUC, "trich_dan": trich_dan, "gia_tri": bo[khoa],
                         }]}
                         for duong_dan in (muc_phuong_thuc, muc_cong_thuc) if trich_dan
@@ -488,7 +852,7 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
             {"id": 11, "url": _URL_SUA, "nam_ap_dung": 2026},
         ]
         data = {
-            "du_lieu": {"thong_tin_import": {}, "dats_tuyen_sinh": {"chi_tieu": 95}, "quy_tac_xet_tuyen": {}},
+            "du_lieu": {"thong_tin_import": {}, "dats_tuyen_sinh": {"chi_tieu": 80}, "quy_tac_xet_tuyen": {}},
             "nguon_xac_minh": [
                 {
                     "nguon_id": 10,
@@ -521,12 +885,19 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
         }
         with (
             patch.object(ai, "_doc_tai_lieu", side_effect=tai_lieu.__getitem__) as tai,
-            patch.object(ai, "_openai", return_value=(data, [])) as openai,
+            patch.object(ai, "_openai", side_effect=[
+                (data, []),
+                ({"ket_luan": [{"duong_dan": _PATH, "gia_tri": 95, "dan_chung_ids": [2],
+                                "ly_do": "Thông báo điều chỉnh chỉ tiêu của kỳ tuyển sinh này."}]}, []),
+            ]) as openai,
         ):
             ket_qua = ai.extract_draft(_TRUONG, 2026, sources)
         self.assertEqual({call.args[0] for call in tai.call_args_list}, {_URL, _URL_SUA})
         self.assertFalse(openai.call_args.kwargs.get("tim_kiem", False))
-        self.assertEqual({s["url"] for s in openai.call_args.args[1]["nguon_da_chon"]}, {_URL, _URL_SUA})
+        self.assertEqual({s["url"] for s in openai.call_args_list[0].args[1]["nguon_da_chon"]}, {_URL, _URL_SUA})
+        self.assertEqual(openai.call_args.args[1]["cac_muc"][0]["duong_dan"], _PATH)
+        self.assertEqual(ket_qua["du_lieu"]["dats_tuyen_sinh"]["chi_tieu"], 95)
+        self.assertEqual(ket_qua["muc"][0]["phan_tich_mau_thuan_ai"]["dan_chung_ids"], [2])
         self.assertEqual([n["gia_tri"] for n in ket_qua["muc"][0]["dan_chung"]], [80, 95])
         self.assertTrue(ket_qua["muc"][0]["mau_thuan"])
         self.assertIn("4 dẫn chứng", ket_qua["ghi_chu"][0])
@@ -626,34 +997,20 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
         self.assertTrue(any("thiếu 1 mã" in chu for chu in ket_qua["ghi_chu"]))
         self.assertEqual(ket_qua["muc"][0]["dan_chung"][0]["gia_tri"], "IT1")
 
-    def test_doi_chieu_ma_chuong_trinh_dung_doan_va_tong_dung_pham_vi(self):
-        du_kien = "https://tuyensinh.huce.edu.vn/thong-bao-du-kien"
-        noi_dung = "Toàn trường tuyển sinh 2 mã xét tuyển.\nIT10 | Tin học\nIT2 | Kỹ thuật\nCó 95 chỉ tiêu."
-        tai_lieu = {
-            10: ai._TaiLieu(_URL, "Đề án chính thức", [(_MUC, noi_dung)], []),
-            11: ai._TaiLieu(du_kien, "Đề án dự kiến", [(_MUC, noi_dung)], []),
-        }
-        sources = [dict(_thong_tin(doc.url), id=i, phu_hop=True) for i, doc in tai_lieu.items()]
-        sources[1].update(thay_the_url=_URL, pham_vi_dieu_chinh="Toàn bộ đề án")
-
-        def de_xuat(nguon_id, trich_dan, ma, tong=None):
-            return {"nguon_id": nguon_id, "vi_tri": _MUC, "trich_dan": trich_dan, "cac_ma": ma,
-                    "tong_cong_bo": tong, "pham_vi": "toan_truong"}
-
-        ds = ai._doi_chieu_chuong_trinh([
-            de_xuat(10, "Toàn trường tuyển sinh 2 mã xét tuyển.", [], 2),
-            de_xuat(10, "IT10 | Tin học", ["IT1", "IT10", "IT10"]),
-            de_xuat(10, "IT2 | Kỹ thuật", ["IT2"]),
-            de_xuat(10, "Có 95 chỉ tiêu.", [], 95),
-            de_xuat(10, "Không có trong tài liệu", ["IT99"], 999),
-            de_xuat(11, "Toàn trường tuyển sinh 2 mã xét tuyển.", [], 2),
-            de_xuat(11, "IT10 | Tin học", ["IT10"]),
-        ], sources, tai_lieu, 2026)
-
-        self.assertEqual([(d["cac_ma"], d["tong_cong_bo"], d["pham_vi"]) for d in ds], [
-            ([], 2, "toan_truong"), (["IT10"], None, "toan_truong"), (["IT2"], None, "toan_truong"),
-            (["IT10"], None, "phan_pham_vi"),
-        ])
+    def test_doi_chieu_chuong_trinh_giu_cach_doc_pham_vi_va_don_vi_cua_ai(self):
+        url = "https://tuyensinh.huce.edu.vn/du-kien-cap-nhat"
+        noi_dung = "Theo quyết định chính thức, cả khóa mở hai hướng.\nIT10 | Tin học"
+        doc = ai._TaiLieu(url, "Phụ lục điều chỉnh", [(_MUC, noi_dung)], [])
+        source = dict(_thong_tin(url), id=10, phu_hop=True, loai="dieu_chinh")
+        tong = {"nguon_id": 10, "vi_tri": _MUC, "trich_dan": noi_dung.splitlines()[0], "cac_ma": [],
+                "tong_cong_bo": 2, "don_vi_tong": "chương trình", "pham_vi": "toan_truong"}
+        dong = {**tong, "trich_dan": "IT10 | Tin học", "cac_ma": ["IT1", "IT10"], "tong_cong_bo": None,
+                "pham_vi": "phan_pham_vi"}
+        ds = ai._doi_chieu_chuong_trinh([tong, dong, {**tong, "trich_dan": "không có trong tài liệu"}],
+                                        [source], {10: doc}, 2026)
+        self.assertEqual([(d["cac_ma"], d["tong_cong_bo"], d["pham_vi"]) for d in ds],
+                         [([], 2, "toan_truong"), (["IT10"], None, "phan_pham_vi")])
+        self.assertEqual(ds[0]["don_vi_tong"], "chương trình")
 
     def test_bo_sung_chi_lay_dan_chung_cong_thuc_co_trong_nguon(self):
         tien_to = "/quy_tac_xet_tuyen/cong_thuc/0"
@@ -672,6 +1029,46 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
         self.assertEqual(theo_path[f"{tien_to}/he_so_nhan"], [])
         self.assertNotIn(f"{tien_to}/diem_san", theo_path)
         self.assertTrue(any("1 công thức còn trường chưa có dẫn chứng" in chu for chu in loi))
+
+    def test_bo_sung_dan_chung_qua_160_muc_va_tiep_tuc_sau_lo_loi(self):
+        cau = "Các công thức trong bảng đều dùng thang điểm 30."
+        doc = ai._TaiLieu(_URL, "Thông tin tuyển sinh", [(_MUC, cau)], [])
+        cong_thuc = [{"thang_diem": 30} for _ in range(205)]
+        du_lieu = {"quy_tac_xet_tuyen": {"cong_thuc": cong_thuc}}
+        cac_lo, tien_do, ghi_chu = [], [], []
+        def path(i):
+            return f"/quy_tac_xet_tuyen/cong_thuc/{i}/thang_diem"
+
+        def xu_ly(_prompt, data, _tokens):
+            lo = data["gia_tri_can_kiem"]
+            cac_lo.append(list(lo))
+            if len(cac_lo) == 1:
+                raise ai._LoiDungLuongModel("Phản hồi dài.")
+            if path(70) in lo:
+                raise ai.AdmissionAIError("Dịch vụ tạm thời gián đoạn.")
+            return {"dan_chung": [{"duong_dan": p, "nguon_id": 1, "vi_tri": _MUC, "trich_dan": cau} for p in lo]}, []
+
+        da_co = [{"duong_dan": path(13), "dan_chung": [{"nguon_id": 1, "gia_tri": 30}]}]
+        with patch.object(ai, "_openai", side_effect=xu_ly):
+            muc = ai._bo_sung_dan_chung_cong_thuc(du_lieu, da_co, {1: doc}, ghi_chu, lambda *p: tien_do.append(p))
+        self.assertEqual(set(cac_lo[0]), set(cac_lo[1]) | set(cac_lo[2]))
+        self.assertFalse(set(cac_lo[1]) & set(cac_lo[2]))
+        self.assertEqual(set().union(*cac_lo), {path(i) for i in range(205)} - {path(13)})
+        loi = next(lo for lo in cac_lo if path(70) in lo)
+        self.assertEqual({m["duong_dan"] for m in muc if m["dan_chung"]}, {path(i) for i in range(205)} - {path(13), *loi})
+        self.assertTrue(any("tạm thời gián đoạn" in g for g in ghi_chu))
+        self.assertEqual(tien_do[-1], ("doi_chieu_cong_thuc", 204, 204))
+
+    def test_dung_doi_chieu_cong_thuc_truoc_khi_goi_lo_ke_tiep(self):
+        cong_thuc = [{"thang_diem": 30} for _ in range(90)]
+        doc = ai._TaiLieu(_URL, "Thông tin tuyển sinh", [(_MUC, "Điểm theo thang điểm 30.")], [])
+        def dung(_buoc, da_xu_ly, _tong):
+            if da_xu_ly:
+                raise RuntimeError("Đã dừng lượt thu thập")
+        with patch.object(ai, "_openai", return_value=({"dan_chung": []}, [])) as model:
+            with self.assertRaisesRegex(RuntimeError, "Đã dừng"):
+                ai._bo_sung_dan_chung_cong_thuc({"quy_tac_xet_tuyen": {"cong_thuc": cong_thuc}}, [], {1: doc}, [], dung)
+        self.assertEqual(model.call_count, 1)
 
     def test_tai_tai_lieu_khoa_ip_da_xac_minh_va_kiem_tra_lai_chuyen_huong(self):
         yeu_cau = []
@@ -723,6 +1120,26 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
             self.assertRaisesRegex(ai.AdmissionAIError, "Không xác minh được chứng chỉ HTTPS"),
         ):
             ai._doc_tai_lieu(_URL)
+
+    def test_luot_tu_dong_chan_pdf_qua_url_chuyen_huong_mime_va_noi_dung(self):
+        client = httpx.Client
+        redirect = httpx.Response(302, headers={"location": _URL_SUA})
+        pdf = b"%PDF-1.7 test"
+        for response in (
+            redirect,
+            httpx.Response(200, headers={"content-type": "application/pdf; charset=binary"}),
+            httpx.Response(200, headers={"content-type": "application/octet-stream"}, stream=httpx.ByteStream(pdf)),
+        ):
+            with (
+                self.subTest(status=response.status_code, mime=response.headers.get("content-type")),
+                patch.object(ai, "_dia_chi_cong_khai", return_value=["9.9.9.9"]) as dns,
+                patch.object(ai.httpx, "Client", lambda **kw: client(transport=httpx.MockTransport(lambda _: response), **kw)),
+                patch.object(ai, "_doc_pdf") as doc_pdf,
+                self.assertRaisesRegex(ai.AdmissionAIError, "Tạm bỏ PDF"),
+            ):
+                ai._doc_tai_lieu(_URL, chi_html=True)
+            self.assertEqual(dns.call_count, 1)
+            doc_pdf.assert_not_called()
 
     def test_doc_html_lay_de_muc_va_bo_noi_dung_khong_hien_thi(self):
         html = (
@@ -783,7 +1200,31 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
         ):
             ai._doc_tai_lieu(_URL)
 
-    def test_doc_phu_luc_uu_tien_lien_ket_bai_viet_va_khu_trung_tep_drive(self):
+    def test_ai_xem_duoc_ngu_canh_lien_ket_khong_nhan_o_cuoi_trang_dai(self):
+        raw = ("<title>Đề án</title><p>Tài liệu công bố theo từng diện.</p>"
+               + "".join(f'<a href="/tl/{i}">Xem</a>' for i in range(83))
+               + '<p>Biểu điểm theo từng mã</p><a href="/bo-sung"></a>')
+        with patch.object(ai, "_tai_tai_lieu", return_value=(httpx.URL(_URL), raw.encode(), "text/html")):
+            trang = ai._doc_tai_lieu(_URL)
+        phu_luc = ai._TaiLieu("https://tuyensinh.huce.edu.vn/bo-sung", "Biểu điểm", [], [])
+
+        def chon(prompt, du_lieu, ngan_sach):
+            muc = du_lieu["tai_nguyen"]
+            for u in muc:
+                if u["url"].endswith("/bo-sung"):
+                    self.assertEqual(u["nhan"], "")
+                    self.assertIn("Biểu điểm theo từng mã", u["ngu_canh"])
+                    return {"ids": [u["id"]]}, []
+            return {"ids": [muc[0]["id"]]}, []
+
+        with (patch.object(ai, "_openai", side_effect=chon) as mo_hinh,
+              patch.object(ai, "_doc_tai_lieu", return_value=phu_luc) as tai):
+            ket_qua, _ = ai._doc_phu_luc({"chinh_thuc": True, "phu_hop": True}, trang, toi_da=1)
+        self.assertEqual(mo_hinh.call_count, 3)
+        tai.assert_called_once_with(phu_luc.url, chi_html=True)
+        self.assertEqual(ket_qua[0].url_goc, phu_luc.url)
+
+    def test_doc_phu_luc_chi_doc_html_va_bo_qua_pdf_drive(self):
         drive = "https://drive.google.com/file/d/tepphuluc/view"
         drive_download = "https://drive.usercontent.google.com/download?export=download&id=tepphuluc"
         tai_lieu = ai._TaiLieu(
@@ -794,26 +1235,30 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
             lien_ket_co_nhan=[
                 ("/khac", "Xem thêm"),
                 ("#doc", "Phụ lục trong trang"),
-                ("/phu-luc1", "Phụ lục 1"),
+                ("/phu-luc1", "Quyển xanh"),
+                ("/phu-luc2.pdf", "Phụ lục 2: Bảng quy đổi"),
                 (drive, "Phụ lục 2: Bảng quy đổi điểm"),
                 (drive_download, "Phụ lục 2: Bảng quy đổi"),
             ],
         )
-        doc = ai._TaiLieu(drive_download, "", [("Trang PDF 2", "IELTS 6.5: 9.5 điểm")], [])
+        trang = "https://tuyensinh.huce.edu.vn/phu-luc1"
+        doc = ai._TaiLieu(trang, "", [("Quy đổi", "IELTS 6.5: 9.5 điểm")], [])
         da_doc = set()
-        with patch.object(ai, "_doc_tai_lieu", return_value=doc) as doc_file:
+        with (patch.object(ai, "_doc_tai_lieu", return_value=doc) as doc_file,
+              patch.object(ai, "_openai", return_value=({"ids": [2]}, [])) as chon):
             ket_qua, ghi_chu = ai._doc_phu_luc(
                 {"chinh_thuc": True, "phu_hop": True},
                 tai_lieu,
                 toi_da=1,
                 bo_qua=da_doc,
             )
-        doc_file.assert_called_once_with(drive)
+        self.assertEqual([r["nhan"] for r in chon.call_args.args[1]["tai_nguyen"]], ["Xem thêm", "Quyển xanh"])
+        doc_file.assert_called_once_with(trang, chi_html=True)
         self.assertEqual(len(ket_qua), 1)
-        self.assertEqual(ket_qua[0].url_goc, drive)
-        self.assertTrue(ket_qua[0].tai_lieu.doi_chieu("Trang PDF 2", "IELTS 6.5: 9.5 điểm"))
-        self.assertEqual(da_doc, {ai._url_so_sanh(drive)})
-        self.assertIn("1 phụ lục ngoài phạm vi", ghi_chu[0])
+        self.assertEqual(ket_qua[0].url_goc, trang)
+        self.assertTrue(ket_qua[0].tai_lieu.doi_chieu("Quy đổi", "IELTS 6.5: 9.5 điểm"))
+        self.assertEqual(da_doc, {trang})
+        self.assertEqual(ghi_chu, [])
 
     def test_doc_phu_luc_bao_loi_tai_va_chuyen_huong_khac_ten_mien(self):
         tai_lieu = ai._TaiLieu(
@@ -821,15 +1266,17 @@ class TestThuThapTuyenSinhAI(unittest.TestCase):
             "Đề án 2026",
             [(_MUC, _XAC_MINH)],
             [],
-            lien_ket_co_nhan=[("/phu-luc1", "Phụ lục 1"), ("/phu-luc2.pdf", "Phụ lục 2")],
+            lien_ket_co_nhan=[("/phu-luc1", "Phụ lục 1"), ("/phu-luc2", "Phụ lục 2")],
         )
 
-        def tai(url):
+        def tai(url, *, chi_html):
+            self.assertTrue(chi_html)
             if url.endswith("phu-luc1"):
                 raise ai.AdmissionAIError("Không tải được.")
             return ai._TaiLieu("https://tam.example.com/phu-luc.pdf", "", [("Trang PDF 2", "Sai nguồn")], [])
 
-        with patch.object(ai, "_doc_tai_lieu", side_effect=tai) as doc_file:
+        with (patch.object(ai, "_doc_tai_lieu", side_effect=tai) as doc_file,
+              patch.object(ai, "_openai", return_value=({"ids": [1, 2]}, []))):
             self.assertEqual(ai._doc_phu_luc({"chinh_thuc": False}, tai_lieu), ([], []))
             doc_file.assert_not_called()
             ket_qua, ghi_chu = ai._doc_phu_luc({"chinh_thuc": True, "phu_hop": True}, tai_lieu)

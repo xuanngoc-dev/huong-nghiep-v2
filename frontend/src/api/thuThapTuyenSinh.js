@@ -8,8 +8,8 @@ const xuLyAi = { ...taiNen, timeout: 360000 }
 export const nhanDienTruong = (ma_truong) =>
   api.get(`${goc}/truong`, { ...taiNen, params: { ma_truong } }).then((res) => res.data)
 
-export const taoPhienTuyenSinh = (duLieu) =>
-  api.post(`${goc}/phien`, duLieu, taiNen).then((res) => res.data)
+export const taoPhienTuyenSinh = (duLieu, tuDong = false) =>
+  api.post(`${goc}/phien`, duLieu, { ...taiNen, params: { tu_dong: tuDong } }).then((res) => res.data)
 
 export const layDanhSachPhien = (params) =>
   api.get(`${goc}/phien`, { ...taiNen, params }).then((res) => res.data)
@@ -32,8 +32,8 @@ export const chonNguonTuyenSinh = (id, nguonId, lua_chon, ly_do) =>
 export const chonTatCaNguonTuyenSinh = (id) =>
   api.patch(`${phien(id)}/nguon`, { lua_chon: 'su_dung' }, taiNen).then((res) => res.data)
 
-export const taoBanNhapTuyenSinh = (id) =>
-  api.post(`${phien(id)}/tao-ban-nhap`, {}, taiNen).then((res) => res.data)
+export const taoBanNhapTuyenSinh = (id, tuDong = false) =>
+  api.post(`${phien(id)}/tao-ban-nhap`, {}, { ...taiNen, params: { tu_dong: tuDong } }).then((res) => res.data)
 
 export const dungTaoBanNhapTuyenSinh = (id, luot_tao_ban_nhap) =>
   api.post(`${phien(id)}/dung-tao-ban-nhap`, { luot_tao_ban_nhap }, taiNen).then((res) => res.data)

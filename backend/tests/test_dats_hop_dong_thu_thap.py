@@ -4,12 +4,18 @@ import json
 import unittest
 from pathlib import Path
 
+from sqlalchemy import select
+
+import app.models as M
 from app.services.dats_hop_dong_thu_thap import (
     hoan_thien_cau_truc_cms,
     hop_dong_cau_truc_cms,
     kiem_tra_cau_truc_cms,
     mau_rut_gon_cms,
 )
+from app.services.dats_import import DatsImportError
+from app.services.thu_thap_tuyen_sinh_import import import_approved_admission, validate_admission_payload
+from tests.hoi_quy_xet_tuyen import DANH_MUC_MA, tao_csdl
 
 _MAU_XDA = Path(__file__).resolve().parents[2] / "docs/de-an-tuyen-sinh/chuan_du_lieu/du_lieu_mau_da_sua.json"
 
@@ -51,11 +57,10 @@ class HopDongThuThapTests(unittest.TestCase):
         del dats["nguon_du_lieu_url"]
         dats["dats_tru_so"][1]["id"] = dats["dats_tru_so"][0]["id"]
         chuan_hoa = hoan_thien_cau_truc_cms(ban_nhap)
-        self.assertNotIn("nguon_du_lieu_url", chuan_hoa["dats_tuyen_sinh"])
+        self.assertIsNone(chuan_hoa["dats_tuyen_sinh"]["nguon_du_lieu_url"])
         loi = kiem_tra_cau_truc_cms(chuan_hoa)
-        self.assertEqual(len(loi), 2)
-        self.assertTrue(any(i.startswith("/dats_tuyen_sinh/dats_tru_so/1/id:") for i in loi))
-        self.assertTrue(any(i.startswith("/dats_tuyen_sinh/nguon_du_lieu_url:") for i in loi))
+        self.assertEqual(len(loi), 1)
+        self.assertTrue(loi[0].startswith("/dats_tuyen_sinh/dats_tru_so/1/id:"))
 
     def test_mau_gui_ai_chi_chua_bo_cuc(self):
         mau = mau_rut_gon_cms(self.mau)
@@ -65,3 +70,82 @@ class HopDongThuThapTests(unittest.TestCase):
         hop_dong = hop_dong_cau_truc_cms()
         self.assertIn("phien_ban", hop_dong["/quy_tac_xet_tuyen"]["gia_tri"])
         self.assertIn("thanh_phan", hop_dong["/quy_tac_xet_tuyen/cong_thuc"]["danh_sach"])
+
+    def test_bang_tuy_chon_co_khoa_nhap_ke_ca_khi_mau_rong(self):
+        hop_dong = hop_dong_cau_truc_cms()
+        for cha, khoi in hop_dong.items():
+            for con in khoi.get("danh_sach", []):
+                if con.startswith("dats_"):
+                    self.assertIn(f"{cha}/{con}", hop_dong)
+        viec_lam = hop_dong["/dats_tuyen_sinh/dats_ty_le_viec_lam"]["truong_tuy_chon_va_kieu"]
+        self.assertEqual(viec_lam["ty_le_co_viec_lam"], "decimal")
+        self.assertEqual(viec_lam["ma_nganh"], "text")
+        self.assertTrue({"id", "de_an_id", "nganh_dao_tao_id"}.isdisjoint(viec_lam))
+
+    def test_bang_quy_doi_cap_truong_tuy_chon_va_co_du_cot_nguon_dich(self):
+        hop_dong = hop_dong_cau_truc_cms()
+        ban_cu = self._tao_ban_nhap()
+        for bang in ("dats_quy_doi_nguong_dau_vao", "dats_quy_doi_diem_trung_tuyen"):
+            with self.subTest(bang=bang):
+                self.assertNotIn(bang, ban_cu["dats_tuyen_sinh"])
+                self.assertIn(bang, hop_dong["/dats_tuyen_sinh"]["danh_sach_neu_co"])
+                cot = hop_dong[f"/dats_tuyen_sinh/{bang}"]["truong_tuy_chon_va_kieu"]
+                self.assertEqual(cot, hop_dong[f"/dats_tuyen_sinh/dats_chuong_trinh_dao_tao/{bang}"]["truong_tuy_chon_va_kieu"])
+                for khoa in ("ma_phuong_thuc_nguon", "ma_phuong_thuc_dich", "ma_to_hop_nguon", "ma_to_hop_dich",
+                             "cong_thuc_noi_suy", "nguon_du_lieu_url", "dieu_kien_ap_dung"):
+                    self.assertEqual(cot[khoa], "text")
+                for khoa in ("diem_moc_nguon", "diem_moc_dich", "thang_diem_nguon", "thang_diem_dich"):
+                    self.assertEqual(cot[khoa], "decimal")
+                self.assertEqual(cot["nam_tuyen_sinh"], "int")
+        self.assertEqual(kiem_tra_cau_truc_cms(ban_cu), [])
+        validate_admission_payload(ban_cu, "XDA", 2026)
+
+    def test_bang_quy_doi_cap_truong_khac_nam_bi_bao_dung_vi_tri(self):
+        ban_nhap = self._tao_ban_nhap()
+        for bang in ("dats_quy_doi_nguong_dau_vao", "dats_quy_doi_diem_trung_tuyen"):
+            ban_nhap["dats_tuyen_sinh"][bang] = [{"nam_tuyen_sinh": 2025}]
+        with self.assertRaises(DatsImportError) as caught:
+            validate_admission_payload(ban_nhap, "XDA", 2026)
+        self.assertEqual(caught.exception.loi, [
+            "dats_tuyen_sinh/dats_quy_doi_nguong_dau_vao/0/nam_tuyen_sinh: phải là 2026",
+            "dats_tuyen_sinh/dats_quy_doi_diem_trung_tuyen/0/nam_tuyen_sinh: phải là 2026",
+        ])
+
+    def test_duyet_va_nhap_hai_bang_quy_doi_chung_mot_lan_cho_de_an(self):
+        db, _ = tao_csdl("XDA")
+        self.addCleanup(db.close)
+        danh_muc = json.loads(DANH_MUC_MA.read_text(encoding="utf-8"))
+        for model in (M.DmPhuongThucTuyenSinh, M.DmThanhTichHocTapNghienCuu):
+            model.__table__.create(db.get_bind())
+        db.add_all(M.DmPhuongThucTuyenSinh(ma_phuong_thuc=x["ma"], ten_phuong_thuc=x["ten"])
+                   for x in danh_muc["phuong_thuc_cua_bo"])
+        db.add_all(M.DmThanhTichHocTapNghienCuu(ma_thanh_tich=x["ma"], ten_thanh_tich=x["ten"])
+                   for x in danh_muc["thanh_tich"])
+        db.add_all(M.DmNganhDaoTao(ma_nhom_nganh=x["ma"][:5], ma_nganh=x["ma"], ten_nganh=x["ten"],
+                                   ten_tieng_anh="", trinh_do="ĐH") for x in danh_muc["nganh"])
+
+        ban_nhap = self._tao_ban_nhap()
+        moc = {
+            "nam_tuyen_sinh": 2026, "ma_phuong_thuc_nguon": "402", "ma_phuong_thuc_dich": "100",
+            "ma_to_hop_dich": "A00", "diem_moc_nguon": 75.5, "diem_moc_dich": 24,
+            "thang_diem_nguon": 100, "thang_diem_dich": 30, "cong_thuc_noi_suy": "y = 24 + 0.3 (x - 75.5)",
+            "dieu_kien_ap_dung": "Toàn trường", "nguon_du_lieu_url": "https://example.edu.vn/quy-doi",
+        }
+        models = (M.DatsQuyDoiNguongDauVao, M.DatsQuyDoiDiemTrungTuyen)
+        for model in models:
+            ban_nhap["dats_tuyen_sinh"][model.__tablename__] = [moc.copy()]
+        self.assertEqual(kiem_tra_cau_truc_cms(ban_nhap), [])
+        de_an_id, counts, _ = import_approved_admission(db, ban_nhap, "XDA", 2026, 1)
+        phuong_thuc = dict(db.execute(select(M.DmPhuongThucTuyenSinh.ma_phuong_thuc, M.DmPhuongThucTuyenSinh.id)).all())
+        to_hop_dich_id = db.scalar(select(M.DmToHopMonHoc.id).where(M.DmToHopMonHoc.ma_to_hop == "A00"))
+        for model in models:
+            with self.subTest(bang=model.__tablename__):
+                self.assertEqual(counts[model.__tablename__], 1)
+                dong = db.scalars(select(model).where(model.de_an_id == de_an_id)).one()
+                self.assertIsNone(dong.de_an_chuong_trinh_id)
+                self.assertIsNone(dong.to_hop_nguon_id)
+                self.assertEqual(dong.to_hop_dich_id, to_hop_dich_id)
+                self.assertEqual((dong.phuong_thuc_nguon_id, dong.phuong_thuc_dich_id), (phuong_thuc["402"], phuong_thuc["100"]))
+                for khoa in ("nam_tuyen_sinh", "diem_moc_nguon", "diem_moc_dich", "thang_diem_nguon",
+                             "thang_diem_dich", "cong_thuc_noi_suy", "dieu_kien_ap_dung", "nguon_du_lieu_url"):
+                    self.assertEqual(getattr(dong, khoa), moc[khoa])

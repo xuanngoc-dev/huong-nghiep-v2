@@ -16,6 +16,22 @@ _HE_THONG = {
     "/quy_tac_xet_tuyen/nam_tuyen_sinh",
     "/quy_tac_xet_tuyen/phien_ban",
 }
+_NAM = r"(?:19\d{2}|20\d{2}|2100)"
+_SO_NAM = re.compile(rf"\b{_NAM}\b")
+_NGAY_THANG = re.compile(
+    rf"\b(?:\d{{1,2}}[./-]\d{{1,2}}[./-]{_NAM}|{_NAM}-\d{{1,2}}-\d{{1,2}}"
+    rf"|tháng\s+\d{{1,2}}\s+năm\s+{_NAM})\b", re.I,
+)
+_NAM_KHAC = re.compile(rf"\b(?:tốt nghiệp|ban hành|cập nhật|đăng tải)\s+(?:năm\s+)?{_NAM}\b", re.I)
+_TEN_DIEM = r"điểm\s+(?:chuẩn(?:\s+trúng\s+tuyển)?|trúng\s+tuyển)"
+_NHAN_DIEM = re.compile(_TEN_DIEM, re.I)
+_NHAN_NAM_DIEM = re.compile(
+    rf"\b(?:{_TEN_DIEM}(?:\s+(?:tuyển sinh|đại học|chính quy|đợt\s+\d+))*"
+    rf"\s*[|:(–-]?\s*(?:năm\s+)?{_NAM}|năm\s+{_NAM}\s*[,|:–-]?\s*{_TEN_DIEM})\b", re.I,
+)
+_NHAN_NAM_TUYEN_SINH = re.compile(
+    rf"\bnăm(?:\s+(?:xét tuyển|tuyển sinh)\s*[:=|]?|\s*[:=])\s*{_NAM}\b", re.I,
+)
 
 
 def _ma_hoa(khoa: str) -> str:
@@ -46,8 +62,9 @@ def _muc_du_lieu(du_lieu: dict, mang_co_dan_chung: set[str]) -> dict:
             return
         if isinstance(gia_tri, dict) and gia_tri:
             for khoa, con in gia_tri.items():
-                if khoa not in _BO_QUA:
-                    yield from duyet(con, f"{duong_dan}/{_ma_hoa(khoa)}")
+                vi_tri = f"{duong_dan}/{_ma_hoa(khoa)}"
+                if khoa not in _BO_QUA or (khoa == "ghi_chu" and vi_tri in mang_co_dan_chung):
+                    yield from duyet(con, vi_tri)
         elif isinstance(gia_tri, list) and gia_tri and (
             duong_dan not in mang_co_dan_chung or any(isinstance(i, (list, dict)) for i in gia_tri)
         ):
@@ -73,7 +90,39 @@ def _chua_xac_minh(gia_tri) -> bool:
     return gia_tri is None or gia_tri == [] or gia_tri == {}
 
 
-def _nguon_hop_le(du_lieu: dict, duong_dan: str, nguon: dict, nam: int) -> bool:
+def _cac_nam_diem_trong_dan_chung(dc: dict) -> set[str]:
+    """Chỉ nhận năm gắn với dòng điểm hoặc tiêu đề mục. Nhiều năm là chưa phân được cột."""
+    if not isinstance(dc, dict):
+        return set()
+    trich_dan, vi_tri = dc.get("trich_dan"), dc.get("vi_tri")
+    if not isinstance(trich_dan, str) or not trich_dan.strip() or not isinstance(vi_tri, str):
+        return set()
+    dong = _NAM_KHAC.sub(" ", _NGAY_THANG.sub(" ", trich_dan))
+    muc = _NAM_KHAC.sub(" ", _NGAY_THANG.sub(" ", vi_tri))
+    cac_nam_dong = set(_SO_NAM.findall(dong))
+    cac_nam_muc = set(_SO_NAM.findall(muc))
+    if not (_NHAN_NAM_DIEM.search(muc) or (_NHAN_DIEM.search(muc) and len(cac_nam_muc) > 1)):
+        cac_nam_muc.clear()
+    dong_neu_nam = _NHAN_NAM_DIEM.search(dong) or (
+        (_NHAN_DIEM.search(dong) or _NHAN_DIEM.search(muc)) and _NHAN_NAM_TUYEN_SINH.search(dong)
+    ) or (len(cac_nam_dong) > 1 and _NHAN_DIEM.search(dong))
+    if dong_neu_nam and (not cac_nam_muc or cac_nam_dong <= cac_nam_muc):
+        return cac_nam_dong
+    if dong_neu_nam or cac_nam_muc:
+        return cac_nam_dong | cac_nam_muc
+    return set()
+
+
+def dan_chung_diem_dung_nam(nam: int, dc: dict) -> bool:
+    return type(nam) is int and _cac_nam_diem_trong_dan_chung(dc) == {str(nam)}
+
+
+def dan_chung_diem_sai_nam(nam: int, dc: dict) -> bool:
+    cac_nam = _cac_nam_diem_trong_dan_chung(dc)
+    return bool(cac_nam and cac_nam != {str(nam)})
+
+
+def _nguon_hop_le(du_lieu: dict, duong_dan: str, nguon: dict, nam: int, dc: dict) -> bool:
     if not nguon.get("chinh_thuc") or not nguon.get("phu_hop") or nguon.get("lua_chon") != "su_dung":
         return False
     tach = _cac_doan(duong_dan)
@@ -81,9 +130,32 @@ def _nguon_hop_le(du_lieu: dict, duong_dan: str, nguon: dict, nam: int) -> bool:
         dong = _lay(du_lieu, tach[:3])
         if not isinstance(dong, dict):
             return False
-        nam_diem = dong.get("nam_tuyen_sinh", nam)
-        # Năm hiện tại cũng phải có URL công bố đúng bản ghi điểm chuẩn.
-        return nguon.get("nam_ap_dung") == nam_diem and nguon["url"] == dong.get("nguon_du_lieu_url")
+        nam_diem = dong.get("nam_tuyen_sinh")
+        if type(nam_diem) is not int or nguon["url"] != dong.get("nguon_du_lieu_url"):
+            return False
+        if dc.get("diem_do_ai_doc"):
+            can_cu_nam = dc.get("can_cu_nam")
+            if can_cu_nam and can_cu_nam["nam_tuyen_sinh"] != nam_diem:
+                return False
+            return nguon.get("nam_ap_dung") == nam_diem or (
+                nam_diem < nam and nguon.get("nam_ap_dung") == nam and not nguon.get("chi_diem_lich_su")
+                and can_cu_nam is not None
+            )
+        # Các phiên bản cũ có dẫn chứng theo ô hoặc chỉ lưu câu trích. Giữ cách duyệt của phiên đó.
+        if dc.get("nam_o_diem") is not None:
+            return (
+                dc["nam_o_diem"] == nam_diem and type(dc.get("vi_tri_cot")) is int and dc["vi_tri_cot"] > 0
+                and bool(dc.get("tieu_de_cot"))
+                and (nguon.get("nam_ap_dung") == nam_diem or (
+                    nam_diem < nam and nguon.get("nam_ap_dung") == nam and not nguon.get("chi_diem_lich_su")
+                ))
+            )
+        if nguon.get("nam_ap_dung") == nam_diem:
+            return not dan_chung_diem_sai_nam(nam_diem, dc)
+        return (
+            nam_diem < nam and not nguon.get("chi_diem_lich_su")
+            and nguon.get("nam_ap_dung") == nam and dan_chung_diem_dung_nam(nam_diem, dc)
+        )
     return not nguon.get("chi_diem_lich_su") and nguon.get("nam_ap_dung") == nam
 
 
@@ -115,19 +187,28 @@ def lap_muc_ban_nhap(du_lieu: dict, muc_ai: list[dict], nguon: list[dict], nam: 
         muc = _muc_moi(duong_dan, gia_tri, tu_ai=True)
         de_xuat = theo_duong_dan.get(duong_dan, [])
         for item in de_xuat:
-            for dc in item["dan_chung"]:
-                if dc["nguon_id"] not in ds_nguon or len(muc["dan_chung"]) >= 50:
+            ket_luan_ai = item.get("phan_tich_mau_thuan_ai")
+            for i, dc in enumerate(item["dan_chung"], 1):
+                if dc["nguon_id"] not in ds_nguon or (not item.get("mau_thuan") and len(muc["dan_chung"]) >= 50):
                     continue
+                if ket_luan_ai:
+                    dc = {**dc, "ai_chon_khi_mau_thuan": i in ket_luan_ai["dan_chung_ids"]}
                 muc["dan_chung"].append({**dc, "id": str(len(muc["dan_chung"]) + 1)})
         muc["mau_thuan"] = any(item.get("mau_thuan") for item in de_xuat) or _co_mau_thuan(muc["dan_chung"])
         muc["ghi_chu"] = next((i["ghi_chu"] for i in de_xuat if i.get("ghi_chu")), "")
         if _chua_xac_minh(gia_tri) and not muc["ghi_chu"]:
             muc["ghi_chu"] = "Chưa tìm thấy dữ liệu cho mục này trong các tài liệu đã chọn."
         for dc in muc["dan_chung"]:
-            if _giong_nhau(dc["gia_tri"], gia_tri) and _nguon_hop_le(
-                du_lieu, duong_dan, ds_nguon[dc["nguon_id"]], nam
-            ):
+            if (dc.get("ai_chon_khi_mau_thuan") is not False and not dc.get("ly_do_suy_luan_ma_bo")
+                    and _giong_nhau(dc["gia_tri"], gia_tri) and _nguon_hop_le(
+                        du_lieu, duong_dan, ds_nguon[dc["nguon_id"]], nam, dc)):
                 muc["dan_chung_ids"].append(dc["id"])
+        if not muc["dan_chung_ids"] and not muc["mau_thuan"]:
+            muc["ghi_chu"] = next(
+                (dc["ly_do_suy_luan_ma_bo"] for dc in muc["dan_chung"]
+                 if dc.get("ly_do_suy_luan_ma_bo") and _giong_nhau(dc["gia_tri"], gia_tri)),
+                muc["ghi_chu"],
+            )
         ket_qua.append(muc)
     return ket_qua
 
@@ -163,7 +244,7 @@ def sua_muc_ban_nhap(du_lieu: dict, muc: list[dict], thay_doi: list[SuaMucBanNha
             # Khi thay một mảng/nhóm, các chỉ số hoặc trường con có thể đã đổi nghĩa.
             da_co = {p: i for p, i in da_co.items() if not p.startswith(path + "/")}
 
-        ids = list(dict.fromkeys(sua.dan_chung_ids))
+        ids = list(dict.fromkeys(sua.dan_chung_ids)) if "dan_chung_ids" in sua.model_fields_set else list(moi["dan_chung_ids"])
         if set(ids) - {d["id"] for d in moi["dan_chung"]}:
             raise ValueError(f"Dẫn chứng được chọn không thuộc mục {path}.")
         if len(moi["dan_chung"]) + len(sua.dan_chung_moi) > 50:
@@ -174,18 +255,16 @@ def sua_muc_ban_nhap(du_lieu: dict, muc: list[dict], thay_doi: list[SuaMucBanNha
             dc_id = str(len(moi["dan_chung"]) + 1)
             moi["dan_chung"].append({**dc.model_dump(), "id": dc_id})
             ids.append(dc_id)
-        if (doi_gia_tri or sua.dan_chung_moi or (truoc and ids != truoc["dan_chung_ids"])) and not sua.ghi_chu:
-            raise ValueError(f"Cần ghi lý do chỉnh sửa hoặc chọn dẫn chứng tại {path}.")
         moi.update(
             dan_chung_ids=ids,
-            ghi_chu=sua.ghi_chu,
-            da_kiem_tra=sua.da_kiem_tra,
+            ghi_chu=sua.ghi_chu if "ghi_chu" in sua.model_fields_set else moi["ghi_chu"],
+            da_kiem_tra=sua.da_kiem_tra if "da_kiem_tra" in sua.model_fields_set else moi["da_kiem_tra"],
             mau_thuan=moi["mau_thuan"] or _co_mau_thuan(moi["dan_chung"]),
         )
         if moi != truoc or doi_gia_tri:
             da_co[path] = moi
-            nhat_ky.append({"duong_dan": path, "truoc": deepcopy(gia_tri_cu), "sau": deepcopy(gia_tri), "ghi_chu": sua.ghi_chu,
-                           "dan_chung_ids": ids, "da_kiem_tra": sua.da_kiem_tra})
+            nhat_ky.append({"duong_dan": path, "truoc": deepcopy(gia_tri_cu), "sau": deepcopy(gia_tri), "ghi_chu": moi["ghi_chu"],
+                           "dan_chung_ids": ids, "da_kiem_tra": moi["da_kiem_tra"]})
 
     ket_qua = hoan_thien_cau_truc_cms(ket_qua)
     cac_muc = []
@@ -199,23 +278,17 @@ def sua_muc_ban_nhap(du_lieu: dict, muc: list[dict], thay_doi: list[SuaMucBanNha
     return ket_qua, cac_muc, nhat_ky
 
 
-def loi_dan_chung(du_lieu: dict, muc: list[dict], nguon: list[dict], nam: int) -> list[str]:
-    theo_duong_dan = {item["duong_dan"]: item for item in muc}
-    ds_nguon = {n["id"]: n for n in nguon}
-    loi = []
-    for p, gia_tri in _muc_du_lieu(du_lieu, set(theo_duong_dan)).items():
-        item = theo_duong_dan.get(p) or _muc_moi(p, gia_tri)
-        da_chon = [dc for dc in item["dan_chung"] if dc["id"] in item["dan_chung_ids"]]
-        if _chua_xac_minh(gia_tri):
-            if not item["ghi_chu"].strip():
-                loi.append(f"{p}: cần ghi chú lý do giữ giá trị trống.")
-        elif gia_tri == "":
-            loi.append(f"{p}: dùng null và ghi chú nếu chưa xác minh được giá trị.")
-        elif not da_chon or not all(
-            _giong_nhau(dc["gia_tri"], gia_tri) and dc["nguon_id"] in ds_nguon
-            and _nguon_hop_le(du_lieu, p, ds_nguon[dc["nguon_id"]], nam) for dc in da_chon
+def canh_bao_dan_chung(du_lieu: dict, muc: list[dict]) -> list[str]:
+    """Tình trạng dẫn chứng để người duyệt tham khảo khi quyết định nhập."""
+    theo_path = {item["duong_dan"]: item for item in muc}
+    canh_bao = []
+    for path, value in _muc_du_lieu(du_lieu, set(theo_path)).items():
+        item = theo_path.get(path, {})
+        chon = set(item.get("dan_chung_ids", []))
+        if not _chua_xac_minh(value) and not any(
+            dc["id"] in chon and _giong_nhau(dc["gia_tri"], value) for dc in item.get("dan_chung", [])
         ):
-            loi.append(f"{p}: cần dẫn chứng chính thức phù hợp với giá trị, trường và năm áp dụng.")
-        if item["mau_thuan"] and (not item["da_kiem_tra"] or not item["ghi_chu"].strip()):
-            loi.append(f"{p}: cần đối chiếu mâu thuẫn, xác nhận và ghi lý do.")
-    return loi
+            canh_bao.append(f"{path}: chưa có dẫn chứng khớp giá trị đang được chọn.")
+        if item.get("mau_thuan") and not item.get("da_kiem_tra"):
+            canh_bao.append(f"{path}: có các dẫn chứng mâu thuẫn.")
+    return canh_bao

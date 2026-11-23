@@ -60,12 +60,14 @@ def nhap_quy_tac(
     nguoi_import_id: int | None = None,
     danh_muc: DanhMucXetTuyen | None = None,
     tu_dong_chuan_hoa: bool = True,
+    noi_dung_da_duyet: bool = False,
     giu_diem_chuan_ngoai_file: bool = False,
     phuong_thuc_theo_phuong_an: dict[tuple[str, str], tuple[int, int]] | None = None,
 ) -> KetQuaNhap:
     """Ghi quy tắc xét tuyển, dùng cặp ID phương thức và chương trình đã đối chiếu khi được cung cấp."""
     ke_hoach = chuan_bi_nhap(
-        du_lieu, danh_muc or DanhMucXetTuyen.tu_csdl(db), tu_dong_chuan_hoa=tu_dong_chuan_hoa
+        du_lieu, danh_muc or DanhMucXetTuyen.tu_csdl(db), tu_dong_chuan_hoa=tu_dong_chuan_hoa,
+        noi_dung_da_duyet=noi_dung_da_duyet,
     )
     return _Ghi(db, ke_hoach, phuong_thuc_theo_phuong_an).chay(
         ten_file=ten_file,

@@ -4,7 +4,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 from urllib.parse import urlsplit
 
-from app.services.dats_import import PHIEN_BAN_QUY_TAC
+from app.services.dats_import import PHIEN_BAN_QUY_TAC, _DATS_FK, _MA_THAY_ID, _MODELS, _SKIP_COLUMNS, _kind
 
 
 @dataclass(frozen=True)
@@ -12,6 +12,7 @@ class _Khoi:
     gia_tri: tuple[str, ...] = ()
     co_the_null: tuple[str, ...] = ()
     danh_sach: tuple[str, ...] = ()
+    danh_sach_neu_co: tuple[str, ...] = ()
     danh_sach_bat_buoc: tuple[str, ...] = ()
     doi_tuong: tuple[str, ...] = ()
 
@@ -31,14 +32,15 @@ _CAC_KHOI = {
     (): _Khoi(doi_tuong=("thong_tin_import", *_DATS, *_QUY_TAC)),
     ("thong_tin_import",): _Khoi(gia_tri=("ma_truong", "nam_tuyen_sinh", "xu_ly_khi_da_ton_tai")),
     _DATS: _Khoi(
-        gia_tri=("ten_de_an", "nguon_du_lieu_url", "trang_thai", "trang_thai_xet_tuyen"),
-        co_the_null=("chi_tieu", "gioi_thieu", "ngay_cong_bo", "ghi_chu", "de_an_nam_truoc_id"),
+        gia_tri=("trang_thai", "trang_thai_xet_tuyen"),
+        co_the_null=("ten_de_an", "nguon_du_lieu_url", "chi_tieu", "gioi_thieu", "ngay_cong_bo", "ghi_chu", "de_an_nam_truoc_id"),
         danh_sach=(
             "hinh_thuc_dao_tao", "dats_tru_so", "dats_website", "dats_lien_he_tuyen_sinh", "dats_nhan_su",
             "dats_co_so_vat_chat", "dats_quy_mo_dao_tao", "dats_ty_le_viec_lam", "dats_doi_tuong_du_tuyen",
             "dats_chinh_sach_xet_tuyen_thang", "dats_chinh_sach_uu_tien_xet_tuyen",
         ),
         danh_sach_bat_buoc=("dats_chuong_trinh_dao_tao",),
+        danh_sach_neu_co=("dats_quy_doi_nguong_dau_vao", "dats_quy_doi_diem_trung_tuyen"),
     ),
     _CHUONG_TRINH: _Khoi(
         gia_tri=("ma_xet_tuyen", "ten_chuong_trinh"),
@@ -48,9 +50,8 @@ _CAC_KHOI = {
         ),
         danh_sach=(
             "dats_ke_hoach_tuyen_sinh", "dats_trinh_do_nganh", "dats_quy_mo_dao_tao", "dats_quy_doi_nguong_dau_vao",
-            "dats_quy_doi_diem_trung_tuyen",
+            "dats_quy_doi_diem_trung_tuyen", "dats_phuong_thuc",
         ),
-        danh_sach_bat_buoc=("dats_phuong_thuc",),
     ),
     _PHUONG_THUC: _Khoi(
         gia_tri=("ma_phuong_thuc_cua_bo",),
@@ -111,8 +112,8 @@ _CAC_KHOI = {
         danh_sach_bat_buoc=("cong_thuc", "chuong_trinh"),
     ),
     (*_QUY_TAC, "de_an"): _Khoi(
-        gia_tri=("ten_de_an", "nguon_du_lieu_url"),
-        co_the_null=("so_quyet_dinh", "ngay_cong_bo", "ghi_chu"),
+        gia_tri=("ten_de_an",),
+        co_the_null=("nguon_du_lieu_url", "so_quyet_dinh", "ngay_cong_bo", "ghi_chu"),
     ),
     (*_QUY_TAC, "co_so"): _Khoi(
         gia_tri=("ma_co_so", "ten_co_so"), co_the_null=("ma_tinh", "dia_chi", "la_tru_so_chinh"),
@@ -161,8 +162,8 @@ _CAC_KHOI = {
     (*_QT_CT, "hoc_phi"): _Khoi(gia_tri=("hoc_phi_tu",), co_the_null=("nam_hoc", "hoc_phi_den", "ghi_chu")),
     (*_QT_CT, "phuong_an"): _Khoi(gia_tri=("ma_cong_thuc",), danh_sach=("to_hop",)),
     (*_QUY_TAC, "diem_chuan"): _Khoi(
-        gia_tri=("nam_tuyen_sinh", "ma_xet_tuyen", "diem_chuan", "thang_diem", "nguon_du_lieu_url"),
-        co_the_null=("ten_chuong_trinh", "ma_phuong_thuc_cua_bo", "ma_to_hop", "tieu_chi_phu"),
+        gia_tri=("nam_tuyen_sinh", "ma_xet_tuyen", "diem_chuan", "thang_diem"),
+        co_the_null=("nguon_du_lieu_url", "ten_chuong_trinh", "ma_phuong_thuc_cua_bo", "ma_to_hop", "tieu_chi_phu"),
     ),
 }
 
@@ -228,9 +229,11 @@ def _kiem_tra_khoa(doi_tuong: dict, bang: tuple, vi_tri: str, khoi: _Khoi) -> li
         elif khoa in {"nguon_du_lieu_url", "url"} and not _url_http(gia_tri):
             loi.append(f"{vi_tri}/{khoa}: cần URL nguồn HTTP(S) hợp lệ.")
     for khoa in khoi.co_the_null:
+        if khoa == "nguon_du_lieu_url" and doi_tuong.get(khoa) is not None and not _url_http(doi_tuong[khoa]):
+            loi.append(f"{vi_tri}/{khoa}: cần URL nguồn HTTP(S) hợp lệ hoặc null.")
         if khoa not in doi_tuong and not _co_khoa_tuong_duong(doi_tuong, bang, khoa):
             loi.append(f"{vi_tri}/{khoa}: thiếu khóa, dùng null khi chưa có dữ liệu.")
-    for khoa in (*khoi.danh_sach, *khoi.danh_sach_bat_buoc):
+    for khoa in (*khoi.danh_sach, *khoi.danh_sach_bat_buoc, *(k for k in khoi.danh_sach_neu_co if k in doi_tuong)):
         gia_tri = doi_tuong.get(khoa)
         if not isinstance(gia_tri, list):
             loi.append(f"{vi_tri}/{khoa}: cần khai báo danh sách.")
@@ -266,14 +269,32 @@ def kiem_tra_cau_truc_cms(payload: dict) -> list[str]:
 
 def hop_dong_cau_truc_cms() -> dict:
     """Liệt kê khóa bắt buộc và dạng rỗng cho prompt, theo đúng hợp đồng kiểm duyệt."""
-    return {
+    hop_dong = {
         "/" + "/".join(bang): {
             nhom: list(getattr(khoi, nhom))
-            for nhom in ("gia_tri", "co_the_null", "danh_sach", "danh_sach_bat_buoc", "doi_tuong")
+            for nhom in ("gia_tri", "co_the_null", "danh_sach", "danh_sach_neu_co", "danh_sach_bat_buoc", "doi_tuong")
             if getattr(khoi, nhom)
         }
         for bang, khoi in _CAC_KHOI.items()
     }
+    # Nhiều bảng tùy chọn rỗng trong mẫu XDA. Cho AI biết tên và kiểu cột mà trình nhập thực sự nhận.
+    for bang, khoi in _CAC_KHOI.items():
+        for con in (*khoi.danh_sach, *khoi.danh_sach_neu_co):
+            if con not in _MODELS or (*bang, con) in _CAC_KHOI:
+                continue
+            truong = {}
+            for cot in _MODELS[con].__table__.columns:
+                ten = cot.name
+                if ten in _SKIP_COLUMNS or ten == "trang_thai":
+                    continue
+                if ten in _MA_THAY_ID:
+                    truong[_MA_THAY_ID[ten][0]] = "text"
+                elif ten == "doi_tuong_du_tuyen_id":
+                    truong["ma_doi_tuong_du_tuyen"] = "text"
+                elif ten not in _DATS_FK or ten == "co_so_id":
+                    truong[ten] = _kind(cot)
+            hop_dong["/" + "/".join((*bang, con))] = {"truong_tuy_chon_va_kieu": truong}
+    return hop_dong
 
 
 def mau_rut_gon_cms(mau: dict) -> dict:

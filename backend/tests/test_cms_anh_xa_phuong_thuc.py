@@ -50,11 +50,11 @@ class AnhXaPhuongThucTests(unittest.TestCase):
         with self.assertRaisesRegex(DatsImportError, "cần đúng một phương thức đề án cho công thức HUCE_SPT_2026"):
             validate_admission_payload(self.mau, "XDA", 2026)
 
-    def test_phuong_thuc_khong_co_phuong_an_doi_ung_bi_chan(self):
-        self.quy_tac["chuong_trinh"][0]["phuong_an"].pop(0)
-        with self.assertRaises(DatsImportError) as caught:
-            validate_admission_payload(self.mau, "XDA", 2026)
-        self.assertTrue(any("phương thức không có phương án tương ứng" in loi for loi in caught.exception.loi))
+    def test_phuong_thuc_da_duyet_chua_co_quy_tac_van_luu_duoc(self):
+        chuong_trinh = self.quy_tac["chuong_trinh"][0]
+        pt = chuong_trinh["phuong_an"].pop(0)
+        khoa = (chuong_trinh["ma_chuong_trinh"], pt["ma_cong_thuc"])
+        assert khoa not in validate_admission_payload(self.mau, "XDA", 2026)
 
     def test_bi_danh_to_hop_cung_duoc_doi_chieu(self):
         pt = self.chuong_trinh[0]["dats_phuong_thuc"][0]

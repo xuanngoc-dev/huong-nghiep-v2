@@ -249,6 +249,7 @@ def import_day_du(
     *,
     nguoi_import_id: int | None = None,
     chuan_hoa_quy_tac: bool = True,
+    noi_dung_da_duyet: bool = False,
     giu_diem_chuan_ngoai_file: bool = False,
     phuong_thuc_theo_phuong_an: dict[tuple[str, str], int] | None = None,
 ) -> tuple[int, dict[str, int], KetQuaNhap | None]:
@@ -306,6 +307,7 @@ def import_day_du(
             ma_bam=hashlib.sha256(json.dumps(du_lieu, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest(),
             nguoi_import_id=nguoi_import_id,
             tu_dong_chuan_hoa=chuan_hoa_quy_tac,
+            noi_dung_da_duyet=noi_dung_da_duyet,
             giu_diem_chuan_ngoai_file=giu_diem_chuan_ngoai_file,
             phuong_thuc_theo_phuong_an=phuong_thuc_db,
         )

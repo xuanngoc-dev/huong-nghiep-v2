@@ -214,7 +214,7 @@ def _gia_tri_nhan(value) -> str:
     return f" (nhận: {text[:80] + '…' if len(text) > 80 else text})"
 
 
-def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen, *, tu_dong_chuan_hoa: bool = True) -> KeHoachNhap:
+def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen, *, tu_dong_chuan_hoa: bool = True, noi_dung_da_duyet: bool = False) -> KeHoachNhap:
     """Kiểm tra file và đổi sang các dòng chờ ghi. Có lỗi thì ném XetTuyenImportError, không trả kế hoạch dở."""
     canh_bao_chuan_hoa, chua_mo_hinh_hoa = [], []
     if tu_dong_chuan_hoa:
@@ -222,6 +222,8 @@ def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen, *, tu_dong_chuan_hoa: bool = Tru
     doc = doc_cau_truc(du_lieu, strict=not tu_dong_chuan_hoa)
     loi: list[str] = []
     canh_bao: list[str] = list(canh_bao_chuan_hoa)
+    # Bản CMS đã chốt vẫn phải ghi được nguyên vẹn; các so sánh nghiệp vụ chỉ còn là ghi chú.
+    van_de_noi_dung = canh_bao if noi_dung_da_duyet else loi
 
     def co_ma(loai: str, ma, vi_tri: str) -> bool:
         if ma is None:
@@ -329,7 +331,7 @@ def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen, *, tu_dong_chuan_hoa: bool = Tru
             co_ma("bai_thi", m.ma_bai_thi, vt)
             co_ma("mon", m.ma_mon_thay_the, vt)
             if m.diem_tu is not None and m.diem_den is not None and m.diem_tu > m.diem_den:
-                loi.append(f"{vt}: diem_tu lớn hơn diem_den")
+                van_de_noi_dung.append(f"{vt}: diem_tu lớn hơn diem_den")
             if m.he_so_noi_suy and m.diem_tu is None:
                 loi.append(f"{vt}: có he_so_noi_suy thì phải có diem_tu")
             if m.diem_tu is None and m.diem_den is None and not m.cap_do:
@@ -383,7 +385,7 @@ def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen, *, tu_dong_chuan_hoa: bool = Tru
         )
 
     for c in doc.cong_thuc:
-        loi_tinh_diem = loi if not tu_dong_chuan_hoa and c.dang_dung else canh_bao
+        loi_tinh_diem = van_de_noi_dung if not tu_dong_chuan_hoa and c.dang_dung else canh_bao
         _cong_thuc(c, ke_hoach, bang, dm, co_ma, loi, loi_tinh_diem)
         for n in c.dieu_kien:
             if n.ma_cong_thuc is not None:
@@ -425,7 +427,7 @@ def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen, *, tu_dong_chuan_hoa: bool = Tru
             canh_bao.append(f"{vt}: chưa có ma_nganh")
         hp = ct.hoc_phi
         if hp and hp.hoc_phi_den is not None and hp.hoc_phi_den < hp.hoc_phi_tu:
-            loi.append(f"{vt}: hoc_phi_den nhỏ hơn hoc_phi_tu")
+            van_de_noi_dung.append(f"{vt}: hoc_phi_den nhỏ hơn hoc_phi_tu")
         ke_hoach.chuong_trinh.append(
             {
                 "ma_chuong_trinh": ct.ma_chuong_trinh,
@@ -480,7 +482,7 @@ def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen, *, tu_dong_chuan_hoa: bool = Tru
                 if vi_tri is None:
                     loi.append(f'{vt}: tổ hợp "{th}" chưa có cấu trúc vị trí môn, hãy khai ở to_hop_rieng')
                     continue
-                loi_thang_diem = loi if not tu_dong_chuan_hoa and cthuc.dang_dung else canh_bao
+                loi_thang_diem = van_de_noi_dung if not tu_dong_chuan_hoa and cthuc.dang_dung else canh_bao
                 _kiem_he_so_to_hop(cthuc, th, vi_tri, dm, vt, loi, loi_thang_diem, da_bao_thang)
                 ma_luu = ma_to_hop_luu(th)
                 ke_hoach.phuong_an.append(
@@ -503,9 +505,9 @@ def chuan_bi_nhap(du_lieu, dm: DanhMucXetTuyen, *, tu_dong_chuan_hoa: bool = Tru
         if ma_to_hop is not None and ma_to_hop not in ma_rieng:
             co_ma("to_hop", ma_to_hop, vt)
         if d.diem_chuan > d.thang_diem:
-            loi.append(f"{vt}: diem_chuan lớn hơn thang_diem")
+            van_de_noi_dung.append(f"{vt}: diem_chuan lớn hơn thang_diem")
         if d.nam_tuyen_sinh > doc.nam_tuyen_sinh:
-            loi.append(f"{vt}: năm điểm chuẩn lớn hơn năm của đề án")
+            van_de_noi_dung.append(f"{vt}: năm điểm chuẩn lớn hơn năm của đề án")
         if d.ma_xet_tuyen not in ma_xet_tuyen:
             canh_bao.append(f'{vt}: mã xét tuyển "{d.ma_xet_tuyen}" không có trong đề án năm nay nên sẽ không được dùng')
         ma_luu = ma_to_hop_luu(ma_to_hop) if ma_to_hop else None

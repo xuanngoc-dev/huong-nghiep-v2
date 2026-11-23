@@ -82,7 +82,25 @@
           </div>
         </CustomCard>
 
-        <CustomCard v-if="banNhap?.loi?.length || Object.keys(nguonBiBoQua).length || ghiChuTrichXuat.length || loiSoSanh" shadow="never" class="catalog-card">
+        <CustomCard v-if="banNhap?.loi?.length || Object.keys(nguonBiBoQua).length || mucConThieu.length || trangThaiRaSoat || doiChieuDiem || ghiChuTrichXuat.length || loiSoSanh" shadow="never" class="catalog-card">
+          <p v-if="trangThaiRaSoat === 'chua_hoan_tat'" class="chu-thich">AI chưa hoàn tất rà soát phiên bản này. Người duyệt cần kiểm tra độ đầy đủ theo từng mã xét tuyển.</p>
+          <p v-else-if="trangThaiRaSoat === 'da_chinh_sua'" class="chu-thich">Bản nháp đã được chỉnh sửa sau lần rà soát. Đánh giá đã lưu thuộc phiên bản trước.</p>
+          <p v-else-if="trangThaiRaSoat === 'da_ra_soat' && !mucConThieu.length" class="chu-thich">AI đã rà soát bản nháp và chưa đề nghị tìm thêm nguồn.</p>
+          <p v-if="doiChieuDiem?.mode_ai" class="chu-thich">
+            AI đề xuất {{ doiChieuDiem.so_o_nhan_dien }} dòng điểm chuẩn.
+            {{ doiChieuDiem.so_o_da_khop }} dòng có dẫn chứng điểm khớp đang được chọn.
+            <span v-if="!doiChieuDiem.da_ra_soat">AI chưa xác nhận đã rà hết các phần tài liệu.</span>
+          </p>
+          <p v-else-if="doiChieuDiem" class="chu-thich">
+            Đã đối chiếu {{ doiChieuDiem.so_o_da_khop }}/{{ doiChieuDiem.so_o_nhan_dien }} ô điểm chuẩn nhận diện được.
+            <span v-if="doiChieuDiem.so_vi_tri_chua_ro">Còn {{ doiChieuDiem.so_vi_tri_chua_ro }} vị trí trong bảng cần đọc lại.</span>
+          </p>
+          <details v-if="mucConThieu.length" class="ghi-chu" open>
+            <summary>{{ trangThaiRaSoat === 'da_chinh_sua' ? 'Các mục cần đối chiếu ở phiên bản trước' : 'Các mục cần đối chiếu khi duyệt' }} ({{ mucConThieu.length }})</summary>
+            <ul class="danh-sach-bao danh-sach-bao--cuon">
+              <li v-for="muc in mucConThieu" :key="muc">{{ muc }}</li>
+            </ul>
+          </details>
           <el-alert v-if="banNhap.loi?.length" title="Các mục cần xử lý trước khi duyệt" type="warning" show-icon :closable="false">
             <ul class="danh-sach-bao danh-sach-bao--cuon">
               <li v-for="(loi, index) in banNhap.loi" :key="index">
@@ -96,7 +114,7 @@
               <li v-for="(lyDo, nguonId) in nguonBiBoQua" :key="nguonId">{{ lyDo }}</li>
             </ul>
           </el-alert>
-          <details v-if="ghiChuTrichXuat.length" class="ghi-chu">
+          <details v-if="ghiChuTrichXuat.length" class="ghi-chu" :open="trangThaiRaSoat === 'chua_hoan_tat'">
             <summary>Ghi chú trích xuất ({{ ghiChuTrichXuat.length }})</summary>
             <ul class="danh-sach-bao danh-sach-bao--cuon">
               <li v-for="(ghiChu, index) in ghiChuTrichXuat" :key="index">{{ ghiChu }}</li>
@@ -105,7 +123,53 @@
           <p v-if="loiSoSanh" class="chu-thich" role="status">{{ loiSoSanh }}</p>
         </CustomCard>
 
-        <CustomCard v-if="Object.keys(canXacNhan).length || doiChieuNguon.length" shadow="never" class="catalog-card">
+        <CustomCard v-if="kiemKeCongThuc || maTran" shadow="never" class="catalog-card">
+          <h3>{{ trangThaiRaSoat === 'da_chinh_sua' ? 'Đối chiếu ở lần rà soát trước' : 'Đối chiếu chương trình và công thức' }}</h3>
+          <p v-if="maTran" class="chu-thich">
+            Bản nháp có {{ maTran.so_ma_da_ghi }}/{{ maTran.so_ma_nhan_dien }} mã xét tuyển và
+            {{ maTran.so_lien_ket_da_ghi }}/{{ maTran.so_lien_ket_nhan_dien }} liên kết diện tuyển, tổ hợp đã nhận diện từ nguồn.
+            <span v-if="!maTran.da_kiem_ke">Danh mục trong nguồn chưa được kiểm kê hết.</span>
+          </p>
+          <p v-if="kiemKeCongThuc" class="chu-thich">
+            <template v-if="kiemKeCongThuc.cong_thuc.length">
+              Trong {{ kiemKeCongThuc.cong_thuc.length }} công thức nhận diện được từ nguồn, {{ soCongThuc.da_cau_truc }} đã có trường dữ liệu tương ứng,
+              {{ soCongThuc.da_ghi_mo_ta }} mới lưu ở phần mô tả và {{ soCongThuc.chua_ghi }} chưa ghi vào bản nháp.
+            </template>
+            <template v-else>Chưa nhận diện được công thức có dẫn chứng trong các phần tài liệu đã đọc.</template>
+          </p>
+          <details v-for="nhom in nhomKiemKe" :key="nhom.nhan" class="ghi-chu" :open="nhom.mo">
+            <summary>{{ nhom.nhan }} ({{ nhom.dong.length }})</summary>
+            <ul class="danh-sach-bao danh-sach-bao--cuon kiem-ke">
+              <li v-for="(muc, i) in nhom.dong" :key="i">
+                <strong>{{ muc.ten || muc.ma_xet_tuyen }}</strong>
+                <span v-if="muc.pham_vi"> · {{ muc.pham_vi }}</span>
+                <p v-if="muc.ten && muc.ma_xet_tuyen.length">Mã xét tuyển áp dụng · {{ muc.ma_xet_tuyen.join(', ') }}</p>
+                <p v-if="muc.bieu_thuc" class="bieu-thuc">{{ muc.bieu_thuc }}</p>
+                <p v-if="muc.dieu_kien">Điều kiện áp dụng · {{ muc.dieu_kien }}</p>
+                <p v-if="muc.thang_diem">Thang điểm · {{ muc.thang_diem }}</p>
+                <p v-if="muc.noi_dung || muc.ly_do">{{ muc.noi_dung || muc.ly_do }}</p>
+                <p v-for="path in muc.duong_dan" :key="path">
+                  <button v-if="trangThaiRaSoat !== 'da_chinh_sua' && duongDanBanNhap.has(path)" type="button" class="nut-dong-loi" @click="doiChieu?.moDuongDan(path)">{{ path }}</button>
+                  <span v-else>{{ path }}</span>
+                </p>
+                <details v-if="muc.dan_chung.length">
+                  <summary>Dẫn chứng ({{ muc.dan_chung.length }})</summary>
+                  <div v-for="(dc, j) in muc.dan_chung" :key="j">
+                    <a v-if="dc.lienKet.url" :href="dc.lienKet.url" class="cell-link" target="_blank" rel="noopener noreferrer">Nguồn #{{ dc.nguon_id }} · {{ dc.vi_tri }}</a>
+                    <span v-else>Nguồn #{{ dc.nguon_id }} · {{ dc.vi_tri }}</span>
+                    <a v-if="dc.lienKet.trangNguon" :href="dc.lienKet.trangNguon" class="cell-link" target="_blank" rel="noopener noreferrer">Mở trang công bố</a>
+                    <p>{{ dc.trich_dan }}</p>
+                  </div>
+                </details>
+              </li>
+            </ul>
+          </details>
+          <ul v-if="luuYKiemKe.length" class="danh-sach-bao">
+            <li v-for="muc in luuYKiemKe" :key="muc">{{ muc }}</li>
+          </ul>
+        </CustomCard>
+
+        <CustomCard v-if="Object.keys(xacNhanDaLuu).length || doiChieuNguon.length" shadow="never" class="catalog-card">
           <h3>Đối chiếu danh sách và chỉ tiêu</h3>
           <details v-if="doiChieuNguon.length" class="ghi-chu">
             <summary>Các mục đã đối chiếu trong tài liệu ({{ doiChieuNguon.length }})</summary>
@@ -118,16 +182,9 @@
               </li>
             </ul>
           </details>
-          <CustomForm v-if="coTheSua" :model="lyDoDoiChieu" @submit.prevent="luuBanNhap">
-            <CustomFormItem v-for="(yeuCau, khoa) in canXacNhan" :key="khoa" :label="khoa === 'chuong_trinh' ? 'Xác nhận danh sách mã' : 'Xác nhận phạm vi chỉ tiêu'">
-              <p class="chu-thich">{{ yeuCau }}</p>
-              <CustomSelect v-model="lyDoDoiChieu[khoa].nguon_id" clearable placeholder="Chọn nguồn làm căn cứ" :disabled="Boolean(thaoTac)">
-                <CustomOption v-for="nguon in nguonXacNhan" :key="nguon.id" :value="nguon.id" :label="`#${nguon.id} · ${nguon.tieu_de}`" />
-              </CustomSelect>
-              <CustomInput v-model="lyDoDoiChieu[khoa].ly_do" type="textarea" :rows="2" maxlength="2000" placeholder="Lý do xác nhận" :disabled="Boolean(thaoTac)" />
-            </CustomFormItem>
-            <CustomButton v-if="coSuaXacNhan" :disabled="Boolean(thaoTac)" @click="luuBanNhap">Lưu xác nhận đối chiếu</CustomButton>
-          </CustomForm>
+          <p v-for="(canCu, khoa) in xacNhanDaLuu" :key="khoa" class="chu-thich">
+            {{ khoa === 'chuong_trinh' ? 'Danh sách mã' : 'Phạm vi chỉ tiêu' }} · Nguồn #{{ canCu.nguon_id }} · {{ canCu.ly_do }}
+          </p>
         </CustomCard>
 
         <DoiChieuBanNhap v-if="banNhap" ref="doiChieu" :key="id" v-model="thayDoi" :cap-nhat="doiMoi" :cac-muc="cacMuc" :nguon="banNhap.nguon || chiTiet.nguon" :co-the-sua="coTheSua" :co-ban-truoc="Boolean(banTruoc)" :dang-xu-ly="Boolean(thaoTac)" @them-truong="moThemTruong" />
@@ -176,15 +233,15 @@
           <CustomFormItem class="form-grid__full" label="Giá trị mới (JSON)" required>
             <CustomInput v-model="themTruong.giaTriJson" type="textarea" class="json-input" :rows="4" placeholder='Nhập giá trị JSON, ví dụ "Theo thông báo của trường"' />
           </CustomFormItem>
-          <CustomFormItem class="form-grid__full" label="Lý do sửa" required>
-            <CustomInput v-model="themTruong.lyDo" type="textarea" :rows="2" placeholder="Nhập lý do thêm hoặc thay thế trường" maxlength="2000" show-word-limit />
+          <CustomFormItem class="form-grid__full" label="Ghi chú (tùy chọn)">
+            <CustomInput v-model="themTruong.lyDo" type="textarea" :rows="2" maxlength="2000" show-word-limit />
           </CustomFormItem>
         </div>
       </CustomForm>
       <el-alert v-if="themTruong.loi" :title="themTruong.loi" type="error" show-icon :closable="false" />
       <template #footer>
         <CustomButton @click="themTruong.hien = false">Hủy</CustomButton>
-        <CustomButton type="primary" :disabled="Boolean(thaoTac) || !themTruong.duongDan.trim() || !themTruong.giaTriJson.trim() || !themTruong.lyDo.trim()" @click="luuTruong">Áp dụng vào bản nháp</CustomButton>
+        <CustomButton type="primary" :disabled="Boolean(thaoTac) || !themTruong.duongDan.trim() || !themTruong.giaTriJson.trim()" @click="luuTruong">Áp dụng vào bản nháp</CustomButton>
       </template>
     </CustomDialog>
 
@@ -202,7 +259,7 @@ import ChiTietDeAnDialog from './ChiTietDeAnDialog.vue'
 import DanhSachPhienTuyenSinh from './DanhSachPhienTuyenSinh.vue'
 import DoiChieuBanNhap from './DoiChieuBanNhap.vue'
 import { giaTriTheoDuongDan, hienGiaTri, lapDanhSachMuc, phanTichGiaTri, tachDuongDan } from './doi-chieu-ban-nhap'
-import { TRANG_THU_THAP, TRANG_XET_DUYET, loiPhien, ngayGio, nguonBiBoQuaKhiTaoBanNhap, trangThaiPhien } from './thu-thap-du-lieu'
+import { TRANG_THU_THAP, TRANG_XET_DUYET, lienKetDanChung, loiPhien, ngayGio, nguonBiBoQuaKhiTaoBanNhap, trangThaiPhien } from './thu-thap-du-lieu'
 import { usePhienTuyenSinh } from './usePhienTuyenSinh'
 
 const router = useRouter()
@@ -218,7 +275,6 @@ const hienDeAn = ref(false)
 const deAnId = ref(null)
 const boSung = reactive({ hien: false, duongDan: [], lyDo: '' })
 const themTruong = reactive({ hien: false, duongDan: '', giaTriJson: '', lyDo: '', loi: '' })
-const lyDoDoiChieu = reactive({ chuong_trinh: {}, chi_tieu: {} })
 
 const hanhDong = {
   tao_phien: 'Tạo phiên', tim_nguon: 'Tìm nguồn', them_nguon: 'Bổ sung URL', chon_nguon: 'Cập nhật lựa chọn nguồn',
@@ -229,6 +285,38 @@ const hanhDong = {
 }
 
 const banNhap = computed(() => chiTiet.value?.ban_nhap)
+const kiemKeCongThuc = computed(() => banNhap.value?.doi_chieu?.cong_thuc)
+const maTran = computed(() => banNhap.value?.doi_chieu?.ma_tran)
+const luuYKiemKe = computed(() => [...new Set([
+  ...(kiemKeCongThuc.value?.can_lam_ro || []), ...(maTran.value?.can_lam_ro || []),
+])])
+const soCongThuc = computed(() => {
+  const soLuong = { da_cau_truc: 0, da_ghi_mo_ta: 0, chua_ghi: 0 }
+  for (const muc of kiemKeCongThuc.value?.cong_thuc || []) soLuong[muc.trang_thai]++
+  return soLuong
+})
+const nhomKiemKe = computed(() => {
+  const nguon = new Map(banNhap.value?.nguon?.map((n) => [n.id, n]))
+  const congThuc = kiemKeCongThuc.value?.cong_thuc || []
+  const nhom = [
+    { nhan: 'Mã hoặc liên kết còn thiếu', dong: maTran.value?.chua_ghi || [], mo: true },
+    { nhan: 'Công thức chưa ghi', dong: congThuc.filter((m) => m.trang_thai === 'chua_ghi'), mo: true },
+    { nhan: 'Công thức mới lưu ở phần mô tả', dong: congThuc.filter((m) => m.trang_thai === 'da_ghi_mo_ta') },
+    { nhan: 'Công thức đã có trường dữ liệu tương ứng', dong: congThuc.filter((m) => m.trang_thai === 'da_cau_truc') },
+  ]
+  return nhom.filter((n) => n.dong.length).map((n) => ({
+    ...n,
+    dong: n.dong.map((m) => ({ ...m, dan_chung: m.dan_chung.map((dc) => ({
+      ...dc, lienKet: lienKetDanChung(dc, nguon.get(dc.nguon_id)),
+    })) })),
+  }))
+})
+const doiChieuDiem = computed(() => banNhap.value?.doi_chieu?.diem_chuan)
+const trangThaiRaSoat = computed(() => banNhap.value?.doi_chieu?.trang_thai_ra_soat_ai)
+const mucConThieu = computed(() => [...new Set([
+  ...(banNhap.value?.doi_chieu?.muc_con_thieu ?? []),
+  ...(doiChieuDiem.value?.can_doi_chieu ?? []),
+])])
 const nguonBiBoQua = computed(() => nguonBiBoQuaKhiTaoBanNhap(chiTiet.value))
 const ghiChuTrichXuat = computed(() => {
   const daHien = new Set(Object.values(nguonBiBoQua.value))
@@ -239,21 +327,11 @@ const duongDanBanNhap = computed(() => new Set(banNhap.value?.muc?.map((muc) => 
 const trangThaiHienThi = computed(() => trangThaiPhien(chiTiet.value?.trang_thai, dangTaoBanNhap.value))
 const coTheSua = computed(() => Boolean(banNhap.value && !phienBan.value && !dangTaoBanNhap.value && chiTiet.value?.trang_thai === 'cho_duyet'))
 const daDuyet = computed(() => !phienBan.value && chiTiet.value?.trang_thai === 'da_duyet_va_nhap')
-const canXacNhan = computed(() => banNhap.value?.doi_chieu?.can_xac_nhan || {})
 const doiChieuNguon = computed(() => banNhap.value?.doi_chieu?.nguon || [])
-const xacNhanDaLuu = computed(() => banNhap.value?.doi_chieu?.xac_nhan || {})
-const nguonXacNhan = computed(() => (banNhap.value?.nguon || []).filter((nguon) => nguon.chinh_thuc && nguon.phu_hop
-  && nguon.lua_chon === 'su_dung' && !nguon.chi_diem_lich_su && nguon.nam_ap_dung === chiTiet.value?.nam_tuyen_sinh))
-const xacNhanThayDoi = computed(() => Object.fromEntries(Object.keys(canXacNhan.value)
-  .map((khoa) => {
-    const { nguon_id, ly_do: noiDung } = lyDoDoiChieu[khoa]
-    const ly_do = noiDung?.trim()
-    return [khoa, ly_do ? { nguon_id, ly_do } : null]
-  })
-  .filter(([khoa, canCu]) => canCu?.ly_do !== xacNhanDaLuu.value[khoa]?.ly_do
-    || canCu?.nguon_id !== xacNhanDaLuu.value[khoa]?.nguon_id)))
-const coSuaXacNhan = computed(() => Object.keys(xacNhanThayDoi.value).length > 0)
-const coChinhSua = computed(() => Boolean(thayDoi.value.length || doiChieu.value?.daNhapSua || coSuaXacNhan.value))
+const xacNhanDaLuu = computed(() => Object.fromEntries(
+  Object.entries(banNhap.value?.doi_chieu?.xac_nhan || {}).filter(([, canCu]) => canCu),
+))
+const coChinhSua = computed(() => Boolean(thayDoi.value.length || doiChieu.value?.daNhapSua))
 const tuyChonBoSung = computed(() => boSung.hien ? cacMuc.value.filter((muc) => !muc.daBo).map((muc) => ({
   label: `${muc.nhan} · ${muc.viTri} · ${muc.duong_dan}`,
   value: muc.duong_dan,
@@ -266,12 +344,6 @@ watch([id, phienBan], () => {
   boSung.hien = false
   themTruong.hien = false
 })
-
-watch(banNhap, () => {
-  for (const khoa of Object.keys(lyDoDoiChieu)) {
-    lyDoDoiChieu[khoa] = { nguon_id: null, ly_do: '', ...xacNhanDaLuu.value[khoa] }
-  }
-}, { immediate: true })
 
 watch([id, () => banNhap.value?.phien_ban], async ([phienId, ban], _, onCleanup) => {
   banTruoc.value = null
@@ -346,7 +418,7 @@ function coTheChuyenTrangThai() {
 
 async function luuBanNhap() {
   if (!coTheSua.value || thaoTac.value || doiChieu.value?.chuanBiLuu() === false) return
-  if (!thayDoi.value.length && !coSuaXacNhan.value) {
+  if (!thayDoi.value.length) {
     ElMessage.info('Chưa có chỉnh sửa để lưu.')
     return
   }
@@ -354,12 +426,7 @@ async function luuBanNhap() {
     loiThaoTac.value = { noiDung: 'Mỗi lần lưu tối đa 500 mục. Hãy bỏ bớt chỉnh sửa ở lần lưu này.', loi: [] }
     return
   }
-  const xacNhan = coSuaXacNhan.value ? xacNhanThayDoi.value : undefined
-  if (xacNhan && Object.values(xacNhan).some((canCu) => canCu && !canCu.nguon_id)) {
-    loiThaoTac.value = { noiDung: 'Chọn nguồn làm căn cứ cho mỗi xác nhận đối chiếu.', loi: [] }
-    return
-  }
-  if (await thucHien('luu', (phienId) => suaBanNhapTuyenSinh(phienId, banNhap.value.phien_ban, thayDoi.value, xacNhan))) {
+  if (await thucHien('luu', (phienId) => suaBanNhapTuyenSinh(phienId, banNhap.value.phien_ban, thayDoi.value))) {
     ElMessage.success('Đã lưu bản nháp.')
   }
 }
@@ -406,7 +473,7 @@ function moThemTruong(duongDan) {
 function luuTruong() {
   const duongDan = themTruong.duongDan.trim()
   const lyDo = themTruong.lyDo.trim()
-  if (!coTheSua.value || !duongDan || !lyDo) return
+  if (!coTheSua.value || !duongDan) return
   if (!duongDan.startsWith('/') || /~(?![01])/.test(duongDan) || tachDuongDan(duongDan).length < 2) {
     themTruong.loi = 'Nhập đường dẫn JSON Pointer tới trường bên trong một trong ba nhánh dữ liệu.'
     return
@@ -427,7 +494,7 @@ function luuTruong() {
   const muc = banNhap.value.muc.find((item) => item.duong_dan === duongDan)
   thayDoi.value = [
     ...thayDoi.value.filter((item) => item.duong_dan !== duongDan),
-    { duong_dan: duongDan, gia_tri: giaTri, ghi_chu: lyDo, dan_chung_ids: muc?.dan_chung_ids || [], da_kiem_tra: false },
+    { duong_dan: duongDan, gia_tri: giaTri, ...(lyDo ? { ghi_chu: lyDo } : {}), dan_chung_ids: muc?.dan_chung_ids || [] },
   ]
   doiMoi.value += 1
   themTruong.hien = false
@@ -466,6 +533,11 @@ function taiJson() {
 .danh-sach-bao--cuon { max-height: 205px; overflow-y: auto; }
 .nut-dong-loi { background: none; border: none; color: inherit; cursor: pointer; padding: 0; text-align: left; text-decoration: underline; }
 .ghi-chu { margin-top: 8px; }
+.kiem-ke li { margin: 8px 0; overflow-wrap: anywhere; }
+.kiem-ke p { margin: 4px 0; }
+.kiem-ke .bieu-thuc { white-space: pre-wrap; }
+.kiem-ke details div { margin-top: 6px; }
+.kiem-ke a + a { margin-inline-start: 8px; }
 summary { cursor: pointer; }
 .lich-su { margin: 8px 0 0; padding-inline-start: 20px; }
 .lich-su > li { margin-top: 6px; }
