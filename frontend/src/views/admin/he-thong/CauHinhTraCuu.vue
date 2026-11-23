@@ -248,7 +248,8 @@ const GIA_TOI_DA = 999999999999999
 const TRUONG_LUOT = [
   { prop: 'so_luot_tra_cuu_khach_ngay', nhan: 'Tra cứu (khách vãng lai)', cot: 'Tra cứu (khách)', rong: 150 },
   { prop: 'so_luot_tra_cuu_thanh_vien_ngay', nhan: 'Tra cứu (thành viên)', cot: 'Tra cứu (thành viên)', rong: 170 },
-  { prop: 'so_luot_tu_van_ai_ngay', nhan: 'Tư vấn AI', cot: 'Tư vấn', rong: 130 },
+  // Ẩn Tư vấn AI (bộ lọc / form / bảng) — vẫn gửi giá trị mặc định lên API.
+  // { prop: 'so_luot_tu_van_ai_ngay', nhan: 'Tư vấn AI', cot: 'Tư vấn', rong: 130 },
   { prop: 'so_luot_phan_tich_truong_ngay', nhan: 'Phân tích trường', cot: 'Phân tích', rong: 150 },
 ]
 // Luôn phải có một cấu hình đang áp dụng: không tắt hay xóa được cấu hình đó, chỉ thay bằng cách bật cấu hình khác.

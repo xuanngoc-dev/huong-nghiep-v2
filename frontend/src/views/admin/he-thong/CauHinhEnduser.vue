@@ -15,15 +15,6 @@
         </template>
       </CustomInput>
       <CustomSelect
-        v-model="filters.kieu_tra_loi"
-        class="filter-status"
-        placeholder="Kiểu trả lời"
-        clearable
-        @change="onSearch"
-      >
-        <CustomOption v-for="item in KIEU_TRA_LOI" :key="item.value" :label="item.label" :value="item.value" />
-      </CustomSelect>
-      <CustomSelect
         v-model="filters.trang_thai"
         class="filter-status"
         placeholder="Trạng thái"
@@ -81,14 +72,14 @@
       </CustomTableColumn>
       <CustomTableColumn prop="id" label="ID" width="80" align="center" />
       <CustomTableColumn prop="ten_cau_hinh" label="Tên cấu hình" min-width="200" />
-      <CustomTableColumn label="Kiểu trả lời" width="130" align="center">
+      <!-- <CustomTableColumn label="Kiểu trả lời" width="130" align="center">
         <template #default="{ row }">
           <CustomTag :type="row.kieu_tra_loi === 'tinh_huong' ? 'warning' : 'primary'" effect="light">
             {{ kieuTraLoiLabel(row.kieu_tra_loi) }}
           </CustomTag>
         </template>
-      </CustomTableColumn>
-      <CustomTableColumn label="Token khách vãng lai" width="160" align="right">
+      </CustomTableColumn> -->
+      <CustomTableColumn label="Token khách vãng lai" width="200" align="right">
         <template #default="{ row }">
           {{ row.so_token_khach_vang_lai == null ? 'Không giới hạn' : formatInteger(row.so_token_khach_vang_lai) }}
         </template>
@@ -156,11 +147,6 @@
       <div class="form-grid__body">
         <CustomFormItem class="form-grid__span-2" label="Tên cấu hình" prop="ten_cau_hinh">
           <CustomInput v-model="form.ten_cau_hinh" maxlength="255" placeholder="Ví dụ: banner_trang_chu" />
-        </CustomFormItem>
-        <CustomFormItem label="Kiểu trả lời" prop="kieu_tra_loi">
-          <CustomSelect v-model="form.kieu_tra_loi" placeholder="Chọn kiểu trả lời" :clearable="false">
-            <CustomOption v-for="item in KIEU_TRA_LOI" :key="item.value" :label="item.label" :value="item.value" />
-          </CustomSelect>
         </CustomFormItem>
         <CustomFormItem label="Trạng thái" prop="trang_thai">
           <CustomSelect v-model="form.trang_thai" placeholder="Chọn trạng thái" :clearable="false">
@@ -235,7 +221,6 @@ const filters = reactive(emptyFilters())
 function emptyFilters() {
   return {
     q: '',
-    kieu_tra_loi: '',
     trang_thai: '',
   }
 }
@@ -244,7 +229,6 @@ const form = reactive(emptyForm())
 
 const rules = {
   ten_cau_hinh: [{ required: true, message: 'Vui lòng nhập tên cấu hình', trigger: 'blur' }],
-  kieu_tra_loi: [{ required: true, message: 'Vui lòng chọn kiểu trả lời', trigger: 'change' }],
   trang_thai: [{ required: true, message: 'Vui lòng chọn trạng thái', trigger: 'change' }],
 }
 
@@ -284,7 +268,6 @@ async function load() {
       page_size: pageSize.value,
     }
     if (filters.q.trim()) params.q = filters.q.trim()
-    if (filters.kieu_tra_loi) params.kieu_tra_loi = filters.kieu_tra_loi
     if (filters.trang_thai !== '' && filters.trang_thai !== null) {
       params.trang_thai = filters.trang_thai
     }

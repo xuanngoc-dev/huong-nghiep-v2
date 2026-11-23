@@ -304,19 +304,19 @@
           "children": [
             {
               "index": "/admin/he-thong/cau-hinh-tra-cuu",
-              "title": "Cấu hình tra cứu",
+              "title": "Tra cứu",
               "tooltip": "Hạn mức tra cứu, tư vấn AI và thanh toán",
               "icon": "Operation"
             },
             {
               "index": "/admin/he-thong/cau-hinh-enduser",
-              "title": "Cấu hình EndUser",
+              "title": "Tư vấn",
               "tooltip": "Các cấu hình JSON dùng cho giao diện người dùng cuối",
               "icon": "Tools"
             },
             {
               "index": "/admin/he-thong/cau-hinh-goi-cuoc",
-              "title": "Cấu hình gói cước",
+              "title": "Gói cước",
               "tooltip": "Giá và số lượt của các gói cước tra cứu, khảo sát, hỏi đáp",
               "icon": "PriceTag"
             }
@@ -383,7 +383,7 @@
         },
         {
           "index": "danh-muc:trac-nghiem",
-          "title": "Trắc nghiệm & Holland",
+          "title": "Trắc nghiệm",
           "tooltip": "Danh mục phục vụ bài trắc nghiệm của mọi định hướng",
           "icon": "EditPen",
           "children": [
@@ -403,7 +403,7 @@
         },
         {
           "index": "danh-muc:thi-dh-xet-tuyen",
-          "title": "Thi ĐH & CĐ: Xét tuyển",
+          "title": "ĐH & CĐ - Xét tuyển",
           "tooltip": "Học sinh THPT thi đại học & cao đẳng: ưu tiên, phương thức, môn thi, chứng chỉ",
           "icon": "Tickets",
           "children": [
@@ -465,7 +465,7 @@
         },
         {
           "index": "danh-muc:thi-dh-nganh-truong",
-          "title": "Thi ĐH & CĐ: Ngành & trường",
+          "title": "ĐH & CĐ - Ngành & trường",
           "tooltip": "Học sinh THPT thi đại học & cao đẳng: lĩnh vực, ngành, trường",
           "icon": "School",
           "children": [
