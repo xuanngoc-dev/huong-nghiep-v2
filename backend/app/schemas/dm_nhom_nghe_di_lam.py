@@ -1,6 +1,7 @@
+import re
 from datetime import datetime
 from decimal import Decimal
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -13,9 +14,10 @@ MucDoApLuc = Literal["thap", "trung_binh", "cao"]
 COT_CHU_NGHE = (
     "mo_ta_cong_viec", "trach_nhiem_chinh", "vi_tri_tuyen_dung_mau", "hinh_thuc_dao_tao", "trinh_do_toi_thieu",
     "chuyen_nganh_phu_hop", "ky_nang_chuyen_mon", "ky_nang_mem", "chung_chi_giay_phep", "ghi_chu_luong",
-    "moi_truong_lam_viec", "dac_thu_thoi_gian", "yeu_cau_suc_khoe", "trien_vong_nghe_nghiep", "lo_trinh_phat_trien",
-    "tu_khoa_tim_kiem",
+    "moi_truong_lam_viec", "dac_thu_thoi_gian", "yeu_cau_suc_khoe", "trien_vong_nghe_nghiep", "tu_khoa_tim_kiem",
 )
+# Lương mỗi giai đoạn lộ trình: số nguyên VND (lưu trong cột JSON nên không dùng Decimal).
+LUONG_BUOC_TOI_DA = 10**13
 # Cặp lương (tối thiểu, tối đa, nhãn) của nghề cụ thể.
 CAP_LUONG_NGHE = (
     ("luong_khoi_diem_min", "luong_khoi_diem_max", "Lương khởi điểm"),
@@ -194,6 +196,47 @@ class DmNhomNgheDiLamTrangThaiMany(_DanhSachId):
 # ---------- Nghề cụ thể ----------
 
 
+def tach_lo_trinh(value: str) -> list[dict[str, Any]]:
+    """Lộ trình dạng chữ cũ "Thợ phụ → Thợ hàn 3G → Tổ trưởng." → các giai đoạn (chỉ có tên)."""
+    buoc = [phan.strip().rstrip(".").strip() for phan in re.split(r"→|->|=>", value)]
+    return [{"giai_doan": ten} for ten in buoc if ten]
+
+
+def _lo_trinh_dau_vao(value: Any) -> Any:
+    """Nhận cả chuỗi kiểu cũ (file JSON import cũ, dữ liệu chưa chuyển) và danh sách; rỗng → None."""
+    if isinstance(value, str):
+        value = tach_lo_trinh(value)
+    return value or None
+
+
+class BuocLoTrinhNghe(BaseModel):
+    """Một giai đoạn trong lộ trình phát triển của nghề cụ thể."""
+
+    giai_doan: str = Field(..., min_length=1, max_length=255)
+    mo_ta_cong_viec: str | None = Field(default=None, max_length=2000)
+    # Mức lương trung bình của giai đoạn, VND theo chu_ky_luong của nghề.
+    luong_trung_binh_min: int | None = Field(default=None, ge=0, le=LUONG_BUOC_TOI_DA)
+    luong_trung_binh_max: int | None = Field(default=None, ge=0, le=LUONG_BUOC_TOI_DA)
+    ghi_chu: str | None = Field(default=None, max_length=1000)
+
+    @field_validator("giai_doan")
+    @classmethod
+    def strip_giai_doan(cls, value: str) -> str:
+        return _bat_buoc(value, "Tên giai đoạn lộ trình")
+
+    @field_validator("mo_ta_cong_viec", "ghi_chu")
+    @classmethod
+    def empty_to_none(cls, value: str | None) -> str | None:
+        return _rong_thanh_none(value)
+
+    @model_validator(mode="after")
+    def kiem_tra_khoang_luong(self) -> "BuocLoTrinhNghe":
+        tu, den = self.luong_trung_binh_min, self.luong_trung_binh_max
+        if tu is not None and den is not None and tu > den:
+            raise ValueError(f"Lộ trình \"{self.giai_doan}\": lương trung bình từ không được lớn hơn đến")
+        return self
+
+
 class DmNgheCuTheDiLamWrite(BaseModel):
     nhom_nghe_di_lam_id: int = Field(..., ge=1)
     ten_nghe: str = Field(..., min_length=1, max_length=255)
@@ -227,9 +270,15 @@ class DmNgheCuTheDiLamWrite(BaseModel):
     muc_do_ap_luc: MucDoApLuc | None = None
     yeu_cau_suc_khoe: str | None = Field(default=None, max_length=500)
     trien_vong_nghe_nghiep: str | None = Field(default=None, max_length=5000)
-    lo_trinh_phat_trien: str | None = Field(default=None, max_length=5000)
+    # Các giai đoạn theo thứ tự; nhận cả chuỗi kiểu cũ "A → B → C" (tự tách thành giai đoạn).
+    lo_trinh_phat_trien: list[BuocLoTrinhNghe] | None = Field(default=None, max_length=20)
     nhom_holland: str | None = Field(default=None, max_length=20)
     tu_khoa_tim_kiem: str | None = Field(default=None, max_length=500)
+
+    @field_validator("lo_trinh_phat_trien", mode="before")
+    @classmethod
+    def chuan_hoa_lo_trinh(cls, value: Any) -> Any:
+        return _lo_trinh_dau_vao(value)
 
     @field_validator("ten_nghe")
     @classmethod
@@ -300,9 +349,15 @@ class DmNgheCuTheDiLamPublic(BaseModel):
     muc_do_ap_luc: str | None = None
     yeu_cau_suc_khoe: str | None = None
     trien_vong_nghe_nghiep: str | None = None
-    lo_trinh_phat_trien: str | None = None
+    # [{giai_doan, mo_ta_cong_viec, luong_trung_binh_min, luong_trung_binh_max, ghi_chu}]
+    lo_trinh_phat_trien: list[BuocLoTrinhNghe] | None = None
     nhom_holland: str | None = None
     tu_khoa_tim_kiem: str | None = None
+
+    @field_validator("lo_trinh_phat_trien", mode="before")
+    @classmethod
+    def chuan_hoa_lo_trinh(cls, value: Any) -> Any:
+        return _lo_trinh_dau_vao(value)
 
 
 class DmNgheCuTheDiLamPage(BaseModel):

@@ -55,3 +55,20 @@ export function khoangNam(tu, den) {
   if (coGiaTri(den)) return `Đến ${den}`
   return null
 }
+
+/**
+ * Lộ trình dạng chuỗi "Thợ phụ → Thợ hàn 3G → Tổ trưởng." → các bước; nhận cả "->", "=>" và dấu ";".
+ * Bỏ dấu chấm cuối mỗi bước.
+ */
+export function tachLoTrinh(value) {
+  return String(value || '')
+    .split(/→|->|=>|;/)
+    .map((buoc) => buoc.trim().replace(/\.$/, '').trim())
+    .filter(Boolean)
+}
+
+/** Mục trong danh sách (tách từ chuỗi ";"): viết hoa chữ đầu, bỏ dấu chấm cuối — "chuẩn bị phôi." → "Chuẩn bị phôi". */
+export function chuanHoaMuc(value) {
+  const text = String(value || '').trim().replace(/\.$/, '').trim()
+  return text ? text.charAt(0).toLocaleUpperCase('vi-VN') + text.slice(1) : ''
+}

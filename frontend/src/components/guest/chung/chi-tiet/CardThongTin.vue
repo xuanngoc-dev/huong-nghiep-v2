@@ -10,6 +10,10 @@
       <span v-for="tag in nhanHienThi" :key="tag">{{ tag }}</span>
     </div>
 
+    <ul v-if="dsHienThi.length" class="card-thong-tin__ds">
+      <li v-for="muc in dsHienThi" :key="muc">{{ muc }}</li>
+    </ul>
+
     <dl v-if="dongHienThi.length">
       <div v-for="row in dongHienThi" :key="row.label" class="card-thong-tin__dong">
         <dt>{{ row.label }}</dt>
@@ -28,8 +32,8 @@
 
 <script setup>
 /**
- * Một card nhóm thông tin trong modal chi tiết tra cứu: tiêu đề + icon, rồi đoạn văn / nhãn / các dòng
- * nhãn – giá trị / slot. Dòng và nhãn rỗng tự ẩn; card không còn nội dung nào thì ẩn cả card.
+ * Một card nhóm thông tin trong modal chi tiết (tra cứu, thư viện ngành nghề): tiêu đề + icon, rồi đoạn văn /
+ * nhãn / gạch đầu dòng / các dòng nhãn – giá trị / slot. Dòng và nhãn rỗng tự ẩn; card không còn nội dung nào thì ẩn cả card.
  */
 import { computed, useSlots } from 'vue'
 import { coGiaTri, locNhan } from './phanChiTiet'
@@ -44,6 +48,8 @@ const props = defineProps({
   dong: { type: Array, default: () => [] },
   doan: { type: [String, Number], default: '' },
   nhan: { type: Array, default: () => [] },
+  // Gạch đầu dòng: mục dài như câu (trách nhiệm, chứng chỉ…); mục ngắn dùng nhan.
+  ds: { type: Array, default: () => [] },
   // Chiếm cả hàng lưới (đoạn văn dài, bảng).
   rong: { type: Boolean, default: false },
   // Nền vàng nhạt cho lưu ý / cảnh báo.
@@ -54,8 +60,14 @@ const slots = useSlots()
 
 const dongHienThi = computed(() => props.dong.filter((row) => coGiaTri(row.giaTri)))
 const nhanHienThi = computed(() => locNhan(props.nhan))
+const dsHienThi = computed(() => locNhan(props.ds))
 const coNoiDung = computed(
-  () => dongHienThi.value.length || nhanHienThi.value.length || coGiaTri(props.doan) || !!slots.default,
+  () =>
+    dongHienThi.value.length ||
+    nhanHienThi.value.length ||
+    dsHienThi.value.length ||
+    coGiaTri(props.doan) ||
+    !!slots.default,
 )
 </script>
 
@@ -110,9 +122,26 @@ const coNoiDung = computed(
 }
 
 .card-thong-tin__doan + .card-thong-tin__nhan,
+.card-thong-tin__doan + .card-thong-tin__ds,
 .card-thong-tin__doan + dl,
-.card-thong-tin__nhan + dl {
+.card-thong-tin__nhan + dl,
+.card-thong-tin__ds + dl {
   margin-top: 10px;
+}
+
+.card-thong-tin__ds {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+  color: #3a4742;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.card-thong-tin__ds li::marker {
+  color: #2f7a33;
 }
 
 .card-thong-tin__nhan {

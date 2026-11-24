@@ -136,7 +136,7 @@
           :min-width="cot.rong"
           show-overflow-tooltip
         >
-          <template #default="{ row }">{{ row[cot.key] || '—' }}</template>
+          <template #default="{ row }">{{ (cot.hienThi ? cot.hienThi(row[cot.key]) : row[cot.key]) || '—' }}</template>
         </CustomTableColumn>
         <CustomTableColumn label="Thao tác" width="150" fixed="right" align="center">
           <template #default="{ row }">
@@ -334,6 +334,9 @@
             :placeholder="truong.placeholder"
           />
         </CustomFormItem>
+        <CustomFormItem class="form-grid__full" label="Lộ trình phát triển" prop="lo_trinh_phat_trien">
+          <BangLoTrinhNghe v-model="form.lo_trinh_phat_trien" />
+        </CustomFormItem>
       </div>
     </CustomForm>
     <template #footer>
@@ -359,9 +362,13 @@ import {
   VAN_BAN_CHUNG,
   VAN_BAN_DAO_TAO,
   VAN_BAN_MOI_TRUONG,
+  chuanHoaLoTrinh,
+  dsLoTrinh,
   khoangLuong,
+  loiLoTrinh,
   nhanMucDoApLuc,
   soHoacNull,
+  tenLoTrinh,
 } from '@/components/admin/nghe-cu-the/truongNghe'
 import { useJsonBatchImport } from '@/composables/useJsonBatchImport'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -402,7 +409,17 @@ const JSON_SAMPLE = `[
     "chu_ky_luong": "thang",
     "muc_do_ap_luc": "trung_binh",
     "nhom_holland": "R",
-    "tu_khoa_tim_kiem": "hàn; thợ hàn; cơ khí"
+    "tu_khoa_tim_kiem": "hàn; thợ hàn; cơ khí",
+    "lo_trinh_phat_trien": [
+      {
+        "giai_doan": "Thợ phụ",
+        "mo_ta_cong_viec": "Chuẩn bị phôi, phụ thợ chính",
+        "luong_trung_binh_min": 7000000,
+        "luong_trung_binh_max": 9000000,
+        "ghi_chu": "Thường 6-12 tháng"
+      },
+      { "giai_doan": "Thợ hàn bậc 3G", "luong_trung_binh_min": 10000000, "luong_trung_binh_max": 15000000 }
+    ]
   }
 ]`
 
@@ -412,6 +429,8 @@ const COT_CHU_BANG = [
   { key: 'dac_thu_thoi_gian', label: 'Đặc thù thời gian', rong: 220 },
   { key: 'yeu_cau_suc_khoe', label: 'Yêu cầu sức khỏe', rong: 220 },
   ...[...VAN_BAN_CHUNG, ...VAN_BAN_DAO_TAO, ...VAN_BAN_MOI_TRUONG].map(({ key, label }) => ({ key, label, rong: 260 })),
+  // Mảng giai đoạn: hiện tên các giai đoạn nối bằng "→".
+  { key: 'lo_trinh_phat_trien', label: 'Lộ trình phát triển', rong: 260, hienThi: tenLoTrinh },
   { key: 'tu_khoa_tim_kiem', label: 'Từ khóa tìm kiếm', rong: 220 },
 ]
 
@@ -447,6 +466,7 @@ function chuanHoa(item, nhomId) {
     chu_ky_luong: item.chu_ky_luong || 'thang',
     ...Object.fromEntries(TRUONG_CHU.map((key) => [key, chuHoacNull(item[key])])),
     ...Object.fromEntries(TRUONG_LUONG.map(({ key }) => [key, soHoacNull(item[key])])),
+    lo_trinh_phat_trien: chuanHoaLoTrinh(item.lo_trinh_phat_trien),
   }
 }
 
@@ -493,6 +513,15 @@ const rules = {
       [{ validator: kiemTraKhoangLuong(key.replace(/_max$/, '_min'), `${label} phải ≥ mức từ`), trigger: 'change' }],
     ]),
   ),
+  lo_trinh_phat_trien: [
+    {
+      validator: (_rule, value, callback) => {
+        const loi = loiLoTrinh(value)
+        callback(loi ? new Error(loi) : undefined)
+      },
+      trigger: 'change',
+    },
+  ],
 }
 
 function kiemTraKhoangLuong(minKey, nhanLoi) {
@@ -513,6 +542,7 @@ function emptyForm() {
     ...Object.fromEntries(TRUONG_LUONG.map(({ key }) => [key, null])),
     don_vi_tien_te: 'VND',
     chu_ky_luong: 'thang',
+    lo_trinh_phat_trien: [],
   }
 }
 
@@ -669,6 +699,7 @@ function openEdit(row) {
     ...Object.fromEntries(TRUONG_LUONG.map(({ key }) => [key, soHoacNull(row[key])])),
     don_vi_tien_te: row.don_vi_tien_te || 'VND',
     chu_ky_luong: row.chu_ky_luong || 'thang',
+    lo_trinh_phat_trien: dsLoTrinh(row.lo_trinh_phat_trien),
   })
   dialogVisible.value = true
 }

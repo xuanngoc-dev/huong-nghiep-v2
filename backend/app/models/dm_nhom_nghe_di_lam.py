@@ -2,6 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy import (
+    JSON,
     CheckConstraint,
     DateTime,
     Enum,
@@ -116,7 +117,9 @@ class DmNgheCuTheDiLam(Base):
     muc_do_ap_luc: Mapped[str | None] = mapped_column(Enum(*MUC_DO_AP_LUC, name="muc_do_ap_luc"))
     yeu_cau_suc_khoe: Mapped[str | None] = mapped_column(String(500))
     trien_vong_nghe_nghiep: Mapped[str | None] = mapped_column(Text)
-    lo_trinh_phat_trien: Mapped[str | None] = mapped_column(Text)
+    # Các giai đoạn theo thứ tự: [{giai_doan, mo_ta_cong_viec, luong_trung_binh_min, luong_trung_binh_max, ghi_chu}],
+    # lương là số nguyên VND theo chu_ky_luong.
+    lo_trinh_phat_trien: Mapped[list | None] = mapped_column(JSON)
     # Mã Holland ghép, ví dụ "RC".
     nhom_holland: Mapped[str | None] = mapped_column(String(20))
     tu_khoa_tim_kiem: Mapped[str | None] = mapped_column(String(500))

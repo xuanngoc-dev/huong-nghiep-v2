@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
+  chuanHoaMuc,
   dongTuDanhSach,
   duongDan,
   khoangNam,
@@ -8,7 +9,8 @@ import {
   loiTat,
   o,
   oLink,
-} from '../src/components/guest/tra-cuu/chi-tiet/phanChiTiet.js'
+  tachLoTrinh,
+} from '../src/components/guest/chung/chi-tiet/phanChiTiet.js'
 
 test('dòng thông tin: nối danh sách, thêm đơn vị, giữ giá trị 0', () => {
   assert.deepEqual(o('Bậc đào tạo', ['Đại học', '', null, 'Thạc sĩ']), { label: 'Bậc đào tạo', giaTri: 'Đại học, Thạc sĩ' })
@@ -47,4 +49,21 @@ test('năm áp dụng', () => {
   assert.equal(khoangNam(2026, 2026), '2026')
   assert.equal(khoangNam(null, 2028), 'Đến 2028')
   assert.equal(khoangNam(null, undefined), null)
+})
+
+test('tách lộ trình thành các bước', () => {
+  assert.deepEqual(tachLoTrinh('Thợ phụ → Thợ hàn bậc 3G → Tổ trưởng / giám sát hàn (QC hàn).'), [
+    'Thợ phụ',
+    'Thợ hàn bậc 3G',
+    'Tổ trưởng / giám sát hàn (QC hàn)',
+  ])
+  assert.deepEqual(tachLoTrinh('Nhân viên -> Trưởng nhóm; Quản lý'), ['Nhân viên', 'Trưởng nhóm', 'Quản lý'])
+  assert.deepEqual(tachLoTrinh(null), [])
+})
+
+test('chuẩn hóa mục danh sách', () => {
+  assert.equal(chuanHoaMuc(' chuẩn bị phôi '), 'Chuẩn bị phôi')
+  assert.equal(chuanHoaMuc('tuân thủ an toàn.'), 'Tuân thủ an toàn')
+  assert.equal(chuanHoaMuc('đọc bản vẽ'), 'Đọc bản vẽ')
+  assert.equal(chuanHoaMuc(null), '')
 })

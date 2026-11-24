@@ -173,6 +173,42 @@ class TestDmNhomNgheDiLam(unittest.TestCase):
         with self.assertRaises(ValueError):
             DmNgheCuTheDiLamWrite(nhom_nghe_di_lam_id=n.id, ten_nghe="X", chu_ky_luong="tuan")
 
+    def test_lo_trinh_phat_trien_theo_giai_doan(self):
+        n, _ = self._tao_du_lieu()
+        tao = nghe.create_nghe_cu_the_di_lam(
+            DmNgheCuTheDiLamWrite(
+                nhom_nghe_di_lam_id=n.id, ten_nghe="Thợ hàn",
+                lo_trinh_phat_trien=[
+                    {"giai_doan": " Thợ phụ ", "mo_ta_cong_viec": "Phụ việc, chuẩn bị phôi",
+                     "luong_trung_binh_min": 7_000_000, "luong_trung_binh_max": 9_000_000, "ghi_chu": "  "},
+                    {"giai_doan": "Thợ hàn 6G", "luong_trung_binh_min": 20_000_000},
+                ],
+            ),
+            db=self.db, _=None,
+        )
+        buoc = [b.model_dump() for b in tao.lo_trinh_phat_trien]
+        self.assertEqual(buoc[0], {"giai_doan": "Thợ phụ", "mo_ta_cong_viec": "Phụ việc, chuẩn bị phôi",
+                                   "luong_trung_binh_min": 7_000_000, "luong_trung_binh_max": 9_000_000,
+                                   "ghi_chu": None})
+        self.assertEqual((buoc[1]["giai_doan"], buoc[1]["luong_trung_binh_max"]), ("Thợ hàn 6G", None))
+        # Đọc lại từ danh sách (qua cột JSON) giữ nguyên thứ tự giai đoạn.
+        doc_lai = _ds_nghe(self.db).items[0].lo_trinh_phat_trien
+        self.assertEqual([b.giai_doan for b in doc_lai], ["Thợ phụ", "Thợ hàn 6G"])
+
+    def test_lo_trinh_nhan_chuoi_cu_va_kiem_tra_luong(self):
+        cu = DmNgheCuTheDiLamWrite(nhom_nghe_di_lam_id=1, ten_nghe="X",
+                                   lo_trinh_phat_trien="Thợ phụ → Thợ hàn bậc 3G -> Tổ trưởng.")
+        self.assertEqual([b.giai_doan for b in cu.lo_trinh_phat_trien], ["Thợ phụ", "Thợ hàn bậc 3G", "Tổ trưởng"])
+        for rong in ("", "  ", []):
+            self.assertIsNone(
+                DmNgheCuTheDiLamWrite(nhom_nghe_di_lam_id=1, ten_nghe="X", lo_trinh_phat_trien=rong).lo_trinh_phat_trien
+            )
+        with self.assertRaises(ValueError):
+            DmNgheCuTheDiLamWrite(nhom_nghe_di_lam_id=1, ten_nghe="X", lo_trinh_phat_trien=[
+                {"giai_doan": "A", "luong_trung_binh_min": 10, "luong_trung_binh_max": 5}])
+        with self.assertRaises(ValueError):
+            DmNgheCuTheDiLamWrite(nhom_nghe_di_lam_id=1, ten_nghe="X", lo_trinh_phat_trien=[{"giai_doan": "  "}])
+
     def test_xoa_nhieu_lien_ket_khong_ton_tai_tra_0(self):
         kq = lien_ket.delete_nhom_nghe_tieu_chi_many(
             DmNhomNgheTieuChiDeleteMany(items=[{"nhom_nghe_di_lam_id": 1, "tieu_chi_goi_y_id": 1}]),

@@ -18,6 +18,24 @@
             <CustomInput :model-value="nghe[o.key] || '—'" type="textarea" :rows="4" readonly />
           </CustomFormItem>
         </template>
+        <CustomFormItem class="form-grid__full" label="Lộ trình phát triển">
+          <CustomTable :data="loTrinh" class="chi-tiet-nghe__lo-trinh">
+            <CustomTableColumn label="#" width="48" align="center">
+              <template #default="{ $index }">{{ $index + 1 }}</template>
+            </CustomTableColumn>
+            <CustomTableColumn prop="giai_doan" label="Giai đoạn" min-width="160" />
+            <CustomTableColumn label="Mô tả công việc" min-width="240">
+              <template #default="{ row }">{{ row.mo_ta_cong_viec || '—' }}</template>
+            </CustomTableColumn>
+            <CustomTableColumn label="Lương trung bình" min-width="200">
+              <template #default="{ row }">{{ khoangLuong({ ...nghe, ...row }, 'luong_trung_binh') || '—' }}</template>
+            </CustomTableColumn>
+            <CustomTableColumn label="Ghi chú" min-width="180">
+              <template #default="{ row }">{{ row.ghi_chu || '—' }}</template>
+            </CustomTableColumn>
+            <template #empty>Chưa có lộ trình</template>
+          </CustomTable>
+        </CustomFormItem>
       </div>
     </CustomForm>
 
@@ -44,6 +62,7 @@ import {
   VAN_BAN_CHUNG,
   VAN_BAN_DAO_TAO,
   VAN_BAN_MOI_TRUONG,
+  dsLoTrinh,
   khoangLuong,
   nhanMucDoApLuc,
 } from './truongNghe'
@@ -55,6 +74,9 @@ const props = defineProps({
 })
 const emit = defineEmits(['sua'])
 const visible = defineModel({ type: Boolean, default: false })
+
+// Lương mỗi giai đoạn định dạng theo đơn vị tiền tệ / chu kỳ lương của nghề (khoangLuong trên { ...nghe, ...giai đoạn }).
+const loTrinh = computed(() => dsLoTrinh(props.nghe?.lo_trinh_phat_trien))
 
 // Các phần giống form sửa: `oNgan` là ô một dòng (nhãn + giá trị đã định dạng), `oDai` là ô nhiều dòng theo cột dữ liệu.
 const dsPhan = computed(() => {
@@ -132,6 +154,10 @@ const dsPhan = computed(() => {
   background: var(--el-fill-color-lighter);
   color: var(--el-text-color-secondary);
   font-size: 12px;
+}
+
+.chi-tiet-nghe__lo-trinh {
+  width: 100%;
 }
 
 .chi-tiet-nghe__khung-anh img {

@@ -34,8 +34,8 @@ export const VAN_BAN_DAO_TAO = [
 export const VAN_BAN_MOI_TRUONG = [
   { key: 'moi_truong_lam_viec', label: 'Môi trường làm việc', toiDa: 5000, placeholder: 'Nhập môi trường làm việc' },
   { key: 'trien_vong_nghe_nghiep', label: 'Triển vọng nghề nghiệp', toiDa: 5000, placeholder: 'Nhập triển vọng nghề nghiệp' },
-  { key: 'lo_trinh_phat_trien', label: 'Lộ trình phát triển', toiDa: 5000, placeholder: 'Nhập lộ trình phát triển' },
 ]
+// Lộ trình phát triển (lo_trinh_phat_trien) nhập riêng theo giai đoạn: xem BangLoTrinhNghe.vue và các hàm *LoTrinh bên dưới.
 // Lương: số tiền đầy đủ theo đơn vị tiền tệ (API trả Decimal dạng chuỗi).
 export const TRUONG_LUONG = [
   { key: 'luong_khoi_diem_min', label: 'Lương khởi điểm từ' },
@@ -71,4 +71,74 @@ export function khoangLuong(nghe, tienTo) {
   const khoang = tu != null && den != null && tu !== den ? `${dinhDang(tu)} - ${dinhDang(den)}` : dinhDang(tu ?? den)
   const chuKy = CHU_KY_LUONG.find((item) => item.value === nghe.chu_ky_luong)?.donVi || 'tháng'
   return `${khoang} ${nghe.don_vi_tien_te || 'VND'}/${chuKy}`
+}
+
+/** Một giai đoạn lộ trình trống (dòng mới trong bảng nhập). */
+export function buocLoTrinhRong() {
+  return { giai_doan: '', mo_ta_cong_viec: '', luong_trung_binh_min: null, luong_trung_binh_max: null, ghi_chu: '' }
+}
+
+/** Lộ trình từ API (mảng giai đoạn; dữ liệu cũ có thể là chuỗi "A → B") → mảng cho form sửa. */
+export function dsLoTrinh(value) {
+  if (Array.isArray(value)) {
+    return value.map((buoc) => ({
+      ...buocLoTrinhRong(),
+      ...buoc,
+      mo_ta_cong_viec: buoc.mo_ta_cong_viec || '',
+      ghi_chu: buoc.ghi_chu || '',
+      luong_trung_binh_min: soHoacNull(buoc.luong_trung_binh_min),
+      luong_trung_binh_max: soHoacNull(buoc.luong_trung_binh_max),
+    }))
+  }
+  return String(value || '')
+    .split(/→|->|=>/)
+    .map((ten) => ten.trim().replace(/\.$/, '').trim())
+    .filter(Boolean)
+    .map((ten) => ({ ...buocLoTrinhRong(), giai_doan: ten }))
+}
+
+/**
+ * Lộ trình từ form / JSON import → payload: bỏ dòng trống hoàn toàn, chữ rỗng → null; không còn dòng nào → null.
+ * Chuỗi kiểu cũ "A → B → C" giữ nguyên để API tự tách.
+ */
+export function chuanHoaLoTrinh(value) {
+  if (typeof value === 'string') return value.trim() || null
+  if (!Array.isArray(value)) return null
+  const chu = (v) => (v == null ? null : String(v).trim() || null)
+  const ds = value
+    .filter((buoc) => buoc && typeof buoc === 'object')
+    .map((buoc) => ({
+      giai_doan: chu(buoc.giai_doan) || '',
+      mo_ta_cong_viec: chu(buoc.mo_ta_cong_viec),
+      luong_trung_binh_min: soHoacNull(buoc.luong_trung_binh_min),
+      luong_trung_binh_max: soHoacNull(buoc.luong_trung_binh_max),
+      ghi_chu: chu(buoc.ghi_chu),
+    }))
+    .filter(
+      (buoc) =>
+        buoc.giai_doan ||
+        buoc.mo_ta_cong_viec ||
+        buoc.ghi_chu ||
+        buoc.luong_trung_binh_min != null ||
+        buoc.luong_trung_binh_max != null,
+    )
+  return ds.length ? ds : null
+}
+
+/** Lỗi đầu tiên của lộ trình trên form (thiếu tên giai đoạn, lương từ > đến); hợp lệ thì ''. */
+export function loiLoTrinh(value) {
+  const ds = chuanHoaLoTrinh(Array.isArray(value) ? value : []) || []
+  for (const [i, buoc] of ds.entries()) {
+    if (!buoc.giai_doan) return `Giai đoạn ${i + 1}: vui lòng nhập tên giai đoạn`
+    const { luong_trung_binh_min: tu, luong_trung_binh_max: den } = buoc
+    if (tu != null && den != null && tu > den) return `Giai đoạn ${i + 1}: lương trung bình từ phải ≤ đến`
+  }
+  return ''
+}
+
+/** Tên các giai đoạn nối bằng "→" (cột bảng danh sách); chưa có thì ''. */
+export function tenLoTrinh(value) {
+  return dsLoTrinh(value)
+    .map((buoc) => buoc.giai_doan)
+    .join(' → ')
 }

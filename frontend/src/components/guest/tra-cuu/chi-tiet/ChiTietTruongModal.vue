@@ -28,10 +28,10 @@
 <script setup>
 /** Modal chi tiết trường ĐH, CĐ ở trang Tra cứu (khách). Dữ liệu lấy từ danh sách đã tải, không gọi thêm API. */
 import { computed } from 'vue'
-import KhungChiTiet from './KhungChiTiet.vue'
-import DauChiTiet from './DauChiTiet.vue'
-import CardThongTin from './CardThongTin.vue'
-import { locNhan, loiTat, o, oLink } from './phanChiTiet'
+import KhungChiTiet from '@/components/guest/chung/chi-tiet/KhungChiTiet.vue'
+import DauChiTiet from '@/components/guest/chung/chi-tiet/DauChiTiet.vue'
+import CardThongTin from '@/components/guest/chung/chi-tiet/CardThongTin.vue'
+import { locNhan, loiTat, o, oLink } from '@/components/guest/chung/chi-tiet/phanChiTiet'
 import { loaiCoSo } from '../loaiTraCuu'
 
 defineOptions({ name: 'ChiTietTruongModal' })
