@@ -161,7 +161,8 @@ import { Placeholder } from '@tiptap/extensions'
 import { Brush, Grid, Link, Loading, Picture, RefreshLeft, RefreshRight } from '@element-plus/icons-vue'
 import { apiAssetUrl, apiOrigin } from '@/api/apiUrl'
 import { importThuVienUrlTaoThuMuc, uploadThuVienTaoThuMuc } from '@/api/thuVien'
-import { anhTuongDoi, anhTuyetDoi, chuanHoaHtmlDan, htmlHoacRong, laAnhNgoai } from './noiDungHtml'
+import { anhTuongDoi, anhTuyetDoi } from '@/utils/anhNoiDung'
+import { chuanHoaHtmlDan, htmlHoacRong, laAnhNgoai } from './noiDungHtml'
 
 defineOptions({ name: 'SoanThaoNoiDung' })
 

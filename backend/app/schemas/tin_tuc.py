@@ -197,3 +197,48 @@ class TinTucBaiVietPage(BaseModel):
 
 class TinTucBaiVietDeleteMany(_DanhSachId):
     pass
+
+
+# ---------- Trang tin tức công khai (khách) ----------
+
+
+class TinTucNhomTinCongKhai(BaseModel):
+    id: int
+    ma_nhom: str
+    ten_nhom: str
+    slug: str
+    mo_ta: str | None = None
+    # Số bài đã xuất bản trong nhóm.
+    so_bai_viet: int = 0
+
+
+class TinTucBaiVietCongKhai(BaseModel):
+    """Một bài trong danh sách tin của khách (không kèm nội dung)."""
+
+    id: int
+    nhom_tin_tuc_id: int
+    ten_nhom: str
+    slug_nhom: str
+    tieu_de: str
+    slug: str
+    tom_tat: str | None = None
+    anh_dai_dien: str | None = None
+    tac_gia: str | None = None
+    is_noi_bat: int
+    luot_xem: int
+    created_at: datetime
+
+
+class TinTucBaiVietCongKhaiPage(BaseModel):
+    items: list[TinTucBaiVietCongKhai]
+    total: int
+    page: int
+    page_size: int
+
+
+class TinTucBaiVietCongKhaiChiTiet(TinTucBaiVietCongKhai):
+    # Nội dung HTML; frontend lọc (DOMPurify) trước khi hiển thị.
+    noi_dung: str | None = None
+    updated_at: datetime
+    # Bài cùng nhóm mới nhất (tối đa 4), không gồm bài đang xem.
+    bai_lien_quan: list[TinTucBaiVietCongKhai] = []

@@ -23,6 +23,7 @@
     "apexcharts": "^8.2.0",
     "axios": "^1.20.0",
     "bootstrap": "^5.3.8",
+    "dompurify": "^3.4.18",
     "element-plus": "^2.14.7",
     "exceljs": "^4.4.0",
     "pinia": "^4.0.3",

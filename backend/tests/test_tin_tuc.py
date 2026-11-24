@@ -10,7 +10,7 @@ from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.orm import Session
 
 import app.models as M
-from app.api.v1.endpoints import tin_tuc_bai_viet as bai, tin_tuc_nhom_tin as nhom
+from app.api.v1.endpoints import tin_tuc_bai_viet as bai, tin_tuc_cong_khai as cong_khai, tin_tuc_nhom_tin as nhom
 from app.db.base import Base
 from app.schemas.tin_tuc import (
     TinTucBaiVietDeleteMany,
@@ -131,6 +131,43 @@ class TestTinTuc(unittest.TestCase):
         self.assertEqual(bai.delete_bai_viet_many(TinTucBaiVietDeleteMany(ids=[b.id, 999]), db=self.db).deleted, 1)
         nhom.delete_nhom_tin(n.id, db=self.db)
         self.assertEqual(_ds_nhom(self.db).total, 0)
+
+    def test_cong_khai_chi_hien_bai_xuat_ban_thuoc_nhom_hien_thi(self):
+        n1 = self._tao_nhom()
+        n2 = self._tao_nhom(ma="AN", ten="Nhóm ẩn", trang_thai=0)
+        b1 = self._tao_bai(n1.id, tieu_de="Bài một", is_noi_bat=1, noi_dung="<p>Một</p>")
+        b2 = self._tao_bai(n1.id, tieu_de="Bài hai")
+        self._tao_bai(n1.id, tieu_de="Bài nháp", trang_thai=0)
+        self._tao_bai(n2.id, tieu_de="Bài trong nhóm ẩn")
+
+        def ds(**kw):
+            return cong_khai.list_bai_viet_cong_khai(
+                **{"q": None, "nhom": None, "is_noi_bat": None, "page": 1, "page_size": 9, **kw}, db=self.db
+            )
+
+        self.assertEqual(sorted(b.tieu_de for b in ds().items), ["Bài hai", "Bài một"])
+        self.assertEqual([b.id for b in ds(is_noi_bat=1).items], [b1.id])
+        self.assertEqual([b.slug_nhom for b in ds(nhom="huong-nghiep").items], ["huong-nghiep", "huong-nghiep"])
+        self.assertEqual(ds(nhom="nhom-an").total, 0)
+        self.assertEqual([b.id for b in ds(q="hai").items], [b2.id])
+
+        nhom_hien = cong_khai.list_nhom_tin_cong_khai(db=self.db)
+        self.assertEqual([(n.slug, n.so_bai_viet) for n in nhom_hien], [("huong-nghiep", 2)])
+
+        ct = cong_khai.get_bai_viet_cong_khai("bai-mot", db=self.db)
+        self.assertEqual((ct.noi_dung, ct.luot_xem, ct.ten_nhom), ("<p>Một</p>", 1, "Hướng nghiệp"))
+        self.assertEqual([b.id for b in ct.bai_lien_quan], [b2.id])
+        self.assertEqual(cong_khai.get_bai_viet_cong_khai("bai-mot", db=self.db).luot_xem, 2)
+        for slug in ("bai-nhap", "bai-trong-nhom-an", "khong-co"):
+            with self.subTest(slug=slug), self.assertRaises(HTTPException) as ctx:
+                cong_khai.get_bai_viet_cong_khai(slug, db=self.db)
+            self.assertEqual(ctx.exception.status_code, 400)
+            self.assertIn(slug, ctx.exception.detail)
+
+    def test_cong_khai_rong_tra_dung_cau_truc(self):
+        self.assertEqual(cong_khai.list_nhom_tin_cong_khai(db=self.db), [])
+        page = cong_khai.list_bai_viet_cong_khai(q=None, nhom=None, is_noi_bat=None, page=1, page_size=9, db=self.db)
+        self.assertEqual((page.items, page.total, page.page, page.page_size), ([], 0, 1, 9))
 
 
 if __name__ == "__main__":

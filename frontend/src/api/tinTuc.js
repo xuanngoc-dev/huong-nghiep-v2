@@ -19,3 +19,12 @@ export const baiVietApi = {
   // Đổi nhanh trạng thái xuất bản / nổi bật: { trang_thai?, is_noi_bat? }.
   hienThi: (id, payload) => api.patch(`/tin-tuc/bai-viet/${id}/hien-thi`, payload).then((res) => res.data),
 }
+
+// Trang tin tức cho khách (không cần đăng nhập): chỉ bài đã xuất bản thuộc nhóm đang hiển thị.
+export const tinTucCongKhaiApi = {
+  nhomTin: () => api.get('/tin-tuc/cong-khai/nhom-tin').then((res) => res.data),
+  // params: { q, nhom (slug nhóm), is_noi_bat, page, page_size }
+  baiViet: (params) => api.get('/tin-tuc/cong-khai/bai-viet', { params }).then((res) => res.data),
+  // Xem chi tiết theo slug (tăng lượt xem), kèm bai_lien_quan.
+  chiTiet: (slug) => api.get(`/tin-tuc/cong-khai/bai-viet/${encodeURIComponent(slug)}`).then((res) => res.data),
+}

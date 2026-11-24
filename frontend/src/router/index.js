@@ -80,6 +80,14 @@ const router = createRouter({
           meta: { title: 'Tin tức', public: true },
         },
         {
+          // Tiêu đề tab đặt lại theo tên bài sau khi tải (TinTucChiTiet.vue).
+          // goc: sáng mục "Tin tức" trên header; cha: breadcrumb Trang chủ / Tin tức / Bài viết.
+          path: 'tin-tuc/:slug',
+          name: 'tin-tuc-chi-tiet',
+          component: () => import('@/views/guest/TinTucChiTiet.vue'),
+          meta: { title: 'Bài viết', public: true, goc: 'tin-tuc', cha: { label: 'Tin tức', to: { name: 'tin-tuc' } } },
+        },
+        {
           path: 'cam-nang',
           name: 'cam-nang',
           component: () => import('@/views/guest/CamNang.vue'),

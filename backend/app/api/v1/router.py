@@ -64,6 +64,7 @@ from app.api.v1.endpoints import (
     tai_lieu,
     thu_vien,
     tin_tuc_bai_viet,
+    tin_tuc_cong_khai,
     tin_tuc_nhom_tin,
     tn_cau_hoi,
     tn_phien_khao_sat,
@@ -148,6 +149,7 @@ api_router.include_router(tn_tim_truong_phu_hop.router)
 api_router.include_router(kiem_tra_du_lieu.router)
 api_router.include_router(tai_lieu.router)
 api_router.include_router(thu_vien.router)
+api_router.include_router(tin_tuc_cong_khai.router)
 api_router.include_router(tin_tuc_nhom_tin.router)
 api_router.include_router(tin_tuc_bai_viet.router)
 api_router.include_router(chat.router)

@@ -91,6 +91,9 @@ const muc = computed(() => {
     return [...goc, hienTai]
   }
 
+  // Trang con của một trang khách (vd. chi tiết bài viết dưới Tin tức): meta.cha = { label, to }.
+  if (route.meta.cha) return [trangChu, route.meta.cha, hienTai]
+
   return [trangChu, hienTai]
 })
 </script>

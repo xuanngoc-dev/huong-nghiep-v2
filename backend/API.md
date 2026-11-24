@@ -1,8 +1,8 @@
 # Danh sách API
 
-Tự sinh từ code lúc 24/11/2026 08:45 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 24/11/2026 09:09 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **508** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **511** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
@@ -10,7 +10,7 @@ Tiền tố chung: `/api/v1`. Tổng cộng **508** API.
 |---|---:|---|
 | [Quản trị (admin)](#quan_tri) | 329 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
 | [Thành viên (user)](#thanh_vien) | 105 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
-| [Khách vãng lai](#khach) | 74 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
+| [Khách vãng lai](#khach) | 77 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
 <a id="quan_tri"></a>
 
@@ -1106,6 +1106,14 @@ Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: c
 | `POST` | `/api/v1/tim-truong-phu-hop` | Tùy chọn | Ghi một lượt tìm trường phù hợp vào tn_lich_su_tim_truong_phu_hop. |
 | `GET` | `/api/v1/tim-truong-phu-hop/luot` | Tùy chọn | Hạn mức tìm trường phù hợp trong ngày theo cấu hình đang áp dụng, kèm số lượt đã dùng. |
 | `GET` | `/api/v1/tim-truong-phu-hop/truong` | Không | Danh sách trường phù hợp của một ngành, lấy từ dm_nganh_hoc_theo_truong. |
+
+### `tin-tuc`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/tin-tuc/cong-khai/bai-viet` | Không | Danh sách bài đã xuất bản, mới nhất trước; lọc theo từ khóa (tiêu đề, tóm tắt), slug nhóm tin, nổi bật. |
+| `GET` | `/api/v1/tin-tuc/cong-khai/bai-viet/{slug}` | Không | Chi tiết một bài đã xuất bản theo slug (kèm bài cùng nhóm) và tăng lượt xem. Không cần đăng nhập. |
+| `GET` | `/api/v1/tin-tuc/cong-khai/nhom-tin` | Không | Các nhóm tin đang hiển thị theo thứ tự, kèm số bài đã xuất bản. Không cần đăng nhập. |
 
 ### `trac-nghiem`
 

@@ -1,13 +1,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { taoSlug } from '../src/utils/slug.js'
-import {
-  anhTuongDoi,
-  anhTuyetDoi,
-  chuanHoaHtmlDan,
-  htmlHoacRong,
-  laAnhNgoai,
-} from '../src/components/admin/soan-thao/noiDungHtml.js'
+import { anhTuongDoi, anhTuyetDoi } from '../src/utils/anhNoiDung.js'
+import { chuanHoaHtmlDan, htmlHoacRong, laAnhNgoai } from '../src/components/admin/soan-thao/noiDungHtml.js'
 
 test('slug từ tiêu đề tiếng Việt (cùng quy tắc với backend)', () => {
   assert.equal(taoSlug('Đề án tuyển sinh 2026: Những điều cần biết!'), 'de-an-tuyen-sinh-2026-nhung-dieu-can-biet')
