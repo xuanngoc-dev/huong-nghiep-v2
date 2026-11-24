@@ -19,7 +19,7 @@
             aria-label="Nhóm nghề"
           >
             <button
-              v-for="tab in dsTab"
+              v-for="tab in dsTabHien"
               :key="tab.ma"
               type="button"
               class="landing-explore__chip"
@@ -31,6 +31,16 @@
             >
               {{ tab.ten }}
               <span v-if="!dangTai" class="thu-vien__so">{{ tab.soNghe }}</span>
+            </button>
+            <button
+              v-if="coNutXemThem"
+              type="button"
+              class="landing-explore__chip thu-vien__xem-them"
+              :aria-expanded="moRongTab"
+              @click="moRongTab = !moRongTab"
+            >
+              {{ moRongTab ? 'Thu gọn' : `Xem thêm ${soTabAn} nhóm` }}
+              <el-icon aria-hidden="true"><component :is="moRongTab ? 'ArrowUp' : 'ArrowDown'" /></el-icon>
             </button>
           </div>
 
@@ -112,6 +122,8 @@ defineOptions({ name: 'ThuVienNganhNghe' })
 
 const TAT_CA = ''
 const SO_NGHE_MOI_TRANG = 12
+// Số nhóm nghề hiện sẵn trên hàng tab (chưa tính "Tất cả"); còn lại ẩn sau nút "Xem thêm".
+const SO_NHOM_MAC_DINH = 8
 
 const route = useRoute()
 const router = useRouter()
@@ -139,6 +151,17 @@ const dsTab = computed(() => {
     ...dsNhomNghe.value.map((nhom) => ({ ma: nhom.ma_nhom, ten: nhom.ten_nhom, soNghe: soNgheTheoNhom[nhom.id] || 0 })),
   ]
 })
+
+const moRongTab = ref(false)
+const coNutXemThem = computed(() => dsTab.value.length > SO_NHOM_MAC_DINH + 1)
+// Thu gọn: "Tất cả" + SO_NHOM_MAC_DINH nhóm đầu; nhóm đang chọn nằm trong phần ẩn (mở từ link ?nhom=) vẫn hiện thêm.
+const dsTabHien = computed(() => {
+  if (moRongTab.value || !coNutXemThem.value) return dsTab.value
+  const hien = dsTab.value.slice(0, SO_NHOM_MAC_DINH + 1)
+  const dangChon = dsTab.value.find((tab) => tab.ma === maNhomDangChon.value)
+  return !dangChon || hien.includes(dangChon) ? hien : [...hien, dangChon]
+})
+const soTabAn = computed(() => dsTab.value.length - dsTabHien.value.length)
 
 // Mã nhóm trên query không còn tồn tại (nhóm đã tắt, sai link) thì về "Tất cả".
 const maNhomDangChon = computed(() => {
@@ -223,6 +246,15 @@ onMounted(taiDuLieu)
 .landing-explore__chip.is-active .thu-vien__so {
   background: rgba(255, 255, 255, 0.2);
   color: #fff;
+}
+
+/* Nút "Xem thêm / Thu gọn" nhóm: cùng cỡ chip tab, viền đứt để phân biệt với tab. */
+.thu-vien__xem-them {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-style: dashed;
+  color: var(--lp-primary-strong);
 }
 
 .thu-vien__trang-thai,
