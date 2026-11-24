@@ -286,6 +286,25 @@
       ]
     },
     {
+      "header": "TIN TỨC",
+      "tooltip": "Quản lý nhóm tin và bài viết của trang tin tức",
+      "abbr": "TT",
+      "items": [
+        {
+          "index": "/admin/tin-tuc/nhom-tin",
+          "title": "Nhóm tin",
+          "tooltip": "Chuyên mục tin tức: mã, tên, slug, thứ tự hiển thị",
+          "icon": "Collection"
+        },
+        {
+          "index": "/admin/tin-tuc/bai-viet",
+          "title": "Bài viết",
+          "tooltip": "Soạn, xuất bản và đánh dấu nổi bật bài viết",
+          "icon": "Document"
+        }
+      ]
+    },
+    {
       "header": "HỆ THỐNG",
       "tooltip": "Quản trị hệ thống và tài khoản",
       "abbr": "HT",

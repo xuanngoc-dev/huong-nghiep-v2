@@ -727,6 +727,18 @@ const router = createRouter({
           component: () => import('@/views/admin/de-an-tuyen-sinh/ChinhSachUuTienXetTuyen.vue'),
           meta: { title: 'Ưu tiên xét tuyển', requiresAuth: true, requiresAdmin: true },
         },
+        {
+          path: 'tin-tuc/nhom-tin',
+          name: 'tin-tuc-nhom-tin',
+          component: () => import('@/views/admin/tin-tuc/NhomTin.vue'),
+          meta: { title: 'Nhóm tin', requiresAuth: true, requiresAdmin: true },
+        },
+        {
+          path: 'tin-tuc/bai-viet',
+          name: 'tin-tuc-bai-viet',
+          component: () => import('@/views/admin/tin-tuc/BaiViet.vue'),
+          meta: { title: 'Bài viết', requiresAuth: true, requiresAdmin: true },
+        },
       ],
     },
     {

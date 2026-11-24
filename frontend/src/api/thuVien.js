@@ -25,6 +25,29 @@ export function createThuMuc(thuMuc, ten) {
   return api.post('/thu-vien/thu-muc', { thu_muc: thuMuc || '', ten }).then((res) => res.data)
 }
 
+// Lần đầu dùng: thư mục (ở gốc Thư viện) chưa có thì API trả 400 "Không tìm thấy thư mục ..." → tạo rồi gọi lại.
+async function voiThuMuc(thuMuc, goi) {
+  try {
+    return await goi()
+  } catch (error) {
+    const detail = error?.response?.data?.detail
+    const chuaCoThuMuc = error?.response?.status === 400 && String(detail || '').startsWith('Không tìm thấy thư mục')
+    if (!chuaCoThuMuc || !thuMuc) throw error
+    await createThuMuc('', thuMuc)
+    return goi()
+  }
+}
+
+/** Tải tệp lên thư mục `thuMuc` của Thư viện, tự tạo thư mục nếu chưa có. */
+export function uploadThuVienTaoThuMuc(file, thuMuc) {
+  return voiThuMuc(thuMuc, () => uploadThuVien(file, thuMuc))
+}
+
+/** Server tải tệp từ URL về thư mục `thuMuc` của Thư viện, tự tạo thư mục nếu chưa có. */
+export function importThuVienUrlTaoThuMuc(url, thuMuc) {
+  return voiThuMuc(thuMuc, () => importThuVienUrl(url, thuMuc))
+}
+
 export function renameThuVien(duongDan, tenMoi) {
   return api.post('/thu-vien/doi-ten', { duong_dan: duongDan, ten_moi: tenMoi }).then((res) => res.data)
 }

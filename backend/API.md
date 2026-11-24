@@ -1,14 +1,14 @@
 # Danh sách API
 
-Tự sinh từ code lúc 24/11/2026 08:18 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
+Tự sinh từ code lúc 24/11/2026 08:45 bằng `python -m app.scripts.xuat_danh_sach_api`. Không sửa tay, chạy lại lệnh khi thêm hoặc đổi API.
 
-Tiền tố chung: `/api/v1`. Tổng cộng **495** API.
+Tiền tố chung: `/api/v1`. Tổng cộng **508** API.
 
 Đăng nhập bằng header `Authorization: Bearer <access_token>` lấy từ API đăng nhập.
 
 | Nhóm | Số API | Yêu cầu đăng nhập |
 |---|---:|---|
-| [Quản trị (admin)](#quan_tri) | 316 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
+| [Quản trị (admin)](#quan_tri) | 329 | Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả 401, không phải admin trả 403. |
 | [Thành viên (user)](#thanh_vien) | 105 | Bắt buộc đăng nhập. Thiếu hoặc sai token trả 401. |
 | [Khách vãng lai](#khach) | 74 | Không cần đăng nhập. Các API ghi “Tùy chọn” vẫn nhận token: có token hợp lệ thì xử lý theo tài khoản. |
 
@@ -524,6 +524,24 @@ Bắt buộc đăng nhập bằng tài khoản quản trị. Thiếu token trả
 |---|---|---|---|
 | `GET` | `/api/v1/tim-truong-phu-hop/quan-tri` | Bắt buộc (admin) | Lịch sử tìm trường phù hợp của mọi tài khoản, mới nhất trước. |
 | `GET` | `/api/v1/tim-truong-phu-hop/quan-tri/{item_id}` | Bắt buộc (admin) | Chi tiết một lượt tìm trường: dữ liệu năng lực, tài chính, tiêu chí và kết quả. |
+
+### `tin-tuc`
+
+| Method | Đường dẫn | Đăng nhập | Mô tả |
+|---|---|---|---|
+| `GET` | `/api/v1/tin-tuc/bai-viet` | Bắt buộc (admin) | Danh sách bài viết (không kèm nội dung), lọc theo từ khóa (tiêu đề, slug, tóm tắt, tác giả), nhóm tin, |
+| `POST` | `/api/v1/tin-tuc/bai-viet` | Bắt buộc (admin) | Thêm bài viết. Slug bỏ trống thì tự sinh từ tiêu đề. |
+| `DELETE` | `/api/v1/tin-tuc/bai-viet` | Bắt buộc (admin) | Xóa nhiều bài viết theo danh sách id. Id không tồn tại thì bỏ qua. |
+| `GET` | `/api/v1/tin-tuc/bai-viet/{item_id}` | Bắt buộc (admin) | Chi tiết một bài viết (kèm nội dung HTML). |
+| `PUT` | `/api/v1/tin-tuc/bai-viet/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một bài viết (lượt xem giữ nguyên). |
+| `DELETE` | `/api/v1/tin-tuc/bai-viet/{item_id}` | Bắt buộc (admin) | Xóa một bài viết theo id. |
+| `PATCH` | `/api/v1/tin-tuc/bai-viet/{item_id}/hien-thi` | Bắt buộc (admin) | Đổi nhanh trạng thái xuất bản và/hoặc nổi bật của một bài viết. |
+| `GET` | `/api/v1/tin-tuc/nhom-tin` | Bắt buộc (admin) | Danh sách nhóm tin có phân trang, lọc theo từ khóa (mã, tên, slug) và trạng thái; xếp theo thứ tự hiển thị. |
+| `POST` | `/api/v1/tin-tuc/nhom-tin` | Bắt buộc (admin) | Thêm nhóm tin. Slug bỏ trống thì tự sinh từ tên nhóm. |
+| `DELETE` | `/api/v1/tin-tuc/nhom-tin` | Bắt buộc (admin) | Xóa nhiều nhóm tin theo danh sách id. Id không tồn tại thì bỏ qua; có nhóm còn bài viết thì không xóa nhóm nào. |
+| `GET` | `/api/v1/tin-tuc/nhom-tin/{item_id}` | Bắt buộc (admin) | Chi tiết một nhóm tin theo id. |
+| `PUT` | `/api/v1/tin-tuc/nhom-tin/{item_id}` | Bắt buộc (admin) | Cập nhật toàn bộ thông tin một nhóm tin. |
+| `DELETE` | `/api/v1/tin-tuc/nhom-tin/{item_id}` | Bắt buộc (admin) | Xóa một nhóm tin theo id (chỉ khi nhóm không còn bài viết). |
 
 ### `trac-nghiem`
 

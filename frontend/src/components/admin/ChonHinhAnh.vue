@@ -34,7 +34,7 @@ import { ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Upload } from '@element-plus/icons-vue'
 import { apiAssetUrl } from '@/api/apiUrl'
-import { createThuMuc, uploadThuVien } from '@/api/thuVien'
+import { uploadThuVienTaoThuMuc } from '@/api/thuVien'
 
 defineOptions({ name: 'ChonHinhAnh' })
 
@@ -69,19 +69,6 @@ function chonTep() {
   tepInput.value?.click()
 }
 
-async function taiLenThuMuc(file) {
-  try {
-    return await uploadThuVien(file, props.thuMuc)
-  } catch (error) {
-    // Lần đầu dùng: thư mục chưa có (API trả 400 "Không tìm thấy thư mục ...") thì tạo rồi tải lại.
-    const detail = error?.response?.data?.detail
-    const chuaCoThuMuc = error?.response?.status === 400 && String(detail || '').startsWith('Không tìm thấy thư mục')
-    if (!chuaCoThuMuc) throw error
-    await createThuMuc('', props.thuMuc)
-    return uploadThuVien(file, props.thuMuc)
-  }
-}
-
 async function onChonTep(event) {
   const file = event.target.files?.[0]
   event.target.value = ''
@@ -96,7 +83,7 @@ async function onChonTep(event) {
   }
   dangTai.value = true
   try {
-    const item = await taiLenThuMuc(file)
+    const item = await uploadThuVienTaoThuMuc(file, props.thuMuc)
     model.value = item.duong_dan
     ElMessage.success('Đã tải ảnh lên')
   } catch (error) {

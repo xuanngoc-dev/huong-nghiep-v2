@@ -49,6 +49,7 @@ from app.models.ht_cau_hinh_tra_cuu import HtCauHinhTraCuu
 from app.models.ht_lich_su_giao_dich_ngan_hang import HtLichSuGiaoDichNganHang
 from app.models.ht_lich_su_nap_tien import HtLichSuNapTien
 from app.models.ht_ngan_hang_thanh_toan import HtNganHangThanhToan
+from app.models.tin_tuc import TinTucBaiViet, TinTucNhomTin
 from app.models.tn_cau_hoi_trac_nghiem import TnCauHoiTracNghiem
 from app.models.tn_cau_tra_loi import TnCauTraLoi
 from app.models.tn_chi_tiet_tra_loi import TnChiTietTraLoi
@@ -152,6 +153,8 @@ __all__ = [
     "HtLichSuGiaoDichNganHang",
     "HtLichSuNapTien",
     "HtNganHangThanhToan",
+    "TinTucBaiViet",
+    "TinTucNhomTin",
     "TnCauHoiTracNghiem",
     "TnCauTraLoi",
     "TnChiTietTraLoi",

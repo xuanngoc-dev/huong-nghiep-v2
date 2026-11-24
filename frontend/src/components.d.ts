@@ -194,6 +194,7 @@ declare module 'vue' {
     SettingsDrawer: typeof import('./components/SettingsDrawer.vue')['default']
     SideMenu: typeof import('./components/SideMenu.vue')['default']
     SinhVien: typeof import('./components/guest/doi-tuong/SinhVien.vue')['default']
+    SoanThaoNoiDung: typeof import('./components/admin/soan-thao/SoanThaoNoiDung.vue')['default']
     SoDuTaiKhoan: typeof import('./components/member/SoDuTaiKhoan.vue')['default']
     ThanhNienNgoaiTruong: typeof import('./components/guest/doi-tuong/ThanhNienNgoaiTruong.vue')['default']
     ThanhToanDialog: typeof import('./components/member/ThanhToanDialog.vue')['default']
