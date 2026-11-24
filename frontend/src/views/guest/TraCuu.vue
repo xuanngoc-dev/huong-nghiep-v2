@@ -72,7 +72,7 @@
             </div>
 
             <div v-if="dangTai" class="row g-3" aria-busy="true">
-              <div v-for="n in 8" :key="n" class="col-12 col-md-6 col-xl-3">
+              <div v-for="n in 8" :key="n" class="col-12 col-md-6 col-xl-4">
                 <el-skeleton class="tra-cuu__khung-cho" animated :rows="3" />
               </div>
             </div>
@@ -88,7 +88,7 @@
 
             <!-- Lưới: 4 thẻ/hàng (desktop) → 2 (tablet) → 1 (mobile). -->
             <div v-else-if="kieuXem === 'luoi'" class="row g-3">
-              <div v-for="item in danhSach" :key="item.id" class="col-12 col-md-6 col-xl-3">
+              <div v-for="item in danhSach" :key="item.id" class="col-12 col-md-6 col-xl-4">
                 <TheTraCuu :the="item.the" :icon="loai.icon" @xem="moChiTiet(item)" />
               </div>
             </div>
@@ -141,22 +141,13 @@
       </div>
     </section>
 
-    <CustomDialog v-model="chiTietMo" :title="chiTiet?.the.tieuDe || ''" :width="960">
-      <dl v-if="chiTiet" class="tra-cuu__chi-tiet">
-        <template v-for="row in chiTiet.dong" :key="row.label">
-          <dt>{{ row.label }}</dt>
-          <dd>
-            <a v-if="row.link" :href="row.value" target="_blank" rel="noopener noreferrer">{{ row.value }}</a>
-            <template v-else>{{ row.value }}</template>
-          </dd>
-        </template>
-      </dl>
-    </CustomDialog>
+    <!-- Modal chi tiết riêng theo loại tra cứu (components/guest/tra-cuu/chi-tiet). -->
+    <component :is="chiTiet.modal" v-if="chiTiet" v-model="chiTietMo" :item="chiTiet.item" />
   </div>
 </template>
 
 <script setup>
-import { computed, onUnmounted, ref, watch } from 'vue'
+import { computed, onUnmounted, ref, shallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
 import HoTroDinhHuong from '@/components/guest/chung/HoTroDinhHuong.vue'
@@ -164,6 +155,7 @@ import KhongCoDuLieu from '@/components/guest/chung/KhongCoDuLieu.vue'
 import TheTraCuu from '@/components/guest/tra-cuu/TheTraCuu.vue'
 import { LOAI_TRA_CUU, timLoaiTraCuu } from '@/components/guest/tra-cuu/loaiTraCuu'
 import { traCuuDanhMuc } from '@/components/guest/tra-cuu/apiTraCuu'
+import { MODAL_CHI_TIET_THEO_LOAI } from '@/components/guest/tra-cuu/chi-tiet'
 import '@/components/guest/landing/landing.css'
 
 defineOptions({ name: 'TraCuu' })
@@ -194,7 +186,8 @@ const tong = ref(0)
 const dangTai = ref(false)
 const loi = ref('')
 const chiTietMo = ref(false)
-const chiTiet = ref(null)
+// shallowRef: giữ component modal không bị bọc reactive.
+const chiTiet = shallowRef(null)
 
 let lanGoi = 0
 let henGioTim = null
@@ -259,7 +252,7 @@ async function taiDuLieu() {
 }
 
 function moChiTiet(item) {
-  chiTiet.value = { the: item.the, dong: loai.value.chiTiet(item) }
+  chiTiet.value = { modal: MODAL_CHI_TIET_THEO_LOAI[loai.value.id], item }
   chiTietMo.value = true
 }
 
@@ -417,36 +410,9 @@ onUnmounted(() => clearTimeout(henGioTim))
   margin-top: var(--lp-gap);
 }
 
-.tra-cuu__chi-tiet {
-  display: grid;
-  grid-template-columns: minmax(160px, 220px) 1fr;
-  gap: 0.75rem 1.25rem;
-  margin: 0;
-}
-
-.tra-cuu__chi-tiet dt {
-  color: var(--el-text-color-secondary);
-  font-weight: 500;
-}
-
-.tra-cuu__chi-tiet dd {
-  margin: 0;
-  white-space: pre-line;
-  overflow-wrap: anywhere;
-}
-
 @media (max-width: 575.98px) {
   .tra-cuu__loc {
     flex: 1 1 100%;
-  }
-
-  .tra-cuu__chi-tiet {
-    grid-template-columns: 1fr;
-    gap: 0.15rem;
-  }
-
-  .tra-cuu__chi-tiet dd {
-    margin-bottom: 0.6rem;
   }
 }
 </style>
